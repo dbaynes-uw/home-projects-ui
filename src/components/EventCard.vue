@@ -6,6 +6,7 @@
     <div class="event-card">
       <span>@{{ event.description }} on {{ event.created_at }}</span>
       <h4>{{ event.frequency }} Days</h4>
+      <h1>{{ event.notes }}</h1>
     </div>
   </router-link>
 </template>
