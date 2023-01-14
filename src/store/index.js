@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-
+import events from "@/store/modules/events";
 export default createStore({
   state: {
     created_by: "dbaynes",
@@ -12,5 +12,7 @@ export default createStore({
     },
   },
   actions: {},
-  modules: {},
+  modules: {
+    events,
+  },
 });

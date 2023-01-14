@@ -1,45 +1,53 @@
 <template>
-  <div class="events">
-    <div
-      v-for="event in events"
-      :key="event.id"
-      :event="event"
-      @dblclick="onDoubleClick(event)"
-      class="event"
-      v-bind:class="{ 'is-complete': event.completed }"
-    >
-      <!--div class="events">
-        <EventCard v-for="event in events" :key="event.id" :event="event" />
-      </div-->
-      <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
-        <p class="p-align-left">
-          <b>
-            <u>{{ event.description }}</u>
-          </b>
-        </p>
-      </router-link>
-      <ul class="ul-left">
-        <li>{{ event.notes }}</li>
-        <li v-if="event.completed">
-          Date completed:
-          {{ format_date(event.action_date) }}
-        </li>
-        <li>{{ event.frequency }} day cycle</li>
-        <li v-if="event.action_date">
-          {{ format_date(event.action_date) }}
-          <span v-for="(history, index) in event.histories" :key="history.id">
-            <div v-if="index == event.histories.length - 1">
-              History: {{ history.notes }}
-              on
-              {{ format_system_date(history.created_at) }}.
-            </div>
-          </span>
-        </li>
-        <li>
-          {{ caculateDue(event.action_date, event.frequency) }}:
-          {{ caculateDueDate(event.action_date, event.frequency) }}
-        </li>
-      </ul>
+  <div>
+    <h3>ToDos</h3>
+    <div class="legend">
+      <span>Double click to mark as complete.</span>
+      <span><span class="incomplete-box"></span> = Incomplete</span>
+      <span><span class="complete-box"></span> = Complete</span>
+    </div>
+    <br />
+    <div class="events">
+      <div
+        v-for="event in events"
+        :key="event.id"
+        @dblclick="onDoubleClick(event)"
+        class="event"
+        v-bind:class="{ 'is-complete': event.completed }"
+      >
+        <!--div class="events">
+          <EventCard v-for="event in events" :key="event.id" :event="event" />
+        </div-->
+        <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
+          <p class="p-align-left">
+            <b>
+              <u>{{ event.description }}</u>
+            </b>
+          </p>
+        </router-link>
+        <ul class="ul-left">
+          <li>{{ event.notes }}</li>
+          <li v-if="event.completed">
+            Date completed:
+            {{ format_date(event.action_date) }}
+          </li>
+          <li>{{ event.frequency }} day cycle</li>
+          <li v-if="event.action_date">
+            {{ format_date(event.action_date) }}
+            <span v-for="(history, index) in event.histories" :key="history.id">
+              <div v-if="index == event.histories.length - 1">
+                History: {{ history.notes }}
+                on
+                {{ format_system_date(history.created_at) }}.
+              </div>
+            </span>
+          </li>
+          <li>
+            {{ caculateDue(event.action_date, event.frequency) }}:
+            {{ caculateDueDate(event.action_date, event.frequency) }}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -47,6 +55,7 @@
 <script>
 // @ is an alias to /src
 //import EventCard from "@/components/EventCard.vue";
+import { mapGetters, mapActions } from "vuex";
 import EventService from "@/services/EventService";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
@@ -66,16 +75,17 @@ export default {
   //  dateDiff: 0,
   //}),
   methods: {
+    ...mapActions(["fetchEvents", "deleteEvent", "updateEvent"]),
     format_date(value) {
       if (value) {
-        console.log("Format Date: ", value);
+        console.log("EVENT LIST Format Date: ", value);
         value = moment(value).format("MM/DD/YY");
         return value;
       }
     },
     format_system_date(value) {
       if (value) {
-        console.log("Format Date: ", value);
+        console.log("EVENT LIST Format Date: ", value);
         value = moment(value).format("MM/DD/YY");
         return value;
       }
@@ -88,9 +98,10 @@ export default {
         completed: !currentEvent.completed,
         action_date: currentEvent.action_date,
       };
-      EventService.putEvent(updatedEvent);
+      //EventService.putEvent(updatedEvent);
+      this.updateEvent(updatedEvent);
       console.log("Put Event executed: ", updatedEvent);
-      // location.reload();
+      location.reload();
     },
     caculateDueDate(action_date, frequency) {
       let returnMessage = "";
@@ -114,6 +125,9 @@ export default {
       return returnMessage;
     },
   },
+  computed: {
+    ...mapGetters(["allEvents"]),
+  },
   created() {
     EventService.getEvents()
       .then((response) => {
@@ -126,13 +140,23 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style>
 .events {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 }
-event-link {
+.event {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+.event-link {
   border: 1px solid #ccc;
   background: #41b883;
   padding: 1rem;

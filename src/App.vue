@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav id="center-nav">
     <router-link :to="{ name: 'EventList' }">Events</router-link> |
     <router-link :to="{ name: 'About' }">About</router-link> |
     <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
@@ -13,6 +13,17 @@
   line-height: 1.6;
   background: #e8f7f0;
 }
+body {
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  line-height: 1.6;
+  background: #e8f7f0;
+}
+.container {
+  max-width: 1100px;
+  margin: auto;
+  overflow: auto;
+  padding: 0 2rem;
+}
 
 nav {
   padding: 30px;
@@ -22,9 +33,12 @@ nav a {
   font-weight: bold;
   color: #2c3e50;
 }
-
 nav a.router-link-exact-active {
   color: #42b983;
+}
+#center-nav {
+  padding: 10px;
+  text-align: center;
 }
 .p-align-left {
   text-align: left;
@@ -82,7 +96,7 @@ i {
   color: #fff;
 }
 @media (max-width: 500px) {
-  .areas {
+  .events {
     grid-template.columns: 1fr;
   }
 }
