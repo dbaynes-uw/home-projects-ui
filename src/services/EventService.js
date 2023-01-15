@@ -17,9 +17,9 @@ export default {
   getEvent(id) {
     return apiClient.get("/events/" + id);
   },
-  postEvent(id) {
-    console.log("postEvent id: ", id);
-    return apiClient.post("/events", id);
+  postEvent(event) {
+    console.log("postEvent id: ", event);
+    return apiClient.post("/events", event);
   },
   putEvent(event) {
     return apiClient.put("events/" + event);

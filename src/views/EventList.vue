@@ -9,16 +9,16 @@
     <br />
     <div class="events">
       <div
-        v-for="event in events"
+        v-for="event in allEvents"
         :key="event.id"
-        @dblclick="onDoubleClick(event)"
         class="event"
+        @dblclick="onDoubleClick(event)"
         v-bind:class="{ 'is-complete': event.completed }"
       >
-        <!--div class="events">
-          <EventCard v-for="event in events" :key="event.id" :event="event" />
-        </div-->
-        <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
+        <router-link
+          :to="{ name: 'EventDetails', params: { id: event.id } }"
+          v-bind:class="{ 'is-complete-for-link': event.completed }"
+        >
           <p class="p-align-left">
             <b>
               <u>{{ event.description }}</u>
@@ -29,24 +29,28 @@
           <li>{{ event.notes }}</li>
           <li v-if="event.completed">
             Date completed:
-            {{ format_date(event.action_date) }}
+            {{ formatStandardDate(event.action_date) }}
           </li>
           <li>{{ event.frequency }} day cycle</li>
           <li v-if="event.action_date">
-            {{ format_date(event.action_date) }}
-            <span v-for="(history, index) in event.histories" :key="history.id">
-              <div v-if="index == event.histories.length - 1">
-                History: {{ history.notes }}
-                on
-                {{ format_system_date(history.created_at) }}.
-              </div>
-            </span>
+            {{ formatStandardDate(event.action_date) }}
           </li>
           <li>
-            {{ caculateDue(event.action_date, event.frequency) }}:
-            {{ caculateDueDate(event.action_date, event.frequency) }}
+            History:
+            <ul v-for="(history, index) in event.histories" :key="history.id">
+              <li v-if="index == event.histories.length - 1">
+                {{ history.notes }}
+                on
+                {{ formatSystemDate(history.created_at) }}.
+              </li>
+            </ul>
+          </li>
+          <li>
+            {{ calculateDue(event.action_date, event.frequency) }}
+            {{ calculateDateDue(event.action_date, event.frequency) }}
           </li>
         </ul>
+        <i @click="deleteEvent(event.id)" class="fas fa-trash-alt"></i>
       </div>
     </div>
   </div>
@@ -56,9 +60,7 @@
 // @ is an alias to /src
 //import EventCard from "@/components/EventCard.vue";
 import { mapGetters, mapActions } from "vuex";
-import EventService from "@/services/EventService";
-import moment from "moment-timezone";
-moment.tz.setDefault("America/Los_Angeles");
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "EventList",
   components: {
@@ -76,20 +78,6 @@ export default {
   //}),
   methods: {
     ...mapActions(["fetchEvents", "deleteEvent", "updateEvent"]),
-    format_date(value) {
-      if (value) {
-        console.log("EVENT LIST Format Date: ", value);
-        value = moment(value).format("MM/DD/YY");
-        return value;
-      }
-    },
-    format_system_date(value) {
-      if (value) {
-        console.log("EVENT LIST Format Date: ", value);
-        value = moment(value).format("MM/DD/YY");
-        return value;
-      }
-    },
     onDoubleClick(currentEvent) {
       const updatedEvent = {
         id: currentEvent.id,
@@ -103,40 +91,32 @@ export default {
       console.log("Put Event executed: ", updatedEvent);
       location.reload();
     },
-    caculateDueDate(action_date, frequency) {
-      let returnMessage = "";
-      let dateCompleted = moment(action_date);
-      let dueDate = moment(dateCompleted).add(frequency, "days");
-      returnMessage = `${moment(dueDate).format("MM/DD/YY")}`;
-      return returnMessage;
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
-    caculateDue(action_date, frequency) {
-      let returnMessage = "";
-      let start = moment(new Date());
-      let end = moment(action_date);
-      let duration = end.diff(start, "days") + frequency;
-
-      if (duration >= 0) {
-        returnMessage = "Due: " + duration + " Days";
-      } else {
-        duration = duration * -1;
-        returnMessage = "OverDue:" + duration + " Days!";
-      }
-      return returnMessage;
+    formatSystemDate(value) {
+      return DateFormatService.formatSystemDate(value);
+    },
+    calculateDue(action_date, frequency) {
+      return DateFormatService.calculateDue(action_date, frequency);
+    },
+    calculateDateDue(action_date, frequency) {
+      return DateFormatService.calculateDateDue(action_date, frequency);
     },
   },
   computed: {
     ...mapGetters(["allEvents"]),
   },
   created() {
-    EventService.getEvents()
-      .then((response) => {
-        console.log("EventList created() events: ", response.data);
-        this.events = response.data;
-      })
-      .catch((error) => {
-        console.log("Events Error: ", error);
-      });
+    this.fetchEvents();
+    //EventService.getEvents()
+    //  .then((response) => {
+    //    console.log("EventList created() events: ", response.data);
+    //    this.events = response.data;
+    //  })
+    //  .catch((error) => {
+    //    console.log("Events Error: ", error);
+    //  });
   },
 };
 </script>
@@ -165,5 +145,41 @@ export default {
   text-align: center;
   position: relative;
   cursor: pointer;
+}
+i {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+.legend {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+.complete-box {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #35495e;
+}
+.incomplete-box {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #41b882;
+}
+.is-complete {
+  background: #35495e;
+  color: #fff;
+}
+.is-complete-for-link {
+  color: #41b883;
+}
+@media (max-width: 500px) {
+  .events {
+    grid-template.columns: 1fr;
+  }
 }
 </style>

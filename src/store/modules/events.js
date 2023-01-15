@@ -17,6 +17,7 @@ const actions = {
   */
   async fetchEvents({ commit }) {
     const response = await axios.get(api_url);
+    console.log("fetchEvents: ", response.data);
     commit("setEvents", response.data);
   },
   async addEvent({ commit }, name, description, frequency, notes, histories) {

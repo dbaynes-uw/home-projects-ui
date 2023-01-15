@@ -24,19 +24,18 @@
       <input v-model="event.notes" type="text" placeholder="Notes" />
       <button class="button" type="submit">Submit</button>
     </form>
-    <div>{{ $store.state.events }}</div>
+    <!--div>{{ $store.state.events }}</div-->
   </div>
 </template>
-
 <script>
 import { v4 as uuidv4 } from "uuid";
+import { mapGetters, mapActions } from "vuex";
 import EventService from "@/services/EventService.js";
-// import EventList from "@/views/EventList.vue";
 
 export default {
   data() {
     return {
-      frequency: ["7", "10", "14", "21", "30", "60", "90"],
+      frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "360"],
       event: {
         id: "",
         description: "",
@@ -47,16 +46,18 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["addEvent"]),
     onSubmit() {
       const event = {
         ...this.event,
         id: uuidv4(),
         organizer: this.$store.state.created_by,
       };
-      // this.$store.dispatch("createEvent", event);
+      //0this.addEvent(event);
+      //1this.$store.dispatch("createEvent", event);
       EventService.postEvent(event)
         .then(() => {
-          this.$store.commit("ADD_EVENT", event);
+          //this.$store.commit("ADD_EVENT", event);
           alert("Event was successfully created");
           this.$router.push({ name: "EventList" });
         })
@@ -64,6 +65,9 @@ export default {
           console.log(error);
         });
     },
+  },
+  computed: {
+    ...mapGetters(["allEvents"]),
   },
 };
 </script>

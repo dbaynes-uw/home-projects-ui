@@ -18,7 +18,7 @@
           <li v-if="index == event.histories.length - 1">
             {{ history.notes }}
             on
-            {{ formatStandardDate(history.created_at) }}.
+            {{ formatSystemDate(history.created_at) }}
           </li>
         </ul>
       </li>
@@ -29,7 +29,6 @@
 <script>
 import EventService from "@/services/EventService.js";
 import DateFormatService from "@/services/DateFormatService.js";
-
 export default {
   props: ["id"],
   data() {

@@ -10,9 +10,11 @@ export default {
     }
   },
   formatSystemDate(action_date) {
-    console.log("EVENT SERVICE Format System Date: ", action_date);
     if (action_date) {
-      action_date = moment(action_date).format("MM/DD/YY");
+      action_date =
+        moment(action_date).format("MM/DD/YY") +
+        " at " +
+        moment(action_date).format("h:mma");
       return action_date;
     }
   },
@@ -37,11 +39,4 @@ export default {
     returnMessage = `${moment(dueDate).format("MM/DD/YY")}`;
     return returnMessage;
   },
-  // async updateEvent({ commit }, updatedEvent) {
-  //   const response = await axios.put(
-  //     apiClient + `/${updatedEvent.id}`,
-  //     updatedEvent
-  //   );
-  //   commit("setUpdatedArea", response.data);
-  // },
 };
