@@ -65,9 +65,15 @@ export default {
   methods: {
     ...mapActions(["fetchEvents", "deleteEvent", "updateEvent"]),
     removeEvent(id) {
-      this.deleteEvent(id);
-      alert("Event was successfully Deleted");
-      this.$router.push({ name: "EventList" });
+      console.log("removeEvent id= ", id);
+      EventService.deleteEvent(id)
+        .then((response) => {
+          this.event = response.data;
+        })
+        .catch((error) => {
+          console.log("ERROR: ", error);
+          console.log(error);
+        });
     },
     onDoubleClick(currentEvent) {
       const updatedEvent = {

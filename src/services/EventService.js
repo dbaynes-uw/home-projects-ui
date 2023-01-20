@@ -24,6 +24,11 @@ export default {
   putEvent(event) {
     return apiClient.put("events/" + event);
   },
+  //Not Used
+  deleteEvent(id) {
+    console.log("deleteEvent id: ", id);
+    return apiClient.put("/events", id);
+  },
   // async updateEvent({ commit }, updatedEvent) {
   //   const response = await axios.put(
   //     apiClient + `/${updatedEvent.id}`,
