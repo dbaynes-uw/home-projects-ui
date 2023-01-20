@@ -15,12 +15,12 @@ const actions = {
   'deleteEvent',
   'updateEvent'
   */
-  async fetchEvents({ commit }) {
-    console.log("EVENTS.js fetchEvents");
-    const response = await axios.get(api_url);
-    console.log("fetchEvents: ", response.data);
-    commit("setEvents", response.data);
-  },
+  //async fetchEvents({ commit }) {
+  //  console.log("EVENTS.js fetchEvents");
+  //  const response = await axios.get(api_url);
+  //  console.log("fetchEvents: ", response.data);
+  //  commit("setEvents", response.data);
+  //},
   async addEvent({ commit }, name, description, frequency, notes, histories) {
     console.log("EVENTS.js addEvents");
     const response = await axios.post(api_url, {
@@ -35,18 +35,6 @@ const actions = {
       },
     });
     commit("newEvent", response.data);
-  },
-  async deleteEvent({ commit }, id) {
-    console.log("EventJS. deleteEvent");
-    await axios
-      .delete(api_url + `/${id}`)
-      .then(() => {
-        commit("removeEvent", id);
-        alert("Event was successfully Deleted");
-      })
-      .catch((error) => {
-        throw error;
-      });
   },
   async filterEvents({ commit }, form) {
     const limit = parseInt(

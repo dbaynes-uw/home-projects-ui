@@ -9,7 +9,7 @@
     <br />
     <div class="events">
       <div
-        v-for="event in allEvents"
+        v-for="event in events"
         :key="event.id"
         class="event"
         @dblclick="onDoubleClick(event)"
@@ -58,8 +58,8 @@
 
 <script>
 // @ is an alias to /src
-//import EventCard from "@/components/EventCard.vue";
-import { mapGetters, mapActions } from "vuex";
+import EventService from "@/services/EventService.js";
+import { mapActions } from "vuex";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "EventList",
@@ -77,7 +77,7 @@ export default {
   //  dateDiff: 0,
   //}),
   methods: {
-    ...mapActions(["fetchEvents", "deleteEvent", "updateEvent"]),
+    ...mapActions(["fetchEvents", "updateEvent"]),
     onDoubleClick(currentEvent) {
       const updatedEvent = {
         id: currentEvent.id,
@@ -86,11 +86,26 @@ export default {
         completed: !currentEvent.completed,
         action_date: currentEvent.action_date,
       };
-      //EventService.putEvent(updatedEvent);
-      this.updateEvent(updatedEvent);
+      EventService.putEvent(updatedEvent);
+      //this.updateEvent(updatedEvent);
       console.log("Put Event executed: ", updatedEvent);
+      alert("Event was updated");
       location.reload();
     },
+    deleteEvent(id) {
+      console.log("EventList deleteEvent id = ", id);
+      EventService.deleteEvent(id)
+        .then((response) => {
+          this.event = response.data;
+          alert("Event was Deleted");
+          location.reload();
+        })
+        .catch((error) => {
+          console.log("ERROR: ", error);
+          console.log(error);
+        });
+    },
+
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);
     },
@@ -104,19 +119,17 @@ export default {
       return DateFormatService.calculateDateDue(action_date, frequency);
     },
   },
-  computed: {
-    ...mapGetters(["allEvents"]),
-  },
+  computed: {},
   created() {
-    this.fetchEvents();
-    //EventService.getEvents()
-    //  .then((response) => {
-    //    console.log("EventList created() events: ", response.data);
-    //    this.events = response.data;
-    //  })
-    //  .catch((error) => {
-    //    console.log("Events Error: ", error);
-    //  });
+    //this.fetchEvents();
+    EventService.getEvents()
+      .then((response) => {
+        console.log("EventList created() events: ", response.data);
+        this.events = response.data;
+      })
+      .catch((error) => {
+        console.log("Events Error: ", error);
+      });
   },
 };
 </script>

@@ -41,7 +41,7 @@
       </i>
     </span>
     <span class="fa-stack">
-      <i @click="removeEvent(event.id)" class="fas fa-trash-alt fa-stack-1x">
+      <i @click="deleteEvent(event.id)" class="fas fa-trash-alt fa-stack-1x">
       </i>
     </span>
     <br />
@@ -63,12 +63,14 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchEvents", "deleteEvent", "updateEvent"]),
-    removeEvent(id) {
-      console.log("removeEvent id= ", id);
+    ...mapActions(["updateEvent"]),
+    deleteEvent(id) {
+      console.log("EventDetails deleteEvent id = ", id);
       EventService.deleteEvent(id)
         .then((response) => {
           this.event = response.data;
+          alert("Event was Deleted");
+          this.$router.push({ path: "/" });
         })
         .catch((error) => {
           console.log("ERROR: ", error);
