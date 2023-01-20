@@ -35,8 +35,16 @@ const actions = {
     commit("newEvent", response.data);
   },
   async deleteEvent({ commit }, id) {
-    await axios.delete(api_url + `/${id}`);
-    commit("removeEvent", id);
+    console.log("EventJS. deleteEvent");
+    await axios
+      .delete(api_url + `/${id}`)
+      .then(() => {
+        commit("removeEvent", id);
+        alert("Event was successfully Deleted");
+      })
+      .catch((error) => {
+        throw error;
+      });
   },
   async filterEvents({ commit }, form) {
     const limit = parseInt(
