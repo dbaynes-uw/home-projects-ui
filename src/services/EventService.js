@@ -23,8 +23,8 @@ export default {
     return apiClient.post("/events", event);
   },
   putEvent(updatedEvent) {
-    console.log("EventService - putEvent id: ", updatedEvent.id);
-    return apiClient.put("events/" + updatedEvent.id);
+    console.log("EventService - putEvent:", updatedEvent);
+    return apiClient.put("events/" + `/${updatedEvent}`);
   },
   //Not Used
   deleteEvent(id) {

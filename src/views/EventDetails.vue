@@ -34,11 +34,9 @@
       <i class="fa-solid fa-backward fa-stack-1x"></i>
     </router-link>
     <span class="fa-stack">
-      <i
-        @click.prevent="removeEvent(event.id)"
-        class="fa-solid fa-pen-to-square fa-stack-1x"
-      >
-      </i>
+      <router-link :to="{ name: 'EventEdit', params: { id: event.id } }">
+        <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+      </router-link>
     </span>
     <span class="fa-stack">
       <i @click="deleteEvent(event.id)" class="fas fa-trash-alt fa-stack-1x">
