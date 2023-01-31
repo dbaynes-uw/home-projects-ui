@@ -92,12 +92,10 @@ export default {
       };
       //EventService.putEvent(updatedEvent);
       this.updateEvent(updatedEvent);
-      console.log("Put Event executed: ", updatedEvent);
       alert("Event was updated");
       location.reload();
     },
     deleteEvent(id) {
-      console.log("EventList deleteEvent id = ", id);
       EventService.deleteEvent(id)
         .then((response) => {
           this.event = response.data;
@@ -125,8 +123,6 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchEvents");
-    console.log("RETURN!");
-    console.log("Store: ", this.$store.state.events);
     //this.fetchEvents();
     //EventService.getEvents()
     //  .then((response) => {

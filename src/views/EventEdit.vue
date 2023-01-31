@@ -43,7 +43,6 @@ export default {
     const result = await axios.get(
       "http://localhost:3000/api/v1/events/" + this.$route.params.id
     );
-    console.warn("Result.data: ", result.data);
     this.event = result.data;
   },
   data() {

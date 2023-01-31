@@ -17,12 +17,7 @@ export default {
   getEvent(id) {
     return apiClient.get("/events/" + id);
   },
-  getLastEvent() {
-    console.log("getLastEvent!");
-    return apiClient.get("last_event");
-  },
   async postEvent(event) {
-    console.log("postEvent: ", event);
     return apiClient.post("/events", event);
   },
   putEvent(updatedEvent) {

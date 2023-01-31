@@ -63,15 +63,13 @@ export default {
   methods: {
     ...mapActions(["updateEvent"]),
     deleteEvent(id) {
-      console.log("EventDetails deleteEvent id = ", id);
       EventService.deleteEvent(id)
-        .then((response) => {
-          this.event = response.data;
+        .then(() => {
+          //this.event = response.data;
           alert("Event was Deleted");
-          this.$router.push({ path: "/" });
+          this.$router.push({ name: "EventList" });
         })
         .catch((error) => {
-          console.log("ERROR: ", error);
           console.log(error);
         });
     },
@@ -85,7 +83,6 @@ export default {
       };
       EventService.putEvent(updatedEvent);
       //this.updateEvent(updatedEvent);
-      console.log("Put Event executed: ", updatedEvent);
       location.reload();
     },
     formatStandardDate(value) {
