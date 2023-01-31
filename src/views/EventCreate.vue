@@ -33,7 +33,6 @@ import { v4 as uuidv4 } from "uuid";
 //import { mapGetters, mapActions } from "vuex";
 //Vuex
 import EventService from "@/services/EventService.js";
-
 export default {
   data() {
     return {
@@ -53,13 +52,16 @@ export default {
       const event = {
         ...this.event,
         id: uuidv4(),
-        created_by: this.$store.state.created_by,
+        created_by: this.$store.state.user,
+        //created_by: "dbaynes",
       };
-      //0this.addEvent(event);
+      //Xthis.addEvent(event); in events.js
       //Vuex 2:
+      //Xthis.$store.dispatch("createEvent", event);
       EventService.postEvent(event)
         .then(() => {
-          //this.$store.commit("ADD_EVENT", event);
+          this.$store.dispatch("fetchLastEvent");
+          this.$store.commit("ADD_EVENT", event);
           alert("Event was successfully created");
           this.$router.push({ name: "EventList" });
         })

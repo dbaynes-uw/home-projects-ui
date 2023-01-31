@@ -12,23 +12,25 @@ const apiClient = axios.create({
 });
 export default {
   getEvents() {
-    console.log("EventService getEvents");
     return apiClient.get("/events");
   },
   getEvent(id) {
     return apiClient.get("/events/" + id);
   },
-  postEvent(event) {
-    console.log("postEvent id: ", event);
+  getLastEvent() {
+    console.log("getLastEvent!");
+    return apiClient.get("last_event");
+  },
+  async postEvent(event) {
+    console.log("postEvent: ", event);
     return apiClient.post("/events", event);
   },
   putEvent(updatedEvent) {
-    console.log("EventService - putEvent:", updatedEvent);
-    return apiClient.put("events/" + `/${updatedEvent}`);
+    console.log("putEvent: updated");
+    return apiClient.put("events/" + `/${updatedEvent.id}`);
   },
   //Not Used
   deleteEvent(id) {
-    console.log("EventService - deleteEvent id: ", id);
     return axios.delete(api_url + `/${id}`);
   },
   // async updateEvent({ commit }, updatedEvent) {

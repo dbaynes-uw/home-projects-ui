@@ -11,6 +11,7 @@
       <div
         v-for="event in events"
         :key="event.id"
+        :event="event"
         class="event"
         @dblclick="onDoubleClick(event)"
         v-bind:class="{ 'is-complete': event.completed }"
@@ -53,6 +54,7 @@
         <i @click="deleteEvent(event.id)" class="fas fa-trash-alt"></i>
       </div>
     </div>
+    <div>{{ $store.state.events }}</div>
   </div>
 </template>
 
@@ -66,9 +68,11 @@ export default {
   components: {
     //EventCard,
   },
+  props: ["id"],
+  //data() {},
   data() {
     return {
-      events: null,
+      eventList: null,
     };
   },
   //data: () => ({
@@ -77,7 +81,7 @@ export default {
   //  dateDiff: 0,
   //}),
   methods: {
-    ...mapActions(["fetchEvents", "updateEvent"]),
+    ...mapActions(["updateEvent"]),
     onDoubleClick(currentEvent) {
       const updatedEvent = {
         id: currentEvent.id,
@@ -86,8 +90,8 @@ export default {
         completed: !currentEvent.completed,
         action_date: currentEvent.action_date,
       };
-      EventService.putEvent(updatedEvent);
-      //this.updateEvent(updatedEvent);
+      //EventService.putEvent(updatedEvent);
+      this.updateEvent(updatedEvent);
       console.log("Put Event executed: ", updatedEvent);
       alert("Event was updated");
       location.reload();
@@ -119,17 +123,31 @@ export default {
       return DateFormatService.calculateDateDue(action_date, frequency);
     },
   },
-  computed: {},
   created() {
+    this.$store.dispatch("fetchEvents");
+    console.log("RETURN!");
+    console.log("Store: ", this.$store.state.events);
     //this.fetchEvents();
-    EventService.getEvents()
-      .then((response) => {
-        console.log("EventList created() events: ", response.data);
-        this.events = response.data;
-      })
-      .catch((error) => {
-        console.log("Events Error: ", error);
-      });
+    //EventService.getEvents()
+    //  .then((response) => {
+    //    this.commit("SET_EVENTS", response.data);
+    //    //console.log("EventList created() events: ", response.data);
+    //    //this.events = response.data;
+    //    //this.events.forEach((eventState) => {
+    //    //  this.$store.dispatch("addEventState", eventState);
+    //    //  //this.$store.commit("ADD_EVENT", eventState);
+    //    //  console.log("Event Committed: ", eventState);
+    //    //  //return apiClient.post("/events", e);
+    //    //});
+    //  })
+    //  .catch((error) => {
+    //    console.log("Events Error: ", error);
+    //  });
+  },
+  computed: {
+    events() {
+      return this.$store.state.events;
+    },
   },
 };
 </script>

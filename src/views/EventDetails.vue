@@ -57,7 +57,7 @@ export default {
   props: ["id"],
   data() {
     return {
-      event: null,
+      updatedEvent: null,
     };
   },
   methods: {
@@ -83,8 +83,8 @@ export default {
         completed: !currentEvent.completed,
         action_date: currentEvent.action_date,
       };
-      //EventService.putEvent(updatedEvent);
-      this.updateEvent(updatedEvent);
+      EventService.putEvent(updatedEvent);
+      //this.updateEvent(updatedEvent);
       console.log("Put Event executed: ", updatedEvent);
       location.reload();
     },
@@ -102,14 +102,20 @@ export default {
     },
   },
   created() {
-    EventService.getEvent(this.id)
-      .then((response) => {
-        this.event = response.data;
-      })
-      .catch((error) => {
-        console.log("ERROR: ", error);
-        console.log(error);
-      });
+    this.$store.dispatch("fetchEvent", this.id);
+    //EventService.getEvent(this.id)
+    //  .then((response) => {
+    //    this.event = response.data;
+    //  })
+    //  .catch((error) => {
+    //    console.log("ERROR: ", error);
+    //    console.log(error);
+    //  });
+  },
+  computed: {
+    event() {
+      return this.$store.state.event;
+    },
   },
 };
 </script>
