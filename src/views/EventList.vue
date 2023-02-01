@@ -83,24 +83,9 @@ export default {
   methods: {
     //...mapActions(["updateEvent"]),
     onDoubleClick(currentEvent) {
-      const updatedEvent = {
-        id: currentEvent.id,
-        description: currentEvent.description,
-        notes: currentEvent.notes,
-        completed: !currentEvent.completed,
-        action_date: currentEvent.action_date,
-      };
-      //Works:EventService.putEvent(updatedEvent)
-      //Works, too:  .then((response) => {
-      //Works, too:    this.event = response.data;
-      //Works, too:    location.reload();
-      //Works, too:  })
-      //Works, too:  .catch((error) => {
-      //Works, too:    console.log("ERROR: ", error);
-      //Works, too:    console.log(error);
-      //Works, too:  });
-      //  this.updateEvent(updatedEvent);
-      //console.log("EventList updatedEvent: ", updatedEvent);
+      var updatedEvent = currentEvent;
+      console.log("updatedEvent: ", updatedEvent);
+      updatedEvent.completed = !currentEvent.completed;
       this.$store.dispatch("updateEvent", updatedEvent);
       alert("Event was successfully added for " + updatedEvent.description);
       location.reload();
