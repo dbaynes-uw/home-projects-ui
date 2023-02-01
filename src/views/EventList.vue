@@ -61,7 +61,7 @@
 <script>
 // @ is an alias to /src
 import EventService from "@/services/EventService.js";
-import { mapActions } from "vuex";
+//import { mapActions } from "vuex";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "EventList",
@@ -81,7 +81,7 @@ export default {
   //  dateDiff: 0,
   //}),
   methods: {
-    ...mapActions(["updateEvent"]),
+    //...mapActions(["updateEvent"]),
     onDoubleClick(currentEvent) {
       const updatedEvent = {
         id: currentEvent.id,
@@ -90,9 +90,19 @@ export default {
         completed: !currentEvent.completed,
         action_date: currentEvent.action_date,
       };
-      //EventService.putEvent(updatedEvent);
-      this.updateEvent(updatedEvent);
-      alert("Event was updated");
+      //Works:EventService.putEvent(updatedEvent)
+      //Works, too:  .then((response) => {
+      //Works, too:    this.event = response.data;
+      //Works, too:    location.reload();
+      //Works, too:  })
+      //Works, too:  .catch((error) => {
+      //Works, too:    console.log("ERROR: ", error);
+      //Works, too:    console.log(error);
+      //Works, too:  });
+      //  this.updateEvent(updatedEvent);
+      //console.log("EventList updatedEvent: ", updatedEvent);
+      this.$store.dispatch("updateEvent", updatedEvent);
+      alert("Event was successfully added for " + updatedEvent.description);
       location.reload();
     },
     deleteEvent(id) {

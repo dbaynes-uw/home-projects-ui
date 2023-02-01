@@ -58,6 +58,17 @@ export default createStore({
           });
       }
     },
+    updateEvent({ commit }, event) {
+      console.log("updateEvent event: ", event);
+      EventService.putEvent(event)
+        .then((response) => {
+          console.log("updateEvent response: ", response.data);
+          commit("SET_EVENT", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
   modules: {},
 });

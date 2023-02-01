@@ -39,6 +39,7 @@
 //import EventService from "@/services/EventService.js";
 import axios from "axios";
 export default {
+  props: ["id"],
   async mounted() {
     const result = await axios.get(
       "http://localhost:3000/api/v1/events/" + this.$route.params.id

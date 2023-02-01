@@ -20,19 +20,18 @@ export default {
   async postEvent(event) {
     return apiClient.post("/events", event);
   },
-  putEvent(updatedEvent) {
-    console.log("putEvent: updated");
-    return apiClient.put("events/" + `/${updatedEvent.id}`);
-  },
+  //async putEvent(event) {
+  //  console.log("putEvent: updatedEvent: ", event);
+  //  return apiClient.put("/events", event.id, event);
+  //},
   //Not Used
   deleteEvent(id) {
     return axios.delete(api_url + `/${id}`);
   },
-  // async updateEvent({ commit }, updatedEvent) {
-  //   const response = await axios.put(
-  //     apiClient + `/${updatedEvent.id}`,
-  //     updatedEvent
-  //   );
-  //   commit("setUpdatedEvent", response.data);
-  // },
+  async putEvent(updatedEvent) {
+    console.log("putEvent: updatedEvent: ", updatedEvent);
+    return axios.put(api_url + `/${updatedEvent.id}`, updatedEvent);
+    //this.$store.commit("setEvent", response.data);
+    //return response.data;
+  },
 };

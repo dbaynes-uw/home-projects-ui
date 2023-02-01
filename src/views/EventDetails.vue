@@ -65,7 +65,6 @@ export default {
     deleteEvent(id) {
       EventService.deleteEvent(id)
         .then(() => {
-          //this.event = response.data;
           alert("Event was Deleted");
           this.$router.push({ name: "EventList" });
         })
