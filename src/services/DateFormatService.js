@@ -25,7 +25,7 @@ export default {
     let duration = end.diff(start, "days") + frequency;
 
     if (duration >= 0) {
-      returnMessage = "Due: " + duration + " Days on ";
+      returnMessage = " " + duration + " Days on ";
     } else {
       duration = duration * -1;
       returnMessage = "OverDue:" + duration + " Days on ";

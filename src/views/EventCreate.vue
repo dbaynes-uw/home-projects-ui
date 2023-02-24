@@ -6,10 +6,35 @@
       <input
         v-model="event.description"
         type="text"
+        class="text-style"
         placeholder="Description"
+        required
       />
+      <label>Whose Turn? </label>
+      <select
+        id="select-box"
+        class="text-style"
+        v-model="event.assigned"
+        required
+      >
+        <option
+          v-for="option in assignees"
+          :value="option"
+          :key="option"
+          id="select-box"
+          :selected="option === event.assigned"
+        >
+          {{ option }}
+        </option>
+      </select>
+      <br />
       <label>Select a Frequency: </label>
-      <select class="select-number" v-model="event.frequency">
+      <select
+        id="select-box"
+        class="text-style"
+        v-model="event.frequency"
+        required
+      >
         <option
           v-for="option in frequency"
           :value="option"
@@ -21,7 +46,13 @@
       </select>
       <br />
       <label>Notes</label>
-      <input v-model="event.notes" type="text" placeholder="Notes" />
+      <input
+        v-model="event.notes"
+        type="text"
+        placeholder="Notes"
+        class="text-style"
+        required
+      />
       <button class="button" type="submit">Submit</button>
     </form>
     <!--Vuex:-->
@@ -36,10 +67,13 @@ import { v4 as uuidv4 } from "uuid";
 export default {
   data() {
     return {
+      assignees: ["David", "Jane", "Both", "Up for Grabs"],
       frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "360"],
       event: {
         id: "",
         description: "",
+        assigned: "",
+        completed: "",
         frequency: "",
         notes: "",
         created_by: "dbaynes in eventcreate",
@@ -78,15 +112,6 @@ export default {
   -webkit-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
   -moz-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
   box-shadow: 2px 15px -12px rgba(0, 0, 0, 0.57);
-}
-.select-box {
-  width: 102%;
-  height: 44px;
-  margin-bottom: -2px;
-}
-.select-number {
-  width: 20%;
-  height: 1.75rem;
 }
 #notes {
   width: 100%;

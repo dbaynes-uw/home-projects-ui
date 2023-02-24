@@ -1,88 +1,112 @@
 <template>
-  <div
-    v-if="event"
-    class="event"
-    id="center-align"
-    @dblclick="onDoubleClick(event)"
-    v-bind:class="{ 'is-complete': event.completed }"
-  >
-    <h1>{{ event.description }}</h1>
-    <ul class="ul-left">
-      <li>Notes: {{ event.notes }}</li>
-      <li v-if="event.completed">
-        Date completed:
-        {{ formatStandardDate(event.action_date) }}
-      </li>
-      <li>{{ event.frequency }} day cycle</li>
-      <li>
-        {{ calculateDue(event.action_date, event.frequency) }}
-        {{ calculateDateDue(event.action_date, event.frequency) }}
-      </li>
-      <li v-if="event.action_date">
-        History:
-        <ul v-for="(history, index) in event.histories" :key="history.id">
-          <li v-if="index == event.histories.length - 1">
-            {{ history.notes }}
-            on
-            {{ formatSystemDate(history.created_at) }}
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <div>
+    <h3>Event Details</h3>
+    <div class="legend">
+      <span>Double click to mark as complete.</span>
+      <span><span class="incomplete-box"></span> = Incomplete</span>
+      <span><span class="complete-box"></span> = Complete</span>
+    </div>
     <br />
-    <router-link :to="{ name: 'EventList' }">
-      <i class="fa-solid fa-backward fa-stack-1x"></i>
-    </router-link>
-    <span class="fa-stack">
-      <router-link :to="{ name: 'EventEdit', params: { id: event.id } }">
-        <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+    <div
+      v-if="event"
+      class="event"
+      id="center-align"
+      @dblclick="onDoubleClick(event)"
+      v-bind:class="{ 'is-complete': event.completed }"
+    >
+      <h1>
+        <b>{{ event.description }}</b>
+      </h1>
+      <ul class="ul-left">
+        <li>
+          <b>{{ event.notes }}</b>
+        </li>
+        <li>
+          Whose Turn:
+          <router-link
+            :to="{
+              name: 'EventsAssigned',
+              params: { assigned: `${event.assigned}` },
+            }"
+          >
+            <b>{{ event.assigned }}</b>
+          </router-link>
+        </li>
+        <li v-if="event.completed">
+          Date completed:
+          <b>{{ formatStandardDate(event.action_date) }}</b>
+        </li>
+        <li>
+          Action Date:
+          <b>{{ formatStandardDate(event.action_date) }}</b>
+        </li>
+        <li>
+          How Often:
+          <b>Every {{ event.frequency }} days</b>
+        </li>
+        <li>
+          Due Date:
+          <b>
+            {{ calculateDue(event.action_date, event.frequency) }}
+            {{ calculateDateDue(event.action_date, event.frequency) }}
+          </b>
+        </li>
+        <li v-if="event.action_date">
+          History:
+          <ul v-for="(history, index) in event.histories" :key="history.id">
+            <span v-if="index >= event.histories.length - 5">
+              <li v-html="history.notes"></li>
+            </span>
+          </ul>
+        </li>
+        <li>
+          Date Created:
+          <b>{{ formatStandardDate(event.created_at) }}</b>
+        </li>
+      </ul>
+      <br />
+      <router-link :to="{ name: 'EventList' }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
       </router-link>
-    </span>
-    <span class="fa-stack">
-      <i @click="deleteEvent(event.id)" class="fas fa-trash-alt fa-stack-1x">
-      </i>
-    </span>
-    <br />
-    <router-link :to="{ name: 'EventList' }">
-      <i class="fa-solid fa-backward fa-stack-1x"></i>
-    </router-link>
+      <span class="fa-stack">
+        <router-link :to="{ name: 'EventEdit', params: { id: `${event.id}` } }">
+          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span class="fa-stack">
+        <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
+        </i>
+      </span>
+      <br />
+      <router-link :to="{ name: 'EventList' }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
+      </router-link>
+    </div>
   </div>
 </template>
 
 <script>
-import EventService from "@/services/EventService.js";
+//import EventService from "@/services/EventService.js";
 import DateFormatService from "@/services/DateFormatService.js";
-import { mapActions } from "vuex";
 export default {
-  props: ["id"],
+  props: ["id", "assigned"],
   data() {
     return {
+      history: null,
       updatedEvent: null,
+      eventsAssigned: null,
     };
   },
   methods: {
-    ...mapActions(["updateEvent"]),
-    deleteEvent(id) {
-      EventService.deleteEvent(id)
-        .then(() => {
-          alert("Event was Deleted");
-          this.$router.push({ name: "EventList" });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    deleteEvent(event) {
+      this.$store.dispatch("deleteEvent", event);
+      alert("Event was Deleted for " + event.description);
+      this.$router.push({ name: "EventList" });
     },
-    onDoubleClick(currentEvent) {
-      const updatedEvent = {
-        id: currentEvent.id,
-        description: currentEvent.description,
-        notes: currentEvent.notes,
-        completed: !currentEvent.completed,
-        action_date: currentEvent.action_date,
-      };
-      EventService.putEvent(updatedEvent);
-      //this.updateEvent(updatedEvent);
-      location.reload();
+    onDoubleClick(event) {
+      var updatedEvent = event;
+      updatedEvent.completed = !event.completed;
+      this.$store.dispatch("updateEvent", updatedEvent);
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);

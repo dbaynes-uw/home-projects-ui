@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h3>ToDos</h3>
+    <h3>Events</h3>
+    <div>
+      <DueBy />
+    </div>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -22,87 +25,94 @@
         >
           <p class="p-align-left">
             <b>
-              <u>{{ event.description }}</u>
+              <u>Event Details for {{ event.description }}</u>
             </b>
           </p>
         </router-link>
         <ul class="ul-left">
+          <li>
+            <router-link
+              :to="{
+                name: 'EventsAssigned',
+                params: { assigned: event.assigned },
+              }"
+              v-bind:class="{ 'is-complete-for-link': event.completed }"
+            >
+              <b>{{ event.assigned }}</b>
+            </router-link>
+          </li>
           <li>{{ event.notes }}</li>
           <li v-if="event.completed">
             Date completed:
             {{ formatStandardDate(event.action_date) }}
           </li>
           <li>{{ event.frequency }} day cycle</li>
-          <li v-if="event.action_date">
+          <li>
+            Action Date:
             {{ formatStandardDate(event.action_date) }}
           </li>
           <li>
-            History:
-            <ul v-for="(history, index) in event.histories" :key="history.id">
-              <li v-if="index == event.histories.length - 1">
-                {{ history.notes }}
-                on
-                {{ formatSystemDate(history.created_at) }}.
-              </li>
-            </ul>
-          </li>
-          <li>
+            Date Due:
             {{ calculateDue(event.action_date, event.frequency) }}
             {{ calculateDateDue(event.action_date, event.frequency) }}
           </li>
+          <li>
+            Latest Changes:
+            <ul v-for="(history, index) in event.histories" :key="history.id">
+              <span v-if="index >= event.histories.length - 1">
+                <li v-html="history.notes"></li>
+              </span>
+            </ul>
+          </li>
         </ul>
-        <i @click="deleteEvent(event.id)" class="fas fa-trash-alt"></i>
+        <br />
+        <span class="fa-stack">
+          <router-link
+            :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
+          >
+            <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+          </router-link>
+        </span>
+        <span class="fa-stack">
+          <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
+          </i>
+        </span>
       </div>
     </div>
-    <div>{{ $store.state.events }}</div>
+    <!--div>{{ $store.state.events }}</div-->
   </div>
 </template>
 
+<script setup>
+import DueBy from "@/components/DueBy.vue";
+</script>
 <script>
 // @ is an alias to /src
-import EventService from "@/services/EventService.js";
-//import { mapActions } from "vuex";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "EventList",
   components: {
-    //EventCard,
+    DueBy,
   },
-  props: ["id"],
+  props: ["id", "assigned"],
   //data() {},
   data() {
     return {
+      DueBy: null,
       eventList: null,
+      updatedEvent: null,
     };
   },
-  //data: () => ({
-  //  endDate: "",
-  //  startDate: "",
-  //  dateDiff: 0,
-  //}),
   methods: {
-    //...mapActions(["updateEvent"]),
-    onDoubleClick(currentEvent) {
-      var updatedEvent = currentEvent;
-      console.log("updatedEvent: ", updatedEvent);
-      updatedEvent.completed = !currentEvent.completed;
+    onDoubleClick(event) {
+      var updatedEvent = event;
+      updatedEvent.completed = !event.completed;
       this.$store.dispatch("updateEvent", updatedEvent);
-      alert("Event was successfully added for " + updatedEvent.description);
+    },
+    deleteEvent(event) {
+      this.$store.dispatch("deleteEvent", event);
+      alert("Event was Deleted for " + event.description);
       location.reload();
     },
-    deleteEvent(id) {
-      EventService.deleteEvent(id)
-        .then((response) => {
-          this.event = response.data;
-          alert("Event was Deleted");
-          location.reload();
-        })
-        .catch((error) => {
-          console.log("ERROR: ", error);
-          console.log(error);
-        });
-    },
-
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);
     },
@@ -118,22 +128,6 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchEvents");
-    //this.fetchEvents();
-    //EventService.getEvents()
-    //  .then((response) => {
-    //    this.commit("SET_EVENTS", response.data);
-    //    //console.log("EventList created() events: ", response.data);
-    //    //this.events = response.data;
-    //    //this.events.forEach((eventState) => {
-    //    //  this.$store.dispatch("addEventState", eventState);
-    //    //  //this.$store.commit("ADD_EVENT", eventState);
-    //    //  console.log("Event Committed: ", eventState);
-    //    //  //return apiClient.post("/events", e);
-    //    //});
-    //  })
-    //  .catch((error) => {
-    //    console.log("Events Error: ", error);
-    //  });
   },
   computed: {
     events() {
@@ -198,6 +192,9 @@ i {
 }
 .is-complete-for-link {
   color: #41b883;
+}
+.fa-table {
+  margin-top: 1rem;
 }
 @media (max-width: 500px) {
   .events {

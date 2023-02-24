@@ -4,6 +4,8 @@ import EventDetails from "@/views/EventDetails.vue";
 import EventEdit from "@/views/EventEdit.vue";
 import EventCreate from "@/views/EventCreate.vue";
 import About from "../views/About.vue";
+import EventStats from "../views/EventStats.vue";
+import EventsAssigned from "../views/EventsAssigned.vue";
 
 const routes = [
   {
@@ -32,6 +34,17 @@ const routes = [
     path: "/about",
     name: "About",
     component: About,
+  },
+  {
+    path: "/event/stats",
+    name: "EventStats",
+    component: EventStats,
+  },
+  {
+    path: "/events_assigned/:assigned",
+    props: true,
+    name: "EventsAssigned",
+    component: EventsAssigned,
   },
 ];
 

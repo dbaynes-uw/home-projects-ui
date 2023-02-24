@@ -1,21 +1,37 @@
 <template>
   <div class="eventEdit">
-    <h4>Event Edit:</h4>
+    <h2>Edit Event {{ event.description }}</h2>
     <form class="add-form" @submit.prevent="updateEvent">
       <div class="form-container">
-        <label for="description">Event Description</label>
+        <label for="action_date">Action Date:</label>
         <input
-          type="text"
-          id="descripton"
-          class="form-control"
-          v-model="event.description"
+          type="date"
+          class="text-style"
+          v-model="event.action_date"
           required
         />
-        <label for="completed">Status</label>
-        <p v-if="event.completed === true">Complete</p>
-        <p v-if="event.completed != true">TBD</p>
+        <label>Whose Turn? </label>
+        <select class="text-style" v-model="event.assigned" required>
+          <option
+            v-for="option in assignees"
+            :value="option"
+            :key="option"
+            :selected="option === event.assigned"
+          >
+            {{ option }}
+          </option>
+        </select>
+        <br />
+        <br />
+        <label for="completed">Status: </label>
+        <select class="text-style" v-model="event.completed">
+          <option value="true">Completed</option>
+          <option value="false">TBD</option>
+        </select>
+        <br />
+        <br />
         <label>Select a Frequency: </label>
-        <select class="select-number" v-model="event.frequency">
+        <select class="text-style" v-model="event.frequency" required>
           <option
             v-for="option in frequency"
             :value="option"
@@ -27,8 +43,14 @@
         </select>
         <br />
         <br />
-        <label for="notes">Notes</label>
-        <input type="text" v-model="event.notes" id="notes" class="notes" />
+        <label for="notes">Notes:</label>
+        <input
+          type="text"
+          v-model="event.notes"
+          id="notes"
+          class="text-style"
+          required
+        />
         <button class="button" type="submit">Submit</button>
       </div>
     </form>
@@ -39,7 +61,7 @@
 //import EventService from "@/services/EventService.js";
 import axios from "axios";
 export default {
-  props: ["id"],
+  props: ["id", "assigned"],
   async mounted() {
     const result = await axios.get(
       "http://localhost:3000/api/v1/events/" + this.$route.params.id
@@ -48,11 +70,14 @@ export default {
   },
   data() {
     return {
+      assignees: ["David", "Jane", "Both", "Up for Grabs"],
       frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "360"],
       event: {
         id: "",
         description: "",
+        assigned: "",
         frequency: "",
+        completed: "",
         notes: "",
         updated_by: "",
       },
@@ -68,10 +93,13 @@ export default {
         ...this.event,
         updated_by: this.$store.state.created_by,
       };
+      console.log("This event to PUT: ", this.event.assigned);
       const result = await axios.put(
         "http://localhost:3000/api/v1/events/" + this.$route.params.id,
         {
           description: this.event.description,
+          completed: this.event.completed,
+          assigned: this.event.assigned,
           frequency: this.event.frequency,
           notes: this.event.notes,
         }
@@ -101,3 +129,4 @@ export default {
   },
 };
 </script>
+<style></style>

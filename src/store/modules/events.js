@@ -21,11 +21,12 @@ const actions = {
   //  console.log("fetchEvents: ", response.data);
   //  commit("setEvents", response.data);
   //},
-  async addEvent({ commit }, name, description, frequency, notes, histories) {
+  async addEvent({ commit }, name, assigned, description, frequency, notes, histories) {
     console.log("EVENTS.js addEvents");
     const response = await axios.post(api_url, {
       event: {
         name,
+        assigned,
         description,
         frequency,
         notes,

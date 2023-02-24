@@ -1,8 +1,9 @@
 <template>
   <nav id="center-nav">
-    <router-link :to="{ name: 'EventList' }">Events</router-link> |
     <router-link :to="{ name: 'About' }">About</router-link> |
-    <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
+    <router-link :to="{ name: 'EventList' }">Events</router-link> |
+    <router-link :to="{ name: 'EventCreate' }">Create Event</router-link> |
+    <router-link :to="{ name: 'EventStats' }">Stats</router-link>
   </nav>
   <router-view />
 </template>
@@ -94,6 +95,13 @@ i {
 .is-complete {
   background: #35495e;
   color: #fff;
+}
+.text-style {
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  font-size: 1.15rem;
+}
+#select-box {
+  height: 2rem;
 }
 @media (max-width: 500px) {
   .events {
