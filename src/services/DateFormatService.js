@@ -9,6 +9,12 @@ export default {
       return action_date;
     }
   },
+  formatStandardDateTime(date_time) {
+    if (date_time) {
+      date_time = moment(date_time).format("M/DD/YY h:MMa");
+      return date_time;
+    }
+  },
   formatSystemDate(action_date) {
     if (action_date) {
       action_date =

@@ -53,9 +53,23 @@
         </li>
         <li v-if="event.action_date">
           History:
+          <!--ul
+            v-for="(history, index) in event.histories.slice.reverse"
+            :key="history.id"
+          -->
+          <!--ul
+            v-for="(history, index) in event.histories.reverse"
+            :key="history.id"
+          -->
           <ul v-for="(history, index) in event.histories" :key="history.id">
             <span v-if="index >= event.histories.length - 5">
-              <li v-html="history.notes"></li>
+              <li>
+                <!--b>{{ formatStandardDateTime(history.created_at) }}</b-->
+                <span v-html="formatStandardDateTime(history.created_at)">
+                </span>
+                <br />
+                <span v-html="history.notes"></span>
+              </li>
             </span>
           </ul>
         </li>
@@ -86,7 +100,7 @@
 </template>
 
 <script>
-//import EventService from "@/services/EventService.js";
+//import { ref, computed } from "vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id", "assigned"],
@@ -110,6 +124,9 @@ export default {
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);
+    },
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTime(value);
     },
     formatSystemDate(value) {
       return DateFormatService.formatSystemDate(value);
