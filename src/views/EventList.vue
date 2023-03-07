@@ -193,6 +193,9 @@ i {
 .is-complete-for-link {
   color: #41b883;
 }
+select {
+  border-color: darkgreen;
+}
 .fa-table {
   margin-top: 1rem;
 }

@@ -73,7 +73,7 @@ export default {
         id: "",
         description: "",
         assigned: "",
-        completed: "",
+        completed: false,
         frequency: "",
         notes: "",
         created_by: "dbaynes in eventcreate",
@@ -146,7 +146,9 @@ fieldset {
   margin: 0;
   padding: 0;
 }
-
+select {
+  border-color: darkgreen;
+}
 legend {
   font-size: 28px;
   font-weight: 700;

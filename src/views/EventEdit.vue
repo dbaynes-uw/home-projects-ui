@@ -129,4 +129,8 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+select {
+  border-color: darkgreen;
+}
+</style>

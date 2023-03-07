@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 import EventService from "@/services/EventService.js";
 export default createStore({
   state: {
-    user: "Adam Jahr",
+    user: "David Baynes",
     events: [],
     eventStats: [],
     eventsAssigned: [],
@@ -30,6 +30,7 @@ export default createStore({
   },
   actions: {
     createEvent({ commit }, event) {
+      console.log("createEvent from index.js");
       EventService.postEvent(event)
         .then(() => {
           commit("ADD_EVENT", event);

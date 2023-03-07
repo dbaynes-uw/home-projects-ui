@@ -22,10 +22,9 @@ export default {
   methods: mapActions(["dueBy"]),
 };
 </script>
-<style scoped>
+<style>
 select {
   margin-top: 20px;
   padding: 6px;
-  border: #41b883;
 }
 </style>
