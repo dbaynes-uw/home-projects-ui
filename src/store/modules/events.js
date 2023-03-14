@@ -13,7 +13,6 @@ const actions = {
   /* From mapActions in Events.vue:
   'fetchEvents',
   'deleteEvent',
-  'updateEvent'
   */
   //async fetchEvents({ commit }) {
   //  console.log("EVENTS.js fetchEvents");
@@ -54,15 +53,6 @@ const actions = {
       form.target.options[form.target.options.selectedIndex].innerText;
     const response = await axios.get(api_url + `?_dueFilter=${dueFilter}`);
     commit("setEvents", response.data);
-  },
-
-  async updateEvent({ commit }, updatedEvent) {
-    console.log("async updateEvent: ", updatedEvent);
-    const response = await axios.put(
-      api_url + `/${updatedEvent.id}`,
-      updatedEvent
-    );
-    commit("setUpdatedEvent", response.data);
   },
 };
 const mutations = {

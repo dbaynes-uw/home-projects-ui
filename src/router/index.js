@@ -2,12 +2,20 @@ import { createRouter, createWebHistory } from "vue-router";
 import EventList from "../views/EventList.vue";
 import EventDetails from "@/views/EventDetails.vue";
 import EventEdit from "@/views/EventEdit.vue";
-import EventCreate from "@/views/EventCreate.vue";
+import UserEdit from "@/views/users/UserEdit.vue";
+import EventCreate from "@/views/events/EventCreate.vue";
+import UserCreate from "@/views/users/UserCreate.vue";
+import UserList from "../views/users/UserList.vue";
 import About from "../views/About.vue";
-import EventStats from "../views/EventStats.vue";
-import EventsAssigned from "../views/EventsAssigned.vue";
+import EventStats from "@/views/EventStats.vue";
+import EventsAssigned from "@/views/EventsAssigned.vue";
 
 const routes = [
+  {
+    path: "/about",
+    name: "About",
+    component: About,
+  },
   {
     path: "/",
     name: "EventList",
@@ -31,12 +39,7 @@ const routes = [
     component: EventCreate,
   },
   {
-    path: "/about",
-    name: "About",
-    component: About,
-  },
-  {
-    path: "/event/stats",
+    path: "/event_stats",
     name: "EventStats",
     component: EventStats,
   },
@@ -45,6 +48,23 @@ const routes = [
     props: true,
     name: "EventsAssigned",
     component: EventsAssigned,
+  },
+  {
+    path: "/user/create",
+    props: true,
+    name: "UserCreate",
+    component: UserCreate,
+  },
+  {
+    path: "/users",
+    name: "UserList",
+    component: UserList,
+  },
+  {
+    path: "/users/:id",
+    name: "UserEdit",
+    props: true,
+    component: UserEdit,
   },
 ];
 

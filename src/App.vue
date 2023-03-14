@@ -3,7 +3,9 @@
     <router-link :to="{ name: 'About' }">About</router-link> |
     <router-link :to="{ name: 'EventList' }">Events</router-link> |
     <router-link :to="{ name: 'EventCreate' }">Create Event</router-link> |
-    <router-link :to="{ name: 'EventStats' }">Stats</router-link>
+    <router-link :to="{ name: 'EventStats' }">Stats</router-link> |
+    <router-link :to="{ name: 'UserCreate' }">Create User</router-link> |
+    <router-link :to="{ name: 'UserList' }">Users</router-link>
   </nav>
   <router-view />
 </template>

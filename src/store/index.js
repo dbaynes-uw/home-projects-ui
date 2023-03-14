@@ -4,6 +4,7 @@ export default createStore({
   state: {
     user: "David Baynes",
     events: [],
+    users: [],
     eventStats: [],
     eventsAssigned: [],
     event: {},
@@ -11,6 +12,12 @@ export default createStore({
   mutations: {
     ADD_EVENT(state, event) {
       state.events.push(event);
+    },
+    ADD_USER(state, user) {
+      state.events.push(user);
+    },
+    DELETE_USER(state, user) {
+      state.user = user;
     },
     DELETE_EVENT(state, event) {
       state.event = event;
@@ -27,6 +34,9 @@ export default createStore({
     RESET_STATE(state) {
       Object.assign(state, createStore());
     },
+    SET_USERS(state, users) {
+      state.users = users;
+    },
   },
   actions: {
     createEvent({ commit }, event) {
@@ -40,6 +50,18 @@ export default createStore({
           console.log(error);
         });
     },
+    createUser({ commit }, user) {
+      console.log("createUser from index.js");
+      EventService.postUser(user)
+        .then(() => {
+          commit("ADD_USER", user);
+        })
+        .catch((error) => {
+          alert("Error in postUser of createUser Action (index.js)");
+          console.log(error);
+        });
+    },
+
     async dueBy({ commit }, form) {
       EventService.eventDueBy(form)
         .then((response) => {
@@ -83,7 +105,7 @@ export default createStore({
           // No longer needed:
           //commit("RESET_STATE", response.data);
           commit("SET_EVENT_STATS", response.data);
-          console.log("EVENT STATS RESPONSE: ", response.data);
+          console.log("EVENT STATS Assigned RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -107,7 +129,7 @@ export default createStore({
       }
     },
     async updateEvent({ commit }, event) {
-      console.log("updateEvent event: ", event);
+      console.log("updateEvent event from dbl click: ", event);
       EventService.putEvent(event)
         .then((response) => {
           commit("SET_EVENT", response.data);
@@ -123,6 +145,38 @@ export default createStore({
       EventService.deleteEvent(event.id)
         .then((response) => {
           commit("DELETE_EVENT", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchUsers({ commit }) {
+      EventService.getUsers()
+        .then((response) => {
+          commit("SET_USERS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async deleteUser({ commit }, user) {
+      console.log("deleteUser: ", user);
+      EventService.deleteUser(user.id)
+        .then((response) => {
+          commit("DELETE_USER", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async updateUser({ commit }, user) {
+      console.log("updateUser user: ", user);
+      EventService.putUser(user)
+        .then((response) => {
+          commit("SET_USER", response.data);
+          alert("User was successfully Updated for " + user.description);
+          location.reload();
         })
         .catch((error) => {
           console.log(error);

@@ -83,10 +83,7 @@ export default {
       },
     };
   },
-  setup() {
-    //description
-    //notes
-  },
+  setup() {},
   methods: {
     async updateEvent() {
       const event = {

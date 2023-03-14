@@ -1,8 +1,7 @@
 import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-// const base_url = "http://localhost:3000/api/v1";
-
+const user_url = "http://localhost:3000/api/v1/users";
 const api_url = "http://localhost:3000/api/v1/events/";
 const apiClient = axios.create({
   baseURL: "http://localhost:3000/api/v1",
@@ -19,11 +18,9 @@ export default {
     return apiClient.get("/events" + `?_dueFilter=${dueFilter}`);
   },
   getEventStats() {
-    console.log("router eventStats GET");
-    return apiClient.get("/stats");
+    return apiClient.get("/event_stats");
   },
   getEventsAssigned(assigned) {
-    console.log("router eventsAssigned GET: ", assigned);
     return apiClient.get("/events_assigned/" + `?assigned=${assigned}`);
   },
   getEvents() {
@@ -35,9 +32,19 @@ export default {
   async postEvent(event) {
     return apiClient.post("/events", event);
   },
+  async postUser(user) {
+    return apiClient.post("/users", user);
+  },
+  getUsers() {
+    return apiClient.get("/users");
+  },
   deleteEvent(id) {
     console.log("ES deleteEvent id: ", id);
     return axios.delete(api_url + `/${id}`);
+  },
+  deleteUser(id) {
+    console.log("ES deleteUser id: ", id);
+    return axios.delete(user_url + `/${id}`);
   },
   async putEvent(updatedEvent) {
     return axios.put(api_url + `/${updatedEvent.id}`, updatedEvent);
