@@ -45,11 +45,19 @@
           <b>Every {{ event.frequency }} days</b>
         </li>
         <li>
-          Due Date:
-          <b>
-            {{ calculateDue(event.action_date, event.frequency) }}
-            {{ calculateDateDue(event.action_date, event.frequency) }}
-          </b>
+          Date Due:
+          <span v-if="pastDue(event.action_date, event.frequency)">
+            <span style="color: red; font-weight: bold">
+              {{ calculateDue(event.action_date, event.frequency) }}
+              {{ calculateDateDue(event.action_date, event.frequency) }}
+            </span>
+          </span>
+          <span v-else>
+            <span>
+              {{ calculateDue(event.action_date, event.frequency) }}
+              {{ calculateDateDue(event.action_date, event.frequency) }}
+            </span>
+          </span>
         </li>
         <li v-if="event.action_date">
           History:
@@ -121,6 +129,9 @@ export default {
       var updatedEvent = event;
       updatedEvent.completed = !event.completed;
       this.$store.dispatch("updateEvent", updatedEvent);
+    },
+    pastDue(value) {
+      return DateFormatService.pastDue(value);
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);

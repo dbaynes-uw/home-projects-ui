@@ -13,8 +13,10 @@ const apiClient = axios.create({
 });
 export default {
   eventDueBy(form) {
+    console.log("EventService - dueBy");
     const dueFilter =
       form.target.options[form.target.options.selectedIndex].innerText;
+    console.log("EventService - dueFilter: ", dueFilter);
     return apiClient.get("/events" + `?_dueFilter=${dueFilter}`);
   },
   getEventStats() {
@@ -39,11 +41,9 @@ export default {
     return apiClient.get("/users");
   },
   deleteEvent(id) {
-    console.log("ES deleteEvent id: ", id);
     return axios.delete(api_url + `/${id}`);
   },
   deleteUser(id) {
-    console.log("ES deleteUser id: ", id);
     return axios.delete(user_url + `/${id}`);
   },
   async putEvent(updatedEvent) {

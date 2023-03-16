@@ -49,6 +49,7 @@ const actions = {
     commit("setEvents", response.data);
   },
   async dueBy({ commit }, form) {
+    console.log("Events.js - dueBy Not Used!!!");
     const dueFilter =
       form.target.options[form.target.options.selectedIndex].innerText;
     const response = await axios.get(api_url + `?_dueFilter=${dueFilter}`);

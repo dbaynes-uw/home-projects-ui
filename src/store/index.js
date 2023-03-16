@@ -63,6 +63,7 @@ export default createStore({
     },
 
     async dueBy({ commit }, form) {
+      console.log("Index.js: dueBy");
       EventService.eventDueBy(form)
         .then((response) => {
           commit("SET_EVENTS", response.data);

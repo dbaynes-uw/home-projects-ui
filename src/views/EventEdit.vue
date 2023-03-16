@@ -74,6 +74,7 @@ export default {
       frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "360"],
       event: {
         id: "",
+        action_date: "",
         description: "",
         assigned: "",
         frequency: "",
@@ -90,10 +91,11 @@ export default {
         ...this.event,
         updated_by: this.$store.state.created_by,
       };
-      console.log("This event to PUT: ", this.event.assigned);
+      console.log("This event to PUT: ", this.event);
       const result = await axios.put(
         "http://localhost:3000/api/v1/events/" + this.$route.params.id,
         {
+          action_date: this.event.action_date,
           description: this.event.description,
           completed: this.event.completed,
           assigned: this.event.assigned,

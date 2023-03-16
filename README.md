@@ -24,4 +24,6 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/)
 
 TBD
-* User Management Scaffold
+* User Login - (Devise?)
+* Pastdue in EventList highlighted
+* EventStats to list PastDues

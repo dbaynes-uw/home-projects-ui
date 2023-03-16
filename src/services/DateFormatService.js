@@ -24,17 +24,27 @@ export default {
       return action_date;
     }
   },
+  pastDue(action_date, frequency) {
+    let start = moment(new Date());
+    let end = moment(action_date);
+    let duration = end.diff(start, "days") + frequency;
+    if (duration >= 0) {
+      return false;
+    } else {
+      return true;
+    }
+  },
   calculateDue(action_date, frequency) {
     let returnMessage = "";
     let start = moment(new Date());
     let end = moment(action_date);
     let duration = end.diff(start, "days") + frequency;
-
+    // duration is days over due date so + is good, - is over due
     if (duration >= 0) {
       returnMessage = " " + duration + " Days on ";
     } else {
       duration = duration * -1;
-      returnMessage = "OverDue:" + duration + " Days on ";
+      returnMessage = "PastDue - " + duration + " Days on ";
     }
     return returnMessage;
   },

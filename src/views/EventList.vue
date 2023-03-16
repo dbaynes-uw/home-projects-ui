@@ -30,7 +30,7 @@
           </p>
         </router-link>
         <ul class="ul-left">
-          <li>
+          <li v-if="event.assigned">
             <router-link
               :to="{
                 name: 'EventsAssigned',
@@ -53,8 +53,22 @@
           </li>
           <li>
             Date Due:
-            {{ calculateDue(event.action_date, event.frequency) }}
-            {{ calculateDateDue(event.action_date, event.frequency) }}
+            <span
+              v-if="
+                DateFormatService.pastDue(event.action_date, event.frequency)
+              "
+            >
+              <span style="color: red; font-weight: bold">
+                {{ calculateDue(event.action_date, event.frequency) }}
+                {{ calculateDateDue(event.action_date, event.frequency) }}
+              </span>
+            </span>
+            <span v-else>
+              <span>
+                {{ calculateDue(event.action_date, event.frequency) }}
+                {{ calculateDateDue(event.action_date, event.frequency) }}
+              </span>
+            </span>
           </li>
           <li>
             Latest Changes:
@@ -77,6 +91,7 @@
           <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
           </i>
         </span>
+        {{ this.$store.state.eventStats }}
       </div>
     </div>
     <!--div>{{ $store.state.events }}</div-->
@@ -112,6 +127,9 @@ export default {
       this.$store.dispatch("deleteEvent", event);
       alert("Event was Deleted for " + event.description);
       location.reload();
+    },
+    pastDue(value) {
+      return DateFormatService.pastDue(value);
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);

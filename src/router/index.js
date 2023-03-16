@@ -3,7 +3,7 @@ import EventList from "../views/EventList.vue";
 import EventDetails from "@/views/EventDetails.vue";
 import EventEdit from "@/views/EventEdit.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
-import EventCreate from "@/views/events/EventCreate.vue";
+import EventCreate from "@/components/events/EventCreate.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserList from "../views/users/UserList.vue";
 import About from "../views/About.vue";
@@ -41,6 +41,12 @@ const routes = [
   {
     path: "/event_stats",
     name: "EventStats",
+    component: EventStats,
+  },
+  {
+    path: "/event_stats_detail",
+    name: "EventStatsDetail",
+    prop: true,
     component: EventStats,
   },
   {
