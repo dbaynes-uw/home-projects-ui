@@ -23,6 +23,12 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/)
 
+PROJECTS:
+* Furnace Filter 
+* Clean Furnace Hallway Filter
+* Clean Bathroom Filters
+* Review Passwords
+
 TBD
 * User Login - (Devise?)
 * Pastdue in EventList highlighted
