@@ -4,12 +4,13 @@
     <div>
       <DueBy />
     </div>
+    <br />
+    <h3>Past Due</h3>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
-    <br />
     <div class="events">
       <div
         v-for="event in events"

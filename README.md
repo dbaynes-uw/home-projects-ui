@@ -25,8 +25,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/)
 
 PROJECTS:
 * Furnace Filter 
-* Clean Furnace Hallway Filter
+* Clean Furnace Hallway Filters
 * Clean Bathroom Filters
+* Feeding Fridays
 * Review Passwords
 
 TBD
