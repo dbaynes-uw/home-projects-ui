@@ -23,13 +23,6 @@
         </select>
         <br />
         <br />
-        <label for="completed">Status: </label>
-        <select class="text-style" v-model="event.completed">
-          <option value="true">Completed</option>
-          <option value="false">TBD</option>
-        </select>
-        <br />
-        <br />
         <label>Select a Frequency: </label>
         <select class="text-style" v-model="event.frequency" required>
           <option
