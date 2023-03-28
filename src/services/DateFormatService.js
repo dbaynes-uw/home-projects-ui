@@ -24,7 +24,7 @@ export default {
       return action_date;
     }
   },
-  pastDue(action_date, frequency) {
+  datePastDue(action_date, frequency) {
     let start = moment(new Date());
     let end = moment(action_date);
     let duration = end.diff(start, "days") + frequency;

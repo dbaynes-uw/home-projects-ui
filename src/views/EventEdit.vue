@@ -75,6 +75,7 @@ export default {
       event: {
         id: "",
         action_date: "",
+        action_due_date: "",
         description: "",
         assigned: "",
         frequency: "",

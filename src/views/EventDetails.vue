@@ -46,7 +46,7 @@
         </li>
         <li>
           Date Due:
-          <span v-if="pastDue(event.action_date, event.frequency)">
+          <span v-if="datePastDue(event.action_date, event.frequency)">
             <span style="color: red; font-weight: bold">
               {{ calculateDue(event.action_date, event.frequency) }}
               {{ calculateDateDue(event.action_date, event.frequency) }}
@@ -70,7 +70,7 @@
             :key="history.id"
           -->
           <ul v-for="(history, index) in event.histories" :key="history.id">
-            <span v-if="index >= event.histories.length - 5">
+            <span v-if="index < 5">
               <li>
                 <!--b>{{ formatStandardDateTime(history.created_at) }}</b-->
                 <span v-html="formatStandardDateTime(history.created_at)">
@@ -130,8 +130,8 @@ export default {
       updatedEvent.completed = !event.completed;
       this.$store.dispatch("updateEvent", updatedEvent);
     },
-    pastDue(value) {
-      return DateFormatService.pastDue(value);
+    datePastDue(value) {
+      return DateFormatService.datePastDue(value);
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);

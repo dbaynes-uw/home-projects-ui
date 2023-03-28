@@ -24,7 +24,14 @@
       </tr>
       <tr>
         <td>
-          <h2 class="h2-status">Events Completed:</h2>
+          <router-link
+            :to="{
+              name: 'EventsPastDue',
+              params: { pastDue: completed },
+            }"
+          >
+            <h2 class="h2-status">Events Completed:</h2>
+          </router-link>
         </td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
@@ -35,7 +42,32 @@
       </tr>
       <tr>
         <td>
-          <h2 class="h2-status">Events Past Due:</h2>
+          <router-link
+            :to="{
+              name: 'EventsPastDue',
+              params: { pastDue: notCompleted },
+            }"
+          >
+            <h2 class="h2-status">Events NOT Completed:</h2>
+          </router-link>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <h2 style="text-align: right">
+            {{ events.notCompleted }}
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <router-link
+            :to="{
+              name: 'EventsPastDue',
+              params: { pastDue: past },
+            }"
+          >
+            <h2 class="h2-status">Events Past Due:</h2>
+          </router-link>
         </td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
@@ -46,7 +78,14 @@
       </tr>
       <tr>
         <td>
-          <h2 class="h2-status">Events Due Today:</h2>
+          <router-link
+            :to="{
+              name: 'EventsPastDue',
+              params: { pastDue: dueToday },
+            }"
+          >
+            <h2 class="h2-status">Events Due Today:</h2>
+          </router-link>
         </td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
@@ -57,7 +96,32 @@
       </tr>
       <tr>
         <td>
-          <h2 class="h2-status">Events Due Next Week:</h2>
+          <router-link
+            :to="{
+              name: 'EventsPastDue',
+              params: { pastDue: dueThisWeek },
+            }"
+          >
+            <h2 class="h2-status">Events Due This Week:</h2>
+          </router-link>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <h2 style="text-align: right">
+            {{ events.dueThisWeek }}
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <router-link
+            :to="{
+              name: 'EventsPastDue',
+              params: { pastDue: dueNextWeek },
+            }"
+          >
+            <h2 class="h2-status">Events Due Next Week:</h2>
+          </router-link>
         </td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
@@ -66,20 +130,8 @@
           </h2>
         </td>
       </tr>
-      <tr>
-        <td>
-          <h2 class="h2-status">Events TBD:</h2>
-        </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          <h2 style="text-align: right">
-            {{ events.notCompleted }}
-          </h2>
-        </td>
-      </tr>
     </table>
     <br />
-    {{ this.$store.state.eventStats.notCompleted }}
     <span class="fa-stack">
       <router-link :to="{ name: 'EventList' }">
         <i class="fa-solid fa-backward fa-stack-1x" id="fa-custom"></i>
@@ -91,11 +143,17 @@
 export default {
   name: "EventStats",
   components: {},
-  props: ["assigned"],
+  props: ["assigned", "pastDue"],
   data() {
     return {
       eventStats: null,
       eventsAssigned: null,
+      past: "past",
+      completed: "completed",
+      notCompleted: "not_completed",
+      dueToday: "due_today",
+      dueThisWeek: "due_this_week",
+      dueNextWeek: "due_next_week",
     };
   },
   created() {

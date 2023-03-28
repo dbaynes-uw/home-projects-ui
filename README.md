@@ -24,7 +24,7 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/)
 
 PROJECTS:
-* Furnace Filter 
+* Furnace Filter 20 x 25 x 1
 * Clean Furnace Hallway Filters
 * Clean Bathroom Filters
 * Feeding Fridays
@@ -32,5 +32,6 @@ PROJECTS:
 
 TBD
 * User Login - (Devise?)
-* Pastdue in EventList highlighted
-* EventStats to list PastDues
+* Finish out EventStats to link to PastDues
+* Combine Assigned with PastDues
+* Migrate to views/events/ for all views

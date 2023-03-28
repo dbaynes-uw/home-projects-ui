@@ -73,10 +73,10 @@ export default {
         id: "",
         description: "",
         assigned: "",
-        completed: false,
+        assigned_email: "",
         frequency: "",
         notes: "",
-        created_by: "dbaynes in eventcreate",
+        created_by: "dbaynes",
       },
     };
   },

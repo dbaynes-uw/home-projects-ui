@@ -31,6 +31,7 @@ const actions = {
         notes,
         completed: false,
         action_date: null,
+        action_due_date: null,
         histories,
       },
     });

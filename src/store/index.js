@@ -1,11 +1,14 @@
 import { createStore } from "vuex";
 import EventService from "@/services/EventService.js";
+import axios from "axios";
+const api_url = "http://localhost:3000/api/v1/events/";
 export default createStore({
   state: {
     user: "David Baynes",
     events: [],
     users: [],
     eventStats: [],
+    eventsPastDue: [],
     eventsAssigned: [],
     event: {},
   },
@@ -30,6 +33,9 @@ export default createStore({
     },
     SET_EVENT_STATS(state, eventStats) {
       state.eventStats = eventStats;
+    },
+    SET_EVENTS_PAST_DUE(state, eventsPastDue) {
+      state.eventsPastDue = eventsPastDue;
     },
     RESET_STATE(state) {
       Object.assign(state, createStore());
@@ -73,6 +79,23 @@ export default createStore({
           console.log(error);
         });
     },
+    //async pastDue({ commit }, pastDue) {
+    //  console.log("Index.js: pastDue");
+    //  EventService.eventDueBy(pastDue)
+    //    .then((response) => {
+    //      commit("SET_EVENTS", response.data);
+    //      return response.data;
+    //    })
+    //    .catch((error) => {
+    //      console.log(error);
+    //    });
+    //},
+    async pastDue({ commit }, pastDue) {
+      console.log("Index: pastDue: ", pastDue);
+      pastDue = true;
+      const response = await axios.get(api_url + `?pastDue=${pastDue}`);
+      commit("SET_EVENTS", response.data);
+    },
     async fetchEvents({ commit }) {
       EventService.getEvents()
         .then((response) => {
@@ -93,6 +116,20 @@ export default createStore({
           //commit("RESET_STATE", response.data);
           commit("SET_EVENT_STATS", response.data);
           console.log("EVENT STATS RESPONSE: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchEventsPastDue({ commit }, pastDue) {
+      console.log("Index - Fetch Events Past Due: ", pastDue);
+      EventService.getEventsPastDue(pastDue)
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_EVENTS_PAST_DUE", response.data);
+          console.log("EVENTS PAST DUE RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {

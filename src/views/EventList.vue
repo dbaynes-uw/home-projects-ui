@@ -5,7 +5,11 @@
       <DueBy />
     </div>
     <br />
-    <h3>Past Due</h3>
+    <div>
+      <PastDue />
+      <button @click="refreshPage">Refresh</button>
+    </div>
+    <br />
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -18,12 +22,8 @@
         :event="event"
         class="event"
         @dblclick="onDoubleClick(event)"
-        v-bind:class="{ 'is-complete': event.completed }"
       >
-        <router-link
-          :to="{ name: 'EventDetails', params: { id: event.id } }"
-          v-bind:class="{ 'is-complete-for-link': event.completed }"
-        >
+        <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
           <p class="p-align-left">
             <b>
               <u>Event Details for {{ event.description }}</u>
@@ -37,14 +37,15 @@
                 name: 'EventsAssigned',
                 params: { assigned: event.assigned },
               }"
-              v-bind:class="{ 'is-complete-for-link': event.completed }"
             >
               <b>{{ event.assigned }}</b>
             </router-link>
           </li>
           <li>{{ event.notes }}</li>
-          <li v-if="event.completed">
-            Date completed:
+          <!--li-->
+          <!--li v-bind:class="{ 'is-complete': event.completed }"-->
+          <li class="is-complete">
+            Last Completed:
             {{ formatStandardDate(event.action_date) }}
           </li>
           <li>{{ event.frequency }} day cycle</li>
@@ -56,7 +57,10 @@
             Date Due:
             <span
               v-if="
-                DateFormatService.pastDue(event.action_date, event.frequency)
+                DateFormatService.datePastDue(
+                  event.action_date,
+                  event.frequency
+                )
               "
             >
               <span style="color: red; font-weight: bold">
@@ -74,7 +78,7 @@
           <li>
             Latest Changes:
             <ul v-for="(history, index) in event.histories" :key="history.id">
-              <span v-if="index >= event.histories.length - 1">
+              <span v-if="index == 0">
                 <li v-html="history.notes"></li>
               </span>
             </ul>
@@ -92,7 +96,6 @@
           <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
           </i>
         </span>
-        {{ this.$store.state.eventStats }}
       </div>
     </div>
     <!--div>{{ $store.state.events }}</div-->
@@ -101,6 +104,7 @@
 
 <script setup>
 import DueBy from "@/components/DueBy.vue";
+import PastDue from "@/components/PastDue.vue";
 </script>
 <script>
 // @ is an alias to /src
@@ -109,7 +113,7 @@ export default {
   components: {
     DueBy,
   },
-  props: ["id", "assigned"],
+  props: ["id", "assigned", "pastDue"],
   //data() {},
   data() {
     return {
@@ -119,6 +123,10 @@ export default {
     };
   },
   methods: {
+    refreshPage() {
+      //this.$router.push({ path: "/" });
+      window.location.reload();
+    },
     onDoubleClick(event) {
       var updatedEvent = event;
       updatedEvent.completed = !event.completed;
@@ -129,8 +137,8 @@ export default {
       alert("Event was Deleted for " + event.description);
       location.reload();
     },
-    pastDue(value) {
-      return DateFormatService.pastDue(value);
+    DatePastDue(value) {
+      return DateFormatService.datePastDue(value);
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);

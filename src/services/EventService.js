@@ -19,8 +19,19 @@ export default {
     console.log("EventService - dueFilter: ", dueFilter);
     return apiClient.get("/events" + `?_dueFilter=${dueFilter}`);
   },
+  async eventPastDue(pastDue) {
+    console.log("EventService - pastDue");
+    pastDue = true;
+    //const response = await axios.get(api_url + `?_pastDue=${pastDue}`);
+    return apiClient.get("/events" + `?_pastDue=${pastDue}`);
+    //commit("setAreas", response.data);
+  },
   getEventStats() {
     return apiClient.get("/event_stats");
+  },
+  getEventsPastDue(pastDue) {
+    console.log("ES - pastDue: ", pastDue);
+    return apiClient.get("/events_past_due/" + `?pastDue=${pastDue}`);
   },
   getEventsAssigned(assigned) {
     return apiClient.get("/events_assigned/" + `?assigned=${assigned}`);

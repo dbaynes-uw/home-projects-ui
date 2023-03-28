@@ -1,39 +1,34 @@
 <template>
   <div>
-    <h3>Event Stats Details</h3>
+    <h3>Events Past Due</h3>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
     <br />
-    <div class="eventAssigned">
+    <div class="eventPastDue">
       <table class="table-index-style">
         <tr>
           <th>Description</th>
           <th>Frequency</th>
-          <th>Status</th>
+          <th>Date Due</th>
           <th>Actions</th>
         </tr>
         <tr
-          v-for="eventStatsDetail in eventStatsDetails"
-          :key="eventStatsDetail.id"
-          :eventStatsDetail="eventStatsDetail"
-          @dblclick="onDoubleClick(eventStatsDetail)"
-          v-bind:class="{ 'is-complete': eventStatsDetail.completed }"
+          v-for="event in events"
+          :key="event.id"
+          :event="event"
+          @dblclick="onDoubleClick(event)"
+          v-bind:class="{ 'is-complete': event.completed }"
         >
-          <td>{{ eventStatsDetail.description }}</td>
-          <td>Every {{ eventStatsDetail.frequency }} days</td>
-          <td>
-            {{ eventStatsDetail.completed ? "Completed" : "TBD" }}
-          </td>
+          <td>{{ event.description }}</td>
+          <td>Every {{ event.frequency }} days</td>
+          <td>{{ formatStandardDate(event.action_due_date) }}</td>
           <td>
             <span class="fa-stack">
               <router-link
-                :to="{
-                  name: 'EventEdit',
-                  params: { id: `${eventStatsDetail.id}` },
-                }"
+                :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
               >
                 <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
               </router-link>
@@ -50,10 +45,11 @@
   </div>
 </template>
 <script>
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "EventStatsDetails",
+  name: "EventsPastDue",
   components: {},
-  props: ["statsType"],
+  props: ["pastDue"],
   data() {
     return {
       description: null,
@@ -62,19 +58,22 @@ export default {
     };
   },
   created() {
-    console.log("Created Store Dispatch - StatsType: ", this.eventStatsDetails);
-    this.$store.dispatch("fetchEventStatsDetails", this.statsType);
+    console.log("Created Store Dispatch - Events Past Due: ", this.pastDue);
+    this.$store.dispatch("fetchEventsPastDue", this.pastDue);
   },
   computed: {
-    eventStatsDetails() {
-      return this.$store.state.eventStatsDetails;
+    events() {
+      return this.$store.state.eventsPastDue;
     },
   },
   methods: {
-    onDoubleClick(eventStatsDetail) {
-      var updatedEvent = eventStatsDetail;
-      updatedEvent.completed = !eventStatsDetail.completed;
+    onDoubleClick(event) {
+      var updatedEvent = event;
+      updatedEvent.completed = !event.completed;
       this.$store.dispatch("updateEvent", updatedEvent);
+    },
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
   },
 };

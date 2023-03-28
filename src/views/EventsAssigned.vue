@@ -12,7 +12,7 @@
         <tr>
           <th>Description</th>
           <th>Frequency</th>
-          <th>Status</th>
+          <th>Date Due</th>
           <th>Actions</th>
         </tr>
         <tr
@@ -24,9 +24,7 @@
         >
           <td>{{ event.description }}</td>
           <td>Every {{ event.frequency }} days</td>
-          <td>
-            {{ event.completed ? "Completed" : "TBD" }}
-          </td>
+          <td>{{ formatStandardDate(event.action_due_date) }}</td>
           <td>
             <span class="fa-stack">
               <router-link
@@ -47,6 +45,7 @@
   </div>
 </template>
 <script>
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "EventsAssigned",
   components: {},
@@ -72,6 +71,9 @@ export default {
       var updatedEvent = event;
       updatedEvent.completed = !event.completed;
       this.$store.dispatch("updateEvent", updatedEvent);
+    },
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
   },
 };
