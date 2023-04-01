@@ -122,9 +122,9 @@ export default createStore({
           console.log(error);
         });
     },
-    async fetchEventsPastDue({ commit }, pastDue) {
-      console.log("Index - Fetch Events Past Due: ", pastDue);
-      EventService.getEventsPastDue(pastDue)
+    async fetchEventsPastDue({ commit }, statistic) {
+      console.log("Index - Fetch Events Past Due statistic: ", statistic);
+      EventService.getEventsPastDue(statistic)
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);

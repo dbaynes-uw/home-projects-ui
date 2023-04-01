@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h3>Events Past Due</h3>
+    <h3>Event Statistic Details</h3>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
     <br />
-    <div class="eventPastDue">
+    <div class="eventStatisticDetails">
       <table class="table-index-style">
         <tr>
           <th>Description</th>
@@ -49,7 +49,7 @@ import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "EventsPastDue",
   components: {},
-  props: ["pastDue"],
+  props: ["statistic"],
   data() {
     return {
       description: null,
@@ -58,8 +58,8 @@ export default {
     };
   },
   created() {
-    console.log("Created Store Dispatch - Events Past Due: ", this.pastDue);
-    this.$store.dispatch("fetchEventsPastDue", this.pastDue);
+    console.log("Created Store Dispatch - Events Past Due: ", this.statistic);
+    this.$store.dispatch("fetchEventsPastDue", this.statistic);
   },
   computed: {
     events() {

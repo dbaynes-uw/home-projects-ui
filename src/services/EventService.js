@@ -29,9 +29,9 @@ export default {
   getEventStats() {
     return apiClient.get("/event_stats");
   },
-  getEventsPastDue(pastDue) {
-    console.log("ES - pastDue: ", pastDue);
-    return apiClient.get("/events_past_due/" + `?pastDue=${pastDue}`);
+  getEventsPastDue(statistic) {
+    console.log("ES - statistic: ", statistic);
+    return apiClient.get("/events_past_due/" + `?statistic=${statistic}`);
   },
   getEventsAssigned(assigned) {
     return apiClient.get("/events_assigned/" + `?assigned=${assigned}`);

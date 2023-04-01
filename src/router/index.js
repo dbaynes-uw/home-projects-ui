@@ -24,7 +24,7 @@ const routes = [
     component: EventList,
   },
   {
-    path: "/events_past_due/:pastDue",
+    path: "/events_past_due/:statistic",
     name: "EventsPastDue",
     props: true,
     component: EventsPastDue,

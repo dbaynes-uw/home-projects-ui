@@ -27,7 +27,7 @@
           <router-link
             :to="{
               name: 'EventsPastDue',
-              params: { pastDue: completed },
+              params: { statistic: completed },
             }"
           >
             <h2 class="h2-status">Events Completed:</h2>
@@ -45,7 +45,7 @@
           <router-link
             :to="{
               name: 'EventsPastDue',
-              params: { pastDue: notCompleted },
+              params: { statistic: notCompleted },
             }"
           >
             <h2 class="h2-status">Events NOT Completed:</h2>
@@ -63,7 +63,7 @@
           <router-link
             :to="{
               name: 'EventsPastDue',
-              params: { pastDue: past },
+              params: { statistic: past },
             }"
           >
             <h2 class="h2-status">Events Past Due:</h2>
@@ -81,7 +81,7 @@
           <router-link
             :to="{
               name: 'EventsPastDue',
-              params: { pastDue: dueToday },
+              params: { statistic: dueToday },
             }"
           >
             <h2 class="h2-status">Events Due Today:</h2>
@@ -99,7 +99,7 @@
           <router-link
             :to="{
               name: 'EventsPastDue',
-              params: { pastDue: dueThisWeek },
+              params: { statistic: dueThisWeek },
             }"
           >
             <h2 class="h2-status">Events Due This Week:</h2>
@@ -117,7 +117,7 @@
           <router-link
             :to="{
               name: 'EventsPastDue',
-              params: { pastDue: dueNextWeek },
+              params: { statistic: dueNextWeek },
             }"
           >
             <h2 class="h2-status">Events Due Next Week:</h2>
