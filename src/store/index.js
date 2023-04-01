@@ -34,6 +34,9 @@ export default createStore({
     SET_EVENT_STATS(state, eventStats) {
       state.eventStats = eventStats;
     },
+    SET_EVENT_STAT_DETAILS(state, eventStatDetails) {
+      state.eventStatDetails = eventStatDetails;
+    },
     SET_EVENTS_PAST_DUE(state, eventsPastDue) {
       state.eventsPastDue = eventsPastDue;
     },
@@ -137,13 +140,13 @@ export default createStore({
         });
     },
     async fetchEventStatDetails({ commit }, statistic) {
-      console.log("Index - Fetch Events Past Due statistic: ", statistic);
+      console.log("Index - Fetch Events statistic: ", statistic);
       EventService.getEventStatDetails(statistic)
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);
-          commit("SET_EVENTS_PAST_DUE", response.data);
-          console.log("EVENTS PAST DUE RESPONSE: ", response.data);
+          commit("SET_EVENT_STAT_DETAILS", response.data);
+          console.log("EVENTS STAT DETAILS RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {

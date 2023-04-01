@@ -35,8 +35,8 @@ export default {
   },
   getEventStatDetails(statistic) {
     console.log("ES getEventStatDetails - statistic: ", statistic);
-    return apiClient.get("/events_past_due/" + `?statistic=${statistic}`);
-  },  
+    return apiClient.get("/event_stat_details/" + `?statistic=${statistic}`);
+  },
   getEventsAssigned(assigned) {
     return apiClient.get("/events_assigned/" + `?assigned=${assigned}`);
   },

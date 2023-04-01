@@ -58,12 +58,12 @@ export default {
     };
   },
   created() {
-    console.log("Created Store Dispatch - Events Past Due: ", this.statistic);
-    this.$store.dispatch("fetchEventsPastDue", this.statistic);
+    console.log("Created Store Dispatch - EventStatDetails: ", this.statistic);
+    this.$store.dispatch("fetchEventStatDetails", this.statistic);
   },
   computed: {
     events() {
-      return this.$store.state.eventsPastDue;
+      return this.$store.state.eventStatDetails;
     },
   },
   methods: {

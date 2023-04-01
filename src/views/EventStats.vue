@@ -26,7 +26,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventsPastDue',
+              name: 'EventStatDetails',
               params: { statistic: completed },
             }"
           >
@@ -44,7 +44,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventsPastDue',
+              name: 'EventStatDetails',
               params: { statistic: notCompleted },
             }"
           >
@@ -62,7 +62,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventsPastDue',
+              name: 'EventStatDetails',
               params: { statistic: past },
             }"
           >
@@ -80,7 +80,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventsPastDue',
+              name: 'EventStatDetails',
               params: { statistic: dueToday },
             }"
           >
@@ -98,7 +98,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventsPastDue',
+              name: 'EventStatDetails',
               params: { statistic: dueThisWeek },
             }"
           >
@@ -116,7 +116,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventsPastDue',
+              name: 'EventStatDetails',
               params: { statistic: dueNextWeek },
             }"
           >
@@ -143,7 +143,7 @@
 export default {
   name: "EventStats",
   components: {},
-  props: ["assigned", "pastDue"],
+  props: ["assigned", "statistic"],
   data() {
     return {
       eventStats: null,
