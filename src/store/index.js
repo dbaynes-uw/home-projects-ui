@@ -136,6 +136,20 @@ export default createStore({
           console.log(error);
         });
     },
+    async fetchEventStatDetails({ commit }, statistic) {
+      console.log("Index - Fetch Events Past Due statistic: ", statistic);
+      EventService.getEventStatDetails(statistic)
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_EVENTS_PAST_DUE", response.data);
+          console.log("EVENTS PAST DUE RESPONSE: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async fetchEventsAssigned({ commit }, assigned) {
       console.log("Assigned to: ", assigned);
       EventService.getEventsAssigned(assigned)

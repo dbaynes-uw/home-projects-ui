@@ -1,21 +1,18 @@
 <template>
   <div>
-    <h3>Event Stats Details</h3>
-    <h3>Route Params: {{ this.$route.params }}</h3>
-    <h3>ROUTE: {{ $route.params.completed }} -- End</h3>
+    <h3>Event Statistic Details</h3>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
     <br />
-    <!--Events: {{ events }} -- Completed: {{ events.completed }} -->
-    <div class="eventAssigned">
+    <div class="eventStatisticDetails">
       <table class="table-index-style">
         <tr>
           <th>Description</th>
           <th>Frequency</th>
-          <th>Status</th>
+          <th>Date Due</th>
           <th>Actions</th>
         </tr>
         <tr
@@ -25,18 +22,13 @@
           @dblclick="onDoubleClick(event)"
           v-bind:class="{ 'is-complete': event.completed }"
         >
-          <td>Description: {{ event.description }}</td>
+          <td>{{ event.description }}</td>
           <td>Every {{ event.frequency }} days</td>
-          <td>
-            {{ event.completed ? "Completed" : "TBD" }}
-          </td>
+          <td>{{ formatStandardDate(event.action_due_date) }}</td>
           <td>
             <span class="fa-stack">
               <router-link
-                :to="{
-                  name: 'EventEdit',
-                  params: { id: `${event.id}` },
-                }"
+                :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
               >
                 <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
               </router-link>
@@ -53,49 +45,35 @@
   </div>
 </template>
 <script>
-import EventService from "@/services/EventService.js";
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "EventStatDetails",
+  name: "EventsPastDue",
   components: {},
-  //props: { completed: { required: true } },
-  props: ["completed"],
+  props: ["statistic"],
   data() {
     return {
-      events: {},
       description: null,
       frequency: null,
+      completed: 0,
     };
   },
-  //created() {
-  //  console.log(
-  //    "EventStatDetails Created Store Dispatch - completed: ",
-  //    this.completed
-  //  );
-  //  this.$store.dispatch("fetchEventStatDetails");
-  //},
   created() {
-    console.log("Created - prop: ", this.completed);
-    EventService.getEventStatDetails(this.completed)
-      .then((response) => {
-        //commit("SET_EVENT_STAT_DETAILS", response.data);
-        console.log("EVENT STAT DETAILS RESPONSE: ", response.data);
-        this.events = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    console.log("Created Store Dispatch - Events Past Due: ", this.statistic);
+    this.$store.dispatch("fetchEventsPastDue", this.statistic);
   },
   computed: {
-    eventStatDetails() {
-      console.log("StatDetails Computed: ", this.$store.state.eventStatDetails);
-      return this.$store.state.eventStatDetails;
+    events() {
+      return this.$store.state.eventsPastDue;
     },
   },
   methods: {
-    onDoubleClick(eventStatsDetail) {
-      var updatedEvent = eventStatsDetail;
-      updatedEvent.completed = !eventStatsDetail.completed;
+    onDoubleClick(event) {
+      var updatedEvent = event;
+      updatedEvent.completed = !event.completed;
       this.$store.dispatch("updateEvent", updatedEvent);
+    },
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
   },
 };
