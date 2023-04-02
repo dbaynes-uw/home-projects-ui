@@ -127,7 +127,7 @@ export default {
     },
     onDoubleClick(event) {
       var updatedEvent = event;
-      updatedEvent.completed = !event.completed;
+      updatedEvent.action_active = !event.action_active;
       this.$store.dispatch("updateEvent", updatedEvent);
     },
     datePastDue(value) {

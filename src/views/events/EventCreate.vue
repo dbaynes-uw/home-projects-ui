@@ -75,6 +75,7 @@ export default {
         assigned: "",
         assigned_email: "",
         frequency: "",
+        action_completed_date: "",
         notes: "",
         created_by: "dbaynes",
       },

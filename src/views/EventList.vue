@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Events</h3>
+    <h2>Events</h2>
     <div>
       <DueBy />
     </div>
@@ -129,7 +129,7 @@ export default {
     },
     onDoubleClick(event) {
       var updatedEvent = event;
-      updatedEvent.completed = !event.completed;
+      updatedEvent.action_active = !event.action_active;
       this.$store.dispatch("updateEvent", updatedEvent);
     },
     deleteEvent(event) {

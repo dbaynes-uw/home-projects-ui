@@ -1,6 +1,6 @@
 <template>
   <div class="event-stats">
-    <h1 class="center">Event Stats</h1>
+    <h1 class="center">Event Statistics</h1>
     <table>
       <tr>
         <td>
@@ -10,7 +10,10 @@
       <tr v-for="(v, k) in events.assigned" :key="k">
         <td>
           <router-link
-            :to="{ name: 'EventsAssigned', params: { assigned: k } }"
+            :to="{
+              name: 'EventStatDetails',
+              params: { statistic: assigned + '-' + k },
+            }"
           >
             <h2 class="h2-status-category">{{ k }}:</h2>
           </router-link>
@@ -19,6 +22,42 @@
         <td>
           <h2>
             {{ v }}
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <router-link
+            :to="{
+              name: 'EventStatDetails',
+              params: { statistic: notCompleted },
+            }"
+          >
+            <h2 class="h2-status">Events Planned:</h2>
+          </router-link>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <h2 style="text-align: right">
+            {{ events.notCompleted }}
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <router-link
+            :to="{
+              name: 'EventStatDetails',
+              params: { statistic: notAssigned },
+            }"
+          >
+            <h2 class="h2-status">Events NOT Assigned:</h2>
+          </router-link>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <h2 style="text-align: right">
+            {{ events.notAssigned }}
           </h2>
         </td>
       </tr>
@@ -37,24 +76,6 @@
         <td>
           <h2 style="text-align: right">
             {{ events.completed }}
-          </h2>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <router-link
-            :to="{
-              name: 'EventStatDetails',
-              params: { statistic: notCompleted },
-            }"
-          >
-            <h2 class="h2-status">Events NOT Completed:</h2>
-          </router-link>
-        </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          <h2 style="text-align: right">
-            {{ events.notCompleted }}
           </h2>
         </td>
       </tr>
@@ -143,12 +164,14 @@
 export default {
   name: "EventStats",
   components: {},
-  props: ["assigned", "statistic"],
+  props: ["statistic"],
   data() {
     return {
       eventStats: null,
       eventsAssigned: null,
       past: "past",
+      assigned: "assigned",
+      notAssigned: "not_assigned",
       completed: "completed",
       notCompleted: "not_completed",
       dueToday: "due_today",

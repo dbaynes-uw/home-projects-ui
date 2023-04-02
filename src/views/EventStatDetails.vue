@@ -13,6 +13,7 @@
           <th>Description</th>
           <th>Frequency</th>
           <th>Date Due</th>
+          <th>Assigned</th>
           <th>Actions</th>
         </tr>
         <tr
@@ -25,6 +26,7 @@
           <td>{{ event.description }}</td>
           <td>Every {{ event.frequency }} days</td>
           <td>{{ formatStandardDate(event.action_due_date) }}</td>
+          <td>{{ event.assigned }}</td>
           <td>
             <span class="fa-stack">
               <router-link
@@ -69,7 +71,7 @@ export default {
   methods: {
     onDoubleClick(event) {
       var updatedEvent = event;
-      updatedEvent.completed = !event.completed;
+      updatedEvent.action_active = !event.action_active;
       this.$store.dispatch("updateEvent", updatedEvent);
     },
     formatStandardDate(value) {
