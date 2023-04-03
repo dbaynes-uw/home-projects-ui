@@ -6,6 +6,7 @@ import EventDetails from "@/views/EventDetails.vue";
 import EventEdit from "@/views/EventEdit.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import EventCreate from "@/components/events/EventCreate.vue";
+import TrailList from "../views/trails/TrailList.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserList from "../views/users/UserList.vue";
 import About from "../views/About.vue";
@@ -69,6 +70,12 @@ const routes = [
     props: true,
     name: "EventsAssigned",
     component: EventsAssigned,
+  },
+  {
+    path: "/trails",
+    name: "TrailList",
+    props: true,
+    component: TrailList,
   },
   {
     path: "/user/create",

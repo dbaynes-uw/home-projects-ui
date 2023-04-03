@@ -43,6 +43,9 @@ export default createStore({
     RESET_STATE(state) {
       Object.assign(state, createStore());
     },
+    SET_TRAILS(state, trails) {
+      state.trails = trails;
+    },
     SET_USERS(state, users) {
       state.users = users;
     },
@@ -200,6 +203,16 @@ export default createStore({
       EventService.deleteEvent(event.id)
         .then((response) => {
           commit("DELETE_EVENT", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchTrails({ commit }) {
+      EventService.getTrails()
+        .then((response) => {
+          commit("SET_TRAILS", response.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error);

@@ -52,6 +52,9 @@ export default {
   async postUser(user) {
     return apiClient.post("/users", user);
   },
+  getTrails() {
+    return apiClient.get("/trails");
+  },
   getUsers() {
     return apiClient.get("/users");
   },

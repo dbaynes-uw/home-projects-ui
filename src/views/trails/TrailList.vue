@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Events</h2>
+    <h2>Trails</h2>
     <div>
       <DueBy />
     </div>
@@ -15,71 +15,71 @@
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
-    <div class="events">
+    <div class="trails">
       <div
-        v-for="event in events"
-        :key="event.id"
-        :event="event"
-        class="event"
-        @dblclick="onDoubleClick(event)"
+        v-for="trail in trails"
+        :key="trail.id"
+        :trail="trail"
+        class="trail"
+        @dblclick="onDoubleClick(trail)"
       >
-        <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
+        <router-link :to="{ name: 'TrailDetails', params: { id: trail.id } }">
           <p class="p-align-left">
             <b>
-              <u>Event Details for {{ event.description }}</u>
+              <u>Trail Details for {{ trail.description }}</u>
             </b>
           </p>
         </router-link>
         <ul class="ul-left">
-          <li v-if="event.assigned">
+          <li v-if="trail.assigned">
             <router-link
               :to="{
-                name: 'EventsAssigned',
-                params: { assigned: event.assigned },
+                name: 'TrailsAssigned',
+                params: { assigned: trail.assigned },
               }"
             >
-              <b>{{ event.assigned }}</b>
+              <b>{{ trail.assigned }}</b>
             </router-link>
           </li>
-          <li>{{ event.notes }}</li>
-          <li :class="event.action_active ? 'is-active' : 'is-inactive'">
+          <li>{{ trail.notes }}</li>
+          <li :class="trail.action_active ? 'is-active' : 'is-inactive'">
             Status:
-            {{ event.action_active ? "Active" : "InActive" }}
+            {{ trail.action_active ? "Active" : "InActive" }}
           </li>
-          <li v-bind:class="{ 'is-active': event.action_active }">
+          <li v-bind:class="{ 'is-active': trail.action_active }">
             Last Completed:
-            {{ formatStandardDate(event.action_date) }}
+            {{ formatStandardDate(trail.action_date) }}
           </li>
-          <li>{{ event.frequency }} day cycle</li>
+          <li>{{ trail.frequency }} day cycle</li>
           <li>
             Action Date:
-            {{ formatStandardDate(event.action_date) }}
+            {{ formatStandardDate(trail.action_date) }}
           </li>
           <li>
             Date Due:
             <span
               v-if="
                 DateFormatService.datePastDue(
-                  event.action_date,
-                  event.frequency
+                  trail.action_date,
+                  trail.frequency
                 )
               "
             >
               <span style="color: red; font-weight: bold">
-                {{ calculateDue(event.action_date, event.frequency) }}
-                {{ calculateDateDue(event.action_date, event.frequency) }}
+                {{ calculateDue(trail.action_date, trail.frequency) }}
+                {{ calculateDateDue(trail.action_date, trail.frequency) }}
               </span>
             </span>
             <span v-else>
               <span>
-                {{ calculateDue(event.action_date, event.frequency) }}
-                {{ calculateDateDue(event.action_date, event.frequency) }}
+                {{ calculateDue(trail.action_date, trail.frequency) }}
+                {{ calculateDateDue(trail.action_date, trail.frequency) }}
               </span>
             </span>
           </li>
           <li>
             Latest Changes:
-            <ul v-for="(history, index) in event.histories" :key="history.id">
+            <ul v-for="(history, index) in trail.histories" :key="history.id">
               <span v-if="index == 0">
                 <li v-html="history.notes"></li>
               </span>
@@ -89,18 +89,18 @@
         <br />
         <span class="fa-stack">
           <router-link
-            :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
+            :to="{ name: 'TrailEdit', params: { id: `${trail.id}` } }"
           >
             <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
           </router-link>
         </span>
         <span class="fa-stack">
-          <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
+          <i @click="deleteTrail(trail)" class="fas fa-trash-alt fa-stack-1x">
           </i>
         </span>
       </div>
     </div>
-    <!--div>{{ $store.state.events }}</div-->
+    <!--div>{{ $store.state.trails }}</div-->
   </div>
 </template>
 
@@ -120,8 +120,8 @@ export default {
   data() {
     return {
       DueBy: null,
-      eventList: null,
-      updatedEvent: null,
+      trailList: null,
+      updatedTrail: null,
     };
   },
   methods: {
@@ -129,14 +129,14 @@ export default {
       //this.$router.push({ path: "/" });
       window.location.reload();
     },
-    onDoubleClick(event) {
-      var updatedEvent = event;
-      updatedEvent.action_active = !event.action_active;
-      this.$store.dispatch("updateEvent", updatedEvent);
+    onDoubleClick(trail) {
+      var updatedTrail = trail;
+      updatedTrail.action_active = !trail.action_active;
+      this.$store.dispatch("updateTrail", updatedTrail);
     },
-    deleteEvent(event) {
-      this.$store.dispatch("deleteEvent", event);
-      alert("Event was Deleted for " + event.description);
+    deleteTrail(trail) {
+      this.$store.dispatch("deleteTrail", trail);
+      alert("Trail was Deleted for " + trail.description);
       location.reload();
     },
     DatePastDue(value) {
@@ -156,22 +156,22 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchEvents");
+    this.$store.dispatch("fetchTrails");
   },
   computed: {
-    events() {
-      return this.$store.state.events;
+    trails() {
+      return this.$store.state.trails;
     },
   },
 };
 </script>
 <style>
-.events {
+.trails {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 }
-.event {
+.trail {
   border: 1px solid #ccc;
   background: #41b883;
   padding: 1rem;
@@ -181,7 +181,7 @@ export default {
   position: relative;
   cursor: pointer;
 }
-.event-link {
+.trail-link {
   border: 1px solid #ccc;
   background: #41b883;
   padding: 1rem;
@@ -233,7 +233,7 @@ select {
   margin-top: 1rem;
 }
 @media (max-width: 500px) {
-  .events {
+  .trails {
     grid-template.columns: 1fr;
   }
 }
