@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import EventList from "../views/EventList.vue";
 import EventsPastDue from "../views/EventsPastDue.vue";
-import EventStatDetails from "../views/EventStatDetails.vue";
+import EventStatisticDetail from "../views/EventStatisticDetail.vue";
 import EventDetails from "@/views/EventDetails.vue";
 import EventEdit from "@/views/EventEdit.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
@@ -32,10 +32,10 @@ const routes = [
     component: EventsPastDue,
   },
   {
-    path: "/event_stat_details/:statistic",
-    name: "EventStatDetails",
+    path: "/event_statistic_detail/:statistic",
+    name: "EventStatisticDetail",
     props: true,
-    component: EventStatDetails,
+    component: EventStatisticDetail,
   },
   {
     path: "/:id",
@@ -57,12 +57,6 @@ const routes = [
   {
     path: "/event_stats",
     name: "EventStats",
-    component: EventStats,
-  },
-  {
-    path: "/event_stats_detail",
-    name: "EventStatsDetail",
-    prop: true,
     component: EventStats,
   },
   {

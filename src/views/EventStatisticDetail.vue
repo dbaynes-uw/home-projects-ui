@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h3>Event Statistic Details</h3>
+    <h3>Event Statistic Detail</h3>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
     <br />
-    <div class="eventStatisticDetails">
+    <div class="eventStatisticDetail">
       <table class="table-index-style">
         <tr>
           <th>Description</th>
@@ -49,7 +49,7 @@
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "EventsPastDue",
+  name: "EventStatisticDetail",
   components: {},
   props: ["statistic"],
   data() {
@@ -60,12 +60,15 @@ export default {
     };
   },
   created() {
-    console.log("Created Store Dispatch - EventStatDetails: ", this.statistic);
-    this.$store.dispatch("fetchEventStatDetails", this.statistic);
+    console.log(
+      "Created Store Dispatch - EventStatisticDetail: ",
+      this.statistic
+    );
+    this.$store.dispatch("fetchEventStatisticDetail", this.statistic);
   },
   computed: {
     events() {
-      return this.$store.state.eventStatDetails;
+      return this.$store.state.eventStatisticDetail;
     },
   },
   methods: {

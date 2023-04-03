@@ -11,7 +11,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: assigned + '-' + k },
             }"
           >
@@ -29,7 +29,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: notCompleted },
             }"
           >
@@ -47,7 +47,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: notAssigned },
             }"
           >
@@ -65,7 +65,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: completed },
             }"
           >
@@ -83,7 +83,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: past },
             }"
           >
@@ -101,7 +101,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: dueToday },
             }"
           >
@@ -119,7 +119,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: dueThisWeek },
             }"
           >
@@ -137,7 +137,7 @@
         <td>
           <router-link
             :to="{
-              name: 'EventStatDetails',
+              name: 'EventStatisticDetail',
               params: { statistic: dueNextWeek },
             }"
           >
