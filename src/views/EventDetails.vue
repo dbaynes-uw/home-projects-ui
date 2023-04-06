@@ -21,12 +21,12 @@
         <li>
           <b>{{ event.notes }}</b>
         </li>
-        <li>
-          Whose Turn:
+        <li v-if="event.assigned">
+          Whose Turn?
           <router-link
             :to="{
-              name: 'EventsAssigned',
-              params: { assigned: `${event.assigned}` },
+              name: 'EventStatisticDetail',
+              params: { statistic: 'assigned-' + event.assigned },
             }"
           >
             <b>{{ event.assigned }}</b>
@@ -111,10 +111,11 @@
 //import { ref, computed } from "vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  props: ["id", "assigned"],
+  props: ["id"],
   data() {
     return {
       history: null,
+      assigned: "",
       updatedEvent: null,
       eventsAssigned: null,
     };

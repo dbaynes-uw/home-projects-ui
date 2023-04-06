@@ -1,6 +1,9 @@
 <template>
   <div>
     <h2>Events</h2>
+    <h2>
+      <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
+    </h2>
     <div>
       <DueBy />
     </div>
@@ -34,8 +37,8 @@
           <li v-if="event.assigned">
             <router-link
               :to="{
-                name: 'EventsAssigned',
-                params: { assigned: event.assigned },
+                name: 'EventStatisticDetail',
+                params: { statistic: assigned + '-' + event.assigned },
               }"
             >
               <b>{{ event.assigned }}</b>
@@ -115,11 +118,12 @@ export default {
   components: {
     DueBy,
   },
-  props: ["id", "assigned", "pastDue"],
+  props: ["id", "pastDue"],
   //data() {},
   data() {
     return {
       DueBy: null,
+      assigned: "assigned",
       eventList: null,
       updatedEvent: null,
     };

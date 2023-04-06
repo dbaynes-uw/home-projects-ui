@@ -2,10 +2,8 @@
   <nav id="center-nav">
     <router-link :to="{ name: 'About' }">About</router-link> |
     <router-link :to="{ name: 'EventList' }">Events</router-link> |
-    <router-link :to="{ name: 'EventCreate' }">Create Event</router-link> |
-    <router-link :to="{ name: 'EventStats' }">Statistics</router-link> |
+    <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
     <router-link :to="{ name: 'TrailList' }">Trails</router-link> |
-    <router-link :to="{ name: 'UserCreate' }">Create User</router-link> |
     <router-link :to="{ name: 'UserList' }">Users</router-link>
   </nav>
   <router-view />
@@ -41,6 +39,7 @@ nav a.router-link-exact-active {
   color: #42b983;
 }
 #center-nav {
+  font-size: 1.5rem;
   padding: 10px;
   text-align: center;
 }

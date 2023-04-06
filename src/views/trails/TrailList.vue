@@ -1,240 +1,112 @@
 <template>
   <div>
-    <h2>Trails</h2>
-    <div>
-      <DueBy />
-    </div>
+    <h2>Trail List</h2>
+    <h2>
+      <router-link :to="{ name: 'TrailCreate' }">Add Trail</router-link>
+    </h2>
     <br />
-    <div>
-      <PastDue />
-      <button @click="refreshPage">Refresh</button>
-    </div>
-    <br />
-    <div class="legend">
-      <span>Double click to mark as complete.</span>
-      <span><span class="incomplete-box"></span> = Incomplete</span>
-      <span><span class="complete-box"></span> = Complete</span>
-    </div>
-    <div class="trails">
-      <div
-        v-for="trail in trails"
-        :key="trail.id"
-        :trail="trail"
-        class="trail"
-        @dblclick="onDoubleClick(trail)"
-      >
-        <router-link :to="{ name: 'TrailDetails', params: { id: trail.id } }">
-          <p class="p-align-left">
-            <b>
-              <u>Trail Details for {{ trail.description }}</u>
-            </b>
-          </p>
-        </router-link>
-        <ul class="ul-left">
-          <li v-if="trail.assigned">
-            <router-link
-              :to="{
-                name: 'TrailsAssigned',
-                params: { assigned: trail.assigned },
-              }"
-            >
-              <b>{{ trail.assigned }}</b>
-            </router-link>
-          </li>
-          <li>{{ trail.notes }}</li>
-          <li :class="trail.action_active ? 'is-active' : 'is-inactive'">
-            Status:
-            {{ trail.action_active ? "Active" : "InActive" }}
-          </li>
-          <li v-bind:class="{ 'is-active': trail.action_active }">
-            Last Completed:
-            {{ formatStandardDate(trail.action_date) }}
-          </li>
-          <li>{{ trail.frequency }} day cycle</li>
-          <li>
-            Action Date:
-            {{ formatStandardDate(trail.action_date) }}
-          </li>
-          <li>
-            Date Due:
-            <span
-              v-if="
-                DateFormatService.datePastDue(
-                  trail.action_date,
-                  trail.frequency
-                )
-              "
-            >
-              <span style="color: red; font-weight: bold">
-                {{ calculateDue(trail.action_date, trail.frequency) }}
-                {{ calculateDateDue(trail.action_date, trail.frequency) }}
+    <div class="trail-list">
+      <table class="table-index-style">
+        <tr>
+          <th>Trail Head</th>
+          <th>Location</th>
+          <th>Distance</th>
+          <th>Date Last Hiked</th>
+          <th>Notes</th>
+          <th>Actions</th>
+        </tr>
+        <tr v-for="trail in trails" :key="trail.id" :trail="trail">
+          <td>{{ trail.head_name }}</td>
+          <td>{{ trail.location }}</td>
+          <td>{{ trail.distance }}</td>
+          <td>{{ formatStandardDate(trail.date_last_hiked) }}</td>
+          <td>{{ trail.notes }}</td>
+          <td>
+            <span class="fa-stack">
+              <router-link
+                :to="{ name: 'TrailEdit', params: { id: `${trail.id}` } }"
+              >
+                <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+              </router-link>
+              <span class="fa-stack fa-table-stack">
+                <router-link
+                  :to="{ name: 'TrailDetails', params: { id: `${trail.id}` } }"
+                >
+                  <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
+                </router-link>
               </span>
             </span>
-            <span v-else>
-              <span>
-                {{ calculateDue(trail.action_date, trail.frequency) }}
-                {{ calculateDateDue(trail.action_date, trail.frequency) }}
-              </span>
-            </span>
-          </li>
-          <li>
-            Latest Changes:
-            <ul v-for="(history, index) in trail.histories" :key="history.id">
-              <span v-if="index == 0">
-                <li v-html="history.notes"></li>
-              </span>
-            </ul>
-          </li>
-        </ul>
-        <br />
-        <span class="fa-stack">
-          <router-link
-            :to="{ name: 'TrailEdit', params: { id: `${trail.id}` } }"
-          >
-            <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span class="fa-stack">
-          <i @click="deleteTrail(trail)" class="fas fa-trash-alt fa-stack-1x">
-          </i>
-        </span>
-      </div>
+          </td>
+        </tr>
+      </table>
     </div>
-    <!--div>{{ $store.state.trails }}</div-->
   </div>
 </template>
-
-<script setup>
-import DueBy from "@/components/DueBy.vue";
-import PastDue from "@/components/PastDue.vue";
-</script>
 <script>
-// @ is an alias to /src
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  components: {
-    DueBy,
-  },
-  props: ["id", "assigned", "pastDue"],
-  //data() {},
+  name: "TrailList",
+  components: {},
   data() {
     return {
-      DueBy: null,
-      trailList: null,
-      updatedTrail: null,
+      description: null,
+      frequency: null,
+      completed: 0,
     };
   },
-  methods: {
-    refreshPage() {
-      //this.$router.push({ path: "/" });
-      window.location.reload();
-    },
-    onDoubleClick(trail) {
-      var updatedTrail = trail;
-      updatedTrail.action_active = !trail.action_active;
-      this.$store.dispatch("updateTrail", updatedTrail);
-    },
-    deleteTrail(trail) {
-      this.$store.dispatch("deleteTrail", trail);
-      alert("Trail was Deleted for " + trail.description);
-      location.reload();
-    },
-    DatePastDue(value) {
-      return DateFormatService.datePastDue(value);
-    },
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
-    },
-    formatSystemDate(value) {
-      return DateFormatService.formatSystemDate(value);
-    },
-    calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDue(action_date, frequency);
-    },
-    calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDue(action_date, frequency);
-    },
-  },
   created() {
+    console.log("Created Store Dispatch - fetchTrails. ");
     this.$store.dispatch("fetchTrails");
   },
   computed: {
     trails() {
+      console.log("Computed Store Dispatch - fetchTrails. ");
       return this.$store.state.trails;
+    },
+  },
+  methods: {
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
   },
 };
 </script>
-<style>
-.trails {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1rem;
+<style scoped>
+.table-index-style {
+  width: 100%;
+  border-collapse: collapse;
 }
-.trail {
-  border: 1px solid #ccc;
-  background: #41b883;
-  padding: 1rem;
-  padding-top: 0em;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
-  cursor: pointer;
+th {
+  background-color: #7ba8bd;
+  text-align: left;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
-.trail-link {
-  border: 1px solid #ccc;
-  background: #41b883;
-  padding: 1rem;
-  padding-top: 0em;
-  border-radius: 5px;
-  text-align: center;
+tr {
+  line-height: 1.6 !important;
+  border: none;
+}
+tr:nth-child(odd) {
+  background-color: #41b88352;
+  border: none !important;
+}
+td {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.eventAssigned {
+  background: #e8f7f0;
+}
+.fa-table-stack {
   position: relative;
-  cursor: pointer;
+  left: 2rem;
 }
 i {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  color: #fff;
-  cursor: pointer;
+  bottom: 0px;
+  color: gray;
 }
-.legend {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 1rem;
-}
-.complete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #35495e;
-}
-.is-active {
-  background: #41b882;
-  color: #000;
-}
-.incomplete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #41b882;
-}
-.is-inactive {
+tr.is-complete {
   background: #35495e;
   color: #fff;
-}
-.is-complete-for-link {
-  color: #41b883;
-}
-select {
-  border-color: darkgreen;
-}
-.fa-table {
-  margin-top: 1rem;
-}
-@media (max-width: 500px) {
-  .trails {
-    grid-template.columns: 1fr;
-  }
 }
 </style>

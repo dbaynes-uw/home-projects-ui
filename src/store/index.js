@@ -6,11 +6,13 @@ export default createStore({
   state: {
     user: "David Baynes",
     events: [],
+    trails: [],
     users: [],
-    eventStats: [],
+    eventStatistics: [],
     eventsPastDue: [],
     eventsAssigned: [],
     event: {},
+    trail: {},
   },
   mutations: {
     ADD_EVENT(state, event) {
@@ -31,8 +33,8 @@ export default createStore({
     SET_EVENTS(state, events) {
       state.events = events;
     },
-    SET_EVENT_STATS(state, eventStats) {
-      state.eventStats = eventStats;
+    SET_EVENT_STATISTICS(state, eventStatistics) {
+      state.eventStatistics = eventStatistics;
     },
     SET_EVENT_STATISTIC_DETAIL(state, eventStatisticDetail) {
       state.eventStatisticDetail = eventStatisticDetail;
@@ -45,6 +47,9 @@ export default createStore({
     },
     SET_TRAILS(state, trails) {
       state.trails = trails;
+    },
+    SET_TRAIL(state, trail) {
+      state.trail = trail;
     },
     SET_USERS(state, users) {
       state.users = users;
@@ -59,6 +64,17 @@ export default createStore({
         })
         .catch((error) => {
           alert("Error in postEvent of createEvent Action (index.js)");
+          console.log(error);
+        });
+    },
+    createTrail({ commit }, trail) {
+      console.log("createTrail from index.js");
+      EventService.postTrail(trail)
+        .then(() => {
+          commit("ADD_TRAIL", trail);
+        })
+        .catch((error) => {
+          alert("Error in postTrail of createTrail Action (index.js)");
           console.log(error);
         });
     },
@@ -114,14 +130,14 @@ export default createStore({
           console.log(error);
         });
     },
-    async fetchEventStats({ commit }) {
+    async fetchEventStatistics({ commit }) {
       console.log("Store!!!!");
-      EventService.getEventStats()
+      EventService.getEventStatistics()
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);
-          commit("SET_EVENT_STATS", response.data);
-          console.log("EVENT STATS RESPONSE: ", response.data);
+          commit("SET_EVENT_STATISTICS", response.data);
+          console.log("EVENT STATISTICS RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -162,8 +178,8 @@ export default createStore({
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);
-          commit("SET_EVENT_STATS", response.data);
-          console.log("EVENT STATS Assigned RESPONSE: ", response.data);
+          commit("SET_EVENT_STATISTICS", response.data);
+          console.log("EVENT STATISTICS Assigned RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -212,7 +228,45 @@ export default createStore({
       EventService.getTrails()
         .then((response) => {
           commit("SET_TRAILS", response.data);
+          console.log("FetchTrails response.data: ", response.data);
           return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchTrail({ commit, state }, id) {
+      const existingTrail = state.trails.find((trail) => trail.id === id);
+      if (existingTrail) {
+        console.log("ExistingTrail: ", existingTrail);
+        commit("SET_TRAIL", existingTrail);
+      } else {
+        EventService.getTrail(id)
+          .then((response) => {
+            commit("SET_TRAIL", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    async updateTrail({ commit }, trail) {
+      console.log("updateTrail event from dbl click: ", trail);
+      EventService.putTrail(trail)
+        .then((response) => {
+          commit("SET_TRAIL", response.data);
+          alert("Trail was successfully Updated for " + trail.head_name);
+          location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async deleteTrail({ commit }, trail) {
+      console.log("deleteTrail event: ", trail);
+      EventService.deleteTrail(trail.id)
+        .then((response) => {
+          commit("DELETE_TRAIL", response.data);
         })
         .catch((error) => {
           console.log(error);

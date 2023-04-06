@@ -1,7 +1,10 @@
 <template>
   <div>
-    <h3>Users</h3>
-
+    <h2>Users</h2>
+    <h2>
+      <router-link :to="{ name: 'UserCreate' }">Create User</router-link>
+    </h2>
+    <br />
     <div class="users">
       <div v-for="user in users" :key="user.id" :user="user" class="user">
         <!--router-link :to="{ name: 'UserDetails', params: { id: user.id } }">

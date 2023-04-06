@@ -2,6 +2,7 @@ import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
 const user_url = "http://localhost:3000/api/v1/users";
+const trail_api_url = "http://localhost:3000/api/v1/trails";
 const api_url = "http://localhost:3000/api/v1/events/";
 const apiClient = axios.create({
   baseURL: "http://localhost:3000/api/v1",
@@ -26,8 +27,8 @@ export default {
     return apiClient.get("/events" + `?_pastDue=${pastDue}`);
     //commit("setAreas", response.data);
   },
-  getEventStats() {
-    return apiClient.get("/event_stats");
+  getEventStatistics() {
+    return apiClient.get("/event_statistics");
   },
   getEventsPastDue(statistic) {
     console.log("ES - statistic: ", statistic);
@@ -43,6 +44,7 @@ export default {
     return apiClient.get("/events_assigned/" + `?assigned=${assigned}`);
   },
   getEvents() {
+    console.log("ES get Events");
     return apiClient.get("/events");
   },
   getEvent(id) {
@@ -51,11 +53,20 @@ export default {
   async postEvent(event) {
     return apiClient.post("/events", event);
   },
+  async postTrail(trail) {
+    return apiClient.post("/trails", trail);
+  },
   async postUser(user) {
     return apiClient.post("/users", user);
   },
   getTrails() {
+    console.log("ES getTrails");
     return apiClient.get("/trails");
+  },
+  getTrail(id) {
+    console.log("apiClient: ", apiClient);
+    console.log("getTrail - id: ", id);
+    return apiClient.get("/trails/" + id);
   },
   getUsers() {
     return apiClient.get("/users");
@@ -63,10 +74,16 @@ export default {
   deleteEvent(id) {
     return axios.delete(api_url + `/${id}`);
   },
+  deleteTrail(id) {
+    return axios.delete(trail_api_url + `/${id}`);
+  },
   deleteUser(id) {
     return axios.delete(user_url + `/${id}`);
   },
   async putEvent(updatedEvent) {
     return axios.put(api_url + `/${updatedEvent.id}`, updatedEvent);
+  },
+  async putTrail(updatedTrail) {
+    return axios.put(trail_api_url + `/${updatedTrail.id}`, updatedTrail);
   },
 };

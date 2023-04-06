@@ -5,12 +5,15 @@ import EventStatisticDetail from "../views/EventStatisticDetail.vue";
 import EventDetails from "@/views/EventDetails.vue";
 import EventEdit from "@/views/EventEdit.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
-import EventCreate from "@/components/events/EventCreate.vue";
+import EventCreate from "@/views/events/EventCreate.vue";
+import TrailCreate from "@/views/trails/TrailCreate.vue";
 import TrailList from "../views/trails/TrailList.vue";
+import TrailDetails from "@/views/trails/TrailDetails.vue";
+import TrailEdit from "@/views/trails/TrailEdit.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserList from "../views/users/UserList.vue";
 import About from "../views/About.vue";
-import EventStats from "@/views/EventStats.vue";
+import EventStatistics from "@/views/EventStatistics.vue";
 import EventsAssigned from "@/views/EventsAssigned.vue";
 
 const routes = [
@@ -25,6 +28,7 @@ const routes = [
     props: true,
     component: EventList,
   },
+  // ???>
   {
     path: "/events_past_due/:statistic",
     name: "EventsPastDue",
@@ -55,9 +59,9 @@ const routes = [
     component: EventCreate,
   },
   {
-    path: "/event_stats",
-    name: "EventStats",
-    component: EventStats,
+    path: "/event_statistics",
+    name: "EventStatistics",
+    component: EventStatistics,
   },
   {
     path: "/events_assigned/:assigned",
@@ -66,10 +70,26 @@ const routes = [
     component: EventsAssigned,
   },
   {
+    path: "/trail/create",
+    name: "TrailCreate",
+    component: TrailCreate,
+  },
+  {
     path: "/trails",
     name: "TrailList",
-    props: true,
     component: TrailList,
+  },
+  {
+    path: "/trails/:id",
+    name: "TrailDetails",
+    props: true,
+    component: TrailDetails,
+  },
+  {
+    path: "/trails/:id",
+    name: "TrailEdit",
+    props: true,
+    component: TrailEdit,
   },
   {
     path: "/user/create",

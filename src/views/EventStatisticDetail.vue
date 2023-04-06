@@ -27,14 +27,27 @@
           <td>Every {{ event.frequency }} days</td>
           <td>{{ formatStandardDate(event.action_due_date) }}</td>
           <td>{{ event.assigned }}</td>
-          <td>
-            <span class="fa-stack">
+          <td style="position: relative; right: 3rem">
+            <span class="fa-stack fa-table-stack">
               <router-link
                 :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
               >
                 <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
               </router-link>
-              <span class="fa-stack fa-table-stack">
+              <span
+                class="fa-stack fa-table-stack"
+                style="position: relative; top: -0.4rem"
+              >
+                <router-link
+                  :to="{ name: 'EventDetails', params: { id: `${event.id}` } }"
+                >
+                  <i class="fa fa-eye" style="font-size: 18px"></i>
+                </router-link>
+              </span>
+              <span
+                class="fa-table-stack"
+                style="position: relative; top: 0.5rem; left: 2.3rem"
+              >
                 <router-link :to="{ name: 'EventList' }">
                   <i class="fa-solid fa-backward fa-stack-1x"></i>
                 </router-link>

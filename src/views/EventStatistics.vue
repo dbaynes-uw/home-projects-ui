@@ -1,5 +1,5 @@
 <template>
-  <div class="event-stats">
+  <div class="event-statistics">
     <h1 class="center">Event Statistics</h1>
     <table>
       <tr>
@@ -162,12 +162,12 @@
 </template>
 <script>
 export default {
-  name: "EventStats",
+  name: "EventStatistics",
   components: {},
   props: ["statistic"],
   data() {
     return {
-      eventStats: null,
+      eventStatistics: null,
       eventsAssigned: null,
       past: "past",
       assigned: "assigned",
@@ -181,22 +181,22 @@ export default {
   },
   created() {
     console.log("Created Store Dispatch");
-    this.$store.dispatch("fetchEventStats");
+    this.$store.dispatch("fetchEventStatistics");
   },
   computed: {
     events() {
-      return this.$store.state.eventStats;
+      return this.$store.state.eventStatistics;
     },
   },
 };
 </script>
 <style>
-.eventStats {
+.eventStatistics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 }
-.eventStat {
+.eventStatistics {
   border: 1px solid #ccc;
   background: #41b883;
   padding: 1rem;
