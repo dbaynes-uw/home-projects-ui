@@ -14,12 +14,18 @@
         <input
           type="text"
           class="text-style"
-          v-model="trail.head_name"
+          v-model="trail.location"
           required
         />
         <label>Distance:</label>
         <input type="text" class="text-style" v-model="trail.distance" />
-        <label>Date Last Hiked:</label>
+        <label for="date_last_hiked">Date Last Hiked:</label>
+        <input
+          type="date"
+          class="text-style"
+          v-model="trail.date_last_hiked"
+          required
+        />
         <input type="text" class="text-style" v-model="trail.date_last_hiked" />
         <label>Notes:</label>
         <input type="text" class="text-style" v-model="trail.notes" />
