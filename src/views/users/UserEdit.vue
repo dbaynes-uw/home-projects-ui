@@ -37,7 +37,8 @@ export default {
   async mounted() {
     console.log("Params id: ", this.$route.params.id);
     const result = await axios.get(
-      "http://localhost:3000/api/v1/users/" + this.$route.params.id
+      "http://davids-macbook-pro.local:3000/api/v1/users/" +
+        +this.$route.params.id
     );
     this.user = result.data;
   },
@@ -64,7 +65,8 @@ export default {
     async updateUser() {
       console.log("This user to PUT: ", this.user.name);
       const result = await axios.put(
-        "http://localhost:3000/api/v1/users/" + this.$route.params.id,
+        "http://davids-macbook-pro.local:3000/api/v1/users/" +
+          +this.$route.params.id,
         {
           name: this.user.name,
           username: this.user.username,

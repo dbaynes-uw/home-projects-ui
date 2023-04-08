@@ -57,7 +57,8 @@ export default {
   props: ["id", "assigned"],
   async mounted() {
     const result = await axios.get(
-      "http://localhost:3000/api/v1/events/" + this.$route.params.id
+      "http://davids-macbook-pro.local:3000/api/v1/events/" +
+        +this.$route.params.id
     );
     this.event = result.data;
   },
@@ -87,7 +88,8 @@ export default {
       };
       console.log("This event to PUT: ", this.event);
       const result = await axios.put(
-        "http://localhost:3000/api/v1/events/" + this.$route.params.id,
+        "http://davids-macbook-pro.local:3000/api/v1/events/" +
+          +this.$route.params.id,
         {
           action_date: this.event.action_date,
           description: this.event.description,

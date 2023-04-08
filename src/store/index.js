@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import EventService from "@/services/EventService.js";
 import axios from "axios";
-const api_url = "http://localhost:3000/api/v1/events/";
+const api_url = "http://davids-macbook-pro.local:3000/api/v1/events/";
 export default createStore({
   state: {
     user: "David Baynes",

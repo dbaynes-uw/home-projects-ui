@@ -41,7 +41,8 @@ export default {
   props: ["id"],
   async mounted() {
     const result = await axios.get(
-      "http://localhost:3000/api/v1/trails/" + this.$route.params.id
+      "http://davids-macbook-pro.local/:3000/api/v1/trails/" +
+        +this.$route.params.id
     );
     this.trail = result.data;
   },
@@ -69,7 +70,8 @@ export default {
       };
       console.log("This trail to PUT: ", this.trail);
       const result = await axios.put(
-        "http://localhost:3000/api/v1/trails/" + this.$route.params.id,
+        "http://davids-macbook-pro.local:3000/api/v1/trails/" +
+          this.$route.params.id,
         {
           head_name: this.trail.head_name,
           location: this.trail.location,

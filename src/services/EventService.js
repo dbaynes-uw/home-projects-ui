@@ -1,11 +1,11 @@
 import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-const user_url = "http://localhost:3000/api/v1/users";
-const trail_api_url = "http://localhost:3000/api/v1/trails";
-const api_url = "http://localhost:3000/api/v1/events/";
+const user_url = "http://davids-macbook-pro.local:3000/api/v1/users";
+const trail_api_url = "http://davids-macbook-pro.local:3000/api/v1/trails";
+const api_url = "http://davids-macbook-pro.local:3000/api/v1/events/";
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000/api/v1",
+  baseURL: "http://davids-macbook-pro.local:3000/api/v1",
   withCredentials: false,
   headers: {
     Accept: "application/json",
