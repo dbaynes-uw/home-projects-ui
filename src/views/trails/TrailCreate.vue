@@ -18,21 +18,35 @@
         placeholder="Location"
         required
       />
-      <label>Distance</label>
+      <label>Distance in Miles</label>
       <input
         v-model="trail.distance"
         type="text"
+        @keypress="onlyForDecimal"
         class="text-style"
-        placeholder="Distance"
+        placeholder="Number of Miles"
         required
       />
+      <!--vue-number-input
+        v-model="num"
+        :value="10"
+        :isInput="false"
+        :align="center"
+      >
+      </vue-number-input-->
+      <!--vue-number-input v-model="num" :min="1" :max="10" inline controls>
+      </vue-number-input-->
       <label>Url to Map</label>
       <input
         v-model="trail.url_to_map"
         type="text"
+        :maxlength="urlMaxLength"
         class="text-style"
         placeholder="URL to Map"
       />
+      <span>
+        {{ urlMaxLength - trail.url_to_map.length }} / {{ urlMaxLength }}
+      </span>
       <label for="date_last_hiked">Date Last Hiked:</label>
       <input type="date" class="text-style" v-model="trail.date_last_hiked" />
       <label>Notes</label>
@@ -41,7 +55,6 @@
         type="text"
         placeholder="Notes"
         class="text-style"
-        required
       />
       <button class="button" type="submit">Submit</button>
     </form>
@@ -51,6 +64,7 @@
 </template>
 <script>
 import { v4 as uuidv4 } from "uuid";
+//import VueNumberInput from '@chenfengyuan/vue-number-input';
 //import { mapGetters, mapActions } from "vuex";
 //Vuex
 //import TrailService from "@/services/TrailService.js";
@@ -58,7 +72,6 @@ export default {
   data() {
     return {
       trail: {
-        id: "",
         head_name: "",
         location: "",
         distance: "",
@@ -67,6 +80,8 @@ export default {
         notes: "",
         created_by: "dbaynes",
       },
+      urlMaxLength: 255,
+      num: 1,
     };
   },
   methods: {
@@ -76,9 +91,31 @@ export default {
         id: uuidv4(),
         created_by: this.$store.state.user,
       };
-      this.$store.dispatch("createTrail", trail);
-      alert("Trail was successfully added for" + trail.location);
-      this.$router.push({ name: "TrailList" });
+      if (this.$store.dispatch("createTrail", trail)) {
+        alert("Trail was successfully added for" + trail.location);
+        this.$router.push({ name: "TrailList" });
+      } else {
+        alert("Error adding Trail Location" + trail.location);
+      }
+    },
+    onlyForDecimal($event) {
+      // console.log($event.keyCode); //keyCodes value
+      let keyCode = $event.keyCode ? $event.keyCode : $event.which;
+      // only allow number and one dot
+      if (
+        (keyCode < 48 || keyCode > 57) &&
+        (keyCode !== 46 || this.trail.distance.indexOf(".") != -1) // 46 is dot
+      ) {
+        $event.preventDefault();
+      }
+      // restrict to 2 decimal places
+      if (
+        this.trail.distance != null &&
+        this.trail.distance.indexOf(".") > -1 &&
+        this.trail.distance.split(".")[1].length > 1
+      ) {
+        $event.preventDefault();
+      }
     },
   },
   trail() {

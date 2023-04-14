@@ -10,10 +10,10 @@
         <tr>
           <th>Trail Head</th>
           <th>Location</th>
-          <th>Distance</th>
+          <th>Distance (Miles)</th>
           <th>Date Last Hiked</th>
           <th>Notes</th>
-          <th>Actions</th>
+          <th style="text-align: right">Actions</th>
         </tr>
         <tr v-for="trail in trails" :key="trail.id" :trail="trail">
           <td>{{ trail.head_name }}</td>
@@ -21,7 +21,7 @@
           <td>{{ trail.distance }}</td>
           <td>{{ formatStandardDate(trail.date_last_hiked) }}</td>
           <td>{{ trail.notes }}</td>
-          <td>
+          <td style="padding-left: 0">
             <span class="fa-stack">
               <router-link
                 :to="{ name: 'TrailEdit', params: { id: `${trail.id}` } }"
@@ -34,6 +34,16 @@
                 >
                   <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
                 </router-link>
+              </span>
+              <span
+                class="fa-table-stack"
+                style="position: relative; top: 0.5rem; left: 2.3rem"
+              >
+                <i
+                  @click="deleteTrail(trail)"
+                  class="fas fa-trash-alt fa-stack-1x"
+                >
+                </i>
               </span>
             </span>
           </td>

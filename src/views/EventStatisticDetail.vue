@@ -14,7 +14,7 @@
           <th>Frequency</th>
           <th>Date Due</th>
           <th>Assigned</th>
-          <th>Actions</th>
+          <th style="text-align: right">Actions</th>
         </tr>
         <tr
           v-for="event in events"
@@ -27,7 +27,7 @@
           <td>Every {{ event.frequency }} days</td>
           <td>{{ formatStandardDate(event.action_due_date) }}</td>
           <td>{{ event.assigned }}</td>
-          <td style="position: relative; right: 3rem">
+          <td>
             <span class="fa-stack fa-table-stack">
               <router-link
                 :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"

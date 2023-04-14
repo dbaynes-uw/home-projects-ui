@@ -10,6 +10,13 @@
         placeholder="Description"
         required
       />
+      <label for="action_date">Action Date:</label>
+      <input
+        type="date"
+        class="text-style"
+        v-model="event.action_date"
+        required
+      />
       <label>Whose Turn? </label>
       <select
         id="select-box"

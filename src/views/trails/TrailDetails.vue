@@ -22,6 +22,10 @@
           Date Last Hiked:
           <b>{{ formatStandardDate(trail.date_last_hiked) }}</b>
         </li>
+        <li v-if="trail.url_to_map">
+          URL:
+          <a :href="trail.url_to_map" target="_blank">Click</a>
+        </li>
         <li>
           Notes:
           <b>{{ trail.notes }}</b>

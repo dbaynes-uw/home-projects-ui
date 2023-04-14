@@ -56,11 +56,13 @@ import axios from "axios";
 export default {
   props: ["id", "assigned"],
   async mounted() {
+    console.log("Mounted: ", this.$route.params.id);
     const result = await axios.get(
       "http://davids-macbook-pro.local:3000/api/v1/events/" +
         +this.$route.params.id
     );
     this.event = result.data;
+    console.log("Returned event: ", this.event);
   },
   data() {
     return {

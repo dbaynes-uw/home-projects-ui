@@ -45,6 +45,9 @@ export default createStore({
     RESET_STATE(state) {
       Object.assign(state, createStore());
     },
+    ADD_TRAIL(state, trail) {
+      state.trails.push(trail);
+    },
     SET_TRAILS(state, trails) {
       state.trails = trails;
     },

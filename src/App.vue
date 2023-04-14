@@ -105,6 +105,16 @@ i {
 #select-box {
   height: 2rem;
 }
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* this is for Firefox */
+/*input[type='"number"'] {
+  -moz-appearance: textfield;
+}*/
 @media (max-width: 500px) {
   .events {
     grid-template.columns: 1fr;

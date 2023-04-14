@@ -48,6 +48,8 @@ export default {
     return apiClient.get("/events");
   },
   getEvent(id) {
+    console.log("apiClient: ", apiClient);
+    console.log("getEdit - id: ", id);
     return apiClient.get("/events/" + id);
   },
   async postEvent(event) {
@@ -81,6 +83,7 @@ export default {
     return axios.delete(user_url + `/${id}`);
   },
   async putEvent(updatedEvent) {
+    console.log("putEvent updatedEvent.id: ", updatedEvent.id);
     return axios.put(api_url + `/${updatedEvent.id}`, updatedEvent);
   },
   async putTrail(updatedTrail) {

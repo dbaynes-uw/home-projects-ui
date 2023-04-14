@@ -26,6 +26,7 @@
           v-model="trail.date_last_hiked"
           required
         />
+        <label for="url_to_map">URL to Map:</label>
         <input type="text" class="text-style" v-model="trail.date_last_hiked" />
         <label>Notes:</label>
         <input type="text" class="text-style" v-model="trail.notes" />
@@ -40,16 +41,16 @@ import axios from "axios";
 export default {
   props: ["id"],
   async mounted() {
+    console.log("Mounted: ", this.$route.params.id);
     const result = await axios.get(
-      "http://davids-macbook-pro.local/:3000/api/v1/trails/" +
+      "http://davids-macbook-pro.local:3000/api/v1/trails/" +
         +this.$route.params.id
     );
     this.trail = result.data;
+    console.log("Returned trail: ", this.trail);
   },
   data() {
     return {
-      assignees: ["David", "Jane", "Both", "Up for Grabs"],
-      frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "360"],
       trail: {
         id: "",
         head_name: "",
