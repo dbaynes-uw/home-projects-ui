@@ -29,7 +29,7 @@
         <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
           <p class="p-align-left">
             <b>
-              <u>Event Details for {{ event.description }}</u>
+              <u>{{ event.description }}</u>
             </b>
           </p>
         </router-link>

@@ -7,6 +7,7 @@ export default createStore({
     user: "David Baynes",
     events: [],
     trails: [],
+    books: [],
     users: [],
     eventStatistics: [],
     eventsPastDue: [],
@@ -54,6 +55,21 @@ export default createStore({
     SET_TRAIL(state, trail) {
       state.trail = trail;
     },
+    DELETE_TRAIL(state, trail) {
+      state.trail = trail;
+    },
+    ADD_BOOK(state, book) {
+      state.books.push(book);
+    },
+    SET_BOOKS(state, books) {
+      state.books = books;
+    },
+    SET_BOOK(state, book) {
+      state.book = book;
+    },
+    DELETE_BOOK(state, book) {
+      state.book = book;
+    },
     SET_USERS(state, users) {
       state.users = users;
     },
@@ -81,6 +97,19 @@ export default createStore({
           console.log(error);
         });
     },
+    createBook({ commit }, book) {
+      console.log("createBook from index.js");
+      EventService.postBook(book)
+        .then(() => {
+          commit("ADD_BOOK", book);
+          alert("Book was successfully added for " + book.title);
+        })
+        .catch((error) => {
+          alert("Error in postBook of createBook Action (index.js)");
+          console.log(error);
+        });
+    },
+
     createUser({ commit }, user) {
       console.log("createUser from index.js");
       EventService.postUser(user)
@@ -275,6 +304,55 @@ export default createStore({
           console.log(error);
         });
     },
+    async fetchBooks({ commit }) {
+      EventService.getBooks()
+        .then((response) => {
+          commit("SET_BOOKS", response.data);
+          console.log("FetchBooks response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchBook({ commit, state }, id) {
+      const existingBook = state.books.find((book) => book.id === id);
+      if (existingBook) {
+        console.log("ExistingBook: ", existingBook);
+        commit("SET_BOOK", existingBook);
+      } else {
+        EventService.getBook(id)
+          .then((response) => {
+            commit("SET_BOOK", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    async updateBook({ commit }, book) {
+      console.log("updateBook event from dbl click: ", book);
+      EventService.putBook(book)
+        .then((response) => {
+          commit("SET_BOOK", response.data);
+          alert("Book was successfully Updated for " + book.title);
+          location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async deleteBook({ commit }, book) {
+      console.log("Index.js: deleteBook title: ", book.title);
+      EventService.deleteBook(book.id)
+        .then((response) => {
+          commit("DELETE_BOOK", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     async fetchUsers({ commit }) {
       EventService.getUsers()
         .then((response) => {

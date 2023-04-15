@@ -1,4 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
+import BookCreate from "@/views/books/BookCreate.vue";
+import BookList from "../views/books/BookList.vue";
+import BookDetails from "@/views/books/BookDetails.vue";
+import BookEdit from "@/views/books/BookEdit.vue";
 import EventList from "../views/EventList.vue";
 import EventsPastDue from "../views/EventsPastDue.vue";
 import EventStatisticDetail from "../views/EventStatisticDetail.vue";
@@ -91,6 +95,29 @@ const routes = [
     props: true,
     component: TrailEdit,
   },
+  {
+    path: "/book/create",
+    name: "BookCreate",
+    component: BookCreate,
+  },
+  {
+    path: "/books",
+    name: "BookList",
+    component: BookList,
+  },
+  {
+    path: "/books/:id",
+    name: "BookDetails",
+    props: true,
+    component: BookDetails,
+  },
+  {
+    path: "/book/:id",
+    name: "BookEdit",
+    props: true,
+    component: BookEdit,
+  },
+
   {
     path: "/user/create",
     props: true,
