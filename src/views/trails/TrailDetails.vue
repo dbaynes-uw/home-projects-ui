@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h3>Trail Details</h3>
     <div class="legend">
@@ -58,19 +59,34 @@
 
 <script>
 //import { ref, computed } from "vue";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id"],
+  components: {
+    ConfirmDialogue,
+  },
   data() {
     return {
       updatedTrail: null,
     };
   },
   methods: {
-    deleteTrail(trail) {
-      this.$store.dispatch("deleteTrail", trail);
-      alert("Trail was Deleted for " + trail.head_name);
-      this.$router.push({ name: "TrailList" });
+    async deleteTrail(trail) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Trail",
+        message:
+          "Are you sure you want to delete " +
+          trail.head_name +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteTrail", trail);
+        alert("Trail was Deleted for " + trail.head_name);
+        this.$router.push({ name: "TrailList" });
+      }
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);

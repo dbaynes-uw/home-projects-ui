@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h2>Users</h2>
     <h2>
@@ -38,8 +39,11 @@
 </template>
 <script>
 // @ is an alias to /src
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  components: {},
+  components: {
+    ConfirmDialogue,
+  },
   props: ["id"],
   data() {
     return {
@@ -47,10 +51,21 @@ export default {
     };
   },
   methods: {
-    deleteUser(user) {
-      this.$store.dispatch("deleteUser", user);
-      alert("User was Deleted for " + user.name);
-      location.reload();
+    async deleteUser(user) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete User from List",
+        message:
+          "Are you sure you want to delete users" +
+          user.name +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteUser", user);
+        alert("User was Deleted for " + user.name);
+        location.reload();
+      }
     },
   },
   created() {

@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h3>Book Details</h3>
     <div class="legend">
@@ -54,19 +55,34 @@
 
 <script>
 //import { ref, computed } from "vue";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id"],
+  components: {
+    ConfirmDialogue,
+  },
   data() {
     return {
       updatedBook: null,
     };
   },
   methods: {
-    deleteBook(book) {
-      this.$store.dispatch("deleteBook", book);
-      alert("Book was Deleted for " + book.head_name);
-      this.$router.push({ name: "BookList" });
+    async deleteBook(book) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Book",
+        message:
+          "Are you sure you want to delete " +
+          book.title +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteBook", book);
+        alert("Book was Deleted for " + book.title);
+        this.$router.push({ name: "BookList" });
+      }
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);

@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h3>Event Details</h3>
     <div class="legend">
@@ -106,12 +107,14 @@
     </div>
   </div>
 </template>
-
 <script>
-//import { ref, computed } from "vue";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id"],
+  components: {
+    ConfirmDialogue,
+  },
   data() {
     return {
       history: null,
@@ -121,10 +124,21 @@ export default {
     };
   },
   methods: {
-    deleteEvent(event) {
-      this.$store.dispatch("deleteEvent", event);
-      alert("Event was Deleted for " + event.description);
-      this.$router.push({ name: "EventList" });
+    async deleteEvent(event) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Event",
+        message:
+          "Are you sure you want to delete " +
+          event.description +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteEvent", event);
+        alert("Event was Deleted for " + event.description);
+        this.$router.push({ name: "EventList" });
+      }
     },
     onDoubleClick(event) {
       var updatedEvent = event;

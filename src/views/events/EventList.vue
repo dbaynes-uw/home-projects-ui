@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h2>Events</h2>
     <h2>
@@ -98,8 +99,7 @@
           </router-link>
         </span>
         <span class="fa-stack">
-          <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
-          </i>
+          <i @click="doDelete(event)" class="fas fa-trash-alt fa-stack-1x"></i>
         </span>
       </div>
     </div>
@@ -108,6 +108,7 @@
 </template>
 
 <script setup>
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DueBy from "@/components/DueBy.vue";
 import PastDue from "@/components/PastDue.vue";
 </script>
@@ -117,6 +118,7 @@ import DateFormatService from "@/services/DateFormatService.js";
 export default {
   components: {
     DueBy,
+    ConfirmDialogue,
   },
   props: ["id", "pastDue"],
   //data() {},
@@ -132,6 +134,20 @@ export default {
     refreshPage() {
       //this.$router.push({ path: "/" });
       window.location.reload();
+    },
+    async doDelete(event) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Event from List",
+        message:
+          "Are you sure you want to delete " +
+          event.description +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.deleteEvent(event);
+      }
     },
     onDoubleClick(event) {
       var updatedEvent = event;

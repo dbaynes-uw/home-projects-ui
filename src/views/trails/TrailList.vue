@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h2>Trail List</h2>
     <h2>
@@ -44,7 +45,7 @@
                 style="position: relative; top: 0.5rem; left: 2.3rem"
               >
                 <i
-                  @click="deleteTrail(trail)"
+                  @click="doDelete(trail)"
                   class="fas fa-trash-alt fa-stack-1x"
                 >
                 </i>
@@ -57,10 +58,13 @@
   </div>
 </template>
 <script>
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "TrailList",
-  components: {},
+  components: {
+    ConfirmDialogue,
+  },
   data() {
     return {
       description: null,
@@ -79,6 +83,20 @@ export default {
     },
   },
   methods: {
+    async doDelete(trail) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Trail from List",
+        message:
+          "Are you sure you want to delete " +
+          trail.head_name +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.deleteTrail(trail);
+      }
+    },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);
     },
