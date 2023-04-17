@@ -2,6 +2,9 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h2>Book List</h2>
+    <h2 id="status-message">
+      <u>{{ this.statusMessage }}</u>
+    </h2>
     <h2>
       <router-link :to="{ name: 'BookCreate' }">Add Book</router-link>
     </h2>
@@ -68,6 +71,7 @@ export default {
       description: null,
       frequency: null,
       completed: 0,
+      statusMessage: "",
     };
   },
   created() {
@@ -92,10 +96,12 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        console.log("Delete Book from Booklist");
         this.$store.dispatch("deleteBook", book);
-        location.reload();
-        alert("Book was Deleted for " + book.title);
+        this.statusMessage =
+          "Book was Deleted for " +
+          book.title +
+          "! Page will restore in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
       }
     },
     formatStandardDate(value) {
@@ -141,5 +147,9 @@ i {
 tr.is-complete {
   background: #35495e;
   color: #fff;
+}
+#status-message {
+  text-align: center;
+  color: navy;
 }
 </style>

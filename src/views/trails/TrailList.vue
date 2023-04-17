@@ -2,6 +2,9 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h2>Trail List</h2>
+    <h2 id="status-message">
+      <u>{{ this.statusMessage }}</u>
+    </h2>
     <h2>
       <router-link :to="{ name: 'TrailCreate' }">Add Trail</router-link>
     </h2>
@@ -45,7 +48,7 @@
                 style="position: relative; top: 0.5rem; left: 2.3rem"
               >
                 <i
-                  @click="doDelete(trail)"
+                  @click="deleteTrail(trail)"
                   class="fas fa-trash-alt fa-stack-1x"
                 >
                 </i>
@@ -70,6 +73,7 @@ export default {
       description: null,
       frequency: null,
       completed: 0,
+      statusMessage: "",
     };
   },
   created() {
@@ -83,7 +87,7 @@ export default {
     },
   },
   methods: {
-    async doDelete(trail) {
+    async deleteTrail(trail) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Trail from List",
         message:
@@ -94,16 +98,16 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.deleteTrail(trail);
+        this.$store.dispatch("deleteTrail", trail);
+        this.statusMessage =
+          "Trail was Deleted for " +
+          trail.head_name +
+          "! Page will refresh in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
       }
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDate(value);
-    },
-    deleteTrail(trail) {
-      this.$store.dispatch("deleteTrail", trail);
-      alert("Trail was Deleted for " + trail.head_name);
-      location.reload();
     },
   },
 };
@@ -145,5 +149,9 @@ i {
 tr.is-complete {
   background: #35495e;
   color: #fff;
+}
+#status-message {
+  text-align: center;
+  color: navy;
 }
 </style>

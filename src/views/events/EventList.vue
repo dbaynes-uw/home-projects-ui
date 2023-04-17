@@ -3,6 +3,7 @@
   <div>
     <h2>Events</h2>
     <h2>
+      <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
       <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
     </h2>
     <div>
