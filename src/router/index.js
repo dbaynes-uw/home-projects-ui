@@ -3,6 +3,10 @@ import BookCreate from "@/views/books/BookCreate.vue";
 import BookList from "../views/books/BookList.vue";
 import BookDetails from "@/views/books/BookDetails.vue";
 import BookEdit from "@/views/books/BookEdit.vue";
+import TravelCreate from "@/views/travels/TravelCreate.vue";
+import TravelList from "../views/travels/TravelList.vue";
+import TravelDetails from "@/views/travels/TravelDetails.vue";
+import TravelEdit from "@/views/travels/TravelEdit.vue";
 import EventList from "../views/events/EventList.vue";
 import EventsPastDue from "../views/events/EventsPastDue.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
@@ -117,7 +121,28 @@ const routes = [
     props: true,
     component: BookEdit,
   },
-
+  {
+    path: "/travel/create",
+    name: "TravelCreate",
+    component: TravelCreate,
+  },
+  {
+    path: "/travels",
+    name: "TravelList",
+    component: TravelList,
+  },
+  {
+    path: "/travel/:id",
+    name: "TravelDetails",
+    props: true,
+    component: TravelDetails,
+  },
+  {
+    path: "/travel/:id",
+    name: "TravelEdit",
+    props: true,
+    component: TravelEdit,
+  },
   {
     path: "/user/create",
     props: true,

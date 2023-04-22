@@ -100,7 +100,8 @@
           </router-link>
         </span>
         <span class="fa-stack">
-          <i @click="doDelete(event)" class="fas fa-trash-alt fa-stack-1x"></i>
+          <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
+          </i>
         </span>
       </div>
     </div>
@@ -136,7 +137,7 @@ export default {
       //this.$router.push({ path: "/" });
       window.location.reload();
     },
-    async doDelete(event) {
+    async deleteEvent(event) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Event from List",
         message:
@@ -147,18 +148,18 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.deleteEvent(event);
+        this.$store.dispatch("deleteEvent", event);
+        this.statusMessage =
+          "Event was Deleted for " +
+          event.description +
+          "! Page will restore in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
       }
     },
     onDoubleClick(event) {
       var updatedEvent = event;
       updatedEvent.action_active = !event.action_active;
       this.$store.dispatch("updateEvent", updatedEvent);
-    },
-    deleteEvent(event) {
-      this.$store.dispatch("deleteEvent", event);
-      alert("Event was Deleted for " + event.description);
-      location.reload();
     },
     DatePastDue(value) {
       return DateFormatService.datePastDue(value);

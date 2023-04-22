@@ -4,8 +4,17 @@ moment.tz.setDefault("America/Los_Angeles");
 export default {
   formatStandardDate(action_date) {
     //console.log("Format Date SERVICE Format Standard Date: ", action_date);
+    // MM/DD/YY
     if (action_date) {
       action_date = moment(action_date).format("MM/DD/YY");
+      return action_date;
+    }
+  },
+  formatFullYearDate(action_date) {
+    //console.log("Format Date SERVICE Format Standard Date: ", action_date);
+    // MM/DD/YYYY
+    if (action_date) {
+      action_date = moment(action_date).format("MM-DD-YYYY");
       return action_date;
     }
   },

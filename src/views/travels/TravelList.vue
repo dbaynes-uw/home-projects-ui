@@ -1,59 +1,71 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
-    <h2>Book List</h2>
+    <h2>Travel List</h2>
     <h2 id="status-message">
       <u>{{ this.statusMessage }}</u>
     </h2>
     <h2>
-      <router-link :to="{ name: 'BookCreate' }">Add Book</router-link>
+      <router-link :to="{ name: 'TravelCreate' }">Add Travel</router-link>
     </h2>
     <br />
-    <div class="book-list">
+    <div class="travel-list">
       <table class="table-index-style">
         <tr>
           <th>Title</th>
-          <th>Author</th>
-          <th>Date Written</th>
-          <th>URL to Review</th>
+          <th>Description</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Reference</th>
           <th>Notes</th>
           <th style="text-align: right">Actions</th>
         </tr>
-        <tr v-for="book in books" :key="book.id" :book="book">
-          <td>{{ book.title }}</td>
-          <td>{{ book.author }}</td>
-          <td>{{ formatFullYearDate(book.date_written) }}</td>
+        <tr v-for="travel in travels" :key="travel.id" :travel="travel">
+          <td>{{ travel.title }}</td>
+          <td>{{ travel.description }}</td>
+          <td>{{ formatStandardDate(travel.start_date) }}</td>
+          <td>{{ formatStandardDate(travel.end_date) }}</td>
           <td>
-            <a :href="book.url_to_review" target="_blank">Review</a>
+            <a :href="travel.url_reference" target="_blank">Reference</a>
           </td>
-          <td>{{ book.notes }}</td>
+          <td>{{ travel.notes }}</td>
           <td style="padding-left: 0">
             <span class="fa-stack">
               <router-link
-                :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
+                :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
               >
                 <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
               </router-link>
               <span class="fa-stack fa-table-stack">
                 <router-link
-                  :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
+                  :to="{
+                    name: 'TravelDetails',
+                    params: { id: `${travel.id}` },
+                  }"
                 >
                   <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
                 </router-link>
               </span>
-              <span v-if="this.onlineStatus">
-                <i
-                  @click="deleteBook(book)"
-                  class="fas fa-trash-alt fa-stack-1x"
+              <span v-if="navigator">
+                <span @click="deleteTravel(travel)">
+                  Delete: {{ Navigator }}
+                </span>
+                <i @click="deleteTravel(travel)"></i>
+                <span
+                  class="fa-table-stack"
+                  style="position: relative; top: 0.5rem; left: 2.3rem"
                 >
-                </i>
+                  <i
+                    @click="deleteTravel(travel)"
+                    class="fas fa-trash-alt fa-stack-1x"
+                  >
+                  </i>
+                </span>
               </span>
-              <span class="ok-btn" @click="deleteBook(book)"><u>Del</u></span>
             </span>
           </td>
         </tr>
       </table>
-      Online Status: {{ this.onlineStatus }}
     </div>
   </div>
 </template>
@@ -61,7 +73,7 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "BookList",
+  name: "TravelList",
   components: {
     ConfirmDialogue,
   },
@@ -71,49 +83,40 @@ export default {
       frequency: null,
       completed: 0,
       statusMessage: "",
-      onlineStatus: navigator.onLine,
     };
   },
   created() {
-    console.log("Created Store Dispatch - fetchBooks. ");
-    this.$store.dispatch("fetchBooks");
+    console.log("Created Store Dispatch - fetchTravels. ");
+    this.$store.dispatch("fetchTravels");
   },
   computed: {
-    books() {
-      console.log("Computed Store Dispatch - fetchBooks. ");
-      return this.$store.state.books;
+    travels() {
+      console.log("Computed Store Dispatch - fetchTravels. ");
+      return this.$store.state.travels;
     },
   },
   methods: {
-    //isOffline() {
-    //  this.isOnline = false;
-    //  console.log("isOffline - this.isOnline = ", this.isOnline);
-    //},
-    //isOnline() {
-    //  this.isOnline = true;
-    //  console.log("isOnline - this.isOnline = ", this.isOnline);
-    //},
-    async deleteBook(book) {
+    async deleteTravel(travel) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Book from List",
+        title: "Delete Travel from List",
         message:
           "Are you sure you want to delete " +
-          book.title +
+          travel.title +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteBook", book);
+        this.$store.dispatch("deleteTravel", travel);
         this.statusMessage =
-          "Book was Deleted for " +
-          book.title +
+          "Travel was Deleted for " +
+          travel.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }
     },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
   },
 };

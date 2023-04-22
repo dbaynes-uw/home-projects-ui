@@ -1,10 +1,6 @@
 import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-const book_api_url = "http://davids-macbook-pro.local:3000/api/v1/books";
-const user_url = "http://davids-macbook-pro.local:3000/api/v1/users";
-const trail_api_url = "http://davids-macbook-pro.local:3000/api/v1/trails";
-const api_url = "http://davids-macbook-pro.local:3000/api/v1/events/";
 const apiClient = axios.create({
   baseURL: "http://davids-macbook-pro.local:3000/api/v1",
   withCredentials: false,
@@ -13,6 +9,11 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+const api_url = "http://davids-macbook-pro.local:3000/api/v1/events/";
+const book_api_url = "http://davids-macbook-pro.local:3000/api/v1/books";
+const trail_api_url = "http://davids-macbook-pro.local:3000/api/v1/trails";
+const user_url = "http://davids-macbook-pro.local:3000/api/v1/users";
+const travel_api_url = "http://davids-macbook-pro.local:3000/api/v1/travels";
 export default {
   eventDueBy(form) {
     console.log("EventService - dueBy");
@@ -27,6 +28,26 @@ export default {
     //const response = await axios.get(api_url + `?_pastDue=${pastDue}`);
     return apiClient.get("/events" + `?_pastDue=${pastDue}`);
     //commit("setAreas", response.data);
+  },
+  async postBook(book) {
+    return apiClient.post("/books", book);
+  },
+  getBooks() {
+    console.log("ES getBooks");
+    return apiClient.get("/books");
+  },
+  getBook(id) {
+    console.log("apiClient: ", apiClient);
+    console.log("getBook - id: ", id);
+    return apiClient.get("/books/" + id);
+  },
+  async putBook(updatedBook) {
+    return axios.put(book_api_url + `/${updatedBook.id}`, updatedBook);
+  },
+  deleteBook(id) {
+    console.log("ES Delete Book: ", id);
+    // For Testing: setTimeout(5000);
+    return axios.delete(book_api_url + `/${id}`);
   },
   getEventStatistics() {
     return apiClient.get("/event_statistics");
@@ -90,24 +111,24 @@ export default {
   deleteTrail(id) {
     return axios.delete(trail_api_url + `/${id}`);
   },
-  async postBook(book) {
-    return apiClient.post("/books", book);
+  async postTravel(travel) {
+    return apiClient.post("/travels", travel);
   },
-  getBooks() {
-    console.log("ES getBooks");
-    return apiClient.get("/books");
+  getTravels() {
+    console.log("ES getTravels");
+    return apiClient.get("/travels");
   },
-  getBook(id) {
+  getTravel(id) {
     console.log("apiClient: ", apiClient);
-    console.log("getBook - id: ", id);
-    return apiClient.get("/books/" + id);
+    console.log("getTravel - id: ", id);
+    return apiClient.get("/travels/" + id);
   },
-  async putBook(updatedBook) {
-    return axios.put(book_api_url + `/${updatedBook.id}`, updatedBook);
+  async putTravel(updatedTravel) {
+    return axios.put(travel_api_url + `/${updatedTravel.id}`, updatedTravel);
   },
-  deleteBook(id) {
-    console.log("ES Delete Book: ", id);
+  deleteTravel(id) {
+    console.log("ES Delete Travel: ", id);
     // For Testing: setTimeout(5000);
-    return axios.delete(book_api_url + `/${id}`);
+    return axios.delete(travel_api_url + `/${id}`);
   },
 };
