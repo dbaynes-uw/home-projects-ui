@@ -46,21 +46,15 @@
                   <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
                 </router-link>
               </span>
-              <span v-if="navigator">
-                <span @click="deleteTravel(travel)">
-                  Delete: {{ Navigator }}
-                </span>
-                <i @click="deleteTravel(travel)"></i>
-                <span
-                  class="fa-table-stack"
-                  style="position: relative; top: 0.5rem; left: 2.3rem"
+              <span
+                class="fa-table-stack"
+                style="position: relative; top: 0.5rem; left: 2.3rem"
+              >
+                <i
+                  @click="deleteTravel(travel)"
+                  class="fas fa-trash-alt fa-stack-1x"
                 >
-                  <i
-                    @click="deleteTravel(travel)"
-                    class="fas fa-trash-alt fa-stack-1x"
-                  >
-                  </i>
-                </span>
+                </i>
               </span>
             </span>
           </td>

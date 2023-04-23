@@ -28,26 +28,44 @@
           </td>
           <td>{{ book.notes }}</td>
           <td style="padding-left: 0">
-            <span class="fa-stack">
+            <span v-if="this.onlineStatus">
+              <span class="fa-stack">
+                <router-link
+                  :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
+                >
+                  <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+                </router-link>
+                <span class="fa-stack fa-table-stack">
+                  <router-link
+                    :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
+                  >
+                    <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px">
+                    </i>
+                  </router-link>
+                </span>
+                <span
+                  class="fa-table-stack"
+                  style="position: relative; top: 0.5rem; left: 2.3rem"
+                >
+                  <i
+                    @click="deleteBook(book)"
+                    class="fas fa-trash-alt fa-stack-1x"
+                  >
+                  </i>
+                </span>
+              </span>
+            </span>
+            <span v-else>
+              <router-link
+                :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
+              >
+                View |
+              </router-link>
               <router-link
                 :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
               >
-                <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+                Edit |
               </router-link>
-              <span class="fa-stack fa-table-stack">
-                <router-link
-                  :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
-                >
-                  <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
-                </router-link>
-              </span>
-              <span v-if="this.onlineStatus">
-                <i
-                  @click="deleteBook(book)"
-                  class="fas fa-trash-alt fa-stack-1x"
-                >
-                </i>
-              </span>
               <span class="ok-btn" @click="deleteBook(book)"><u>Del</u></span>
             </span>
           </td>

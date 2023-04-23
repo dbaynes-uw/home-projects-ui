@@ -1,12 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
-    <h3>Book Details</h3>
-    <div class="legend">
-      <span>Double click to mark as complete.</span>
-      <span><span class="incomplete-box"></span> = Incomplete</span>
-      <span><span class="complete-box"></span> = Complete</span>
-    </div>
+    <h1>Book Details</h1>
     <br />
     <div v-if="book" class="event" id="center-align">
       <h1>
@@ -14,6 +9,7 @@
       </h1>
       <ul class="ul-left">
         <li>
+          Author:
           <b>{{ book.author }}</b>
         </li>
         <li v-if="book.date_written">
@@ -29,7 +25,7 @@
           <b>{{ book.notes }}</b>
         </li>
         <li>
-          Date Created:
+          Date Entered:
           <b>{{ formatStandardDate(book.created_at) }}</b>
         </li>
       </ul>
@@ -99,8 +95,14 @@ export default {
 };
 </script>
 <style scoped>
+.event {
+  font-size: 1.5rem;
+}
 #align-right {
   text-align: center;
+}
+body {
+  font-size: 1.6rem;
 }
 .right-align {
   text-align: right;
