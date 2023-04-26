@@ -3,10 +3,7 @@
     <v-app-bar color="teal-darken-2">
       <v-toolbar-title>Home Projects Dashboard</v-toolbar-title>
       <v-btn text rounded>
-        <a
-          href="http://davids-macbook-pro.local:3000/api/v1/trails"
-          target="_blank"
-        >
+        <a href="http://davids-macbook-pro.local:8080/trails" target="_blank">
           Happy Trails
         </a>
         <router-link :to="{ name: 'About' }">
