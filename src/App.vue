@@ -1,4 +1,44 @@
 <template>
+  <v-app>
+    <v-app-bar color="teal-darken-2">
+      <v-toolbar-title>Home Projects Dashboard</v-toolbar-title>
+      <v-btn text rounded>
+        <a
+          href="http://davids-macbook-pro.local:3000/api/v1/trails"
+          target="_blank"
+        >
+          Happy Trails
+        </a>
+        <router-link :to="{ name: 'About' }">
+          <v-toolbar-title>Home</v-toolbar-title>
+        </router-link>
+      </v-btn>
+      <v-btn text rounded>
+        <router-link :to="{ name: 'EventList' }">Events</router-link>
+      </v-btn>
+      <v-btn text rounded>
+        <router-link :to="{ name: 'TrailList' }">Trails</router-link>
+      </v-btn>
+      <v-btn text rounded>
+        <router-link :to="{ name: 'BookList' }">Books</router-link>
+      </v-btn>
+      <v-btn text rounded>
+        <router-link :to="{ name: 'TravelList' }">Travels</router-link>
+      </v-btn>
+    </v-app-bar>
+  </v-app>
+</template>
+<script>
+export default {
+  name: "App",
+
+  data: () => ({
+    //
+  }),
+};
+</script>
+
+<!--template>
   <nav id="center-nav">
     <router-link :to="{ name: 'About' }">About</router-link> |
     <router-link :to="{ name: 'EventList' }">Events</router-link> |
@@ -7,7 +47,7 @@
     <router-link :to="{ name: 'TravelList' }">Travels</router-link>
   </nav>
   <router-view />
-</template>
+</template-->
 
 <style>
 #app {
@@ -26,11 +66,9 @@ body {
   overflow: auto;
   padding: 0 2rem;
 }
-
 nav {
   padding: 30px;
 }
-
 nav a {
   font-weight: bold;
   color: #2c3e50;
