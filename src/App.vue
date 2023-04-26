@@ -1,14 +1,10 @@
 <template>
   <v-app>
     <v-app-bar color="teal-darken-2">
-      <v-toolbar-title>Home Projects Dashboard</v-toolbar-title>
+      <v-toolbar-title>Vuetify Dashboard</v-toolbar-title>
+      <v-spacer></v-spacer>
       <v-btn text rounded>
-        <a href="http://davids-macbook-pro.local:8080/trails" target="_blank">
-          Happy Trails
-        </a>
-        <router-link :to="{ name: 'About' }">
-          <v-toolbar-title>Home</v-toolbar-title>
-        </router-link>
+        <router-link :to="{ name: 'About' }">About</router-link>
       </v-btn>
       <v-btn text rounded>
         <router-link :to="{ name: 'EventList' }">Events</router-link>
@@ -22,16 +18,33 @@
       <v-btn text rounded>
         <router-link :to="{ name: 'TravelList' }">Travels</router-link>
       </v-btn>
+      <v-btn text rounded>Login</v-btn>
     </v-app-bar>
+    <v-content style="margin-top: 7rem">
+      <router-view></router-view>
+    </v-content>
+    <!--v-footer color="primary lighten-1" padless>
+      <v-layout justify-center wrap>
+        <v-btn
+          v-for="link in links"
+          :key="link"
+          color="white"
+          text
+          rounded
+          class="my-2"
+        >
+          {{ link }}
+        </v-btn>
+        <v-flex primary lighten-2 py-4 text-center white--text xs12>
+          {{ new Date().getFullYear() }} — <strong>Vuetify Dashboard</strong>
+        </v-flex>
+      </v-layout>
+    </v-footer-->
   </v-app>
 </template>
 <script>
 export default {
   name: "App",
-
-  data: () => ({
-    //
-  }),
 };
 </script>
 
@@ -44,7 +57,7 @@ export default {
     <router-link :to="{ name: 'TravelList' }">Travels</router-link>
   </nav>
   <router-view />
-</template-->
+</template>
 
 <style>
 #app {
@@ -155,4 +168,4 @@ input::-webkit-inner-spin-button {
     grid-template.columns: 1fr;
   }
 }
-</style>
+</style-->

@@ -29,7 +29,7 @@
           <td>{{ book.notes }}</td>
           <td style="padding-left: 0">
             <span v-if="this.onlineStatus">
-              <span class="fa-stack">
+              <span class="fa-stack" style="left: -0.5rem !important">
                 <router-link
                   :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
                 >
