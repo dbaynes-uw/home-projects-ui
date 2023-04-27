@@ -21,10 +21,16 @@ import TrailEdit from "@/views/trails/TrailEdit.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserList from "../views/users/UserList.vue";
 import About from "../views/About.vue";
+import Login from "../views/Login.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventsAssigned from "@/views/events/EventsAssigned.vue";
 
 const routes = [
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+  },
   {
     path: "/about",
     name: "About",

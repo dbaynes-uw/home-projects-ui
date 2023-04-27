@@ -3,48 +3,84 @@
     <v-app-bar color="teal-darken-2">
       <v-toolbar-title>Vuetify Dashboard</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text rounded>
-        <router-link :to="{ name: 'About' }">About</router-link>
+      <v-btn
+        v-for="link in links"
+        :key="`${link.label}-header-link`"
+        text
+        rounded
+      >
+        <router-link :to="{ name: `${link.label}` }">
+          {{ link.title }}
+        </router-link>
       </v-btn>
-      <v-btn text rounded>
-        <router-link :to="{ name: 'EventList' }">Events</router-link>
-      </v-btn>
-      <v-btn text rounded>
-        <router-link :to="{ name: 'TrailList' }">Trails</router-link>
-      </v-btn>
-      <v-btn text rounded>
-        <router-link :to="{ name: 'BookList' }">Books</router-link>
-      </v-btn>
-      <v-btn text rounded>
-        <router-link :to="{ name: 'TravelList' }">Travels</router-link>
-      </v-btn>
-      <v-btn text rounded>Login</v-btn>
     </v-app-bar>
     <v-content style="margin-top: 7rem">
       <router-view></router-view>
     </v-content>
-    <!--v-footer color="primary lighten-1" padless>
+    <v-footer
+      color="teal-darken-2"
+      padless
+      style="display: flex; flex: 0 0 auto !important; top: 2rem"
+    >
       <v-layout justify-center wrap>
         <v-btn
           v-for="link in links"
-          :key="link"
+          :key="`${link.label}-footer-link`"
           color="white"
           text
           rounded
           class="my-2"
         >
-          {{ link }}
+          <router-link :to="{ name: `${link.label}` }">
+            {{ link.title }}
+          </router-link>
         </v-btn>
         <v-flex primary lighten-2 py-4 text-center white--text xs12>
           {{ new Date().getFullYear() }} — <strong>Vuetify Dashboard</strong>
         </v-flex>
       </v-layout>
-    </v-footer-->
+    </v-footer>
   </v-app>
 </template>
 <script>
 export default {
   name: "App",
+  data() {
+    return {
+      links: [
+        {
+          label: "About",
+          url: "/about",
+          title: "About",
+        },
+        {
+          label: "EventList",
+          url: "/",
+          title: "Events",
+        },
+        {
+          label: "BookList",
+          url: "/books",
+          title: "Books",
+        },
+        {
+          label: "TrailList",
+          url: "/trails",
+          title: "Trails",
+        },
+        {
+          label: "TravelList",
+          url: "/travels",
+          title: "Travels",
+        },
+        {
+          label: "Login",
+          url: "/login",
+          title: "Login",
+        },
+      ],
+    };
+  },
 };
 </script>
 

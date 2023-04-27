@@ -10,7 +10,8 @@
     </h2>
     <br />
     <div class="book-list">
-      <table class="table-index-style">
+      <!--table class="table-index-style"-->
+      <v-table density="compact">
         <tr>
           <th>Title</th>
           <th>Author</th>
@@ -70,7 +71,8 @@
             </span>
           </td>
         </tr>
-      </table>
+        <!--/table-->
+      </v-table>
       Online Status: {{ this.onlineStatus }}
     </div>
   </div>

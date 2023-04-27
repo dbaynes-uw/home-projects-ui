@@ -1,7 +1,7 @@
 <template>
   <div class="event-statistics">
     <h1 class="center">Event Statistics</h1>
-    <table>
+    <v-table theme="dark">
       <tr>
         <td>
           <h2 class="h2-status">Event Assignments:</h2>
@@ -151,7 +151,7 @@
           </h2>
         </td>
       </tr>
-    </table>
+    </v-table>
     <br />
     <span class="fa-stack">
       <router-link :to="{ name: 'EventList' }">

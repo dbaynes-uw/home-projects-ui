@@ -23,15 +23,13 @@
   </v-card>
 </template>
 
-<script lang="ts">
- export default {
-  name: "LoginPage",
+<script>
+export default {
+  name: "Login",
   data() {
     return {
       showPassword: false,
-      links: ["Home", "Login"],
     };
   },
-}
+};
 </script>
-
