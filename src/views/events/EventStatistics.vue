@@ -1,10 +1,10 @@
 <template>
   <div class="event-statistics">
-    <h1 class="center">Event Statistics</h1>
-    <v-table theme="dark">
+    <h1 class="center" style="padding-bottom: 2rem">Event Statistics</h1>
+    <v-table>
       <tr>
-        <td>
-          <h2 class="h2-status">Event Assignments:</h2>
+        <td style="width: 30%">
+          <h2>Event Assignments:</h2>
         </td>
       </tr>
       <tr v-for="(v, k) in events.assigned" :key="k">
@@ -15,15 +15,10 @@
               params: { statistic: assigned + '-' + k },
             }"
           >
-            <h2 class="h2-status-category">{{ k }}:</h2>
+            {{ k }}:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          <h2>
-            {{ v }}
-          </h2>
-        </td>
+        <td>{{ v }}</td>
       </tr>
       <tr>
         <td>
@@ -33,14 +28,11 @@
               params: { statistic: notCompleted },
             }"
           >
-            <h2 class="h2-status">Events Planned:</h2>
+            Events Planned:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-          <h2 style="text-align: right">
-            {{ events.notCompleted }}
-          </h2>
+          {{ events.notCompleted }}
         </td>
       </tr>
       <tr>
@@ -51,15 +43,10 @@
               params: { statistic: notAssigned },
             }"
           >
-            <h2 class="h2-status">Events NOT Assigned:</h2>
+            Events NOT Assigned:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          <h2 style="text-align: right">
-            {{ events.notAssigned }}
-          </h2>
-        </td>
+        <td>{{ events.notAssigned }}</td>
       </tr>
       <tr>
         <td>
@@ -69,33 +56,23 @@
               params: { statistic: completed },
             }"
           >
-            <h2 class="h2-status">Events Completed:</h2>
+            Events Completed:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          <h2 style="text-align: right">
-            {{ events.completed }}
-          </h2>
-        </td>
+        <td>{{ events.completed }}</td>
       </tr>
       <tr>
         <td>
           <router-link
             :to="{
               name: 'EventStatisticDetail',
-              params: { statistic: past },
+              params: { statistic: pastDue },
             }"
           >
-            <h2 class="h2-status">Events Past Due:</h2>
+            Events Past Due:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td>
-          <h2 style="text-align: right">
-            {{ events.pastDue }}
-          </h2>
-        </td>
+        <td>{{ events.pastDue }}</td>
       </tr>
       <tr>
         <td>
@@ -105,14 +82,11 @@
               params: { statistic: dueToday },
             }"
           >
-            <h2 class="h2-status">Events Due Today:</h2>
+            Events Due Today:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-          <h2 style="text-align: right">
-            {{ events.dueToday }}
-          </h2>
+          {{ events.dueToday }}
         </td>
       </tr>
       <tr>
@@ -123,14 +97,11 @@
               params: { statistic: dueThisWeek },
             }"
           >
-            <h2 class="h2-status">Events Due This Week:</h2>
+            Events Due This Week:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-          <h2 style="text-align: right">
-            {{ events.dueThisWeek }}
-          </h2>
+          {{ events.dueThisWeek }}
         </td>
       </tr>
       <tr>
@@ -141,14 +112,11 @@
               params: { statistic: dueNextWeek },
             }"
           >
-            <h2 class="h2-status">Events Due Next Week:</h2>
+            Events Due Next Week:
           </router-link>
         </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-          <h2 style="text-align: right">
-            {{ events.dueNextWeek }}
-          </h2>
+          {{ events.dueNextWeek }}
         </td>
       </tr>
     </v-table>
@@ -169,7 +137,7 @@ export default {
     return {
       eventStatistics: null,
       eventsAssigned: null,
-      past: "past",
+      pastDue: "past_due",
       assigned: "assigned",
       notAssigned: "not_assigned",
       completed: "completed",
@@ -214,9 +182,11 @@ export default {
 .center {
   text-align: center;
 }
+/*
 tr {
   line-height: 0.5 !important;
 }
+*/
 .h2-status {
   text-decoration-line: underline;
 }
