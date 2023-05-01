@@ -5,11 +5,15 @@
     </v-card-title>
     <v-card-text>
       <v-form>
-        <v-text-field label="Username" prepend-icon="mdi-account-circle" />
+        <v-text-field label="Username">
+          <template v-slot:append>
+            <v-icon class="icon-css">mdi-account-circle</v-icon>
+          </template>
+        </v-text-field>
         <v-text-field
           :type="showPassword ? 'text' : 'password'"
           label="Password"
-          prepend-icon="mdi-lock"
+          aria-hidden="true"
           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append="showPassword = !showPassword"
         />

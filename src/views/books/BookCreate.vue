@@ -1,52 +1,52 @@
 <template>
-  <h1>Create a Book to Track</h1>
-  <div class="form-container">
-    <form class="add-form" @submit.prevent="onSubmit">
-      <label>Title</label>
-      <input
-        v-model="book.title"
-        type="text"
-        class="text-style"
-        placeholder="Book Title"
-        required
-      />
-      <label>Author</label>
-      <input
-        v-model="book.author"
-        type="text"
-        class="text-style"
-        placeholder="Author"
-        required
-      />
-      <label for="date_last_hiked">Date Written:</label>
-      <input type="date" class="text-style" v-model="book.date_written" />
-      <label>Url to Review</label>
-      <input
-        v-model="book.url_to_review"
-        type="text"
-        :maxlength="urlMaxLength"
-        class="text-style"
-        placeholder="URL to Review"
-      />
-      <span>
-        {{ urlMaxLength - book.url_to_review.length }} / {{ urlMaxLength }}
-      </span>
-      <label>Notes</label>
-      <input
-        v-model="book.notes"
-        type="text"
-        placeholder="Notes"
-        class="text-style"
-      />
-      <button class="button" type="submit">Submit</button>
-    </form>
-  </div>
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h3>Add Book to Collection</h3>
+    </v-card-title>
+  </v-card>
+  <v-card-text>
+    <v-form>
+      <v-containter>
+        <v-text-field label="Title" v-model="book.title">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Author" v-model="book.author">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-account-circle</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Date Written" v-model="book.date_written">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Url to Review" v-model="book.url_to_review">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-book</v-icon>
+          </template>
+        </v-text-field>
+        <span>
+          {{ urlMaxLength - book.url_to_review.length }} / {{ urlMaxLength }}
+        </span>
+        <v-text-field label="Notes" v-model="book.notes">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-note</v-icon>
+          </template>
+        </v-text-field>
+        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
+        <!--button class="button" type="submit">Submit</button-->
+      </v-containter>
+    </v-form>
+  </v-card-text>
 </template>
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
   data() {
     return {
+      isVisible: false,
       book: {
         title: "",
         author: "",
@@ -61,6 +61,7 @@ export default {
   },
   methods: {
     onSubmit() {
+      console.log("ON SUBMIT REFFED!!");
       const book = {
         ...this.book,
         id: uuidv4(),
