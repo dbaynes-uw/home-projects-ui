@@ -18,6 +18,9 @@
           </template>
         </v-text-field>
         <v-text-field label="Date Written" v-model="book.date_written">
+          <template>
+            <Datepicker v-model="picked" />
+          </template>
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
@@ -41,16 +44,26 @@
     </v-form>
   </v-card-text>
 </template>
+<script setup>
+import Datepicker from "vue3-datepicker";
+import { ref } from "vue";
+const picked = ref(new Date());
+</script>
+
 <script>
 import { v4 as uuidv4 } from "uuid";
+
 export default {
+  components: {
+    Datepicker,
+  },
   data() {
     return {
       isVisible: false,
       book: {
         title: "",
         author: "",
-        date_written: "",
+        date_written: new Date(),
         url_to_review: "",
         notes: "",
         created_by: "dbaynes",
