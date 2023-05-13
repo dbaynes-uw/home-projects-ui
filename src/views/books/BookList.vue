@@ -13,7 +13,7 @@
       <!--table class="table-index-style"-->
       <v-table density="compact">
         <tr>
-          <th>Title</th>
+          <th @click="sortList('title')">Title</th>
           <th>Author</th>
           <th>Date Written</th>
           <th>URL to Review</th>
@@ -87,6 +87,8 @@ export default {
   },
   data() {
     return {
+      sortedData: [],
+      sortedbyASC: false,
       description: null,
       frequency: null,
       completed: 0,
@@ -94,9 +96,15 @@ export default {
       onlineStatus: navigator.onLine,
     };
   },
+  mounted() {
+    this.sortedData = this.books;
+    console.log("Mounted - this.sortedData: ", this.sortedData);
+  },
   created() {
     console.log("Created Store Dispatch - fetchBooks. ");
     this.$store.dispatch("fetchBooks");
+    this.sortedData = this.books;
+    console.log("Created - this.sortedData: ", this.sortedData);
   },
   computed: {
     books() {
@@ -105,6 +113,19 @@ export default {
     },
   },
   methods: {
+    sortList(sortBy) {
+      this.sortedData = this.books;
+      console.log("SORTLIST - sortedData: ", this.sortedData);
+      console.log("SORTLIST: ", sortBy);
+      console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);
+      if (this.sortedbyASC) {
+        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+        this.sortedbyASC = false;
+      } else {
+        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+        this.sortedbyASC = true;
+      }
+    },
     //isOffline() {
     //  this.isOnline = false;
     //  console.log("isOffline - this.isOnline = ", this.isOnline);
