@@ -14,8 +14,8 @@
       <v-table density="compact">
         <tr>
           <th @click="sortList('title')">Title</th>
-          <th>Author</th>
-          <th>Date Written</th>
+          <th @click="sortList('author')">Author</th>
+          <th @click="sortList('date_written')">Date Written</th>
           <th>URL to Review</th>
           <th>Notes</th>
           <th style="text-align: right">Actions</th>
@@ -159,7 +159,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<!--style scoped>
 .table-index-style {
   width: 100%;
   border-collapse: collapse;
@@ -200,5 +200,28 @@ tr.is-complete {
 #status-message {
   text-align: center;
   color: navy;
+}
+</style-->
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th:hover {
+  cursor: pointer;
+  background: rgb(229, 255, 211);
+}
+
+tr:nth-child(even) {
+  background-color: #f3f3f3;
 }
 </style>
