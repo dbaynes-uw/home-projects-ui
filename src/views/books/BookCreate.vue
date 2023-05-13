@@ -17,19 +17,12 @@
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Date Written" v-model="book.date_written">
-          <template>
-            <Datepicker v-model="picked" />
-          </template>
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Url to Review" v-model="book.url_to_review">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-book</v-icon>
-          </template>
-        </v-text-field>
+        <VueDatePicker
+          v-model="book.date_written"
+          placeholder="Date Written"
+          :format="format"
+        />
+        <v-text-field label="Url to Review" v-model="book.url_to_review" />
         <span>
           {{ urlMaxLength - book.url_to_review.length }} / {{ urlMaxLength }}
         </span>
@@ -45,25 +38,32 @@
   </v-card-text>
 </template>
 <script setup>
-import Datepicker from "vue3-datepicker";
-import { ref } from "vue";
-const picked = ref(new Date());
+const format = (date) => {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  console.log("DATE: ", date);
+  console.log("Month: ", month);
+  console.log("Day: ", day);
+  console.log("Year: ", year);
+  return `${month}/${day}/${year}`;
+};
 </script>
 
 <script>
 import { v4 as uuidv4 } from "uuid";
-
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 export default {
   components: {
-    Datepicker,
+    VueDatePicker,
   },
   data() {
     return {
-      isVisible: false,
       book: {
         title: "",
         author: "",
-        date_written: new Date(),
+        date_written: null,
         url_to_review: "",
         notes: "",
         created_by: "dbaynes",
@@ -74,7 +74,6 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log("ON SUBMIT REFFED!!");
       const book = {
         ...this.book,
         id: uuidv4(),
@@ -145,5 +144,27 @@ legend {
   font-size: 28px;
   font-weight: 700;
   margin-top: 20px;
+}
+.label-visible {
+  top: -35px;
+  left: 4px;
+  visibility: visible;
+}
+.label-invisible {
+  top: -10px;
+  left: 4px;
+  visibility: hidden;
+}
+.input-field {
+  margin-top: 30px;
+  position: relative;
+}
+.input-field > input {
+  width: 100%;
+}
+.input-field > p {
+  position: absolute;
+  font-size: 14px;
+  transition: 0.3s;
 }
 </style>
