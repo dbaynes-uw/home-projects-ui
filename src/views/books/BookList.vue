@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div>
+  <div class="div-frame">
     <h2>Book List</h2>
     <h2 id="status-message">
       <u>{{ this.statusMessage }}</u>
@@ -9,39 +9,59 @@
       <router-link :to="{ name: 'BookCreate' }">Add Book</router-link>
     </h2>
     <br />
+    <div style="width: 100%">
+      <div class="auto-search-container">
+        <input
+          type="text"
+          class="np-input-search"
+          v-model="inputSearchText"
+          placeholder="Search"
+          autocomplete="off"
+          v-on:keyup="searchTitles"
+        />
+      </div>
+    </div>
     <div class="book-list">
       <!--table class="table-index-style"-->
-      <v-table density="compact">
-        <tr>
-          <th @click="sortList('title')">Title</th>
-          <th @click="sortList('author')">Author</th>
-          <th @click="sortList('date_written')">Date Written</th>
-          <th>URL to Review</th>
-          <th>Notes</th>
-          <th style="text-align: right">Actions</th>
-        </tr>
-        <tr v-for="book in books" :key="book.id" :book="book">
-          <td>{{ book.title }}</td>
-          <td>{{ book.author }}</td>
-          <td>{{ formatFullYearDate(book.date_written) }}</td>
-          <td>
-            <a :href="book.url_to_review" target="_blank">Review</a>
-          </td>
-          <td>{{ book.notes }}</td>
-          <td style="padding-left: 0">
-            <span v-if="this.onlineStatus">
-              <span class="fa-stack" style="left: -0.5rem !important">
-                <router-link
-                  :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
-                >
-                  <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-                </router-link>
+      <span v-if="filteredResult.length == 0">
+        <v-table>
+          <tr>
+            <th @click="sortList('title')">Title</th>
+            <th @click="sortList('author')">Author</th>
+            <th @click="sortList('date_written')">Date Written</th>
+            <th>URL to Review</th>
+            <th>Notes</th>
+            <th style="text-align: right">Actions</th>
+          </tr>
+          <tr v-for="book in books" :key="book.id" :book="book">
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ formatFullYearDate(book.date_written) }}</td>
+            <td>
+              <a :href="book.url_to_review" target="_blank">Review</a>
+            </td>
+            <td>{{ book.notes }}</td>
+            <td>
+              <span v-if="this.onlineStatus">
+                <span class="fa-stack">
+                  <router-link
+                    :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
+                  >
+                    <i
+                      class="fa-solid fa-pen-to-square fa-stack-1x fa-sm"
+                      id="book-icon-edit"
+                    >
+                    </i>
+                  </router-link>
+                </span>
                 <span class="fa-stack fa-table-stack">
                   <router-link
-                    :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
+                    :to="{
+                      name: 'BookDetails',
+                      params: { id: `${book.id}` },
+                    }"
                   >
-                    <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px">
-                    </i>
+                    <i class="fa-regular fa-eye fa-sm" id="book-icon-eye"></i>
                   </router-link>
                 </span>
                 <span
@@ -51,28 +71,99 @@
                   <i
                     @click="deleteBook(book)"
                     class="fas fa-trash-alt fa-stack-1x"
+                    id="book-icon-delete"
                   >
                   </i>
                 </span>
               </span>
-            </span>
-            <span v-else>
-              <router-link
-                :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
-              >
-                View |
-              </router-link>
-              <router-link
-                :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
-              >
-                Edit |
-              </router-link>
-              <span class="ok-btn" @click="deleteBook(book)"><u>Del</u></span>
-            </span>
-          </td>
-        </tr>
-        <!--/table-->
-      </v-table>
+              <span v-else>
+                <router-link
+                  :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
+                >
+                  View |
+                </router-link>
+                <router-link
+                  :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
+                >
+                  Edit |
+                </router-link>
+                <span class="ok-btn" @click="deleteBook(book)"><u>Del</u></span>
+              </span>
+            </td>
+          </tr>
+        </v-table>
+      </span>
+      <span v-if="filteredResult.length > 0">
+        <v-table density="compact">
+          <tr>
+            <th @click="sortList('title')">Title</th>
+            <th @click="sortList('author')">Author</th>
+            <th @click="sortList('date_written')">Date Written</th>
+            <th>URL to Review</th>
+            <th>Notes</th>
+            <th style="text-align: right">Actions</th>
+          </tr>
+          <tr
+            v-for="(result, resultIndex) in filteredResult"
+            :key="resultIndex"
+          >
+            <td>{{ result.title }}</td>
+            <td>{{ result.author }}</td>
+            <td>{{ formatFullYearDate(result.date_written) }}</td>
+            <td>
+              <a :href="result.url_to_review" target="_blank">Review</a>
+            </td>
+            <td>{{ result.notes }}</td>
+            <td style="padding-left: 0">
+              <span v-if="this.onlineStatus">
+                <span class="fa-stack fa-table-stack">
+                  <router-link
+                    :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
+                  >
+                    <i
+                      class="fa-solid fa-pen-to-square fa-stack-1x"
+                      id="book-icon-edit"
+                    >
+                    </i>
+                  </router-link>
+                  <router-link
+                    :to="{
+                      name: 'BookDetails',
+                      params: { id: `${result.id}` },
+                    }"
+                  >
+                    <i class="fa fa-eye" id="book-icon-eye"></i>
+                  </router-link>
+                  <i
+                    @click="deleteBook(result)"
+                    class="fas fa-trash-alt fa-stack-1x"
+                    id="book-icon-delete"
+                  >
+                  </i>
+                </span>
+              </span>
+              <span v-else>
+                <router-link
+                  :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
+                >
+                  View |
+                </router-link>
+                <router-link
+                  :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
+                >
+                  Edit |
+                </router-link>
+                <span class="ok-btn" @click="deleteBook(result)">
+                  <u>Del</u>
+                </span>
+              </span>
+            </td>
+          </tr>
+        </v-table>
+        <!--div>
+          <BookSearchResults />
+        </div-->
+      </span>
       Online Status: {{ this.onlineStatus }}
     </div>
   </div>
@@ -87,6 +178,9 @@ export default {
   },
   data() {
     return {
+      inputSearchText: "",
+      filteredResult: [],
+      titleDetails: null,
       sortedData: [],
       sortedbyASC: false,
       description: null,
@@ -113,6 +207,53 @@ export default {
     },
   },
   methods: {
+    searchTitles() {
+      console.log("SEARCH TITLES!!!");
+      this.filteredResult = [];
+      this.titleDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        console.log("Search Text is Null");
+        this.filteredResult = [];
+        this.titleDetails = null;
+      } else {
+        console.log("Search Text is NOT Null");
+        console.log("this.books.length: ", this.books.length);
+        console.log(
+          "this.inputSearchText.length: ",
+          this.inputSearchText.length
+        );
+        if (
+          this.books &&
+          this.books.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.books.forEach((book) => {
+            const searchHasTitle =
+              book.title &&
+              book.title
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            console.log("SearchHasTitle: ", searchHasTitle);
+            const searchHasAuthor =
+              book.author &&
+              book.author
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            console.log("SearchHasAuthor: ", searchHasAuthor);
+            if (searchHasTitle || searchHasAuthor) {
+              this.filteredResult.push(book);
+              console.log("this.filteredResult.push(book): ", book);
+            }
+          });
+        }
+      }
+    },
+    showCharacterDetails(result) {
+      this.characterDetails = result;
+    },
     sortList(sortBy) {
       this.sortedData = this.books;
       console.log("SORTLIST - sortedData: ", this.sortedData);
