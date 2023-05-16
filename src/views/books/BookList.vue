@@ -22,147 +22,11 @@
       </div>
     </div>
     <div class="book-list">
-      <!--table class="table-index-style"-->
       <span v-if="filteredResult.length == 0">
-        <v-table>
-          <tr>
-            <th @click="sortList('title')">Title</th>
-            <th @click="sortList('author')">Author</th>
-            <th @click="sortList('date_written')">Date Written</th>
-            <th>URL to Review</th>
-            <th>Notes</th>
-            <th style="text-align: right">Actions</th>
-          </tr>
-          <tr v-for="book in books" :key="book.id" :book="book">
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ formatFullYearDate(book.date_written) }}</td>
-            <td>
-              <a :href="book.url_to_review" target="_blank">Review</a>
-            </td>
-            <td>{{ book.notes }}</td>
-            <td>
-              <span v-if="this.onlineStatus">
-                <span class="fa-stack">
-                  <router-link
-                    :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
-                  >
-                    <i
-                      class="fa-solid fa-pen-to-square fa-stack-1x fa-sm"
-                      id="book-icon-edit"
-                    >
-                    </i>
-                  </router-link>
-                </span>
-                <span class="fa-stack fa-table-stack">
-                  <router-link
-                    :to="{
-                      name: 'BookDetails',
-                      params: { id: `${book.id}` },
-                    }"
-                  >
-                    <i class="fa-regular fa-eye fa-sm" id="book-icon-eye"></i>
-                  </router-link>
-                </span>
-                <span
-                  class="fa-table-stack"
-                  style="position: relative; top: 0.5rem; left: 2.3rem"
-                >
-                  <i
-                    @click="deleteBook(book)"
-                    class="fas fa-trash-alt fa-stack-1x"
-                    id="book-icon-delete"
-                  >
-                  </i>
-                </span>
-              </span>
-              <span v-else>
-                <router-link
-                  :to="{ name: 'BookDetails', params: { id: `${book.id}` } }"
-                >
-                  View |
-                </router-link>
-                <router-link
-                  :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
-                >
-                  Edit |
-                </router-link>
-                <span class="ok-btn" @click="deleteBook(book)"><u>Del</u></span>
-              </span>
-            </td>
-          </tr>
-        </v-table>
+        <BookIndex :books="books" />
       </span>
       <span v-if="filteredResult.length > 0">
-        <v-table density="compact">
-          <tr>
-            <th @click="sortList('title')">Title</th>
-            <th @click="sortList('author')">Author</th>
-            <th @click="sortList('date_written')">Date Written</th>
-            <th>URL to Review</th>
-            <th>Notes</th>
-            <th style="text-align: right">Actions</th>
-          </tr>
-          <tr
-            v-for="(result, resultIndex) in filteredResult"
-            :key="resultIndex"
-          >
-            <td>{{ result.title }}</td>
-            <td>{{ result.author }}</td>
-            <td>{{ formatFullYearDate(result.date_written) }}</td>
-            <td>
-              <a :href="result.url_to_review" target="_blank">Review</a>
-            </td>
-            <td>{{ result.notes }}</td>
-            <td style="padding-left: 0">
-              <span v-if="this.onlineStatus">
-                <span class="fa-stack fa-table-stack">
-                  <router-link
-                    :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
-                  >
-                    <i
-                      class="fa-solid fa-pen-to-square fa-stack-1x"
-                      id="book-icon-edit"
-                    >
-                    </i>
-                  </router-link>
-                  <router-link
-                    :to="{
-                      name: 'BookDetails',
-                      params: { id: `${result.id}` },
-                    }"
-                  >
-                    <i class="fa fa-eye" id="book-icon-eye"></i>
-                  </router-link>
-                  <i
-                    @click="deleteBook(result)"
-                    class="fas fa-trash-alt fa-stack-1x"
-                    id="book-icon-delete"
-                  >
-                  </i>
-                </span>
-              </span>
-              <span v-else>
-                <router-link
-                  :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
-                >
-                  View |
-                </router-link>
-                <router-link
-                  :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
-                >
-                  Edit |
-                </router-link>
-                <span class="ok-btn" @click="deleteBook(result)">
-                  <u>Del</u>
-                </span>
-              </span>
-            </td>
-          </tr>
-        </v-table>
-        <!--div>
-          <BookSearchResults />
-        </div-->
+        <BookSearchResults :filteredResult="filteredResult" />
       </span>
       Online Status: {{ this.onlineStatus }}
     </div>
@@ -171,10 +35,15 @@
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import BookIndex from "@/components/BookIndex.vue";
+import BookSearchResults from "@/components/BookSearchResults.vue";
 export default {
   name: "BookList",
+  props: ["books:, filteredResult[]"],
   components: {
     ConfirmDialogue,
+    BookIndex,
+    BookSearchResults,
   },
   data() {
     return {
@@ -275,25 +144,6 @@ export default {
     //  this.isOnline = true;
     //  console.log("isOnline - this.isOnline = ", this.isOnline);
     //},
-    async deleteBook(book) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Book from List",
-        message:
-          "Are you sure you want to delete " +
-          book.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteBook", book);
-        this.statusMessage =
-          "Book was Deleted for " +
-          book.title +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-      }
-    },
     formatFullYearDate(value) {
       return DateFormatService.formatFullYearDate(value);
     },

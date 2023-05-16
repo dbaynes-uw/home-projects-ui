@@ -9,7 +9,7 @@
       <th>Notes</th>
       <th style="text-align: right">Actions</th>
     </tr>
-    <tr v-for="(result, resultIndex) in filteredResult" :key="resultIndex">
+    <tr v-for="(result, resultIndex) in books" :key="resultIndex">
       <td>{{ result.title }}</td>
       <td>{{ result.author }}</td>
       <td>{{ formatFullYearDate(result.date_written) }}</td>
@@ -73,8 +73,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "BookSearchResults",
-  props: ["filteredResult"],
+  name: "BookIndex",
+  props: ["books"],
   components: {
     ConfirmDialogue,
   },
@@ -89,7 +89,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.filteredResult;
+      this.sortedData = this.books;
       console.log("SORTLIST - sortedData: ", this.sortedData);
       console.log("SORTLIST: ", sortBy);
       console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);
@@ -99,6 +99,25 @@ export default {
       } else {
         this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
         this.sortedbyASC = true;
+      }
+    },
+    async deleteBook(book) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Book from List",
+        message:
+          "Are you sure you want to delete " +
+          book.title +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteBook", book);
+        this.statusMessage =
+          "Book was Deleted for " +
+          book.title +
+          "! Page will restore in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
       }
     },
     formatFullYearDate(value) {
