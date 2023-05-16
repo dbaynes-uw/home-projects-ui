@@ -56,39 +56,27 @@ export default {
   },
   mounted() {
     this.sortedData = this.books;
-    console.log("Mounted - this.sortedData: ", this.sortedData);
   },
   created() {
-    console.log("Created Store Dispatch - fetchBooks. ");
     this.$store.dispatch("fetchBooks");
     this.sortedData = this.books;
-    console.log("Created - this.sortedData: ", this.sortedData);
   },
   computed: {
     books() {
-      console.log("Computed Store Dispatch - fetchBooks. ");
       return this.$store.state.books;
     },
   },
   methods: {
     searchTitles() {
-      console.log("SEARCH TITLES!!!");
       this.filteredResult = [];
       this.titleDetails = null;
       if (
         this.inputSearchText == null ||
         (this.inputSearchText != null && this.inputSearchText.length === 0)
       ) {
-        console.log("Search Text is Null");
         this.filteredResult = [];
         this.titleDetails = null;
       } else {
-        console.log("Search Text is NOT Null");
-        console.log("this.books.length: ", this.books.length);
-        console.log(
-          "this.inputSearchText.length: ",
-          this.inputSearchText.length
-        );
         if (
           this.books &&
           this.books.length > 0 &&
@@ -100,16 +88,13 @@ export default {
               book.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            console.log("SearchHasTitle: ", searchHasTitle);
             const searchHasAuthor =
               book.author &&
               book.author
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            console.log("SearchHasAuthor: ", searchHasAuthor);
             if (searchHasTitle || searchHasAuthor) {
               this.filteredResult.push(book);
-              console.log("this.filteredResult.push(book): ", book);
             }
           });
         }
