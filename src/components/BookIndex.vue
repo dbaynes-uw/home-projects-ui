@@ -87,6 +87,39 @@ export default {
     };
   },
   methods: {
+    searchTitles() {
+      this.filteredResult = [];
+      this.titleDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        this.filteredResult = [];
+        this.titleDetails = null;
+      } else {
+        if (
+          this.books &&
+          this.books.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.books.forEach((book) => {
+            const searchHasTitle =
+              book.title &&
+              book.title
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            const searchHasAuthor =
+              book.author &&
+              book.author
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            if (searchHasTitle || searchHasAuthor) {
+              this.filteredResult.push(book);
+            }
+          });
+        }
+      }
+    },
     showCharacterDetails(result) {
       this.characterDetails = result;
     },
