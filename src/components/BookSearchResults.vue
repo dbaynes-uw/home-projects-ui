@@ -92,9 +92,6 @@ export default {
     },
     sortList(sortBy) {
       this.sortedData = this.filteredResult;
-      console.log("SORTLIST - sortedData: ", this.sortedData);
-      console.log("SORTLIST: ", sortBy);
-      console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;
