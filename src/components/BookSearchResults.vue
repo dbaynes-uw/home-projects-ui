@@ -68,6 +68,8 @@
       </td>
     </tr>
   </v-table>
+  <br />
+  <b>Online Status: {{ this.onlineStatus }}</b>
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";

@@ -1,5 +1,4 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="div-frame">
     <h2>Book List</h2>
     <h2 id="status-message">
@@ -28,12 +27,10 @@
       <span v-if="filteredResult.length > 0">
         <BookSearchResults :filteredResult="filteredResult" />
       </span>
-      Online Status: {{ this.onlineStatus }}
     </div>
   </div>
 </template>
 <script>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import BookIndex from "@/components/BookIndex.vue";
 import BookSearchResults from "@/components/BookSearchResults.vue";
@@ -41,7 +38,6 @@ export default {
   name: "BookList",
   props: ["books:, filteredResult[]"],
   components: {
-    ConfirmDialogue,
     BookIndex,
     BookSearchResults,
   },
@@ -56,7 +52,6 @@ export default {
       frequency: null,
       completed: 0,
       statusMessage: "",
-      onlineStatus: navigator.onLine,
     };
   },
   mounted() {
