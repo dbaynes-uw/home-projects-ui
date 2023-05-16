@@ -19,31 +19,26 @@
       <td>{{ result.notes }}</td>
       <td>
         <span v-if="this.onlineStatus">
-          <span class="fa-stack">
+          <span class="fa-stack fa-table-stack">
+            <i
+              class="fa-solid fa-pen-to-square fa-stack-1x fa-sm"
+              id="book-icon-edit"
+            >
+            </i>
             <router-link
               :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
             >
-              <i
-                class="fa-solid fa-pen-to-square fa-stack-1x fa-sm"
-                id="book-icon-edit"
-              >
-              </i>
             </router-link>
-          </span>
-          <span class="fa-stack fa-table-stack">
+            &nbsp;
+            <i class="fa-regular fa-eye fa-sm" id="book-icon-eye"></i>
             <router-link
               :to="{
                 name: 'BookDetails',
                 params: { id: `${result.id}` },
               }"
             >
-              <i class="fa-regular fa-eye fa-sm" id="book-icon-eye"></i>
             </router-link>
-          </span>
-          <span
-            class="fa-table-stack"
-            style="position: relative; top: 0.5rem; left: 2.3rem"
-          >
+            &nbsp;
             <i
               @click="deleteBook(result)"
               class="fas fa-trash-alt fa-stack-1x"
