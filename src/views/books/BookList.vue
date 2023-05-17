@@ -21,22 +21,22 @@
       </div>
     </div>
     <div class="book-list">
-      <span v-if="filteredResult.length == 0">
+      <span v-if="filteredResults.length == 0">
         <BookIndex :books="books" />
       </span>
-      <span v-if="filteredResult.length > 0">
-        <BookSearchResults :filteredResult="filteredResult" />
+      <span v-if="filteredResults.length > 0">
+        <BookSearchResults :filteredResults="filteredResults" />
       </span>
     </div>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import BookIndex from "@/components/BookIndex.vue";
-import BookSearchResults from "@/components/BookSearchResults.vue";
+import BookIndex from "@/components/books/BookIndex.vue";
+import BookSearchResults from "@/components/books/BookSearchResults.vue";
 export default {
   name: "BookList",
-  props: ["books:, filteredResult[]"],
+  props: ["books:, filteredResults[]"],
   components: {
     BookIndex,
     BookSearchResults,
@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       inputSearchText: "",
-      filteredResult: [],
+      filteredResults: [],
       titleDetails: null,
       sortedData: [],
       sortedbyASC: false,
@@ -68,13 +68,13 @@ export default {
   },
   methods: {
     searchTitles() {
-      this.filteredResult = [];
+      this.filteredResults = [];
       this.titleDetails = null;
       if (
         this.inputSearchText == null ||
         (this.inputSearchText != null && this.inputSearchText.length === 0)
       ) {
-        this.filteredResult = [];
+        this.filteredResults = [];
         this.titleDetails = null;
       } else {
         if (
@@ -94,7 +94,7 @@ export default {
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasTitle || searchHasAuthor) {
-              this.filteredResult.push(book);
+              this.filteredResults.push(book);
             }
           });
         }

@@ -15,15 +15,15 @@
 #book-icon-eye {
   text-align: center;
   position: relative;
-  top: -1.8rem;
-  left: 1rem;
+  top: -2rem;
+  left: 1.5rem;
   font-size: 18px;
   color: #00796b;
 }
 #book-icon-delete {
   position: relative;
   top: -4rem;
-  left: 2.4rem;
+  left: 2.3rem;
   font-size: 18px;
   color: #00796b;
 }
