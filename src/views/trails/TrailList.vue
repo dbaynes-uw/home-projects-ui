@@ -9,84 +9,112 @@
       <router-link :to="{ name: 'TrailCreate' }">Add Trail</router-link>
     </h2>
     <br />
+    <div style="width: 100%">
+      <div class="auto-search-container">
+        <input
+          type="text"
+          class="np-input-search"
+          v-model="inputSearchText"
+          placeholder="Search"
+          autocomplete="off"
+          v-on:keyup="searchColumns"
+        />
+      </div>
+    </div>
     <div class="trail-list">
-      <table class="table-index-style">
-        <tr>
-          <th>Trail Head</th>
-          <th>Location</th>
-          <th>Distance (Miles)</th>
-          <th>Date Last Hiked</th>
-          <th>URL</th>
-          <th>Notes</th>
-          <th style="text-align: right">Actions</th>
-        </tr>
-        <tr v-for="trail in trails" :key="trail.id" :trail="trail">
-          <td>{{ trail.head_name }}</td>
-          <td>{{ trail.location }}</td>
-          <td>{{ trail.distance }}</td>
-          <td>{{ formatStandardDate(trail.date_last_hiked) }}</td>
-          <td>
-            <a :href="trail.url_to_map" target="_blank">Map</a>
-          </td>
-          <td>{{ trail.notes }}</td>
-          <td style="padding-left: 0">
-            <span class="fa-stack">
-              <router-link
-                :to="{ name: 'TrailEdit', params: { id: `${trail.id}` } }"
-              >
-                <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-              </router-link>
-              <span class="fa-stack fa-table-stack">
-                <router-link
-                  :to="{ name: 'TrailDetails', params: { id: `${trail.id}` } }"
-                >
-                  <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
-                </router-link>
-              </span>
-              <span
-                class="fa-table-stack"
-                style="position: relative; top: 0.5rem; left: 2.3rem"
-              >
-                <i
-                  @click="deleteTrail(trail)"
-                  class="fas fa-trash-alt fa-stack-1x"
-                >
-                </i>
-              </span>
-            </span>
-          </td>
-        </tr>
-      </table>
+      <span v-if="filteredResults.length == 0">
+        <TrailIndex :trails="trails" />
+      </span>
+      <span v-if="filteredResults.length > 0">
+        <TrailSearchResults :filteredResults="filteredResults" />
+      </span>
     </div>
   </div>
 </template>
 <script>
+import TrailIndex from "@/components/trails/TrailIndex.vue";
+import TrailSearchResults from "@/components/trails/TrailSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "TrailList",
+  props: ["filteredResults[]"],
   components: {
     ConfirmDialogue,
+    TrailIndex,
+    TrailSearchResults,
   },
   data() {
     return {
+      inputSearchText: "",
+      filteredResults: [],
+      columnDetails: null,
+      sortedData: [],
+      sortedbyASC: false,
       description: null,
       frequency: null,
       completed: 0,
       statusMessage: "",
     };
   },
+  mounted() {
+    this.sortedData = this.trails;
+  },
   created() {
-    console.log("Created Store Dispatch - fetchTrails. ");
     this.$store.dispatch("fetchTrails");
   },
   computed: {
     trails() {
-      console.log("Computed Store Dispatch - fetchTrails. ");
       return this.$store.state.trails;
     },
   },
   methods: {
+    searchColumns() {
+      this.filteredResults = [];
+      this.columnDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        this.filteredResults = [];
+        this.columnDetails = null;
+      } else {
+        if (
+          this.trails &&
+          this.trails.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.trails.forEach((trail) => {
+            const searchHasHeadName =
+              trail.head_name &&
+              trail.head_name
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            const searchHasLocation =
+              trail.location &&
+              trail.location
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            if (searchHasHeadName || searchHasLocation) {
+              this.filteredResults.push(trail);
+            }
+          });
+        }
+      }
+    },
+    showCharacterDetails(result) {
+      this.characterDetails = result;
+    },
+    sortList(sortBy) {
+      this.sortedData = this.trails;
+      if (this.sortedbyASC) {
+        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+        this.sortedbyASC = false;
+      } else {
+        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+        this.sortedbyASC = true;
+      }
+    },
     async deleteTrail(trail) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Trail from List",
@@ -114,6 +142,7 @@ export default {
 </script>
 <style scoped>
 .table-index-style {
+  font-family: arial, sans-serif;
   width: 100%;
   border-collapse: collapse;
 }

@@ -16,7 +16,7 @@
           v-model="inputSearchText"
           placeholder="Search"
           autocomplete="off"
-          v-on:keyup="searchTitles"
+          v-on:keyup="searchColumns"
         />
       </div>
     </div>
@@ -36,7 +36,7 @@ import BookIndex from "@/components/books/BookIndex.vue";
 import BookSearchResults from "@/components/books/BookSearchResults.vue";
 export default {
   name: "BookList",
-  props: ["books:, filteredResults[]"],
+  props: ["filteredResults[]"],
   components: {
     BookIndex,
     BookSearchResults,
@@ -45,7 +45,7 @@ export default {
     return {
       inputSearchText: "",
       filteredResults: [],
-      titleDetails: null,
+      columnDetails: null,
       sortedData: [],
       sortedbyASC: false,
       description: null,
@@ -67,15 +67,15 @@ export default {
     },
   },
   methods: {
-    searchTitles() {
+    searchColumns() {
       this.filteredResults = [];
-      this.titleDetails = null;
+      this.columnDetails = null;
       if (
         this.inputSearchText == null ||
         (this.inputSearchText != null && this.inputSearchText.length === 0)
       ) {
         this.filteredResults = [];
-        this.titleDetails = null;
+        this.columnDetails = null;
       } else {
         if (
           this.books &&
@@ -186,13 +186,14 @@ th {
   text-align: left;
   padding: 8px;
 }
-
 th:hover {
   cursor: pointer;
   background: rgb(229, 255, 211);
 }
-
 tr:nth-child(even) {
   background-color: #f3f3f3;
+}
+#background-blue {
+  background-color: #7ba8bd;
 }
 </style>

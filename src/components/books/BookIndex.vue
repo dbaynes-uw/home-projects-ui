@@ -2,12 +2,14 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-table density="compact">
     <tr>
-      <th @click="sortList('title')">Title</th>
-      <th @click="sortList('author')">Author</th>
-      <th @click="sortList('date_written')">Date Written</th>
-      <th>URL to Review</th>
-      <th>Notes</th>
-      <th style="text-align: right">Actions</th>
+      <th id="background-blue" @click="sortList('title')">Title</th>
+      <th id="background-blue" @click="sortList('author')">Author</th>
+      <th id="background-blue" @click="sortList('date_written')">
+        Date Written
+      </th>
+      <th id="background-blue">URL to Review</th>
+      <th id="background-blue">Notes</th>
+      <th id="background-blue" style="text-align: right">Actions</th>
     </tr>
     <tr v-for="(result, resultIndex) in books" :key="resultIndex">
       <td>{{ result.title }}</td>
@@ -81,15 +83,15 @@ export default {
     };
   },
   methods: {
-    searchTitles() {
+    searchColumns() {
       this.filteredResults = [];
-      this.titleDetails = null;
+      this.columnDetails = null;
       if (
         this.inputSearchText == null ||
         (this.inputSearchText != null && this.inputSearchText.length === 0)
       ) {
         this.filteredResults = [];
-        this.titleDetails = null;
+        this.columnDetails = null;
       } else {
         if (
           this.books &&

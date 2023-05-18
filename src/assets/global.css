@@ -27,3 +27,18 @@
   font-size: 18px;
   color: #00796b;
 }
+#trail-icon-eye {
+  text-align: center;
+  position: relative;
+  top: -2rem;
+  left: 0rem;
+  font-size: 18px;
+  color: #00796b;
+}
+#trail-icon-delete {
+  position: relative;
+  top: -4rem;
+  left: 1.3rem;
+  font-size: 18px;
+  color: #00796b;
+}

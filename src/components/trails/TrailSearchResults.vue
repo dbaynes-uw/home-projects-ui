@@ -20,25 +20,25 @@
           <th>Notes</th>
           <th style="text-align: right">Actions</th>
         </tr>
-        <tr v-for="trail in trails" :key="trail.id" :trail="trail">
-          <td>{{ trail.head_name }}</td>
-          <td>{{ trail.location }}</td>
-          <td>{{ trail.distance }}</td>
-          <td>{{ formatStandardDate(trail.date_last_hiked) }}</td>
+        <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
+          <td>{{ result.head_name }}</td>
+          <td>{{ result.location }}</td>
+          <td>{{ result.distance }}</td>
+          <td>{{ formatStandardDate(result.date_last_hiked) }}</td>
           <td>
-            <a :href="trail.url_to_map" target="_blank">Map</a>
+            <a :href="result.url_to_map" target="_blank">Map</a>
           </td>
-          <td>{{ trail.notes }}</td>
+          <td>{{ result.notes }}</td>
           <td style="padding-left: 0">
             <span class="fa-stack">
               <router-link
-                :to="{ name: 'TrailEdit', params: { id: `${trail.id}` } }"
+                :to="{ name: 'TrailEdit', params: { id: `${result.id}` } }"
               >
                 <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
               </router-link>
               <span class="fa-stack fa-table-stack">
                 <router-link
-                  :to="{ name: 'TrailDetails', params: { id: `${trail.id}` } }"
+                  :to="{ name: 'TrailDetails', params: { id: `${result.id}` } }"
                 >
                   <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
                 </router-link>
@@ -48,7 +48,7 @@
                 style="position: relative; top: 0.5rem; left: 2.3rem"
               >
                 <i
-                  @click="deleteTrail(trail)"
+                  @click="deleteTrail(result)"
                   class="fas fa-trash-alt fa-stack-1x"
                 >
                 </i>
@@ -65,28 +65,34 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "TrailList",
+  props: ["filteredResults"],
   components: {
     ConfirmDialogue,
   },
   data() {
     return {
+      inputSearchText: "",
+      onlineStatus: navigator.onLine,
       description: null,
       frequency: null,
       completed: 0,
       statusMessage: "",
     };
   },
-  created() {
-    console.log("Created Store Dispatch - fetchTrails. ");
-    this.$store.dispatch("fetchTrails");
-  },
-  computed: {
-    trails() {
-      console.log("Computed Store Dispatch - fetchTrails. ");
-      return this.$store.state.trails;
-    },
-  },
   methods: {
+    showCharacterDetails(result) {
+      this.characterDetails = result;
+    },
+    sortList(sortBy) {
+      this.sortedData = this.filteredResults;
+      if (this.sortedbyASC) {
+        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+        this.sortedbyASC = false;
+      } else {
+        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+        this.sortedbyASC = true;
+      }
+    },
     async deleteTrail(trail) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Trail from List",

@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-app>
     <v-app-bar color="teal-darken-2">
       <v-toolbar-title>Home Project Dashboard</v-toolbar-title>
@@ -13,6 +14,7 @@
           {{ link.title }}
         </router-link>
       </v-btn>
+      <p>{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>
     </v-app-bar>
     <v-content style="margin-top: 7rem">
       <router-view></router-view>
@@ -43,10 +45,15 @@
   </v-app>
 </template>
 <script>
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
   name: "App",
+  components: {
+    ConfirmDialogue,
+  },
   data() {
     return {
+      onlineStatus: navigator.onLine,
       links: [
         {
           label: "About",

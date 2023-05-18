@@ -21,26 +21,26 @@
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'trailEdit', params: { id: `${result.id}` } }"
             >
               <i
-                id="book-icon-edit"
+                id="trail-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'TrailDetails', params: { id: `${result.id}` } }"
               >
-                <i id="book-icon-eye" class="fa fa-eye"></i>
+                <i id="trail-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteBook(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="book-icon-delete"
+                id="trail-icon-delete"
               >
               </i>
             </span>
@@ -109,7 +109,7 @@ export default {
           "Book was Deleted for " +
           book.title +
           "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
+        setTimeout(() => location.reload(), 2000);
       }
     },
     formatFullYearDate(value) {
