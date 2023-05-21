@@ -21,26 +21,26 @@
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'trailEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
             >
               <i
-                id="trail-icon-edit"
+                id="book-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'TrailDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
               >
-                <i id="trail-icon-eye" class="fa fa-eye"></i>
+                <i id="book-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteBook(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="trail-icon-delete"
+                id="book-icon-delete"
               >
               </i>
             </span>

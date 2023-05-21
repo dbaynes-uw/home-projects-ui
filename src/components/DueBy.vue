@@ -1,6 +1,6 @@
 <template>
   Due in next:
-  <select @change="dueBy($event)">
+  <select id="border-select" @change="dueBy($event)">
     <option></option>
     <option>7</option>
     <option>10</option>
@@ -23,8 +23,17 @@ export default {
 };
 </script>
 <style>
+#border-select {
+  margin-top: 20px;
+  border-radius: 4px;
+  padding: 6px;
+  border-style: solid;
+  border-color: #7ba8bd;
+}
 select {
   margin-top: 20px;
   padding: 6px;
+  border-style: solid;
+  border-color: #7ba8bd;
 }
 </style>

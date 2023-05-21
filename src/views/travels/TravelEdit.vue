@@ -18,7 +18,9 @@
         <input type="text" class="text-style" v-model="book.url_to_review" />
         <label>Notes:</label>
         <input type="text" class="text-style" v-model="book.notes" />
-        <button class="button" type="submit">Submit</button>
+        <button class="button" type="submit" id="background-blue">
+          Submit
+        </button>
       </div>
     </form>
   </div>

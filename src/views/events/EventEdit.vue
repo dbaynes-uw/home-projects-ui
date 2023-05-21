@@ -44,7 +44,9 @@
           class="text-style"
           required
         />
-        <button class="button" type="submit">Submit</button>
+        <button class="button" type="submit" id="background-blue">
+          Submit
+        </button>
       </div>
     </form>
   </div>

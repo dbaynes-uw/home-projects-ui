@@ -10,7 +10,10 @@
     <br />
     <div style="width: 100%">
       <div class="auto-search-container">
-        <input
+        <v-text-field
+          clearable
+          clear-icon="mdi-close"
+          @click:clear="showIndex"
           type="text"
           class="np-input-search"
           v-model="inputSearchText"
@@ -67,6 +70,9 @@ export default {
     },
   },
   methods: {
+    showIndex() {
+      this.filteredResults = [];
+    },
     searchColumns() {
       this.filteredResults = [];
       this.columnDetails = null;
@@ -193,7 +199,8 @@ th:hover {
 tr:nth-child(even) {
   background-color: #f3f3f3;
 }
-#background-blue {
-  background-color: #7ba8bd;
+tr:nth-child(odd) {
+  background-color: #41b88352;
+  border: none !important;
 }
 </style>

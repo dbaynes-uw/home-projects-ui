@@ -27,10 +27,12 @@
           required
         />
         <label for="url_to_map">URL to Map:</label>
-        <input type="text" class="text-style" v-model="trail.date_last_hiked" />
+        <input type="text" class="text-style" v-model="trail.url_to_map" />
         <label>Notes:</label>
         <input type="text" class="text-style" v-model="trail.notes" />
-        <button class="button" type="submit">Submit</button>
+        <button class="button" type="submit" id="background-blue">
+          Submit
+        </button>
       </div>
     </form>
   </div>

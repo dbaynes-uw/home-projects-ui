@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div>
+  <div id="body-outline">
     <h2>Events</h2>
     <h2>
       <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
@@ -12,7 +12,7 @@
     <br />
     <div>
       <PastDue />
-      <button @click="refreshPage">Refresh</button>
+      <button id="button-as-link" @click="refreshPage"><u>Refresh</u></button>
     </div>
     <br />
     <div class="legend">
@@ -35,7 +35,7 @@
             </b>
           </p>
         </router-link>
-        <ul class="ul-left">
+        <ul class="ul-left-dash">
           <li v-if="event.assigned">
             <router-link
               :to="{
@@ -84,9 +84,13 @@
           </li>
           <li>
             Latest Changes:
-            <ul v-for="(history, index) in event.histories" :key="history.id">
+            <ul
+              class="ul-indented-left-dash"
+              v-for="(history, index) in event.histories"
+              :key="history.id"
+            >
               <span v-if="index == 0">
-                <li v-html="history.notes"></li>
+                <li class="li-left-dash" v-html="history.notes"></li>
               </span>
             </ul>
           </li>
@@ -188,6 +192,9 @@ export default {
 };
 </script>
 <style>
+#body-outline {
+  margin: 0.25;
+}
 .events {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -258,5 +265,10 @@ select {
   .events {
     grid-template.columns: 1fr;
   }
+}
+#button-as-link {
+  background-color: #7ba8bd;
+  border-radius: 5px;
+  font-size: 18px;
 }
 </style>

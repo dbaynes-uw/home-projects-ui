@@ -12,10 +12,10 @@
     <div class="trail-list">
       <table class="table-index-style">
         <tr>
-          <th>Trail Head</th>
-          <th>Location</th>
-          <th>Distance (Miles)</th>
-          <th>Date Last Hiked</th>
+          <th @click="sortList('head_name')">Trail Head</th>
+          <th @click="sortList('location')">Location</th>
+          <th @click="sortList('distance')">Distance (Miles)</th>
+          <th @click="sortList('date_last_hiked')">Date Last Hiked</th>
           <th>URL</th>
           <th>Notes</th>
           <th style="text-align: right">Actions</th>

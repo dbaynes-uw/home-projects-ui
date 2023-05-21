@@ -15,12 +15,13 @@ export default {
 <style scoped>
 button {
   margin: 30px;
-  background-color: #39495c;
+  background-color: #7ba8bd;
   border-radius: 5px;
   font-size: 18px;
   width: 160px;
-  height: 60px;
-  color: white;
+  height: 70px;
+  color: #000;
+  border-bottom: 1rem;
   padding: 10px;
   box-shadow: inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.17),
     inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15),

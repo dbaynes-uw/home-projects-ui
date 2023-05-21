@@ -4,6 +4,25 @@
 .icon-css {
   color: #0D2336;
 }
+#background-blue {
+  background-color: #7ba8bd;
+}
+.ul-left {
+  list-style-type: none;
+  text-align: left;
+}
+.ul-dash {
+  list-style-type: "-- ";
+}
+.ul-indented-left-dash {
+  padding-left: .5rem;
+  list-style-type: disc;
+  text-align: left;
+}
+.ul-left-dash {
+  list-style-type: "-- ";
+  text-align: left;
+}
 #book-icon-edit {
   text-align: center;
   position: relative;
