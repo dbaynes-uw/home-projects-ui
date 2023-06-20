@@ -5,9 +5,14 @@
     </v-card-title>
   </v-card>
   <v-card-text>
+    Rules: {{ [required] }}
     <v-form>
       <v-containter>
-        <v-text-field label="Title" v-model="book.title">
+        <v-text-field
+          v-model="book.title"
+          :rules="[(v) => !!v || 'Required']"
+          label="Title"
+        >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
@@ -61,7 +66,10 @@ export default {
   data() {
     return {
       book: {
-        title: "",
+        title: null,
+        rules: {
+          required: (value) => !!value || "Required",
+        },
         author: "",
         date_written: null,
         url_to_review: "",

@@ -383,7 +383,7 @@ export default createStore({
       } else {
         EventService.getTravel(id)
           .then((response) => {
-            commit("SET_TRAVBEL", response.data);
+            commit("SET_TRAVEL", response.data);
           })
           .catch((error) => {
             console.log(error);

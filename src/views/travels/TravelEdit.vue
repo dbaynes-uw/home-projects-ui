@@ -1,23 +1,40 @@
 <template>
-  <div class="bookEdit">
-    <h2>Edit Book {{ book.head_name }}</h2>
-    <form class="add-form" @submit.prevent="updateBook">
+  <div class="travelEdit">
+    <h2>Edit Travel {{ travel.title }}</h2>
+    <form class="add-form" @submit.prevent="updateTravel">
       <div class="form-container">
         <label>Title:</label>
-        <input type="text" class="text-style" v-model="book.title" required />
-        <label>Author:</label>
-        <input type="text" class="text-style" v-model="book.author" required />
-        <label for="date_written">Date Written:</label>
+        <input type="text" class="text-style" v-model="travel.title" required />
+        <label>Description:</label>
+        <input
+          type="text"
+          class="text-style"
+          v-model="travel.description"
+          required
+        />
+        <label for="start_date">Start Date:</label>
         <input
           type="date"
           class="text-style"
-          v-model="book.date_written"
+          v-model="travel.start_date"
           required
         />
-        <label for="url_to_review">URL to Review:</label>
-        <input type="text" class="text-style" v-model="book.url_to_review" />
+        <label for="end_date">End Date:</label>
+        <input
+          type="date"
+          class="text-style"
+          v-model="travel.end_date"
+          required
+        />
+        <label for="url_reference">URL Reference:</label>
+        <input type="text" class="text-style" v-model="travel.url_reference" />
         <label>Notes:</label>
-        <input type="text" class="text-style" v-model="book.notes" />
+        <textarea
+          v-model="travel.notes"
+          rows="3"
+          cols="40"
+          class="textarea-style"
+        />
         <button class="button" type="submit" id="background-blue">
           Submit
         </button>
@@ -33,20 +50,21 @@ export default {
   async mounted() {
     console.log("Mounted: ", this.$route.params.id);
     const result = await axios.get(
-      "http://davids-macbook-pro.local:3000/api/v1/books/" +
+      "http://davids-macbook-pro.local:3000/api/v1/travels/" +
         +this.$route.params.id
     );
-    this.book = result.data;
-    console.log("Returned book: ", this.book);
+    this.travel = result.data;
+    console.log("Returned travel: ", this.travel);
   },
   data() {
     return {
-      book: {
+      travel: {
         id: "",
         title: "",
-        author: "",
-        date_written: "",
-        url_to_review: "",
+        description: "",
+        distance: "",
+        start_date: "",
+        end_date: "",
         notes: "",
         updated_by: "dbaynes",
       },
@@ -54,26 +72,28 @@ export default {
   },
   setup() {},
   methods: {
-    async updateBook() {
-      const book = {
-        ...this.book,
+    async updateTravel() {
+      const travel = {
+        ...this.travel,
         updated_by: this.$store.state.created_by,
       };
-      console.log("This book to PUT: ", this.book);
+      console.log("This travel to PUT: ", this.travel);
       const result = await axios.put(
-        "http://davids-macbook-pro.local:3000/api/v1/books/" +
+        "http://davids-macbook-pro.local:3000/api/v1/travels/" +
           this.$route.params.id,
         {
-          title: this.book.title,
-          author: this.book.author,
-          date_written: this.book.date_written,
-          url_to_review: this.book.url_to_review,
-          notes: this.book.notes,
+          title: this.travel.title,
+          description: this.travel.description,
+          distance: this.travel.distance,
+          start_date: this.travel.start_date,
+          end_date: this.travel.end_date,
+          url_reference: this.travel.url_reference,
+          notes: this.travel.notes,
         }
       );
       if (result.status >= 200) {
-        alert("Book has been updated");
-        this.$router.push({ name: "BookDetails", params: { id: book.id } });
+        alert("Travel has been updated");
+        this.$router.push({ name: "TravelDetails", params: { id: travel.id } });
       } else {
         alert("Update Error Code ", result.status);
         console.log("ERROR Result Status: ", result.status);

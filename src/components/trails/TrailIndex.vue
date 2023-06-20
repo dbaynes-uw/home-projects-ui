@@ -3,7 +3,7 @@
   <div class="trail-list">
     <table class="table-index-style">
       <tr>
-        <th @click="sortList('head_name')">Trail Head</th>
+        <th @click="sortList('trail_head_name')">Trail Head</th>
         <th @click="sortList('location')">Location</th>
         <th @click="sortList('distance')">Distance (Miles)</th>
         <th @click="sortList('date_last_hiked')">Date Last Hiked</th>
@@ -12,7 +12,7 @@
         <th style="text-align: right">Actions</th>
       </tr>
       <tr v-for="trail in trails" :key="trail.id" :trail="trail">
-        <td>{{ trail.head_name }}</td>
+        <td>{{ trail.trail_head_name }}</td>
         <td>{{ trail.location }}</td>
         <td>{{ trail.distance }}</td>
         <td>{{ formatStandardDate(trail.date_last_hiked) }}</td>

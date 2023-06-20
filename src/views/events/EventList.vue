@@ -1,7 +1,10 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div id="body-outline">
+  <div class="div-frame">
     <h2>Events</h2>
+    <h2 id="status-message">
+      <u>{{ this.statusMessage }}</u>
+    </h2>
     <h2>
       <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
       <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
@@ -13,14 +16,34 @@
     <div>
       <PastDue />
       <button id="button-as-link" @click="refreshPage"><u>Refresh</u></button>
+      &nbsp;&nbsp;
+      <button id="button-as-link" @click="requestIndexDetail">
+        <u>Detail Index View</u>
+      </button>
     </div>
+
     <br />
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
-    <div class="events">
+    <div style="width: 100%">
+      <div class="auto-search-container">
+        <v-text-field
+          clearable
+          clear-icon="mdi-close"
+          @click:clear="showIndex"
+          type="text"
+          class="np-input-search"
+          v-model="inputSearchText"
+          placeholder="Search"
+          autocomplete="off"
+          v-on:keyup="searchColumns"
+        />
+      </div>
+    </div>
+    <!--div class="events">
       <div
         v-for="event in events"
         :key="event.id"
@@ -28,86 +51,20 @@
         class="event"
         @dblclick="onDoubleClick(event)"
       >
-        <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
-          <p class="p-align-left">
-            <b>
-              <u>{{ event.description }}</u>
-            </b>
-          </p>
-        </router-link>
-        <ul class="ul-left-dash">
-          <li v-if="event.assigned">
-            <router-link
-              :to="{
-                name: 'EventStatisticDetail',
-                params: { statistic: assigned + '-' + event.assigned },
-              }"
-            >
-              <b>{{ event.assigned }}</b>
-            </router-link>
-          </li>
-          <li>{{ event.notes }}</li>
-          <li :class="event.action_active ? 'is-active' : 'is-inactive'">
-            Status:
-            {{ event.action_active ? "Active" : "InActive" }}
-          </li>
-          <li v-bind:class="{ 'is-active': event.action_active }">
-            Last Completed:
-            {{ formatStandardDate(event.action_date) }}
-          </li>
-          <li>{{ event.frequency }} day cycle</li>
-          <li>
-            Action Date:
-            {{ formatStandardDate(event.action_date) }}
-          </li>
-          <li>
-            Date Due:
-            <span
-              v-if="
-                DateFormatService.datePastDue(
-                  event.action_date,
-                  event.frequency
-                )
-              "
-            >
-              <span style="color: red; font-weight: bold">
-                {{ calculateDue(event.action_date, event.frequency) }}
-                {{ calculateDateDue(event.action_date, event.frequency) }}
-              </span>
-            </span>
-            <span v-else>
-              <span>
-                {{ calculateDue(event.action_date, event.frequency) }}
-                {{ calculateDateDue(event.action_date, event.frequency) }}
-              </span>
-            </span>
-          </li>
-          <li>
-            Latest Changes:
-            <ul
-              class="ul-indented-left-dash"
-              v-for="(history, index) in event.histories"
-              :key="history.id"
-            >
-              <span v-if="index == 0">
-                <li class="li-left-dash" v-html="history.notes"></li>
-              </span>
-            </ul>
-          </li>
-        </ul>
         <br />
-        <span class="fa-stack">
-          <router-link
-            :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
-          >
-            <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span class="fa-stack">
-          <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
-          </i>
-        </span>
       </div>
+    </div-->
+    <p>Results: {{ filteredResults.length }}</p>
+    <div class="event-list">
+      <span v-if="this.requestIndexDetailFlag == true">
+        console.log("Hell Yea! ", this.requestIndexDetailFlag)
+      </span>
+      <span v-if="filteredResults.length == 0">
+        <EventIndex :events="events" />
+      </span>
+      <span v-if="filteredResults.length > 0">
+        <EventSearchResults :filteredResults="filteredResults" />
+      </span>
     </div>
     <!--div>{{ $store.state.events }}</div-->
   </div>
@@ -117,6 +74,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DueBy from "@/components/DueBy.vue";
 import PastDue from "@/components/PastDue.vue";
+import EventIndex from "@/components/events/EventIndex.vue";
+import EventSearchResults from "@/components/events/EventSearchResults.vue";
 </script>
 <script>
 // @ is an alias to /src
@@ -126,17 +85,84 @@ export default {
     DueBy,
     ConfirmDialogue,
   },
-  props: ["id", "pastDue"],
-  //data() {},
+  props: ["id", "pastDue", "filteredResults[]"],
   data() {
     return {
+      requestIndexDetailFlag: false,
       DueBy: null,
       assigned: "assigned",
       eventList: null,
       updatedEvent: null,
+      inputSearchText: "",
+      filteredResults: [],
+      columnDetails: null,
+      sortedData: [],
+      sortedbyASC: false,
+      statusMessage: "",
     };
   },
+  mounted() {
+    this.sortedData = this.events;
+  },
+  created() {
+    this.$store.dispatch("fetchEvents");
+  },
+  computed: {
+    events() {
+      return this.$store.state.events;
+    },
+  },
   methods: {
+    requestIndexDetail() {
+      console.log(
+        "Before RequestDetailIndexFlag: ",
+        this.requestIndexDetailFlag
+      );
+      this.requestIndexDetailFlag = true;
+      console.log(
+        "After RequestDetailIndexFlag: ",
+        this.requestIndexDetailFlag
+      );
+    },
+    showIndex() {
+      this.filteredResults = [];
+    },
+    searchColumns() {
+      this.filteredResults = [];
+      this.columnDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        this.filteredResults = [];
+        this.columnDetails = null;
+      } else {
+        if (
+          this.events &&
+          this.events.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.events.forEach((event) => {
+            const searchHasDescription =
+              event.description &&
+              event.description
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            const searchHasAssigned =
+              event.assigned &&
+              event.assigned
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            if (searchHasDescription || searchHasAssigned) {
+              this.filteredResults.push(event);
+            }
+          });
+        }
+      }
+    },
+    showCharacterDetails(result) {
+      this.characterDetails = result;
+    },
     refreshPage() {
       //this.$router.push({ path: "/" });
       window.location.reload();
@@ -181,20 +207,9 @@ export default {
       return DateFormatService.calculateDateDue(action_date, frequency);
     },
   },
-  created() {
-    this.$store.dispatch("fetchEvents");
-  },
-  computed: {
-    events() {
-      return this.$store.state.events;
-    },
-  },
 };
 </script>
 <style>
-#body-outline {
-  margin: 0.25;
-}
 .events {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

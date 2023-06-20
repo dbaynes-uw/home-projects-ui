@@ -10,7 +10,7 @@
     <br />
     <div v-if="trail" class="event" id="center-align">
       <h1>
-        <b>{{ trail.head_name }}</b>
+        <b>{{ trail.trail_head_name }}</b>
       </h1>
       <ul class="ul-left">
         <li>
@@ -77,14 +77,14 @@ export default {
         title: "Delete Trail",
         message:
           "Are you sure you want to delete " +
-          trail.head_name +
+          trail.trail_head_name +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
         this.$store.dispatch("deleteTrail", trail);
-        alert("Trail was Deleted for " + trail.head_name);
+        alert("Trail was Deleted for " + trail.trail_head_name);
         this.$router.push({ name: "TrailList" });
       }
     },

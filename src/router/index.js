@@ -1,29 +1,29 @@
 import { createRouter, createWebHistory } from "vue-router";
+import About from "../views/About.vue";
 import BookCreate from "@/views/books/BookCreate.vue";
-import BookList from "../views/books/BookList.vue";
 import BookDetails from "@/views/books/BookDetails.vue";
 import BookEdit from "@/views/books/BookEdit.vue";
-import TravelCreate from "@/views/travels/TravelCreate.vue";
-import TravelList from "../views/travels/TravelList.vue";
-import TravelDetails from "@/views/travels/TravelDetails.vue";
-import TravelEdit from "@/views/travels/TravelEdit.vue";
-import EventList from "../views/events/EventList.vue";
-import EventsPastDue from "../views/events/EventsPastDue.vue";
-import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
+import BookList from "../views/books/BookList.vue";
+import EventCreate from "@/views/events/EventCreate.vue";
+import EventsAssigned from "@/views/events/EventsAssigned.vue";
 import EventDetails from "@/views/events/EventDetails.vue";
 import EventEdit from "@/views/events/EventEdit.vue";
-import UserEdit from "@/views/users/UserEdit.vue";
-import EventCreate from "@/views/events/EventCreate.vue";
+import EventList from "../views/events/EventList.vue";
+import EventsPastDue from "../views/events/EventsPastDue.vue";
+import EventStatistics from "@/views/events/EventStatistics.vue";
+import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
+import Login from "../views/Login.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
-import TrailList from "../views/trails/TrailList.vue";
 import TrailDetails from "@/views/trails/TrailDetails.vue";
 import TrailEdit from "@/views/trails/TrailEdit.vue";
+import TrailList from "../views/trails/TrailList.vue";
+import TravelCreate from "@/views/travels/TravelCreate.vue";
+import TravelDetails from "@/views/travels/TravelDetails.vue";
+import TravelEdit from "@/views/travels/TravelEdit.vue";
+import TravelList from "../views/travels/TravelList.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
+import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
-import About from "../views/About.vue";
-import Login from "../views/Login.vue";
-import EventStatistics from "@/views/events/EventStatistics.vue";
-import EventsAssigned from "@/views/events/EventsAssigned.vue";
 
 const routes = [
   {
@@ -37,12 +37,33 @@ const routes = [
     component: About,
   },
   {
+    path: "/book/create",
+    name: "BookCreate",
+    component: BookCreate,
+  },
+  {
+    path: "/books",
+    name: "BookList",
+    component: BookList,
+  },
+  {
+    path: "/books/:id",
+    name: "BookDetails",
+    props: true,
+    component: BookDetails,
+  },
+  {
+    path: "/book/:id",
+    name: "BookEdit",
+    props: true,
+    component: BookEdit,
+  },
+  {
     path: "/",
     name: "EventList",
     props: true,
     component: EventList,
   },
-  // ???>
   {
     path: "/events_past_due/:statistic",
     name: "EventsPastDue",
@@ -104,28 +125,6 @@ const routes = [
     name: "TrailEdit",
     props: true,
     component: TrailEdit,
-  },
-  {
-    path: "/book/create",
-    name: "BookCreate",
-    component: BookCreate,
-  },
-  {
-    path: "/books",
-    name: "BookList",
-    component: BookList,
-  },
-  {
-    path: "/books/:id",
-    name: "BookDetails",
-    props: true,
-    component: BookDetails,
-  },
-  {
-    path: "/book/:id",
-    name: "BookEdit",
-    props: true,
-    component: BookEdit,
   },
   {
     path: "/travel/create",

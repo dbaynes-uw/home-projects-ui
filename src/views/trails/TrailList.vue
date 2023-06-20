@@ -92,8 +92,8 @@ export default {
         ) {
           this.trails.forEach((trail) => {
             const searchHasHeadName =
-              trail.head_name &&
-              trail.head_name
+              trail.trail_head_name &&
+              trail.trail_head_name
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchHasLocation =
@@ -126,7 +126,7 @@ export default {
         title: "Delete Trail from List",
         message:
           "Are you sure you want to delete " +
-          trail.head_name +
+          trail.trail_head_name +
           "? It cannot be undone.",
         okButton: "Delete",
       });
@@ -135,7 +135,7 @@ export default {
         this.$store.dispatch("deleteTrail", trail);
         this.statusMessage =
           "Trail was Deleted for " +
-          trail.head_name +
+          trail.trail_head_name +
           "! Page will refresh in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }

@@ -1,10 +1,10 @@
 <template>
   <h1>Create a Trail to Track</h1>
   <div class="form-container">
-    <form class="add-form" @submit.prevent="onSubmit">
-      <label>Name</label>
+    <v-form class="add-form" @submit.prevent="onSubmit">
+      <label>Trail Name</label>
       <input
-        v-model="trail.head_name"
+        v-model="trail.trail_head_name"
         type="text"
         class="text-style"
         placeholder="Trail Head Name"
@@ -49,15 +49,15 @@
       </span>
       <label for="date_last_hiked">Date Last Hiked:</label>
       <input type="date" class="text-style" v-model="trail.date_last_hiked" />
-      <label>Notes</label>
-      <input
+      <label>Notes:</label>
+      <textarea
         v-model="trail.notes"
-        type="text"
-        placeholder="Notes"
-        class="text-style"
+        rows="3"
+        cols="40"
+        class="textarea-style"
       />
       <button class="button" type="submit">Submit</button>
-    </form>
+    </v-form>
     <!--Vuex:-->
     <!--div>{{ $store.state.trails }}</div-->
   </div>
@@ -92,7 +92,7 @@ export default {
         created_by: this.$store.state.user,
       };
       if (this.$store.dispatch("createTrail", trail)) {
-        alert("Trail was successfully added for" + trail.location);
+        alert("Trail was successfully added for " + trail.location);
         this.$router.push({ name: "TrailList" });
       } else {
         alert("Error adding Trail Location" + trail.location);

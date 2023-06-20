@@ -18,8 +18,9 @@
         placeholder="Description"
         required
       />
-      <label for="date_last_hiked">Start Date:</label>
+      <label for="start_date">Start Date:</label>
       <input type="date" class="text-style" v-model="travel.start_date" />
+      <label for="end_date">End Date:</label>
       <input type="date" class="text-style" v-model="travel.end_date" />
       <label>Reference</label>
       <input
@@ -33,11 +34,11 @@
         {{ urlMaxLength - travel.url_reference.length }} / {{ urlMaxLength }}
       </span>
       <label>Notes</label>
-      <input
+      <textarea
         v-model="travel.notes"
-        type="text"
-        placeholder="Notes"
-        class="text-style"
+        rows="3"
+        cols="40"
+        class="textarea-style"
       />
       <button class="button" type="submit">Submit</button>
     </form>
@@ -51,6 +52,7 @@ export default {
       travel: {
         title: "",
         description: "",
+        destination: "",
         start_date: "",
         end_date: "",
         url_reference: "",

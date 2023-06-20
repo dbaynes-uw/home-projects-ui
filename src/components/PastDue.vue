@@ -1,7 +1,8 @@
 <template>
   <div>
-    Past Due:
-    <button class="button" @click="pastDue($event)">Click for Past Due</button>
+    <button class="button" @click="pastDue($event)">
+      <u>Click for Past Due</u>
+    </button>
   </div>
 </template>
 <script>

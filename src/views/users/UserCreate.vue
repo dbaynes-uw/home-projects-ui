@@ -72,7 +72,7 @@ export default {
         created_by: this.$store.state.user,
       };
       this.$store.dispatch("createUser", user);
-      alert("User was successfully added for" + user.description);
+      alert("User was successfully added for " + user.description);
       this.$router.push({ name: "UserList" });
     },
     validateEmail() {

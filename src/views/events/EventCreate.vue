@@ -99,7 +99,7 @@ export default {
       //Xthis.addEvent(event); in events.js
       //Vuex 2:
       this.$store.dispatch("createEvent", event);
-      alert("Event was successfully added for" + event.description);
+      alert("Event was successfully added for " + event.description);
       this.$router.push({ name: "EventList" });
     },
   },

@@ -1,52 +1,62 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
-    <h3>Book Details</h3>
+    <h3>Travel Details</h3>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
     <br />
-    <div v-if="book" class="event" id="center-align">
+    <div v-if="travel" class="event" id="center-align">
       <h1>
-        <b>{{ book.title }}</b>
+        <b>{{ travel.title }}</b>
       </h1>
       <ul class="ul-left">
         <li>
-          <b>{{ book.author }}</b>
+          <b>{{ travel.description }}</b>
         </li>
-        <li v-if="book.date_written">
-          Date Book Written:
-          <b>{{ formatStandardDate(book.date_written) }}</b>
+        <li v-if="travel.distance">
+          Distance:
+          <b>{{ travel.distance }}</b>
         </li>
-        <li v-if="book.url_to_review">
-          URL to Review:
-          <a :href="book.url_to_review" target="_blank">Click</a>
+        <li v-if="travel.start_date">
+          Travel Start Date:
+          <b>{{ formatStandardDate(travel.start_date) }}</b>
+        </li>
+        <li v-if="travel.start_date">
+          Travel End Date:
+          <b>{{ formatStandardDate(travel.end_date) }}</b>
+        </li>
+        <li v-if="travel.url_reference">
+          URL Reference:
+          <a :href="travel.url_reference" target="_blank">Click</a>
         </li>
         <li>
           Notes:
-          <b>{{ book.notes }}</b>
+          <b>{{ travel.notes }}</b>
         </li>
         <li>
           Date Created:
-          <b>{{ formatStandardDate(book.created_at) }}</b>
+          <b>{{ formatStandardDate(travel.created_at) }}</b>
         </li>
       </ul>
       <br />
-      <router-link :to="{ name: 'BookList' }">
+      <router-link :to="{ name: 'TravelList' }">
         <i class="fa-solid fa-backward fa-stack-1x"></i>
       </router-link>
       <span class="fa-stack">
-        <router-link :to="{ name: 'BookEdit', params: { id: `${book.id}` } }">
+        <router-link
+          :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
+        >
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
         </router-link>
       </span>
       <span class="fa-stack">
-        <i @click="deleteBook(book)" class="fas fa-trash-alt fa-stack-1x"></i>
+        <i @click="deleteTravel(travel)" class="fas fa-trash-alt fa-stack-1x" />
       </span>
       <br />
-      <router-link :to="{ name: 'BookList' }">
+      <router-link :to="{ name: 'TravelList' }">
         <i class="fa-solid fa-backward fa-stack-1x"></i>
       </router-link>
     </div>
@@ -64,24 +74,24 @@ export default {
   },
   data() {
     return {
-      updatedBook: null,
+      updatedTravel: null,
     };
   },
   methods: {
-    async deleteBook(book) {
+    async deleteTravel(travel) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Book",
+        title: "Delete Travel",
         message:
           "Are you sure you want to delete " +
-          book.title +
+          travel.title +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteBook", book);
-        alert("Book was Deleted for " + book.title);
-        this.$router.push({ name: "BookList" });
+        this.$store.dispatch("deleteTravel", travel);
+        alert("Travel was Deleted for " + travel.title);
+        this.$router.push({ name: "TravelList" });
       }
     },
     formatStandardDate(value) {
@@ -89,11 +99,11 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchBook", this.id);
+    this.$store.dispatch("fetchTravel", this.id);
   },
   computed: {
-    book() {
-      return this.$store.state.book;
+    travel() {
+      return this.$store.state.travel;
     },
   },
 };

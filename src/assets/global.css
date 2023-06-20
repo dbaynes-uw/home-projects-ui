@@ -46,6 +46,29 @@
   font-size: 18px;
   color: #00796b;
 }
+#event-icon-edit {
+  text-align: center;
+  position: relative;
+  padding: 0;
+  top: 0rem;
+  left: -0.5rem !important;
+  color: #00796b;
+}
+#event-icon-eye {
+  text-align: center;
+  position: relative;
+  top: -2rem;
+  left: 1.5rem;
+  font-size: 18px;
+  color: #00796b;
+}
+#event-icon-delete {
+  position: relative;
+  top: -4rem;
+  left: 2.3rem;
+  font-size: 18px;
+  color: #00796b;
+}
 #trail-icon-eye {
   text-align: center;
   position: relative;
@@ -60,4 +83,7 @@
   left: 1.3rem;
   font-size: 18px;
   color: #00796b;
+}
+.textarea-style {
+  margin-left: 0rem;
 }
