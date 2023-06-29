@@ -57,11 +57,11 @@ const format = (date) => {
 
 <script>
 import { v4 as uuidv4 } from "uuid";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
+//Himport VueDatePicker from "@vuepic/vue-datepicker";
+//Himport "@vuepic/vue-datepicker/dist/main.css";
 export default {
   components: {
-    VueDatePicker,
+    //VueDatePicker,
   },
   data() {
     return {
