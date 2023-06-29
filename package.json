@@ -9,6 +9,7 @@
     "heroku-postbuild": "npm run build",
     "server": "http-server",
     "serve": "vue-cli-service serve",
+    "start": "npm run serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
