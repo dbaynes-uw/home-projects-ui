@@ -81,7 +81,7 @@ export default {
   async mounted() {
     console.log("Mounted: ", this.$route.params.id);
     const result = await axios.get(
-      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/" +
+      "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/" +
         +this.$route.params.id
     );
     this.event = result.data;
@@ -124,7 +124,7 @@ export default {
         };
         console.log("This event to PUT: ", this.event);
         const result = await axios.put(
-          "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/" +
+          "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/" +
             +this.$route.params.id,
           {
             action_date: this.event.action_date,

@@ -37,7 +37,7 @@ export default {
   async mounted() {
     console.log("Params id: ", this.$route.params.id);
     const result = await axios.get(
-      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/" +
+      "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/" +
         +this.$route.params.id
     );
     this.user = result.data;
@@ -65,7 +65,7 @@ export default {
     async updateUser() {
       console.log("This user to PUT: ", this.user.name);
       const result = await axios.put(
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/" +
+        "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/" +
           +this.$route.params.id,
         {
           name: this.user.name,

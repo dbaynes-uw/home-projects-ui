@@ -50,7 +50,7 @@ export default {
   async mounted() {
     console.log("Mounted: ", this.$route.params.id);
     const result = await axios.get(
-      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels/" +
+      "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels/" +
         +this.$route.params.id
     );
     this.travel = result.data;
@@ -79,7 +79,7 @@ export default {
       };
       console.log("This travel to PUT: ", this.travel);
       const result = await axios.put(
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels/" +
+        "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels/" +
           this.$route.params.id,
         {
           title: this.travel.title,
