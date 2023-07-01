@@ -2,7 +2,7 @@ import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
 const apiClient = axios.create({
-  baseURL: "https://davids-macbook-pro.local:3000/api/v1",
+  baseURL: "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/",
   withCredentials: false,
   headers: {
     Accept: "application/json",
