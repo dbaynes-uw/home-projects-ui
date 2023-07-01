@@ -1,5 +1,5 @@
 import axios from "axios";
-const api_url = "http://davids-macbook-pro.local:3000/api/v1/events/";
+const api_url = "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
 
 const state = {
   events: [],

@@ -2,18 +2,23 @@ import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
 const apiClient = axios.create({
-  baseURL: "http://davids-macbook-pro.local:3000/api/v1",
+  baseURL: "https://davids-macbook-pro.local:3000/api/v1",
   withCredentials: false,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
   },
 });
-const api_url = "http://davids-macbook-pro.local:3000/api/v1/events/";
-const book_api_url = "http://davids-macbook-pro.local:3000/api/v1/books";
-const trail_api_url = "http://davids-macbook-pro.local:3000/api/v1/trails";
-const user_url = "http://davids-macbook-pro.local:3000/api/v1/users";
-const travel_api_url = "http://davids-macbook-pro.local:3000/api/v1/travels";
+const api_url =
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
+const book_api_url =
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books";
+const trail_api_url =
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails";
+const user_url =
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users";
+const travel_api_url =
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels";
 export default {
   eventDueBy(form) {
     console.log("EventService - dueBy");
