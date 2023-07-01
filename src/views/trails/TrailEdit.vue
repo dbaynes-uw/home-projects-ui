@@ -54,7 +54,7 @@ export default {
   async mounted() {
     console.log("Mounted: ", this.$route.params.id);
     const result = await axios.get(
-      "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails/" +
+      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails/" +
         +this.$route.params.id
     );
     this.trail = result.data;
@@ -93,7 +93,7 @@ export default {
         };
         console.log("This trail to PUT: ", this.trail);
         const result = await axios.put(
-          "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails/" +
+          "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails/" +
             this.$route.params.id,
           {
             trail_head_name: this.trail.trail_head_name,

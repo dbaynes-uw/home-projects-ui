@@ -2,7 +2,7 @@ import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
 const apiClient = axios.create({
-  baseURL: "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/",
+  baseURL: "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/",
   withCredentials: false,
   headers: {
     Accept: "application/json",
@@ -10,15 +10,15 @@ const apiClient = axios.create({
   },
 });
 const api_url =
-  "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
 const book_api_url =
-  "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books";
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books";
 const trail_api_url =
-  "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails";
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails";
 const user_url =
-  "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users";
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users";
 const travel_api_url =
-  "http://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels";
+  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels";
 export default {
   eventDueBy(form) {
     console.log("EventService - dueBy");
