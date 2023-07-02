@@ -85,7 +85,7 @@ export default {
     return {
       inputSearchText: "",
       onlineStatus: navigator.onLine,
-      requestIndexDetailFlag: false,
+      //requestIndexDetailFlag: false,
     };
   },
   methods: {

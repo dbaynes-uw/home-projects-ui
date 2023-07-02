@@ -110,7 +110,8 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  props: ["id", "requestIndexDetailFlag", "eventsIndexDetail"],
+  //props: ["id", "requestIndexDetailFlag", "eventsIndexDetail"],
+  props: ["id", "eventsIndexDetail"],
   //data() {},
   data() {
     return {

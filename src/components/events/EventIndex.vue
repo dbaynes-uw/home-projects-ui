@@ -75,7 +75,8 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "EventIndex",
-  props: ["events", "requestIndexDetailFlag"],
+  //props: ["events", "requestIndexDetailFlag"],
+  props: ["events"],
   components: {
     ConfirmDialogue,
   },

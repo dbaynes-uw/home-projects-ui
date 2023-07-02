@@ -55,9 +55,9 @@
     </div-->
     <p>Results: {{ filteredResults.length }}</p>
     <div class="event-list">
-      <span v-if="this.requestIndexDetailFlag == true">
+      <!--span v-if="this.requestIndexDetailFlag == true">
         console.log("Hell Yea! ", this.requestIndexDetailFlag)
-      </span>
+      </!--span-->
       <span v-if="filteredResults.length == 0">
         <EventIndex :events="events" />
       </span>
@@ -89,7 +89,7 @@ export default {
   props: ["id", "pastDue", "filteredResults[]"],
   data() {
     return {
-      requestIndexDetailFlag: false,
+      //requestIndexDetailFlag: false,
       DueBy: null,
       assigned: "assigned",
       eventList: null,
@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     requestIndexDetail() {
-      console.log(
+      /*console.log(
         "Before RequestDetailIndexFlag: ",
         this.requestIndexDetailFlag
       );
@@ -124,7 +124,7 @@ export default {
       console.log(
         "After RequestDetailIndexFlag: ",
         this.requestIndexDetailFlag
-      );
+      );*/
     },
     showIndex() {
       this.filteredResults = [];
