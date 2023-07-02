@@ -62,7 +62,7 @@ export default {
         },
         {
           label: "EventList",
-          url: "/",
+          url: "/events",
           title: "Events",
         },
         {
