@@ -83,6 +83,7 @@ export default {
     return {
       inputSearchText: "",
       onlineStatus: navigator.onLine,
+      statusMessage: "",
     };
   },
   methods: {
