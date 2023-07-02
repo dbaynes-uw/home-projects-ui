@@ -118,7 +118,7 @@ export default {
       assigned: "assigned",
       eventList: null,
       updatedEvent: null,
-      statusMessage: "",
+      //statusMessage: "",
     };
   },
   methods: {
@@ -138,10 +138,11 @@ export default {
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
         this.$store.dispatch("deleteEvent", event);
-        this.statusMessage =
+        /*this.statusMessage =
           "Event was Deleted for " +
           event.description +
           "! Page will restore in 2 seconds";
+        */
         setTimeout(() => location.reload(), 2500);
       }
     },

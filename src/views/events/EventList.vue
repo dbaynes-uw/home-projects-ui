@@ -2,7 +2,7 @@
   <div class="div-frame">
     <h2>Events</h2>
     <h2 id="status-message">
-      <u>{{ this.statusMessage }}</u>
+      <u>Status Message: this.statusMessage</u>
     </h2>
     <h2>
       <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
