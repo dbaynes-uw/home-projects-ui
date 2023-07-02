@@ -1,5 +1,4 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="div-frame">
     <h2>Events</h2>
     <h2 id="status-message">
@@ -71,7 +70,7 @@
 </template>
 
 <script setup>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+//import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DueBy from "@/components/DueBy.vue";
 import PastDue from "@/components/PastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
@@ -83,7 +82,6 @@ import DateFormatService from "@/services/DateFormatService.js";
 export default {
   components: {
     DueBy,
-    ConfirmDialogue,
   },
   props: ["id", "pastDue", "filteredResults[]"],
   data() {
