@@ -59,7 +59,7 @@ const routes = [
     component: BookEdit,
   },
   {
-    path: "/",
+    path: "/events",
     name: "EventList",
     props: true,
     component: EventList,
@@ -77,13 +77,13 @@ const routes = [
     component: EventStatisticDetail,
   },
   {
-    path: "/:id",
+    path: "/events/:id",
     name: "EventDetails",
     props: true,
     component: EventDetails,
   },
   {
-    path: "/:id",
+    path: "/event/:id",
     name: "EventEdit",
     props: true,
     component: EventEdit,
