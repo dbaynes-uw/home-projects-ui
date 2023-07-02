@@ -71,7 +71,7 @@ export default {
     return apiClient.get("/events_assigned/" + `?assigned=${assigned}`);
   },
   getEvents() {
-    console.log("ES get Events");
+    console.log("ES get Events with apiClient.get('/events') ");
     return apiClient.get("/events");
   },
   getEvent(id) {

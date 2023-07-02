@@ -118,6 +118,7 @@ export default {
       assigned: "assigned",
       eventList: null,
       updatedEvent: null,
+      statusMessage: "",
     };
   },
   methods: {
