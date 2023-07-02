@@ -80,7 +80,10 @@ import EventSearchResults from "@/components/events/EventSearchResults.vue";
 // @ is an alias to /src
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
+  name: "EventList",
   components: {
+    EventIndex,
+    EventSearchResults,
     DueBy,
   },
   props: ["id", "pastDue", "filteredResults[]"],
@@ -104,6 +107,7 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchEvents");
+    this.sortedData = this.events;
   },
   computed: {
     events() {
@@ -165,25 +169,25 @@ export default {
       //this.$router.push({ path: "/" });
       window.location.reload();
     },
-    async deleteEvent(event) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Event from List",
-        message:
-          "Are you sure you want to delete " +
-          event.description +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteEvent", event);
-        this.statusMessage =
-          "Event was Deleted for " +
-          event.description +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-      }
-    },
+    //async deleteEvent(event) {
+    //  const ok = await this.$refs.confirmDialogue.show({
+    //    title: "Delete Event from List",
+    //    message:
+    //      "Are you sure you want to delete " +
+    //      event.description +
+    //      "? It cannot be undone.",
+    //    okButton: "Delete",
+    //  });
+    //  // If you throw an error, the method will terminate here unless you surround it wil try/catch
+    //  if (ok) {
+    //    this.$store.dispatch("deleteEvent", event);
+    //    this.statusMessage =
+    //      "Event was Deleted for " +
+    //      event.description +
+    //      "! Page will restore in 2 seconds";
+    //    setTimeout(() => location.reload(), 2500);
+    //  }
+    //},
     onDoubleClick(event) {
       var updatedEvent = event;
       updatedEvent.action_active = !event.action_active;
