@@ -2,7 +2,7 @@
   <div class="div-frame">
     <h2>Book List</h2>
     <h2 id="status-message">
-      <u>{{ this.statusMessage }}</u>
+      <u>StatusMessage</u>
     </h2>
     <h2>
       <router-link :to="{ name: 'BookCreate' }">Add Book</router-link>
@@ -54,7 +54,7 @@ export default {
       description: null,
       frequency: null,
       completed: 0,
-      statusMessage: "",
+      //statusMessage: "",
     };
   },
   mounted() {
