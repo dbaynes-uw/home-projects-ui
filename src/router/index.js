@@ -99,6 +99,11 @@ const routes = [
     component: EventStatistics,
   },
   {
+    path: "/events_past_due",
+    name: "EventsPastDue",
+    component: EventsPastDue,
+  },
+  {
     path: "/events_assigned/:assigned",
     props: true,
     name: "EventsAssigned",
