@@ -9,6 +9,14 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+const devApiClient = axios.create({
+  baseURL: "http://davids-macbook-pro.local:3000/api/v1/",
+  withCredentials: false,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
 const api_url =
   "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
 const book_api_url =
@@ -19,6 +27,7 @@ const user_url =
   "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users";
 const travel_api_url =
   "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels";
+var currentPath = window.location.href;
 export default {
   eventDueBy(form) {
     console.log("EventService - dueBy");
@@ -72,7 +81,15 @@ export default {
   },
   getEvents() {
     console.log("ES get Events with apiClient.get('/events') ");
-    return apiClient.get("/events");
+    console.log("currentPath: ", currentPath);
+    console.log("currentPORT: ", window.location.port);
+    if (currentPath.includes("tranquil-mesa")) {
+      console.log("currentPath contains tranquil-mesa!!!!");
+      return apiClient.get("/events");
+    } else {
+      console.log("currentPath is NOT production");
+      return devApiClient.get("/events");
+    }
   },
   getEvent(id) {
     console.log("apiClient: ", apiClient);
