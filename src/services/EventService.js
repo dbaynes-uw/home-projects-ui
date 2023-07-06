@@ -1,7 +1,7 @@
 import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-const apiClient = axios.create({
+var apiClient = axios.create({
   baseURL: "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/",
   withCredentials: false,
   headers: {
@@ -17,18 +17,20 @@ const devApiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
-const api_url =
-  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
-const book_api_url =
-  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books";
-const trail_api_url =
-  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails";
-const user_url =
-  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users";
-const travel_api_url =
-  "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels";
-var currentPath = window.location.href;
+var environment = "";
+var api_url = "";
 export default {
+  async mounted() {
+    console.log("Event Service Mounted.");
+    if (window.location.port == "8080") {
+      environment = "development";
+      api_url = "http://davids-macbook-pro.local:3000/api/v1/";
+    } else {
+      environment = "production";
+      api_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
+    }
+  },
   eventDueBy(form) {
     console.log("EventService - dueBy");
     const dueFilter =
@@ -40,7 +42,7 @@ export default {
     console.log("EventService - pastDue");
     pastDue = true;
     //const response = await axios.get(api_url + `?_pastDue=${pastDue}`);
-    return apiClient.get("/events" + `?_pastDue=${pastDue}`);
+    return apiClient.get(api_url + "/events" + `?_pastDue=${pastDue}`);
     //commit("setAreas", response.data);
   },
   async postBook(book) {
@@ -56,12 +58,12 @@ export default {
     return apiClient.get("/books/" + id);
   },
   async putBook(updatedBook) {
-    return axios.put(book_api_url + `/${updatedBook.id}`, updatedBook);
+    return axios.put(api_url + "/books" + `/${updatedBook.id}`, updatedBook);
   },
   deleteBook(id) {
     console.log("ES Delete Book: ", id);
     // For Testing: setTimeout(5000);
-    return axios.delete(book_api_url + `/${id}`);
+    return axios.delete(api_url + "/books"`/${id}`);
   },
   getEventStatistics() {
     return apiClient.get("/event_statistics");
@@ -81,13 +83,10 @@ export default {
   },
   getEvents() {
     console.log("ES get Events with apiClient.get('/events') ");
-    console.log("currentPath: ", currentPath);
     console.log("currentPORT: ", window.location.port);
-    if (currentPath.includes("tranquil-mesa")) {
-      console.log("currentPath contains tranquil-mesa!!!!");
+    if (environment == "production") {
       return apiClient.get("/events");
     } else {
-      console.log("currentPath is NOT production");
       return devApiClient.get("/events");
     }
   },
@@ -101,10 +100,10 @@ export default {
   },
   async putEvent(updatedEvent) {
     console.log("putEvent updatedEvent.id: ", updatedEvent.id);
-    return axios.put(api_url + `/${updatedEvent.id}`, updatedEvent);
+    return axios.put(api_url + "books" + `/${updatedEvent.id}`, updatedEvent);
   },
   deleteEvent(id) {
-    return axios.delete(api_url + `/${id}`);
+    return axios.delete(api_url + "books" + `/${id}`);
   },
   async postUser(user) {
     return apiClient.post("/users", user);
@@ -113,7 +112,7 @@ export default {
     return apiClient.get("/users");
   },
   deleteUser(id) {
-    return axios.delete(user_url + `/${id}`);
+    return axios.delete(api_url + "users" + `/${id}`);
   },
   async postTrail(trail) {
     return apiClient.post("/trails", trail);
@@ -128,10 +127,10 @@ export default {
     return apiClient.get("/trails/" + id);
   },
   async putTrail(updatedTrail) {
-    return axios.put(trail_api_url + `/${updatedTrail.id}`, updatedTrail);
+    return axios.put(api_url + "trails" + `/${updatedTrail.id}`, updatedTrail);
   },
   deleteTrail(id) {
-    return axios.delete(trail_api_url + `/${id}`);
+    return axios.delete(api_url + "trails" + `/${id}`);
   },
   async postTravel(travel) {
     return apiClient.post("/travels", travel);
@@ -146,11 +145,14 @@ export default {
     return apiClient.get("/travels/" + id);
   },
   async putTravel(updatedTravel) {
-    return axios.put(travel_api_url + `/${updatedTravel.id}`, updatedTravel);
+    return axios.put(
+      api_url + "travels" + `/${updatedTravel.id}`,
+      updatedTravel
+    );
   },
   deleteTravel(id) {
     console.log("ES Delete Travel: ", id);
     // For Testing: setTimeout(5000);
-    return axios.delete(travel_api_url + `/${id}`);
+    return axios.delete(api_url + "travels" + `/${id}`);
   },
 };
