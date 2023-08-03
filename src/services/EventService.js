@@ -147,7 +147,12 @@ export default {
   getUsers() {
     this.init();
     console.log("environment: ", environment);
-    return apiClient.get("/users");
+    // environment == "production" ? return apiClient.get("/users") : return devApiClient.get("/users");
+    if (environment == "development") {
+      return devApiClient.get("/users");
+    } else {
+      return apiClient.get("/users");
+    }
   },
   deleteUser(id) {
     this.init();

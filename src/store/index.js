@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import sessionManager from "@/store/modules/session_manager";
 import EventService from "@/services/EventService.js";
 import axios from "axios";
 const api_url =
@@ -457,5 +458,7 @@ export default createStore({
         });
     },
   },
-  modules: {},
+  modules: {
+    sessionManager,
+  },
 });
