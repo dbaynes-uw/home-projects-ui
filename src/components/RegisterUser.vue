@@ -1,7 +1,11 @@
 <template>
   <div>
-    <h1>Login Vue</h1>
-    <form @submit.prevent="login">
+    <form @submit.prevent="register">
+      <label for="name">
+        Name:
+      </label>
+      <input v-model="name" type="text" name="name" value>
+
       <label for="email">
         Email:
       </label>
@@ -13,11 +17,8 @@
       <input v-model="password" type="password" name="password" value>
 
       <button type="submit" name="button">
-        Login:
+        Register
       </button>
-      <router-link to="/register">
-        Don't have an account? Register.
-      </router-link>
     </form>
   </div>
 </template>
@@ -26,20 +27,22 @@
 export default {
   data () {
     return {
+      name: '',
       email: '',
       password: ''
     }
   },
   methods: {
-    login () {
+    register () {
+      console.log("Reg: name, email: ", this.name, this.email);
       this.$store
-        .dispatch('login', {
+        .dispatch('register', {
+          name: this.name,
           email: this.email,
           password: this.password
         })
         .then(() => {
-          console.log("login.vue for: ", this.email );
-          this.$router.push({ name: 'EventList' })
+          this.$router.push({ name: 'dashboard' })
         })
     }
   }

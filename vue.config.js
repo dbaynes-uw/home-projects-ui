@@ -4,8 +4,8 @@ module.exports = {
     // clientLogLevel: 'info',
     //clientLogLevel: [ 'info', 'warn', 'error', 'debug', 'trace', 'silent' ],
     allowedHosts: "all",
-    //proxy: "http://localhost:3000/",
-    proxy: "http://davids-macbook-pro.local:3000/",
+    proxy: "http://localhost:3000/",
+    //proxy: "http://davids-macbook-pro.local:3000/",
   },
   pluginOptions: {
     vuetify: {

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://davids-macbook-pro.local:3000/api/v1/";
+const BASE_URL = "http://localhost:3000/";
 
 const state = {
   auth_token: null,
@@ -23,14 +23,16 @@ const getters = {
   isLoggedIn(state) {
     console.log("isLoggedIn(state): ", state);
     console.log("state.auth_token: ", state.auth_token);
-    const loggedOut = true;
-    state.auth_token == null || state.auth_token == JSON.stringify(null);
+    const loggedOut = 
+      //true;
+      state.auth_token == null || state.auth_token == JSON.stringify(null);
     console.log("loggedOut: ", loggedOut);
     return !loggedOut;
   },
 };
 const actions = {
   registerUser({ commit }, payload) {
+    console.log("RegisterUser - payload: ", payload);
     return new Promise((resolve, reject) => {
       axios
         .post(`${BASE_URL}users`, payload)
@@ -44,6 +46,7 @@ const actions = {
     });
   },
   loginUser({ commit }, payload) {
+    console.log("session_manager.js loginUser - payload: ", payload);
     new Promise((resolve, reject) => {
       axios
         .post(`${BASE_URL}users/sign_in`, payload)
@@ -57,6 +60,7 @@ const actions = {
     });
   },
   logoutUser({ commit }) {
+    console.log("@@logoutUser - state.auth_token: ", state.auth_token);
     const config = {
       headers: {
         authorization: state.auth_token,
@@ -75,6 +79,7 @@ const actions = {
     });
   },
   loginUserWithToken({ commit }, payload) {
+    console.log("@@loginUserWithTokan - payload - ", payload);
     const config = {
       headers: {
         Authorization: payload.auth_token,
@@ -95,8 +100,11 @@ const actions = {
 };
 const mutations = {
   setUserInfo(state, data) {
+    console.log("session_manager.js mutations setUserInfo state: ", state);
+    console.log("session_manager.js mutations setUserInfo data: ", data);
     state.user = data.data.user;
     state.auth_token = data.headers.authorization;
+    console.log("data.headers.auth_token: ", data.headers.authorization );
     axios.defaults.headers.common["Authorization"] = data.headers.authorization;
     localStorage.setItem("auth_token", data.headers.authorization);
   },

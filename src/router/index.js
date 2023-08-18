@@ -12,7 +12,6 @@ import EventList from "../views/events/EventList.vue";
 import EventsPastDue from "../views/events/EventsPastDue.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
-import Login from "../views/Login.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
 import TrailDetails from "@/views/trails/TrailDetails.vue";
 import TrailEdit from "@/views/trails/TrailEdit.vue";
@@ -24,13 +23,44 @@ import TravelList from "../views/travels/TravelList.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
-
+import Home from '../views/Home.vue'
+import Dashboard from '../views/Dashboard.vue'
+import Login from '../views/Login.vue'
+import Logout from '../views/Logout.vue'
+import Register from '../views/Register.vue'
 const routes = [
   {
-    path: "/login",
+    path: '/',
+    name: 'home',
+    component: Home
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: Dashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: Logout
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: Register
+  },
+  /*{
+    path: "/users/sign_in",
     name: "Login",
     component: Login,
   },
+  */
   {
     path: "/about",
     name: "About",
@@ -177,4 +207,11 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  const loggedIn = localStorage.getItem('user')
+  if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
+    next('/')
+  }
+  next()
+})
 export default router;

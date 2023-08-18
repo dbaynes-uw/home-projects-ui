@@ -6,7 +6,8 @@ const api_url =
   "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
 export default createStore({
   state: {
-    user: "David Baynes",
+    user: null,
+    isNewUser: true,
     books: [],
     events: [],
     trails: [],
@@ -19,6 +20,22 @@ export default createStore({
     trail: {},
   },
   mutations: {
+    SET_USER_DATA (state, userData) {
+      console.log("SET_USER_DATA - state: ", state);
+      console.log("SET_USER_DATA - userData: ", userData);
+      localStorage.setItem('user', JSON.stringify(userData))
+      axios.defaults.headers.common['Authorization'] = `Bearer ${
+        userData.token
+      }`
+      state.user = userData
+    },
+    LOGOUT () {
+      localStorage.removeItem('user')
+      location.reload()
+    },
+    IS_NEW_USER (state, isNewUser) {
+      state.isNewUser = isNewUser
+    },
     ADD_BOOK(state, book) {
       state.books.push(book);
     },
@@ -90,6 +107,27 @@ export default createStore({
     },
   },
   actions: {
+    register ({ commit }, credentials) {
+      console.log("Action Register - credentials: ", credentials);
+      return axios
+        .post('//localhost:3000/register', credentials)
+        .then(({ data }) => {
+          commit('SET_USER_DATA', data)
+        })
+    },
+    login ({ commit }, credentials) {
+      return axios
+        .post('//localhost:3000/login', credentials)
+        .then(({ data }) => {
+          commit('SET_USER_DATA', data)
+        })
+    },
+    logout ({ commit }) {
+      commit('LOGOUT')
+    },
+    isNewUser ({ commit }, isNewUser) {
+      commit('IS_NEW_USER', isNewUser)
+    },
     createBook({ commit }, book) {
       console.log("createBook from index.js");
       EventService.postBook(book)

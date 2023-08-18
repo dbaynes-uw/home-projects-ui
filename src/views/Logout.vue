@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Login Vue</h1>
-    <form @submit.prevent="login">
+    <h1>LogOut</h1>
+    <form @submit.prevent="logout">
       <label for="email">
         Email:
       </label>
@@ -13,7 +13,7 @@
       <input v-model="password" type="password" name="password" value>
 
       <button type="submit" name="button">
-        Login:
+        Logout:
       </button>
       <router-link to="/register">
         Don't have an account? Register.
@@ -39,7 +39,7 @@ export default {
         })
         .then(() => {
           console.log("login.vue for: ", this.email );
-          this.$router.push({ name: 'EventList' })
+          this.$router.push({ name: 'about' })
         })
     }
   }
