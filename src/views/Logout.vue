@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>LogOut</h1>
-    <form @submit.prevent="logout">
+    <form @submit.prevent="login">
       <label for="email">
         Email:
       </label>
@@ -39,7 +39,7 @@ export default {
         })
         .then(() => {
           console.log("login.vue for: ", this.email );
-          this.$router.push({ name: 'about' })
+          this.$router.push({ name: 'home' })
         })
     }
   }

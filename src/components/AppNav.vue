@@ -1,50 +1,73 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  Logged In? {{ loggedIn }}
   <div id="nav">
-    <v-app>
-    <v-app-bar color="teal-darken-2">
-      <v-toolbar-title>Home Project Dashboard</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        v-for="link in links"
-        :key="`${link.label}-header-link`"
-        text
-        rounded
-      >
-        <router-link :to="{ name: `${link.label}` }">
-          {{ link.title }}
-        </router-link>
-      </v-btn>
-      <p>{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>
-    </v-app-bar>
-    <v-content style="margin-top: 7rem">
-      <router-view></router-view>
-    </v-content>
-    <v-footer
-      color="teal-darken-2"
-      padless
-      style="display: flex; flex: 0 0 auto !important; top: 2rem"
-    >
-      <v-layout justify-center wrap>
+    <v-app v-if="!loggedIn">
+      <v-app-bar color="teal-darken-2">
+        <v-toolbar-title>Home Project</v-toolbar-title>
+        <v-spacer></v-spacer>
         <v-btn
-          v-for="link in links"
-          :key="`${link.label}-footer-link`"
-          color="white"
           text
           rounded
-          class="my-2"
+        >
+          <router-link :to="{ name: `Login` }">
+            Login!
+          </router-link>
+        </v-btn>
+        <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
+      </v-app-bar>
+      <v-content style="margin-top: 7rem">
+        <router-view></router-view>
+      </v-content>
+    </v-app>
+    <v-app v-if="loggedIn">
+      <v-app-bar color="teal-darken-2">
+        <v-toolbar-title>Home Project</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn
+          v-for="link in links"
+          :key="`${link.label}-header-link`"
+          text
+          rounded
         >
           <router-link :to="{ name: `${link.label}` }">
             {{ link.title }}
           </router-link>
         </v-btn>
-        <!--v-flex primary lighten-2 py-4 text-center white--text xs12>
-          {{ new Date().getFullYear() }} — <strong>Vuetify Dashboard</strong>
-        </v-flex-->
-      </v-layout>
-    </v-footer>
-  </v-app>
+        <button type="button" class="logoutButton" @click="logout">
+          Logout
+        </button>
+        <p>{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>
+      </v-app-bar>
+      <v-content style="margin-top: 7rem">
+        <router-view></router-view>
+      </v-content>
+      <v-footer
+        color="teal-darken-2"
+        padless
+        style="display: flex; flex: 0 0 auto !important; top: 2rem"
+      >
+        <v-layout justify-center wrap>
+          <v-btn
+            v-for="link in links"
+            :key="`${link.label}-footer-link`"
+            color="white"
+            text
+            rounded
+            class="my-2"
+          >
+            <router-link :v-if="loggedIn" :to="{ name: `${link.label}` }">
+              {{ link.title }}
+            </router-link>
+          </v-btn>
+          <button type="button" class="logoutButton" @click="logout">
+            Logout
+          </button>
+          <!--v-flex primary lighten-2 py-4 text-center white--text xs12>
+            {{ new Date().getFullYear() }} — <strong>Vuetify Dashboard</strong>
+          </v-flex-->
+        </v-layout>
+      </v-footer>
+    </v-app>
   </div>
   <!--div v-else-if="!loggedIn">
     <router-link to="/">
@@ -63,6 +86,7 @@
 </template>
 
 <script>
+//import { RouterLink, useLink } from 'vue-router';
 import { authComputed } from '../vuex/helpers.js'
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
@@ -74,7 +98,7 @@ export default {
   },
   methods: {
     logout () {
-      console.log("Logged Out!");
+      console.log("AppNav - Logged Out!");
       this.$store.dispatch('logout');
     }
   },
@@ -90,7 +114,7 @@ export default {
         {
           label: "EventList",
           url: "/",
-          title: "Events",
+          title: "Events!",
         },
         {
           label: "BookList",
@@ -107,16 +131,11 @@ export default {
           url: "/travels",
           title: "Travels",
         },
-        {
-          label: "Login",
-          url: "/login",
-          title: "Login",
-        },
-        {
-          label: "Logout",
-          url: "/logout",
-          title: "Logout",
-        },
+        //{
+        //  label: "Logout",
+        //  url: "/logout",
+        //  title: "Logout",
+        //},
       ],
     };
   },

@@ -10,7 +10,8 @@ var apiClient = axios.create({
   },
 });
 const devApiClient = axios.create({
- baseURL: "http://davids-macbook-pro.local:3001/api/v1/",
+ //baseURL: "http://davids-macbook-pro.local:3000/api/v1/",
+ baseURL: "http://localhost:3000/api/v1/",
   withCredentials: false,
   headers: {
     Accept: "application/json",
@@ -24,7 +25,8 @@ export default {
     console.log("Event Service Initialized.");
     if (window.location.port == "8080") {
       environment = "development";
-      api_url = "http://davids-macbook-pro.local:3001/api/v1/";
+      //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
+      api_url = "http://localhost:3000/api/v1/";
     } else {
       environment = "production";
       api_url =

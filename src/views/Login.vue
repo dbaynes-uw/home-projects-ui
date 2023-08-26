@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Login Vue</h1>
     <form @submit.prevent="login">
       <label for="email">
         Email:
@@ -13,8 +12,11 @@
       <input v-model="password" type="password" name="password" value>
 
       <button type="submit" name="button">
-        Login:
+        Login
       </button>
+
+      <p>{{ error }}</p>
+
       <router-link to="/register">
         Don't have an account? Register.
       </router-link>
@@ -27,24 +29,30 @@ export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      error: null
     }
   },
   methods: {
     login () {
+      console.log("Login.vue login!!!");
       this.$store
         .dispatch('login', {
           email: this.email,
           password: this.password
         })
         .then(() => {
-          console.log("login.vue for: ", this.email );
-          this.$router.push({ name: 'EventList' })
+          //this.$router.push({ name: 'dashboard' })
+          this.$router.push({ name: 'About' })
+        })
+        .catch(err => {
+          console.log("Login Error: ", err.response.data.error)
+          this.error = err.response.data.error
         })
     }
   }
 }
 </script>
-
-<style scoped>
+<style lang="scss">
+@import '../assets/authorization.scss';
 </style>

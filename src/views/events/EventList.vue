@@ -106,6 +106,7 @@ export default {
     this.sortedData = this.events;
   },
   created() {
+    console.log("EventList created");
     this.$store.dispatch("fetchEvents");
     this.sortedData = this.events;
   },

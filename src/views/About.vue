@@ -4,6 +4,7 @@
     <h1>
       <router-link :to="{ name: 'UserList' }">Users</router-link>
     </h1>
+    <p>User:</p>
   </div>
 </template>
 <style lang="css">

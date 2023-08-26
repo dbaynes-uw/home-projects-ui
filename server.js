@@ -29,6 +29,7 @@ app.get('/dashboard', verifyToken, (req, res) => {
 })
 
 app.post('/register', (req, res) => {
+  console.log("Server.js - Register", req.body);
   if (req.body) {
     const user = {
       name: req.body.name,
@@ -36,12 +37,19 @@ app.post('/register', (req, res) => {
       password: req.body.password
       // In a production app, you'll want to encrypt the password
     }
-
     const data = JSON.stringify(user, null, 2)
-    var dbUserEmail = require('./db/user.json').email
 
-    if (dbUserEmail === req.body.email) {
-      res.sendStatus(400)
+    var dbUserEmail = require('./db/user.json').email
+    var errorsToSend = []
+
+    if (dbUserEmail === user.email) {
+      errorsToSend.push('An account with this email already exists.')
+    }
+    if (user.password.length < 5) {
+      errorsToSend.push('Password too short.')
+    }
+    if (errorsToSend.length > 0) {
+      res.status(400).json({ errors: errorsToSend })
     } else {
       fs.writeFile('./db/user.json', data, err => {
         if (err) {
@@ -65,6 +73,7 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   const userDB = fs.readFileSync('./db/user.json')
   const userInfo = JSON.parse(userDB)
+  console.log("Server.js POST LOGIN UserInfo ", userInfo.email);
   if (
     req.body &&
     req.body.email === userInfo.email &&
@@ -78,7 +87,7 @@ app.post('/login', (req, res) => {
       name: userInfo.name
     })
   } else {
-    res.sendStatus(400)
+    res.status(401).json({ error: 'Invalid login. Please try again.' })
   }
 })
 

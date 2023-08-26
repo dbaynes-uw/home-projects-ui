@@ -30,6 +30,7 @@ export default createStore({
       state.user = userData
     },
     LOGOUT () {
+      console.log("Store/index.js - LOGOUT");
       localStorage.removeItem('user')
       location.reload()
     },
@@ -107,27 +108,30 @@ export default createStore({
     },
   },
   actions: {
-    register ({ commit }, credentials) {
-      console.log("Action Register - credentials: ", credentials);
-      return axios
-        .post('//localhost:3000/register', credentials)
-        .then(({ data }) => {
-          commit('SET_USER_DATA', data)
-        })
-    },
-    login ({ commit }, credentials) {
-      return axios
-        .post('//localhost:3000/login', credentials)
-        .then(({ data }) => {
-          commit('SET_USER_DATA', data)
-        })
-    },
-    logout ({ commit }) {
-      commit('LOGOUT')
-    },
-    isNewUser ({ commit }, isNewUser) {
-      commit('IS_NEW_USER', isNewUser)
-    },
+    //register ({ commit }, credentials) {
+    //  console.log("Index.js - Action Register - credentials: ", credentials);
+    //  return axios
+    //    .post('//localhost:3000/register', credentials)
+    //    .then(({ data }) => {
+    //      commit('SET_USER_DATA', data)
+    //    })
+    //},
+    //login ({ commit }, credentials) {
+    //  console.log("Index.js Action Login - credentials: ", credentials);
+    //  return axios
+    //    .post('//localhost:3000/login', credentials)
+    //    //.post('//localhost:3000/users/sign_in', credentials)
+    //    .then(({ data }) => {
+    //      commit('SET_USER_DATA', data)
+    //    })
+    //},
+    //logout ({ commit }) {
+    //  console.log("Index.js - Logout");
+    //  commit('LOGOUT')
+    //},
+    //isNewUser ({ commit }, isNewUser) {
+    //  commit('IS_NEW_USER', isNewUser)
+    //},
     createBook({ commit }, book) {
       console.log("createBook from index.js");
       EventService.postBook(book)
@@ -137,17 +141,6 @@ export default createStore({
         })
         .catch((error) => {
           alert("Error in postBook of createBook Action (index.js)");
-          console.log(error);
-        });
-    },
-    async fetchBooks({ commit }) {
-      EventService.getBooks()
-        .then((response) => {
-          commit("SET_BOOKS", response.data);
-          console.log("FetchBooks response.data: ", response.data);
-          return response.data;
-        })
-        .catch((error) => {
           console.log(error);
         });
     },
