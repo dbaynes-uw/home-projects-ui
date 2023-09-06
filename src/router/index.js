@@ -32,6 +32,8 @@ const routes = [
   {
     path: '/',
     name: 'home',
+    message: '',
+    params: {message: '!!!!!'},
     component: Home
   },
   {

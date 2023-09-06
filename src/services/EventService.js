@@ -7,26 +7,29 @@ var apiClient = axios.create({
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
+    "Authorization": axios.defaults.headers.common['Authorization']
   },
 });
-const devApiClient = axios.create({
- //baseURL: "http://davids-macbook-pro.local:3000/api/v1/",
- baseURL: "http://localhost:3000/api/v1/",
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
+//const devApiClient = axios.create({
+// //baseURL: "http://davids-macbook-pro.local:3000/api/v1/",
+// baseURL: "http://localhost:3001/api/v1/",
+//  withCredentials: true,
+//  headers: {
+//    Accept: "application/json",
+//    "Content-Type": "application/json",
+//    "Authorization": axios.defaults.headers.common['Authorization']
+//  },
+//});
 var environment = "";
 var api_url = "";
+//const app_token = access_token
 export default {
   init() {
     console.log("Event Service Initialized.");
     if (window.location.port == "8080") {
       environment = "development";
       //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-      api_url = "http://localhost:3000/api/v1/";
+      api_url = "http://localhost:3001/api/v1/";
     } else {
       environment = "production";
       api_url =
@@ -51,16 +54,34 @@ export default {
     return apiClient.get(api_url + "/events" + `?_pastDue=${pastDue}`);
     //commit("setAreas", response.data);
   },
+  //async postBook(book) {
+  //  this.init();
+  //  console.log("environment: ", environment);
+  //  return apiClient.post("/books", book);
+  //},
   async postBook(book) {
     this.init();
-    console.log("environment: ", environment);
-    return apiClient.post("/books", book);
+    console.log("ES Post Book: ", book);
+    console.log("ES Post Book environment: ", environment);
+    console.log("ES Post Book: ", book);
+    return axios.post(api_url + 'books', book);
   },
   getBooks() {
     this.init();
     console.log("environment: ", environment);
-    console.log("ES getBooks");
-    return apiClient.get("/books");
+    console.log("ES get Books with apiClient.get('/books') ");
+    console.log("currentPORT: ", window.location.port);
+    console.log("TEST USER: ", localStorage.getItem('user'))
+    console.log("environment: ", environment);
+    if (environment == "production") {
+      return apiClient.get("/books");
+    } else {
+      //return devApiClient.get("/events");
+      return axios.get(api_url + "books")
+      .catch((error) => {
+        console.error("ERROR: ", error)
+      })
+    }
   },
   getBook(id) {
     this.init();
@@ -110,12 +131,16 @@ export default {
     console.log("environment: ", environment);
     console.log("ES get Events with apiClient.get('/events') ");
     console.log("currentPORT: ", window.location.port);
-    this.init();
+    console.log("TEST USER: ", localStorage.getItem('user'))
     console.log("environment: ", environment);
     if (environment == "production") {
       return apiClient.get("/events");
     } else {
-      return devApiClient.get("/events");
+      //return devApiClient.get("/events");
+      return axios.get(api_url + "events")
+      .catch((error) => {
+        console.error("ERROR: ", error)
+      })
     }
   },
   getEvent(id) {
@@ -148,13 +173,7 @@ export default {
   },
   getUsers() {
     this.init();
-    console.log("environment: ", environment);
-    // environment == "production" ? return apiClient.get("/users") : return devApiClient.get("/users");
-    if (environment == "development") {
-      return devApiClient.get("/users");
-    } else {
-      return apiClient.get("/users");
-    }
+    return axios.get(api_url + "users")
   },
   deleteUser(id) {
     this.init();
@@ -198,7 +217,8 @@ export default {
     this.init();
     console.log("environment: ", environment);
     console.log("ES getTravels");
-    return apiClient.get("/travels");
+    //return apiClient.get("/travels");
+    return axios.get(api_url + "/traveles")
   },
   getTravel(id) {
     this.init();

@@ -4,12 +4,12 @@
       <label for="email">
         Email:
       </label>
-      <input v-model="email" type="email" name="email" value>
+      <input v-model="email" type="email" required name="email" value>
 
       <label for="password">
         Password:
       </label>
-      <input v-model="password" type="password" name="password" value>
+      <input v-model="password" type="password" required name="password" value>
 
       <button type="submit" name="button">
         Login
@@ -26,6 +26,10 @@
 
 <script>
 export default {
+  state: {
+    token: "",
+    errors: null,
+  },
   data () {
     return {
       email: '',
@@ -43,12 +47,13 @@ export default {
         })
         .then(() => {
           //this.$router.push({ name: 'dashboard' })
+          this.$store.commit('SET_ERRORS', "")
           this.$router.push({ name: 'About' })
         })
-        .catch(err => {
-          console.log("Login Error: ", err.response.data.error)
-          this.error = err.response.data.error
-        })
+        //.catch(err => {
+        //  console.log("Login Error: ", err.response.data.error)
+        //  this.error = err.response.data.error
+        //})
     }
   }
 }

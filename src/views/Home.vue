@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <h1>Welcome to the App!</h1>
+    <h2 style="color: red; font-weight: bold;" v-if="!this.$store.state.errors == ''">Error Message: {{ this.$store.state.errors }}</h2>
     <div> <!---- v-if="!loggedIn"-->
       To use this app you'll need to
       <router-link to="/login">

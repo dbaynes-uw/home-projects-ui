@@ -2,6 +2,8 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h2>Users</h2>
+    <h3>Message: {{ this.message }}</h3>
+    <h3>Count: {{ }}</h3>
     <h2>
       <router-link :to="{ name: 'UserCreate' }">Create User</router-link>
     </h2>
@@ -15,6 +17,7 @@
             </b>
           </p>
         </router-link-->
+        <p> Users <Caption></Caption>Count: {{ users.length }}</p>
         <ul class="ul-left">
           <li>{{ user.name }}</li>
           <li>{{ user.username }}</li>
@@ -41,12 +44,14 @@
 // @ is an alias to /src
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
+  name: 'UserList',
   components: {
     ConfirmDialogue,
   },
   props: ["id"],
   data() {
     return {
+      message: '',
       userList: null,
     };
   },
@@ -69,7 +74,7 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchUsers");
+    this.$store.dispatch("fetchUsers")
   },
   computed: {
     users() {

@@ -132,33 +132,33 @@ export default createStore({
     //isNewUser ({ commit }, isNewUser) {
     //  commit('IS_NEW_USER', isNewUser)
     //},
-    createBook({ commit }, book) {
-      console.log("createBook from index.js");
-      EventService.postBook(book)
-        .then(() => {
-          commit("ADD_BOOK", book);
-          alert("Book was successfully added for " + book.title);
-        })
-        .catch((error) => {
-          alert("Error in postBook of createBook Action (index.js)");
-          console.log(error);
-        });
-    },
-    async fetchBook({ commit, state }, id) {
-      const existingBook = state.books.find((book) => book.id === id);
-      if (existingBook) {
-        console.log("ExistingBook: ", existingBook);
-        commit("SET_BOOK", existingBook);
-      } else {
-        EventService.getBook(id)
-          .then((response) => {
-            commit("SET_BOOK", response.data);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    },
+    //createBook({ commit }, book) {
+    //  console.log("createBook from index.js");
+    //  EventService.postBook(book)
+    //    .then(() => {
+    //      commit("ADD_BOOK", book);
+    //      alert("Book was successfully added for " + book.title);
+    //    })
+    //    .catch((error) => {
+    //      alert("Error in postBook of createBook Action (index.js)");
+    //      console.log(error);
+    //    });
+    //},
+    //async fetchBooks({ commit, state }, id) {
+    //  const existingBook = state.books.find((book) => book.id === id);
+    //  if (existingBook) {
+    //    console.log("ExistingBook: ", existingBook);
+    //    commit("SET_BOOK", existingBook);
+    //  } else {
+    //    EventService.getBook(id)
+    //      .then((response) => {
+    //        commit("SET_BOOK", response.data);
+    //      })
+    //      .catch((error) => {
+    //        console.log(error);
+    //      });
+    //  }
+    //},
     async updateBook({ commit }, book) {
       console.log("updateBook event from dbl click: ", book);
       EventService.putBook(book)

@@ -19,12 +19,19 @@
     "axios": "^1.2.2",
     "core-js": "^3.8.3",
     "cors": "^2.8.5",
+    "crypto": "npm:crypto-browserify",
+    "crypto-js": "^3.1.9-1",
     "import": "^0.0.6",
     "jsonwebtoken": "^8.4.0",
     "material-design-icons-iconfont": "^6.7.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.40",
+    "node-sass": "^9.0.0",
+    "process": "^0.11.10",
     "roboto-fontface": "*",
+    "sqlite3": "^5.1.6",
+    "stream": "npm:stream-browserify",
+    "util": "^0.12.5",
     "vue": "^3.2.47",
     "vue-axios": "^3.5.2",
     "vue-internet-checker": "^2.0.1",
@@ -56,5 +63,8 @@
     "vue-cli-plugin-vuetify": "~2.5.8",
     "webpack": "^5.88.2",
     "webpack-plugin-vuetify": "^2.0.0-alpha.0"
+  },
+  "browser": {
+    "crypto": false
   }
 }

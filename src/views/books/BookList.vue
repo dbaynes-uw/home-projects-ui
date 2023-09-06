@@ -61,6 +61,7 @@ export default {
     this.sortedData = this.books;
   },
   created() {
+    console.log("BookList created");
     this.$store.dispatch("fetchBooks");
     this.sortedData = this.books;
   },

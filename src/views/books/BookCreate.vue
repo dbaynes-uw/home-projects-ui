@@ -6,8 +6,8 @@
   </v-card>
   <v-card-text>
     Rules: {{ [required] }}
-    <v-form>
-      <v-containter>
+    <v-form id="form-container">
+      <v-container id="form-container">
         <v-text-field
           v-model="book.title"
           :rules="[(v) => !!v || 'Required']"
@@ -38,7 +38,7 @@
         </v-text-field>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
         <!--button class="button" type="submit">Submit</button-->
-      </v-containter>
+      </v-container>
     </v-form>
   </v-card-text>
 </template>
@@ -100,6 +100,9 @@ export default {
 };
 </script>
 <style>
+#form-container {
+  width: 75% !important;
+}
 .add-form {
   display: flex;
   flex-direction: column;
