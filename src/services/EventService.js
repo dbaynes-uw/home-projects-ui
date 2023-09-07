@@ -133,15 +133,7 @@ export default {
     console.log("currentPORT: ", window.location.port);
     console.log("TEST USER: ", localStorage.getItem('user'))
     console.log("environment: ", environment);
-    if (environment == "production") {
-      return apiClient.get("/events");
-    } else {
-      //return devApiClient.get("/events");
-      return axios.get(api_url + "events")
-      .catch((error) => {
-        console.error("ERROR: ", error)
-      })
-    }
+    return axios.get(api_url + "users")
   },
   getEvent(id) {
     this.init();
