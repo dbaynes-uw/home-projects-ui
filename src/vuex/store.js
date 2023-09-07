@@ -75,8 +75,8 @@ export default new Vuex.Store({
     async register ({ commit }, credentials) {
       console.log("Store.js REGISTER!");
       return axios
-        //.post('//localhost:3000/register', credentials)
-        .post('//localhost:3001/users/tokens/sign_up', credentials)
+        //.post('//localhost:3001/users/tokens/sign_up', credentials)
+        .post('//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/sign_up', credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })
@@ -84,8 +84,8 @@ export default new Vuex.Store({
     async login ({ commit }, credentials) {
       console.log("Store.js LOGIN Credentials: ", credentials);
       return axios
-        //.post('//localhost:3000/login', credentials)
-        .post('//localhost:3001/users/tokens/sign_in', credentials)
+        //.post('//localhost:3001/users/tokens/sign_in', credentials)
+        .post('//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/sign_in', credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })
