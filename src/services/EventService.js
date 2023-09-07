@@ -73,15 +73,8 @@ export default {
     console.log("currentPORT: ", window.location.port);
     console.log("TEST USER: ", localStorage.getItem('user'))
     console.log("environment: ", environment);
-    if (environment == "production") {
-      return apiClient.get("/books");
-    } else {
-      //return devApiClient.get("/events");
-      return axios.get(api_url + "books")
-      .catch((error) => {
-        console.error("ERROR: ", error)
-      })
-    }
+    this.init();
+    return axios.get(api_url + "books")
   },
   getBook(id) {
     this.init();
@@ -133,7 +126,7 @@ export default {
     console.log("currentPORT: ", window.location.port);
     console.log("TEST USER: ", localStorage.getItem('user'))
     console.log("environment: ", environment);
-    return axios.get(api_url + "users")
+    return axios.get(api_url + "events")
   },
   getEvent(id) {
     this.init();
