@@ -28,6 +28,7 @@ import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
 import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
+
 const routes = [
   {
     path: '/',

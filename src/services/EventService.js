@@ -1,42 +1,21 @@
 import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-//var apiClient = axios.create({
-//  baseURL: "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/",
-//  withCredentials: false,
-//  headers: {
-//    Accept: "application/json",
-//    "Content-Type": "application/json",
-//    "Authorization": axios.defaults.headers.common['Authorization']
-//  },
-//});
 var environment = "";
 var api_url = "";
 export default {
   init() {
-    console.log("Event Service Initialized.");
     console.log("UI PORT IS: ", window.location.port)
     if (window.location.port == "8080") {
       environment = "development";
       //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-      //api_url = "http://localhost:3001/api/v1/";
-      api_url = axios.create({
-        baseURL: "https://localhost:3001/api/v1/",
-        withCredentials: false,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Authorization": axios.defaults.headers.common['Authorization']
-        },
-      })
+      api_url = "http://localhost:3001/api/v1/";
     } else {
       environment = "production";
       api_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
     }
     console.log("API_URL: ", api_url);
-    //axios.defaults.headers.common = { 'Authorization': 'Bearer '+localStorage.getItem('accessToken') }
-    console.log("AXIOS Defaults: ", axios.defaults.headers.common)
   },
   eventDueBy(form) {
     this.init();
@@ -71,9 +50,7 @@ export default {
     console.log("environment: ", environment);
     console.log("ES Delete Book: ", book.id);
     // For Testing: setTimeout(5000);
-    return axios.get(api_url + "books/" + `${book.id}`);
-    //fetch(api_url + "books/" + `${book.id}`, {method: 'DELETE'})
-    //.then(() => this.status = 'Delete successful');
+    return axios.delete(api_url + "books/" + `${book.id}`);
   },
   getEventStatistics() {
     this.init();
