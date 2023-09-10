@@ -2,7 +2,7 @@
   <div class="div-frame">
     <h2>Book List</h2>
     <h2 id="status-message">
-      <u>{{ this.statusMessage }}</u>
+      <!--{{ this.statusMessage }}</-->
     </h2>
     <h2>
       <router-link :to="{ name: 'BookCreate' }">Add Book</router-link>

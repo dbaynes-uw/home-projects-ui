@@ -3,10 +3,11 @@
   <div>
     <h2>Users</h2>
     <h3>Message: {{ this.message }}</h3>
-    <h3>Count: {{ }}</h3>
-    <h2>
+    <h3>Count: {{ users.count }}</h3>
+    <h3>User must register to be added</h3>
+    <!--h2>
       <router-link :to="{ name: 'UserCreate' }">Create User</router-link>
-    </h2>
+    </h2-->
     <br />
     <div class="users">
       <div v-for="user in users" :key="user.id" :user="user" class="user">
@@ -22,7 +23,7 @@
           <li>{{ user.name }}</li>
           <li>{{ user.username }}</li>
           <li>{{ user.email }}</li>
-          <li>{{ user.telephone }}</li>
+          <li>{{ user.phone }}</li>
         </ul>
         <br />
         <span class="fa-stack">

@@ -1,5 +1,5 @@
 <template>
-  <h1>Create an event</h1>
+  <h1>Create an event View</h1>
   <div class="form-container">
     <form class="add-form" @submit.prevent="onSubmit">
       <label>Description</label>

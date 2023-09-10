@@ -12,13 +12,7 @@
         {{ errors.email }}
       </div>
       <label>Telephone</label>
-      <input type="text" required v-model="user.telephone" />
-      <!--input
-        v-model="user.telephone"
-        type="email"
-        class="text-style"
-        required
-      /-->
+      <input type="text" required v-model="user.phone" />
       <button class="button" type="submit">Submit</button>
     </form>
     <!--Vuex:-->
@@ -38,7 +32,7 @@ export default {
         name: "",
         username: "",
         email: "",
-        telephone: "",
+        phone: "",
         created_by: "dbaynes in UserCreate",
       },
       errors: null,
@@ -72,7 +66,7 @@ export default {
         created_by: this.$store.state.user,
       };
       this.$store.dispatch("createUser", user);
-      alert("User was successfully added for " + user.description);
+      alert("User was successfully added for " + user.name);
       this.$router.push({ name: "UserList" });
     },
     validateEmail() {

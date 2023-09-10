@@ -21,7 +21,7 @@
         <input
           type="text"
           class="text-style"
-          v-model="user.telephone"
+          v-model="user.phone"
           required
         />
         <button class="button" type="submit">Submit</button>
@@ -35,13 +35,21 @@ import axios from "axios";
 export default {
   props: ["id"],
   async mounted() {
-    console.log("Params id: ", this.$route.params.id);
-    const result = await axios.get(
-      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/" +
-        +this.$route.params.id
-    );
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macbook-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3001/api/v1/users/";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/";
+    }
+    console.log("Mounted: ", this.$route.params.id);
+    this.api_url = work_url
+    const result = await axios.get(this.api_url + +this.$route.params.id);
     this.user = result.data;
+    console.log("Returned User: ", this.user);
   },
+  created(){},
   data() {
     return {
       user: {
@@ -49,9 +57,10 @@ export default {
         name: "",
         username: "",
         email: "",
-        telephone: "",
+        phone: "",
         created_by: "dbaynes in UserCreate",
       },
+      api_url: "",
       errors: null,
     };
   },
@@ -63,15 +72,14 @@ export default {
   setup() {},
   methods: {
     async updateUser() {
-      console.log("This user to PUT: ", this.user.name);
-      const result = await axios.put(
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/" +
-          +this.$route.params.id,
+      console.log("updateUser - API URL: ", this.api_url)
+      console.log("This user ID to PUT: ", this.$route.params.id);
+      const result = await axios.put(this.api_url  +this.$route.params.id,
         {
-          name: this.user.name,
-          username: this.user.username,
-          email: this.user.email,
-          telephone: this.user.telephone,
+            name: this.user.name,
+            username: this.user.username,
+            email: this.user.email,
+            phone: this.user.phone,
         }
       );
       if (result.status >= 200) {

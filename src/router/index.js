@@ -242,11 +242,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('user')
-  console.log("router beforeEach !loggedIn: ", !loggedIn)
-  console.log("Matched?", to.matched.some(record => record.meta.requiresAuth))
-  console.log("Current to: ", to);
-  console.log("Current to.matched: ", to.matched == '/');
-  console.log("Current from: ", from);
+  //console.log("router beforeEach !loggedIn: ", !loggedIn)
+  //console.log("Matched?", to.matched.some(record => record.meta.requiresAuth))
+  //console.log("Current to: ", to);
+  //console.log("Current to.matched: ", to.matched == '/');
+  //console.log("Current from: ", from);
   
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     next('/')

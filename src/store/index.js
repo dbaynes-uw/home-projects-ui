@@ -4,6 +4,7 @@ import EventService from "@/services/EventService.js";
 import axios from "axios";
 const api_url =
   "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
+axios.defaults.headers.common = { 'Authorization': 'Bearer '+localStorage.getItem('accessToken') }
 export default createStore({
   state: {
     user: null,
@@ -159,6 +160,22 @@ export default createStore({
     //      });
     //  }
     //},
+    //async fetchBook({ commit, state }, id) {
+    //  const existingBook = state.books.find((book) => book.id === id);
+    //  if (existingBook) {
+    //    console.log("ExistingBook: ", existingBook);
+    //    commit("SET_BOOK", existingBook);
+    //  } else {
+    //    EventService.getBook(id)
+    //      .then((response) => {
+    //        commit("SET_Book", response.data);
+    //      })
+    //      .catch((error) => {
+    //        console.log(error);
+    //      });
+    //  }
+    //},
+
     async updateBook({ commit }, book) {
       console.log("updateBook event from dbl click: ", book);
       EventService.putBook(book)
@@ -171,16 +188,16 @@ export default createStore({
           console.log(error);
         });
     },
-    async deleteBook({ commit }, book) {
-      console.log("Index.js: deleteBook title: ", book.title);
-      EventService.deleteBook(book.id)
-        .then((response) => {
-          commit("DELETE_BOOK", response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+    //async deleteBook({ commit }, book) {
+    //  console.log("Index.js: deleteBook title: ", book.title);
+    //  EventService.deleteBook(book.id)
+    //    .then((response) => {
+    //      commit("DELETE_BOOK", response.data);
+    //    })
+    //    .catch((error) => {
+    //      console.log(error);
+    //    });
+    //},
     createEvent({ commit }, event) {
       console.log("createEvent from index.js");
       EventService.postEvent(event)

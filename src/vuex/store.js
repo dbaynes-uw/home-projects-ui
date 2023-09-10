@@ -6,7 +6,8 @@ import EventService from '@/services/EventService'
 import router from '../router'
 //Vuex.use(Vuex)
 //const localStorage = new Vuex.localStorage({
-
+var environment = "";
+var api_authenticate_url = "";
 export default new Vuex.Store({
   props: ["message"],
   state: {
@@ -32,6 +33,18 @@ export default new Vuex.Store({
   mutations: {
     ADD_BOOK(state, book) {
       state.books.push(book);
+    },
+    DELETE_BOOK(state, book) {
+      state.book = book;
+    },
+    SET_BOOK(state, book) {
+      state.book = book;
+    },
+    ADD_EVENT(state, event) {
+      state.events.push(event);
+    },
+    ADD_USER(state, user) {
+      state.users.push(user);
     },
     SET_ERRORS(state, errors) {
       state.errors = errors
@@ -71,21 +84,43 @@ export default new Vuex.Store({
       state.users = users;
     },
   },
+
   actions: {
     async register ({ commit }, credentials) {
-      console.log("Store.js REGISTER!");
+      this.init_authentication;
+      console.log("Store.js REGISTER - Environment: ", environment);
+      if (window.location.port == "8080") {
+        environment = "development";
+        //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
+        api_authenticate_url = "//localhost:3001/users/tokens/";
+      } else {
+        environment = "production";
+        api_authenticate_url =
+          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
+      }
       return axios
         //.post('//localhost:3001/users/tokens/sign_up', credentials)
-        .post('//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/sign_up', credentials)
+        .post(api_authenticate_url + "sign_up", credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })
     },
     async login ({ commit }, credentials) {
       console.log("Store.js LOGIN Credentials: ", credentials);
+      if (window.location.port == "8080") {
+        environment = "development";
+        //api_url = "http://davids-macbook-pro.local:3000/...";
+        api_authenticate_url = "//localhost:3001/users/tokens/";
+      } else {
+        environment = "production";
+        api_authenticate_url =
+          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
+      }
+      console.log("api_authenticate_url: ", api_authenticate_url);
+      this.init_authentication;
       return axios
         //.post('//localhost:3001/users/tokens/sign_in', credentials)
-        .post('//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/sign_in', credentials)
+        .post(api_authenticate_url + "sign_in", credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })
@@ -111,7 +146,31 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
+    async deleteBook({ commit }, book) {
+      console.log("Store.js: deleteBook title: ", book.title);
+      EventService.deleteBook(book)
+        .then((response) => {
+          commit("DELETE_BOOK", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchBook({ commit, state }, id) {
+      const existingBook = state.books.find((book) => book.id === id);
+      if (existingBook) {
+        console.log("ExistingBook: ", existingBook);
+        commit("SET_BOOK", existingBook);
+      } else {
+        EventService.getBook(id)
+          .then((response) => {
+            commit("SET_BOOK", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
     async fetchBooks({ commit }) {
       console.log("Store.js - fetchBooks!")
       EventService.getBooks()
@@ -124,6 +183,18 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async createEvent({ commit }, event) {
+      console.log("createEvent from store.js");
+      EventService.postEvent(event)
+        .then(() => {
+          commit("ADD_EVENT", event);
+        })
+        .catch((error) => {
+          alert("Error in postEvent of createEvent Action (index.js)");
+          console.log(error);
+        });
+    },
+
     async fetchEvents({ commit }) {
       console.log("Store.js - fetchEvents!")
       EventService.getEvents()
@@ -135,6 +206,9 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
+          const message = error.response.request.statusText + '!';
+          commit('SET_ERRORS', message)
+          router.push({name:'home'})
         });
     },
     async fetchTrails({ commit }) {
@@ -144,7 +218,10 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          console.log("STORE ERROR: ", error);
+          const message = error.response.request.statusText + '!';
+          commit('SET_ERRORS', message)
+          router.push({name:'home'})
         });
     },
     async fetchTravels({ commit }) {
@@ -158,6 +235,17 @@ export default new Vuex.Store({
           const message = error.response.request.statusText + '!';
           commit('SET_ERRORS', message)
           router.push({name:'home'})
+        });
+    },
+    async createUser({ commit }, user) {
+      console.log("createUser from store.js");
+      EventService.postUser(user)
+        .then(() => {
+          commit("ADD_USER", user);
+        })
+        .catch((error) => {
+          alert("Error in postUser of createUser Action (index.js)");
+          console.log(error);
         });
     },
     async fetchUsers({ commit }) {

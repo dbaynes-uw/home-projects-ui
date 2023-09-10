@@ -1,19 +1,9 @@
 import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-var apiClient = axios.create({
-  baseURL: "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/",
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    "Authorization": axios.defaults.headers.common['Authorization']
-  },
-});
-//const devApiClient = axios.create({
-// //baseURL: "http://davids-macbook-pro.local:3000/api/v1/",
-// baseURL: "http://localhost:3001/api/v1/",
-//  withCredentials: true,
+//var apiClient = axios.create({
+//  baseURL: "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/",
+//  withCredentials: false,
 //  headers: {
 //    Accept: "application/json",
 //    "Content-Type": "application/json",
@@ -22,139 +12,113 @@ var apiClient = axios.create({
 //});
 var environment = "";
 var api_url = "";
-//const app_token = access_token
 export default {
   init() {
     console.log("Event Service Initialized.");
+    console.log("UI PORT IS: ", window.location.port)
     if (window.location.port == "8080") {
       environment = "development";
       //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-      api_url = "http://localhost:3001/api/v1/";
+      //api_url = "http://localhost:3001/api/v1/";
+      api_url = axios.create({
+        baseURL: "https://localhost:3001/api/v1/",
+        withCredentials: false,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Authorization": axios.defaults.headers.common['Authorization']
+        },
+      })
     } else {
       environment = "production";
       api_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
     }
+    console.log("API_URL: ", api_url);
+    //axios.defaults.headers.common = { 'Authorization': 'Bearer '+localStorage.getItem('accessToken') }
+    console.log("AXIOS Defaults: ", axios.defaults.headers.common)
   },
   eventDueBy(form) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("EventService - dueBy");
     const dueFilter =
       form.target.options[form.target.options.selectedIndex].innerText;
-    console.log("EventService - dueFilter: ", dueFilter);
-    return apiClient.get("/events" + `?_dueFilter=${dueFilter}`);
+    return axios.get(api_url + "events" + `?_dueFilter=${dueFilter}`);
   },
   async eventPastDue(pastDue) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("EventService - pastDue");
     pastDue = true;
-    //const response = await axios.get(api_url + `?_pastDue=${pastDue}`);
-    return apiClient.get(api_url + "/events" + `?_pastDue=${pastDue}`);
-    //commit("setAreas", response.data);
+    return axios.get(api_url + "events" + `?_pastDue=${pastDue}`);
   },
-  //async postBook(book) {
-  //  this.init();
-  //  console.log("environment: ", environment);
-  //  return apiClient.post("/books", book);
-  //},
   async postBook(book) {
     this.init();
-    console.log("ES Post Book: ", book);
-    console.log("ES Post Book environment: ", environment);
-    console.log("ES Post Book: ", book);
     return axios.post(api_url + 'books', book);
   },
   getBooks() {
-    this.init();
-    console.log("environment: ", environment);
-    console.log("ES get Books with apiClient.get('/books') ");
-    console.log("currentPORT: ", window.location.port);
-    console.log("TEST USER: ", localStorage.getItem('user'))
-    console.log("environment: ", environment);
     this.init();
     return axios.get(api_url + "books")
   },
   getBook(id) {
     this.init();
     console.log("environment: ", environment);
-    console.log("apiClient: ", apiClient);
-    console.log("getBook - id: ", id);
-    return apiClient.get("/books/" + id);
+    return axios.get(api_url + "books/" + id);
   },
   async putBook(updatedBook) {
     this.init();
-    console.log("environment: ", environment);
-    return axios.put(api_url + "/books" + `/${updatedBook.id}`, updatedBook);
+    return axios.put(api_url + "books" + `/${updatedBook.id}`, updatedBook);
   },
-  deleteBook(id) {
+  deleteBook(book) {
     this.init();
     console.log("environment: ", environment);
-    console.log("ES Delete Book: ", id);
+    console.log("ES Delete Book: ", book.id);
     // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "/books"`/${id}`);
+    return axios.get(api_url + "books/" + `${book.id}`);
+    //fetch(api_url + "books/" + `${book.id}`, {method: 'DELETE'})
+    //.then(() => this.status = 'Delete successful');
   },
   getEventStatistics() {
     this.init();
-    console.log("environment: ", environment);
-    return apiClient.get("/event_statistics");
+    return axios.get(api_url + "event_statistics");
   },
   getEventsPastDue(statistic) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES - statistic: ", statistic);
-    return apiClient.get("/events_past_due/" + `?statistic=${statistic}`);
+    return axios.get(api_url + "events_past_due/" + `?statistic=${statistic}`);
   },
   getEventStatisticDetail(statistic) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES getEventStatisticDetail - statistic: ", statistic);
-    return apiClient.get(
-      "/event_statistic_detail/" + `?statistic=${statistic}`
-    );
+    return axios.get(api_url + "event_statistic_detail/" + `?statistic=${statistic}`)
   },
   getEventsAssigned(assigned) {
     this.init();
-    console.log("environment: ", environment);
-    return apiClient.get("/events_assigned/" + `?assigned=${assigned}`);
+    return axios.get(api_url + "events_assigned/" + `?assigned=${assigned}`);
   },
-  getEvents() {
+  async getEvents() {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES get Events with apiClient.get('/events') ");
-    console.log("currentPORT: ", window.location.port);
-    console.log("TEST USER: ", localStorage.getItem('user'))
-    console.log("environment: ", environment);
     return axios.get(api_url + "events")
+    //.catch(error=>{
+    // console.log("ERROR!!!", error)
+      //this.$router.push({ name: 'About' })
+      //this.router.push({name:'home'})
+    //})
   },
   getEvent(id) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("apiClient: ", apiClient);
-    console.log("getEdit - id: ", id);
-    return apiClient.get("/events/" + id);
+    return axios.get(api_url + "events/" + id);
   },
   async postEvent(event) {
     this.init();
-    console.log("environment: ", environment);
-    return apiClient.post("/events", event);
+    return axios.post(api_url + "events", event);
   },
   async putEvent(updatedEvent) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("putEvent updatedEvent.id: ", updatedEvent.id);
     return axios.put(api_url + "books" + `/${updatedEvent.id}`, updatedEvent);
   },
   deleteEvent(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.delete(api_url + "books" + `/${id}`);
   },
   async postUser(user) {
     this.init();
-    console.log("environment: ", environment);
-    return apiClient.post("/users", user);
+    return axios.get(api_url + "users", user);
   },
   getUsers() {
     this.init();
@@ -167,64 +131,42 @@ export default {
   },
   async postTrail(trail) {
     this.init();
-    console.log("environment: ", environment);
-    return apiClient.post("/trails", trail);
+    return axios.post(api_url + "trails", trail);
   },
   getTrails() {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES getTrails");
-    return apiClient.get("/trails");
+    return axios.get(api_url + "trails");
   },
   getTrail(id) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("apiClient: ", apiClient);
-    console.log("getTrail - id: ", id);
-    return apiClient.get("/trails/" + id);
+    return axios.get(api_url + "trails/" + id);
   },
   async putTrail(updatedTrail) {
     this.init();
-    console.log("environment: ", environment);
     return axios.put(api_url + "trails" + `/${updatedTrail.id}`, updatedTrail);
   },
   deleteTrail(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.delete(api_url + "trails" + `/${id}`);
   },
   async postTravel(travel) {
     this.init();
-    console.log("environment: ", environment);
-    return apiClient.post("/travels", travel);
+    return axios.post(api_url + "travels", travel);
   },
   getTravels() {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES getTravels");
-    //return apiClient.get("/travels");
-    return axios.get(api_url + "/traveles")
+    return axios.get(api_url + "traveles")
   },
   getTravel(id) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("apiClient: ", apiClient);
-    console.log("getTravel - id: ", id);
-    return apiClient.get("/travels/" + id);
+    return axios.get(api_url + "travels/" + id);
   },
   async putTravel(updatedTravel) {
     this.init();
-    console.log("environment: ", environment);
-    return axios.put(
-      api_url + "travels" + `/${updatedTravel.id}`,
-      updatedTravel
-    );
+    return axios.put(api_url + "travels" + `/${updatedTravel.id}`)
   },
   deleteTravel(id) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES Delete Travel: ", id);
-    // For Testing: setTimeout(5000);
     return axios.delete(api_url + "travels" + `/${id}`);
   },
 };

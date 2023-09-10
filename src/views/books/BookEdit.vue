@@ -40,11 +40,17 @@ export default {
     ConfirmDialogue,
   },
   async mounted() {
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macbook-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3001/api/v1/books/";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books/";
+    }
     console.log("Mounted: ", this.$route.params.id);
-    const result = await axios.get(
-      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books/" +
-        +this.$route.params.id
-    );
+    this.api_url = work_url
+    const result = await axios.get(this.api_url + +this.$route.params.id);
     this.book = result.data;
     console.log("Returned book: ", this.book);
   },
@@ -59,6 +65,7 @@ export default {
         notes: "",
         updated_by: "dbaynes",
       },
+      api_url: ""
     };
   },
   setup() {},
@@ -78,9 +85,10 @@ export default {
           ...this.book,
           updated_by: this.$store.state.created_by,
         };
+        console.log("This api_url: ", this.api_url);
         console.log("This book to PUT: ", this.book);
         const result = await axios.put(
-          "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books/" +
+            this.api_url + 
             this.$route.params.id,
           {
             title: this.book.title,
