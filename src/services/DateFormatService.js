@@ -10,6 +10,14 @@ export default {
       return action_date;
     }
   },
+  formatYearDate(action_date) {
+    //console.log("Format Date SERVICE Format Standard Date: ", action_date);
+    // MM/DD/YY
+    if (action_date) {
+      action_date = moment(action_date).format("MM-DD-YY");
+      return action_date;
+    }
+  },
   formatFullYearDate(action_date) {
     //console.log("Format Date SERVICE Format Standard Date: ", action_date);
     // MM/DD/YYYY
@@ -61,7 +69,7 @@ export default {
     let returnMessage = "";
     let dateCompleted = moment(action_date);
     let dueDate = moment(dateCompleted).add(frequency, "days");
-    returnMessage = `${moment(dueDate).format("MM/DD/YY")}`;
+    returnMessage = `${moment(dueDate).format("MM-DD-YY")}`;
     return returnMessage;
   },
 };

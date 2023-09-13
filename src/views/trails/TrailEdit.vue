@@ -52,13 +52,17 @@ export default {
     ConfirmDialogue,
   },
   async mounted() {
-    console.log("Mounted: ", this.$route.params.id);
-    const result = await axios.get(
-      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails/" +
-        +this.$route.params.id
-    );
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macbook-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3000/api/v1/trails/";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails/";
+    }
+    this.api_url = work_url
+    const result = await axios.get(this.api_url + +this.$route.params.id);
     this.trail = result.data;
-    console.log("Returned trail: ", this.trail);
   },
   data() {
     return {
@@ -93,7 +97,7 @@ export default {
         };
         console.log("This trail to PUT: ", this.trail);
         const result = await axios.put(
-          "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/trails/" +
+            this.api_url + 
             this.$route.params.id,
           {
             trail_head_name: this.trail.trail_head_name,
@@ -105,7 +109,7 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Trail has been updated");
+          alert("Trail has been updated ");
           this.$router.push({ name: "TrailDetails", params: { id: trail.id } });
         } else {
           alert("Update Error Code ", result.status);

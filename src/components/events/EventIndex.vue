@@ -6,6 +6,7 @@
       <th id="background-blue" @click="sortList('description')">Description</th>
       <th id="background-blue" @click="sortList('frequency')">Frequency</th>
       <th id="background-blue" @click="sortList('action_date')">Action Date</th>
+      <th id="background-blue" @click="sortList('action_due_date')">Due</th>
       <th id="background-blue" @click="sortList('action_completed_date')">
         Completed Date
       </th>
@@ -16,8 +17,10 @@
     <tr v-for="(result, resultIndex) in events" :key="resultIndex">
       <td>{{ result.description }}</td>
       <td>Every {{ result.frequency }} Days</td>
-      <td>{{ formatFullYearDate(result.action_date) }}</td>
-      <td>{{ formatFullYearDate(result.action_completed_date) }}</td>
+      <td>{{ formatYearDate(result.action_date) }}</td>
+      <!--td>{{ formatFullYearDate(result.action_due_date) }}</td-->
+      <td>{{ calculateDateDue(result.action_date, result.frequency) }}</td>
+      <td>{{ formatYearDate(result.action_completed_date) }}</td>
       <td>{{ result.assigned }}</td>
       <td>{{ result.action_active == true ? "Active" : "Not Active" }}</td>
       <td>
@@ -137,6 +140,12 @@ export default {
         this.sortedbyASC = true;
       }
     },
+    calculateDue(action_date, frequency) {
+      return DateFormatService.calculateDue(action_date, frequency);
+    },
+    calculateDateDue(action_date, frequency) {
+      return DateFormatService.calculateDateDue(action_date, frequency);
+    },
     async deleteEvent(event) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Event from List",
@@ -155,6 +164,9 @@ export default {
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }
+    },
+    formatYearDate(value) {
+      return DateFormatService.formatYearDate(value);
     },
     formatFullYearDate(value) {
       return DateFormatService.formatFullYearDate(value);

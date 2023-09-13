@@ -38,7 +38,7 @@ export default {
     var work_url = ""
     if (window.location.port == "8080") {
       // or: "http://davids-macbook-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3001/api/v1/users/";
+      work_url = "http://localhost:3000/api/v1/users/";
     } else {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/";

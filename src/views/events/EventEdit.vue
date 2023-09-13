@@ -11,13 +11,15 @@
           v-model="event.action_date"
           required
         />
-        <label for="action_due_date">Action Due Date:</label>
-        <input
-          type="date"
-          class="text-style"
-          v-model="event.action_due_date"
-          required
-        />
+        <label for="action_date">Action Due Date:</label>
+        <br/>
+        <span v-if="datePastDue(event.action_date, event.frequency)">
+          <span style="color: red; font-weight: bold">
+            &nbsp;{{ calculateDue(event.action_date, event.frequency) }}
+            {{ calculateDateDue(event.action_date, event.frequency) }}
+          </span>
+        </span>
+        <br/>
         <label for="action_completed_date">Action Last Completed Date:</label>
         <input
           type="date"
@@ -73,19 +75,25 @@
 //import EventService from "@/services/EventService.js";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import axios from "axios";
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id", "assigned"],
   components: {
     ConfirmDialogue,
   },
   async mounted() {
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macbook-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3000/api/v1/events/";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
+    }
     console.log("Mounted: ", this.$route.params.id);
-    const result = await axios.get(
-      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/" +
-        +this.$route.params.id
-    );
+    this.api_url = work_url
+    const result = await axios.get(this.api_url + +this.$route.params.id);
     this.event = result.data;
-    console.log("Returned event: ", this.event);
   },
   data() {
     return {
@@ -124,12 +132,13 @@ export default {
         };
         console.log("This event to PUT: ", this.event);
         const result = await axios.put(
-          "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/" +
-            +this.$route.params.id,
+          this.api_url +
+          +this.$route.params.id,
           {
             action_date: this.event.action_date,
+            action_due_date: this.event.action_due_date,
             description: this.event.description,
-            completed: this.event.completed,
+            action_completed_date: this.event.action_completed_date,
             assigned: this.event.assigned,
             frequency: this.event.frequency,
             notes: this.event.notes,
@@ -157,6 +166,15 @@ export default {
         //Not Yet:      console.log(error);
         //Not Yet:    });
       }
+    },
+    datePastDue(value) {
+      return DateFormatService.datePastDue(value);
+    },
+    calculateDue(action_date, frequency) {
+      return DateFormatService.calculateDue(action_date, frequency);
+    },
+    calculateDateDue(action_date, frequency) {
+      return DateFormatService.calculateDateDue(action_date, frequency);
     },
   },
 };

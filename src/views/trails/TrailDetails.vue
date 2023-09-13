@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
-    <h3>Trail Details</h3>
+    <h2>Trail Details</h2>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>

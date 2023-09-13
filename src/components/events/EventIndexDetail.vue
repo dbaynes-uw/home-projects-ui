@@ -115,7 +115,7 @@ export default {
   //data() {},
   data() {
     return {
-      DueBy: null,
+      EventsDueBy: null,
       assigned: "assigned",
       eventList: null,
       updatedEvent: null,

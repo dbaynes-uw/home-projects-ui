@@ -59,7 +59,7 @@ export default {
   },
   created() {
     console.log("Created Store Dispatch - Events Past Due: ", this.statistic);
-    this.$store.dispatch("fetchEventsPastDue", this.statistic);
+    this.$store.dispatch("eventsPastDue", this.statistic);
   },
   computed: {
     events() {

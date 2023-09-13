@@ -25,6 +25,7 @@ export default new Vuex.Store({
     users: [],
     eventStatistics: [],
     eventsPastDue: [],
+    eventsDueBy: [],
     eventsAssigned: [],
     event: {},
     trail: {},
@@ -40,14 +41,53 @@ export default new Vuex.Store({
     SET_BOOK(state, book) {
       state.book = book;
     },
+    SET_BOOKS(state, books) {
+      state.books = books;
+    },
     ADD_EVENT(state, event) {
       state.events.push(event);
     },
+    DELETE_EVENT(state, event) {
+      state.event = event;
+    },
+    SET_EVENT(state, event) {
+      state.event = event;
+    },
+    SET_EVENTS(state, events) {
+      state.events = events;
+    },
+    SET_EVENT_STATISTICS(state, eventStatistics) {
+      state.eventStatistics = eventStatistics;
+    },
+    SET_EVENT_STATISTIC_DETAIL(state, eventStatisticDetail) {
+      state.eventStatisticDetail = eventStatisticDetail;
+    },
+    ADD_TRAIL(state, trail) {
+      state.trails.push(trail);
+    },
+    DELETE_TRAIL(state, trail) {
+      state.trail = trail;
+    },
+    SET_TRAIL(state, trail) {
+      state.trail = trail;
+    },
+    SET_TRAILS(state, trail) {
+      state.trails = trail;
+    },
+    ADD_TRAVEL(state, travel) {
+      state.travels.push(travel);
+    },
+    DELETE_TRAVEL(state, travel) {
+      state.travel = travel;
+    },
+    SET_TRAVEL(state, travel) {
+      state.travel = travel;
+    },
+    SET_TRAVELS(state, travels) {
+      state.travels = travels;
+    },
     ADD_USER(state, user) {
       state.users.push(user);
-    },
-    SET_ERRORS(state, errors) {
-      state.errors = errors
     },
     SET_USER_DATA (state, userData) {
       console.log("Mutations - SET_USER_DATA: ", userData)
@@ -68,23 +108,13 @@ export default new Vuex.Store({
       axios.defaults.headers.common['Authorization'] = null
       location.reload()
     },
-    SET_BOOKS(state, books) {
-      state.books = books;
-    },
-    SET_EVENTS(state, events) {
-      state.events = events;
-    },
-    SET_TRAILS(state, trails) {
-      state.trails = trails;
-    },
-    SET_TRAVELS(state, travels) {
-      state.travels = travels;
-    },
     SET_USERS(state, users) {
       state.users = users;
     },
+    SET_ERRORS(state, errors) {
+      state.errors = errors
+    },
   },
-
   actions: {
     async register ({ commit }, credentials) {
       this.init_authentication;
@@ -92,14 +122,13 @@ export default new Vuex.Store({
       if (window.location.port == "8080") {
         environment = "development";
         //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-        api_authenticate_url = "//localhost:3001/users/tokens/";
+        api_authenticate_url = "//localhost:3000/users/tokens/";
       } else {
         environment = "production";
         api_authenticate_url =
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
       return axios
-        //.post('//localhost:3001/users/tokens/sign_up', credentials)
         .post(api_authenticate_url + "sign_up", credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
@@ -110,7 +139,7 @@ export default new Vuex.Store({
       if (window.location.port == "8080") {
         environment = "development";
         //api_url = "http://davids-macbook-pro.local:3000/...";
-        api_authenticate_url = "//localhost:3001/users/tokens/";
+        api_authenticate_url = "//localhost:3000/users/tokens/";
       } else {
         environment = "production";
         api_authenticate_url =
@@ -119,7 +148,7 @@ export default new Vuex.Store({
       console.log("api_authenticate_url: ", api_authenticate_url);
       this.init_authentication;
       return axios
-        //.post('//localhost:3001/users/tokens/sign_in', credentials)
+        //.post('//localhost:3000/users/tokens/sign_in', credentials)
         .post(api_authenticate_url + "sign_in", credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
@@ -194,7 +223,31 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
+    async deleteEvent({ commit }, event) {
+      console.log("deleteEvent event: ", event);
+      EventService.deleteEvent(event.id)
+        .then((response) => {
+          commit("DELETE_EVENT", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchEvent({ commit, state }, id) {
+      const existingEvent = state.events.find((event) => event.id === id);
+      if (existingEvent) {
+        console.log("ExistingEVENT: ", existingEvent);
+        commit("SET_EVENT", existingEvent);
+      } else {
+        EventService.getEvent(id)
+          .then((response) => {
+            commit("SET_EVENT", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
     async fetchEvents({ commit }) {
       console.log("Store.js - fetchEvents!")
       EventService.getEvents()
@@ -211,6 +264,120 @@ export default new Vuex.Store({
           router.push({name:'home'})
         });
     },
+    async fetchEventsAssigned({ commit }, assigned) {
+      console.log("Assigned to: ", assigned);
+      EventService.getEventsAssigned(assigned)
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_EVENT_STATISTICS", response.data);
+          console.log("EVENT STATISTICS Assigned RESPONSE: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    async eventsDueBy({ commit }, form) {
+      console.log("eventsDueBy - dueBy: ");
+      EventService.getEventsDueBy(form)
+        .then((response) => {
+      commit("SET_EVENTS", response.data);
+      console.log("EVENT STATISTICS RESPONSE: ", response.data);
+      return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    async eventsPastDue({ commit }, dueBy) {
+      EventService.getEventsPastDue(dueBy)
+        .then((response) => {
+      commit("SET_EVENTS", response.data);
+      console.log("EVENT STATISTICS RESPONSE: ", response.data);
+      return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    async fetchEventStatistics({ commit }) {
+      console.log("fetchEventStatistics Store!!!!");
+      EventService.getEventStatistics()
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_EVENT_STATISTICS", response.data);
+          console.log("EVENT STATISTICS RESPONSE: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchEventStatisticDetail({ commit }, statistic) {
+      console.log("Index - Fetch Events statistic: ", statistic);
+      EventService.getEventStatisticDetail(statistic)
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_EVENT_STATISTIC_DETAIL", response.data);
+          console.log("EVENTS STATISTIC DETAIL RESPONSE: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async updateEvent({ commit }, event) {
+      console.log("updateEvent event from dbl click: ", event);
+      EventService.putEvent(event)
+        .then((response) => {
+          commit("SET_EVENT", response.data);
+          alert("Event was successfully Updated for " + event.description);
+          location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async createTrail({ commit }, trail) {
+      console.log("createTrail from index.js");
+      EventService.postTrail(trail)
+        .then(() => {
+          commit("ADD_TRAIL", trail);
+        })
+        .catch((error) => {
+          alert("Error in postTrail of createTrail Action (index.js)");
+          console.log(error);
+        });
+    },
+    async deleteTrail({ commit }, trail) {
+      console.log("deleteTrail event: ", trail);
+      EventService.deleteTrail(trail.id)
+        .then((response) => {
+          commit("DELETE_TRAIL", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchTrail({ commit, state }, id) {
+      const existingTrail = state.trails.find((trail) => trail.id === id);
+      if (existingTrail) {
+        console.log("ExistingTrail: ", existingTrail);
+        commit("SET_TRAIL", existingTrail);
+      } else {
+        EventService.getTrail(id)
+          .then((response) => {
+            commit("SET_TRAIL", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
     async fetchTrails({ commit }) {
       EventService.getTrails()
         .then((response) => {
@@ -224,17 +391,65 @@ export default new Vuex.Store({
           router.push({name:'home'})
         });
     },
+    createTravel({ commit }, travel) {
+      console.log("createTravel from index.js");
+      EventService.postTravel(travel)
+        .then(() => {
+          commit("ADD_TRAVEL", travel);
+          alert("Travel was successfully added for " + travel.title);
+        })
+        .catch((error) => {
+          alert("Error in postTravel of createTravel Action (index.js)");
+          console.log(error);
+        });
+    },
+    async deleteTravel({ commit }, travel) {
+      console.log("Index.js: deleteTravel title: ", travel.title);
+      EventService.deleteTravel(travel.id)
+        .then((response) => {
+          commit("DELETE_TRAVEL", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchTravel({ commit, state }, id) {
+      const existingTravel = state.travels.find((travel) => travel.id === id);
+      if (existingTravel) {
+        console.log("ExistingTravel: ", existingTravel);
+        commit("SET_Travel", existingTravel);
+      } else {
+        EventService.getTravel(id)
+          .then((response) => {
+            commit("SET_TRAVEL", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
     async fetchTravels({ commit }) {
+      console.log("Fetch Travels");
       EventService.getTravels()
         .then((response) => {
           commit("SET_TRAVELS", response.data);
+          console.log("FetchTravel response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log("fetchTravels ERROR: ", error);
-          const message = error.response.request.statusText + '!';
-          commit('SET_ERRORS', message)
-          router.push({name:'home'})
+          console.log(error);
+        });
+    },
+    async updateTravel({ commit }, travel) {
+      console.log("updateTravel event from dbl click: ", travel);
+      EventService.putTravel(travel)
+        .then((response) => {
+          commit("SET_TRAVEL", response.data);
+          alert("Travel was successfully Updated for " + travel.title);
+          location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     async createUser({ commit }, user) {

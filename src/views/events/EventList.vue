@@ -1,26 +1,21 @@
 <template>
   <div class="div-frame">
     <h2>Events</h2>
-    <h2 id="status-message">
-      <u>Status Message: this.statusMessage</u>
-    </h2>
-    <h2>
-      <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
-      <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
-    </h2>
+    <!--h2 id="status-message">
+      <u>Status Message: {{ this.statusMessage }}</u>
+    </h2-->
     <div>
-      <DueBy />
-    </div>
-    <br />
-    <div>
-      <PastDue />
-      <button id="button-as-link" @click="refreshPage"><u>Refresh</u></button>
-      &nbsp;&nbsp;
-      <button id="button-as-link" @click="requestIndexDetail">
+      <h2>
+        <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
+        <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
+        <button id="button-as-link" @click="refreshPage"><u>Refresh</u></button>  
+        <EventsPastDue />
+      <!--button id="button-as-link" @click="requestIndexDetail">
         <u>Detail Index View</u>
-      </button>
+      </button-->
+        <EventsDueBy />
+      </h2>
     </div>
-
     <br />
     <div class="legend">
       <span>Double click to mark as complete.</span>
@@ -53,7 +48,6 @@
         <br />
       </div>
     </div-->
-    <p>Results: {{ filteredResults.length }}</p>
     <div class="event-list">
       <!--span v-if="this.requestIndexDetailFlag == true">
         console.log("Hell Yea! ", this.requestIndexDetailFlag)
@@ -62,6 +56,7 @@
         <EventIndex :events="events" />
       </span>
       <span v-if="filteredResults.length > 0">
+        <p>Search Results: {{ filteredResults.length }}</p>
         <EventSearchResults :filteredResults="filteredResults" />
       </span>
     </div>
@@ -71,8 +66,8 @@
 
 <script setup>
 //import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DueBy from "@/components/DueBy.vue";
-import PastDue from "@/components/PastDue.vue";
+import EventsDueBy from "@/components/EventsDueBy.vue";
+import EventsPastDue from "@/components/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 import EventSearchResults from "@/components/events/EventSearchResults.vue";
 </script>
@@ -84,13 +79,13 @@ export default {
   components: {
     EventIndex,
     EventSearchResults,
-    DueBy,
+    EventsDueBy,
+    EventsPastDue,
   },
   props: ["id", "pastDue", "filteredResults[]"],
   data() {
     return {
       //requestIndexDetailFlag: false,
-      DueBy: null,
       assigned: "assigned",
       eventList: null,
       updatedEvent: null,
@@ -288,5 +283,6 @@ select {
   background-color: #7ba8bd;
   border-radius: 5px;
   font-size: 18px;
+  margin-left: 3.5rem;
 }
 </style>

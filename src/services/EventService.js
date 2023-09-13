@@ -9,7 +9,7 @@ export default {
     if (window.location.port == "8080") {
       environment = "development";
       //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-      api_url = "http://localhost:3001/api/v1/";
+      api_url = "http://localhost:3000/api/v1/";
     } else {
       environment = "production";
       api_url =
@@ -17,16 +17,15 @@ export default {
     }
     console.log("API_URL: ", api_url);
   },
-  eventDueBy(form) {
+  eventsDueBy(form) {
     this.init();
     const dueFilter =
       form.target.options[form.target.options.selectedIndex].innerText;
     return axios.get(api_url + "events" + `?_dueFilter=${dueFilter}`);
   },
-  async eventPastDue(pastDue) {
+  async eventsPastDue() {
     this.init();
-    pastDue = true;
-    return axios.get(api_url + "events" + `?_pastDue=${pastDue}`);
+    return axios.get(api_url + "events_past_due" + `'true'`);
   },
   async postBook(book) {
     this.init();
@@ -52,21 +51,9 @@ export default {
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "books/" + `${book.id}`);
   },
-  getEventStatistics() {
+  getEvent(id) {
     this.init();
-    return axios.get(api_url + "event_statistics");
-  },
-  getEventsPastDue(statistic) {
-    this.init();
-    return axios.get(api_url + "events_past_due/" + `?statistic=${statistic}`);
-  },
-  getEventStatisticDetail(statistic) {
-    this.init();
-    return axios.get(api_url + "event_statistic_detail/" + `?statistic=${statistic}`)
-  },
-  getEventsAssigned(assigned) {
-    this.init();
-    return axios.get(api_url + "events_assigned/" + `?assigned=${assigned}`);
+    return axios.get(api_url + "events/" + id);
   },
   async getEvents() {
     this.init();
@@ -77,9 +64,28 @@ export default {
       //this.router.push({name:'home'})
     //})
   },
-  getEvent(id) {
+  getEventsAssigned(assigned) {
     this.init();
-    return axios.get(api_url + "events/" + id);
+    return axios.get(api_url + "events_assigned/" + `?assigned=${assigned}`);
+  },
+  getEventsDueBy(form) {
+    this.init();
+    const dueFilter =
+      form.target.options[form.target.options.selectedIndex].innerText;
+    console.log("SERVICE.JS dueBY: ", dueFilter)
+    return axios.get(api_url + "events/" + `?due_by=${dueFilter}`)
+  },
+  getEventsPastDue() {
+    this.init();
+    return axios.get(api_url + "events/" + `?past_due=true`)
+  },
+  getEventStatistics() {
+    this.init();
+    return axios.get(api_url + "events/statistics");
+  },
+  getEventStatisticDetail(statistic) {
+    this.init();
+    return axios.get(api_url + "event_statistic_detail/" + `?statistic=${statistic}`)
   },
   async postEvent(event) {
     this.init();
@@ -87,11 +93,11 @@ export default {
   },
   async putEvent(updatedEvent) {
     this.init();
-    return axios.put(api_url + "books" + `/${updatedEvent.id}`, updatedEvent);
+    return axios.put(api_url + "events" + `/${updatedEvent.id}`, updatedEvent);
   },
   deleteEvent(id) {
     this.init();
-    return axios.delete(api_url + "books" + `/${id}`);
+    return axios.delete(api_url + "events" + `/${id}`);
   },
   async postUser(user) {
     this.init();
@@ -132,7 +138,7 @@ export default {
   },
   getTravels() {
     this.init();
-    return axios.get(api_url + "traveles")
+    return axios.get(api_url + "travels")
   },
   getTravel(id) {
     this.init();

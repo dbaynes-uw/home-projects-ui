@@ -1,6 +1,6 @@
 <template>
   Due in next:
-  <select id="border-select" @change="dueBy($event)">
+  <select id="border-select" @change="eventsDueBy($event)">
     <option></option>
     <option>7</option>
     <option>10</option>
@@ -18,8 +18,8 @@
 <script>
 import { mapActions } from "vuex";
 export default {
-  name: "DueBy",
-  methods: mapActions(["dueBy"]),
+  name: "EventsDueBy",
+  methods: mapActions(["eventsDueBy"]),
 };
 </script>
 <style>

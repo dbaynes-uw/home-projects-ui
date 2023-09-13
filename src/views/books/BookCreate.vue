@@ -5,7 +5,7 @@
     </v-card-title>
   </v-card>
   <v-card-text>
-    Rules: {{ [required] }}
+    Rules: {{ [required] }} ??
     <v-form id="form-container">
       <v-container id="form-container">
         <v-text-field
@@ -22,12 +22,16 @@
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
-        <VueDatePicker
-          v-model="book.date_written"
-          placeholder="Date Written"
-          :format="format"
+        <v-text-field label="Date Written" v-model="book.date_written"
+          type="date" class="text-style"/>    
+        
+        <v-text-field label="Url to Review"
+          v-model="book.url_to_review"
+          type="text"
+          :maxlength="urlMaxLength"
+          class="text-style"
+          placeholder="URL to Review"
         />
-        <v-text-field label="Url to Review" v-model="book.url_to_review" />
         <span>
           {{ urlMaxLength - book.url_to_review.length }} / {{ urlMaxLength }}
         </span>
@@ -43,16 +47,16 @@
   </v-card-text>
 </template>
 <script setup>
-const format = (date) => {
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  console.log("DATE: ", date);
-  console.log("Month: ", month);
-  console.log("Day: ", day);
-  console.log("Year: ", year);
-  return `${month}/${day}/${year}`;
-};
+//const format = (date) => {
+//  const day = date.getDate();
+//  const month = date.getMonth() + 1;
+//  const year = date.getFullYear();
+//  console.log("DATE: ", date);
+//  console.log("Month: ", month);
+//  console.log("Day: ", day);
+//  console.log("Year: ", year);
+//  return `${month}/${day}/${year}`;
+//};
 </script>
 
 <script>

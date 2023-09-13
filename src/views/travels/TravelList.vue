@@ -21,7 +21,7 @@
           <th style="text-align: right">Actions</th>
         </tr>
         <tr v-for="travel in travels" :key="travel.id" :travel="travel">
-          <td>{{ travel.trail_head_name }}</td>
+          <td>{{ travel.title }}</td>
           <td>{{ travel.description }}</td>
           <td>{{ formatStandardDate(travel.start_date) }}</td>
           <td>{{ formatStandardDate(travel.end_date) }}</td>

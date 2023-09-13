@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="button" @click="pastDue($event)">
+    <button class="button" @click="eventsPastDue($event)">
       <u>Click for Past Due</u>
     </button>
   </div>
@@ -8,8 +8,8 @@
 <script>
 import { mapActions } from "vuex";
 export default {
-  name: "PastDue",
-  methods: mapActions(["pastDue"]),
+  name: "EventsPastDue",
+  methods: mapActions(["eventsPastDue"]),
 };
 </script>
 
