@@ -4,11 +4,13 @@
     <v-table>
       <tr>
         <td style="width: 30%">
-          <h2>Event Assignments:</h2>
+          <h3>Event Assignments:</h3>
         </td>
       </tr>
       <tr v-for="(v, k) in events.assigned" :key="k">
         <td>
+          &nbsp;&nbsp;
+          --
           <router-link
             :to="{
               name: 'EventStatisticDetail',

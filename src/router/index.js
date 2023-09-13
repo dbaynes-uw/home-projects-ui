@@ -9,7 +9,6 @@ import EventsAssigned from "@/views/events/EventsAssigned.vue";
 import EventDetails from "@/views/events/EventDetails.vue";
 import EventEdit from "@/views/events/EventEdit.vue";
 import EventList from "../views/events/EventList.vue";
-import EventsPastDue from "../views/events/EventsPastDue.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
@@ -110,14 +109,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/events_past_due/:statistic",
-    name: "EventsPastDue",
-    props: true,
-    component: EventsPastDue,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/event_statistic_detail/:statistic",
+    path: "/events/statistic_detail/:statistic",
     name: "EventStatisticDetail",
     props: true,
     component: EventStatisticDetail,
@@ -147,12 +139,6 @@ const routes = [
     path: "/event_statistics",
     name: "EventStatistics",
     component: EventStatistics,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/events_past_due",
-    name: "EventsPastDue",
-    component: EventsPastDue,
     meta: { requiresAuth: true}
   },
   {

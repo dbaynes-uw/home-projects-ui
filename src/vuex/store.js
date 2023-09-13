@@ -317,7 +317,7 @@ export default new Vuex.Store({
         });
     },
     async fetchEventStatisticDetail({ commit }, statistic) {
-      console.log("Index - Fetch Events statistic: ", statistic);
+      console.log("Store.js - Fetch Events statistic: ", statistic);
       EventService.getEventStatisticDetail(statistic)
         .then((response) => {
           // No longer needed:

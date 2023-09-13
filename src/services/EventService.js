@@ -81,11 +81,11 @@ export default {
   },
   getEventStatistics() {
     this.init();
-    return axios.get(api_url + "events/statistics");
+    return axios.get(api_url + "events/statistics/");
   },
   getEventStatisticDetail(statistic) {
     this.init();
-    return axios.get(api_url + "event_statistic_detail/" + `?statistic=${statistic}`)
+    return axios.get(api_url + "events/statistic_detail/" + `?statistic=${statistic}`)
   },
   async postEvent(event) {
     this.init();

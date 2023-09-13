@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h3>Event Statistic Detail</h3>
+    <h2>
+      <router-link :to="{ name: 'EventStatistics' }">Event Statistics</router-link>
+    </h2>
+    <br/>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
