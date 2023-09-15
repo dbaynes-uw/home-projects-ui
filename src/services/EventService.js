@@ -112,6 +112,11 @@ export default {
     console.log("environment: ", environment);
     return axios.delete(api_url + "users" + `/${id}`);
   },
+  async putUser(user) {
+    this.init();
+    return axios.put(api_url + "users" + `/${user.id}`, user);
+  },
+  
   async postTrail(trail) {
     this.init();
     return axios.post(api_url + "trails", trail);

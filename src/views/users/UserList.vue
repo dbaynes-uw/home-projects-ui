@@ -61,7 +61,7 @@ export default {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete User from List",
         message:
-          "Are you sure you want to delete users" +
+          "Are you sure you want to delete user " +
           user.name +
           "? It cannot be undone.",
         okButton: "Delete",

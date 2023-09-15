@@ -463,6 +463,16 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async deleteUser({ commit }, user) {
+      console.log("deleteUser: ", user);
+      EventService.deleteUser(user.id)
+        .then((response) => {
+          commit("DELETE_USER", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async fetchUsers({ commit }) {
       EventService.getUsers()
         .then((response) => {
@@ -480,6 +490,19 @@ export default new Vuex.Store({
           //router.back()
         });
     },
+    async updateUser({ commit }, user) {
+      console.log("updateUser user: ", user);
+      EventService.putUser(user)
+        .then((response) => {
+          commit("SET_USER", response.data);
+          alert("User was successfully Updated for " + user.description);
+          location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
   },
   getters: {
     loggedIn (state) {

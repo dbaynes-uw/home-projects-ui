@@ -31,10 +31,4 @@ createApp({
     )
   }
 }).use(router).use(store).use(vuetify).mount("#app")
-//Vue.config.productionTip = false
-
-//new Vue({
-//  router,
-//  store,
-//  vuetify,
 
