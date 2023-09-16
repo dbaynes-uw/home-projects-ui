@@ -122,14 +122,15 @@ export default new Vuex.Store({
       if (window.location.port == "8080") {
         environment = "development";
         //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-        api_authenticate_url = "//localhost:3000/users/tokens/";
+        api_authenticate_url = "//localhost:3000/api/v1/users/";
       } else {
         environment = "production";
         api_authenticate_url =
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
+      console.log("REGISTER Credentials: ", credentials);
       return axios
-        .post(api_authenticate_url + "sign_up", credentials)
+        .post(api_authenticate_url, credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })

@@ -2,7 +2,7 @@
   <div>
     <form @submit.prevent="register">
       <label for="name">
-        Name:
+        Name!:
       </label>
       <input v-model="name" type="text" name="name" value>
 
