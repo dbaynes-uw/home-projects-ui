@@ -129,6 +129,7 @@ export default new Vuex.Store({
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
       console.log("REGISTER Credentials: ", credentials);
+      console.log("Store.js Register Credentials: ", credentials);
       return axios
         .post(api_authenticate_url, credentials)
         .then(({ data }) => {

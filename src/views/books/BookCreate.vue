@@ -22,9 +22,8 @@
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Date Written" v-model="book.date_written"
+        <v-text-field :label="'Date Written'" v-model="book.date_written"
           type="date" class="text-style"/>    
-        
         <v-text-field label="Url to Review"
           v-model="book.url_to_review"
           type="text"

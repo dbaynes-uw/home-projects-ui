@@ -1,5 +1,10 @@
 <template>
-  <h1>Create an event View</h1>
+  <h1>Create an Event</h1>
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h3>Create an Event View</h3>
+    </v-card-title>
+  </v-card>
   <div class="form-container">
     <form class="add-form" @submit.prevent="onSubmit">
       <label>Description</label>
