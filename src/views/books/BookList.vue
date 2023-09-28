@@ -1,6 +1,6 @@
 <template>
   <div class="div-frame">
-    <h2>Book List</h2>
+    <h2>Book List!</h2>
     <h2 id="status-message">
       <!--{{ this.statusMessage }}</-->
     </h2>

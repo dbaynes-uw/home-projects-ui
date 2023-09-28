@@ -13,7 +13,6 @@
           type="date"
           class="text-style"
           v-model="book.date_written"
-          required
         />
         <label for="url_to_review">URL to Review:</label>
         <input type="text" class="text-style" v-model="book.url_to_review" />
@@ -74,8 +73,7 @@ export default {
         title: "Update Book from List",
         message:
           "Are you sure you want to update " +
-          this.book.title +
-          "? It cannot be undone.",
+          this.book.title,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch

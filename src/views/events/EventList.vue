@@ -1,6 +1,6 @@
 <template>
   <div class="div-frame">
-    <h2>Events</h2>
+    <h2>Event List!</h2>
     <!--h2 id="status-message">
       <u>Status Message: {{ this.statusMessage }}</u>
     </h2-->
@@ -53,9 +53,11 @@
         console.log("Hell Yea! ", this.requestIndexDetailFlag)
       </!--span-->
       <span v-if="filteredResults.length == 0">
+        FilteredResults == 0
         <EventIndex :events="events" />
       </span>
       <span v-if="filteredResults.length > 0">
+        FilteredResults > 0
         <p>Search Results: {{ filteredResults.length }}</p>
         <EventSearchResults :filteredResults="filteredResults" />
       </span>

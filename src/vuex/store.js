@@ -166,7 +166,7 @@ export default new Vuex.Store({
       commit('CLEAR_USER_DATA')
     },
     async createBook({ commit }, book) {
-      console.log("createBook from index.js BOOK: ", book);
+      console.log("createBook from store.js BOOK: ", book);
       EventService.postBook(book)
         .then(() => {
           commit("ADD_BOOK", book);
@@ -174,6 +174,18 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           alert("Error in postBook of createBook Action (index.js)");
+          console.log(error);
+        });
+    },
+    async createEvent({ commit }, event) {
+      console.log("createEvent from store.js EVENT: ", event);
+      EventService.postEvent(event)
+        .then(() => {
+          commit("ADD_EVENT", event);
+          alert("Event was successfully added for " + event.description);
+        })
+        .catch((error) => {
+          alert("Error in postEvent of createEvent Action (index.js)");
           console.log(error);
         });
     },
@@ -214,14 +226,23 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async createEvent({ commit }, event) {
-      console.log("createEvent from store.js");
-      EventService.postEvent(event)
-        .then(() => {
-          commit("ADD_EVENT", event);
+    async fetchEvents({ commit }) {
+      console.log("Store.js - fetchEvents!")
+      EventService.getEvents()
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_EVENTS", response.data);
+          console.log("FetchBooks response.data: ", response.data);
+          return response.data;
         })
+        //.catch((error) => {
+        //  console.log(error);
+        //  const message = error.response.request.statusText + '!';
+        //  commit('SET_ERRORS', message)
+        //  router.push({name:'home'})
+        //});
         .catch((error) => {
-          alert("Error in postEvent of createEvent Action (index.js)");
           console.log(error);
         });
     },
@@ -249,22 +270,6 @@ export default new Vuex.Store({
             console.log(error);
           });
       }
-    },
-    async fetchEvents({ commit }) {
-      console.log("Store.js - fetchEvents!")
-      EventService.getEvents()
-        .then((response) => {
-          // No longer needed:
-          //commit("RESET_STATE", response.data);
-          commit("SET_EVENTS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-          const message = error.response.request.statusText + '!';
-          commit('SET_ERRORS', message)
-          router.push({name:'home'})
-        });
     },
     async fetchEventsAssigned({ commit }, assigned) {
       console.log("Assigned to: ", assigned);

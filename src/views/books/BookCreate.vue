@@ -5,32 +5,43 @@
     </v-card-title>
   </v-card>
   <v-card-text>
-    Rules: {{ [required] }} ??
-    <v-form id="form-container">
+    <v-form id="isFormValid">
       <v-container id="form-container">
         <v-text-field
           v-model="book.title"
-          :rules="[(v) => !!v || 'Required']"
+          :rules="[requiredTitle, minLength]"
           label="Title"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Author" v-model="book.author">
+        <v-text-field label="Author" v-model="book.author" :rules="[requiredAuthor]">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
-        <v-text-field :label="'Date Written'" v-model="book.date_written"
-          type="date" class="text-style"/>    
+        <v-text-field :label="'Date Written'"
+          v-model="book.date_written"
+          type="date"
+          class="text-style"
+          id="test-calendar"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </template>
+        </v-text-field>    
         <v-text-field label="Url to Review"
           v-model="book.url_to_review"
           type="text"
           :maxlength="urlMaxLength"
           class="text-style"
           placeholder="URL to Review"
-        />
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-link</v-icon>
+          </template>
+        </v-text-field>
         <span>
           {{ urlMaxLength - book.url_to_review.length }} / {{ urlMaxLength }}
         </span>
@@ -62,6 +73,7 @@
 import { v4 as uuidv4 } from "uuid";
 //Himport VueDatePicker from "@vuepic/vue-datepicker";
 //Himport "@vuepic/vue-datepicker/dist/main.css";
+
 export default {
   components: {
     //VueDatePicker,
@@ -70,32 +82,93 @@ export default {
     return {
       book: {
         title: null,
-        rules: {
-          required: (value) => !!value || "Required",
-        },
         author: "",
         date_written: null,
         url_to_review: "",
         notes: "",
         created_by: "dbaynes",
       },
+      //rules: {
+      //  required: value => !!value || 'Field is required'
+      //},
+      isFormValid: false,
+      isAuthorValid: false,
+      isTitleValid: false,
       urlMaxLength: 255,
       num: 1,
     };
   },
   methods: {
     onSubmit() {
-      const book = {
-        ...this.book,
-        id: uuidv4(),
-        created_by: this.$store.state.user,
-      };
-      if (this.$store.dispatch("createBook", book)) {
-        this.$router.push({ name: "BookList" });
+      this.checkValidations();
+      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
+      if (this.isFormValid) {
+        const book = {
+          ...this.book,
+          id: uuidv4(),
+          created_by: this.$store.state.user,
+        };
+        if (this.$store.dispatch("createBook", book)) {
+          this.$router.push({ name: "BookList" });
+        } else {
+          alert("Error adding Book Location " + book.title);
+        }
       } else {
-        alert("Error adding Book Location " + book.title);
+        alert("Please correct required fields and resubmit");
       }
     },
+    minLength: function (value) {
+      console.log("minLength: ", this.isTitleValid)
+      console.log("VALUE: ", value.length)
+      if (value.length > 2) {
+          this.isTitleValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isTitleValid = false
+          return 'Please enter at least 3 characters in Title';
+      }
+    },
+
+    requiredAuthor: function (value) {
+      console.log("requiredAuthor: - this.isAuthorValid: ", this.isAuthorValid)
+      console.log("VALUE: ", value)
+      if (value) {
+          this.isAuthorValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isAuthorValid = false
+          return 'Please enter Author';
+      }
+    },
+    requiredTitle: function (value) {
+      console.log("requiredTitle: - this.isTitleValid: ", this.isTitleValid)
+      console.log("VALUE: ", value)
+      if (value) {
+          this.isTitleValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isTitleValid = false
+          return 'Please enter Title';
+      }
+    },
+    checkValidations() {
+      console.log("checkValidations - this.isFormValid: ", this.isFormValid)
+      console.log("checkValidations - this.isAuthorValid: ", this.isAuthorValid)
+      console.log("checkValidations - this.isTitleValid: ", this.isTitleValid)
+
+      if (this.isAuthorValid && this.isTitleValid) {
+        this.isFormValid = true
+      } else {
+        this.isFormValid = false
+      }
+      console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
+      console.log("checkValidations Exit - this.isAuthorValid: ", this.isAuthorValid)
+      console.log("checkValidations Exit - this.isTitleValid: ", this.isTitleValid)
+
+    }
   },
   book() {
     return this.$store.state.book;

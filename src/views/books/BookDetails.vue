@@ -4,9 +4,9 @@
     <h1>Book Details</h1>
     <br />
     <div v-if="book" class="event" id="center-align">
-      <h1>
+      <h3>
         <b>{{ book.title }}</b>
-      </h1>
+      </h3>
       <ul class="ul-left">
         <li>
           Author:
