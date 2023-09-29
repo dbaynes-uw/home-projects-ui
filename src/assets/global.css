@@ -85,5 +85,7 @@
   color: #00796b;
 }
 .textarea-style {
-  margin-left: 0rem;
+  width: 100%;
+  border-style: groove;
+  border-color: lightgray;
 }

@@ -101,18 +101,6 @@ export default {
 };
 </script>
 <style>
-.add-form {
-  display: flex;
-  flex-direction: column;
-  width: 425px;
-  padding: 20px;
-  margin: 40px;
-  border: 2px solid #d8d8d8;
-  background-color: white;
-  -webkit-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  -moz-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  box-shadow: 2px 15px -12px rgba(0, 0, 0, 0.57);
-}
 #notes {
   width: 100%;
   height: 4rem;

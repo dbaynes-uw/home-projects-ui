@@ -60,7 +60,7 @@
           columns="10"
           v-model="event.notes"
           id="notes"
-          class="text-style1112"
+          class="textarea-style"
           required
         />
         <button class="button" type="submit" id="background-blue">
@@ -180,6 +180,9 @@ export default {
 };
 </script>
 <style>
+.form-container {
+  width: 100%;
+}
 select {
   border-color: darkgreen;
 }

@@ -4,12 +4,24 @@
       <label for="email">
         Email:
       </label>
-      <input v-model="email" type="email" required name="email" value>
-
+      <input
+        v-model="email"
+        type="email"
+        name="email"
+        id="login-field"
+        value
+        placeholder="example@email.com"
+      >
       <label for="password">
         Password:
       </label>
-      <input v-model="password" type="password" required name="password" value>
+      <input v-model="password"
+        type="password"
+        name="password"
+        id="login-field"
+        value
+        placeholder="password"
+      >
 
       <button type="submit" name="button">
         Login
@@ -58,6 +70,8 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style>
+/*@import '../assets/styles/global.css';*/
+
 @import '../assets/authorization.scss';
 </style>

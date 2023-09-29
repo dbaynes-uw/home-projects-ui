@@ -2,24 +2,23 @@
   <div>
     <form @submit.prevent="register">
       <label for="name">
-        Name!:
+        Name:
       </label>
-      <input v-model="name" type="text" name="name" value>
-
+      <input v-model="name" type="text" name="name" id="login-field" value>
       <label for="username">
         User Name:
       </label>
-      <input v-model="username" type="text" name="username" value>
+      <input v-model="username" type="text" name="username" id="login-field" value>
 
       <label for="email">
         Email:
       </label>
-      <input v-model="email" type="email" name="email" value>
+      <input v-model="email" type="email" name="email" id="login-field" value>
 
       <label for="password">
         Password:
       </label>
-      <input v-model="password" type="password" name="password" value>
+      <input v-model="password" type="password" name="password" id="login-field" value>
 
       <button type="submit" name="button">
         Register

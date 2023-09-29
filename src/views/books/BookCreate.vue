@@ -9,7 +9,7 @@
       <v-container id="form-container">
         <v-text-field
           v-model="book.title"
-          :rules="[requiredTitle, minLength]"
+          :rules="[requiredTitle]"
           label="Title"
         >
           <template v-slot:prepend-inner>
@@ -21,11 +21,9 @@
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
-        <v-text-field :label="'Date Written'"
+        <v-text-field label="Date Written"
           v-model="book.date_written"
           type="date"
-          class="text-style"
-          id="test-calendar"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
@@ -35,7 +33,6 @@
           v-model="book.url_to_review"
           type="text"
           :maxlength="urlMaxLength"
-          class="text-style"
           placeholder="URL to Review"
         >
           <template v-slot:prepend-inner>
@@ -88,9 +85,6 @@ export default {
         notes: "",
         created_by: "dbaynes",
       },
-      //rules: {
-      //  required: value => !!value || 'Field is required'
-      //},
       isFormValid: false,
       isAuthorValid: false,
       isTitleValid: false,
@@ -117,19 +111,6 @@ export default {
         alert("Please correct required fields and resubmit");
       }
     },
-    minLength: function (value) {
-      console.log("minLength: ", this.isTitleValid)
-      console.log("VALUE: ", value.length)
-      if (value.length > 2) {
-          this.isTitleValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isTitleValid = false
-          return 'Please enter at least 3 characters in Title';
-      }
-    },
-
     requiredAuthor: function (value) {
       console.log("requiredAuthor: - this.isAuthorValid: ", this.isAuthorValid)
       console.log("VALUE: ", value)
@@ -179,18 +160,7 @@ export default {
 #form-container {
   width: 75% !important;
 }
-.add-form {
-  display: flex;
-  flex-direction: column;
-  width: 425px;
-  padding: 20px;
-  margin: 40px;
-  border: 2px solid #d8d8d8;
-  background-color: white;
-  -webkit-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  -moz-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  box-shadow: 2px 15px -12px rgba(0, 0, 0, 0.57);
-}
+
 #notes {
   width: 100%;
   height: 4rem;

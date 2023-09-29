@@ -7,7 +7,11 @@ body {
   padding: 0em;
   margin: 0em;
 }
-
+.login-field {
+  width: 50%;
+  border-style: groove;
+  border-color: lightgray;
+}
 a:visited {
   color: #2c3e50;
 }
