@@ -28,7 +28,10 @@
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
-        </v-text-field>    
+        </v-text-field>
+        <span>
+          {{ urlMaxLength - book.url_to_review.length }} characters remaining of / {{ urlMaxLength }} total.
+        </span>  
         <v-text-field label="Url to Review"
           v-model="book.url_to_review"
           type="text"
@@ -39,9 +42,6 @@
             <v-icon class="icon-css">mdi-link</v-icon>
           </template>
         </v-text-field>
-        <span>
-          {{ urlMaxLength - book.url_to_review.length }} / {{ urlMaxLength }}
-        </span>
         <v-text-field label="Notes" v-model="book.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
