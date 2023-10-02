@@ -4,6 +4,7 @@ import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import EventService from '@/services/EventService'
 import router from '../router'
+//import { email } from 'vuelidate/lib/validators'
 //Vuex.use(Vuex)
 //const localStorage = new Vuex.localStorage({
 var environment = "";
@@ -150,15 +151,18 @@ export default new Vuex.Store({
       console.log("api_authenticate_url: ", api_authenticate_url);
       this.init_authentication;
       return axios
-        //.post('//localhost:3000/users/tokens/sign_in', credentials)
         .post(api_authenticate_url + "sign_in", credentials)
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })
-        //.catch((error) => {
-        //  console.log("ERROR CATCH: ", error);
-        //  console.log(error);
-        //});
+        .catch((error) => {
+          console.log(error);
+          alert("Invalid Login Credentials - Please try again")
+          //location.reload()
+          const message = error.response.request.statusText + '!';
+          console.log("Message to be sent: ", message)
+          router.back(message)
+        });
     },
 
     async logout ({ commit }) {
