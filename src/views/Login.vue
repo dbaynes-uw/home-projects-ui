@@ -1,39 +1,39 @@
 <template>
-  <div>
-    <form @submit.prevent="login">
-      <label for="email">
-        Email:
-      </label>
-      <input
-        v-model="email"
-        type="email"
-        name="email"
-        id="login-field"
-        value
-        placeholder="example@email.com"
-      >
-      <label for="password">
-        Password:
-      </label>
-      <input v-model="password"
-        type="password"
-        name="password"
-        id="login-field"
-        value
-        placeholder="password"
-      >
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h3>Log In</h3>
+    </v-card-title>
+  </v-card>
+  <v-card-text>
+    <v-form @submit.prevent="login">
+      <v-container id="form-container">
+        <v-text-field
+          label="Email"
+          v-model="email"
+          type="email"
+          name="email"
+          placeholder="example@email.com"
+        />
+        <v-text-field
+          label="Password"
+          v-model="password"
+          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="showPassword ? 'text' : 'password'"
+          name="password"
+          hint="At least 8 characters"
+          @click:append="showPassword = !showPassword"
+        />
 
-      <button type="submit" name="button">
-        Login
-      </button>
+        <v-btn type="submit" block class="mt-2" @click="login">Submit</v-btn>
 
-      <p>{{ error }}</p>
+      </v-container>
+    </v-form>
+      <p>{{ message }}</p>
+  </v-card-text>
 
       <router-link to="/register">
         Don't have an account? Register.
       </router-link>
-    </form>
-  </div>
 </template>
 
 <script>
@@ -46,8 +46,14 @@ export default {
     return {
       email: '',
       password: '',
-      error: null
+      showPassword: false,
+      error: null,
+      message: '',
+      isFormValid: true,
     }
+  },
+  buttonLabel() {
+    return (this.showPassword) ? "Hide" : "Show";
   },
   methods: {
     login () {
@@ -62,10 +68,11 @@ export default {
           this.$store.commit('SET_ERRORS', "")
           this.$router.push({ name: 'About' })
         })
-        //.catch(err => {
-        //  console.log("Login Error: ", err.response.data.error)
-        //  this.error = err.response.data.error
-        //})
+        .catch(err => {
+          console.log("Login Error: ", err.response.data.error)
+          this.message = err.response.data.error
+          this.error = err.response.data.error
+        })
     }
   }
 }
