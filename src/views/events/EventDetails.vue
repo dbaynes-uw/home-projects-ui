@@ -47,6 +47,7 @@
         </li>
         <li>
           Date Due:
+          <b>{{ formatStandardDate(event.action_due_date) }} - </b>
           <span v-if="datePastDue(event.action_date, event.frequency)">
             <span style="color: red; font-weight: bold">
               {{ calculateDue(event.action_date, event.frequency) }}

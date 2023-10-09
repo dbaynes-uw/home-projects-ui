@@ -13,6 +13,12 @@
         />
         <label for="action_date">Action Due Date:</label>
         <br/>
+        <input
+          type="date"
+          class="text-style"
+          v-model="event.action_due_date"
+          required
+        />
         <span v-if="datePastDue(event.action_date, event.frequency)">
           <span style="color: red; font-weight: bold">
             &nbsp;{{ calculateDue(event.action_date, event.frequency) }}
@@ -120,8 +126,7 @@ export default {
         title: "Update Event from List",
         message:
           "Are you sure you want to update " +
-          this.event.description +
-          "? It cannot be undone.",
+          this.event.description,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch

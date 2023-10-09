@@ -18,8 +18,9 @@
       <td>{{ result.description }}</td>
       <td>Every {{ result.frequency }} Days</td>
       <td>{{ formatYearDate(result.action_date) }}</td>
-      <!--td>{{ formatFullYearDate(result.action_due_date) }}</td-->
-      <td>{{ calculateDateDue(result.action_date, result.frequency) }}</td>
+      <td>{{ formatFullYearDate(result.action_due_date) }} - 
+          {{ calculateDateDue(result.action_date, result.frequency) }}
+      </td>
       <td>{{ formatYearDate(result.action_completed_date) }}</td>
       <td>{{ result.assigned }}</td>
       <td>{{ result.action_active == true ? "Active" : "Not Active" }}</td>
