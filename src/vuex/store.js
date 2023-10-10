@@ -237,7 +237,7 @@ export default new Vuex.Store({
           // No longer needed:
           //commit("RESET_STATE", response.data);
           commit("SET_EVENTS", response.data);
-          console.log("FetchBooks response.data: ", response.data);
+          console.log("FetchEvents response.data: ", response.data);
           return response.data;
         })
         //.catch((error) => {
@@ -440,11 +440,11 @@ export default new Vuex.Store({
       }
     },
     async fetchTravels({ commit }) {
-      console.log("Fetch Travels");
+      console.log("Store.js - Fetch Travels!");
       EventService.getTravels()
         .then((response) => {
           commit("SET_TRAVELS", response.data);
-          console.log("FetchTravel response.data: ", response.data);
+          console.log("FetchTravels response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {

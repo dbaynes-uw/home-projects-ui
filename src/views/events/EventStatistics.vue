@@ -6,6 +6,7 @@
         <td style="width: 30%">
           <h3>Event Assignments:</h3>
         </td>
+        <td><h3>Count</h3></td>
       </tr>
       <tr v-for="(v, k) in events.assigned" :key="k">
         <td>
@@ -121,6 +122,21 @@
           {{ events.dueNextWeek }}
         </td>
       </tr>
+      <tr>
+        <td>
+          <router-link
+            :to="{
+              name: 'EventStatisticDetail',
+              params: { statistic: othersDue },
+            }"
+          >
+            Other Events Due:
+          </router-link>
+        </td>
+        <td>
+          {{ events.othersDue }}
+        </td>
+      </tr>      
     </v-table>
     <br />
     <span class="fa-stack">
@@ -147,6 +163,7 @@ export default {
       dueToday: "due_today",
       dueThisWeek: "due_this_week",
       dueNextWeek: "due_next_week",
+      othersDue: "others_due"
     };
   },
   created() {

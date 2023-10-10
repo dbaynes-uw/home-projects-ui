@@ -9,87 +9,126 @@
       <router-link :to="{ name: 'TravelCreate' }">Add Travel</router-link>
     </h2>
     <br />
-    <div class="travel-list">
-      <table class="table-index-style">
-        <tr>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Reference</th>
-          <th>Notes</th>
-          <th style="text-align: right">Actions</th>
-        </tr>
-        <tr v-for="travel in travels" :key="travel.id" :travel="travel">
-          <td>{{ travel.title }}</td>
-          <td>{{ travel.description }}</td>
-          <td>{{ formatStandardDate(travel.start_date) }}</td>
-          <td>{{ formatStandardDate(travel.end_date) }}</td>
-          <td>
-            <a :href="travel.url_reference" target="_blank">Reference</a>
-          </td>
-          <td>{{ travel.notes }}</td>
-          <td style="padding-left: 0">
-            <span class="fa-stack">
-              <router-link
-                :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
-              >
-                <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-              </router-link>
-              <span class="fa-stack fa-table-stack">
-                <router-link
-                  :to="{
-                    name: 'TravelDetails',
-                    params: { id: `${travel.id}` },
-                  }"
-                >
-                  <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
-                </router-link>
-              </span>
-              <span
-                class="fa-table-stack"
-                style="position: relative; top: 0.5rem; left: 2.3rem"
-              >
-                <i
-                  @click="deleteTravel(travel)"
-                  class="fas fa-trash-alt fa-stack-1x"
-                >
-                </i>
-              </span>
-            </span>
-          </td>
-        </tr>
-      </table>
+    <div style="width: 100%">
+      <div class="auto-search-container">
+        <v-text-field
+          clearable
+          clear-icon="mdi-close"
+          @click:clear="showIndex"
+          type="text"
+          class="np-input-search"
+          v-model="inputSearchText"
+          placeholder="Search"
+          autocomplete="off"
+          v-on:keyup="searchColumns"
+        />
+      </div>
     </div>
-  </div>
+    <div class="travel-list">
+      <span v-if="filteredResults.length == 0">
+        <TravelIndex :travels="travels" />
+      </span>
+      <span v-if="filteredResults.length > 0">
+        <TravelSearchResults :filteredResults="filteredResults" />
+      </span>
+    </div>
+  </div>       
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import TravelIndex from "@/components/travels/TravelIndex.vue";
+import TravelSearchResults from "@/components/travels/TravelSearchResults.vue";
+
 export default {
   name: "TravelList",
+  props: ["filteredResults[]"],
   components: {
     ConfirmDialogue,
+    TravelIndex,
+    TravelSearchResults,
   },
   data() {
     return {
+      inputSearchText: "",
+      filteredResults: [],
+      columnDetails: null,
+      sortedData: [],
+      sortedbyASC: false,
+      title: null,
       description: null,
-      frequency: null,
       completed: 0,
       statusMessage: "",
     };
   },
+  mounted() {
+    this.sortedData = this.travels;
+  },
   created() {
-    console.log("Created Store Dispatch - fetchTravels. ");
+    console.log("Travel List Created Store Dispatch - fetchTravels. ");
     this.$store.dispatch("fetchTravels");
+    this.sortedData = this.travels;
   },
   computed: {
     travels() {
-      console.log("Computed Store Dispatch - fetchTravels. ");
+      console.log("Computed Store Dispatch - fetchTravels: ", this.$store.state.travels);
       return this.$store.state.travels;
     },
   },
   methods: {
+    showIndex() {
+      this.filteredResults = [];
+    },
+    searchColumns() {
+      this.filteredResults = [];
+      this.columnDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        this.filteredResults = [];
+        this.columnDetails = null;
+      } else {
+        if (
+          this.travels &&
+          this.travels.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.travels.forEach((travel) => {
+            const searchHasTitle =
+              travel.title &&
+              travel.title
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            const searchHasDescription =
+              travel.description &&
+              travel.description
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            if (searchHasTitle || searchHasDescription) {
+              this.filteredResults.push(travel);
+            }
+          });
+        }
+      }
+    },
+    showCharacterDetails(result) {
+      this.characterDetails = result;
+    },
+    sortList(sortBy) {
+      this.sortedData = this.travels;
+      console.log("SORTLIST - sortedData: ", this.sortedData);
+      console.log("SORTLIST: ", sortBy);
+      console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);
+      if (this.sortedbyASC) {
+        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+        this.sortedbyASC = false;
+      } else {
+        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+        this.sortedbyASC = true;
+      }
+    },
+
     async deleteTravel(travel) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Travel from List",

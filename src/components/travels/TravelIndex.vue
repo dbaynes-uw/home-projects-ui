@@ -2,47 +2,49 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('title')">Title</th>
-      <th id="background-blue" @click="sortList('author')">Author</th>
-      <th id="background-blue" @click="sortList('date_written')">
-        Date Written
+      <th id="background-blue" @click="sortList('title')">Title Index</th>
+      <th id="background-blue" @click="sortList('description')">Description</th>
+      <th id="background-blue" @click="sortList('start_date')">
+        Start Date
       </th>
-      <th id="background-blue">URL to Review</th>
+      <th id="background-blue" @click="sortList('end_date')">End Date</th>
+      <th id="background-blue">Reference</th>
       <th id="background-blue">Notes</th>
       <th id="background-blue" style="text-align: right">Actions</th>
     </tr>
-    <tr v-for="(result, resultIndex) in books" :key="resultIndex">
-      <td>{{ result.title }} LEN: {{ books.length }}</td>
-      <td>{{ result.author }}</td>
-      <td>{{ formatFullYearDate(result.date_written) }}</td>
+    <tr v-for="(result, resultIndex) in travels" :key="resultIndex">
+      <td>{{ result.title }}</td>
+      <td>{{ result.description }}</td>
+      <td>{{ formatFullYearDate(result.start_date) }}</td>
+      <td>{{ formatFullYearDate(result.end_date) }}</td>
       <td>
-        <a :href="result.url_to_review" target="_blank">Review</a>
+        <a :href="result.url_reference" target="_blank">Review</a>
       </td>
       <td>{{ result.notes }}</td>
       <td>
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'TravelEdit', params: { id: `${result.id}` } }"
             >
               <i
-                id="book-icon-edit"
+                id="travel-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'TravelDetails', params: { id: `${result.id}` } }"
               >
-                <i id="book-icon-eye" class="fa fa-eye"></i>
+                <i id="travel-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
-                @click="deleteBook(result)"
+                @click="deleteTravel(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="book-icon-delete"
+                id="travel-icon-delete"
               >
               </i>
             </span>
@@ -50,16 +52,16 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'TravelDetails', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
+            :to="{ name: 'TravelEdit', params: { id: `${result.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteBook(result)"><u>Del</u></span>
+          <span class="ok-btn" @click="deleteTravel(result)"><u>Del</u></span>
         </span>
       </td>
     </tr>
@@ -71,8 +73,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "BookIndex",
-  props: ["books"],
+  name: "TravelIndex",
+  props: ["travels"],
   components: {
     ConfirmDialogue,
   },
@@ -94,23 +96,23 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.books &&
-          this.books.length > 0 &&
+          this.travels &&
+          this.travels.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.books.forEach((book) => {
+          this.travels.forEach((travel) => {
             const searchHasTitle =
-              book.title &&
-              book.title
+              travel.title &&
+              travel.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            const searchHasAuthor =
-              book.author &&
-              book.author
+            const searchHasDescription =
+              travel.description &&
+              travel.description
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(book);
+            if (searchHasTitle || searchHasDescription) {
+              this.filteredResults.push(travel);
             }
           });
         }
@@ -120,7 +122,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.books;
+      this.sortedData = this.travels;
       console.log("SORTLIST - sortedData: ", this.sortedData);
       console.log("SORTLIST: ", sortBy);
       console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);
@@ -132,21 +134,21 @@ export default {
         this.sortedbyASC = true;
       }
     },
-    async deleteBook(book) {
+    async deleteTravel(travel) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Book from List",
+        title: "Delete Travel from List",
         message:
           "Are you sure you want to delete " +
-          book.title +
+          travel.title +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteBook", book);
+        this.$store.dispatch("deleteTravel", travel);
         this.statusMessage =
-          "Book was Deleted for " +
-          book.title +
+          "Travel was Deleted for " +
+          travel.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }
