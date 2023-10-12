@@ -4,21 +4,21 @@
       <label for="name">
         Name:
       </label>
-      <input v-model="name" type="text" name="name" id="login-field" value>
+      <input v-model="name" type="text" name="name" id="login-field" value required>
       <label for="username">
         User Name:
       </label>
-      <input v-model="username" type="text" name="username" id="login-field" value>
+      <input v-model="username" type="text" name="username" id="login-field" value required>
 
       <label for="email">
         Email:
       </label>
-      <input v-model="email" type="email" name="email" id="login-field" value :rules="[requiredAdmin]">
+      <input v-model="email" type="email" name="email" id="login-field" value required>
 
       <label for="password">
         Password:
       </label>
-      <input v-model="password" type="password" name="password" id="login-field" value>
+      <input v-model="password" type="password" name="password" id="login-field" value required>
 
       <button type="submit" name="button">
         Register
