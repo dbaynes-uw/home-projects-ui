@@ -4,10 +4,8 @@ import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import EventService from '@/services/EventService'
 import router from '../router'
-//import { email } from 'vuelidate/lib/validators'
 //Vuex.use(Vuex)
 //const localStorage = new Vuex.localStorage({
-var environment = "";
 var api_authenticate_url = "";
 export default new Vuex.Store({
   props: ["message"],
@@ -119,58 +117,68 @@ export default new Vuex.Store({
   actions: {
     async register ({ commit }, credentials) {
       this.init_authentication;
-      console.log("Store.js REGISTER - Environment: ", environment);
       if (window.location.port == "8080") {
-        environment = "development";
         //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
         api_authenticate_url = "//localhost:3000/api/v1/users/";
       } else {
-        environment = "production";
         api_authenticate_url =
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
-      console.log("REGISTER Credentials: ", credentials);
-      console.log("Store.js Register Credentials: ", credentials);
-      return axios
-        .post(api_authenticate_url, credentials)
-        .then(({ data }) => {
-          commit('SET_USER_DATA', data)
-        })
+      this.message = null
+      if ( credentials.email != 'djbaynes@gmail.com') {
+        this.message = 'Contact Admin to Register!';
+        commit('SET_ERRORS', this.message)
+        router.push({name:'home', params: {message: this.message}})
+      } else {
+        return axios
+          .post(api_authenticate_url, credentials)
+          .then(({ data }) => {
+            commit('SET_USER_DATA', data)
+          })
+          .catch((error) => {
+            console.log(error);
+            if (this.message == null) {
+              error = error.response.request.statusText + '!';
+            } else {
+              error = this.message
+            }
+            console.log("Message to be sent: ", error)
+            router.push({name:'home', params: {message: this.message}})
+          });
+        }
     },
     async login ({ commit }, credentials) {
-      console.log("Store.js LOGIN Credentials: ", credentials);
       if (window.location.port == "8080") {
-        environment = "development";
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/users/tokens/";
       } else {
-        environment = "production";
         api_authenticate_url =
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
       console.log("api_authenticate_url: ", api_authenticate_url);
       this.init_authentication;
       return axios
-        .post(api_authenticate_url + "sign_in", credentials)
-        .then(({ data }) => {
-          commit('SET_USER_DATA', data)
-        })
-        .catch((error) => {
-          console.log(error);
-          alert("Invalid Login Credentials - Please try again")
-          //location.reload()
-          const message = error.response.request.statusText + '!';
-          console.log("Message to be sent: ", message)
-          router.back(message)
-        });
+       .post(api_authenticate_url + "sign_in", credentials)
+       .then(({ data }) => {
+         commit('SET_USER_DATA', data)
+       })
+       .catch((error) => {
+         console.log(error);
+         alert("Invalid Login Credentials - Please try again")
+         //location.reload()
+         //const message = error.response.request.statusText + '!';
+         error = error.response.request.statusText + '!';
+         console.log("Message to be sent: ", error)
+         router.back(error)
+       });
     },
 
     async logout ({ commit }) {
       console.log("LOGOUT - CLEAR_USER_DATA!");
       commit('CLEAR_USER_DATA')
+      router.push({name:'home'})
     },
     async createBook({ commit }, book) {
-      console.log("createBook from store.js BOOK: ", book);
       EventService.postBook(book)
         .then(() => {
           commit("ADD_BOOK", book);
@@ -182,7 +190,6 @@ export default new Vuex.Store({
         });
     },
     async createEvent({ commit }, event) {
-      console.log("createEvent from store.js EVENT: ", event);
       EventService.postEvent(event)
         .then(() => {
           commit("ADD_EVENT", event);
@@ -194,7 +201,6 @@ export default new Vuex.Store({
         });
     },
     async deleteBook({ commit }, book) {
-      console.log("Store.js: deleteBook title: ", book.title);
       EventService.deleteBook(book)
         .then((response) => {
           commit("DELETE_BOOK", response.data);
@@ -219,7 +225,6 @@ export default new Vuex.Store({
       }
     },
     async fetchBooks({ commit }) {
-      console.log("Store.js - fetchBooks!")
       EventService.getBooks()
         .then((response) => {
           commit("SET_BOOKS", response.data);
@@ -231,7 +236,6 @@ export default new Vuex.Store({
         });
     },
     async fetchEvents({ commit }) {
-      console.log("Store.js - fetchEvents!")
       EventService.getEvents()
         .then((response) => {
           // No longer needed:
@@ -328,7 +332,6 @@ export default new Vuex.Store({
         });
     },
     async fetchEventStatisticDetail({ commit }, statistic) {
-      console.log("Store.js - Fetch Events statistic: ", statistic);
       EventService.getEventStatisticDetail(statistic)
         .then((response) => {
           // No longer needed:
@@ -440,7 +443,6 @@ export default new Vuex.Store({
       }
     },
     async fetchTravels({ commit }) {
-      console.log("Store.js - Fetch Travels!");
       EventService.getTravels()
         .then((response) => {
           commit("SET_TRAVELS", response.data);
@@ -464,7 +466,6 @@ export default new Vuex.Store({
         });
     },
     async createUser({ commit }, user) {
-      console.log("createUser from store.js");
       EventService.postUser(user)
         .then(() => {
           commit("ADD_USER", user);

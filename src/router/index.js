@@ -32,9 +32,8 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    message: '',
-    params: {message: '!!!!!'},
-    component: Home
+    component: Home,
+    props: { message: ''},
   },
   {
     path: '/dashboard',
@@ -73,7 +72,7 @@ const routes = [
     path: "/about",
     name: "About",
     component: About,
-    meta: { requiresAuth: true}
+    //meta: { requiresAuth: true}
   },
   {
     path: "/book/create",

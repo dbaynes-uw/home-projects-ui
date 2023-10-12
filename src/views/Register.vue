@@ -13,7 +13,7 @@
       <label for="email">
         Email:
       </label>
-      <input v-model="email" type="email" name="email" id="login-field" value>
+      <input v-model="email" type="email" name="email" id="login-field" value :rules="[requiredAdmin]">
 
       <label for="password">
         Password:
@@ -39,13 +39,14 @@
 
 <script>
 export default {
+  props: ["message"],
   data () {
     return {
       name: '',
       username: '',
       email: '',
       password: '',
-      errors: null
+      errors: null,
     }
   },
   methods: {
@@ -58,12 +59,25 @@ export default {
           password: this.password
         })
         .then(() => {
-          this.$router.push({ name: 'About' })
+          this.$router.push({ name: 'home' })
         })
         .catch(err => {
           this.errors = err.response.data.errors
         })
-    }
+    },
+    requiredAdmin: function (value) {
+      console.log("requiredAdmin: - this.isAdminValid: ", this.isAdminValid)
+      console.log("VALUE: ", value)
+      if (value == 'dlbaynes@gmail.com') {
+          this.isAdminValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isAuthorValid = false
+          return 'Please enter Admin';
+      }
+    },
+
   }
 }
 </script>
