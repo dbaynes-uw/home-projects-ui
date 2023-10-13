@@ -12,7 +12,7 @@
       <th id="background-blue" style="text-align: right">Actions</th>
     </tr>
     <tr v-for="(result, resultIndex) in books" :key="resultIndex">
-      <td>{{ result.title }} LEN: {{ books.length }}</td>
+      <td>{{ result.title }}</td>
       <td>{{ result.author }}</td>
       <td>{{ formatFullYearDate(result.date_written) }}</td>
       <td>
@@ -65,7 +65,7 @@
     </tr>
   </v-table>
   <br />
-  <b>Online Status: {{ this.onlineStatus }}</b>
+  <!--b>Online Status: {{ this.onlineStatus }}</b!-->
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";

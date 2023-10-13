@@ -7,7 +7,7 @@ import router from "./router";
 import store from "./vuex/store.js";
 import "./plugins/vuetify";
 import vuetify from "./plugins/vuetify";
-import { VuelidatePlugin } from '@vuelidate/core'
+//import { VuelidatePlugin } from '@vuelidate/core'
 import { loadFonts } from "./plugins/webfontloader";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "@mdi/font/css/materialdesignicons.css";
@@ -31,5 +31,5 @@ createApp({
       }
     )
   }
-}).use(router).use(store).use(vuetify).use(VuelidatePlugin).mount("#app")
+}).use(router).use(store).use(vuetify).mount("#app")
 

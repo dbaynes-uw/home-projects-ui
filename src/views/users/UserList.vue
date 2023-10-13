@@ -2,12 +2,10 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h2>Users</h2>
-    <h3>Message: {{ this.message }}</h3>
-    <h3>Count: {{ users.count }}</h3>
-    <h3>User must register to be added</h3>
-    <!--h2>
-      <router-link :to="{ name: 'UserCreate' }">Create User</router-link>
-    </h2-->
+    <!--h3>Message: {{ this.message }}</h3-->
+    <h2>Current User: {{ this.$store.state.user.resource_owner.email }}</h2>
+    <h3>Count: {{ users.length }}</h3>
+    <h3><u>User must register to be added</u></h3>
     <br />
     <div class="users">
       <div v-for="user in users" :key="user.id" :user="user" class="user">
@@ -18,7 +16,6 @@
             </b>
           </p>
         </router-link-->
-        <p> Users <Caption></Caption>Count: {{ users.length }}</p>
         <ul class="ul-left">
           <li>{{ user.name }}</li>
           <li>{{ user.username }}</li>
@@ -49,7 +46,7 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  props: ["id"],
+  props: ["id"]["message"],
   data() {
     return {
       message: '',

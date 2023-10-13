@@ -1,9 +1,9 @@
 <template>
   <div class="home">
     <h1>Welcome to the App!</h1>
-    <h2 class="error-message" v-if="!this.$store.state.errors == ''">{{ this.$store.state.errors }}</h2>
+    <h2 class="error-message" v-if="!this.$store.state.errors == ''">{{ this.$store.state.errors }} <a href="mailto:dlbaynes@gmail.com">David Baynes</a></h2>
     <div> <!---- v-if="!loggedIn"-->
-      To use this app you'll need to
+      Once registered you'll need to
       <router-link to="/login">
         <h2>Sign In</h2>
       </router-link>

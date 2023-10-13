@@ -125,11 +125,7 @@ export default new Vuex.Store({
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
       this.message = null
-      if ( credentials.email != 'djbaynes@gmail.com') {
-        this.message = 'Contact Admin to Register!';
-        commit('SET_ERRORS', this.message)
-        router.push({name:'home', params: {message: this.message}})
-      } else {
+      if ( credentials.email.toLowerCase().includes('baynes')) {
         return axios
           .post(api_authenticate_url, credentials)
           .then(({ data }) => {
@@ -145,7 +141,11 @@ export default new Vuex.Store({
             console.log("Message to be sent: ", error)
             router.push({name:'home', params: {message: this.message}})
           });
-        }
+        } else {
+          this.message = 'Contact Admin to Register: ';
+          commit('SET_ERRORS', this.message)
+          router.push({name:'home', params: {message: this.message}})
+      }
     },
     async login ({ commit }, credentials) {
       if (window.location.port == "8080") {

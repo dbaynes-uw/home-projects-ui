@@ -4,7 +4,7 @@
     <h1>
       <router-link :to="{ name: 'UserList' }">Users</router-link>
     </h1>
-    <p>User:</p>
+    <p>User: {{ this.$store.state.user.resource_owner.email }}</p>
   </div>
 </template>
 <style lang="css">

@@ -9,21 +9,30 @@
       <v-container id="form-container">
         <v-text-field
           label="Email"
-          v-model="email"
+          v-model="state.email"
           type="email"
           name="email"
           placeholder="example@email.com"
         />
+        <span v-if="v$.email.$error">
+          {{ v$.email.$errors[0].$message }}
+        </span>
         <v-text-field
-          label="Password"
-          v-model="password"
+          label="Password (Mininum 8 characters)"
+          v-model="state.password"
           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
           :type="showPassword ? 'text' : 'password'"
           name="password"
-          hint="At least 8 characters"
           @click:append="showPassword = !showPassword"
         />
-
+        <!--hint="Required minimum of 8 characters"-->
+        <span>
+          {{ state.password.length }} characters used.
+        </span>
+        <span v-if="v$.password.$error">
+          {{ v$.password.$errors[0].$message }}
+        </span>
+        <br/>
         <v-btn type="submit" block class="mt-2" @click="login">Submit</v-btn>
 
       </v-container>
@@ -37,11 +46,32 @@
 </template>
 
 <script>
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, minLength} from '@vuelidate/validators';
+import { reactive, computed } from 'vue';
 export default {
-  state: {
-    token: "",
-    errors: null,
+  setup () {
+    const state = reactive({
+      email: '',
+      password: '',
+    })
+    const rules = computed(() => {
+      return {
+        email: { required, email},
+        password: { required, minLength: minLength(8) }
+      } 
+    })
+    const v$ = useVuelidate(rules, state)
+    return {
+      state,
+      v$,
+    }
   },
+  
+  //state: {
+  //  token: "",
+  //  errors: null,
+  //},
   data () {
     return {
       email: '',
@@ -50,29 +80,37 @@ export default {
       error: null,
       message: '',
       isFormValid: true,
+      urlMinLength: 8,
     }
   },
+
   buttonLabel() {
     return (this.showPassword) ? "Hide" : "Show";
   },
+
   methods: {
-    login () {
+    async login () {
       console.log("Login.vue login!!!");
-      this.$store
-        .dispatch('login', {
-          email: this.email,
-          password: this.password
-        })
-        .then(() => {
-          //this.$router.push({ name: 'dashboard' })
-          this.$store.commit('SET_ERRORS', "")
-          this.$router.push({ name: 'About' })
-        })
-        .catch(err => {
-          console.log("Login Error: ", err.response.data.error)
-          this.message = err.response.data.error
-          this.error = err.response.data.error
-        })
+      this.v$.$validate()
+      console.log("V$: ", this.v$)
+      console.log("V$.$error: ", this.v$.$error)
+      if (!this.v$.$error) {
+        this.$store
+          .dispatch('login', {
+            email: this.state.email,
+            password: this.state.password
+          })
+          .then(() => {
+            //this.$router.push({ name: 'dashboard' })
+            this.$store.commit('SET_ERRORS', "")
+            this.$router.push({ name: 'About' })
+          })
+          .catch(err => {
+            console.log("Login Error: ", err.response.data.error)
+            this.message = err.response.data.error
+            this.error = err.response.data.error
+          })
+        }
     }
   }
 }
