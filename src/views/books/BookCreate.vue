@@ -29,6 +29,14 @@
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
+        <v-text-field label="Date Read"
+          v-model="book.date_read"
+          type="date"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
         <span>
           {{ urlMaxLength - book.url_to_review.length }} characters remaining of / {{ urlMaxLength }} total.
         </span>  
@@ -81,6 +89,7 @@ export default {
         title: null,
         author: "",
         date_written: null,
+        date_read: null,
         url_to_review: "",
         notes: "",
         created_by: "dbaynes",

@@ -14,6 +14,12 @@
           class="text-style"
           v-model="book.date_written"
         />
+        <label for="date_read">Date Read:</label>
+        <input
+          type="date"
+          class="text-style"
+          v-model="book.date_read"
+        />
         <label for="url_to_review">URL to Review:</label>
         <input type="text" class="text-style" v-model="book.url_to_review" />
         <label>Notes:</label>
@@ -59,6 +65,7 @@ export default {
         title: "",
         author: "",
         date_written: "",
+        date_read: "",
         url_to_review: "",
         notes: "",
         updated_by: "dbaynes",
@@ -91,6 +98,7 @@ export default {
             title: this.book.title,
             author: this.book.author,
             date_written: this.book.date_written,
+            date_read: this.book.date_read,
             url_to_review: this.book.url_to_review,
             notes: this.book.notes,
           }

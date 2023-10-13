@@ -16,6 +16,10 @@
           Date Book Written:
           <b>{{ formatStandardDate(book.date_written) }}</b>
         </li>
+        <li v-if="book.date_read">
+          Date Book Read:
+          <b>{{ formatStandardDate(book.date_read) }}</b>
+        </li>
         <li v-if="book.url_to_review">
           URL to Review:
           <a :href="book.url_to_review" target="_blank">Click</a>

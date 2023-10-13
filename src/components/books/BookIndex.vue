@@ -7,6 +7,9 @@
       <th id="background-blue" @click="sortList('date_written')">
         Date Written
       </th>
+      <th id="background-blue" @click="sortList('date_read')">
+        Date Read
+      </th>
       <th id="background-blue">URL to Review</th>
       <th id="background-blue">Notes</th>
       <th id="background-blue" style="text-align: right">Actions</th>
@@ -15,6 +18,8 @@
       <td>{{ result.title }}</td>
       <td>{{ result.author }}</td>
       <td>{{ formatFullYearDate(result.date_written) }}</td>
+      <td>{{ formatFullYearDate(result.date_read) }}</td>
+
       <td>
         <a :href="result.url_to_review" target="_blank">Review</a>
       </td>
