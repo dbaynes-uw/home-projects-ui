@@ -37,9 +37,125 @@
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
+        <div class="row">
+          <div class="column">
+            <h2 @click='toggle1 = !toggle1'><b><u>Book Format1</u></b></h2>
+            <br/>
+            <div v-show='toggle1'>
+              <v-checkbox
+                label="Print"
+                v-model="book.format_print"
+              />
+              <v-checkbox
+                label="Audio"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test3"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test4"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test5"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test6"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test7"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test8"
+                v-model="book.format_audio"
+              />
+            </div>
+          </div>
+          <div class="column">
+            <h2 @click='toggle2 = !toggle2'><b><u>Book Format2</u></b></h2>
+            <br/>
+            <div v-show='toggle2'>
+              <v-checkbox
+                label="Print"
+                v-model="book.format_print"
+              />
+              <v-checkbox
+                label="Audio"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test3"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test4"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test5"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test6"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test7"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test8"
+                v-model="book.format_audio"
+              />
+            </div>
+          </div>
+          <div class="column">
+            <h2 @click='toggle3 = !toggle3'><b><u>Book Format3</u></b></h2>
+            <br/>
+            <div v-show='toggle3'>
+              <v-checkbox
+                label="Print"
+                v-model="book.format_print"
+              />
+              <v-checkbox
+                label="Audio"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test3"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test4"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test5"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test6"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test7"
+                v-model="book.format_audio"
+              />
+              <v-checkbox
+                label="Test8"
+                v-model="book.format_audio"
+              />
+            </div>
+          </div>
+        </div>
         <span>
-          {{ urlMaxLength - book.url_to_review.length }} characters remaining of / {{ urlMaxLength }} total.
-        </span>  
+          {{ urlMaxLength }} characters max -- {{ urlMaxLength - book.url_to_review.length }} characters remaining.
+        </span>
         <v-text-field label="Url to Review"
           v-model="book.url_to_review"
           type="text"
@@ -56,32 +172,14 @@
           </template>
         </v-text-field>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
-        <!--button class="button" type="submit">Submit</button-->
       </v-container>
     </v-form>
   </v-card-text>
 </template>
-<script setup>
-//const format = (date) => {
-//  const day = date.getDate();
-//  const month = date.getMonth() + 1;
-//  const year = date.getFullYear();
-//  console.log("DATE: ", date);
-//  console.log("Month: ", month);
-//  console.log("Day: ", day);
-//  console.log("Year: ", year);
-//  return `${month}/${day}/${year}`;
-//};
-</script>
-
 <script>
 import { v4 as uuidv4 } from "uuid";
-//Himport VueDatePicker from "@vuepic/vue-datepicker";
-//Himport "@vuepic/vue-datepicker/dist/main.css";
-
 export default {
   components: {
-    //VueDatePicker,
   },
   data() {
     return {
@@ -90,10 +188,15 @@ export default {
         author: "",
         date_written: null,
         date_read: null,
+        format_audio: false,
+        format_print: false,
         url_to_review: "",
         notes: "",
         created_by: "dbaynes",
       },
+      toggle1: false,
+      toggle2: false,
+      toggle3: false,
       isFormValid: false,
       isAuthorValid: false,
       isTitleValid: false,
@@ -165,11 +268,31 @@ export default {
   },
 };
 </script>
-<style>
-#form-container {
-  width: 75% !important;
+<style lang="css">
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 33%;
+  padding: 10px;
+  /*height: 300px; /* Should be removed. Only for demonstration */
 }
 
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.v-icon {
+  color: darkslategrey;
+  top: -0.2rem;
+}
+#form-container {
+  text-align: left;
+  width: 75% !important;
+}
+[type="checkbox"],
 #notes {
   width: 100%;
   height: 4rem;
