@@ -42,78 +42,29 @@
             <h2 @click='toggle1 = !toggle1'><b><u>Book Format1</u></b></h2>
             <br/>
             <div v-show='toggle1'>
-              <v-checkbox
-                label="Print"
-                v-model="book.format_print"
-              />
-              <v-checkbox
-                label="Audio"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test3"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test4"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test5"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test6"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test7"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test8"
-                v-model="book.format_audio"
-              />
+              <div v-for="(item, index) in products" :key="index">
+                <span v-if="item.vendor == 'costco'">
+                  <v-checkbox
+                    :label=item.product
+                    v-model="item.product"
+                  />
+                </span>
+              </div>
             </div>
           </div>
           <div class="column">
             <h2 @click='toggle2 = !toggle2'><b><u>Book Format2</u></b></h2>
             <br/>
             <div v-show='toggle2'>
-              <v-checkbox
-                label="Print"
-                v-model="book.format_print"
-              />
-              <v-checkbox
-                label="Audio"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test3"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test4"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test5"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test6"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test7"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test8"
-                v-model="book.format_audio"
-              />
-            </div>
-          </div>
+              <div v-for="(item, index) in products" :key="index">
+                <span v-if="item.vendor == 'traderjoe'">
+                  <v-checkbox
+                    :label=item.product
+                    v-model="item.product"
+                  />
+                </span>
+              </div>
+            </div>          </div>
           <div class="column">
             <h2 @click='toggle3 = !toggle3'><b><u>Book Format3</u></b></h2>
             <br/>
@@ -153,19 +104,6 @@
             </div>
           </div>
         </div>
-        <span>
-          {{ urlMaxLength }} characters max -- {{ urlMaxLength - book.url_to_review.length }} characters remaining.
-        </span>
-        <v-text-field label="Url to Review"
-          v-model="book.url_to_review"
-          type="text"
-          :maxlength="urlMaxLength"
-          placeholder="URL to Review"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
-          </template>
-        </v-text-field>
         <v-text-field label="Notes" v-model="book.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
@@ -183,6 +121,17 @@ export default {
   },
   data() {
     return {
+      products: [
+        { vendor: 'costco', product: 'costco prod1', checked: false },
+        { vendor: 'costco', product: 'costco prod2', checked: false },
+        { vendor: 'costco', product: 'costco prod2', checked: false },
+        { vendor: 'safeway', product: 'safeway prod1', checked: false },
+        { vendor: 'safeway', product: 'safeway prod2', checked: false },
+        { vendor: 'safeway', product: 'safeway prod2', checked: false },
+        { vendor: 'traderjoe', product: 'traderjoe prod1', checked: false },
+        { vendor: 'traderjoe', product: 'traderjoe prod2', checked: false },
+        { vendor: 'traderjoe', product: 'traderjoe prod2', checked: false },
+      ],
       book: {
         title: null,
         author: "",
