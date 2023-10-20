@@ -9,138 +9,57 @@
       <v-container id="form-container">
         <div class="row">
           <div class="column">
-            <h2 @click='toggle1 = !toggle1'><b><u>Book Format1</u></b></h2>
+            <h2 @click='toggle1 = !toggle1'><b><u>CostCo</u></b></h2>
             <br/>
             <div v-show='toggle1'>
-              <v-checkbox
-                label="Print"
-                v-model="book.format_print"
-              />
-              <v-checkbox
-                label="Audio"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test3"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test4"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test5"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test6"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test7"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test8"
-                v-model="book.format_audio"
-              />
+              <div v-for="(item, index) in products" :key="index">
+                <span v-if="item.vendor == 'costco'">
+                  <v-checkbox
+                    :label="item.product"
+                    v-model="product.vendor_products"
+                    :value="item.vendor + '-' + item.product"
+                  />
+                </span>
+              </div>
             </div>
           </div>
           <div class="column">
-            <h2 @click='toggle2 = !toggle2'><b><u>Book Format2</u></b></h2>
+            <h2 @click='toggle2 = !toggle2'><b><u>Safeway</u></b></h2>
             <br/>
             <div v-show='toggle2'>
-              <v-checkbox
-                label="Print"
-                v-model="book.format_print"
-              />
-              <v-checkbox
-                label="Audio"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test3"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test4"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test5"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test6"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test7"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test8"
-                v-model="book.format_audio"
-              />
+              <div v-for="(item, index) in products" :key="index">
+                <span v-if="item.vendor == 'safeway'">
+                  <v-checkbox
+                    :label="item.product"
+                    v-model="product.vendor_products"
+                    :value="item.vendor + '-' + item.product"                           
+                  />
+                </span>
+              </div>
             </div>
           </div>
           <div class="column">
-            <h2 @click='toggle3 = !toggle3'><b><u>Book Format3</u></b></h2>
+            <h2 @click='toggle3 = !toggle3'><b><u>Trader Joes</u></b></h2>
             <br/>
             <div v-show='toggle3'>
-              <v-checkbox
-                label="Print"
-                v-model="book.format_print"
-              />
-              <v-checkbox
-                label="Audio"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test3"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test4"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test5"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test6"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test7"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test8"
-                v-model="book.format_audio"
-              />
+              <div v-for="(item, index) in products" :key="index">
+                <span v-if="item.vendor == 'traderjoes'">
+                  <v-checkbox
+                    :label="item.product"
+                    v-model="product.vendor_products"
+                    :value="item.vendor + '-' + item.product"                           
+                  />
+                </span>
+              </div>
             </div>
           </div>
         </div>
-        <span>
-          {{ urlMaxLength }} characters max -- {{ urlMaxLength - book.url_to_review.length }} characters remaining.
-        </span>
-        <v-text-field label="Url to Review"
-          v-model="book.url_to_review"
-          type="text"
-          :maxlength="urlMaxLength"
-          placeholder="URL to Review"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Notes" v-model="book.notes">
+        <v-text-field label="Notes" v-model="product.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
+        Product: {{ this.product}}
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
     </v-form>
@@ -153,14 +72,19 @@ export default {
   },
   data() {
     return {
-      book: {
-        title: null,
-        author: "",
-        date_written: null,
-        date_read: null,
-        format_audio: false,
-        format_print: false,
-        url_to_review: "",
+      products: [
+        { vendor: 'costco', product: 'prod1', checked: false },
+        { vendor: 'costco', product: 'prod2', checked: false },
+        { vendor: 'costco', product: 'prod3', checked: false },
+        { vendor: 'safeway', product: 'prod1', checked: false },
+        { vendor: 'safeway', product: 'prod2', checked: false },
+        { vendor: 'safeway', product: 'prod3', checked: false },
+        { vendor: 'traderjoes', product: 'prod1', checked: false },
+        { vendor: 'traderjoes', product: 'prod2', checked: false },
+        { vendor: 'traderjoes', product: 'prod3', checked: false },
+      ],
+      product: {
+        vendor_products: [],
         notes: "",
         created_by: "dbaynes",
       },
@@ -176,65 +100,24 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.checkValidations();
-      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
-      if (this.isFormValid) {
-        const book = {
-          ...this.book,
-          id: uuidv4(),
-          created_by: this.$store.state.user,
-        };
-        if (this.$store.dispatch("createBook", book)) {
-          this.$router.push({ name: "BookList" });
-        } else {
-          alert("Error adding Book Location " + book.title);
-        }
+      console.log("onSubmit Product List - product?")
+      alert("On Submit!!!!")
+      const product = {
+        ...this.product,
+        id: uuidv4(),
+        created_by: this.$store.state.user,
+      };
+      console.log("Call to Store - product: ", product)
+      alert("Call to Store:")
+      if (this.$store.dispatch("createProduct", product)) {
+        this.$router.push({ name: "ProductList" });
       } else {
-        alert("Please correct required fields and resubmit");
+        alert("Error adding Product " + product.title);
       }
     },
-    requiredAuthor: function (value) {
-      console.log("requiredAuthor: - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("VALUE: ", value)
-      if (value) {
-          this.isAuthorValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isAuthorValid = false
-          return 'Please enter Author';
-      }
-    },
-    requiredTitle: function (value) {
-      console.log("requiredTitle: - this.isTitleValid: ", this.isTitleValid)
-      console.log("VALUE: ", value)
-      if (value) {
-          this.isTitleValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isTitleValid = false
-          return 'Please enter Title';
-      }
-    },
-    checkValidations() {
-      console.log("checkValidations - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations - this.isTitleValid: ", this.isTitleValid)
-
-      if (this.isAuthorValid && this.isTitleValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-      console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations Exit - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations Exit - this.isTitleValid: ", this.isTitleValid)
-
-    }
   },
-  book() {
-    return this.$store.state.book;
+  product() {
+    return this.$store.state.product;
   },
 };
 </script>

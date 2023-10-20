@@ -19,6 +19,7 @@ export default new Vuex.Store({
     loggedOut: null,
     books: [],
     events: [],
+    products: [],
     trails: [],
     travels: [],
     users: [],
@@ -60,6 +61,9 @@ export default new Vuex.Store({
     },
     SET_EVENT_STATISTIC_DETAIL(state, eventStatisticDetail) {
       state.eventStatisticDetail = eventStatisticDetail;
+    },
+    SET_PRODUCT(state, product) {
+      state.product = product;
     },
     ADD_TRAIL(state, trail) {
       state.trails.push(trail);
@@ -186,6 +190,19 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           alert("Error in postBook of createBook Action (index.js)");
+          console.log(error);
+        });
+    },
+    async createProduct({ commit }, product) {
+      console.log("STORE - create product: ", product)
+      alert("STORE - create product: ", product)
+      EventService.postProduct(product)
+        .then(() => {
+          commit("SET_PRODUCT", product);
+          alert("Product was successfully Set");
+        })
+        .catch((error) => {
+          alert("Error in postProduct of createProduct Action (index.js)");
           console.log(error);
         });
     },

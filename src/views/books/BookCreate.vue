@@ -45,8 +45,9 @@
               <div v-for="(item, index) in products" :key="index">
                 <span v-if="item.vendor == 'costco'">
                   <v-checkbox
-                    :label=item.product
-                    v-model="item.product"
+                    :label="item.product"
+                    v-model="book.vendor_product"
+                    :value="item.vendor + '-' + item.product"                           
                   />
                 </span>
               </div>
@@ -57,50 +58,29 @@
             <br/>
             <div v-show='toggle2'>
               <div v-for="(item, index) in products" :key="index">
-                <span v-if="item.vendor == 'traderjoe'">
+                <span v-if="item.vendor == 'safeway'">
                   <v-checkbox
-                    :label=item.product
-                    v-model="item.product"
+                    :label="item.product"
+                    v-model="book.vendor_product"
+                    :value="item.vendor + '-' + item.product"                           
                   />
                 </span>
               </div>
-            </div>          </div>
+            </div>
+          </div>
           <div class="column">
             <h2 @click='toggle3 = !toggle3'><b><u>Book Format3</u></b></h2>
             <br/>
             <div v-show='toggle3'>
-              <v-checkbox
-                label="Print"
-                v-model="book.format_print"
-              />
-              <v-checkbox
-                label="Audio"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test3"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test4"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test5"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test6"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test7"
-                v-model="book.format_audio"
-              />
-              <v-checkbox
-                label="Test8"
-                v-model="book.format_audio"
-              />
+              <div v-for="(item, index) in products" :key="index">
+                <span v-if="item.vendor == 'traderjoes'">
+                  <v-checkbox
+                    :label="item.product"
+                    v-model="book.vendor_product"
+                    :value="item.vendor + '-' + item.product"                           
+                  />
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -124,21 +104,22 @@ export default {
       products: [
         { vendor: 'costco', product: 'costco prod1', checked: false },
         { vendor: 'costco', product: 'costco prod2', checked: false },
-        { vendor: 'costco', product: 'costco prod2', checked: false },
+        { vendor: 'costco', product: 'costco prod3', checked: false },
         { vendor: 'safeway', product: 'safeway prod1', checked: false },
         { vendor: 'safeway', product: 'safeway prod2', checked: false },
-        { vendor: 'safeway', product: 'safeway prod2', checked: false },
-        { vendor: 'traderjoe', product: 'traderjoe prod1', checked: false },
-        { vendor: 'traderjoe', product: 'traderjoe prod2', checked: false },
-        { vendor: 'traderjoe', product: 'traderjoe prod2', checked: false },
+        { vendor: 'safeway', product: 'safeway prod3', checked: false },
+        { vendor: 'traderjoes', product: 'traderjoes prod1', checked: false },
+        { vendor: 'traderjoes', product: 'traderjoes prod2', checked: false },
+        { vendor: 'traderjoes', product: 'traderjoes prod3', checked: false },
       ],
       book: {
         title: null,
         author: "",
         date_written: null,
         date_read: null,
-        format_audio: false,
-        format_print: false,
+        vendor_product: [],
+        audio_format: false,
+        print_format: false,
         url_to_review: "",
         notes: "",
         created_by: "dbaynes",

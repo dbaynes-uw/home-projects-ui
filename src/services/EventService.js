@@ -99,6 +99,12 @@ export default {
     this.init();
     return axios.delete(api_url + "events" + `/${id}`);
   },
+  async postProduct(product) {
+    console.log("ES POST PRODUCT")
+    alert("POST PRODUCT: ", product)
+    this.init();
+    return axios.post(api_url + 'products', product);
+  },
   async postUser(user) {
     this.init();
     return axios.get(api_url + "users", user);

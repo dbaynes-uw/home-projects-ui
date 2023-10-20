@@ -24,7 +24,7 @@
     </v-app>
     <v-app v-else-if="this.$route.name == 'Login'">
       <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Projects</v-toolbar-title>
+        <v-toolbar-title>Home Projects!!</v-toolbar-title>
         <v-spacer></v-spacer>
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
@@ -122,6 +122,11 @@ export default {
           label: "BookList",
           url: "/books",
           title: "Books",
+        },
+        {
+          label: "ProductList",
+          url: "/products",
+          title: "Shopping",
         },
         {
           label: "TrailList",
