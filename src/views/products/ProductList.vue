@@ -16,7 +16,7 @@
               <h2 @click='toggle1 = !toggle1'><b><u>{{ vendor.vendor_name }}</u></b></h2>
               <br/>
               <div v-show='toggle1'>                
-                <span style="height: 4rem !important;" v-for="(product, product_index) in vendor.products" :key="product_index">
+                <p v-for="(product, product_index) in vendor.products" :key="product_index">
                   <!--v-checkbox
                     :class="centered-checkbox"
                     :label="product.product_name"
@@ -35,7 +35,7 @@
                     class="field"
                   />
                   <label class="checkbox-right">{{ product.product_name }}</label>
-                </span>
+                </p>
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@ export default {
   margin: 0 0px 0;
 }
 input[type=checkbox] { 
-  width: 2%;
+  width: 6%;
   height: 1rem;
 }
 .checkbox-right {
@@ -157,7 +157,7 @@ input[type=checkbox] {
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
-  width: 100%;
+  width: 33.33%;
   padding: 0px;
   /*height: 300px; /* Should be removed. Only for demonstration */
 }
