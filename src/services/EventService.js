@@ -99,11 +99,20 @@ export default {
     this.init();
     return axios.delete(api_url + "events" + `/${id}`);
   },
-  async postProduct(product) {
-    console.log("ES POST PRODUCT")
-    alert("POST PRODUCT: ", product)
+  async getVendorProducts() {
+    console.log("**ES getVendorProducts**")
     this.init();
-    return axios.post(api_url + 'products', product);
+    return axios.get(api_url + "vendor_products")
+  },
+  async postVendorProduct(vendor_product) {
+    console.log("ES POST vendor product: ", vendor_product)
+    this.init();
+    return axios.post(api_url + 'vendor_product', vendor_product);
+  },
+  async putVendorProducts(vendor_products) {
+    this.init();
+    console.log("ES PutVendorProducts: ", vendor_products)
+    return axios.put(api_url + "vendors/update", vendor_products, { params: {vendor_products}});
   },
   async postUser(user) {
     this.init();

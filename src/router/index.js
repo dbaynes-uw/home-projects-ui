@@ -149,7 +149,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/products",
+    path: "/vendor_products",
     name: "ProductList",
     props: true,
     component: ProductList,

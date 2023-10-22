@@ -107,7 +107,7 @@ export default {
     this.$store.dispatch("fetchEvents");
     this.sortedData = this.events;
   },
-  computed: {
+  computed: {    
     events() {
       return this.$store.state.events;
     },

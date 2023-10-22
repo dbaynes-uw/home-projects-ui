@@ -1,96 +1,93 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Product List by Vendor</h3>
+      <h2>Product List by Vendor</h2>
+      <h3>
+      <router-link :to="{ name: 'ProductList' }">(Update Product List By Vendor)</router-link>
+    </h3>
     </v-card-title>
   </v-card>
   <v-card-text>
     <v-form>
       <v-container id="form-container">
         <div class="row">
-          <div class="column">
-            <h2 @click='toggle1 = !toggle1'><b><u>CostCo</u></b></h2>
-            <br/>
-            <div v-show='toggle1'>
-              <div v-for="(item, index) in products" :key="index">
-                <span v-if="item.vendor == 'costco'">
-                  <v-checkbox
-                    :label="item.product"
-                    v-model="product.vendor_products"
-                    :value="item.vendor + '-' + item.product"
+          <div v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
+            <div class="column">              
+              <h2 @click='toggle1 = !toggle1'><b><u>{{ vendor.vendor_name }}</u></b></h2>
+              <br/>
+              <div v-show='toggle1'>                
+                <span style="height: 4rem !important;" v-for="(product, product_index) in vendor.products" :key="product_index">
+                  <!--v-checkbox
+                    :class="centered-checkbox"
+                    :label="product.product_name"
+                    :v-model="product_active"
+                    v-bind:true-value="true"
+                    @change="isChecked(product, product.active)"
+                    :checked="modelValue"
+                    :value="product.active"
+                    unchecked-value="not_accepted"
+                  /-->
+                  
+                  <input
+                    type="checkbox"
+                    :checked="product.active"
+                    @change="isChecked(product, product.active)"
+                    class="field"
                   />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <h2 @click='toggle2 = !toggle2'><b><u>Safeway</u></b></h2>
-            <br/>
-            <div v-show='toggle2'>
-              <div v-for="(item, index) in products" :key="index">
-                <span v-if="item.vendor == 'safeway'">
-                  <v-checkbox
-                    :label="item.product"
-                    v-model="product.vendor_products"
-                    :value="item.vendor + '-' + item.product"                           
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <h2 @click='toggle3 = !toggle3'><b><u>Trader Joes</u></b></h2>
-            <br/>
-            <div v-show='toggle3'>
-              <div v-for="(item, index) in products" :key="index">
-                <span v-if="item.vendor == 'traderjoes'">
-                  <v-checkbox
-                    :label="item.product"
-                    v-model="product.vendor_products"
-                    :value="item.vendor + '-' + item.product"                           
-                  />
+                  <label class="checkbox-right">{{ product.product_name }}</label>
                 </span>
               </div>
             </div>
           </div>
         </div>
-        <v-text-field label="Notes" v-model="product.notes">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
-          </template>
-        </v-text-field>
-        Product: {{ this.product}}
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
     </v-form>
+    <router-link
+        :to="{
+          name: 'ProductList',
+          params: { vendor_products: vendor_products },
+        }"
+      >
+    </router-link>
   </v-card-text>
 </template>
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
+  name: "ProductList",
+  props: ["ventor_products"],
   components: {
   },
   data() {
     return {
-      products: [
-        { vendor: 'costco', product: 'prod1', checked: false },
-        { vendor: 'costco', product: 'prod2', checked: false },
-        { vendor: 'costco', product: 'prod3', checked: false },
-        { vendor: 'safeway', product: 'prod1', checked: false },
-        { vendor: 'safeway', product: 'prod2', checked: false },
-        { vendor: 'safeway', product: 'prod3', checked: false },
-        { vendor: 'traderjoes', product: 'prod1', checked: false },
-        { vendor: 'traderjoes', product: 'prod2', checked: false },
-        { vendor: 'traderjoes', product: 'prod3', checked: false },
-      ],
-      product: {
-        vendor_products: [],
+      //products: [
+      //  { vendor: 'costco', product: 'prod1', checked: false },
+      //  { vendor: 'costco', product: 'prod2', checked: false },
+      //  { vendor: 'costco', product: 'prod3', checked: false },
+      //  { vendor: 'safeway', product: 'prod1', checked: false },
+      //  { vendor: 'safeway', product: 'prod2', checked: false },
+      //  { vendor: 'safeway', product: 'prod3', checked: false },
+      //  { vendor: 'traderjoes', product: 'prod1', checked: false },
+      //  { vendor: 'traderjoes', product: 'prod2', checked: false },
+      //  { vendor: 'traderjoes', product: 'prod3', checked: false },
+      //],
+      product_active: true,
+      productList: null,
+      vendors: {
+        vendor_name: '',
+        vendor_location: '',
+        products: {
+          product_name: '',
+          active: false,
+          notes: null,
+        },
         notes: "",
         created_by: "dbaynes",
       },
+      toggle0: false,
       toggle1: false,
       toggle2: false,
-      toggle3: false,
       isFormValid: false,
       isAuthorValid: false,
       isTitleValid: false,
@@ -98,36 +95,70 @@ export default {
       num: 1,
     };
   },
+  created() {
+    console.log("ProductList created");
+    this.$store.dispatch("fetchVendorProducts");
+    this.sortedData = this.vendor_products;
+  },
+  computed: {
+    vendor_products() {
+      return this.$store.state.vendor_products;
+    },
+  },
   methods: {
     onSubmit() {
-      console.log("onSubmit Product List - product?")
+      console.log("onSubmit Product List - vendor_products: ", this.vendor_products)
       alert("On Submit!!!!")
-      const product = {
-        ...this.product,
+      const sub_vendor_products = {
+        ...this.vendor_products,
         id: uuidv4(),
         created_by: this.$store.state.user,
       };
-      console.log("Call to Store - product: ", product)
-      alert("Call to Store:")
-      if (this.$store.dispatch("createProduct", product)) {
-        this.$router.push({ name: "ProductList" });
+      console.log("Call to Store - sub_vendor_products: ", sub_vendor_products)
+      if (this.$store.dispatch("putVendorProducts", sub_vendor_products, {params: { vendor_products: sub_vendor_products }} )) {
+        this.$router.push({ name: "VendorProductList", params: { sub_vendor_products } });
       } else {
-        alert("Error adding Product " + product.title);
+        alert("Error adding Products ");
       }
     },
+    isChecked(product, active) {
+      console.log("Active at start: ", active)
+      product.active = active == true ? false : true
+      //if (active == true) {
+      //  active = false
+      //} else{
+      //  active = true
+      //}
+      console.log("Active?: ", active)
+      return product.active
+    }
   },
-  product() {
-    return this.$store.state.product;
-  },
+  //vendor_products() {
+  //  console.log("ProductList vendor_products: ", this.$store.state.vendor_products)
+  //  alert("Product Vendors!!");
+  //  return this.$store.state.vendor_products;
+  //},
 };
 </script>
 <style lang="css">
-
+.row-height {
+  height: 2rem !important;
+  margin: 0 0px 0;
+}
+input[type=checkbox] { 
+  width: 2%;
+  height: 1rem;
+}
+.checkbox-right {
+  position: relative;
+  top: -2.3rem;
+  left: 2rem;
+}
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
-  width: 33%;
-  padding: 10px;
+  width: 100%;
+  padding: 0px;
   /*height: 300px; /* Should be removed. Only for demonstration */
 }
 
@@ -143,13 +174,13 @@ export default {
 }
 #form-container {
   text-align: left;
-  width: 75% !important;
+  width: 100% !important;
 }
-[type="checkbox"],
+/*[type="checkbox"],
 #notes {
   width: 100%;
   height: 4rem;
-}
+}*/
 .button {
   margin: 30px;
   background-color: #39495c;

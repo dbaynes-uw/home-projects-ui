@@ -19,7 +19,7 @@ export default new Vuex.Store({
     loggedOut: null,
     books: [],
     events: [],
-    products: [],
+    vendor_products: [],
     trails: [],
     travels: [],
     users: [],
@@ -64,6 +64,9 @@ export default new Vuex.Store({
     },
     SET_PRODUCT(state, product) {
       state.product = product;
+    },
+    SET_VENDOR_PRODUCTS(state, vendor_products) {
+      state.vendor_products = vendor_products;
     },
     ADD_TRAIL(state, trail) {
       state.trails.push(trail);
@@ -168,7 +171,7 @@ export default new Vuex.Store({
        })
        .catch((error) => {
          console.log(error);
-         alert("Invalid Login Credentials - Please try again")
+         alert("Invalid Login Credentials or API problem - Please try again")
          //location.reload()
          //const message = error.response.request.statusText + '!';
          error = error.response.request.statusText + '!';
@@ -190,19 +193,6 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           alert("Error in postBook of createBook Action (index.js)");
-          console.log(error);
-        });
-    },
-    async createProduct({ commit }, product) {
-      console.log("STORE - create product: ", product)
-      alert("STORE - create product: ", product)
-      EventService.postProduct(product)
-        .then(() => {
-          commit("SET_PRODUCT", product);
-          alert("Product was successfully Set");
-        })
-        .catch((error) => {
-          alert("Error in postProduct of createProduct Action (index.js)");
           console.log(error);
         });
     },
@@ -370,6 +360,30 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchVendorProducts({ commit }) {
+      EventService.getVendorProducts()
+        .then((response) => {
+          commit("SET_VENDOR_PRODUCTS", response.data);
+          console.log("ES FetchVendorProducts response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async putVendorProducts({ commit }, vendor_products) {
+      console.log("STORE - update vendor_products: ", vendor_products)
+      // alert("STORE - create product: ", vendor_products)
+      EventService.putVendorProducts(vendor_products)
+        .then(() => {
+          commit("SET_PRODUCT", vendor_products);
+          alert("Vendor Products were successfully Set");
+        })
+        .catch((error) => {
+          alert("Error in putVendorProducts");
           console.log(error);
         });
     },
