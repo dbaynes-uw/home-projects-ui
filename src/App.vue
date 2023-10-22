@@ -1,5 +1,4 @@
 <script setup>
-  //import SideBar from "./components/SideBar.vue"
 </script>
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
