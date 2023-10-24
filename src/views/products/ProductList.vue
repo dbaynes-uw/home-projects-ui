@@ -12,21 +12,23 @@
       <v-container id="form-container">
         <div class="row">
           <div class="column" id="group" v-for="(vendor, group_index) in vendor_group" :key="group_index">
-            <h2 @click='toggle1 = !toggle1'><b>{{ group_index }}</b></h2>
+            <h2 @click='toggle1 = !toggle1'><b><u>{{ group_index }}</u></b></h2>
             <div v-show='toggle1'>
               <div class="vendor-name" v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
-                <span v-if="vendor.location == group_index"> 
-                  <h2 @click='toggle2 = !toggle2'><b><u>{{ vendor.vendor_name }}</u></b></h2>          
-                  <p v-for="(product, product_index) in vendor_products" :key="product_index">            
+                <span v-if="vendor.location == group_index">
+                  <h2 @click='toggle2 = !toggle2'><b>{{ vendor.vendor_name }}</b></h2>          
+                  <p v-for="(product, product_index) in vendor_products" :key="product_index">        
                     <span v-show='toggle2'>
-                      <div v-if="product.vendor_name == vendor.vendor_name"> 
-                        <input
-                          type="checkbox"
-                          :checked="product.active"
-                          @change="isChecked(product, product.products[product_index].active)"
-                          class="field"
-                        />
-                        <label class="checkbox-right">{{ product.products[product_index].product_name }}</label>
+                      <div v-if="product.vendor_name == vendor.vendor_name">
+                        <span v-for="(item, item_index) in product.products" :key="item_index">  
+                          <input
+                            type="checkbox"
+                            :checked="item.active"
+                            @change="isChecked(item, item.active)"
+                            class="field"
+                          />
+                          <label class="checkbox-right">{{ product.products[product_index].product_name }}</label>
+                        </span>
                       </div>
                     </span>
                   </p>
