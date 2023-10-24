@@ -27,7 +27,7 @@
                             @change="isChecked(item, item.active)"
                             class="field"
                           />
-                          <label class="checkbox-right">{{ product.products[product_index].product_name }}</label>
+                          <label class="checkbox-right">{{ item.product_name }}</label>
                         </span>
                       </div>
                     </span>
