@@ -11,31 +11,26 @@
     <v-form>
       <v-container id="form-container">
         <div class="row">
-          <div v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
-            <div class="column">              
-              <h2 @click='toggle1 = !toggle1'><b><u>{{ vendor.vendor_name }}</u></b></h2>
-              <br/>
-              <div v-show='toggle1'>                
-                <p v-for="(product, product_index) in vendor.products" :key="product_index">
-                  <!--v-checkbox
-                    :class="centered-checkbox"
-                    :label="product.product_name"
-                    :v-model="product_active"
-                    v-bind:true-value="true"
-                    @change="isChecked(product, product.active)"
-                    :checked="modelValue"
-                    :value="product.active"
-                    unchecked-value="not_accepted"
-                  /-->
-                  
-                  <input
-                    type="checkbox"
-                    :checked="product.active"
-                    @change="isChecked(product, product.active)"
-                    class="field"
-                  />
-                  <label class="checkbox-right">{{ product.product_name }}</label>
-                </p>
+          <div class="column" id="group" v-for="(vendor, group_index) in vendor_group" :key="group_index">
+            <h2 @click='toggle1 = !toggle1'><b>{{ group_index }}</b></h2>
+            <div v-show='toggle1'>
+              <div class="vendor-name" v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
+                <span v-if="vendor.location == group_index"> 
+                  <h2 @click='toggle2 = !toggle2'><b><u>{{ vendor.vendor_name }}</u></b></h2>          
+                  <p v-for="(product, product_index) in vendor_products" :key="product_index">            
+                    <span v-show='toggle2'>
+                      <div v-if="product.vendor_name == vendor.vendor_name"> 
+                        <input
+                          type="checkbox"
+                          :checked="product.active"
+                          @change="isChecked(product, product.products[product_index].active)"
+                          class="field"
+                        />
+                        <label class="checkbox-right">{{ product.products[product_index].product_name }}</label>
+                      </div>
+                    </span>
+                  </p>
+                </span>
               </div>
             </div>
           </div>
@@ -99,6 +94,29 @@ export default {
     console.log("ProductList created");
     this.$store.dispatch("fetchVendorProducts");
     this.sortedData = this.vendor_products;
+
+    console.log("Vendor Products: ", this.vendor_products)
+    this.vendor_group = this.vendor_products.reduce((acc, obj) => {
+      console.log("Vendor Group: ", this.vendor_group)
+      console.log("obj: ", obj)
+      let outerKey = obj.location
+      console.log("outerKey: ", outerKey)
+      let innerKey = outerKey === ''
+      console.log("innerKey: ", innerKey)
+      if (!acc[outerKey]) { 
+        acc[outerKey] = {} 
+      }
+      console.log("outerKey2: ", outerKey)
+      console.log("!acc[outerKey][innerKey]: ", !acc[outerKey][innerKey])
+      if (!acc[outerKey][innerKey]) { 
+        acc[outerKey][innerKey] = []
+        console.log("When False: ", acc[outerKey][innerKey])
+      }
+      console.log("When Continueing: ", acc[outerKey][innerKey])
+      acc[outerKey][innerKey].push(obj.location.rendered)
+      console.log("Return ACC: ", acc)
+      return acc
+    }, {})
   },
   computed: {
     vendor_products() {
