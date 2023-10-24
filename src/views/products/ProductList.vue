@@ -58,17 +58,6 @@ export default {
   },
   data() {
     return {
-      //products: [
-      //  { vendor: 'costco', product: 'prod1', checked: false },
-      //  { vendor: 'costco', product: 'prod2', checked: false },
-      //  { vendor: 'costco', product: 'prod3', checked: false },
-      //  { vendor: 'safeway', product: 'prod1', checked: false },
-      //  { vendor: 'safeway', product: 'prod2', checked: false },
-      //  { vendor: 'safeway', product: 'prod3', checked: false },
-      //  { vendor: 'traderjoes', product: 'prod1', checked: false },
-      //  { vendor: 'traderjoes', product: 'prod2', checked: false },
-      //  { vendor: 'traderjoes', product: 'prod3', checked: false },
-      //],
       product_active: true,
       productList: null,
       vendors: {
@@ -141,23 +130,11 @@ export default {
         alert("Error adding Products ");
       }
     },
-    isChecked(product, active) {
-      console.log("Active at start: ", active)
-      product.active = active == true ? false : true
-      //if (active == true) {
-      //  active = false
-      //} else{
-      //  active = true
-      //}
-      console.log("Active?: ", active)
-      return product.active
+    isChecked(item, active) {
+      item.active = active == true ? false : true
+      return item.active
     }
   },
-  //vendor_products() {
-  //  console.log("ProductList vendor_products: ", this.$store.state.vendor_products)
-  //  alert("Product Vendors!!");
-  //  return this.$store.state.vendor_products;
-  //},
 };
 </script>
 <style lang="css">
