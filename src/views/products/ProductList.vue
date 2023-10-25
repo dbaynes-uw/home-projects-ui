@@ -3,7 +3,9 @@
     <v-card-title class="pb-0">
       <h2>Product List by Vendor</h2>
       <h3>
-      <router-link :to="{ name: 'ProductList' }">(Update Product List By Vendor)</router-link>
+      <router-link :to="{ name: 'ProductCreate' }">Create Product</router-link>
+      &nbsp;-&nbsp;
+      <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor</router-link>
     </h3>
     </v-card-title>
   </v-card>
@@ -16,22 +18,25 @@
             <div v-show='toggle1'>
               <div class="vendor-name" v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
                 <span v-if="vendor.location == group_index">
-                  <h2 @click='toggle2 = !toggle2'><b>{{ vendor.vendor_name }}</b></h2>          
-                  <p v-for="(product, product_index) in vendor_products" :key="product_index">        
-                    <span v-show='toggle2'>
+                  <h2 @click='toggle2 = !toggle2'><b>{{ vendor.vendor_name }}</b></h2>  
+                  <br/>
+                  <span v-show='toggle2'>        
+                    <span v-for="(product, product_index) in vendor_products" :key="product_index">        
                       <div v-if="product.vendor_name == vendor.vendor_name">
-                        <span v-for="(item, item_index) in product.products" :key="item_index">  
-                          <input
-                            type="checkbox"
-                            :checked="item.active"
-                            @change="isChecked(item, item.active)"
-                            class="field"
-                          />
-                          <label class="checkbox-right">{{ item.product_name }}</label>
-                        </span>
+                        <div v-if="product.location == vendor.location">
+                          <span v-for="(item, item_index) in product.products" :key="item_index">
+                            <input
+                              type="checkbox"
+                              :checked="item.active"
+                              @change="isChecked(item, item.active)"
+                              class="field"
+                            />
+                            <label class="checkbox-right">{{ item.product_name }}</label>
+                          </span>
+                        </div>
                       </div>
                     </span>
-                  </p>
+                  </span>
                 </span>
               </div>
             </div>
@@ -74,6 +79,8 @@ export default {
       toggle0: false,
       toggle1: false,
       toggle2: false,
+      home_safe: false,
+      toggleArr: [],
       isFormValid: false,
       isAuthorValid: false,
       isTitleValid: false,
@@ -133,6 +140,10 @@ export default {
     isChecked(item, active) {
       item.active = active == true ? false : true
       return item.active
+    },
+    setToggle(item, product_name) {
+      console.log("setToggle item: ", item)
+      console.log("setToggle product_name: ", product_name)
     }
   },
 };

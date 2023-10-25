@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Product to Vendor</h3>
+      <h3>Add Product Vendor</h3>
     </v-card-title>
   </v-card>
   <v-card-text>

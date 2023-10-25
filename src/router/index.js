@@ -12,6 +12,8 @@ import EventList from "../views/events/EventList.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
 import ProductList from "../views/products/ProductList.vue";
+import ProductCreate from "../views/products/ProductCreate.vue";
+import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
 import TrailDetails from "@/views/trails/TrailDetails.vue";
 import TrailEdit from "@/views/trails/TrailEdit.vue";
@@ -146,6 +148,18 @@ const routes = [
     props: true,
     name: "EventsAssigned",
     component: EventsAssigned,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/product/create",
+    name: "ProductCreate",
+    component: ProductCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/vendor/create",
+    name: "ProductVendorCreate",
+    component: ProductVendorCreate,
     meta: { requiresAuth: true}
   },
   {
