@@ -19,7 +19,11 @@ export default new Vuex.Store({
     loggedOut: null,
     books: [],
     events: [],
+    vendors: [],
     vendor_products: [],
+    vendor_group: [],
+    vendor_locations_group: [],
+    products: [],
     trails: [],
     travels: [],
     users: [],
@@ -67,6 +71,15 @@ export default new Vuex.Store({
     },
     SET_VENDOR_PRODUCTS(state, vendor_products) {
       state.vendor_products = vendor_products;
+    },
+    SET_VENDOR_GROUP(state, vendor_group) {
+      state.vendor_group = vendor_group;
+    },
+    SET_VENDOR_LOCATIONS_GROUP(state, vendor_locations_group) {
+      state.vendor_locations_group = vendor_locations_group;
+    },
+    ADD_VENDOR(state, vendor) {
+      state.vendors.push(vendor);
     },
     ADD_TRAIL(state, trail) {
       state.trails.push(trail);
@@ -183,6 +196,7 @@ export default new Vuex.Store({
     async logout ({ commit }) {
       console.log("LOGOUT - CLEAR_USER_DATA!");
       commit('CLEAR_USER_DATA')
+      alert("CLEAR!!!!!!!!!!")
       router.push({name:'home'})
     },
     async createBook({ commit }, book) {
@@ -358,6 +372,53 @@ export default new Vuex.Store({
           commit("SET_EVENT", response.data);
           alert("Event was successfully Updated for " + event.description);
           location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async createVendor({ commit }, vendor) {
+      console.log("CREATE VENDOR: ", vendor)
+      EventService.postVendor(vendor)
+        .then(() => {
+          commit("ADD_VENDOR", vendor);
+          alert("Vendor was successfully added for " + vendor.vendor_name);
+        })
+        .catch((error) => {
+          /*console.log("ERRORS!!!!!!!!!!!@@@@@@@@@@@@@@@")
+          console.log("Error Response: ", error.response)
+          console.log("Error Response Status: ", error.response.status)
+          console.log("Error Response Request: ", error.response.request)
+          console.log("Error Response Headers: ", error.response.headers)
+          console.log("Error Data: ", error.data)
+          console.log("Error Response Data: ", error.response.data)
+          console.log("error.response?.data?.message)", error.response?.data?.message)
+          console.log("Error Response Data.message: ", error.response.data.message)
+          console.log("error.response.data.error: ", error.response.data.error)
+          console.log("Error Response Data Errors: ", error.response.data.errors)
+          console.log("Error Message: ", error.message)
+          console.log("Display Error: ", error.response.data.error);
+          */
+          alert(error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
+        });
+    },
+    async fetchVendorGroup({ commit }) {
+      EventService.getVendorGroup()
+        .then((response) => {
+          commit("SET_VENDOR_GROUP", response.data);
+          console.log("ES FetchVendorGroup response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchVendorLocationsGroup({ commit }) {
+      EventService.getVendorLocationsGroup()
+        .then((response) => {
+          commit("SET_VENDOR_LOCATIONS_GROUP", response.data);
+          console.log("ES FetchVendorLocationsGroup response.data: ", response.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error);

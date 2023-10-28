@@ -80,9 +80,7 @@ import { v4 as uuidv4 } from "uuid";
 //Himport "@vuepic/vue-datepicker/dist/main.css";
 
 export default {
-  components: {
-    //VueDatePicker,
-  },
+  components: {},
   data() {
     return {
       book: {

@@ -99,10 +99,24 @@ export default {
     this.init();
     return axios.delete(api_url + "events" + `/${id}`);
   },
+  async getVendorGroup() {
+    console.log("**ES getVendorGroup**")
+    this.init();
+    return axios.get(api_url + "vendor_group")
+  },
   async getVendorProducts() {
     console.log("**ES getVendorProducts**")
     this.init();
     return axios.get(api_url + "vendor_products")
+  },
+  async getVendorLocationsGroup() {
+    console.log("**ES getVendorLocationsGroup**")
+    this.init();
+    return axios.get(api_url + "vendor_locations_group")
+  },
+  async postVendor(vendor) {
+    this.init();
+    return axios.post(api_url + 'vendors', vendor);
   },
   async postVendorProduct(vendor_product) {
     console.log("ES POST vendor product: ", vendor_product)

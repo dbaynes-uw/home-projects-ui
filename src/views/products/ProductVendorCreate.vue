@@ -1,60 +1,69 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Product Vendor</h3>
+      <h3>Add Vendor</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
     <v-form id="isFormValid">
       <v-container id="form-container">
-        <v-text-field
-          v-model="book.title"
-          :rules="[requiredTitle]"
-          label="Title"
+        <br/>
+        <!--v-select
+          v-model="vendor.location"
+          id="custom-select"
+          :options="this.vendorLocationsGroup.vendorLocationsGroup"
+          placeholder="Select Vendor Location"
+          label="Vendor Location"
+          required
+        /-->
+        <label>Vendor Location</label>
+        <select
+          id="select-box"
+          class="text-style"
+          v-model="vendor.location"
+          required
         >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Author" v-model="book.author" :rules="[requiredAuthor]">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Date Written"
-          v-model="book.date_written"
-          type="date"
+          <option
+            v-for="option in this.vendorLocationsGroup.vendorLocationsGroup"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === vendor.location"
+          >
+            {{ option }}
+          </option>
+        </select>
+        <br />
+        <label>Vendor Name</label>
+        <select
+          id="select-box"
+          class="text-style"
+          v-model="vendor.vendor_name"
+          required
         >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Date Read"
-          v-model="book.date_read"
-          type="date"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <span>
-          {{ urlMaxLength - book.url_to_review.length }} characters remaining of / {{ urlMaxLength }} total.
-        </span>  
-        <v-text-field label="Url to Review"
-          v-model="book.url_to_review"
-          type="text"
-          :maxlength="urlMaxLength"
-          placeholder="URL to Review"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Notes" v-model="book.notes">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
-          </template>
-        </v-text-field>
+          <option
+            v-for="option in this.vendorGroup.vendorGroup"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === vendor.vendor_name"
+          >
+            {{ option }}
+          </option>
+        </select>
+        <br/>
+        <span v-if="vendor.vendor_name == 'Other'">
+          <v-text-field
+          v-model="vendor.other_vendor_name"
+          label="Other Vendor Name"
+          >
+            <template v-slot:prepend-inner>
+              <v-icon class="icon-css">mdi-magnify</v-icon>
+            </template>
+          </v-text-field>
+        </span>
+        <br/>
+        <br/>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
         <!--button class="button" type="submit">Submit</button-->
       </v-container>
@@ -63,113 +72,65 @@
 </template>
 <script setup>
 //const format = (date) => {
-//  const day = date.getDate();
-//  const month = date.getMonth() + 1;
-//  const year = date.getFullYear();
-//  console.log("DATE: ", date);
-//  console.log("Month: ", month);
-//  console.log("Day: ", day);
-//  console.log("Year: ", year);
-//  return `${month}/${day}/${year}`;
-//};
 </script>
 
 <script>
 import { v4 as uuidv4 } from "uuid";
-//Himport VueDatePicker from "@vuepic/vue-datepicker";
-//Himport "@vuepic/vue-datepicker/dist/main.css";
-
+//!import vSelect from "vue-select";
 export default {
-  components: {
-    //VueDatePicker,
+  created() {
+      this.$store.dispatch("fetchVendorGroup");
+      this.$store.dispatch("fetchVendorLocationsGroup");
   },
+  computed: {
+    vendorGroup() {
+      return this.$store.state.vendor_group;
+    },
+    vendorLocationsGroup() {
+      return this.$store.state.vendor_locations_group;
+    },
+  },    
+  components: {},
   data() {
     return {
-      book: {
-        title: null,
-        author: "",
-        date_written: null,
-        date_read: null,
-        url_to_review: "",
-        notes: "",
+      vendor: {
+        vendor_name: null,
+        location: "",
         created_by: "dbaynes",
+        other_vendor_name: ""
       },
       isFormValid: false,
-      isAuthorValid: false,
-      isTitleValid: false,
+      isVendorNameValid: false,
+      isVendorLocationValid: false,
       urlMaxLength: 255,
       num: 1,
     };
   },
   methods: {
     onSubmit() {
-      this.checkValidations();
       console.log("onSubmit - this.isFormValid: ", this.isFormValid)
-      if (this.isFormValid) {
-        const book = {
-          ...this.book,
-          id: uuidv4(),
-          created_by: this.$store.state.user,
-        };
-        if (this.$store.dispatch("createBook", book)) {
-          this.$router.push({ name: "BookList" });
-        } else {
-          alert("Error adding Book Location " + book.title);
-        }
+      const vendor = {
+        ...this.vendor,
+        id: uuidv4(),
+        created_by: this.$store.state.user,
+      };
+      if (this.$store.dispatch("createVendor", vendor)) {
+        this.$router.push({ name: "ProductList", params: {} });
       } else {
-        alert("Please correct required fields and resubmit");
+        alert("Error adding Vendor " + vendor.vendor_name);
       }
     },
-    requiredAuthor: function (value) {
-      console.log("requiredAuthor: - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("VALUE: ", value)
-      if (value) {
-          this.isAuthorValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isAuthorValid = false
-          return 'Please enter Author';
-      }
-    },
-    requiredTitle: function (value) {
-      console.log("requiredTitle: - this.isTitleValid: ", this.isTitleValid)
-      console.log("VALUE: ", value)
-      if (value) {
-          this.isTitleValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isTitleValid = false
-          return 'Please enter Title';
-      }
-    },
-    checkValidations() {
-      console.log("checkValidations - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations - this.isTitleValid: ", this.isTitleValid)
-
-      if (this.isAuthorValid && this.isTitleValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-      console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations Exit - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations Exit - this.isTitleValid: ", this.isTitleValid)
-
-    }
   },
-  book() {
-    return this.$store.state.book;
-  },
-};
+}
 </script>
 <style>
+@import "vue-select/dist/vue-select.css";
 #form-container {
   width: 75% !important;
 }
-
+#id {
+  width: 100%;
+}
 #notes {
   width: 100%;
   height: 4rem;

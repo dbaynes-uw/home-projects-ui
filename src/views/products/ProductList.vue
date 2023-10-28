@@ -3,7 +3,7 @@
     <v-card-title class="pb-0">
       <h2>Product List by Vendor</h2>
       <h3>
-      <router-link :to="{ name: 'ProductCreate' }">Create Product</router-link>
+      <router-link :to="{ name: 'ProductCreate' }">Add Product</router-link>
       &nbsp;-&nbsp;
       <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor</router-link>
     </h3>
@@ -58,7 +58,6 @@
 import { v4 as uuidv4 } from "uuid";
 export default {
   name: "ProductList",
-  props: ["ventor_products"],
   components: {
   },
   data() {
@@ -89,10 +88,10 @@ export default {
     };
   },
   created() {
-    console.log("ProductList created");
+    console.log("ProductList created - FetchVendorProducts!!!!");
     this.$store.dispatch("fetchVendorProducts");
     this.sortedData = this.vendor_products;
-
+    
     console.log("Vendor Products: ", this.vendor_products)
     this.vendor_group = this.vendor_products.reduce((acc, obj) => {
       console.log("Vendor Group: ", this.vendor_group)
@@ -118,6 +117,7 @@ export default {
   },
   computed: {
     vendor_products() {
+      console.log("product list COMPUTED!")
       return this.$store.state.vendor_products;
     },
   },
@@ -130,9 +130,11 @@ export default {
         id: uuidv4(),
         created_by: this.$store.state.user,
       };
+      
       console.log("Call to Store - sub_vendor_products: ", sub_vendor_products)
       if (this.$store.dispatch("putVendorProducts", sub_vendor_products, {params: { vendor_products: sub_vendor_products }} )) {
-        this.$router.push({ name: "VendorProductList", params: { sub_vendor_products } });
+        const fresh_fetched_vendor_products = this.$store.dispatch("fetchVendorProducts");
+        this.$router.push({ name: "VendorProductList", params: { fresh_fetched_vendor_products } });
       } else {
         alert("Error adding Products ");
       }
@@ -154,10 +156,11 @@ export default {
   margin: 0 0px 0;
 }
 input[type=checkbox] { 
-  width: 6%;
+  width: 10%;
   height: 1rem;
 }
 .checkbox-right {
+  font-size: 1rem;
   position: relative;
   top: -2.3rem;
   left: 2rem;
