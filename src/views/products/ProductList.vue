@@ -13,11 +13,11 @@
     <v-form>
       <v-container id="form-container">
         <div class="row">
-          <div class="column" id="group" v-for="(vendor, group_index) in vendor_group" :key="group_index">
-            <h2 @click='toggle1 = !toggle1'><b><u>{{ group_index }}</u></b></h2>
+          <div class="column" id="group" v-for="(location, group_index) in this.vendorLocationsGroup.vendorLocationsGroup" :key="group_index">
+            <h2 @click='toggle1 = !toggle1'><b><u>{{ location }}</u></b></h2>
             <div v-show='toggle1'>
               <div class="vendor-name" v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
-                <span v-if="vendor.location == group_index">
+                <span v-if="vendor.location == location">
                   <h2 @click='toggle2 = !toggle2'><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <span v-show='toggle2'>        
@@ -91,34 +91,38 @@ export default {
     console.log("ProductList created - FetchVendorProducts!!!!");
     this.$store.dispatch("fetchVendorProducts");
     this.sortedData = this.vendor_products;
-    
-    console.log("Vendor Products: ", this.vendor_products)
-    this.vendor_group = this.vendor_products.reduce((acc, obj) => {
-      console.log("Vendor Group: ", this.vendor_group)
-      console.log("obj: ", obj)
-      let outerKey = obj.location
-      console.log("outerKey: ", outerKey)
-      let innerKey = outerKey === ''
-      console.log("innerKey: ", innerKey)
-      if (!acc[outerKey]) { 
-        acc[outerKey] = {} 
-      }
-      console.log("outerKey2: ", outerKey)
-      console.log("!acc[outerKey][innerKey]: ", !acc[outerKey][innerKey])
-      if (!acc[outerKey][innerKey]) { 
-        acc[outerKey][innerKey] = []
-        console.log("When False: ", acc[outerKey][innerKey])
-      }
-      console.log("When Continueing: ", acc[outerKey][innerKey])
-      acc[outerKey][innerKey].push(obj.location.rendered)
-      console.log("Return ACC: ", acc)
-      return acc
-    }, {})
+    this.$store.dispatch("fetchVendorLocationsGroup");
+    // Group by location via JS:
+      //console.log("Vendor Products: ", this.vendor_products)
+      //this.vendor_by_location = this.vendor_products.reduce((acc, obj) => {
+      //  console.log("Vendor Group: ", this.vendor_group)
+      //  console.log("obj: ", obj)
+      //  let outerKey = obj.location
+      //  console.log("outerKey: ", outerKey)
+      //  let innerKey = outerKey === ''
+      //  console.log("innerKey: ", innerKey)
+      //  if (!acc[outerKey]) { 
+      //    acc[outerKey] = {} 
+      //  }
+      //  console.log("outerKey2: ", outerKey)
+      //  console.log("!acc[outerKey][innerKey]: ", !acc[outerKey][innerKey])
+      //  if (!acc[outerKey][innerKey]) { 
+      //    acc[outerKey][innerKey] = []
+      //    console.log("When False: ", acc[outerKey][innerKey])
+      //  }
+      //  console.log("When Continueing: ", acc[outerKey][innerKey])
+      //  acc[outerKey][innerKey].push(obj.location.rendered)
+      //  console.log("Return ACC: ", acc)
+      //  return acc
+      //}, {})
   },
   computed: {
     vendor_products() {
       console.log("product list COMPUTED!")
       return this.$store.state.vendor_products;
+    },
+    vendorLocationsGroup() {
+      return this.$store.state.vendor_locations_group;
     },
   },
   methods: {
