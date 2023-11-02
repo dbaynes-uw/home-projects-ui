@@ -29,7 +29,8 @@
                               @change="isChecked(item, item.active)"
                               class="field"
                             />
-                            <label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label>
+                            <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label-->
+                            <label class="checkbox-right">{{ item.product_name }}</label>
                           </span>
                         </div>
                       </div>
@@ -145,6 +146,7 @@ input[type=checkbox] {
 .column {
   float: left;
   width: 33.33%;
+  width: 50%;
   padding: 0px;
   /*height: 300px; /* Should be removed. Only for demonstration */
 }
