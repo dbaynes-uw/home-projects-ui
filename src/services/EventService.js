@@ -130,8 +130,8 @@ export default {
     return axios.post(api_url + 'vendor_product', vendor_product);
   },
   async putVendorProducts(vendor_products) {
-    this.init();
     console.log("ES PutVendorProducts: ", vendor_products)
+    this.init();
     return axios.put(api_url + "vendors/update", vendor_products, { params: {vendor_products}});
   },
   async postUser(user) {

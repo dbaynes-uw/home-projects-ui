@@ -88,31 +88,7 @@ export default {
   created() {
     console.log("ProductList created - FetchVendorProducts!!!!");
     this.$store.dispatch("fetchVendorProducts");
-    this.sortedData = this.vendor_products;
     this.$store.dispatch("fetchVendorLocationsGroup");
-    // Group by location via JS:
-      //console.log("Vendor Products: ", this.vendor_products)
-      //this.vendor_by_location = this.vendor_products.reduce((acc, obj) => {
-      //  console.log("Vendor Group: ", this.vendor_group)
-      //  console.log("obj: ", obj)
-      //  let outerKey = obj.location
-      //  console.log("outerKey: ", outerKey)
-      //  let innerKey = outerKey === ''
-      //  console.log("innerKey: ", innerKey)
-      //  if (!acc[outerKey]) { 
-      //    acc[outerKey] = {} 
-      //  }
-      //  console.log("outerKey2: ", outerKey)
-      //  console.log("!acc[outerKey][innerKey]: ", !acc[outerKey][innerKey])
-      //  if (!acc[outerKey][innerKey]) { 
-      //    acc[outerKey][innerKey] = []
-      //    console.log("When False: ", acc[outerKey][innerKey])
-      //  }
-      //  console.log("When Continueing: ", acc[outerKey][innerKey])
-      //  acc[outerKey][innerKey].push(obj.location.rendered)
-      //  console.log("Return ACC: ", acc)
-      //  return acc
-      //}, {})
   },
   computed: {
     vendor_products() {
@@ -125,19 +101,18 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log("onSubmit Product List - vendor_products: ", this.vendor_products)
       const sub_vendor_products = {
         ...this.vendor_products,
         id: uuidv4(),
         created_by: this.$store.state.user,
       };
       
-      console.log("Call to Store - sub_vendor_products: ", sub_vendor_products)
       if (this.$store.dispatch("putVendorProducts", sub_vendor_products, {params: { vendor_products: sub_vendor_products }} )) {
+        alert("Vendor Product List Updated Successfully")
         const fresh_fetched_vendor_products = this.$store.dispatch("fetchVendorProducts");
-        this.$router.push({ name: "VendorProductList", params: { fresh_fetched_vendor_products } });
+        this.$router.push({ name: "ProductList", params: { fresh_fetched_vendor_products } });
       } else {
-        alert("Error adding Products ");
+        alert("Error adding Products in ProductList View ");
       }
     },
     isChecked(item, active) {

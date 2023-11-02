@@ -475,12 +475,11 @@ export default new Vuex.Store({
         });
     },
     async putVendorProducts({ commit }, vendor_products) {
-      console.log("STORE - update vendor_products: ", vendor_products)
-      // alert("STORE - create product: ", vendor_products)
+      console.log("STORE - update vendor_products: ")
       EventService.putVendorProducts(vendor_products)
         .then(() => {
+          console.log("STORE - update vendor_products: ")
           commit("SET_VENDOR_PRODUCTS", vendor_products);
-          alert("Vendor Products were successfully Set");
         })
         .catch((error) => {
           alert("Error in putVendorProducts");
