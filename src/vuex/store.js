@@ -479,7 +479,7 @@ export default new Vuex.Store({
       // alert("STORE - create product: ", vendor_products)
       EventService.putVendorProducts(vendor_products)
         .then(() => {
-          commit("SET_PRODUCT", vendor_products);
+          commit("SET_VENDOR_PRODUCTS", vendor_products);
           alert("Vendor Products were successfully Set");
         })
         .catch((error) => {
