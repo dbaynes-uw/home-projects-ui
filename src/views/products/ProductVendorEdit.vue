@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Vendor</h3>
+      <h3>Edit Vendor</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
@@ -149,7 +149,7 @@ export default {
         id: uuidv4(),
         created_by: this.$store.state.user,
       };
-      if (this.$store.dispatch("createVendor", vendor)) {
+      if (this.$store.dispatch("editVendor", vendor)) {
         this.$router.push({ name: "ProductList", params: {} });
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);

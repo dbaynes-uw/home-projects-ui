@@ -3,9 +3,7 @@
     <v-card-title class="pb-0">
       <h2>Product List by Vendor</h2>
       <h3>
-      <router-link :to="{ name: 'ProductCreate' }">Add Product</router-link>
-      &nbsp;-&nbsp;
-      <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor</router-link>
+      <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
     </h3>
     </v-card-title>
   </v-card>
@@ -31,7 +29,7 @@
                               @change="isChecked(item, item.active)"
                               class="field"
                             />
-                            <label class="checkbox-right">{{ item.product_name }}</label>
+                            <label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label>
                           </span>
                         </div>
                       </div>
@@ -128,7 +126,6 @@ export default {
   methods: {
     onSubmit() {
       console.log("onSubmit Product List - vendor_products: ", this.vendor_products)
-      alert("On Submit!!!!")
       const sub_vendor_products = {
         ...this.vendor_products,
         id: uuidv4(),

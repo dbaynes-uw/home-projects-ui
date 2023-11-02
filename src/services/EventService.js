@@ -5,17 +5,16 @@ var environment = "";
 var api_url = "";
 export default {
   init() {
-    console.log("UI PORT IS: ", window.location.port)
     if (window.location.port == "8080") {
       environment = "development";
-      //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-      api_url = "http://localhost:3000/api/v1/";
+      api_url = "http://davids-macbook-pro.local:3000/api/v1/";
+      //api_url = "http://localhost:3000/api/v1/";
+      axios.defaults.baseURL = '//localhost:3000/';
     } else {
       environment = "production";
       api_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
     }
-    console.log("API_URL: ", api_url);
   },
   eventsDueBy(form) {
     this.init();
@@ -100,23 +99,30 @@ export default {
     return axios.delete(api_url + "events" + `/${id}`);
   },
   async getVendorGroup() {
-    console.log("**ES getVendorGroup**")
     this.init();
     return axios.get(api_url + "vendor_group")
   },
   async getVendorProducts() {
-    console.log("**ES getVendorProducts**")
     this.init();
     return axios.get(api_url + "vendor_products")
   },
   async getVendorLocationsGroup() {
-    console.log("**ES getVendorLocationsGroup**")
     this.init();
     return axios.get(api_url + "vendor_locations_group")
   },
+  async getVendorProductsGroup() {
+    this.init();
+    return axios.get(api_url + "vendor_products_group")
+  },
   async postVendor(vendor) {
+    console.log("POST VENDOR!")
     this.init();
     return axios.post(api_url + 'vendors', vendor);
+  },
+  async putVendor(updatedVendor) {
+    console.log("PUT VENDOR!")
+    this.init();
+    return axios.put(api_url + "vendors" + `/${updatedVendor.id}`, updatedVendor);
   },
   async postVendorProduct(vendor_product) {
     console.log("ES POST vendor product: ", vendor_product)

@@ -22,8 +22,6 @@ export default createStore({
   },
   mutations: {
     SET_USER_DATA (state, userData) {
-      console.log("SET_USER_DATA - state: ", state);
-      console.log("SET_USER_DATA - userData: ", userData);
       localStorage.setItem('user', JSON.stringify(userData))
       axios.defaults.headers.common['Authorization'] = `Bearer ${
         userData.token

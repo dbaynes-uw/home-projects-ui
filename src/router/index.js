@@ -11,9 +11,11 @@ import EventEdit from "@/views/events/EventEdit.vue";
 import EventList from "../views/events/EventList.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
-import ProductList from "../views/products/ProductList.vue";
 import ProductCreate from "../views/products/ProductCreate.vue";
+import ProductEdit from "../views/products/ProductVendorEdit.vue";
+import ProductList from "../views/products/ProductList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
+import ProductVendorEdit from "../views/products/ProductVendorEdit.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
 import TrailDetails from "@/views/trails/TrailDetails.vue";
 import TrailEdit from "@/views/trails/TrailEdit.vue";
@@ -157,9 +159,22 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/product/:id",
+    name: "ProductEdit",
+    props: true,
+    component: ProductEdit,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/vendor/create",
     name: "ProductVendorCreate",
     component: ProductVendorCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/vendor/edit",
+    name: "ProductVendorEdit",
+    component: ProductVendorEdit,
     meta: { requiresAuth: true}
   },
   {

@@ -67,11 +67,6 @@ export default {
       v$,
     }
   },
-  
-  //state: {
-  //  token: "",
-  //  errors: null,
-  //},
   data () {
     return {
       email: '',
