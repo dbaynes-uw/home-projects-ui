@@ -93,7 +93,6 @@ export default {
   },
   computed: {
     vendor_products() {
-      console.log("product list COMPUTED!")
       return this.$store.state.vendor_products;
     },
     vendorLocationsGroup() {

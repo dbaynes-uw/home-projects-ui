@@ -387,20 +387,18 @@ export default new Vuex.Store({
           alert("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
         })
         .catch((error) => {
-          /*console.log("ERRORS!!!!!!!!!!!@@@@@@@@@@@@@@@")
-          console.log("Error Response: ", error.response)
+          //console.log("Error Response: ", error.response)
           console.log("Error Response Status: ", error.response.status)
           console.log("Error Response Request: ", error.response.request)
-          console.log("Error Response Headers: ", error.response.headers)
+          //console.log("Error Response Headers: ", error.response.headers)
           console.log("Error Data: ", error.data)
           console.log("Error Response Data: ", error.response.data)
           console.log("error.response?.data?.message)", error.response?.data?.message)
           console.log("Error Response Data.message: ", error.response.data.message)
-          console.log("error.response.data.error: ", error.response.data.error)
-          console.log("Error Response Data Errors: ", error.response.data.errors)
-          console.log("Error Message: ", error.message)
-          console.log("Display Error: ", error.response.data.error);
-          */
+          //console.log("error.response.data.error: ", error.response.data.error)
+          //console.log("Error Response Data Errors: ", error.response.data.errors)
+          //console.log("Error Message: ", error.message)
+          //console.log("Display Error: ", error.response.data.error);
           alert(error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
         });
     },
