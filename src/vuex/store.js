@@ -388,12 +388,9 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           //console.log("Error Response: ", error.response)
-          console.log("Error Response Status: ", error.response.status)
-          console.log("Error Response Request: ", error.response.request)
+          //console.log("Error Response Status: ", error.response.status)
+          //console.log("Error Response Request: ", error.response.request)
           //console.log("Error Response Headers: ", error.response.headers)
-          console.log("Error Data: ", error.data)
-          console.log("Error Response Data: ", error.response.data)
-          console.log("error.response?.data?.message)", error.response?.data?.message)
           console.log("Error Response Data.message: ", error.response.data.message)
           //console.log("error.response.data.error: ", error.response.data.error)
           //console.log("Error Response Data Errors: ", error.response.data.errors)
@@ -469,6 +466,7 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
+          alert("Store getVendorProducts Error: " + error.response.data.error);
         });
     },
     async putVendorProducts({ commit }, vendor_products) {
