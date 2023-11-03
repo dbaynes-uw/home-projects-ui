@@ -139,8 +139,8 @@ input[type=checkbox] {
 .checkbox-right {
   font-size: 1rem;
   position: relative;
-  top: -2.3rem;
-  left: 2rem;
+  top: -2rem;
+  left: 3rem;
 }
 /* Create two equal columns that floats next to each other */
 .column {
