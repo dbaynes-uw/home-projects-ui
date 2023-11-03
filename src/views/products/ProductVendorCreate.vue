@@ -18,7 +18,7 @@
         >
         <br/>
           <option
-            v-for="option in this.vendorLocationsGroup.vendorLocationsGroup"
+            v-for="option in vendorLocationsGroup.vendorLocationsGroup"
             :value="option"
             :key="option"
             id="select-box"
@@ -38,7 +38,7 @@
           required
         >
           <option
-            v-for="option in this.vendorGroup.vendorGroup"
+            v-for="option in vendorGroup.vendorGroup"
             :value="option"
             :key="option"
             id="select-box"
@@ -70,7 +70,7 @@
           v-model="vendor.product_name"
         >
           <option
-            v-for="product in this.vendorProductsGroup.vendorProductsGroup"
+            v-for="product in vendorProductsGroup.vendorProductsGroup"
             :value="product"
             :key="product"
             id="select-box"
