@@ -12,7 +12,7 @@
       <v-container id="form-container">
         <div class="row">
           <div class="column" id="group" v-for="(location, group_index) in this.vendorLocationsGroup.vendorLocationsGroup" :key="group_index">
-            <h2 @click='toggle1 = !toggle1'><b><u>{{ location }}</u></b></h2>
+            <h1 @click='toggle1 = !toggle1'><b><u>{{ location }}</u></b></h1>
             <div v-show='toggle1'>
               <div class="vendor-name" v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
@@ -145,9 +145,9 @@ input[type=checkbox] {
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
-  width: 33.33%;
+  width: 90%;
   /*Xwidth: 50%;*/
-  padding: 0px;
+  padding: 2px;
   /*height: 300px; /* Should be removed. Only for demonstration */
 }
 
