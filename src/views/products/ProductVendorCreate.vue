@@ -108,9 +108,9 @@ import { v4 as uuidv4 } from "uuid";
 //!import vSelect from "vue-select";
 export default {
   created() {
-      this.$store.dispatch("fetchVendorGroup");
-      this.$store.dispatch("fetchVendorLocationsGroup");
-      this.$store.dispatch("fetchVendorProductsGroup");
+      //this.$store.dispatch("fetchVendorGroup");
+      //this.$store.dispatch("fetchVendorLocationsGroup");
+      //this.$store.dispatch("fetchVendorProductsGroup");
   },
   computed: {
     vendorGroup() {

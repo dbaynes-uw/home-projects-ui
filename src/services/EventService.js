@@ -7,9 +7,9 @@ export default {
   init() {
     if (window.location.port == "8080") {
       environment = "development";
-      api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-      //api_url = "http://localhost:3000/api/v1/";
-      axios.defaults.baseURL = '//localhost:3000/';
+      //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
+      api_url = "http://localhost:3000/api/v1/";
+      //axios.defaults.baseURL = '//localhost:3000/';
     } else {
       environment = "production";
       api_url =
