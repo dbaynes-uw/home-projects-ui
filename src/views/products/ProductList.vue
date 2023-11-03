@@ -146,7 +146,7 @@ input[type=checkbox] {
 .column {
   float: left;
   width: 33.33%;
-  width: 50%;
+  /*Xwidth: 50%;*/
   padding: 0px;
   /*height: 300px; /* Should be removed. Only for demonstration */
 }
