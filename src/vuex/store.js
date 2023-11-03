@@ -445,7 +445,6 @@ export default new Vuex.Store({
       EventService.getVendorLocationsGroup()
         .then((response) => {
           commit("SET_VENDOR_LOCATIONS_GROUP", response.data);
-          console.log("ES FetchVendorLocationsGroup response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {

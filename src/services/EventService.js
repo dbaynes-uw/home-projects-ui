@@ -108,6 +108,7 @@ export default {
   },
   async getVendorLocationsGroup() {
     this.init();
+    console.log("ES: getVendorLocationsGroup")
     return axios.get(api_url + "vendor_locations_group")
   },
   async getVendorProductsGroup() {

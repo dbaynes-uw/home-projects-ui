@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Vendor</h3>
+      <h3>Add Vendor/Products</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
@@ -117,6 +117,7 @@ export default {
       return this.$store.state.vendor_group;
     },
     vendorLocationsGroup() {
+      console.log("PVC - Computed vendorLocationsGroup")
       return this.$store.state.vendor_locations_group;
     },
     vendorProductsGroup() {
