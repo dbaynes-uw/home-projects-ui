@@ -383,8 +383,8 @@ export default new Vuex.Store({
       console.log("CREATE VENDOR: ", vendor)
       EventService.postVendor(vendor)
         .then(() => {
-          commit("ADD_VENDOR", vendor);
-          alert("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+          commit("PUT_VENDOR", vendor);
+          alert("Store: Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
         })
         .catch((error) => {
           //console.log("Error Response: ", error.response)
@@ -396,7 +396,7 @@ export default new Vuex.Store({
           //console.log("Error Response Data Errors: ", error.response.data.errors)
           //console.log("Error Message: ", error.message)
           //console.log("Display Error: ", error.response.data.error);
-          alert(error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
+          alert("Store: " + error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
         });
     },
     async editVendor({ commit }, vendor) {
