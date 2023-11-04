@@ -466,7 +466,7 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
-          alert("Store getVendorProducts Error: " + error.response.data.error);
+          alert("Store getVendorProducts Error");
         });
     },
     async putVendorProducts({ commit }, vendor_products) {
