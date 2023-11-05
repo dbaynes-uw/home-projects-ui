@@ -12,28 +12,32 @@
       <v-container id="form-container">
         <div class="row">
           <div class="column" id="group" v-for="(location, group_index) in this.vendorLocationsGroup.vendorLocationsGroup" :key="group_index">
-            <h1 @click='toggleVendor(group_index)'><b><u>{{ location }}</u></b></h1>
-            <div v-show="isToggled === group_index">
+            <!-- Toggle by Location -->
+            <h1 @click='toggleLocation(group_index)'><b><u>{{ location }}</u></b></h1>
+            <div v-show="isVendorToggled === group_index">
               <div class="vendor-name" v-for="(vendor, vendor_index) in vendor_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
-                  <h2><b>{{ vendor.vendor_name }}</b></h2>  
+                  <!-- Toggle by Vendor -->
+                  <h2 @click='toggleVendor(vendor_index)'><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <span v-for="(product, product_index) in vendor_products" :key="product_index">        
-                    <div v-if="product.vendor_name == vendor.vendor_name">
-                      <div v-if="product.location == vendor.location">
-                        <span v-for="(item, item_index) in product.products" :key="item_index">
-                          <input
-                            type="checkbox"
-                            :checked="item.active"
-                            @change="isChecked(item, item.active)"
-                            class="field"
-                          />
-                          <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label-->
-                          <!--@@label class="checkbox-right"><span style="font-size: 1rem;">{{vendor.location}}-{{ product.vendor_name }}</span>-<b>{{ item.product_name }}</b></label-->
-                          <label class="checkbox-right">{{ item.product_name }}</label>
-                        </span>
+                    <span v-show="isProductToggled === product_index">
+                      <div v-if="product.vendor_name == vendor.vendor_name">
+                        <div v-if="product.location == vendor.location">
+                          <span v-for="(item, item_index) in product.products" :key="item_index">
+                            <input
+                              type="checkbox"
+                              :checked="item.active"
+                              @change="isChecked(item, item.active)"
+                              class="field"
+                            />
+                            <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label-->
+                            <!--@@label class="checkbox-right"><span style="font-size: 1rem;">{{vendor.location}}-{{ product.vendor_name }}</span>-<b>{{ item.product_name }}</b></label-->
+                            <label class="checkbox-right">{{ item.product_name }}</label>
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </span>
                   </span>
                 </span>
               </div>
@@ -76,7 +80,8 @@ export default {
       toggle0: false,
       toggle1: false,
       toggle2: false,
-      isToggled: null,
+      isVendorToggled: null,
+      isProductToggled: null,
       home_safe: false,
       toggleArr: [],
       isFormValid: false,
@@ -120,13 +125,12 @@ export default {
       item.active = active == true ? false : true
       return item.active
     },
+    toggleLocation(index) {
+      this.isVendorToggled = index === this.isVendorToggled? null : index
+    },
     toggleVendor(index) {
-      console.log("toggleVendor - index: ", index)
-      console.log("this.isToggled in: ", this.isToggled)
-      //console.log("setToggle product_name: ", product_name)
-      this.isToggled = index === this.isToggled? null : index
-      
-    }
+      this.isProductToggled = index === this.isProductToggled? null : index
+    }    
   },
 };
 </script>
