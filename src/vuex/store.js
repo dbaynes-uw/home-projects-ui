@@ -384,7 +384,7 @@ export default new Vuex.Store({
       EventService.postVendor(vendor)
         .then(() => {
           commit("PUT_VENDOR", vendor);
-          alert("Store: Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+          alert("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
         })
         .catch((error) => {
           //console.log("Error Response: ", error.response)
