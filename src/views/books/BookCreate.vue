@@ -37,53 +37,6 @@
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
-        <div class="row">
-          <div class="column">
-            <h2 @click='toggle1 = !toggle1'><b><u>Book Format1</u></b></h2>
-            <br/>
-            <div v-show='toggle1'>
-              <div v-for="(item, index) in products" :key="index">
-                <span v-if="item.vendor == 'costco'">
-                  <v-checkbox
-                    :label="item.product"
-                    v-model="book.vendor_product"
-                    :value="item.vendor + '-' + item.product"                           
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <h2 @click='toggle2 = !toggle2'><b><u>Book Format2</u></b></h2>
-            <br/>
-            <div v-show='toggle2'>
-              <div v-for="(item, index) in products" :key="index">
-                <span v-if="item.vendor == 'safeway'">
-                  <v-checkbox
-                    :label="item.product"
-                    v-model="book.vendor_product"
-                    :value="item.vendor + '-' + item.product"                           
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <h2 @click='toggle3 = !toggle3'><b><u>Book Format3</u></b></h2>
-            <br/>
-            <div v-show='toggle3'>
-              <div v-for="(item, index) in products" :key="index">
-                <span v-if="item.vendor == 'traderjoes'">
-                  <v-checkbox
-                    :label="item.product"
-                    v-model="book.vendor_product"
-                    :value="item.vendor + '-' + item.product"                           
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
         <v-text-field label="Notes" v-model="book.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
