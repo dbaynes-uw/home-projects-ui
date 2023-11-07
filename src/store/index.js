@@ -27,12 +27,6 @@ export default createStore({
     IS_NEW_USER (state, isNewUser) {
       state.isNewUser = isNewUser
     },
-    ADD_BOOK(state, book) {
-      state.books.push(book);
-    },
-    SET_BOOKS(state, books) {
-      state.books = books;
-    },
     RESET_STATE(state) {
       Object.assign(state, createStore());
     },

@@ -66,26 +66,17 @@ export default new Vuex.Store({
     SET_EVENT_STATISTIC_DETAIL(state, eventStatisticDetail) {
       state.eventStatisticDetail = eventStatisticDetail;
     },
-    SET_PRODUCT(state, product) {
-      state.product = product;
+    ADD_FILM(state, film) {
+      state.books.push(film);
     },
-    SET_VENDOR_PRODUCTS(state, vendor_products) {
-      state.vendor_products = vendor_products;
+    DELETE_FILM(state, film) {
+      state.film = film;
     },
-    SET_VENDOR_GROUP(state, vendor_group) {
-      state.vendor_group = vendor_group;
+    SET_FILM(state, film) {
+      state.film = film;
     },
-    SET_VENDOR_LOCATIONS_GROUP(state, vendor_locations_group) {
-      state.vendor_locations_group = vendor_locations_group;
-    },
-    SET_VENDOR_PRODUCTS_GROUP(state, vendor_products_group) {
-      state.vendor_products_group = vendor_products_group;
-    },
-    ADD_VENDOR(state, vendor) {
-      state.vendors.push(vendor);
-    },
-    PUT_VENDOR(state, vendor) {
-      state.vendors.push(vendor);
+    SET_FILMS(state, films) {
+      state.films = films;
     },
     ADD_TRAIL(state, trail) {
       state.trails.push(trail);
@@ -132,6 +123,27 @@ export default new Vuex.Store({
     },
     SET_USERS(state, users) {
       state.users = users;
+    },
+    SET_PRODUCT(state, product) {
+      state.product = product;
+    },
+    SET_VENDOR_PRODUCTS(state, vendor_products) {
+      state.vendor_products = vendor_products;
+    },
+    SET_VENDOR_GROUP(state, vendor_group) {
+      state.vendor_group = vendor_group;
+    },
+    SET_VENDOR_LOCATIONS_GROUP(state, vendor_locations_group) {
+      state.vendor_locations_group = vendor_locations_group;
+    },
+    SET_VENDOR_PRODUCTS_GROUP(state, vendor_products_group) {
+      state.vendor_products_group = vendor_products_group;
+    },
+    ADD_VENDOR(state, vendor) {
+      state.vendors.push(vendor);
+    },
+    PUT_VENDOR(state, vendor) {
+      state.vendors.push(vendor);
     },
     SET_ERRORS(state, errors) {
       state.errors = errors
@@ -212,17 +224,6 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async createEvent({ commit }, event) {
-      EventService.postEvent(event)
-        .then(() => {
-          commit("ADD_EVENT", event);
-          alert("Event was successfully added for " + event.description);
-        })
-        .catch((error) => {
-          alert("Error in postEvent of createEvent Action (index.js)");
-          console.log(error);
-        });
-    },
     async deleteBook({ commit }, book) {
       EventService.deleteBook(book)
         .then((response) => {
@@ -255,6 +256,17 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
+          console.log(error);
+        });
+    },
+    async createEvent({ commit }, event) {
+      EventService.postEvent(event)
+        .then(() => {
+          commit("ADD_EVENT", event);
+          alert("Event was successfully added for " + event.description);
+        })
+        .catch((error) => {
+          alert("Error in postEvent of createEvent Action (index.js)");
           console.log(error);
         });
     },
@@ -316,7 +328,6 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
     async eventsDueBy({ commit }, form) {
       console.log("eventsDueBy - dueBy: ");
       EventService.getEventsDueBy(form)
@@ -379,12 +390,58 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async createFilm({ commit }, film) {
+      EventService.postBook(film)
+        .then(() => {
+          commit("ADD_FILM", film);
+          alert("Film was successfully added for " + film.title);
+        })
+        .catch((error) => {
+          alert("Error in postFilm of createFilm Action (index.js)");
+          console.log(error);
+        });
+    },
+    async deleteFilm({ commit }, film) {
+      EventService.deleteFilm(film)
+        .then((response) => {
+          commit("DELETE_FILM", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchFilm({ commit, state }, id) {
+      const existingFilm = state.films.find((film) => film.id === id);
+      if (existingFilm) {
+        console.log("ExistingFilm: ", existingFilm);
+        commit("SET_FILM", existingFilm);
+      } else {
+        EventService.getFilm(id)
+          .then((response) => {
+            commit("SET_FILM", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    async fetchFilms({ commit }) {
+      EventService.getFilms()
+        .then((response) => {
+          commit("SET_FILMS", response.data);
+          console.log("FetchFilms response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async createVendor({ commit }, vendor) {
       console.log("CREATE VENDOR: ", vendor)
       EventService.postVendor(vendor)
         .then(() => {
           commit("PUT_VENDOR", vendor);
-          alert("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+          console.log("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
         })
         .catch((error) => {
           //console.log("Error Response: ", error.response)

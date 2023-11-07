@@ -1,14 +1,14 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Book to Collection</h3>
+      <h3>Add Film to Collection</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
     <v-form id="isFormValid">
       <v-container id="form-container">
         <v-text-field
-          v-model="book.title"
+          v-model="film.title"
           :rules="[requiredTitle]"
           label="Title"
         >
@@ -16,13 +16,13 @@
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Author" v-model="book.author" :rules="[requiredAuthor]">
+        <v-text-field label="Author" v-model="film.author" :rules="[requiredAuthor]">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
         <v-text-field label="Date Written"
-          v-model="book.date_written"
+          v-model="film.date_written"
           type="date"
         >
           <template v-slot:prepend-inner>
@@ -30,14 +30,14 @@
           </template>
         </v-text-field>
         <v-text-field label="Date Read"
-          v-model="book.date_read"
+          v-model="film.date_read"
           type="date"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Notes" v-model="book.notes">
+        <v-text-field label="Notes" v-model="film.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
@@ -65,7 +65,7 @@ export default {
         { vendor: 'traderjoes', product: 'traderjoes prod2', checked: false },
         { vendor: 'traderjoes', product: 'traderjoes prod3', checked: false },
       ],
-      book: {
+      film: {
         title: null,
         author: "",
         date_written: null,
@@ -92,15 +92,15 @@ export default {
       this.checkValidations();
       console.log("onSubmit - this.isFormValid: ", this.isFormValid)
       if (this.isFormValid) {
-        const book = {
-          ...this.book,
+        const film = {
+          ...this.film,
           id: uuidv4(),
           created_by: this.$store.state.user,
         };
-        if (this.$store.dispatch("createBook", book)) {
-          this.$router.push({ name: "BookList" });
+        if (this.$store.dispatch("createFilm", film)) {
+          this.$router.push({ name: "FilmList" });
         } else {
-          alert("Error adding Book Location " + book.title);
+          alert("Error adding Film Location " + film.title);
         }
       } else {
         alert("Please correct required fields and resubmit");
@@ -146,8 +146,8 @@ export default {
 
     }
   },
-  book() {
-    return this.$store.state.book;
+  film() {
+    return this.$store.state.film;
   },
 };
 </script>
