@@ -37,10 +37,10 @@
               <router-link
                 :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }"
               >
-                <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
+                <i class="fa fa-eye" id="action-eye-icon"></i>
               </router-link>
             </span>
-            <span class="fa-table-stack" style="position: relative; top: 0.5rem; left: 2.3rem">
+            <span class="fa-table-stack" id="action-delete-icon">
               <i
                 @click="deleteTravel(travel)"
                 class="fas fa-trash-alt fa-stack-1x"
@@ -146,6 +146,15 @@ export default {
 };
 </script>
 <style scoped>
+#action-eye-icon {
+  top: 0.4rem;
+  font-size: 18px;
+}
+#action-delete-icon {
+  position: relative;
+  top: 0.5rem;
+  left: 2.3rem;
+}
 .table-index-style {
   width: 100%;
   border-collapse: collapse;
