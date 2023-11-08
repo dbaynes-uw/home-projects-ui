@@ -51,6 +51,7 @@ import { required, email, minLength} from '@vuelidate/validators';
 import { reactive, computed } from 'vue';
 export default {
   setup () {
+    console.log("LOGIN!!!!!!!!!!")
     const state = reactive({
       email: '',
       password: '',

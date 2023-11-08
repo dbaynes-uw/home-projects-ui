@@ -6,15 +6,6 @@
     <v-app v-if="this.$route.name == 'home'">
       <v-app-bar color="teal-darken-2">
         <v-toolbar-title>Home Projects</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <!--v-btn
-          text
-          rounded
-        >
-          <router-link :to="{ name: 'Login' }">
-            Login
-          </router-link>
-        </!--v-btn-->
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
       <v-content style="margin-top: 7rem">
@@ -23,8 +14,7 @@
     </v-app>
     <v-app v-else-if="this.$route.name == 'Login'">
       <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Projects!!</v-toolbar-title>
-        <v-spacer></v-spacer>
+        <v-toolbar-title>Home Projects</v-toolbar-title>
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
       <v-content style="margin-top: 7rem">
@@ -34,7 +24,6 @@
     <v-app v-else>
       <v-app-bar color="teal-darken-2">
         <v-toolbar-title>Home Projects</v-toolbar-title>
-        <v-spacer></v-spacer>
         <v-btn
           v-for="link in links"
           :key="`${link.label}-header-link`"
@@ -47,10 +36,9 @@
             {{ link.title }}
           </router-link>
         </v-btn>
-        <button type="button" class="logoutButton" @click="logout">
+        <button type="button" class="nav-button" @click="logout">
           Exit
         </button>
-        <p>{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>
       </v-app-bar>
       <v-content style="margin-top: 7rem">
         <router-view></router-view>
@@ -64,7 +52,7 @@
           <button
             v-for="link in links"
             :key="`${link.label}-footer-link`"
-            class="logoutButton"
+            class="nav-button"
             text
             rounded
           >
@@ -72,9 +60,10 @@
               {{ link.title }}
             </router-link>
           </button>
-          <button type="button" class="logoutButton" @click="logout">
+          <button type="button" class="nav-button" @click="logout">
             Exit
-          </button>       
+          </button> 
+          <p class="footer-info" style="margin-top: 0.75rem">{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>      
           <!--v-flex primary lighten-2 py-4 text-center white--text xs12>
             {{ new Date().getFullYear() }} — <strong>Vuetify Dashboard</strong>
           </v-flex-->
@@ -123,6 +112,11 @@ export default {
           title: "Books",
         },
         {
+          label: "FilmList",
+          url: "/films",
+          title: "Films",
+        },
+        {
           label: "ProductList",
           url: "/products",
           title: "Shopping",
@@ -142,9 +136,18 @@ export default {
   },
 }
 </script>
+<style scoped>
+.nav-button {
+  cursor: pointer;
+  font-weight: bold;
+}
+  .footer-info {
+    margin-top: 0.75rem !important;
+  }
+  
+</style>
 
-<!--
-<style lang="scss" scoped>
+<!--style lang="scss" scoped>
 #nav {
   display: flex;
   align-items: center;

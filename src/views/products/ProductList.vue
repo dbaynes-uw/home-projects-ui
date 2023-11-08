@@ -116,8 +116,8 @@ export default {
         alert("Vendor Product List Updated Successfully")
         //const fresh_fetched_vendor_products = this.$store.dispatch("fetchVendorProducts");
         //this.$router.push({ name: "ProductList", params: { fresh_fetched_vendor_products } });
-        //location.reload();
-        window.location.reload();
+        //window.location.reload();
+        location.reload();
       } else {
         alert("Error adding Products in ProductList View ");
       }

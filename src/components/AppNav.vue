@@ -33,7 +33,7 @@
             {{ link.title }}
           </router-link>
         </v-btn>
-        <button type="button" class="logoutButton" @click="logout">
+        <button type="button" class="navButton" @click="logout">
           Logout
         </button>
         <p>{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>
@@ -59,7 +59,7 @@
               {{ link.title }}
             </router-link>
           </v-btn>
-          <button type="button" class="logoutButton" @click="logout">
+          <button type="button" class="navButton" @click="logout">
             Logout
           </button>
           <!--v-flex primary lighten-2 py-4 text-center white--text xs12>
@@ -79,7 +79,7 @@
     <router-link v-if="!loggedIn" to="/login" class="button">
       Login
     </router-link>
-    <button v-else type="button" class="logoutButton" @click="logout">
+    <button v-else type="button" class="navButton" @click="logout">
       Logout
     </button>
   <div-->
@@ -183,8 +183,9 @@ button,
   }
 }
 
-.logoutButton {
+.navButton {
   cursor: pointer;
+  font-weight: bold;
 }
 
 .nav-welcome + button {

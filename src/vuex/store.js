@@ -119,7 +119,6 @@ export default new Vuex.Store({
       console.log("Get User: ", localStorage.getItem('user'))
 
       axios.defaults.headers.common['Authorization'] = null
-      location.reload()
     },
     SET_USERS(state, users) {
       state.users = users;
@@ -196,6 +195,7 @@ export default new Vuex.Store({
        .post(api_authenticate_url + "sign_in", credentials)
        .then(({ data }) => {
          commit('SET_USER_DATA', data)
+
        })
        .catch((error) => {
          console.log(error);
@@ -211,7 +211,7 @@ export default new Vuex.Store({
     async logout ({ commit }) {
       console.log("LOGOUT - CLEAR_USER_DATA!");
       commit('CLEAR_USER_DATA')
-      router.push({name:'home'})
+      router.push({name: 'Login'});
     },
     async createBook({ commit }, book) {
       EventService.postBook(book)
