@@ -12,20 +12,20 @@
       <th id="background-blue">Notes</th>
       <th id="background-blue" style="text-align: right">Actions</th>
     </tr>
-    <tr v-for="(result, resultIndex) in travels" :key="resultIndex">
-      <td>{{ result.title }}</td>
-      <td>{{ result.description }}</td>
-      <td>{{ formatFullYearDate(result.start_date) }}</td>
-      <td>{{ formatFullYearDate(result.end_date) }}</td>
+    <tr v-for="travel in travels" :key="travel.id" travel="travel">
+      <td>{{ travel.title }}</td>
+      <td>{{ travel.description }}</td>
+      <td>{{ formatFullYearDate(travel.start_date) }}</td>
+      <td>{{ formatFullYearDate(travel.end_date) }}</td>
       <td>
-        <a :href="result.url_reference" target="_blank">Review</a>
+        <a :href="travel.url_reference" target="_blank">Review</a>
       </td>
-      <td>{{ result.notes }}</td>
-      <td>
-        <span v-if="this.onlineStatus">
+      <td>{{ travel.notes }}</td>
+      <td style="padding-left: 0">
+        <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'TravelEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
             >
               <i
                 id="travel-icon-edit"
@@ -35,34 +35,20 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'TravelDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }"
               >
-                <i id="travel-icon-eye" class="fa fa-eye"></i>
+                <i class="fa fa-eye" style="top: 0.4rem; font-size: 18px"></i>
               </router-link>
             </span>
-            <span class="fa-table-stack">
+            <span class="fa-table-stack" style="position: relative; top: 0.5rem; left: 2.3rem">
               <i
-                @click="deleteTravel(result)"
+                @click="deleteTravel(travel)"
                 class="fas fa-trash-alt fa-stack-1x"
                 id="travel-icon-delete"
               >
               </i>
             </span>
           </span>
-        </span>
-        <span v-else>
-          <router-link
-            :to="{ name: 'TravelDetails', params: { id: `${result.id}` } }"
-          >
-            View |
-          </router-link>
-          <router-link
-            :to="{ name: 'TravelEdit', params: { id: `${result.id}` } }"
-          >
-            Edit |
-          </router-link>
-          <span class="ok-btn" @click="deleteTravel(result)"><u>Del</u></span>
-        </span>
       </td>
     </tr>
   </v-table>
@@ -159,3 +145,47 @@ export default {
   },
 };
 </script>
+<style scoped>
+.table-index-style {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  background-color: #7ba8bd;
+  text-align: left;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+tr {
+  line-height: 1.6 !important;
+  border: none;
+}
+tr:nth-child(odd) {
+  background-color: #41b88352;
+  border: none !important;
+}
+td {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.eventAssigned {
+  background: #e8f7f0;
+}
+.fa-table-stack {
+  position: relative;
+  left: 2rem;
+}
+i {
+  bottom: 0px;
+  color: gray;
+}
+tr.is-complete {
+  background: #35495e;
+  color: #fff;
+}
+#status-message {
+  text-align: center;
+  color: navy;
+}
+</style>
+
