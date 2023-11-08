@@ -16,39 +16,29 @@ export default {
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
     }
   },
-  eventsDueBy(form) {
-    this.init();
-    const dueFilter =
-      form.target.options[form.target.options.selectedIndex].innerText;
-    return axios.get(api_url + "events" + `?_dueFilter=${dueFilter}`);
-  },
-  async eventsPastDue() {
-    this.init();
-    return axios.get(api_url + "events_past_due" + `'true'`);
-  },
-  async postBook(book) {
-    this.init();
-    return axios.post(api_url + 'books', book);
-  },
-  getBooks() {
-    this.init();
-    return axios.get(api_url + "books")
-  },
-  getBook(id) {
-    this.init();
-    console.log("environment: ", environment);
-    return axios.get(api_url + "books/" + id);
-  },
-  async putBook(updatedBook) {
-    this.init();
-    return axios.put(api_url + "books" + `/${updatedBook.id}`, updatedBook);
-  },
   deleteBook(book) {
     this.init();
     console.log("environment: ", environment);
     console.log("ES Delete Book: ", book.id);
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "books/" + `${book.id}`);
+  },
+  getBook(id) {
+    this.init();
+    console.log("environment: ", environment);
+    return axios.get(api_url + "books/" + id);
+  },
+  getBooks() {
+    this.init();
+    return axios.get(api_url + "books")
+  },
+  async putBook(updatedBook) {
+    this.init();
+    return axios.put(api_url + "books" + `/${updatedBook.id}`, updatedBook);
+  },
+  async postBook(book) {
+    this.init();
+    return axios.post(api_url + 'books', book);
   },
   getEvent(id) {
     this.init();
@@ -74,6 +64,17 @@ export default {
     console.log("SERVICE.JS dueBY: ", dueFilter)
     return axios.get(api_url + "events/" + `?due_by=${dueFilter}`)
   },
+  eventsDueBy(form) {
+    this.init();
+    const dueFilter =
+      form.target.options[form.target.options.selectedIndex].innerText;
+    return axios.get(api_url + "events" + `?_dueFilter=${dueFilter}`);
+  },
+  async eventsPastDue() {
+    this.init();
+    return axios.get(api_url + "events_past_due" + `'true'`);
+  },
+
   getEventsPastDue() {
     this.init();
     return axios.get(api_url + "events/" + `?past_due=true`)
@@ -98,6 +99,31 @@ export default {
     this.init();
     return axios.delete(api_url + "events" + `/${id}`);
   },
+  deleteFilm(film) {
+    this.init();
+    console.log("environment: ", environment);
+    console.log("ES Delete Film: ", film.id);
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "films/" + `${film.id}`);
+  },
+  getFilm(id) {
+    this.init();
+    console.log("environment: ", environment);
+    return axios.get(api_url + "films/" + id);
+  },
+  getFilms() {
+    this.init();
+    return axios.get(api_url + "films")
+  },
+  async putFilm(updatedFilm) {
+    this.init();
+    return axios.put(api_url + "films" + `/${updatedFilm.id}`, updatedFilm);
+  },
+  async postFilm(film) {
+    this.init();
+    return axios.post(api_url + 'films', film);
+  },
+
   async getVendorGroup() {
     this.init();
     return axios.get(api_url + "vendor_group")

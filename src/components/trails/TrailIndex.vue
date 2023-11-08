@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="trail-list">
-    <table class="table-index-style">
+    <v-table density="compact">
       <tr>
         <th @click="sortList('trail_head_name')">Trail Head</th>
         <th @click="sortList('location')">Location</th>
@@ -47,7 +47,7 @@
           </span>
         </td>
       </tr>
-    </table>
+    </v-table>
   </div>
 </template>
 <script>

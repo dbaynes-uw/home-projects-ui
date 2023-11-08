@@ -11,6 +11,7 @@ import EventEdit from "@/views/events/EventEdit.vue";
 import EventList from "../views/events/EventList.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
+import FilmList from "../views/films/FilmList.vue";
 import ProductCreate from "../views/products/ProductCreate.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
 import ProductList from "../views/products/ProductList.vue";
@@ -150,6 +151,12 @@ const routes = [
     props: true,
     name: "EventsAssigned",
     component: EventsAssigned,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/films",
+    name: "FilmList",
+    component: FilmList,
     meta: { requiresAuth: true}
   },
   {
