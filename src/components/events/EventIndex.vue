@@ -176,7 +176,4 @@ export default {
 };
 </script>
 <style>
-.td-center {
-  text-align: center;
-}
 </style>

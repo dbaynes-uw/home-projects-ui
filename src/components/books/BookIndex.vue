@@ -11,20 +11,17 @@
         Date Read
       </th>
       <th id="background-blue">URL to Review</th>
-      <th id="background-blue">Notes</th>
       <th id="background-blue" style="text-align: right">Actions</th>
     </tr>
     <tr v-for="(result, resultIndex) in books" :key="resultIndex">
       <td>{{ result.title }}</td>
       <td>{{ result.author }}</td>
-      <td>{{ formatFullYearDate(result.date_written) }}</td>
-      <td>{{ formatFullYearDate(result.date_read) }}</td>
-
-      <td>
+      <td class="td-center">{{ formatFullYearDate(result.date_written) }}</td>
+      <td class="td-center">{{ formatFullYearDate(result.date_read) }}</td>
+      <td class="td-center">
         <a :href="result.url_to_review" target="_blank">Review</a>
       </td>
-      <td>{{ result.notes }}</td>
-      <td>
+       <td>
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
             <router-link

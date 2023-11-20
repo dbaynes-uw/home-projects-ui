@@ -8,6 +8,9 @@
   background-color: #7ba8bd;
   text-align: center;
 }
+.td-center {
+  text-align: center;
+}
 .ul-left {
   list-style-type: none;
   text-align: left;
