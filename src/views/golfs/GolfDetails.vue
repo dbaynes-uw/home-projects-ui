@@ -1,52 +1,52 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
-    <h1>Book Details</h1>
+    <h1>Golf Details</h1>
     <br />
-    <div v-if="book" class="event" id="center-align">
+    <div v-if="golf" class="event" id="center-align">
       <h3>
-        <b>{{ book.title }}</b>
+        <b>{{ golf.title }}</b>
       </h3>
       <ul class="ul-left">
         <li>
           Author:
-          <b>{{ book.author }}</b>
+          <b>{{ golf.author }}</b>
         </li>
-        <li v-if="book.date_written">
-          Date Book Written:
-          <b>{{ formatStandardDate(book.date_written) }}</b>
+        <li v-if="golf.date_written">
+          Date Golf Played:
+          <b>{{ formatStandardDate(golf.date_written) }}</b>
         </li>
-        <li v-if="book.date_read">
-          Date Book Read:
-          <b>{{ formatStandardDate(book.date_read) }}</b>
+        <li v-if="golf.date_read">
+          Date Golf Read:
+          <b>{{ formatStandardDate(golf.date_read) }}</b>
         </li>
-        <li v-if="book.url_to_review">
+        <li v-if="golf.url_to_review">
           URL to Review:
-          <a :href="book.url_to_review" target="_blank">Click</a>
+          <a :href="golf.url_to_review" target="_blank">Click</a>
         </li>
         <li>
           Notes:
-          <b>{{ book.notes }}</b>
+          <b>{{ golf.notes }}</b>
         </li>
         <li>
           Date Entered:
-          <b>{{ formatStandardDate(book.created_at) }}</b>
+          <b>{{ formatStandardDate(golf.created_at) }}</b>
         </li>
       </ul>
       <br />
-      <router-link :to="{ name: 'BookList' }">
+      <router-link :to="{ name: 'GolfList' }">
         <i class="fa-solid fa-backward fa-stack-1x"></i>
       </router-link>
       <span class="fa-stack">
-        <router-link :to="{ name: 'BookEdit', params: { id: `${book.id}` } }">
+        <router-link :to="{ name: 'GolfEdit', params: { id: `${golf.id}` } }">
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
         </router-link>
       </span>
       <span class="fa-stack">
-        <i @click="deleteBook(book)" class="fas fa-trash-alt fa-stack-1x"></i>
+        <i @click="deleteGolf(golf)" class="fas fa-trash-alt fa-stack-1x"></i>
       </span>
       <br />
-      <router-link :to="{ name: 'BookList' }">
+      <router-link :to="{ name: 'GolfList' }">
         <i class="fa-solid fa-backward fa-stack-1x"></i>
       </router-link>
     </div>
@@ -64,24 +64,24 @@ export default {
   },
   data() {
     return {
-      updatedBook: null,
+      updatedGolf: null,
     };
   },
   methods: {
-    async deleteBook(book) {
+    async deleteGolf(golf) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Book",
+        title: "Delete Golf",
         message:
           "Are you sure you want to delete " +
-          book.title +
+          golf.title +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteBook", book);
-        alert("Book was Deleted for " + book.title);
-        this.$router.push({ name: "BookList" });
+        this.$store.dispatch("deleteGolf", golf);
+        alert("Golf was Deleted for " + golf.title);
+        this.$router.push({ name: "GolfList" });
       }
     },
     formatStandardDate(value) {
@@ -89,11 +89,11 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchBook", this.id);
+    this.$store.dispatch("fetchGolf", this.id);
   },
   computed: {
-    book() {
-      return this.$store.state.book;
+    golf() {
+      return this.$store.state.golf;
     },
   },
 };

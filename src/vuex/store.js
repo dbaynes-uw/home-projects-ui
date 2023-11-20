@@ -66,17 +66,17 @@ export default new Vuex.Store({
     SET_EVENT_STATISTIC_DETAIL(state, eventStatisticDetail) {
       state.eventStatisticDetail = eventStatisticDetail;
     },
-    ADD_FILM(state, film) {
-      state.books.push(film);
+    ADD_GOLF(state, golf) {
+      state.books.push(golf);
     },
-    DELETE_FILM(state, film) {
-      state.film = film;
+    DELETE_GOLF(state, golf) {
+      state.golf = golf;
     },
-    SET_FILM(state, film) {
-      state.film = film;
+    SET_GOLF(state, golf) {
+      state.golf = golf;
     },
-    SET_FILMS(state, films) {
-      state.films = films;
+    SET_GOLFS(state, golfs) {
+      state.golfs = golfs;
     },
     ADD_TRAIL(state, trail) {
       state.trails.push(trail);
@@ -390,46 +390,46 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async createFilm({ commit }, film) {
-      EventService.postBook(film)
+    async createGolf({ commit }, golf) {
+      EventService.postGolf(golf)
         .then(() => {
-          commit("ADD_FILM", film);
-          alert("Film was successfully added for " + film.title);
+          commit("ADD_GOLF", golf);
+          alert("Golf was successfully added for " + golf.title);
         })
         .catch((error) => {
-          alert("Error in postFilm of createFilm Action (index.js)");
+          alert("Error in postGolf of createGolf Action (index.js)");
           console.log(error);
         });
     },
-    async deleteFilm({ commit }, film) {
-      EventService.deleteFilm(film)
+    async deleteGolf({ commit }, golf) {
+      EventService.deleteGolf(golf)
         .then((response) => {
-          commit("DELETE_FILM", response.data);
+          commit("DELETE_GOLF", response.data);
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    async fetchFilm({ commit, state }, id) {
-      const existingFilm = state.films.find((film) => film.id === id);
-      if (existingFilm) {
-        console.log("ExistingFilm: ", existingFilm);
-        commit("SET_FILM", existingFilm);
+    async fetchGolf({ commit, state }, id) {
+      const existingGolf = state.golfs.find((golf) => golf.id === id);
+      if (existingGolf) {
+        console.log("ExistingGolf: ", existingGolf);
+        commit("SET_GOLF", existingGolf);
       } else {
-        EventService.getFilm(id)
+        EventService.getGolf(id)
           .then((response) => {
-            commit("SET_FILM", response.data);
+            commit("SET_GOLF", response.data);
           })
           .catch((error) => {
             console.log(error);
           });
       }
     },
-    async fetchFilms({ commit }) {
-      EventService.getFilms()
+    async fetchGolfs({ commit }) {
+      EventService.getGolfs()
         .then((response) => {
-          commit("SET_FILMS", response.data);
-          console.log("FetchFilms response.data: ", response.data);
+          commit("SET_GOLFS", response.data);
+          console.log("FetchGolfs response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {

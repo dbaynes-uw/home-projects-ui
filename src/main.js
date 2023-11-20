@@ -7,6 +7,8 @@ import store from "./vuex/store.js";
 import "./plugins/vuetify";
 import vuetify from "./plugins/vuetify";
 //import { VuelidatePlugin } from '@vuelidate/core'
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 import { loadFonts } from "./plugins/webfontloader";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "@mdi/font/css/materialdesignicons.css";
@@ -33,5 +35,6 @@ createApp({
 }).use(router)
   .use(store)
   .use(vuetify)
+  .use("v-select", vSelect)
   .mount("#app")
 

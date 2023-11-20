@@ -1,11 +1,11 @@
 <template>
   <div class="div-frame">
-    <h2>Film List</h2>
+    <h2>Golf Rounds Played</h2>
     <h2 id="status-message">
       <!--{{ this.statusMessage }}</-->
     </h2>
     <h2>
-      <router-link :to="{ name: 'FilmCreate' }">Add Movie, Series, Videos, etc.</router-link>
+      <router-link :to="{ name: 'GolfCreate' }">Add Golf Round</router-link>
     </h2>
     <br />
     <div style="width: 100%">
@@ -23,26 +23,26 @@
         />
       </div>
     </div>
-    <div class="film-list">
+    <div class="golf-list">
       <span v-if="filteredResults.length == 0">
-        <FilmIndex :films="films" />
+        <GolfIndex :golfs="golfs" />
       </span>
       <span v-if="filteredResults.length > 0">
-        <FilmSearchResults :filteredResults="filteredResults" />
+        <GolfSearchResults :filteredResults="filteredResults" />
       </span>
     </div>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import FilmIndex from "@/components/films/FilmIndex.vue";
-import FilmSearchResults from "@/components/films/FilmSearchResults.vue";
+import GolfIndex from "@/components/golfs/GolfIndex.vue";
+import GolfSearchResults from "@/components/golfs/GolfSearchResults.vue";
 export default {
-  name: "FilmList",
+  name: "GolfList",
   props: ["filteredResults[]"],
   components: {
-    FilmIndex,
-    FilmSearchResults,
+    GolfIndex,
+    GolfSearchResults,
   },
   data() {
     return {
@@ -58,16 +58,16 @@ export default {
     };
   },
   mounted() {
-    this.sortedData = this.films;
+    this.sortedData = this.golfs;
   },
   created() {
-    console.log("FilmList created");
-    this.$store.dispatch("fetchFilms");
-    this.sortedData = this.films;
+    console.log("GolfList created");
+    this.$store.dispatch("fetchGolfs");
+    this.sortedData = this.golfs;
   },
   computed: {
-    films() {
-      return this.$store.state.films;
+    golfs() {
+      return this.$store.state.golfs;
     },
   },
   methods: {
@@ -85,23 +85,23 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.films &&
-          this.films.length > 0 &&
+          this.golfs &&
+          this.golfs.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.films.forEach((film) => {
+          this.golfs.forEach((golf) => {
             const searchHasTitle =
-              film.title &&
-              film.title
+              golf.title &&
+              golf.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchHasAuthor =
-              film.author &&
-              film.author
+              golf.author &&
+              golf.author
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(film);
+              this.filteredResults.push(golf);
             }
           });
         }
@@ -111,7 +111,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.films;
+      this.sortedData = this.golfs;
       console.log("SORTLIST - sortedData: ", this.sortedData);
       console.log("SORTLIST: ", sortBy);
       console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);

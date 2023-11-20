@@ -5,7 +5,7 @@
   <div id="nav">
     <v-app v-if="this.$route.name == 'home'">
       <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Projects</v-toolbar-title>
+        <v-toolbar-title id="toolbar-title" style="flex: .7;;margin-inline-start: 2px;text-align: left;width: 10rem;">Home Projects1</v-toolbar-title>
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
       <v-content style="margin-top: 7rem">
@@ -14,7 +14,7 @@
     </v-app>
     <v-app v-else-if="this.$route.name == 'Login'">
       <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Projects</v-toolbar-title>
+        <v-toolbar-title id="toolbar-title" style="flex: .7;margin-inline-start: 2px;text-align: left;width: 10rem;">Home Projects</v-toolbar-title>
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
       <v-content style="margin-top: 7rem">
@@ -23,7 +23,7 @@
     </v-app>
     <v-app v-else>
       <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Projects</v-toolbar-title>
+        <v-toolbar-title id="toolbar-title" style="flex: .7;margin-inline-start: 2px;text-align: left;width: 10rem;">Home Projects</v-toolbar-title>
         <v-btn
           v-for="link in links"
           :key="`${link.label}-header-link`"
@@ -112,9 +112,9 @@ export default {
           title: "Books",
         },
         {
-          label: "FilmList",
-          url: "/films",
-          title: "Films",
+          label: "GolfList",
+          url: "/golfs",
+          title: "Golfs",
         },
         {
           label: "ProductList",
@@ -137,6 +137,12 @@ export default {
 }
 </script>
 <style scoped>
+#tool-bar-title {
+  flex: .7;
+  margin-inline-start: 2px;
+  text-align: left;
+  width: 10rem;
+}
 .nav-button {
   cursor: pointer;
   font-weight: bold;

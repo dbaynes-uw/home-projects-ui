@@ -11,7 +11,10 @@ import EventEdit from "@/views/events/EventEdit.vue";
 import EventList from "../views/events/EventList.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
-import FilmList from "../views/films/FilmList.vue";
+import GolfCreate from "../views/golfs/GolfCreate.vue";
+import GolfDetails from "@/views/golfs/GolfDetails.vue";
+import GolfEdit from "@/views/golfs/GolfEdit.vue"
+import GolfList from "../views/golfs/GolfList.vue";
 import ProductCreate from "../views/products/ProductCreate.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
 import ProductList from "../views/products/ProductList.vue";
@@ -154,11 +157,32 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/films",
-    name: "FilmList",
-    component: FilmList,
+    path: "/golf/create",
+    name: "GolfCreate",
+    component: GolfCreate,
     meta: { requiresAuth: true}
   },
+  {
+    path: "/golfs",
+    name: "GolfList",
+    component: GolfList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/golfs/:id",
+    name: "GolfDetails",
+    props: true,
+    component: GolfDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/golf/:id",
+    name: "GolfEdit",
+    props: true,
+    component: GolfEdit,
+    meta: { requiresAuth: true}
+  },
+
   {
     path: "/product/create",
     name: "ProductCreate",

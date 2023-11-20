@@ -99,29 +99,29 @@ export default {
     this.init();
     return axios.delete(api_url + "events" + `/${id}`);
   },
-  deleteFilm(film) {
+  deleteGolf(golf) {
     this.init();
     console.log("environment: ", environment);
-    console.log("ES Delete Film: ", film.id);
+    console.log("ES Delete Golf: ", golf.id);
     // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "films/" + `${film.id}`);
+    return axios.delete(api_url + "golfs/" + `${golf.id}`);
   },
-  getFilm(id) {
+  getGolf(id) {
     this.init();
     console.log("environment: ", environment);
-    return axios.get(api_url + "films/" + id);
+    return axios.get(api_url + "golfs/" + id);
   },
-  getFilms() {
+  getGolfs() {
     this.init();
-    return axios.get(api_url + "films")
+    return axios.get(api_url + "golfs")
   },
-  async putFilm(updatedFilm) {
+  async putGolf(updatedGolf) {
     this.init();
-    return axios.put(api_url + "films" + `/${updatedFilm.id}`, updatedFilm);
+    return axios.put(api_url + "golfs" + `/${updatedGolf.id}`, updatedGolf);
   },
-  async postFilm(film) {
+  async postGolf(golf) {
     this.init();
-    return axios.post(api_url + 'films', film);
+    return axios.post(api_url + 'golfs', golf);
   },
 
   async getVendorGroup() {

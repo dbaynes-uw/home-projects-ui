@@ -5,10 +5,10 @@
     <tr>
       <th id="background-blue" @click="sortList('description')">Description</th>
       <th id="background-blue" @click="sortList('frequency')">Frequency</th>
-      <th id="background-blue" @click="sortList('action_date')">Action Date</th>
+      <!--th id="background-blue" @click="sortList('action_date')">Action Date</th-->
       <th id="background-blue" @click="sortList('action_due_date')">Due</th>
       <th id="background-blue" @click="sortList('action_completed_date')">
-        Completed Date
+        Completed
       </th>
       <th id="background-blue" @click="sortList('assigned')">Assigned</th>
       <th id="background-blue">Status</th>
@@ -17,13 +17,13 @@
     <tr v-for="(result, resultIndex) in events" :key="resultIndex">
       <td>{{ result.description }}</td>
       <td>Every {{ result.frequency }} Days</td>
-      <td>{{ formatYearDate(result.action_date) }}</td>
-      <td>{{ formatFullYearDate(result.action_due_date) }} - 
-          {{ calculateDateDue(result.action_date, result.frequency) }}
+      <!--td>{{ formatYearDate(result.action_date) }}</td-->
+      <td class="td-center">{{ formatYearDate(result.action_due_date) }}
+          <!--{{ calculateDateDue(result.action_date, result.frequency) }}-->
       </td>
-      <td>{{ formatYearDate(result.action_completed_date) }}</td>
-      <td>{{ result.assigned }}</td>
-      <td>{{ result.action_active == true ? "Active" : "Not Active" }}</td>
+      <td class="td-center">{{ formatYearDate(result.action_completed_date) }}</td>
+      <td class="td-center">{{ result.assigned }}</td>
+      <td class="td-center">{{ result.action_active == true ? "Active" : "Not Active" }}</td>
       <td>
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
@@ -175,3 +175,8 @@ export default {
   },
 };
 </script>
+<style>
+.td-center {
+  text-align: center;
+}
+</style>

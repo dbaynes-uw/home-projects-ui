@@ -2,69 +2,68 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('title')">Title</th>
-      <th id="background-blue" @click="sortList('author')">Author</th>
-      <th id="background-blue" @click="sortList('date_written')">
-        Date Written
+      <th id="background-blue" @click="sortList('course')">Course</th>
+      <th id="background-blue" @click="sortList('tees_played')">Tees Played</th>
+      <th id="background-blue" @click="sortList('date_played')">
+        Date Played
       </th>
       <th id="background-blue" @click="sortList('date_read')">
-        Date Read
+        Par
+      </th>
+      <th id="background-blue" @click="sortList('date_read')">
+        Score
       </th>
       <th id="background-blue">URL to Review</th>
       <th id="background-blue">Notes</th>
-      <th id="background-blue" style="text-align: right">Actions</th>
+      <th class="td-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="(result, resultIndex) in films" :key="resultIndex">
-      <td>{{ result.title }}</td>
-      <td>{{ result.author }}</td>
-      <td>{{ formatFullYearDate(result.date_written) }}</td>
-      <td>{{ formatFullYearDate(result.date_read) }}</td>
-
-      <td>
-        <a :href="result.url_to_review" target="_blank">Review</a>
+    <tr v-for="(result, resultIndex) in golfs" :key="resultIndex">
+      <td>{{ result.course }}</td>
+      <td class="td-center" >{{ result.tees_played }}</td>
+      <td class="td-center" >{{ formatFullYearDate(result.date_played) }}</td>
+      <td class="td-center" >{{ result.par_1_hole + 
+                                result.par_2_hole }}</td>
+      <td class="td-center" >{{ result.total_score }}</td>
+      <td class="td-center" >
+        <a :href="result.url_to_course" target="_blank">Review</a>
       </td>
       <td>{{ result.notes }}</td>
-      <td>
+      <td class="td-center">
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'FilmEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'GolfEdit', params: { id: `${result.id}` } }"
             >
-              <i
-                id="film-icon-edit"
-                class="fa-solid fa-pen-to-square fa-stack-1x"
-              >
-              </i>
+              <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
             </router-link>
-            <span class="fa-stack fa-table-stack">
-              <router-link
-                :to="{ name: 'FilmDetails', params: { id: `${result.id}` } }"
-              >
-                <i id="film-icon-eye" class="fa fa-eye"></i>
-              </router-link>
-            </span>
-            <span class="fa-table-stack">
-              <i
-                @click="deleteFilm(result)"
-                class="fas fa-trash-alt fa-stack-1x"
-                id="film-icon-delete"
-              >
-              </i>
-            </span>
+          </span>
+          <span class="fa-stack">
+            <router-link
+              :to="{ name: 'GolfDetails', params: { id: `${result.id}` } }"
+            >
+              <i class="fa-solid fa-eye fa-stack-1x"></i>
+            </router-link>
+          </span>
+          <span class="fa-stack">
+            <i
+              @click="deleteGolf(result)"
+              class="fa-solid fa-trash-alt fa-stack-1x"
+            >
+            </i>
           </span>
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'FilmDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'GolfDetails', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'FilmEdit', params: { id: `${result.id}` } }"
+            :to="{ name: 'GolfEdit', params: { id: `${result.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteFilm(result)"><u>Del</u></span>
+          <span class="ok-btn" @click="deleteGolf(result)"><u>Del</u></span>
         </span>
       </td>
     </tr>
@@ -76,8 +75,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "FilmIndex",
-  props: ["films"],
+  name: "GolfIndex",
+  props: ["golfs"],
   components: {
     ConfirmDialogue,
   },
@@ -99,23 +98,23 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.films &&
-          this.films.length > 0 &&
+          this.golfs &&
+          this.golfs.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.films.forEach((film) => {
+          this.golfs.forEach((golf) => {
             const searchHasTitle =
-              film.title &&
-              film.title
+              golf.title &&
+              golf.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchHasAuthor =
-              film.author &&
-              film.author
+              golf.author &&
+              golf.author
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(film);
+              this.filteredResults.push(golf);
             }
           });
         }
@@ -125,7 +124,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.films;
+      this.sortedData = this.golfs;
       console.log("SORTLIST - sortedData: ", this.sortedData);
       console.log("SORTLIST: ", sortBy);
       console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);
@@ -137,21 +136,21 @@ export default {
         this.sortedbyASC = true;
       }
     },
-    async deleteFilm(film) {
+    async deleteGolf(golf) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Film from List",
+        title: "Delete Golf from List",
         message:
           "Are you sure you want to delete " +
-          film.title +
+          golf.title +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteFilm", film);
+        this.$store.dispatch("deleteGolf", golf);
         this.statusMessage =
-          "Film was Deleted for " +
-          film.title +
+          "Golf was Deleted for " +
+          golf.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }
@@ -162,3 +161,16 @@ export default {
   },
 };
 </script>
+<style scoped>
+.fa-stack {
+  position: relative;
+  top: .5rem;
+  width: 1.25rem;
+}
+.fa-solid {
+  color: gray;
+}
+.td-center {
+  text-align: center;
+}
+</style>

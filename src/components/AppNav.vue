@@ -143,6 +143,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+a:visited {
+  color: #ebebeb;
+}
 #nav {
   display: flex;
   align-items: center;

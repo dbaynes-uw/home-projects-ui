@@ -39,6 +39,7 @@
 <script>
 import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { ErrorTypes } from 'vue-router';
 export default {
   props: ["id"],
   components: {
@@ -76,41 +77,46 @@ export default {
   setup() {},
   methods: {
     async updateBook() {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Book from List",
-        message:
-          "Are you sure you want to update " +
-          this.book.title,
-        okButton: "Update",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        const book = {
-          ...this.book,
-          updated_by: this.$store.state.created_by,
-        };
-        console.log("This api_url: ", this.api_url);
-        console.log("This book to PUT: ", this.book);
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            title: this.book.title,
-            author: this.book.author,
-            date_written: this.book.date_written,
-            date_read: this.book.date_read,
-            url_to_review: this.book.url_to_review,
-            notes: this.book.notes,
-          }
-        );
-        if (result.status >= 200) {
-          alert("Book has been updated");
-          this.$router.push({ name: "BookDetails", params: { id: book.id } });
-        } else {
-          alert("Update Error Code ", result.status);
-          console.log("ERROR Result Status: ", result.status);
-        }
+      try {
+        const ok = await this.$refs.confirmDialogue.show({
+          title: "Update Book from List ",
+          message:
+            "Are you sure you want to update " + 
+            this.book.title + ok,
+          okButton: "Update",
+        });
+      } catch (error) {
+        console.log("ERROR: ", error)
+        alert("ERROR: ", ErrorTypes)
       }
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      //if (ok) {
+      //  const book = {
+      //    ...this.book,
+      //    updated_by: this.$store.state.created_by,
+      //  };
+      //  console.log("This api_url: ", this.api_url);
+      //  console.log("This book to PUT: ", this.book);
+      //  const result = await axios.put(
+      //      this.api_url + 
+      //      this.$route.params.id,
+      //    {
+      //      title: this.book.title,
+      //      author: this.book.author,
+      //      date_written: this.book.date_written,
+      //      date_read: this.book.date_read,
+      //      url_to_review: this.book.url_to_review,
+      //      notes: this.book.notes,
+      //    }
+      //  );
+      //  if (result.status >= 200) {
+      //    alert("Book has been updated");
+      //    this.$router.push({ name: "BookDetails", params: { id: book.id } });
+      //  } else {
+      //    alert("Update Error Code ", result.status);
+      //    console.log("ERROR Result Status: ", result.status);
+      //  }
+      //}
     },
   },
 };
