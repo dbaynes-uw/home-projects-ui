@@ -32,7 +32,7 @@
           rounded
           class="my-2"
         >
-          <router-link :to="{ name: `${link.label}` }">
+          <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
             {{ link.title }}
           </router-link>
         </v-btn>

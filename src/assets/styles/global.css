@@ -12,10 +12,14 @@ body {
   border-style: groove;
   border-color: lightgray;
 }
+/* old:
 a:visited {
   color: #2c3e50;
 }
-
+*/
+a:visited {
+  color: #ebebeb;
+}
 .button,
 button {
   display: flex;

@@ -1,9 +1,8 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card-text>
-    <p>GOLF INPUT ACTION : {{ this.action }}</p>
     <span v-if="this.action == 'edit'">
-      <h3>Edit Golf Round INPUT! for {{ golf.course}} on {{ formatFullYearDate(golf.date_played) }} </h3>
+      <h2 style="font-size: 1.5rem;">{{ golf.course}} on {{ formatFullYearDate(golf.date_played) }} </h2>
     </span>
     <!--v-form id="isFormValid"-->
       <v-container id="form-container">
@@ -59,10 +58,10 @@
         <br/>
         <br />
         <h3>Totals</h3>
-        <h3>Par: {{ calculateTotalPar() }} </h3>
-        <h3>Score: {{ calculateTotalScore() }} </h3>
-        <h3>Putts: {{ calculateTotalPutts() }} </h3>
-        <h3>Penalty: {{ calculateTotalPenalty() }} </h3>
+        <h3>Par: {{ calculateTotalPar(golf) }} </h3>
+        <h3>Score: {{ calculateTotalScore(golf) }} </h3>
+        <h3>Putts: {{ calculateTotalPutts(golf) }} </h3>
+        <h3>Penalty: {{ calculateTotalPenalty(golf) }} </h3>
         <br/>
         <br />
         <h3>Front 9</h3>
@@ -77,8 +76,8 @@
           <label class="g-label">8</label>
           <label class="g-label">9</label>
         </div>
-        <h3>Par: {{ calculateFrontPar() }}</h3>
-        <div class="g-container" @change="calculateFrontPar()">
+        <h3>Par: {{ calculateFrontPar(golf) }}</h3>
+        <div class="g-container" @change="calculateFrontPar(golf)">
           <input type="number" v-model="golf.par_1_hole" id="par_1_hole" class="width-9"  />
           <input type="number" v-model="golf.par_2_hole" id="par_2_hole" class="width-9"  />
           <input type="number" v-model="golf.par_3_hole" id="par_3_hole" class="width-9"  />
@@ -89,7 +88,7 @@
           <input type="number" v-model="golf.par_8_hole" id="par_8_hole" class="width-9"  />
           <input type="number" v-model="golf.par_9_hole" id="par_9_hole" class="width-9"  />
         </div>
-        <h3>Score: {{ calculateFrontScore() }}</h3>
+        <h3>Score: {{ calculateFrontScore(golf) }}</h3>
         <div class="g-container" @change="calculateFrontScore()">
           <input type="number" v-model="golf.score_1_hole" id="score_1_hole" class="width-9" />
           <input type="number" v-model="golf.score_2_hole" id="score_2_hole" class="width-9" />
@@ -101,8 +100,8 @@
           <input type="number" v-model="golf.score_8_hole" id="score_8_hole" class="width-9" />
           <input type="number" v-model="golf.score_9_hole" id="score_9_hole" class="width-9" />
         </div>
-        <h3>Putts {{ calculateFrontPutts() }}</h3>
-        <div class="g-container" @change="calculateFrontPutts()">
+        <h3>Putts {{ calculateFrontPutts(golf) }}</h3>
+        <div class="g-container" @change="calculateFrontPutts(golf)">
           <input type="number" v-model="golf.putts_1_hole" id="putts_1_hole" class="width-9" />
           <input type="number" v-model="golf.putts_2_hole" id="putts_2_hole" class="width-9" />
           <input type="number" v-model="golf.putts_3_hole" id="putts_3_hole" class="width-9" />
@@ -113,8 +112,8 @@
           <input type="number" v-model="golf.putts_8_hole" id="putts_8_hole" class="width-9" />
           <input type="number" v-model="golf.putts_9_hole" id="putts_9_hole" class="width-9" />
         </div>
-        <h3>Penalties {{ calculateFrontPenalty() }}</h3>
-        <div class="g-container" @change="calculateFrontPenalty()">
+        <h3>Penalties {{ calculateFrontPenalty(golf) }}</h3>
+        <div class="g-container" @change="calculateFrontPenalty(golf)">
           <input type="number" v-model="golf.penalty_1_hole" id="penalty_1_hole" class="width-9" />
           <input type="number" v-model="golf.penalty_2_hole" id="penalty_2_hole" class="width-9" />
           <input type="number" v-model="golf.penalty_3_hole" id="penalty_3_hole" class="width-9" />
@@ -137,8 +136,8 @@
           <label class="g-label">17</label>
           <label class="g-label">18</label>
         </div>
-        <h3>Par: {{ calculateBackPar() }}</h3>
-        <div class="g-container" @change="calculateBackPar()">
+        <h3>Par: {{ calculateBackPar(golf)}}</h3>
+        <div class="g-container" @change="calculateBackPar(golf)">
           <input type="number" v-model="golf.par_10_hole" id="score_10_hole" class="width-9" />
           <input type="number" v-model="golf.par_11_hole" id="score_11_hole" class="width-9" />
           <input type="number" v-model="golf.par_12_hole" id="score_12_hole" class="width-9" />
@@ -149,8 +148,8 @@
           <input type="number" v-model="golf.par_17_hole" id="score_17_hole" class="width-9" />
           <input type="number" v-model="golf.par_18_hole" id="score_18_hole" class="width-9" />
         </div>
-        <h3>Score: {{ calculateBackScore() }}</h3>
-        <div class="g-container" @change="calculateBackScore()">
+        <h3>Score: {{ calculateBackScore(golf) }}</h3>
+        <div class="g-container" @change="calculateBackScore(golf)">
           <input type="number" v-model="golf.score_10_hole" id="score_10_hole" class="width-9" />
           <input type="number" v-model="golf.score_11_hole" id="score_11_hole" class="width-9" />
           <input type="number" v-model="golf.score_12_hole" id="score_12_hole" class="width-9" />
@@ -161,8 +160,8 @@
           <input type="number" v-model="golf.score_17_hole" id="score_17_hole" class="width-9" />
           <input type="number" v-model="golf.score_18_hole" id="score_18_hole" class="width-9" />
         </div>
-        <h3>Putts: {{ calculateBackPutts() }}</h3>
-        <div class="g-container" @change="calculateBackPutts()">
+        <h3>Putts: {{ calculateBackPutts(golf) }}</h3>
+        <div class="g-container" @change="calculateBackPutts(golf)">
           <input type="number" v-model="golf.putts_10_hole" id="score_10_hole" class="width-9" />
           <input type="number" v-model="golf.putts_11_hole" id="score_11_hole" class="width-9" />
           <input type="number" v-model="golf.putts_12_hole" id="score_12_hole" class="width-9" />
@@ -173,8 +172,8 @@
           <input type="number" v-model="golf.putts_17_hole" id="score_17_hole" class="width-9" />
           <input type="number" v-model="golf.putts_18_hole" id="score_18_hole" class="width-9" />
         </div>
-        <h3>Penalties: {{ calculateBackPenalty() }}</h3>
-        <div class="g-container" @change="calculateBackPenalty()">
+        <h3>Penalties: {{ calculateBackPenalty(golf) }}</h3>
+        <div class="g-container" @change="calculateBackPenalty(golf)">
           <input type="number" v-model="golf.penalty_10_hole" id="penalty_10_hole" class="width-9" />
           <input type="number" v-model="golf.penalty_11_hole" id="penalty_11_hole" class="width-9" />
           <input type="number" v-model="golf.penalty_12_hole" id="penalty_12_hole" class="width-9" />
@@ -195,7 +194,6 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
-        ACTION@@@@@: {{ this.action }}
         <span v-if="(this.action == 'edit')">
           <v-btn type="submit" block class="mt-2" @click="updateGolf">Update</v-btn>
         </span>
@@ -207,11 +205,11 @@
   </v-card-text>
 </template>
 <script>
-//import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import GolfCalculations from "@/components/golfs/GolfCalculations.js";
 export default {
   components: {
     ConfirmDialogue
@@ -221,7 +219,7 @@ export default {
   async mounted() {
     console.log("PATHNAME: ", window.location.pathname)
     if (window.location.pathname.includes("/create")) {
-      this.action == "create"
+      this.action = "create"
     } else {
       this.action = "edit"
       var work_url = ""
@@ -237,19 +235,6 @@ export default {
       const result = await axios.get(this.api_url + +this.$route.params.id);
       console.log("Result.Data: ", result.data)
       this.golf = result.data;
-      
-      this.calculateFrontPar()
-      this.calculateBackPar()
-      this.calculateTotalPar()
-      this.calculateFrontScore()
-      this.calculateBackScore()
-      this.calculateTotalScore()
-      this.calculateFrontPutts()
-      this.calculateBackPutts()
-      this.calculateTotalPutts()
-      this.calculateFrontPenalty()
-      this.calculateBackPenalty()
-      this.calculateTotalPenalty()
     }
   },
   data() {
@@ -338,18 +323,6 @@ export default {
       },
       action: "",
       tees_played: ["Black", "Blue", "Red", "White"],
-      front_par: 0,
-      front_score: 0,
-      front_putts: 0,
-      front_penalty: 0,
-      back_par: 0,
-      back_score: 0,
-      back_putts: 0,
-      back_penalty: 0,
-      total_par: 0,
-      total_score: 0,
-      total_putts: 0,
-      total_penalty: 0,
       toggle1: false,
       toggle2: false,
       toggle3: false,
@@ -360,10 +333,7 @@ export default {
       num: 1,
     };
   },
-  methods: {   
-    formatFullYearDate(value) {
-    return DateFormatService.formatFullYearDate(value);
-  },                       
+  methods: {                     
     onSubmit() {
       //this.checkValidations();
       this.isFormValid = true
@@ -496,7 +466,6 @@ export default {
         }
       }
     },
-
     requiredCourse: function (value) {
       console.log("requiredCourse: - this.isCourseValid: ", this.isCourseValid)
       console.log("VALUE: ", value)
@@ -536,116 +505,51 @@ export default {
       console.log("checkValidations Exit - this.isCourseLocationValid: ", this.isCourseLocationValid)
 
     },
-    calculateFrontPar() {
-      this.front_par = 0
-      return this.front_par = this.golf.par_1_hole + 
-                              this.golf.par_2_hole +
-                              this.golf.par_3_hole +
-                              this.golf.par_4_hole +
-                              this.golf.par_5_hole +
-                              this.golf.par_6_hole +
-                              this.golf.par_7_hole +
-                              this.golf.par_8_hole +
-                              this.golf.par_9_hole 
+    calculateFrontPar(golf) {
+      return GolfCalculations.calculateFrontPar(golf)
     },
-    calculateBackPar() {
-      this.back_par = 0
-      return this.back_par = this.golf.par_10_hole +
-                             this.golf.par_11_hole +
-                             this.golf.par_12_hole +
-                             this.golf.par_13_hole +
-                             this.golf.par_14_hole +
-                             this.golf.par_15_hole +
-                             this.golf.par_16_hole +
-                             this.golf.par_17_hole +
-                             this.golf.par_18_hole 
+    calculateBackPar(golf) {
+      return GolfCalculations.calculateBackPar(golf)
     },
-    calculateTotalPar() {
-      return this.total_par = this.front_par + this.back_par
+    calculateTotalPar(golf) {
+      return GolfCalculations.calculateTotalPar(golf)
     },
-    calculateFrontScore() {
-      this.front_score = 0
-      return this.front_score = this.golf.score_1_hole + 
-                                this.golf.score_2_hole +
-                                this.golf.score_3_hole +
-                                this.golf.score_4_hole +
-                                this.golf.score_5_hole +
-                                this.golf.score_6_hole +
-                                this.golf.score_7_hole +
-                                this.golf.score_8_hole +
-                                this.golf.score_9_hole 
+    calculateFrontScore(golf) {
+      return GolfCalculations.calculateFrontScore(golf)
     },
-    calculateBackScore() {
-      this.back_score = 0
-      return this.back_score = this.golf.score_10_hole + 
-                               this.golf.score_11_hole +
-                               this.golf.score_12_hole +
-                               this.golf.score_13_hole +
-                               this.golf.score_14_hole +
-                               this.golf.score_15_hole +
-                               this.golf.score_16_hole +
-                               this.golf.score_17_hole +
-                               this.golf.score_18_hole 
+    calculateBackScore(golf) {
+      return GolfCalculations.calculateBackScore(golf)
     },
-    calculateTotalScore() {
-      return this.total_score = this.front_score + this.back_score
+    calculateTotalScore(golf) {
+      return GolfCalculations.calculateTotalScore(golf)
     },
-
-    calculateFrontPutts() {
-      this.front_putts = 0
-      return this.front_putts = this.golf.putts_1_hole + 
-                                this.golf.putts_2_hole +
-                                this.golf.putts_3_hole +
-                                this.golf.putts_4_hole +
-                                this.golf.putts_5_hole +
-                                this.golf.putts_6_hole +
-                                this.golf.putts_7_hole +
-                                this.golf.putts_8_hole +
-                                this.golf.putts_9_hole 
+    calculateFrontPutts(golf) {
+      return GolfCalculations.calculateFrontPutts(golf)
     },
-    calculateBackPutts() {
-      this.back_putts = 0
-      return this.back_putts = this.golf.putts_10_hole +
-                               this.golf.putts_11_hole +
-                               this.golf.putts_12_hole +
-                               this.golf.putts_13_hole +
-                               this.golf.putts_14_hole +
-                               this.golf.putts_15_hole +
-                               this.golf.putts_16_hole +
-                               this.golf.putts_17_hole +
-                               this.golf.putts_18_hole 
+    calculateBackPutts(golf) {
+      return GolfCalculations.calculateBackPutts(golf)
     },
-    calculateTotalPutts() {
-      return this.total_putts = this.front_putts + this.back_putts
+    calculateTotalPutts(golf) {
+      return GolfCalculations.calculateTotalPutts(golf)
     },
-    calculateFrontPenalty() {
-      this.front_penalty = 0
-      return this.front_penalty = this.golf.penalty_1_hole + 
-                                       this.golf.penalty_2_hole +
-                                       this.golf.penalty_3_hole +
-                                       this.golf.penalty_4_hole +
-                                       this.golf.penalty_5_hole +
-                                       this.golf.penalty_6_hole +
-                                       this.golf.penalty_7_hole +
-                                       this.golf.penalty_8_hole +
-                                       this.golf.penalty_9_hole 
+    calculateFrontPenalty(golf) {
+      return GolfCalculations.calculateFrontPenalty(golf)
     },
-    calculateBackPenalty() {
-      this.back_penalty = 0
-      return this.back_penalty = this.golf.penalty_10_hole +
-                                 this.golf.penalty_11_hole + 
-                                 this.golf.penalty_12_hole +
-                                 this.golf.penalty_13_hole +
-                                 this.golf.penalty_14_hole +
-                                 this.golf.penalty_15_hole +
-                                 this.golf.penalty_16_hole +
-                                 this.golf.penalty_17_hole +
-                                 this.golf.penalty_18_hole 
+    calculateBackPenalty(golf) {
+      return GolfCalculations.calculateBackPenalty(golf)
     },
-    calculateTotalPenalty() {
-      this.total_penalty = 0
-      return this.total_penalty = this.front_penalty + this.back_penalty
-    },         
+    calculateTotalPenalty(golf) {
+      return GolfCalculations.calculateTotalPenalty(golf)
+    },
+    formatFullYearDate(value) {
+      return DateFormatService.formatFullYearDate(value);
+    },
+    capitalized(name) {
+      const capitalizedFirst = name.toUpperCase();
+      const  rest = name.slice(1);
+      return capitalizedFirst[0] + rest;
+      //WORKS for ALL CAPS: return name.toUpperCase();
+    }             
   },
   //golf() {
   //  return this.$store.state.golf;

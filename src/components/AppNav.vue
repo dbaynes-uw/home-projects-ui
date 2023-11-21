@@ -28,6 +28,7 @@
           :key="`${link.label}-header-link`"
           text
           rounded
+          class="test"
         >
           <router-link :to="{ name: `${link.label}` }">
             {{ link.title }}
@@ -143,9 +144,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-a:visited {
-  color: #ebebeb;
-}
+
 #nav {
   display: flex;
   align-items: center;

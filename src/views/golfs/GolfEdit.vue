@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Edit Golf Round INPUT! for {{ golf.course}} </h3>
+      <h3>Edit Golf Round  </h3>
     </v-card-title>
   </v-card>    
     <!--form class="add-form" @submit.prevent="updateBook"-->

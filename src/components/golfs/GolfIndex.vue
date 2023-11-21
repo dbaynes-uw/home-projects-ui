@@ -21,9 +21,8 @@
       <td>{{ result.course }}</td>
       <td class="td-center" >{{ result.tees_played }}</td>
       <td class="td-center" >{{ formatFullYearDate(result.date_played) }}</td>
-      <td class="td-center" >{{ result.par_1_hole + 
-                                result.par_2_hole }}</td>
-      <td class="td-center" >{{ result.total_score }}</td>
+      <td class="td-center" >{{ calculateTotalPar(result)}}</td>
+      <td class="td-center" >{{ calculateTotalScore(result)}}</td>
       <td class="td-center" >
         <a :href="result.url_to_course" target="_blank">Review</a>
       </td>
@@ -74,6 +73,8 @@
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import GolfCalculations from "@/components/golfs/GolfCalculations.js";
+
 export default {
   name: "GolfIndex",
   props: ["golfs"],
@@ -158,6 +159,12 @@ export default {
     formatFullYearDate(value) {
       return DateFormatService.formatFullYearDate(value);
     },
+    calculateTotalPar(golf) {
+      return GolfCalculations.calculateTotalPar(golf)
+    },
+    calculateTotalScore(golf) {
+      return GolfCalculations.calculateTotalScore(golf)
+    }
   },
 };
 </script>
