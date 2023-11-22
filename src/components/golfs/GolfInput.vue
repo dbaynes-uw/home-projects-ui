@@ -78,27 +78,27 @@
         </div>
         <h3>Par: {{ calculateFrontPar(golf) }}</h3>
         <div class="g-container" @change="calculateFrontPar(golf)">
-          <input type="number" v-model="golf.par_1_hole" id="par_1_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_2_hole" id="par_2_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_3_hole" id="par_3_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_4_hole" id="par_4_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_5_hole" id="par_5_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_6_hole" id="par_6_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_7_hole" id="par_7_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_8_hole" id="par_8_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_9_hole" id="par_9_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_1_hole > 5) { golf.par_1_hole= 0 }}" v-model="golf.par_1_hole" id="par_1_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_2_hole > 5) { golf.par_2_hole= 0 }}" v-model="golf.par_2_hole" id="par_2_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_3_hole > 5) { golf.par_3_hole= 0 }}" v-model="golf.par_3_hole" id="par_3_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_4_hole > 5) { golf.par_4_hole= 0 }}" v-model="golf.par_4_hole" id="par_4_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_5_hole > 5) { golf.par_5_hole= 0 }}" v-model="golf.par_5_hole" id="par_5_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_6_hole > 5) { golf.par_6_hole= 0 }}" v-model="golf.par_6_hole" id="par_6_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_7_hole > 5) { golf.par_7_hole= 0 }}" v-model="golf.par_7_hole" id="par_7_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_8_hole > 5) { golf.par_8_hole= 0 }}" v-model="golf.par_8_hole" id="par_8_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.par_9_hole > 5) { golf.par_9_hole= 0 }}" v-model="golf.par_9_hole" id="par_9_hole" class="width-9"  />
         </div>
         <h3>Score: {{ calculateFrontScore(golf) }}</h3>
-        <div class="g-container" @change="calculateFrontScore()">
-          <input type="number" v-model="golf.score_1_hole" id="score_1_hole" class="width-9" />
-          <input type="number" v-model="golf.score_2_hole" id="score_2_hole" class="width-9" />
-          <input type="number" v-model="golf.score_3_hole" id="score_3_hole" class="width-9" />
-          <input type="number" v-model="golf.score_4_hole" id="score_4_hole" class="width-9" />
-          <input type="number" v-model="golf.score_5_hole" id="score_5_hole" class="width-9" />
-          <input type="number" v-model="golf.score_6_hole" id="score_6_hole" class="width-9" />
-          <input type="number" v-model="golf.score_7_hole" id="score_7_hole" class="width-9" />
-          <input type="number" v-model="golf.score_8_hole" id="score_8_hole" class="width-9" />
-          <input type="number" v-model="golf.score_9_hole" id="score_9_hole" class="width-9" />
+        <div class="g-container" @change="calculateFrontScore(golf)">
+          <input type="number" @input="() => { if(golf.score_1_hole > 8) { golf.score_1_hole= 0 }}" v-model="golf.score_1_hole" id="par_1_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_2_hole > 8) { golf.score_2_hole= 0 }}" v-model="golf.score_2_hole" id="par_2_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_3_hole > 8) { golf.score_3_hole= 0 }}" v-model="golf.score_3_hole" id="par_3_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_4_hole > 8) { golf.score_4_hole= 0 }}" v-model="golf.score_4_hole" id="par_4_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_5_hole > 8) { golf.score_5_hole= 0 }}" v-model="golf.score_5_hole" id="par_5_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_6_hole > 8) { golf.score_6_hole= 0 }}" v-model="golf.score_6_hole" id="par_6_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_7_hole > 8) { golf.score_7_hole= 0 }}" v-model="golf.score_7_hole" id="par_7_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_8_hole > 8) { golf.score_8_hole= 0 }}" v-model="golf.score_8_hole" id="par_8_hole" class="width-9"  />
+          <input type="number" @input="() => { if(golf.score_9_hole > 8) { golf.score_9_hole= 0 }}" v-model="golf.score_9_hole" id="par_9_hole" class="width-9"  />
         </div>
         <h3>Putts {{ calculateFrontPutts(golf) }}</h3>
         <div class="g-container" @change="calculateFrontPutts(golf)">
@@ -354,7 +354,6 @@ export default {
       }
     },
     async updateGolf() {
-      alert("UPDATE!!!!")
       console.log("UPDATE: ", this.golf.course)
       const ok = await this.$refs.confirmDialogue.show({
         title: "Update Golf from List",
@@ -458,8 +457,8 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Golf has been updated");
-          this.$router.push({ name: "GolfDetails", params: { id: golf.id } });
+          alert("Golf has been updated!!");
+          this.$router.push({ name: "GolfEdit", params: { id: golf.id } });
         } else {
           alert("Update Error Code ", result.status);
           console.log("ERROR Result Status: ", result.status);
@@ -557,6 +556,9 @@ export default {
 };
 </script>
 <style lang="css">
+ input[type=number]::-webkit-outer-spin-button {
+     -webkit-appearance: none;
+ }
 .g-container {
   display: grid;
   grid-template-columns: repeat(9, 1fr);

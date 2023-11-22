@@ -39,7 +39,6 @@
 <script>
 import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import { ErrorTypes } from 'vue-router';
 export default {
   props: ["id"],
   components: {
@@ -87,7 +86,7 @@ export default {
         });
       } catch (error) {
         console.log("ERROR: ", error)
-        alert("ERROR: ", ErrorTypes)
+        alert("ERROR: ", error)
       }
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       //if (ok) {
