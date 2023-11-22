@@ -556,9 +556,11 @@ export default {
 };
 </script>
 <style lang="css">
- input[type=number]::-webkit-outer-spin-button {
-     -webkit-appearance: none;
- }
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .g-container {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
