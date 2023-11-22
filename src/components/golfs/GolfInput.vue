@@ -76,7 +76,7 @@
           <label class="g-label">8</label>
           <label class="g-label">9</label>
         </div>
-        <h3>Par: {{ calculateFrontPar(golf) }}</h3>
+        <h3>Par:: {{ calculateFrontPar(golf) }}</h3>
         <div class="g-container" @change="calculateFrontPar(golf)">
           <input type="number" @input="() => { if(golf.par_1_hole > 5) { golf.par_1_hole= 0 }}" v-model="golf.par_1_hole" id="par_1_hole" class="width-9"  />
           <input type="number" @input="() => { if(golf.par_2_hole > 5) { golf.par_2_hole= 0 }}" v-model="golf.par_2_hole" id="par_2_hole" class="width-9"  />
