@@ -394,7 +394,7 @@ export default new Vuex.Store({
       EventService.postGolf(golf)
         .then(() => {
           commit("ADD_GOLF", golf);
-          alert("Golf was successfully added for " + golf.title);
+          alert("Golf was successfully added for " + golf.course);
         })
         .catch((error) => {
           alert("Error in postGolf of createGolf Action (index.js)");

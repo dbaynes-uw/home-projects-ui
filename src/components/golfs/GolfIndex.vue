@@ -126,9 +126,6 @@ export default {
     },
     sortList(sortBy) {
       this.sortedData = this.golfs;
-      console.log("SORTLIST - sortedData: ", this.sortedData);
-      console.log("SORTLIST: ", sortBy);
-      console.log("SORTLIST - sortedbyASC: ", this.sortedbyASC);
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;
@@ -157,7 +154,7 @@ export default {
       }
     },
     formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+      return DateFormatService.formatYearDate(value);
     },
     calculateTotalPar(golf) {
       return GolfCalculations.calculateTotalPar(golf)

@@ -58,7 +58,7 @@
         <br/>
         <br />
         <h3>Totals</h3>
-        <h3>Par: {{ calculateTotalPar(golf) }} </h3>
+        <h3>Par: {{ calculateTotalPar(golf) }}</h3>
         <h3>Score: {{ calculateTotalScore(golf) }} </h3>
         <h3>Putts: {{ calculateTotalPutts(golf) }} </h3>
         <h3>Penalty: {{ calculateTotalPenalty(golf) }} </h3>
@@ -102,27 +102,27 @@
         </div>
         <h3>Putts {{ calculateFrontPutts(golf) }}</h3>
         <div class="g-container" @change="calculateFrontPutts(golf)">
-          <input type="number" v-model="golf.putts_1_hole" id="putts_1_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_2_hole" id="putts_2_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_3_hole" id="putts_3_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_4_hole" id="putts_4_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_5_hole" id="putts_5_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_6_hole" id="putts_6_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_7_hole" id="putts_7_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_8_hole" id="putts_8_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_9_hole" id="putts_9_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_1_hole > 4) { golf.putts_1_hole= 0 }}" v-model="golf.putts_1_hole" id="putts_1_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_2_hole > 4) { golf.putts_2_hole= 0 }}" v-model="golf.putts_2_hole" id="putts_2_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_3_hole > 4) { golf.putts_3_hole= 0 }}" v-model="golf.putts_3_hole" id="putts_3_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_4_hole > 4) { golf.putts_4_hole= 0 }}" v-model="golf.putts_4_hole" id="putts_4_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_5_hole > 4) { golf.putts_5_hole= 0 }}" v-model="golf.putts_5_hole" id="putts_5_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_6_hole > 4) { golf.putts_6_hole= 0 }}" v-model="golf.putts_6_hole" id="putts_6_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_7_hole > 4) { golf.putts_7_hole= 0 }}" v-model="golf.putts_7_hole" id="putts_7_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_8_hole > 4) { golf.putts_8_hole= 0 }}" v-model="golf.putts_8_hole" id="putts_8_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_9_hole > 4) { golf.putts_9_hole= 0 }}" v-model="golf.putts_9_hole" id="putts_9_hole" class="width-9" />
         </div>
         <h3>Penalties {{ calculateFrontPenalty(golf) }}</h3>
         <div class="g-container" @change="calculateFrontPenalty(golf)">
-          <input type="number" v-model="golf.penalty_1_hole" id="penalty_1_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_2_hole" id="penalty_2_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_3_hole" id="penalty_3_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_4_hole" id="penalty_4_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_5_hole" id="penalty_5_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_6_hole" id="penalty_6_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_7_hole" id="penalty_7_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_8_hole" id="penalty_8_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_9_hole" id="penalty_9_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_1_hole > 4) { golf.penalty_1_hole= 0 }}" v-model="golf.penalty_1_hole" id="penalty_1_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_2_hole > 4) { golf.penalty_2_hole= 0 }}" v-model="golf.penalty_2_hole" id="penalty_2_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_3_hole > 4) { golf.penalty_3_hole= 0 }}" v-model="golf.penalty_3_hole" id="penalty_3_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_4_hole > 4) { golf.penalty_4_hole= 0 }}" v-model="golf.penalty_4_hole" id="penalty_4_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_5_hole > 4) { golf.penalty_5_hole= 0 }}" v-model="golf.penalty_5_hole" id="penalty_5_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_6_hole > 4) { golf.penalty_6_hole= 0 }}" v-model="golf.penalty_6_hole" id="penalty_6_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_7_hole > 4) { golf.penalty_7_hole= 0 }}" v-model="golf.penalty_7_hole" id="penalty_7_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_8_hole > 4) { golf.penalty_8_hole= 0 }}" v-model="golf.penalty_8_hole" id="penalty_8_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_9_hole > 4) { golf.penalty_9_hole= 0 }}" v-model="golf.penalty_9_hole" id="penalty_9_hole" class="width-9" />
         </div>
         <h3>Back 9</h3>
         <div class="g-container">
@@ -138,51 +138,51 @@
         </div>
         <h3>Par: {{ calculateBackPar(golf)}}</h3>
         <div class="g-container" @change="calculateBackPar(golf)">
-          <input type="number" v-model="golf.par_10_hole" id="score_10_hole" class="width-9" />
-          <input type="number" v-model="golf.par_11_hole" id="score_11_hole" class="width-9" />
-          <input type="number" v-model="golf.par_12_hole" id="score_12_hole" class="width-9" />
-          <input type="number" v-model="golf.par_13_hole" id="score_13_hole" class="width-9" />
-          <input type="number" v-model="golf.par_14_hole" id="score_14_hole" class="width-9" />
-          <input type="number" v-model="golf.par_15_hole" id="score_15_hole" class="width-9" />
-          <input type="number" v-model="golf.par_16_hole" id="score_16_hole" class="width-9" />
-          <input type="number" v-model="golf.par_17_hole" id="score_17_hole" class="width-9" />
-          <input type="number" v-model="golf.par_18_hole" id="score_18_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_10_hole > 5) { golf.par_10_hole= 0 }}" v-model="golf.par_10_hole" id="par_10_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_11_hole > 5) { golf.par_11_hole= 0 }}" v-model="golf.par_11_hole" id="par_11_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_12_hole > 5) { golf.par_12_hole= 0 }}" v-model="golf.par_12_hole" id="par_12_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_13_hole > 5) { golf.par_13_hole= 0 }}" v-model="golf.par_13_hole" id="par_13_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_14_hole > 5) { golf.par_14_hole= 0 }}" v-model="golf.par_14_hole" id="par_14_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_15_hole > 5) { golf.par_15_hole= 0 }}" v-model="golf.par_15_hole" id="par_15_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_16_hole > 5) { golf.par_16_hole= 0 }}" v-model="golf.par_16_hole" id="par_16_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_17_hole > 5) { golf.par_17_hole= 0 }}" v-model="golf.par_17_hole" id="par_17_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.par_18_hole > 5) { golf.par_18_hole= 0 }}" v-model="golf.par_18_hole" id="par_18_hole" class="width-9" />
         </div>
         <h3>Score: {{ calculateBackScore(golf) }}</h3>
         <div class="g-container" @change="calculateBackScore(golf)">
-          <input type="number" v-model="golf.score_10_hole" id="score_10_hole" class="width-9" />
-          <input type="number" v-model="golf.score_11_hole" id="score_11_hole" class="width-9" />
-          <input type="number" v-model="golf.score_12_hole" id="score_12_hole" class="width-9" />
-          <input type="number" v-model="golf.score_13_hole" id="score_13_hole" class="width-9" />
-          <input type="number" v-model="golf.score_14_hole" id="score_14_hole" class="width-9" />
-          <input type="number" v-model="golf.score_15_hole" id="score_15_hole" class="width-9" />
-          <input type="number" v-model="golf.score_16_hole" id="score_16_hole" class="width-9" />
-          <input type="number" v-model="golf.score_17_hole" id="score_17_hole" class="width-9" />
-          <input type="number" v-model="golf.score_18_hole" id="score_18_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_10_hole > 8) { golf.score_10_hole= 0 }}" v-model="golf.score_10_hole" id="score_10_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_11_hole > 8) { golf.score_11_hole= 0 }}" v-model="golf.score_11_hole" id="score_11_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_12_hole > 8) { golf.score_12_hole= 0 }}" v-model="golf.score_12_hole" id="score_12_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_13_hole > 8) { golf.score_13_hole= 0 }}" v-model="golf.score_13_hole" id="score_13_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_14_hole > 8) { golf.score_14_hole= 0 }}" v-model="golf.score_14_hole" id="score_14_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_15_hole > 8) { golf.score_15_hole= 0 }}" v-model="golf.score_15_hole" id="score_15_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_16_hole > 8) { golf.score_16_hole= 0 }}" v-model="golf.score_16_hole" id="score_16_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_17_hole > 8) { golf.score_17_hole= 0 }}" v-model="golf.score_17_hole" id="score_17_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.score_18_hole > 8) { golf.score_18_hole= 0 }}" v-model="golf.score_18_hole" id="score_18_hole" class="width-9" />
         </div>
         <h3>Putts: {{ calculateBackPutts(golf) }}</h3>
         <div class="g-container" @change="calculateBackPutts(golf)">
-          <input type="number" v-model="golf.putts_10_hole" id="score_10_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_11_hole" id="score_11_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_12_hole" id="score_12_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_13_hole" id="score_13_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_14_hole" id="score_14_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_15_hole" id="score_15_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_16_hole" id="score_16_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_17_hole" id="score_17_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_18_hole" id="score_18_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_10_hole > 4) { golf.putts_10_hole= 0 }}" v-model="golf.putts_10_hole" id="score_10_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_11_hole > 4) { golf.putts_11_hole= 0 }}" v-model="golf.putts_11_hole" id="score_11_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_12_hole > 4) { golf.putts_12_hole= 0 }}" v-model="golf.putts_12_hole" id="score_12_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_13_hole > 4) { golf.putts_13_hole= 0 }}" v-model="golf.putts_13_hole" id="score_13_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_14_hole > 4) { golf.putts_14_hole= 0 }}" v-model="golf.putts_14_hole" id="score_14_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_15_hole > 4) { golf.putts_15_hole= 0 }}" v-model="golf.putts_15_hole" id="score_15_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_16_hole > 4) { golf.putts_16_hole= 0 }}" v-model="golf.putts_16_hole" id="score_16_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_17_hole > 4) { golf.putts_17_hole= 0 }}" v-model="golf.putts_17_hole" id="score_17_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.putts_18_hole > 4) { golf.putts_18_hole= 0 }}" v-model="golf.putts_18_hole" id="score_18_hole" class="width-9" />
         </div>
         <h3>Penalties: {{ calculateBackPenalty(golf) }}</h3>
         <div class="g-container" @change="calculateBackPenalty(golf)">
-          <input type="number" v-model="golf.penalty_10_hole" id="penalty_10_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_11_hole" id="penalty_11_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_12_hole" id="penalty_12_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_13_hole" id="penalty_13_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_14_hole" id="penalty_14_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_15_hole" id="penalty_15_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_16_hole" id="penalty_16_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_17_hole" id="penalty_17_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_18_hole" id="penalty_18_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_10_hole > 4) { golf.penalty_10_hole= 0 }}" v-model="golf.penalty_10_hole" id="penalty_10_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_11_hole > 4) { golf.penalty_11_hole= 0 }}" v-model="golf.penalty_11_hole" id="penalty_11_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_12_hole > 4) { golf.penalty_12_hole= 0 }}" v-model="golf.penalty_12_hole" id="penalty_12_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_13_hole > 4) { golf.penalty_13_hole= 0 }}" v-model="golf.penalty_13_hole" id="penalty_13_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_14_hole > 4) { golf.penalty_14_hole= 0 }}" v-model="golf.penalty_14_hole" id="penalty_14_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_15_hole > 4) { golf.penalty_15_hole= 0 }}" v-model="golf.penalty_15_hole" id="penalty_15_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_16_hole > 4) { golf.penalty_16_hole= 0 }}" v-model="golf.penalty_16_hole" id="penalty_16_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_17_hole > 4) { golf.penalty_17_hole= 0 }}" v-model="golf.penalty_17_hole" id="penalty_17_hole" class="width-9" />
+          <input type="number" @input="() => { if(golf.penalty_18_hole > 4) { golf.penalty_18_hole= 0 }}" v-model="golf.penalty_18_hole" id="penalty_18_hole" class="width-9" />
         </div>        
         <v-text-field label="Players" v-model="golf.players">
           <template v-slot:prepend-inner>
@@ -556,6 +556,7 @@ export default {
 };
 </script>
 <style lang="css">
+/*below to remove increment/decrement arrows for type=number*/
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
