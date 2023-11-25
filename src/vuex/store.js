@@ -156,7 +156,7 @@ export default new Vuex.Store({
         api_authenticate_url = "//localhost:3000/api/v1/users/";
       } else {
         api_authenticate_url =
-          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
+          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/";
       }
       this.message = null
       if ( credentials.email.toLowerCase().includes('baynes')) {
