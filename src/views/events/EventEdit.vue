@@ -115,7 +115,7 @@ export default {
         frequency: "",
         completed: "",
         notes: "",
-        updated_by: "",
+        updated_by: this.$store.state.user.resource_owner.email,
       },
     };
   },
@@ -131,11 +131,11 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        const event = {
-          ...this.event,
-          updated_by: this.$store.state.created_by,
-        };
-        console.log("This event to PUT: ", this.event);
+        //Needed? const event = {
+        //Needed?   ...this.event,
+        //Needed?   updated_by: this.$store.state.user.resource_owner.email,
+        //Needed? };
+        //console.log("This event to PUT: ", this.event);
         const result = await axios.put(
           this.api_url +
           +this.$route.params.id,
@@ -147,6 +147,7 @@ export default {
             assigned: this.event.assigned,
             frequency: this.event.frequency,
             notes: this.event.notes,
+            updated_by: this.$store.state.user.resource_owner.email,
           }
         );
         if (result.status >= 200) {

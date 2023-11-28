@@ -103,9 +103,11 @@ export default new Vuex.Store({
       state.travels = travels;
     },
     ADD_USER(state, user) {
+      console.log("ADD_USER: ", user);
       state.users.push(user);
     },
     SET_USER_DATA (state, userData) {
+      console.log("SET_USER_DATA - userData: ", userData)
       state.user = userData
       localStorage.setItem('user', JSON.stringify(userData))
       axios.defaults.headers.common['Authorization'] = `Bearer ${
@@ -150,7 +152,8 @@ export default new Vuex.Store({
   },
   actions: {
     async register ({ commit }, credentials) {
-      this.init_authentication;
+      console.log("CREDENTIALS: ", credentials)
+      //this.init_authentication;
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
         api_authenticate_url = "//localhost:3000/api/v1/users/";
@@ -164,7 +167,8 @@ export default new Vuex.Store({
         return axios
           .post(api_authenticate_url, credentials)
           .then(({ data }) => {
-            commit('SET_USER_DATA', data)
+            console.log("DATA: ", data)
+            commit('ADD_USER', data)
           })
           .catch((error) => {
             console.log(error);
@@ -183,6 +187,7 @@ export default new Vuex.Store({
       }
     },
     async login ({ commit }, credentials) {
+      console.log("LOGIN CREDS: ", credentials)
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/users/tokens/";
@@ -191,12 +196,11 @@ export default new Vuex.Store({
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
       console.log("api_authenticate_url: ", api_authenticate_url);
-      this.init_authentication;
+      //this.init_authentication;
       return axios
        .post(api_authenticate_url + "sign_in", credentials)
        .then(({ data }) => {
          commit('SET_USER_DATA', data)
-
        })
        .catch((error) => {
          console.log(error);
@@ -277,7 +281,6 @@ export default new Vuex.Store({
           // No longer needed:
           //commit("RESET_STATE", response.data);
           commit("SET_EVENTS", response.data);
-          console.log("FetchEvents response.data: ", response.data);
           return response.data;
         })
         //.catch((error) => {
@@ -668,6 +671,22 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async fetchUser({ commit, state }, id) {
+      const existingUser = state.users.find((user) => user.id === id);
+      if (existingUser) {
+        console.log("ExistingUser: ", existingUser);
+        commit("SET_USER_DATA", existingUser);
+      } else {
+        EventService.getUser(id)
+          .then((response) => {
+            commit("SET_USER_DATA", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    //Could fetch user to get username
     async fetchUsers({ commit }) {
       EventService.getUsers()
         .then((response) => {

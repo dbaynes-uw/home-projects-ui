@@ -1,6 +1,7 @@
 <template>
   <div class="div-frame">
-    <h2>Event List</h2>
+    <h2>Event Created By</h2>
+    <h3>{{ this.user.email  }}</h3>
     <!--h2 id="status-message">
       <u>Status Message: {{ this.statusMessage }}</u>
     </h2-->
@@ -97,15 +98,15 @@ export default {
       sortedData: [],
       sortedbyASC: false,
       statusMessage: "",
+      user: null,
     };
   },
-  mounted() {
-    this.sortedData = this.events;
-  },
+  mounted() {},
   created() {
     console.log("EventList created");
     this.$store.dispatch("fetchEvents");
     this.sortedData = this.events;
+    this.user = this.$store.state.user.resource_owner
   },
   computed: {    
     events() {

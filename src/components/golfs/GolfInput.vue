@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card-text>
     <span v-if="this.action == 'edit'">
-      <h2 style="font-size: 1.5rem;">{{ golf.course}} on {{ formatFullYearDate(golf.date_played) }} </h2>
+      <h2>{{ golf.course}} on {{ formatStandardDate(golf.date_played) }} </h2>
     </span>
     <!--v-form id="isFormValid"-->
       <v-container id="form-container">
@@ -319,7 +319,8 @@ export default {
         penalty_16_hole: null,
         penalty_17_hole: null,
         penalty_18_hole: null,       
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
+        updated_by: this.$store.state.user.resource_owner.email,
       },
       action: "",
       tees_played: ["Black", "Blue", "Red", "White"],
@@ -342,7 +343,7 @@ export default {
         const golf = {
           ...this.golf,
           id: uuidv4(),
-          created_by: this.$store.state.user,
+          created_by: this.$store.state.user.resource_owner.email, 
         };
         if (this.$store.dispatch("createGolf", golf)) {
           this.$router.push({ name: "GolfList" });
@@ -366,10 +367,10 @@ export default {
       if (ok) {
         const golf = {
           ...this.golf,
-          updated_by: this.$store.state.created_by,
+          updated_by: this.$store.state.user.resource_owner.email ,
         };
         console.log("This api_url: ", this.api_url);
-        console.log("This golf to PUT: ", this.golf);
+        console.log("This golf to PUT: ", golf);
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -453,7 +454,7 @@ export default {
             players: this.golf.players,
             url_to_course: this.golf.url_to_course,
             notes: this.golf.notes,
-            created_by: "dbaynes", 
+            updated_by: this.$store.state.user.resource_owner.email, 
           }
         );
         if (result.status >= 200) {
@@ -540,8 +541,8 @@ export default {
     calculateTotalPenalty(golf) {
       return GolfCalculations.calculateTotalPenalty(golf)
     },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
     capitalized(name) {
       const capitalizedFirst = name.toUpperCase();

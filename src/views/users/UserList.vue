@@ -3,7 +3,7 @@
   <div>
     <h2>Users</h2>
     <!--h3>Message: {{ this.message }}</h3-->
-    <h2>Current User: {{ this.$store.state.user.resource_owner.email }}</h2>
+    <p>Current User: {{ this.$store.state.user.resource_owner.email }}</p>
     <h3>Count: {{ users.length }}</h3>
     <h3><u>User must register to be added</u></h3>
     <br />

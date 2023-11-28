@@ -3,6 +3,8 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h3>Edit Golf Round  </h3>
+      <h2>Current User: {{ this.$store.state.user.resource_owner.id}}</h2>
+      <!--p>Current User: {{ this.user}}</p-->
     </v-card-title>
   </v-card>    
     <!--form class="add-form" @submit.prevent="updateBook"-->
@@ -20,7 +22,9 @@ export default {
     GolfInput,
     ConfirmDialogue,
   },
-
+  created() {
+    //this.user = this.$store.dispatch("fetchUser", this.$store.state.user.resource_owner.id);
+  },
   data() {
     return {
       golf: {
@@ -105,6 +109,7 @@ export default {
         penalty_18_hole: null,       
         created_by: "dbaynes",
       },
+      user: null,
       tees_played: ["Black", "Blue", "Red", "White"],
       front_nine_par: 0,
       front_nine_score: 0,
