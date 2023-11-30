@@ -220,7 +220,7 @@ export default new Vuex.Store({
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
       } else {
         api_authenticate_url =
-          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/password_resets/";
+          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/password_resets";
       }
       console.log("api_authenticate_url: ", api_authenticate_url);
       //this.init_authentication;
