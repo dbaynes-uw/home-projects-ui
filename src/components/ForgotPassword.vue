@@ -32,7 +32,6 @@ import { required, email } from '@vuelidate/validators';
 import { reactive, computed } from 'vue';
 export default {
   setup () {
-    console.log("FORGOT!!!!!!!!!!")
     const state = reactive({
       email: '',
     })
@@ -59,7 +58,6 @@ export default {
   },
   methods: {
     handleSubmitForgot () {
-      console.log("Forgot PW!!!");
       this.$store
       .dispatch('forgotPassword', {
         email: this.state.email,
