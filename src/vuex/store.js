@@ -103,11 +103,9 @@ export default new Vuex.Store({
       state.travels = travels;
     },
     ADD_USER(state, user) {
-      console.log("ADD_USER: ", user);
       state.users.push(user);
     },
     SET_USER_DATA (state, userData) {
-      console.log("SET_USER_DATA - userData: ", userData)
       state.user = userData
       localStorage.setItem('user', JSON.stringify(userData))
       axios.defaults.headers.common['Authorization'] = `Bearer ${
@@ -116,10 +114,8 @@ export default new Vuex.Store({
     },
     CLEAR_USER_DATA () {
       var user = localStorage.getItem('user')
-      console.log("CLEAR USER DATA!!! - ", user)
+      console.log("CLEAR USER DATA - ", user)
       localStorage.removeItem('user')
-      console.log("Get User: ", localStorage.getItem('user'))
-
       axios.defaults.headers.common['Authorization'] = null
     },
     SET_USERS(state, users) {
@@ -163,11 +159,9 @@ export default new Vuex.Store({
       }
       this.message = null
       if ( credentials.email.toLowerCase().includes('baynes')) {
-        console.log
         return axios
           .post(api_authenticate_url, credentials)
           .then(({ data }) => {
-            console.log("DATA: ", data)
             commit('ADD_USER', data)
           })
           .catch((error) => {
@@ -226,7 +220,7 @@ export default new Vuex.Store({
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
       } else {
         api_authenticate_url =
-          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/password_resets/";
+          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/password_resets/";
       }
       console.log("api_authenticate_url: ", api_authenticate_url);
       //this.init_authentication;
