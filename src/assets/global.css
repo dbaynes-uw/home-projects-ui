@@ -8,7 +8,14 @@
   background-color: #7ba8bd;
   text-align: center;
 }
+#background-gray {
+  background-color: #f7f6f6;
+  text-align: center;
+}
 .td-center {
+  text-align: center;
+}
+.div-center {
   text-align: center;
 }
 .ul-left {

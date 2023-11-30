@@ -218,6 +218,62 @@ export default new Vuex.Store({
       commit('CLEAR_USER_DATA')
       router.push({name: 'Login'});
     },
+
+    async forgotPassword ({ commit }, email) {
+      console.log("ForgetPassword user: ", email)
+      if (window.location.port == "8080") {
+        //api_url = "http://davids-macbook-pro.local:3000/...";
+        api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
+      } else {
+        api_authenticate_url =
+          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/password/";
+      }
+      console.log("api_authenticate_url: ", api_authenticate_url);
+      //this.init_authentication;
+      return axios
+        .post(api_authenticate_url, { email: email })
+        //.post(api_authenticate_url, user )
+        .then(({ data }) => {
+         commit('SET_USER_DATA', data)
+       })
+       .catch((error) => {
+         console.log(error);
+         alert("Invalid Login Credentials or API problem - Please try again")
+         //location.reload()
+         //const message = error.response.request.statusText + '!';
+         error = error.response.request.statusText + '!';
+         console.log("Message to be sent: ", error)
+         router.back(error)
+       });
+    },
+    async resetPassword ({ commit }, email) {
+      console.log("ForgetPassword user: ", email)
+      if (window.location.port == "8080") {
+        //api_url = "http://davids-macbook-pro.local:3000/...";
+        api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
+      } else {
+        api_authenticate_url =
+          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/password/";
+      }
+      console.log("api_authenticate_url: ", api_authenticate_url);
+      //this.init_authentication;
+      return axios
+        .patch(`api_authenticate_url + /${this.$route.params.token}`, { password: this.password, password_confirmation: this.password_confirmation })
+        //.post(api_authenticate_url, user )
+        .then(({ data }) => {
+         commit('SET_USER_DATA', data)
+       })
+       .catch((error) => {
+         console.log(error);
+         alert("Invalid Login Credentials or API problem - Please try again")
+         //location.reload()
+         //const message = error.response.request.statusText + '!';
+         error = error.response.request.statusText + '!';
+         console.log("Message to be sent: ", error)
+         router.back(error)
+       });
+    },
+
     async createBook({ commit }, book) {
       EventService.postBook(book)
         .then(() => {

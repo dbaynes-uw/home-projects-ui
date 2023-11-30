@@ -11,6 +11,8 @@ import EventEdit from "@/views/events/EventEdit.vue";
 import EventList from "../views/events/EventList.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
+import ForgotPassword from "../components/ForgotPassword.vue";
+import ResetPassword from "../components/ResetPassword.vue";
 import GolfCreate from "../views/golfs/GolfCreate.vue";
 import GolfDetails from "@/views/golfs/GolfDetails.vue";
 import GolfEdit from "@/views/golfs/GolfEdit.vue"
@@ -64,6 +66,16 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register
+  },
+  {
+    path: '/forgot_password',
+    name: 'ForgotPassword',
+    component: ForgotPassword
+  },
+  {
+    path: '/password_resets/:token',
+    name: 'ResetPassword',
+    component: ResetPassword
   },
   /*
   {

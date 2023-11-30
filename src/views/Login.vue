@@ -34,15 +34,18 @@
         </span>
         <br/>
         <v-btn type="submit" block class="mt-2" @click="login">Submit</v-btn>
-
       </v-container>
     </v-form>
       <p>{{ message }}</p>
   </v-card-text>
-
+  Don't have an account? 
       <router-link to="/register">
-        Don't have an account? Register.
+        Register
       </router-link>
+  -- Forgot or Need Password Reset?  
+  <router-link to="/forgot_password">
+        Forgot or Reset Password
+      </router-link>     
 </template>
 
 <script>
@@ -51,7 +54,6 @@ import { required, email, minLength} from '@vuelidate/validators';
 import { reactive, computed } from 'vue';
 export default {
   setup () {
-    console.log("LOGIN!!!!!!!!!!")
     const state = reactive({
       email: '',
       password: '',
@@ -86,7 +88,6 @@ export default {
 
   methods: {
     async login () {
-      console.log("Login.vue login!!!");
       this.v$.$validate()
       console.log("V$: ", this.v$)
       console.log("V$.$error: ", this.v$.$error)

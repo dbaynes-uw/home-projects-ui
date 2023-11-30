@@ -12,6 +12,7 @@ import "vue-select/dist/vue-select.css";
 import { loadFonts } from "./plugins/webfontloader";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "@mdi/font/css/materialdesignicons.css";
+
 loadFonts();
 
 createApp({
