@@ -76,6 +76,7 @@ export default {
   },
   methods: {
     async resetPassword () {
+      console.log("resetPassword!!!!!")
       this.checkValidations(this.password, this.password_confirmation)
       if (this.isFormValid) {
         return axios
@@ -112,6 +113,7 @@ export default {
     },
     async checkPasswordToken () {
       try {
+        console.log("checkPasswordToken!!!!!")
         return await axios
           .get(`//localhost:3000/api/v1/password_resets/${this.$route.params.token}`);
       } catch(error) {

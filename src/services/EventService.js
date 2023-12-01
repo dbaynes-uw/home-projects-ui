@@ -168,7 +168,7 @@ export default {
   getUser(id) {
     this.init();
     console.log("environment: ", environment);
-    return axios.get(api_url + "users/"/ + id);
+    return axios.get(api_url + "users" + id);
 
   },
   getUsers() {
