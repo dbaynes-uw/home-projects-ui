@@ -107,7 +107,6 @@ export default {
     this.$store.dispatch("fetchEvents");
     this.sortedData = this.events;
     this.user = this.$store.state.user.resource_owner
-    console.log("created this.user: ", this.user)
   },
   computed: {    
     events() {
