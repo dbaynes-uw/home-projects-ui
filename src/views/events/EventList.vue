@@ -1,7 +1,7 @@
 <template>
   <div class="div-frame">
     <h2>Event Created By</h2>
-    <h3>{{ this.user.email  }}</h3>
+    <!--h3>{{ this.user.email  }}</h3-->
     <!--h2 id="status-message">
       <u>Status Message: {{ this.statusMessage }}</u>
     </h2-->
@@ -107,6 +107,7 @@ export default {
     this.$store.dispatch("fetchEvents");
     this.sortedData = this.events;
     this.user = this.$store.state.user.resource_owner
+    console.log("created this.user: ", this.user)
   },
   computed: {    
     events() {
