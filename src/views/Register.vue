@@ -23,7 +23,7 @@
       <button type="submit" name="button">
         Register
       </button>
-
+      <home :message="message"></home>
       <ul>
         <li v-for="(error, index) in errors" :key="index">
           {{ error }}
@@ -38,8 +38,15 @@
 </template>
 
 <script>
+import Home from "@/views/Home.vue"
 export default {
-  props: ["message"],
+  //props: ['message'],
+ //props: {
+ //  message: String,
+ //},
+  components: {
+    Home
+  },
   data () {
     return {
       name: '',
@@ -47,6 +54,7 @@ export default {
       email: '',
       password: '',
       errors: null,
+      message: '@@@@@@@@@@@@@',
     }
   },
   methods: {
@@ -56,10 +64,12 @@ export default {
           name: this.name,
           username: this.username,
           email: this.email,
-          password: this.password
+          password: this.password,
+          message: this.message,
         })
         .then(() => {
-          this.$router.push({ name: 'home' })
+          console.log("Register this.message: ", this.$store.message)
+          this.$router.push({ name: 'home', state: { message: this.$store.message } })
         })
         .catch(err => {
           this.errors = err.response.data.errors

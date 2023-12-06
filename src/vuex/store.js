@@ -158,14 +158,18 @@ export default new Vuex.Store({
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/";
       }
       this.message = null
-      if ( credentials.email.toLowerCase().includes('baynes')) {
+      // Comment ADMIN baynes check to register user.
+      // Send New User link to site at Reset Password
+
+      //if ( credentials.email.toLowerCase().includes('baynes')) {
         return axios
           .post(api_authenticate_url, credentials)
           .then(({ data }) => {
+            this.message = data.name + " - You have Successfully Registered."
             commit('ADD_USER', data)
           })
           .catch((error) => {
-            console.log(error);
+            this.$store.state.errors = null
             if (this.message == null) {
               error = error.response.request.statusText + '!';
             } else {
@@ -174,11 +178,11 @@ export default new Vuex.Store({
             console.log("Message to be sent: ", error)
             router.push({name:'home', params: {message: this.message}})
           });
-        } else {
-          this.message = 'Contact Admin to Register: ';
-          commit('SET_ERRORS', this.message)
-          router.push({name:'home', params: {message: this.message}})
-      }
+        //} else {
+        //  this.message = 'Contact Admin to Register: ';
+        //  commit('SET_ERRORS', this.message)
+        //  router.push({name:'home', params: {message: this.message}})
+      //}
     },
     async login ({ commit }, credentials) {
       console.log("LOGIN CREDS: ", credentials)

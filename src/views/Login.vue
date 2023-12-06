@@ -39,13 +39,14 @@
       <p>{{ message }}</p>
   </v-card-text>
   Don't have an account? 
-      <router-link to="/register">
-        Register
-      </router-link>
-  -- Forgot or Need Password Reset?  
+  <router-link to="/register">
+    Register
+  </router-link>
+  <br />
+  Forgot or Need Password Reset?  
   <router-link to="/forgot_password">
-        Forgot or Reset Password
-      </router-link>     
+    Forgot or Reset Password
+  </router-link>     
 </template>
 
 <script>

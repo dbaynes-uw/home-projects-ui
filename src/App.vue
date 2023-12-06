@@ -5,7 +5,7 @@
   <div id="nav">
     <v-app v-if="this.$route.name == 'home'">
       <v-app-bar color="teal-darken-2">
-        <v-toolbar-title id="toolbar-title" style="flex: .7;;margin-inline-start: 2px;text-align: left;width: 10rem;">Home Projects1</v-toolbar-title>
+        <v-toolbar-title id="toolbar-title" style="flex: .7;;margin-inline-start: 2px;text-align: left;width: 10rem;">Home Projects</v-toolbar-title>
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
       <v-content style="margin-top: 7rem">
