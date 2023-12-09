@@ -123,23 +123,34 @@ export default {
     this.init();
     return axios.post(api_url + 'golfs', golf);
   },
-
-  async getVendorGroup() {
+  async getProducts() {
     this.init();
-    return axios.get(api_url + "vendor_group")
+    return axios.get(api_url + "products")
   },
-  async getVendorProducts() {
+  async putProducts(products) {
+    console.log("ES PutProducts: ", products)
     this.init();
-    return axios.get(api_url + "vendor_products")
+    return axios.put(api_url + "products/update", products) //, { params: {vendors_products}});
   },
-  async getVendorLocationsGroup() {
+  async getVendors() {
     this.init();
-    console.log("ES: getVendorLocationsGroup")
-    return axios.get(api_url + "vendor_locations_group")
+    return axios.get(api_url + "vendors")
   },
-  async getVendorProductsGroup() {
+  async getVendorsGroup() {
     this.init();
-    return axios.get(api_url + "vendor_products_group")
+    return axios.get(api_url + "vendors_group")
+  },
+  async getVendorsProducts() {
+    this.init();
+    return axios.get(api_url + "vendors_products")
+  },
+  async getVendorsLocationsGroup() {
+    this.init();
+    return axios.get(api_url + "vendors_locations_group")
+  },
+  async getVendorsProductsGroup() {
+    this.init();
+    return axios.get(api_url + "vendors_products_group")
   },
   async postVendor(vendor) {
     console.log("POST VENDOR!")
@@ -151,15 +162,15 @@ export default {
     this.init();
     return axios.put(api_url + "vendors" + `/${updatedVendor.id}`, updatedVendor);
   },
-  async postVendorProduct(vendor_product) {
-    console.log("ES POST vendor product: ", vendor_product)
+  async postVendorsProduct(vendors_products) {
+    console.log("ES POST vendors products: ", vendors_products)
     this.init();
-    return axios.post(api_url + 'vendor_product', vendor_product);
+    return axios.post(api_url + 'vendors_products', vendors_products);
   },
-  async putVendorProducts(vendor_products) {
-    console.log("ES PutVendorProducts: ", vendor_products)
+  async putVendorsProducts(vendors_products) {
+    console.log("ES PutVendorsProducts: ", vendors_products)
     this.init();
-    return axios.put(api_url + "vendors/update", vendor_products) //, { params: {vendor_products}});
+    return axios.put(api_url + "vendors/update", vendors_products) //, { params: {vendors_products}});
   },
   async postUser(user) {
     this.init();

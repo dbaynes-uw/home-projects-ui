@@ -20,6 +20,7 @@ import GolfList from "../views/golfs/GolfList.vue";
 import ProductCreate from "../views/products/ProductCreate.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
 import ProductList from "../views/products/ProductList.vue";
+import ProductVendorList from "../views/products/ProductVendorList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
 import ProductVendorEdit from "../views/products/ProductVendorEdit.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
@@ -194,7 +195,12 @@ const routes = [
     component: GolfEdit,
     meta: { requiresAuth: true}
   },
-
+  {
+    path: "/products",
+    name: "ProductVendorList",
+    component: ProductVendorList,
+    meta: { requiresAuth: true}
+  },
   {
     path: "/product/create",
     name: "ProductCreate",
@@ -221,7 +227,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/vendor_products",
+    path: "/vendors_products",
     name: "ProductList",
     props: true,
     component: ProductList,

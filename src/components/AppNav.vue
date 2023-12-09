@@ -3,7 +3,7 @@
   <div id="nav">
     <v-app v-if="!loggedIn">
       <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Project</v-toolbar-title>
+        <v-toolbar-title>Home Projects</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           text

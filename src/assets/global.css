@@ -1,3 +1,12 @@
+.toolbar-title {
+  flex: .7;
+  margin-inline-start: 2px;
+  text-align: left;
+  width: 10rem;
+}
+.h3-title-sm {
+  font-size: 1rem;
+}
 .div-frame {
   padding: .25rem;
 }

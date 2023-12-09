@@ -28,7 +28,11 @@
           required
         />
         <label for="url_to_map">URL to Map:</label>
-        <input type="text" class="text-style" v-model="trail.url_to_map" />
+        <input type="url"
+          class="text-style"
+          pattern="https://.*"
+          v-model="trail.url_to_map"
+        />
         <label>Notes:</label>
         <textarea
           v-model="trail.notes"

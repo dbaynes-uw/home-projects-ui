@@ -1,76 +1,76 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Product List by Vendor!</h2>
-      <h3>
-        <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
-      </h3>
-      <h3>
-        <router-link :to="{ name: 'ProductVendorList' }">Product List with Vendor and Location</router-link>
-      </h3>
+      <h2>Vendor and Product List</h2>
+      <h3><router-link :to="{ name: 'ProductList', params: { vendors_products: vendors_products }}" >
+        Product List by Vendor
+      </router-link>
+      <br/>
+      <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
+    </h3>
     </v-card-title>
   </v-card>
   <v-card-text>
     <v-form>
       <v-container id="form-container">
-        <div class="row">
-          <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
-            <!-- Toggle by Location -->
-            <h1 @click='toggleLocation(group_index)'><b><u>{{ location }}</u></b></h1>
-            <div v-show="isVendorToggled === group_index">
-              <div class="vendor-name" v-for="(vendor, vendor_index) in vendors_products" :key="vendor_index">
-                <span v-if="vendor.location == location">
-                  <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)'><b>{{ vendor.vendor_name }}</b></h2>  
-                  <br/>
-                  <span v-for="(product, product_index) in vendors_products" :key="product_index">        
-                    <span v-show="isProductToggled === product_index">
-                      <div v-if="product.vendor_name == vendor.vendor_name">
-                        <div v-if="product.location == vendor.location">
-                          <span v-for="(item, item_index) in product.products" :key="item_index">
-                            <input
-                              type="checkbox"
-                              :checked="item.active"
-                              @change="isChecked(item, item.active)"
-                              class="field"
-                            />
-                            <label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label>
-                          </span>
-                        </div>
-                      </div>
-                    </span>
-                  </span>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <span class="row">
+          <span class="column" id="group" v-for="(product, group_index) in this.products" :key="group_index">
+            <span v-if="group_index == 0">
+              <h2>{{ product.product_name }} IDX: {{ group_index}}</h2>
+            </span>
+            <span v-if="group_index > 0">
+              <span v-if="product.product_name != products[group_index-1].product_name">
+                <h2>{{ product.product_name }}</h2>
+              </span>
+            </span>
+            <span v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
+              <span v-if="product.vendor_id == vendor.id">
+                <h2>
+                  <input
+                    type="checkbox"
+                    :checked="product.active"
+                    @change="isChecked(product, product.active)"
+                    class="field"
+                  />
+                  <label class="checkbox-right">{{ vendor.vendor_name }} - {{ vendor.location }}</label>
+                </h2>
+              </span>
+            </span>
+          </span>
+        </span>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
     </v-form>
+    <router-link
+        :to="{
+          name: 'ProductList',
+          params: { vendors_products: vendors_products },
+        }"
+      >
+    </router-link>
   </v-card-text>
 </template>
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  name: "ProductList",
+  name: "ProductVendorList",
   components: {
   },
   data() {
     return {
       product_active: true,
       productList: null,
-      vendors: {
-        vendor_name: '',
-        vendor_location: '',
-        products: {
-          product_name: '',
-          active: false,
-          notes: null,
-        },
-        notes: "",
-        created_by: "dbaynes",
-      },
+      //vendors: {
+      //  vendor_name: '',
+      //  vendor_location: '',
+      //  products: {
+      //    product_name: '',
+      //    active: false,
+      //    notes: null,
+      //  },
+      //  notes: "",
+      //  created_by: "dbaynes",
+      //},
       toggle0: false,
       toggle1: false,
       toggle2: false,
@@ -86,33 +86,38 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchVendorsProducts");
-    this.$store.dispatch("fetchVendorsLocationsGroup");
+    this.$store.dispatch("fetchProducts");
+    this.$store.dispatch("fetchVendors");
   },
   computed: {
-    vendors_products() {
-      return this.$store.state.vendors_products;
+    products() {
+      console.log("this.$store.state.products: ", this.$store.state.products )
+      return this.$store.state.products;
     },
-    vendorsLocationsGroup() {
-      return this.$store.state.vendors_locations_group;
+    vendors() {
+      return this.$store.state.vendors;
+    },
+    vendors_products() {
+      console.log("this.$store.state.vendors_products: ", this.$store.state.vendors_products )
+      return this.$store.state.vendors_products;
     },
   },
   methods: {
     onSubmit() {
-      const sub_vendors_products = {
-        ...this.vendors_products,
+      const sub_products = {
+        ...this.products,
         id: uuidv4(),
         created_by: this.$store.state.user,
       };
       
-      if (this.$store.dispatch("putVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {
-        alert("Vendors Products List Updated Successfully")
+      if (this.$store.dispatch("putProducts", sub_products, {params: { products: sub_products }} )) {
+        alert("Products List Updated Successfully")
         //const fresh_fetched_vendors_products = this.$store.dispatch("fetchVendorsProducts");
         //this.$router.push({ name: "ProductList", params: { fresh_fetched_vendors_products } });
         //window.location.reload();
         location.reload();
       } else {
-        alert("Error adding Products in ProductList View ");
+        alert("Error adding Products in ProductVendorList View ");
       }
     },
     isChecked(item, active) {

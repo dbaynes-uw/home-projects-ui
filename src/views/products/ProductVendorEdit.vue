@@ -18,7 +18,7 @@
         >
         <br/>
           <option
-            v-for="option in this.vendorLocationsGroup.vendorLocationsGroup"
+            v-for="option in this.vendorsLocationsGroup.vendorsLocationsGroup"
             :value="option"
             :key="option"
             id="select-box"
@@ -38,7 +38,7 @@
           required
         >
           <option
-            v-for="option in this.vendorGroup.vendorGroup"
+            v-for="option in this.vendorsGroup.vendorsGroup"
             :value="option"
             :key="option"
             id="select-box"
@@ -70,7 +70,7 @@
           v-model="vendor.product_name"
         >
           <option
-            v-for="product in this.vendorProductsGroup.vendorProductsGroup"
+            v-for="product in this.vendorsProductsGroup.vendorsProductsGroup"
             :value="product"
             :key="product"
             id="select-box"
@@ -108,19 +108,19 @@ import { v4 as uuidv4 } from "uuid";
 //!import vSelect from "vue-select";
 export default {
   created() {
-      this.$store.dispatch("fetchVendorGroup");
-      this.$store.dispatch("fetchVendorLocationsGroup");
-      this.$store.dispatch("fetchVendorProductsGroup");
+      this.$store.dispatch("fetchVendorsGroup");
+      this.$store.dispatch("fetchVendorsLocationsGroup");
+      this.$store.dispatch("fetchVendorsProductsGroup");
   },
   computed: {
-    vendorGroup() {
-      return this.$store.state.vendor_group;
+    vendorsGroup() {
+      return this.$store.state.vendors_group;
     },
-    vendorLocationsGroup() {
-      return this.$store.state.vendor_locations_group;
+    vendorsLocationsGroup() {
+      return this.$store.state.vendors_locations_group;
     },
-    vendorProductsGroup() {
-      return this.$store.state.vendor_products_group;
+    vendorsProductsGroup() {
+      return this.$store.state.vendors_products_group;
     },
   },    
   components: {},
@@ -151,8 +151,8 @@ export default {
       };
       if (this.$store.dispatch("editVendor", vendor)) {
         alert("Vendor Product List Updated Successfully")
-        const fresh_fetched_vendor_products = this.$store.dispatch("fetchVendorProducts");
-        this.$router.push({ name: "ProductList", params: { fresh_fetched_vendor_products } });
+        const fresh_fetched_vendors_products = this.$store.dispatch("fetchVendorsProducts");
+        this.$router.push({ name: "ProductList", params: { fresh_fetched_vendors_products } });
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);
       }

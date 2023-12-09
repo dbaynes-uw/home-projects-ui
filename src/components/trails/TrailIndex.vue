@@ -8,7 +8,6 @@
         <th @click="sortList('distance')">Distance (Miles)</th>
         <th @click="sortList('date_last_hiked')">Date Last Hiked</th>
         <th>URL</th>
-        <th>Notes</th>
         <th style="text-align: right">Actions</th>
       </tr>
       <tr v-for="trail in trails" :key="trail.id" :trail="trail">
@@ -19,7 +18,6 @@
         <td>
           <a :href="trail.url_to_map" target="_blank">Map</a>
         </td>
-        <td>{{ trail.notes }}</td>
         <td style="padding-left: 0">
           <span class="fa-stack">
             <router-link

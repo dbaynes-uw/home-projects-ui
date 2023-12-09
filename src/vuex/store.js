@@ -20,9 +20,9 @@ export default new Vuex.Store({
     books: [],
     events: [],
     vendors: [],
-    vendor_group: [],
-    vendor_locations_group: [],
-    vendor_products_group: [],
+    vendors_group: [],
+    vendors_locations_group: [],
+    vendors_products_group: [],
     products: [],
     trails: [],
     travels: [],
@@ -124,17 +124,23 @@ export default new Vuex.Store({
     SET_PRODUCT(state, product) {
       state.product = product;
     },
-    SET_VENDOR_PRODUCTS(state, vendor_products) {
-      state.vendor_products = vendor_products;
+    SET_PRODUCTS(state, products) {
+      state.products = products;
     },
-    SET_VENDOR_GROUP(state, vendor_group) {
-      state.vendor_group = vendor_group;
+    SET_VENDORS(state, vendors) {
+      state.vendors = vendors;
     },
-    SET_VENDOR_LOCATIONS_GROUP(state, vendor_locations_group) {
-      state.vendor_locations_group = vendor_locations_group;
+    SET_VENDORS_PRODUCTS(state, vendors_products) {
+      state.vendors_products = vendors_products;
     },
-    SET_VENDOR_PRODUCTS_GROUP(state, vendor_products_group) {
-      state.vendor_products_group = vendor_products_group;
+    SET_VENDORS_GROUP(state, vendors_group) {
+      state.vendors_group = vendors_group;
+    },
+    SET_VENDORS_LOCATIONS_GROUP(state, vendors_locations_group) {
+      state.vendors_locations_group = vendors_locations_group;
+    },
+    SET_VENDORS_PRODUCTS_GROUP(state, vendors_products_group) {
+      state.vendors_products_group = vendors_products_group;
     },
     ADD_VENDOR(state, vendor) {
       state.vendors.push(vendor);
@@ -494,6 +500,41 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async fetchProducts({ commit }) {
+      EventService.getProducts()
+        .then((response) => {
+          commit("SET_PRODUCTS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Store getProducts Error from ES: " + error.response.data.error);
+        });
+    },
+    async putProducts({ commit }, products) {
+      console.log("STORE - update products: ")
+      EventService.putProducts(products)
+        .then(() => {
+          console.log("STORE - update products: ")
+          commit("SET_PRODUCTS", products);
+        })
+        .catch((error) => {
+          alert("Error in putProducts");
+          console.log(error);
+        });
+    },
+    async putProductsVendors({ commit }, products_vendors) {
+      console.log("STORE - update products_vendors: ")
+      EventService.putVendorsProducts(products_vendors)
+        .then(() => {
+          console.log("STORE - update products_vendors: ")
+          commit("SET_PRODUCTS_VENDORS", products_vendors);
+        })
+        .catch((error) => {
+          alert("Error in putProductsVendors");
+          console.log(error);
+        });
+    },
     async createVendor({ commit }, vendor) {
       console.log("CREATE VENDOR: ", vendor)
       EventService.postVendor(vendor)
@@ -522,24 +563,20 @@ export default new Vuex.Store({
           alert("Vendor was successfully updated.");
         })
         .catch((error) => {
-          /*console.log("ERRORS!!!!!!!!!!!@@@@@@@@@@@@@@@")
-          console.log("Error Response: ", error.response)
-          console.log("Error Response Status: ", error.response.status)
-          console.log("Error Response Request: ", error.response.request)
-          console.log("Error Response Headers: ", error.response.headers)
-          console.log("Error Data: ", error.data)
-          console.log("Error Response Data: ", error.response.data)
-          console.log("error.response?.data?.message)", error.response?.data?.message)
-          console.log("Error Response Data.message: ", error.response.data.message)
-          console.log("error.response.data.error: ", error.response.data.error)
-          console.log("Error Response Data Errors: ", error.response.data.errors)
-          console.log("Error Message: ", error.message)
-          console.log("Display Error: ", error.response.data.error);
-          */
           alert(error.response.data.error);
         });
     },
-
+    async fetchVendors({ commit }) {
+      EventService.getVendors()
+        .then((response) => {
+          commit("SET_VENDORS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Store getVendors Error from ES: " + error.response.data.error);
+        });
+    },
     async fetchVendorGroup({ commit }) {
       EventService.getVendorGroup()
         .then((response) => {
@@ -551,48 +588,47 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async fetchVendorLocationsGroup({ commit }) {
-      EventService.getVendorLocationsGroup()
+    async fetchVendorsLocationsGroup({ commit }) {
+      EventService.getVendorsLocationsGroup()
         .then((response) => {
-          commit("SET_VENDOR_LOCATIONS_GROUP", response.data);
+          commit("SET_VENDORS_LOCATIONS_GROUP", response.data);
           return response.data;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    async fetchVendorProductsGroup({ commit }) {
-      EventService.getVendorProductsGroup()
+    async fetchGroup({ commit }) {
+      EventService.getVendorsProductsGroup()
         .then((response) => {
-          commit("SET_VENDOR_PRODUCTS_GROUP", response.data);
-          console.log("ES FetchVendorProductsGroup response.data: ", response.data);
+          commit("SET_VENDORS_PRODUCTS_GROUP", response.data);
+          console.log("ES FetchVendorsProductsGroup response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    async fetchVendorProducts({ commit }) {
-      EventService.getVendorProducts()
+    async fetchVendorsProducts({ commit }) {
+      EventService.getVendorsProducts()
         .then((response) => {
-          commit("SET_VENDOR_PRODUCTS", response.data);
-          console.log("ES FetchVendorProducts response.data: ", response.data);
+          commit("SET_VENDORS_PRODUCTS", response.data);
           return response.data;
         })
         .catch((error) => {
           console.log(error);
-          alert("Store getVendorProducts Error from ES: " + error.response.data.error);
+          alert("Store getVendorsProducts Error from ES: " + error.response.data.error);
         });
     },
-    async putVendorProducts({ commit }, vendor_products) {
-      console.log("STORE - update vendor_products: ")
-      EventService.putVendorProducts(vendor_products)
+    async putVendorsProducts({ commit }, vendors_products) {
+      console.log("STORE - update vendors_products: ")
+      EventService.putVendorsProducts(vendors_products)
         .then(() => {
-          console.log("STORE - update vendor_products: ")
-          commit("SET_VENDOR_PRODUCTS", vendor_products);
+          console.log("STORE - update vendors_products: ")
+          commit("SET_VENDORS_PRODUCTS", vendors_products);
         })
         .catch((error) => {
-          alert("Error in putVendorProducts");
+          alert("Error in putVendorsProducts");
           console.log(error);
         });
     },

@@ -18,7 +18,7 @@
         >
         <br/>
           <option
-            v-for="option in vendorLocationsGroup.vendorLocationsGroup"
+            v-for="option in vendorsLocationsGroup.vendorsLocationsGroup"
             :value="option"
             :key="option"
             id="select-box"
@@ -38,7 +38,7 @@
           required
         >
           <option
-            v-for="option in vendorGroup.vendorGroup"
+            v-for="option in vendorsGroup.vendorsGroup"
             :value="option"
             :key="option"
             id="select-box"
@@ -70,7 +70,7 @@
           v-model="vendor.product_name"
         >
           <option
-            v-for="product in vendorProductsGroup.vendorProductsGroup"
+            v-for="product in vendorsProductsGroup.vendorsProductsGroup"
             :value="product"
             :key="product"
             id="select-box"
@@ -108,20 +108,20 @@ import { v4 as uuidv4 } from "uuid";
 //!import vSelect from "vue-select";
 export default {
   created() {
-    this.$store.dispatch("fetchVendorGroup");
-    this.$store.dispatch("fetchVendorLocationsGroup");
-    this.$store.dispatch("fetchVendorProductsGroup");
+    this.$store.dispatch("fetchVendorsGroup");
+    this.$store.dispatch("fetchVendorsLocationsGroup");
+    this.$store.dispatch("fetchVendorsProductsGroup");
   },
   computed: {
-    vendorGroup() {
-      return this.$store.state.vendor_group;
+    vendorsGroup() {
+      return this.$store.state.vendors_group;
     },
-    vendorLocationsGroup() {
-      console.log("PVC - Computed vendorLocationsGroup")
-      return this.$store.state.vendor_locations_group;
+    vendorsLocationsGroup() {
+      console.log("PVC - Computed vendorsLocationsGroup")
+      return this.$store.state.vendors_locations_group;
     },
-    vendorProductsGroup() {
-      return this.$store.state.vendor_products_group;
+    vendorsProductsGroup() {
+      return this.$store.state.vendors_products_group;
     },
   },    
   components: {},
