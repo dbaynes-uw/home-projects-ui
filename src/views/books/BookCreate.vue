@@ -37,6 +37,14 @@
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
+        <v-text-field
+          v-model="book.url_to_review"
+          label="URL to Review"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-link</v-icon>
+          </template>
+        </v-text-field>        
         <v-text-field label="Notes" v-model="book.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
@@ -54,17 +62,6 @@ export default {
   },
   data() {
     return {
-      products: [
-        { vendor: 'costco', product: 'costco prod1', checked: false },
-        { vendor: 'costco', product: 'costco prod2', checked: false },
-        { vendor: 'costco', product: 'costco prod3', checked: false },
-        { vendor: 'safeway', product: 'safeway prod1', checked: false },
-        { vendor: 'safeway', product: 'safeway prod2', checked: false },
-        { vendor: 'safeway', product: 'safeway prod3', checked: false },
-        { vendor: 'traderjoes', product: 'traderjoes prod1', checked: false },
-        { vendor: 'traderjoes', product: 'traderjoes prod2', checked: false },
-        { vendor: 'traderjoes', product: 'traderjoes prod3', checked: false },
-      ],
       book: {
         title: null,
         author: "",
