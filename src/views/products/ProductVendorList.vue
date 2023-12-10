@@ -16,7 +16,7 @@
         <span class="row">
           <span class="column" id="group" v-for="(product, group_index) in this.products" :key="group_index">
             <span v-if="group_index == 0">
-              <h2>{{ product.product_name }} IDX: {{ group_index}}</h2>
+              <h2>{{ product.product_name }}</h2>
             </span>
             <span v-if="group_index > 0">
               <span v-if="product.product_name != products[group_index-1].product_name">
