@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Product List by Vendor!</h2>
+      <h2>Product List by Vendor</h2>
       <h3>
         <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
       </h3>

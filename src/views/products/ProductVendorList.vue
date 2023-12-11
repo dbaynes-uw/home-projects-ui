@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Vendor and Product List</h2>
+      <h2>Product List with Vendor</h2>
       <h3><router-link :to="{ name: 'ProductList', params: { vendors_products: vendors_products }}" >
         Product List by Vendor
       </router-link>
@@ -14,29 +14,34 @@
     <v-form>
       <v-container id="form-container">
         <span class="row">
-          <span class="column" id="group" v-for="(product, group_index) in this.products" :key="group_index">
+          <div class="column" id="group" v-for="(product, group_index) in this.products" :key="group_index">
+            <!-- Toggle by Product -->
             <span v-if="group_index == 0">
-              <h2>{{ product.product_name }}</h2>
+              <!--h2 @click='toggleProduct(group_index)'>{{ product.product_name }}</h2-->
+               <h2>{{ product.product_name }}</h2>
             </span>
             <span v-if="group_index > 0">
               <span v-if="product.product_name != products[group_index-1].product_name">
+                <!--h2 @click='toggleProduct(group_index)'>{{ product.product_name }}</h2-->
                 <h2>{{ product.product_name }}</h2>
               </span>
             </span>
-            <span v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
-              <span v-if="product.vendor_id == vendor.id">
-                <h2>
-                  <input
-                    type="checkbox"
-                    :checked="product.active"
-                    @change="isChecked(product, product.active)"
-                    class="field"
-                  />
-                  <label class="checkbox-right">{{ vendor.vendor_name }} - {{ vendor.location }}</label>
-                </h2>
-              </span>
-            </span>
-          </span>
+            <!--div v-show="isProductToggled === group_index"-->
+              <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
+                <span v-if="product.vendor_id == vendor.id">
+                  <h2>
+                    <input
+                      type="checkbox"
+                      :checked="product.active"
+                      @change="isChecked(product, product.active)"
+                      class="field"
+                    />
+                    <label class="checkbox-right">{{ vendor.vendor_name }} - {{ vendor.location }}</label>
+                  </h2>
+                </span>
+              </div>
+            <!--/div-->
+          </div>
         </span>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
@@ -74,7 +79,7 @@ export default {
       toggle0: false,
       toggle1: false,
       toggle2: false,
-      isVendorToggled: null,
+      //isVendorToggled: null,
       isProductToggled: null,
       home_safe: false,
       toggleArr: [],
@@ -124,10 +129,12 @@ export default {
       item.active = active == true ? false : true
       return item.active
     },
-    toggleLocation(index) {
-      this.isVendorToggled = index === this.isVendorToggled? null : index
-    },
-    toggleVendor(index) {
+    //toggleProduct(index) {
+    //  this.isProductToggled = index === this.isProductToggled? null : index
+    //},
+    toggleProduct(index) {
+      console.log("toggleProduct - index: ", index)
+      console.log("this.isProductToggled: ", this.isProductToggled)
       this.isProductToggled = index === this.isProductToggled? null : index
     }    
   },

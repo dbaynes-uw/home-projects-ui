@@ -87,6 +87,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
+      console.log("BOOK SEARCH RESULTS sortBy: ", sortBy)
       this.sortedData = this.filteredResults;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
