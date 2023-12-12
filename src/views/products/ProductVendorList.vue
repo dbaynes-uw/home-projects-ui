@@ -48,13 +48,6 @@
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
     </v-form>
-    <router-link
-        :to="{
-          name: 'ProductShoppingList',
-          params: { vendors_products: vendors_products },
-        }"
-      >
-    </router-link>
   </v-card-text>
 </template>
 <script>
@@ -131,7 +124,7 @@ export default {
         //window.location.reload();
         location.reload();
       } else {
-        alert("Error adding Products in ProductShoppingList View ");
+        alert("Error adding Products in ProductsList View ");
       }
     },
     isChecked(item, active) {

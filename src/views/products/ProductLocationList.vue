@@ -7,10 +7,7 @@
       </h3>
       <h3>
         <router-link :to="{ name: 'ProductList' }">Make Shopping List</router-link>
-      </h3>
-      <h3>
-        <router-link :to="{ name: 'ProductShoppingList' }">Ready Shopping List</router-link>
-      </h3>      
+      </h3>    
     </v-card-title>
   </v-card>
   <v-card-text>

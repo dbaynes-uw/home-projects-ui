@@ -1,8 +1,14 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Vendor/Products</h3>
+      <h2>Add Vendor/Products</h2>
     </v-card-title>
+    <h3>
+      <router-link :to="{ name: 'ProductLocationList' }">Product Location List</router-link>
+    </h3>
+    <h3>
+       <router-link :to="{ name: 'ProductList' }">Make Shopping List</router-link>
+    </h3> 
   </v-card>
   <v-card-text>
     <v-form id="isFormValid">

@@ -21,7 +21,6 @@ import ProductCreate from "../views/products/ProductCreate.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductList from "../views/products/ProductList.vue";
-import ProductShoppingList from "../views/products/ProductShoppingList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
 import ProductVendorEdit from "../views/products/ProductVendorEdit.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
@@ -206,12 +205,6 @@ const routes = [
     path: "/products",
     name: "ProductList",
     component: ProductList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/products/shopping_list",
-    name: "ProductShoppingList",
-    component: ProductShoppingList,
     meta: { requiresAuth: true}
   },
   {
