@@ -23,6 +23,7 @@ export default new Vuex.Store({
     vendors_group: [],
     vendors_locations_group: [],
     vendors_products_group: [],
+    shopping_list: [],
     products: [],
     trails: [],
     travels: [],
@@ -126,6 +127,9 @@ export default new Vuex.Store({
     },
     SET_PRODUCTS(state, products) {
       state.products = products;
+    },
+    SET_SHOPPING_LIST(state, shopping_list) {
+      state.shopping_list = shopping_list;
     },
     SET_VENDORS(state, vendors) {
       state.vendors = vendors;
@@ -511,6 +515,19 @@ export default new Vuex.Store({
           alert("Store getProducts Error from ES: " + error.response.data.error);
         });
     },
+    async fetchShoppingList({ commit }) {
+      console.log("Store fetchShoppingList")
+      EventService.getShoppingList()
+        .then((response) => {
+          commit("SET_SHOPPING_LIST", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Store getShoppingList Error from ES: " + error.response.data.error);
+        });
+    },
+
     async putProducts({ commit }, products) {
       console.log("STORE - update products: ")
       EventService.putProducts(products)

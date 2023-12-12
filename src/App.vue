@@ -120,7 +120,7 @@ export default {
           title: "Golfs",
         },
         {
-          label: "ProductList",
+          label: "ProductLocationList",
           url: "/products",
           title: "Shopping",
         },

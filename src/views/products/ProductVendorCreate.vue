@@ -151,7 +151,7 @@ export default {
         created_by: this.$store.state.user,
       };
       if (this.$store.dispatch("createVendor", vendor)) {
-        //this.$router.push({ name: "ProductList", params: {} });
+        //this.$router.push({ name: "ProductLocationList", params: {} });
         alert("Vendor/Product was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);

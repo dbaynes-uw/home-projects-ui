@@ -64,17 +64,6 @@ export default {
     console.log("SERVICE.JS dueBY: ", dueFilter)
     return axios.get(api_url + "events/" + `?due_by=${dueFilter}`)
   },
-  eventsDueBy(form) {
-    this.init();
-    const dueFilter =
-      form.target.options[form.target.options.selectedIndex].innerText;
-    return axios.get(api_url + "events" + `?_dueFilter=${dueFilter}`);
-  },
-  async eventsPastDue() {
-    this.init();
-    return axios.get(api_url + "events_past_due" + `'true'`);
-  },
-
   getEventsPastDue() {
     this.init();
     return axios.get(api_url + "events/" + `?past_due=true`)
@@ -127,6 +116,11 @@ export default {
     this.init();
     return axios.get(api_url + "products")
   },
+  async getShoppingList() {
+    this.init();
+    console.log("ES getShoppingList")
+    return axios.get(api_url + "shopping_list")
+  },
   async putProducts(products) {
     console.log("ES PutProducts: ", products)
     this.init();
@@ -136,6 +130,7 @@ export default {
     this.init();
     return axios.get(api_url + "vendors")
   },
+
   async getVendorsGroup() {
     this.init();
     return axios.get(api_url + "vendors_group")

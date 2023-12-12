@@ -152,7 +152,7 @@ export default {
       if (this.$store.dispatch("editVendor", vendor)) {
         alert("Vendor Product List Updated Successfully")
         const fresh_fetched_vendors_products = this.$store.dispatch("fetchVendorsProducts");
-        this.$router.push({ name: "ProductList", params: { fresh_fetched_vendors_products } });
+        this.$router.push({ name: "ProductLocationList", params: { fresh_fetched_vendors_products } });
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);
       }

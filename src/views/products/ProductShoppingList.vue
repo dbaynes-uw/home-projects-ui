@@ -13,38 +13,43 @@
   <v-card-text>
     <v-form>
       <h3>
-        <u @click='shoppingListDisplay(showFlag)'>Show Shopping List</u>
+        <router-link :to="{ name: 'ProductShoppingList' }">Show Shopping List</router-link>
       </h3>
       <v-container id="form-container">
-          <div class="column" id="group" v-for="(product, group_index) in this.products" :key="group_index">
+        <span class="row">
+          <div class="column" id="group" v-for="(product, product_index) in this.products" :key="product_index">
             <!-- Toggle by Product -->
-            <span v-if="group_index == 0">
+            {{ product_index }}
+            <span v-if="product_index == 0">
               <!--h2 @click='toggleProduct(group_index)'>{{ product.product_name }}</h2-->
-               <h2>{{ product.product_name }}</h2>
+               <h2>@{{ product[product_index] }}</h2>
             </span>
-            <span v-if="group_index > 0">
-              <span v-if="product.product_name != products[group_index-1].product_name">
+            <span v-if="product_index > 0">
+              GT 0 !!!!!!!@@@@@@@@ {{ product_index }}
+              <!--span v-if="vendor_product.products[group_index].product_name != vendor_product.products[group_index-1].product_name"-->
                 <!--h2 @click='toggleProduct(group_index)'>{{ product.product_name }}</h2-->
-                <h2>{{ product.product_name }}</h2>
-              </span>
+                <!--h2>{{ vendor_product.products[group_index].product_name }}</!--h2-->
+                <!--h2>@{{ vendor_product.products[group_index].product_name }}</!--h2-->
+              <!--span-->
             </span>
             <!--div v-show="isProductToggled === group_index"-->
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
-                <span v-if="product.vendor_id == vendor.id">
+                @@@{{ product.products[product_index]}}
+                <!--span v-if="vendor.id == vendor[vendor_index].id"-->
                   <h2>
                     <input
                       type="checkbox"
-                      :checked="product.active"
-                      @change="isChecked(product, product.active)"
+                      :checked="product.products[product_index]"
+                      @change="isChecked(product, product.products[product_index])"
                       class="field"
                     />
-                    <label class="checkbox-right">{{ vendor.vendor_name }} - {{ vendor.location }}</label>
+                    <label class="checkbox-right">{{ product.vendor_name }} - {{ product.location }}</label>
                   </h2>
-                </span>
+                <!--span-->
               </div>
-            <!--/div-->
-          </div>
-        <!--/span-->
+            </div>
+          <!--/div-->
+        </span>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
     </v-form>
@@ -60,7 +65,7 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  name: "Products",
+  name: "ProductShoppingList",
   components: {
   },
   data() {
@@ -78,9 +83,6 @@ export default {
       //  notes: "",
       //  created_by: "dbaynes",
       //},
-      resultSet: [],
-      showShoppingList: false,
-      showFlag: false,
       toggle0: false,
       toggle1: false,
       toggle2: false,
@@ -96,26 +98,21 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchProducts");
     this.$store.dispatch("fetchShoppingList");
     this.$store.dispatch("fetchVendors");
   },
   computed: {
     products() {
-      console.log("this.$store.state.products: ", this.$store.state.products )
-      return this.$store.state.products;
+      console.log("this.$store.state.shopping_list: ", this.$store.state.shopping_list )
+      return this.$store.state.shopping_list;
     },
     vendors() {
       return this.$store.state.vendors;
     },
-    shopping_list() {
-      console.log("this.$store.state.shopping_list: ", this.$store.state.shopping_list )
-      return this.$store.state.shopping_list;
-    },
-    vendors_products() {
-      console.log("this.$store.state.vendors_products: ", this.$store.state.vendors_products )
-      return this.$store.state.vendors_products;
-    },
+    //vendors_products() {
+    //  console.log("this.$store.state.vendors_products: ", this.$store.state.vendors_products )
+    //  return this.$store.state.vendors_products;
+    //},
   },
   methods: {
     onSubmit() {
@@ -123,7 +120,8 @@ export default {
         ...this.products,
         id: uuidv4(),
         created_by: this.$store.state.user,
-      };   
+      };
+      
       if (this.$store.dispatch("putProducts", sub_products, {params: { products: sub_products }} )) {
         alert("Products List Updated Successfully")
         //const fresh_fetched_vendors_products = this.$store.dispatch("fetchVendorsProducts");
@@ -137,12 +135,6 @@ export default {
     isChecked(item, active) {
       item.active = active == true ? false : true
       return item.active
-    },
-    shoppingListDisplay(showFlag) {
-      console.log("shoppingListDisplay In showFlag: ", showFlag )
-      this.showShoppingList = showFlag == true ? false : true
-      console.log("OutshoppingListDisplay: ", this.showShoppingList )
-      return this.showShoppingList
     },
     //toggleProduct(index) {
     //  this.isProductToggled = index === this.isProductToggled? null : index

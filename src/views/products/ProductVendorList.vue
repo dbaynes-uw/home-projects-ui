@@ -1,9 +1,9 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Product List with Vendor</h2>
-      <h3><router-link :to="{ name: 'ProductList', params: { vendors_products: vendors_products }}" >
-        Product List by Vendor
+      <h2>Product Shopping</h2>
+      <h3><router-link :to="{ name: 'ProductLocationList', params: { vendors_products: vendors_products }}" >
+        Product List by Location and Vendor
       </router-link>
       <br/>
       <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
@@ -12,8 +12,10 @@
   </v-card>
   <v-card-text>
     <v-form>
+      <h3>
+        <u @click='shoppingListDisplay(showFlag)'>Show Shopping List</u>
+      </h3>
       <v-container id="form-container">
-        <span class="row">
           <div class="column" id="group" v-for="(product, group_index) in this.products" :key="group_index">
             <!-- Toggle by Product -->
             <span v-if="group_index == 0">
@@ -42,13 +44,13 @@
               </div>
             <!--/div-->
           </div>
-        </span>
+        <!--/span-->
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
     </v-form>
     <router-link
         :to="{
-          name: 'ProductList',
+          name: 'ProductShoppingList',
           params: { vendors_products: vendors_products },
         }"
       >
@@ -58,13 +60,13 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  name: "ProductVendorList",
+  name: "Products",
   components: {
   },
   data() {
     return {
       product_active: true,
-      productList: null,
+      Location: null,
       //vendors: {
       //  vendor_name: '',
       //  vendor_location: '',
@@ -76,6 +78,9 @@ export default {
       //  notes: "",
       //  created_by: "dbaynes",
       //},
+      resultSet: [],
+      showShoppingList: false,
+      showFlag: false,
       toggle0: false,
       toggle1: false,
       toggle2: false,
@@ -92,6 +97,7 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchProducts");
+    this.$store.dispatch("fetchShoppingList");
     this.$store.dispatch("fetchVendors");
   },
   computed: {
@@ -101,6 +107,10 @@ export default {
     },
     vendors() {
       return this.$store.state.vendors;
+    },
+    shopping_list() {
+      console.log("this.$store.state.shopping_list: ", this.$store.state.shopping_list )
+      return this.$store.state.shopping_list;
     },
     vendors_products() {
       console.log("this.$store.state.vendors_products: ", this.$store.state.vendors_products )
@@ -113,21 +123,26 @@ export default {
         ...this.products,
         id: uuidv4(),
         created_by: this.$store.state.user,
-      };
-      
+      };   
       if (this.$store.dispatch("putProducts", sub_products, {params: { products: sub_products }} )) {
         alert("Products List Updated Successfully")
         //const fresh_fetched_vendors_products = this.$store.dispatch("fetchVendorsProducts");
-        //this.$router.push({ name: "ProductList", params: { fresh_fetched_vendors_products } });
+        //this.$router.push({ name: "ProductLocationList", params: { fresh_fetched_vendors_products } });
         //window.location.reload();
         location.reload();
       } else {
-        alert("Error adding Products in ProductVendorList View ");
+        alert("Error adding Products in ProductShoppingList View ");
       }
     },
     isChecked(item, active) {
       item.active = active == true ? false : true
       return item.active
+    },
+    shoppingListDisplay(showFlag) {
+      console.log("shoppingListDisplay In showFlag: ", showFlag )
+      this.showShoppingList = showFlag == true ? false : true
+      console.log("OutshoppingListDisplay: ", this.showShoppingList )
+      return this.showShoppingList
     },
     //toggleProduct(index) {
     //  this.isProductToggled = index === this.isProductToggled? null : index

@@ -19,8 +19,9 @@ import GolfEdit from "@/views/golfs/GolfEdit.vue"
 import GolfList from "../views/golfs/GolfList.vue";
 import ProductCreate from "../views/products/ProductCreate.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
+import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductList from "../views/products/ProductList.vue";
-import ProductVendorList from "../views/products/ProductVendorList.vue";
+import ProductShoppingList from "../views/products/ProductShoppingList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
 import ProductVendorEdit from "../views/products/ProductVendorEdit.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
@@ -196,9 +197,21 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/products_by_location",
+    name: "ProductLocationList",
+    component: ProductLocationList,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/products",
-    name: "ProductVendorList",
-    component: ProductVendorList,
+    name: "ProductList",
+    component: ProductList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/products/shopping_list",
+    name: "ProductShoppingList",
+    component: ProductShoppingList,
     meta: { requiresAuth: true}
   },
   {
@@ -228,9 +241,9 @@ const routes = [
   },
   {
     path: "/vendors_products",
-    name: "ProductList",
+    name: "ProductLocationList",
     props: true,
-    component: ProductList,
+    component: ProductLocationList,
     meta: { requiresAuth: true}
   },
   {
