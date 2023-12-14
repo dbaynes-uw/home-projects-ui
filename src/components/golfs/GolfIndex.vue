@@ -16,7 +16,21 @@
       <th id="background-blue">URL to Review</th>
       <th id="background-blue">Notes</th>
       <th class="td-center" id="background-blue">Actions</th>
-    </tr>
+    </tr> 
+    <tr>
+      <th id="background-blue" ></th>
+      <th id="background-blue" ></th>
+      <th id="background-blue" >Averages:</th> 
+      <th id="background-blue">
+        {{ calculateAveragePar(golfs) }}
+      </th>
+      <th id="background-blue">
+        {{ calculateAverageScore(golfs) }}
+      </th>
+      <th id="background-blue"></th>
+      <th id="background-blue"></th>
+      <th class="td-center" id="background-blue"></th>
+    </tr>   
     <tr v-for="(result, resultIndex) in golfs" :key="resultIndex">
       <td>{{ result.course }}</td>
       <td class="td-center" >{{ result.tees_played }}</td>
@@ -88,43 +102,11 @@ export default {
     };
   },
   methods: {
-    searchColumns() {
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.golfs &&
-          this.golfs.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.golfs.forEach((golf) => {
-            const searchHasTitle =
-              golf.title &&
-              golf.title
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasAuthor =
-              golf.author &&
-              golf.author
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(golf);
-            }
-          });
-        }
-      }
-    },
     showCharacterDetails(result) {
       this.characterDetails = result;
     },
     sortList(sortBy) {
+      //console.log("SORT IN INDEX")
       this.sortedData = this.golfs;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -161,6 +143,12 @@ export default {
     },
     calculateTotalScore(golf) {
       return GolfCalculations.calculateTotalScore(golf)
+    },
+    calculateAveragePar(golfs) {
+      return GolfCalculations.calculateAveragePar(golfs)
+    },
+    calculateAverageScore(golfs) {
+      return GolfCalculations.calculateAverageScore(golfs)
     }
   },
 };

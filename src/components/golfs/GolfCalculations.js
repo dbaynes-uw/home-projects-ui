@@ -178,5 +178,19 @@ export default {
                                 golf.penalty_16_hole +
                                 golf.penalty_17_hole +
                                 golf.penalty_18_hole 
-  },  
+  }, 
+  calculateAveragePar(golfs) {
+    this.average_par = 0
+    for (let i=0; i < golfs.length; i++) {
+      this.average_par +=this.calculateTotalPar(golfs[i])
+    }
+    return (this.average_par / golfs.length)
+  },
+  calculateAverageScore(golfs) {
+    this.average_score = 0
+    for (let i=0; i < golfs.length; i++) {
+      this.average_score +=this.calculateTotalScore(golfs[i])
+    }
+    return (this.average_score / golfs.length)
+  },
 }

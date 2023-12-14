@@ -76,6 +76,7 @@ export default {
       this.filteredResults = [];
     },
     searchColumns() {
+      console.log("SEARCH In LIST")
       this.filteredResults = [];
       this.columnDetails = null;
       if (
@@ -91,17 +92,12 @@ export default {
           this.inputSearchText.length >= 2
         ) {
           this.golfs.forEach((golf) => {
-            const searchHasTitle =
-              golf.title &&
-              golf.title
+            const searchHasCourse =
+              golf.course &&
+              golf.course
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            const searchHasAuthor =
-              golf.author &&
-              golf.author
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
+            if (searchHasCourse) {
               this.filteredResults.push(golf);
             }
           });
@@ -112,6 +108,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
+      console.log("SORT in LIST")
       this.sortedData = this.golfs;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
