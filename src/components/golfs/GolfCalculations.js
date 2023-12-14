@@ -191,6 +191,6 @@ export default {
     for (let i=0; i < golfs.length; i++) {
       this.average_score +=this.calculateTotalScore(golfs[i])
     }
-    return (this.average_score / golfs.length)
+    return (this.average_score / golfs.length).toFixed(1)
   },
 }
