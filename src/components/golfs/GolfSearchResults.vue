@@ -18,18 +18,18 @@
       <th id="background-blue">URL to Review</th>
       <th class="td-center" id="background-blue">Actions</th>
     </tr> 
-    <tr>
+    <tr id="averages">
       <th id="background-blue" ></th>
       <th id="background-blue"></th>
       <th id="background-blue"></th>
-      <th id="background-blue" >Averages:</th>
-      <th id="background-blue" >9/18:</th>
+      <th id="background-blue-right" style="text-align: right;" colspan="2" >Avg 9/18 holes:</th>
       <th id="background-blue">
         {{ calculateAverageScore9(filteredResults) }}/{{ calculateAverageScore18(filteredResults) }}
       </th>
       <th id="background-blue" ></th>
       <th id="background-blue"></th>
     </tr>   
+
     <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
       <td>{{ result.course }}</td>
       <td class="td-center" >{{ result.tees_played }}</td>

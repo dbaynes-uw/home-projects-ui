@@ -17,11 +17,11 @@
       <th id="background-blue">URL to Review</th>
       <th class="td-center" id="background-blue">Actions</th>
     </tr> 
-    <tr>
+    <tr id="averages">
       <th id="background-blue" ></th>
       <th id="background-blue"></th>
       <th id="background-blue"></th>
-      <th id="background-blue" colspan="2" >Avg 9/18:</th>
+      <th id="background-blue-right" colspan="2" >Avg 9/18 holes:</th>
       <th id="background-blue">
         {{ calculateAverageScore9(golfs) }}/{{ calculateAverageScore18(golfs) }}
       </th>
