@@ -1,5 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <b>Online Status: {{ this.onlineStatus }}</b>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('course')">Course</th>
@@ -7,40 +8,38 @@
       <th id="background-blue" @click="sortList('date_played')">
         Date Played
       </th>
-      <th id="background-blue" @click="sortList('date_read')">
+      <th id="background-blue">Holes Played</th>
+      <th id="background-blue" @click="sortList('par')">
         Par
       </th>
-      <th id="background-blue" @click="sortList('date_read')">
+      <th id="background-blue" @click="sortList(this.par)">
         Score
       </th>
       <th id="background-blue">URL to Review</th>
-      <th id="background-blue">Notes</th>
       <th class="td-center" id="background-blue">Actions</th>
     </tr> 
     <tr>
       <th id="background-blue" ></th>
+      <th id="background-blue"></th>
+      <th id="background-blue"></th>
+      <th id="background-blue" >Averages:</th>
+      <th id="background-blue" >9/18:</th>
+      <th id="background-blue">
+        {{ calculateAverageScore9(filteredResults) }}/{{ calculateAverageScore18(filteredResults) }}
+      </th>
       <th id="background-blue" ></th>
-      <th id="background-blue" >Averages:</th> 
-      <th id="background-blue">
-        {{ calculateAveragePar(filteredResults) }}
-      </th>
-      <th id="background-blue">
-        {{ calculateAverageScore(filteredResults) }}
-      </th>
       <th id="background-blue"></th>
-      <th id="background-blue"></th>
-      <th class="td-center" id="background-blue"></th>
     </tr>   
     <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
       <td>{{ result.course }}</td>
       <td class="td-center" >{{ result.tees_played }}</td>
       <td class="td-center" >{{ formatFullYearDate(result.date_played) }}</td>
-      <td class="td-center" >{{ calculateTotalPar(result)}}</td>
+      <td class="td-center" >{{ determineHolesPlayed(result) }}</td>
+      <td class="td-center" >{{ this.par = calculateTotalPar(result)}}</td>
       <td class="td-center" >{{ calculateTotalScore(result)}}</td>
       <td class="td-center" >
         <a :href="result.url_to_course" target="_blank">Review</a>
       </td>
-      <td>{{ result.notes }}</td>
       <td class="td-center">
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
@@ -80,8 +79,7 @@
         </span>
       </td>
     </tr>
-  </v-table>  <br />
-  <b>Online Status: {{ this.onlineStatus }}</b>
+  </v-table>
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
@@ -105,7 +103,7 @@ export default {
     },
     sortList(sortBy) {
       //console.log("SORT IN INDEX")
-      this.sortedData = this.golfs;
+      this.sortedData = this.filteredResults;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;
@@ -142,12 +140,16 @@ export default {
     calculateTotalScore(golf) {
       return GolfCalculations.calculateTotalScore(golf)
     },
-    calculateAveragePar(golfs) {
-      return GolfCalculations.calculateAveragePar(golfs)
+    calculateAverageScore9(golfs) {
+      return GolfCalculations.calculateAverageScore9(golfs)
     },
-    calculateAverageScore(golfs) {
-      return GolfCalculations.calculateAverageScore(golfs)
-    }
+    calculateAverageScore18(golfs) {
+      return GolfCalculations.calculateAverageScore18(golfs)
+    },
+    determineHolesPlayed(golf) {
+      return GolfCalculations.determineHolesPlayed(golf)
+    },
+
   },
 };
 </script>

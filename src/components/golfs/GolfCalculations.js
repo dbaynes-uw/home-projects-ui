@@ -24,25 +24,7 @@ export default {
                            golf.par_18_hole 
   },
   calculateTotalPar(golf) {
-    this.total_par = 0
-    return this.total_par = golf.par_1_hole + 
-                            golf.par_2_hole +
-                            golf.par_3_hole +
-                            golf.par_4_hole +
-                            golf.par_5_hole +
-                            golf.par_6_hole +
-                            golf.par_7_hole +
-                            golf.par_8_hole +
-                            golf.par_9_hole +
-                            golf.par_10_hole + 
-                            golf.par_11_hole +
-                            golf.par_12_hole +
-                            golf.par_13_hole +
-                            golf.par_14_hole +
-                            golf.par_15_hole +
-                            golf.par_16_hole +
-                            golf.par_17_hole +
-                            golf.par_18_hole 
+    return this.calculateFrontPar(golf) + this.calculateBackPar(golf)
   },
   calculateFrontScore(golf) {
     this.front_score = 0
@@ -69,25 +51,7 @@ export default {
                              golf.score_18_hole 
   },
   calculateTotalScore(golf) {
-    this.total_score = 0
-    return this.total_score = golf.score_1_hole + 
-                              golf.score_2_hole +
-                              golf.score_3_hole +
-                              golf.score_4_hole +
-                              golf.score_5_hole +
-                              golf.score_6_hole +
-                              golf.score_7_hole +
-                              golf.score_8_hole +
-                              golf.score_9_hole +
-                              golf.score_10_hole + 
-                              golf.score_11_hole +
-                              golf.score_12_hole +
-                              golf.score_13_hole +
-                              golf.score_14_hole +
-                              golf.score_15_hole +
-                              golf.score_16_hole +
-                              golf.score_17_hole +
-                              golf.score_18_hole 
+    return this.calculateFrontScore(golf) + this.calculateBackScore(golf)
   },
   calculateFrontPutts(golf) {
     this.front_putts = 0
@@ -114,25 +78,7 @@ export default {
                              golf.putts_18_hole 
   },
   calculateTotalPutts(golf) {
-    this.total_putts = 0
-    return this.total_putts = golf.putts_1_hole + 
-                              golf.putts_2_hole +
-                              golf.putts_3_hole +
-                              golf.putts_4_hole +
-                              golf.putts_5_hole +
-                              golf.putts_6_hole +
-                              golf.putts_7_hole +
-                              golf.putts_8_hole +
-                              golf.putts_9_hole +
-                              golf.putts_10_hole +
-                              golf.putts_11_hole +
-                              golf.putts_12_hole +
-                              golf.putts_13_hole +
-                              golf.putts_14_hole +
-                              golf.putts_15_hole +
-                              golf.putts_16_hole +
-                              golf.putts_17_hole +
-                              golf.putts_18_hole 
+    return this.calculateFrontPutts(golf) + this.calculateBackPutts(golf)
   },
   calculateFrontPenalty(golf) {
     this.front_penalty = 0
@@ -159,38 +105,43 @@ export default {
                                golf.penalty_18_hole 
   },
   calculateTotalPenalty(golf) {
-    this.total_penalty = 0
-    return this.total_penalty = golf.penalty_1_hole + 
-                                golf.penalty_2_hole +
-                                golf.penalty_3_hole +
-                                golf.penalty_4_hole +
-                                golf.penalty_5_hole +
-                                golf.penalty_6_hole +
-                                golf.penalty_7_hole +
-                                golf.penalty_8_hole +
-                                golf.penalty_9_hole +
-                                golf.penalty_10_hole +
-                                golf.penalty_11_hole + 
-                                golf.penalty_12_hole +
-                                golf.penalty_13_hole +
-                                golf.penalty_14_hole +
-                                golf.penalty_15_hole +
-                                golf.penalty_16_hole +
-                                golf.penalty_17_hole +
-                                golf.penalty_18_hole 
-  }, 
-  calculateAveragePar(golfs) {
-    this.average_par = 0
-    for (let i=0; i < golfs.length; i++) {
-      this.average_par +=this.calculateTotalPar(golfs[i])
-    }
-    return (this.average_par / golfs.length)
+    return this.calculateFrontPenalty(golf) + this.calculateBackPenalty(golf)
   },
-  calculateAverageScore(golfs) {
-    this.average_score = 0
-    for (let i=0; i < golfs.length; i++) {
-      this.average_score +=this.calculateTotalScore(golfs[i])
+  determineHolesPlayed(golf) {
+    console.log("determineHolesPlayed golf: ", golf)
+    if (this.calculateBackScore(golf) == 0) {
+      return 9
+    }else {
+      return 18
     }
-    return (this.average_score / golfs.length).toFixed(1)
   },
+  calculateAverageScore9(golfs) {
+    this.score_9 = 0
+    this.number_9_holes = 0
+    for (let i=0; i < golfs.length; i++) {
+      console.log("Hole Score: ", this.calculateBackScore(golfs[i]))
+      if (this.calculateBackScore(golfs[i]) == 0) {
+        this.number_9_holes += 1
+        this.score_9 += this.calculateFrontScore(golfs[i])
+      }
+    }
+    if (this.number_9_holes == 0) {
+      return (this.number_9_holes)
+    } else {
+      return (this.score_9 / this.number_9_holes)
+    }
+  },
+  calculateAverageScore18(golfs) {
+    this.score_18 = 0
+    this.number_18_holes = 0
+    for (let i=0; i < golfs.length; i++) {
+      if (this.calculateBackScore(golfs[i]) > 0) {
+        console.log("Back Hole Score: ", this.calculateBackScore(golfs[i]))
+        this.number_18_holes += 1
+        this.score_18 += this.calculateFrontScore(golfs[i]) + this.calculateBackScore(golfs[i])
+      }
+    }
+    return this.number_18_holes == 0 ? this.number_18_holes : (this.score_18 / this.number_18_holes)
+  },
+
 }
