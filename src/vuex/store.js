@@ -527,7 +527,6 @@ export default new Vuex.Store({
           alert("Store getShoppingList Error from ES: " + error.response.data.error);
         });
     },
-
     async putProducts({ commit }, products) {
       console.log("STORE - update products: ")
       EventService.putProducts(products)
@@ -594,11 +593,11 @@ export default new Vuex.Store({
           alert("Store getVendors Error from ES: " + error.response.data.error);
         });
     },
-    async fetchVendorGroup({ commit }) {
-      EventService.getVendorGroup()
+    async fetchVendorsGroup({ commit }) {
+      EventService.getVendorsGroup()
         .then((response) => {
-          commit("SET_VENDOR_GROUP", response.data);
-          console.log("ES FetchVendorGroup response.data: ", response.data);
+          commit("SET_VENDORS_GROUP", response.data);
+          console.log("ES FetchVendorsGroup response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -615,7 +614,7 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async fetchGroup({ commit }) {
+    async fetchVendorsProductsGroup({ commit }) {
       EventService.getVendorsProductsGroup()
         .then((response) => {
           commit("SET_VENDORS_PRODUCTS_GROUP", response.data);
