@@ -1,9 +1,11 @@
 <template>
   <div class="about">
-    <h1>A Site for Events to make a Better World!</h1>
-    <h1>
+    <h1>Home Projects</h1>
+    <h2>A Site for Events to make a Better World!</h2>
+    
+    <h2 v-if="this.$store.state.user.resource_owner.email.toLowerCase().includes('baynes')">
       <router-link :to="{ name: 'UserList' }">Users</router-link>
-    </h1>
+    </h2>
     <p>User: {{ this.$store.state.user.resource_owner.email }}</p>
   </div>
 </template>

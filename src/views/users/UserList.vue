@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div>
+  <div v-if="this.$store.state.user.resource_owner.email.toLowerCase().includes('baynes')">
     <h2>Users</h2>
     <!--h3>Message: {{ this.message }}</h3-->
     <p>Current User: {{ this.$store.state.user.resource_owner.email }}</p>
@@ -36,6 +36,9 @@
       </div>
     </div>
     <!--div>{{ $store.state.users }}</div-->
+  </div>
+  <div v-else>
+    <h2>Contact Admin to Register: <a href="mailto:dlbaynes@gmail.com">David Baynes</a></h2>
   </div>
 </template>
 <script>

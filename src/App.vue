@@ -5,7 +5,7 @@
   <div id="nav">
     <v-app v-if="this.$route.name == 'home'">
       <v-app-bar color="teal-darken-2">
-        <h3 class="h3-title-sm">Home Projects</h3>
+        <!--h3 class="h3-title-sm">Home Projects</h3-->
         <!--v-toolbar-title id="toolbar-title">Home Projects</v-toolbar-title-->
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
@@ -15,7 +15,7 @@
     </v-app>
     <v-app v-else-if="this.$route.name == 'Login'">
       <v-app-bar color="teal-darken-2">
-        <h3 class="h3-title-sm">Home Projects</h3>
+        <!--h3 class="h3-title-sm">Home Projects</h3-->
         <!--v-toolbar-title id="toolbar-title">Home Projects</v-toolbar-title-->
         <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
@@ -25,7 +25,7 @@
     </v-app>
     <v-app v-else>
       <v-app-bar color="teal-darken-2">
-        <h3 class="h3-title-sm">Home Projects</h3>
+        <!--h3 class="h3-title-sm">Home Projects</h3-->
         <!--v-toolbar-title id="toolbar-title">Home Projects</v-toolbar-title-->
         <v-btn
           v-for="link in links"
