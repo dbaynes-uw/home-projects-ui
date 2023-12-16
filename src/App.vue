@@ -120,6 +120,11 @@ export default {
           title: "Golfs",
         },
         {
+          label: "MedList",
+          url: "/meds",
+          title: "Meds",
+        },
+        {
           label: "ProductLocationList",
           url: "/products",
           title: "Shopping",

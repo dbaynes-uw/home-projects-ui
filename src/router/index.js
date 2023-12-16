@@ -17,6 +17,10 @@ import GolfCreate from "../views/golfs/GolfCreate.vue";
 import GolfDetails from "@/views/golfs/GolfDetails.vue";
 import GolfEdit from "@/views/golfs/GolfEdit.vue"
 import GolfList from "../views/golfs/GolfList.vue";
+import MedCreate from "@/views/meds/MedCreate.vue";
+import MedDetails from "@/views/meds/MedDetails.vue";
+import MedEdit from "@/views/meds/MedEdit.vue";
+import MedList from "../views/meds/MedList.vue";
 import ProductCreate from "../views/products/ProductCreate.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
@@ -78,18 +82,6 @@ const routes = [
     name: 'ResetPassword',
     component: ResetPassword
   },
-  /*
-  {
-    path: "/users/sign_in",
-    name: "Login",
-    component: Login,
-  },
-  {
-    path: "/users/sign_out",
-    name: "Logout",
-    component: Logout,
-  },
-  */
   {
     path: "/about",
     name: "About",
@@ -193,6 +185,32 @@ const routes = [
     name: "GolfEdit",
     props: true,
     component: GolfEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/med/create",
+    name: "MedCreate",
+    component: MedCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/meds",
+    name: "MedList",
+    component: MedList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/meds/:id",
+    name: "MedDetails",
+    props: true,
+    component: MedDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/med/:id",
+    name: "MedEdit",
+    props: true,
+    component: MedEdit,
     meta: { requiresAuth: true}
   },
   {
