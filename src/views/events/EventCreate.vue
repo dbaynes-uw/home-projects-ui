@@ -89,7 +89,7 @@ export default {
         frequency: "",
         action_completed_date: "",
         notes: "",
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
     };
   },

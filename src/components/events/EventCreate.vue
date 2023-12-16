@@ -76,8 +76,7 @@ export default {
         completed: false,
         frequency: "",
         notes: "",
-        created_by: "dbaynes in eventcreate",
-      },
+        created_by: this.$store.state.user.resource_owner.email,      },
     };
   },
   methods: {
@@ -86,8 +85,7 @@ export default {
       const event = {
         ...this.event,
         id: uuidv4(),
-        created_by: this.$store.state.user,
-      };
+        created_by: this.$store.state.user.resource_owner.email,      };
       //Xthis.addEvent(event); in events.js
       //Vuex 2:
       this.$store.dispatch("createEvent", event);

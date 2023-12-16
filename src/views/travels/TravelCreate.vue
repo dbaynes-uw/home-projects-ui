@@ -57,7 +57,7 @@ export default {
         end_date: "",
         url_reference: "",
         notes: "",
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       urlMaxLength: 255,
       num: 1,
@@ -68,7 +68,7 @@ export default {
       const travel = {
         ...this.travel,
         id: uuidv4(),
-        created_by: this.$store.state.user,
+        created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("createTravel", travel)) {
         this.$router.push({ name: "TravelList" });

@@ -96,7 +96,7 @@ export default {
         penalty_16_hole: null,
         penalty_17_hole: null,
         penalty_18_hole: null,       
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       tees_played: ["Black", "Blue", "Red", "White"],
       front_nine_par: 0,

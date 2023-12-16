@@ -69,7 +69,7 @@ export default {
           notes: null,
         },
         notes: "",
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       toggle0: false,
       toggle1: false,
@@ -102,7 +102,7 @@ export default {
       const sub_vendors_products = {
         ...this.vendors_products,
         id: uuidv4(),
-        created_by: this.$store.state.user,
+        created_by: this.$store.state.user.resource_owner.email,
       };
       
       if (this.$store.dispatch("putVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {

@@ -58,7 +58,7 @@ export default {
         username: "",
         email: "",
         phone: "",
-        created_by: "dbaynes in UserCreate",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       api_url: "",
       errors: null,

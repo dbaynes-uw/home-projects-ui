@@ -68,7 +68,7 @@ export default {
         date_read: "",
         url_to_review: "",
         notes: "",
-        updated_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       api_url: ""
     };

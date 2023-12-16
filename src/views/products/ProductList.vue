@@ -58,17 +58,6 @@ export default {
     return {
       product_active: true,
       Location: null,
-      //vendors: {
-      //  vendor_name: '',
-      //  vendor_location: '',
-      //  products: {
-      //    product_name: '',
-      //    active: false,
-      //    notes: null,
-      //  },
-      //  notes: "",
-      //  created_by: "dbaynes",
-      //},
       resultSet: [],
       showShoppingList: false,
       showFlag: false,
@@ -111,7 +100,7 @@ export default {
       const sub_products = {
         ...this.resultSet,
         id: uuidv4(),
-        created_by: this.$store.state.user,
+        created_by: this.$store.state.user.resource_owner.email,
       };   
       if (this.$store.dispatch("putProducts", sub_products, {params: { products: sub_products }} )) {
         alert("Products List Updated Successfully")

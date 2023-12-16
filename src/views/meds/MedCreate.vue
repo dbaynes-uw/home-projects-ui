@@ -7,45 +7,33 @@
   <v-card-text>
     <v-form id="isFormValid">
       <v-container id="form-container">
-        <v-text-field
-          v-model="med.title"
-          :rules="[requiredTitle]"
-          label="Title"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Author" v-model="med.author" :rules="[requiredAuthor]">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Date Written"
-          v-model="med.date_written"
-          type="date"
+        <v-text-field label="Date of Occurrence"
+          v-model="med.date_of_occurrence"
+          type="datetime-local"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Date Read"
-          v-model="med.date_read"
-          type="date"
+        <v-select
+          id="select-box"
+          class="text-style"
+          label="Duration"
+          :items="durations"
+          v-model="med.duration"
+          required
         >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field
-          v-model="med.url_to_review"
-          label="URL to Review"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
-          </template>
-        </v-text-field>        
-        <v-text-field label="Notes" v-model="med.notes">
+          <option
+            v-for="option in durations"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === med.duration"
+          >
+            {{ option }}
+          </option>
+        </v-select>
+        <v-text-field label="Circumstances: sugar, sleep, alcohol, etc..." v-model="med.circumstances">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
@@ -63,17 +51,12 @@ export default {
   data() {
     return {
       med: {
-        title: null,
-        author: "",
-        date_written: null,
-        date_read: null,
-        vendor_product: [],
-        audio_format: false,
-        print_format: false,
-        url_to_review: "",
-        notes: "",
-        created_by: "dbaynes",
+        date_of_occurrence: null,
+        duration: "",
+        circumstance: null,
+        created_by: this.$store.state.user.resource_owner.email,
       },
+      durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
       toggle1: false,
       toggle2: false,
       toggle3: false,
@@ -92,7 +75,7 @@ export default {
         const med = {
           ...this.med,
           id: uuidv4(),
-          created_by: this.$store.state.user,
+          created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createMed", med)) {
           this.$router.push({ name: "MedList" });

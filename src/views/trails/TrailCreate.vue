@@ -78,7 +78,7 @@ export default {
         url_to_map: "",
         date_last_hiked: "",
         notes: "",
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       urlMaxLength: 255,
       num: 1,
@@ -89,7 +89,7 @@ export default {
       const trail = {
         ...this.trail,
         id: uuidv4(),
-        created_by: this.$store.state.user,
+        created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("createTrail", trail)) {
         alert("Trail was successfully added for " + trail.location);

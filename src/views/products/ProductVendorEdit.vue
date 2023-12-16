@@ -129,7 +129,7 @@ export default {
       vendor: {
         vendor_name: null,
         location: '',
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
         other_vendor_name: '',
         product_name: '',
         other_product_name: '',
@@ -147,7 +147,7 @@ export default {
       const vendor = {
         ...this.vendor,
         id: uuidv4(),
-        created_by: this.$store.state.user,
+        created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("editVendor", vendor)) {
         alert("Vendor Product List Updated Successfully")

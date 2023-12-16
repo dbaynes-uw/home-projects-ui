@@ -90,7 +90,7 @@ export default {
         date_read: null,
         url_to_review: "",
         notes: "",
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       isFormValid: false,
       isAuthorValid: false,
@@ -107,7 +107,7 @@ export default {
         const book = {
           ...this.book,
           id: uuidv4(),
-          created_by: this.$store.state.user,
+          created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createBook", book)) {
           this.$router.push({ name: "BookList" });

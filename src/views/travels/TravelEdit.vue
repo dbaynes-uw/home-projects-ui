@@ -71,7 +71,7 @@ export default {
         start_date: "",
         end_date: "",
         notes: "",
-        updated_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
     };
   },

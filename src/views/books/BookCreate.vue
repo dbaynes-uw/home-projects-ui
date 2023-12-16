@@ -72,7 +72,7 @@ export default {
         print_format: false,
         url_to_review: "",
         notes: "",
-        created_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       toggle1: false,
       toggle2: false,
@@ -92,7 +92,7 @@ export default {
         const book = {
           ...this.book,
           id: uuidv4(),
-          created_by: this.$store.state.user,
+          created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createBook", book)) {
           this.$router.push({ name: "BookList" });

@@ -78,7 +78,7 @@ export default {
         url_to_map: "",
         date_last_hiked: "",
         notes: "",
-        updated_by: "dbaynes",
+        created_by: this.$store.state.user.resource_owner.email,
       },
     };
   },

@@ -33,7 +33,7 @@ export default {
         username: "",
         email: "",
         phone: "",
-        created_by: "dbaynes in UserCreate",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       errors: null,
     };
@@ -63,7 +63,7 @@ export default {
       const user = {
         ...this.user,
         id: uuidv4(),
-        created_by: this.$store.state.user,
+        created_by: this.$store.state.user.resource_owner.email,
       };
       this.$store.dispatch("createUser", user);
       alert("User was successfully added for " + user.name);
