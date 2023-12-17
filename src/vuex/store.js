@@ -19,21 +19,22 @@ export default new Vuex.Store({
     loggedOut: null,
     books: [],
     events: [],
-    vendors: [],
-    vendors_group: [],
-    vendors_locations_group: [],
-    vendors_products_group: [],
-    shopping_list: [],
-    products: [],
-    trails: [],
-    travels: [],
-    users: [],
     eventStatistics: [],
     eventsPastDue: [],
     eventsDueBy: [],
     eventsAssigned: [],
     event: {},
+    meds: [],
+    products: [],
+    shopping_list: [],
     trail: {},
+    trails: [],
+    travels: [],
+    users: [],
+    vendors: [],
+    vendors_group: [],
+    vendors_locations_group: [],
+    vendors_products_group: [],  
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -79,6 +80,15 @@ export default new Vuex.Store({
     SET_GOLFS(state, golfs) {
       state.golfs = golfs;
     },
+    SET_PRODUCT(state, product) {
+      state.product = product;
+    },
+    SET_PRODUCTS(state, products) {
+      state.products = products;
+    },
+    SET_SHOPPING_LIST(state, shopping_list) {
+      state.shopping_list = shopping_list;
+    },
     ADD_TRAIL(state, trail) {
       state.trails.push(trail);
     },
@@ -122,15 +132,6 @@ export default new Vuex.Store({
     SET_USERS(state, users) {
       state.users = users;
     },
-    SET_PRODUCT(state, product) {
-      state.product = product;
-    },
-    SET_PRODUCTS(state, products) {
-      state.products = products;
-    },
-    SET_SHOPPING_LIST(state, shopping_list) {
-      state.shopping_list = shopping_list;
-    },
     SET_VENDORS(state, vendors) {
       state.vendors = vendors;
     },
@@ -172,27 +173,22 @@ export default new Vuex.Store({
       // Send New User link to site at Reset Password
 
       //if ( credentials.email.toLowerCase().includes('baynes')) {
-        return axios
-          .post(api_authenticate_url, credentials)
-          .then(({ data }) => {
-            this.message = data.name + " - You have Successfully Registered."
-            commit('ADD_USER', data)
-          })
-          .catch((error) => {
-            this.$store.state.errors = null
-            if (this.message == null) {
-              error = error.response.request.statusText + '!';
-            } else {
-              error = this.message
-            }
-            console.log("Message to be sent: ", error)
-            router.push({name:'home', params: {message: this.message}})
-          });
-        //} else {
-        //  this.message = 'Contact Admin to Register: ';
-        //  commit('SET_ERRORS', this.message)
-        //  router.push({name:'home', params: {message: this.message}})
-      //}
+      return axios
+        .post(api_authenticate_url, credentials)
+        .then(({ data }) => {
+          this.message = data.name + " - You have Successfully Registered."
+          commit('ADD_USER', data)
+        })
+        .catch((error) => {
+          this.$store.state.errors = null
+          if (this.message == null) {
+            error = error.response.request.statusText + '!';
+          } else {
+            error = this.message
+          }
+          console.log("Message to be sent: ", error)
+          router.push({name:'home', params: {message: this.message}})
+        });
     },
     async login ({ commit }, credentials) {
       console.log("LOGIN CREDS: ", credentials)
@@ -206,19 +202,19 @@ export default new Vuex.Store({
       console.log("api_authenticate_url: ", api_authenticate_url);
       //this.init_authentication;
       return axios
-       .post(api_authenticate_url + "sign_in", credentials)
-       .then(({ data }) => {
-         commit('SET_USER_DATA', data)
-       })
-       .catch((error) => {
-         console.log(error);
-         alert("Invalid Login Credentials or API problem - Please try again")
-         //location.reload()
-         //const message = error.response.request.statusText + '!';
-         error = error.response.request.statusText + '!';
-         console.log("Message to be sent: ", error)
-         router.back(error)
-       });
+        .post(api_authenticate_url + "sign_in", credentials)
+        .then(({ data }) => {
+          commit('SET_USER_DATA', data)
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Invalid Login Credentials or API problem - Please try again")
+          //location.reload()
+          //const message = error.response.request.statusText + '!';
+          error = error.response.request.statusText + '!';
+          console.log("Message to be sent: ", error)
+          router.back(error)
+        });
     },
 
     async logout ({ commit }) {
@@ -504,6 +500,53 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async createMed({ commit }, med) {
+      EventService.postBook(med)
+        .then(() => {
+          commit("ADD_MED", med);
+          alert("Med was successfully added for " + med.date_of_occurrrence);
+        })
+        .catch((error) => {
+          alert("Error in postMed of createMed Action (index.js)");
+          console.log(error);
+        });
+    },
+    async deleteMed({ commit }, med) {
+      EventService.deleteMed(med)
+        .then((response) => {
+          commit("DELETE_BOOK", response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchMed({ commit, state }, id) {
+      const existingMed = state.meds.find((med) => med.id === id);
+      if (existingMed) {
+        console.log("ExistingMed: ", existingMed);
+        commit("SET_BOOK", existingMed);
+      } else {
+        EventService.getMed(id)
+          .then((response) => {
+            commit("SET_BOOK", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    async fetchMeds({ commit }) {
+      EventService.getMeds()
+        .then((response) => {
+          commit("SET_BOOKS", response.data);
+          console.log("FetchMeds response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     async fetchProducts({ commit }) {
       EventService.getProducts()
         .then((response) => {

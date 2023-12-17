@@ -57,14 +57,8 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       },
       durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
-      toggle1: false,
-      toggle2: false,
-      toggle3: false,
       isFormValid: false,
-      isAuthorValid: false,
-      isTitleValid: false,
-      urlMaxLength: 255,
-      num: 1,
+      isDateOccurrenceValid: false,
     };
   },
   methods: {
@@ -86,44 +80,25 @@ export default {
         alert("Please correct required fields and resubmit");
       }
     },
-    requiredAuthor: function (value) {
-      console.log("requiredAuthor: - this.isAuthorValid: ", this.isAuthorValid)
+    requiredDateOccurrence: function (value) {
+      console.log("requiredDateOccurrence: - this.isDateOccurrenceValid: ", this.isDateOccurrenceValid)
       console.log("VALUE: ", value)
       if (value) {
-          this.isAuthorValid = true
+          this.isDateOccurrenceValid = true
           return true;
       } else {
           this.isFormValid = false
-          this.isAuthorValid = false
-          return 'Please enter Author';
-      }
-    },
-    requiredTitle: function (value) {
-      console.log("requiredTitle: - this.isTitleValid: ", this.isTitleValid)
-      console.log("VALUE: ", value)
-      if (value) {
-          this.isTitleValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isTitleValid = false
-          return 'Please enter Title';
+          this.isDateOccurrenceValid = false
+          return 'Please enter Date of Occurrence';
       }
     },
     checkValidations() {
-      console.log("checkValidations - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations - this.isTitleValid: ", this.isTitleValid)
 
-      if (this.isAuthorValid && this.isTitleValid) {
+      if (this.isDateOccurrenceValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false
       }
-      console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations Exit - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations Exit - this.isTitleValid: ", this.isTitleValid)
-
     }
   },
   med() {

@@ -86,7 +86,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import GolfCalculations from "@/components/golfs/GolfCalculations.js";
 export default {
-  name: "BookSearchResults",
+  name: "GolfSearchResults",
   props: ["filteredResults"],
   components: {
     ConfirmDialogue,

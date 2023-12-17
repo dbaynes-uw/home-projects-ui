@@ -28,7 +28,7 @@
         <BookIndex :books="books" />
       </span>
       <span v-if="filteredResults.length > 0">
-        <BookSearchResults :filteredResults="filteredResults" />
+        <BookIndex :books="filteredResults" />
       </span>
     </div>
   </div>
@@ -36,13 +36,11 @@
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import BookIndex from "@/components/books/BookIndex.vue";
-import BookSearchResults from "@/components/books/BookSearchResults.vue";
 export default {
   name: "BookList",
   props: ["filteredResults[]"],
   components: {
     BookIndex,
-    BookSearchResults,
   },
   data() {
     return {
