@@ -47,8 +47,8 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  components: {
-  },
+  name: "MedCreate",
+  components: {},
   data() {
     return {
       med: {
@@ -75,6 +75,7 @@ export default {
         };
         if (this.$store.dispatch("createMed", med)) {
           this.$router.push({ name: "MedList" });
+          alert("Just pushed to MedList???????")
         } else {
           alert("Error adding Med Location " + med.title);
         }

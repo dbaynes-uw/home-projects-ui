@@ -1,12 +1,12 @@
 <template>
   <div class="div-frame">
-    <h2>Meds List</h2>
-    <h2 id="status-message">
-      <!--{{ this.statusMessage }}</-->
-    </h2>
+    <h2>Med List</h2>
     <h2>
       <router-link :to="{ name: 'MedCreate' }">Add Med</router-link>
     </h2>
+    <h3 id="h3-left">
+      <a href="https://myhealthchart.com/" target="_blank">MyHealthChart dj.@./sen...NagoSalib2.@</a>
+    </h3>
     <br />
     <div style="width: 100%">
       <div class="auto-search-container">
@@ -73,7 +73,7 @@ export default {
       this.filteredResults = [];
     },
     searchColumns() {
-      console.log("BOOK LIST searchColumn: ")
+      console.log("Med LIST searchColumn: ")
       this.filteredResults = [];
       this.columnDetails = null;
       if (
@@ -89,17 +89,23 @@ export default {
           this.inputSearchText.length >= 2
         ) {
           this.meds.forEach((med) => {
-            const searchHasTitle =
-              med.title &&
-              med.title
+            const searchHasDate =
+              med.date_of_occurrence &&
+              med.date_of_occurrence
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            const searchHasAuthor =
-              med.author &&
-              med.author
+            const searchHasDuration =
+              med.duration &&
+              med.duration
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
+            const searchHasCircumstances =
+              med.circumstances &&
+              med.circumstances
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+
+            if (searchHasDate || searchHasDuration || searchHasCircumstances) {
               this.filteredResults.push(med);
             }
           });
@@ -110,7 +116,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      //console.log("BOOK LIST sortBy: ", sortBy)
+      //console.log("Med LIST sortBy: ", sortBy)
       this.sortedData = this.meds;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
