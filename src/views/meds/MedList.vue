@@ -28,7 +28,7 @@
         <MedIndex :meds="meds" />
       </span>
       <span v-if="filteredResults.length > 0">
-        <MedSearchResults :filteredResults="filteredResults" />
+        <MedIndex :meds="filteredResults" />
       </span>
     </div>
   </div>
@@ -36,13 +36,11 @@
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import MedIndex from "@/components/meds/MedIndex.vue";
-import MedSearchResults from "@/components/meds/MedSearchResults.vue";
 export default {
   name: "MedList",
   props: ["filteredResults[]"],
   components: {
     MedIndex,
-    MedSearchResults,
   },
   data() {
     return {
@@ -130,8 +128,8 @@ export default {
     //  this.isOnline = true;
     //  console.log("isOnline - this.isOnline = ", this.isOnline);
     //},
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTime(value);
     },
   },
 };

@@ -32,6 +32,12 @@ export default {
       return date_time;
     }
   },
+  formatRubyDateTime(date_time) {
+    if (date_time) {
+      date_time = moment(date_time).format("YYYY/MM/DD HH:MM:SS");
+      return date_time;
+    }
+  },
   formatSystemDate(action_date) {
     if (action_date) {
       action_date =

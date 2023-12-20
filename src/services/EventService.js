@@ -112,6 +112,31 @@ export default {
     this.init();
     return axios.post(api_url + 'golfs', golf);
   },
+  deleteMed(med) {
+    this.init();
+    console.log("environment: ", environment);
+    console.log("ES Delete Med: ", med.id);
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "meds/" + `${med.id}`);
+  },
+  getMed(id) {
+    this.init();
+    console.log("environment: ", environment);
+    return axios.get(api_url + "meds/" + id);
+  },
+  getMeds() {
+    this.init();
+    return axios.get(api_url + "meds")
+  },
+  async putMed(updatedMed) {
+    this.init();
+    return axios.put(api_url + "meds" + `/${updatedMed.id}`, updatedMed);
+  },
+  async postMed(med) {
+    this.init();
+    return axios.post(api_url + 'meds', med);
+  },
+
   async getProducts() {
     this.init();
     return axios.get(api_url + "products")

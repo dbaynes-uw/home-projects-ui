@@ -2,49 +2,39 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('title')">Title</th>
-      <th id="background-blue" @click="sortList('author')">Author</th>
-      <th id="background-blue" @click="sortList('date_written')">
-        Date Written
-      </th>
-      <th id="background-blue" @click="sortList('date_read')">
-        Date Read
-      </th>
-      <th id="background-blue">URL to Review</th>
-      <th id="background-blue" style="text-align: right">Actions</th>
+      <th id="background-blue" @click="sortList('date_of_occurrence')">Date of Occcurrence</th>
+      <th id="background-blue" @click="sortList('duration')">Duration</th>
+      <th id="background-blue">Circumstances </th>
+      <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="(result, resultIndex) in meds" :key="resultIndex">
-      <td>{{ result.title }}</td>
-      <td>{{ result.author }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_written) }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_read) }}</td>
-      <td class="td-center">
-        <a :href="result.url_to_review" target="_blank">Review</a>
-      </td>
-       <td>
+    <tr v-for="(med, medIndex) in meds" :key="medIndex">
+      <td>{{ formatStandardDateTime(med.date_of_occurrence) }} </td>
+      <td>{{ med.duration }}</td>
+      <td>{{ med.circumstances }} </td>
+      <td class="td-center" >
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'MedEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'MedEdit', params: { id: `${med.id}` } }"
             >
               <i
-                id="med-icon-edit"
+                id="medium-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'MedDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'MedDetails', params: { id: `${med.id}` } }"
               >
-                <i id="med-icon-eye" class="fa fa-eye"></i>
+                <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
-                @click="deleteMed(result)"
+                @click="deleteMed(med)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="med-icon-delete"
+                id="medium-icon-delete"
               >
               </i>
             </span>
@@ -52,16 +42,16 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'MedDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'MedDetails', params: { id: `${med.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'MedEdit', params: { id: `${result.id}` } }"
+            :to="{ name: 'MedEdit', params: { id: `${med.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteMed(result)"><u>Del</u></span>
+          <span class="ok-btn" @click="deleteMed(med)"><u>Delete</u></span>
         </span>
       </td>
     </tr>
@@ -80,19 +70,24 @@ export default {
   },
   data() {
     return {
+      med: {
+        date_of_occurrence: "",
+        duration: "",
+        circumstances: "",
+      },
       inputSearchText: "",
       onlineStatus: navigator.onLine,
     };
   },
   methods: {
     searchColumns() {
-      this.filteredResults = [];
+      this.filteredmeds = [];
       this.columnDetails = null;
       if (
         this.inputSearchText == null ||
         (this.inputSearchText != null && this.inputSearchText.length === 0)
       ) {
-        this.filteredResults = [];
+        this.filteredmeds = [];
         this.columnDetails = null;
       } else {
         if (
@@ -112,14 +107,14 @@ export default {
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(med);
+              this.filteredmeds.push(med);
             }
           });
         }
       }
     },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
+    showCharacterDetails(med) {
+      this.characterDetails = med;
     },
     sortList(sortBy) {
       console.log("BOOK INDEX sortBy: ", sortBy)
@@ -151,8 +146,8 @@ export default {
         setTimeout(() => location.reload(), 2500);
       }
     },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTime(value);
     },
   },
 };

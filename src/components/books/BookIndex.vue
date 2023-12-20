@@ -11,7 +11,7 @@
         Date Read
       </th>
       <th id="background-blue">URL to Review</th>
-      <th id="background-blue" style="text-align: right">Actions</th>
+      <th class="th-center" id="background-blue">Actions</th>
     </tr>
     <tr v-for="(result, resultIndex) in books" :key="resultIndex">
       <td>{{ result.title }}</td>
@@ -21,14 +21,14 @@
       <td class="td-center">
         <a :href="result.url_to_review" target="_blank">Review</a>
       </td>
-       <td>
+       <td class="td-center" >
         <span v-if="this.onlineStatus">
-          <span class="fa-stack">
+          <span class="fa-stack" style="text-align: center">
             <router-link
               :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
             >
               <i
-                id="book-icon-edit"
+                id="medium-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
@@ -37,14 +37,14 @@
               <router-link
                 :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
               >
-                <i id="book-icon-eye" class="fa fa-eye"></i>
+                <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteBook(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="book-icon-delete"
+                id="medium-icon-delete"
               >
               </i>
             </span>
@@ -61,7 +61,7 @@
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteBook(result)"><u>Del</u></span>
+          <span class="ok-btn" @click="deleteBook(result)"><u>Delete</u></span>
         </span>
       </td>
     </tr>

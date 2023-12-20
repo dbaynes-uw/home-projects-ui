@@ -5,32 +5,20 @@
     <br />
     <div v-if="med" class="event" id="center-align">
       <h3>
-        <b>{{ med.title }}</b>
+        <b></b>
       </h3>
       <ul class="ul-left">
         <li>
-          Author:
-          <b>{{ med.author }}</b>
-        </li>
-        <li v-if="med.date_written">
-          Date Med Written:
-          <b>{{ formatStandardDate(med.date_written) }}</b>
-        </li>
-        <li v-if="med.date_read">
-          Date Med Read:
-          <b>{{ formatStandardDate(med.date_read) }}</b>
-        </li>
-        <li v-if="med.url_to_review">
-          URL to Review:
-          <a :href="med.url_to_review" target="_blank">Click</a>
+          Date of Occurrence:
+          <b>{{ formatStandardDateTime(med.date_of_occurrence) }} </b>
         </li>
         <li>
-          Notes:
-          <b>{{ med.notes }}</b>
+          Duration:
+          <b>{{ med.duration }}</b>
         </li>
         <li>
-          Date Entered:
-          <b>{{ formatStandardDate(med.created_at) }}</b>
+          Circumstances:
+          <b>{{med.circumstances }}</b>
         </li>
       </ul>
       <br />
@@ -84,8 +72,8 @@ export default {
         this.$router.push({ name: "MedList" });
       }
     },
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTime(value);
     },
   },
   created() {

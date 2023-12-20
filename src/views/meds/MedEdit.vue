@@ -1,33 +1,39 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="medEdit">
-    <h2>Edit Med {{ med.head_name }}</h2>
+  <div class="bookEdit">
+    <h2>Edit Med</h2>
     <form class="add-form" @submit.prevent="updateMed">
+      
       <div class="form-container">
-        <label>Title:</label>
-        <input type="text" class="text-style" v-model="med.title" required />
-        <label>Author:</label>
-        <input type="text" class="text-style" v-model="med.author" required />
-        <label for="date_written">Date Written:</label>
-        <input
-          type="date"
-          class="text-style"
-          v-model="med.date_written"
-        />
-        <label for="date_read">Date Read:</label>
-        <input
-          type="date"
-          class="text-style"
-          v-model="med.date_read"
-        />
-        <label for="url_to_review">URL to Review:</label>
-        <input type="text" class="text-style" v-model="med.url_to_review" />
-        <label>Notes:</label>
-        <textarea
-          v-model="med.notes"
+        <p id="p-custom-left">Date of Occurrence: {{ formatStandardDateTime(med.date_of_occurrence) }}</p>
+        <v-text-field
+          label="Click calendar at right to change Date/Time of Occurrence"
+          v-model="med.date_of_occurrence"
+          type="datetime-local"
+        >
+          <!--template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </!--template-->
+        </v-text-field>
+        <v-select
+          label="Duration"
+          :items="durations"
+          v-model="med.duration"
+        >
+          <option
+            v-for="option in durations"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === med.duration"
+          >
+            {{ option }}
+          </option>
+        </v-select>
+        <v-text-field
+          v-model="med.circumstances"
           rows="3"
           cols="40"
-          class="textarea-style"
         />
         <button class="button" type="submit" id="background-blue">
           Submit
@@ -39,6 +45,7 @@
 <script>
 import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id"],
   components: {
@@ -53,35 +60,32 @@ export default {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/meds/";
     }
-    console.log("Mounted: ", this.$route.params.id);
+    console.log("MedEdit Mounted: ", this.$route.params.id);
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
+    console.log("Results: ", result)
     this.med = result.data;
   },
   data() {
     return {
       med: {
         id: "",
-        title: "",
-        author: "",
-        date_written: "",
-        date_read: "",
-        url_to_review: "",
-        notes: "",
+        date_of_occurrence: "",
+        duration: "",
+        circumstances: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
+      durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
       api_url: ""
     };
   },
   setup() {},
   methods: {
     async updateMed() {
-  
       const ok = await this.$refs.confirmDialogue.show({
         title: "Update Med from List ",
         message:
-          "Are you sure you want to update " + 
-          this.med.title,
+          "Are you sure you want to Update this record ",
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
@@ -96,12 +100,9 @@ export default {
             this.api_url + 
             this.$route.params.id,
           {
-            title: this.med.title,
-            author: this.med.author,
-            date_written: this.med.date_written,
-            date_read: this.med.date_read,
-            url_to_review: this.med.url_to_review,
-            notes: this.med.notes,
+            date_of_occurrence: this.med.date_of_occurrence,
+            duration: this.med.duration,
+            circumstances: this.med.circumstances,
           }
         );
         if (result.status >= 200) {
@@ -112,6 +113,9 @@ export default {
           console.log("ERROR Result Status: ", result.status);
         }
       }
+    },
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTime(value);
     },
   },
 };

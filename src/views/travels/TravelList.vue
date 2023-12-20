@@ -29,7 +29,7 @@
         <TravelIndex :travels="travels" />
       </span>
       <span v-if="filteredResults.length > 0">
-        <TravelSearchResults :filteredResults="filteredResults" />
+        <TravelIndex :travels="filteredResults" />
       </span>
     </div>
   </div>       
@@ -38,7 +38,6 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import TravelIndex from "@/components/travels/TravelIndex.vue";
-import TravelSearchResults from "@/components/travels/TravelSearchResults.vue";
 
 export default {
   name: "TravelList",
@@ -46,7 +45,6 @@ export default {
   components: {
     ConfirmDialogue,
     TravelIndex,
-    TravelSearchResults,
   },
   data() {
     return {

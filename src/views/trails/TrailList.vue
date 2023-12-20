@@ -29,14 +29,13 @@
         <TrailIndex :trails="trails" />
       </span>
       <span v-if="filteredResults.length > 0">
-        <TrailSearchResults :filteredResults="filteredResults" />
+        <TrailIndex :trails="filteredResults" />
       </span>
     </div>
   </div>
 </template>
 <script>
 import TrailIndex from "@/components/trails/TrailIndex.vue";
-import TrailSearchResults from "@/components/trails/TrailSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
@@ -45,7 +44,6 @@ export default {
   components: {
     ConfirmDialogue,
     TrailIndex,
-    TrailSearchResults,
   },
   data() {
     return {

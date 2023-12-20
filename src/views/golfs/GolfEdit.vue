@@ -7,9 +7,7 @@
       <!--p>Current User: {{ this.user}}</p-->
     </v-card-title>
   </v-card>    
-    <!--form class="add-form" @submit.prevent="updateBook"-->
-      <GolfInput :golf="golf" />
-    <!--form-->
+  <GolfInput :golf="golf" />
 </template>
 <script>
 //import axios from "axios";

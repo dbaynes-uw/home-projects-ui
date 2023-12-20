@@ -17,6 +17,7 @@ export default new Vuex.Store({
     isNewUser: null,
     loggedIn: null,
     loggedOut: null,
+    book: [],
     books: [],
     events: [],
     eventStatistics: [],
@@ -24,6 +25,7 @@ export default new Vuex.Store({
     eventsDueBy: [],
     eventsAssigned: [],
     event: {},
+    med: [],
     meds: [],
     products: [],
     shopping_list: [],
@@ -69,7 +71,7 @@ export default new Vuex.Store({
       state.eventStatisticDetail = eventStatisticDetail;
     },
     ADD_GOLF(state, golf) {
-      state.books.push(golf);
+      state.golfs.push(golf);
     },
     DELETE_GOLF(state, golf) {
       state.golf = golf;
@@ -80,6 +82,18 @@ export default new Vuex.Store({
     SET_GOLFS(state, golfs) {
       state.golfs = golfs;
     },
+    ADD_MED(state, med) {
+      state.meds.push(med);
+    },
+    DELETE_MED(state, med) {
+      state.med = med;
+    },
+    SET_MED(state, med) {
+      state.med = med;
+    },
+    SET_MEDS(state, meds) {
+      state.meds = meds;
+    },    
     SET_PRODUCT(state, product) {
       state.product = product;
     },
@@ -501,7 +515,7 @@ export default new Vuex.Store({
         });
     },
     async createMed({ commit }, med) {
-      EventService.postBook(med)
+      EventService.postMed(med)
         .then(() => {
           commit("ADD_MED", med);
           alert("Med was successfully added for " + med.date_of_occurrrence);
@@ -511,10 +525,11 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+
     async deleteMed({ commit }, med) {
       EventService.deleteMed(med)
         .then((response) => {
-          commit("DELETE_BOOK", response.data);
+          commit("DELETE_MED", response.data);
         })
         .catch((error) => {
           console.log(error);
@@ -524,11 +539,11 @@ export default new Vuex.Store({
       const existingMed = state.meds.find((med) => med.id === id);
       if (existingMed) {
         console.log("ExistingMed: ", existingMed);
-        commit("SET_BOOK", existingMed);
+        commit("SET_MED", existingMed);
       } else {
         EventService.getMed(id)
           .then((response) => {
-            commit("SET_BOOK", response.data);
+            commit("SET_MED", response.data);
           })
           .catch((error) => {
             console.log(error);
@@ -538,7 +553,7 @@ export default new Vuex.Store({
     async fetchMeds({ commit }) {
       EventService.getMeds()
         .then((response) => {
-          commit("SET_BOOKS", response.data);
+          commit("SET_MEDS", response.data);
           console.log("FetchMeds response.data: ", response.data);
           return response.data;
         })

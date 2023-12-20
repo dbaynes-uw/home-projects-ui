@@ -29,6 +29,18 @@
   background-color: #f7f6f6;
   text-align: center;
 }
+#select-box-style {
+  height: 140%
+}
+#p-custom-left {
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.th-center {
+  text-align: center;
+}
 .td-center {
   text-align: center;
 }
@@ -51,7 +63,7 @@
   list-style-type: "-- ";
   text-align: left;
 }
-#book-icon-edit {
+#medium-icon-edit {
   text-align: center;
   position: relative;
   padding: 0;
@@ -59,15 +71,15 @@
   left: -0.5rem !important;
   color: #00796b;
 }
-#book-icon-eye {
+#medium-icon-eye {
   text-align: center;
   position: relative;
   top: -2rem;
-  left: 1.5rem;
+  left: 1rem;
   font-size: 18px;
   color: #00796b;
 }
-#book-icon-delete {
+#medium-icon-delete {
   position: relative;
   top: -4rem;
   left: 2.3rem;
@@ -116,4 +128,5 @@
   width: 100%;
   border-style: groove;
   border-color: lightgray;
+  height: 140%;
 }

@@ -2,6 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="bookEdit">
     <h2>Edit Book {{ book.head_name }}</h2>
+    Date Written {{ book.date_written }}
     <form class="add-form" @submit.prevent="updateBook">
       <div class="form-container">
         <label>Title:</label>
@@ -76,7 +77,6 @@ export default {
   setup() {},
   methods: {
     async updateBook() {
-  
       const ok = await this.$refs.confirmDialogue.show({
         title: "Update Book from List ",
         message:

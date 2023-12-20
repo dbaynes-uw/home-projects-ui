@@ -117,6 +117,7 @@ export default {
     },
     requiredTitle: function (value) {
       console.log("requiredTitle: - this.isTitleValid: ", this.isTitleValid)
+      console.log("requiredTitle: - value: ", value)
       console.log("VALUE: ", value)
       if (value) {
           this.isTitleValid = true

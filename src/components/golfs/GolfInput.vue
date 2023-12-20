@@ -37,7 +37,7 @@
         </span>
         <v-text-field label="Date Round Played"
           v-model="golf.date_played"
-          type="date"
+          type="datetime"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>

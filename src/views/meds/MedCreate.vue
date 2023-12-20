@@ -10,6 +10,7 @@
         <v-text-field label="Date of Occurrence"
           v-model="med.date_of_occurrence"
           type="datetime-local"
+          :rules="[requiredDateOccurrence]"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
@@ -21,7 +22,6 @@
           label="Duration"
           :items="durations"
           v-model="med.duration"
-          required
         >
           <option
             v-for="option in durations"
@@ -33,7 +33,8 @@
             {{ option }}
           </option>
         </v-select>
-        <v-text-field label="Circumstances: sugar, sleep, alcohol, etc..." v-model="med.circumstances">
+        <v-text-field label="Circumstances: sugar, sleep, alcohol, etc..."
+          v-model="med.circumstances">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
@@ -51,6 +52,7 @@ export default {
   data() {
     return {
       med: {
+        id: null,
         date_of_occurrence: null,
         duration: "",
         circumstance: null,
@@ -81,8 +83,6 @@ export default {
       }
     },
     requiredDateOccurrence: function (value) {
-      console.log("requiredDateOccurrence: - this.isDateOccurrenceValid: ", this.isDateOccurrenceValid)
-      console.log("VALUE: ", value)
       if (value) {
           this.isDateOccurrenceValid = true
           return true;
