@@ -23,7 +23,7 @@
              <h2>{{ product.product_name }}</h2>
           </span>
           <span v-if="group_index > 0">
-            <span v-if="product.product_name != products[group_index-1].product_name">
+            <span v-if="product.product_name != resultSet[group_index-1].product_name">
               <!--h2 @click='toggleProduct(group_index)'>{{ product.product_name }}</h2-->
               <h2>{{ product.product_name }}</h2>
             </span>
