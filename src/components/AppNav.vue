@@ -1,105 +1,59 @@
+<script setup>
+</script>
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div id="nav">
-    <v-app v-if="!loggedIn">
-      <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Projects</v-toolbar-title>
-        <v-spacer></v-spacer>
+  <div class="text-center">
+    <v-select
+      v-model="link"
+      :items="links"
+      label="Home Projects"
+    ></v-select>
+    <v-menu :link="link">
+      <template v-slot:activator="{ props }">
         <v-btn
-          text
-          rounded
+          color="primary"
+          dark
+          v-bind="props"
         >
-          <router-link :to="{ name: `Login` }">
-            Login!
-          </router-link>
+          Dropdown
         </v-btn>
-        <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
-      </v-app-bar>
-      <v-content style="margin-top: 7rem">
-        <router-view></router-view>
-      </v-content>
-    </v-app>
-    <v-app v-if="loggedIn">
-      <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Project</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn
-          v-for="link in links"
+      </template>
+
+      <v-list>
+        <v-list-item
+          v-for="(link) in links"
           :key="`${link.label}-header-link`"
-          text
-          rounded
-          class="test"
         >
-          <router-link :to="{ name: `${link.label}` }">
+          <v-list-item-title>
+            <router-link :to="{ name: `${link.label}` }">
             {{ link.title }}
           </router-link>
-        </v-btn>
-        <button type="button" class="navButton" @click="logout">
-          Logout
-        </button>
-        <p>{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>
-      </v-app-bar>
-      <v-content style="margin-top: 7rem">
-        <router-view></router-view>
-      </v-content>
-      <v-footer
-        color="teal-darken-2"
-        padless
-        style="display: flex; flex: 0 0 auto !important; top: 2rem"
-      >
-        <v-layout justify-center wrap>
-          <v-btn
-            v-for="link in links"
-            :key="`${link.label}-footer-link`"
-            color="white"
-            text
-            rounded
-            class="my-2"
-          >
-            <router-link :v-if="loggedIn" :to="{ name: `${link.label}` }">
-              {{ link.title }}
-            </router-link>
-          </v-btn>
-          <button type="button" class="navButton" @click="logout">
-            Logout
-          </button>
-          <!--v-flex primary lighten-2 py-4 text-center white--text xs12>
-            {{ new Date().getFullYear() }} — <strong>Vuetify Dashboard</strong>
-          </v-flex-->
-        </v-layout>
-      </v-footer>
-    </v-app>
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </div>
-  <!--div v-else-if="!loggedIn">
-    <router-link to="/">
-      Home - loggedIn? {{ loggedIn }} !loggedIn? {{ !loggedIn }}
-    </router-link>
-    <router-link v-if="loggedIn" to="/dashboard">
-      Dashboard
-    </router-link>
-    <router-link v-if="!loggedIn" to="/login" class="button">
-      Login
-    </router-link>
-    <button v-else type="button" class="navButton" @click="logout">
-      Logout
-    </button>
-  <div-->
 </template>
-
+<script>
+</script>
 <script>
 //import { RouterLink, useLink } from 'vue-router';
-import { authComputed } from '../vuex/helpers.js'
+//import axios from 'axios'jj
+//import { authComputed } from './vuex/helpers.js'
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import AppNav from "@/components/AppNav.vue";
+
 export default {
+
   components: {
     ConfirmDialogue,
+    AppNav,
   },
   computed: {
-    ...authComputed
+    //...authComputed
   },
   methods: {
     logout () {
-      console.log("AppNav - Logged Out!");
+      console.log("APP.VUE Logout!")
       this.$store.dispatch('logout');
     }
   },
@@ -115,12 +69,27 @@ export default {
         {
           label: "EventList",
           url: "/",
-          title: "Events!",
+          title: "Events",
         },
         {
           label: "BookList",
           url: "/books",
           title: "Books",
+        },
+        {
+          label: "GolfList",
+          url: "/golfs",
+          title: "Golfs",
+        },
+        {
+          label: "MedList",
+          url: "/meds",
+          title: "Meds",
+        },
+        {
+          label: "ProductLocationList",
+          url: "/products",
+          title: "Shopping",
         },
         {
           label: "TrailList",
@@ -132,19 +101,29 @@ export default {
           url: "/travels",
           title: "Travels",
         },
-        //{
-        //  label: "Logout",
-        //  url: "/logout",
-        //  title: "Logout",
-        //},
       ],
     };
   },
 }
 </script>
+<style scoped>
+#tool-bar-title {
+  flex: .7;
+  margin-inline-start: 2px;
+  text-align: left;
+  width: 10rem;
+}
+.nav-button {
+  cursor: pointer;
+  font-weight: bold;
+}
+  .footer-info {
+    margin-top: 0.75rem !important;
+  }
+  
+</style>
 
-<style lang="scss" scoped>
-
+<!--style lang="scss" scoped>
 #nav {
   display: flex;
   align-items: center;
@@ -185,12 +164,12 @@ button,
   }
 }
 
-.navButton {
+.logoutButton {
   cursor: pointer;
-  font-weight: bold;
 }
 
 .nav-welcome + button {
   margin-left: 0;
 }
 </style>
+-->
