@@ -2,6 +2,7 @@
 </script>
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <!--AppVue /-->
   <div id="nav">
     <v-app v-if="this.$route.name == 'home'">
       <v-app-bar color="teal-darken-2">
@@ -24,26 +25,31 @@
       </v-content>
     </v-app>
     <v-app v-else>
-      <v-app-bar color="teal-darken-2">
-        <!--h3 class="h3-title-sm">Home Projects</h3-->
-        <!--v-toolbar-title id="toolbar-title">Home Projects</v-toolbar-title-->
-        <v-btn
-          v-for="link in links"
-          :key="`${link.label}-header-link`"
-          color="white"
-          text
-          rounded
-          class="my-2"
-        >
-          <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
-            {{ link.title }}
-          </router-link>
-        </v-btn>
-        <button type="button" class="nav-button" @click="logout">
-          Exit
-        </button>
-      </v-app-bar>
-      <v-content style="margin-top: 7rem">
+        <div class="text-left">
+          <v-menu :link="links" offset-y>
+            <template v-slot:activator="{ props }">
+              <v-select
+                v-model="menu"
+                :items="links"
+                v-bind="props"
+              ></v-select>
+            </template>  
+            <v-list>
+              <v-list-item
+                v-for="(link) in links"
+                :key="`${link.label}-header-link`"
+              >
+                <v-list-item-title>
+                  <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
+                  {{ link.title }}
+                </router-link>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+
+      <v-content>
         <router-view></router-view>
       </v-content>
       <v-footer
@@ -80,11 +86,13 @@
 //import axios from 'axios'
 import { authComputed } from './vuex/helpers.js'
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+//import AppVue from "@/components/AppVue.vue";
 
 export default {
 
   components: {
     ConfirmDialogue,
+    //AppVue,
   },
   computed: {
     ...authComputed
@@ -140,6 +148,7 @@ export default {
           title: "Travels",
         },
       ],
+      menu: "Home Projects",
     };
   },
 }
