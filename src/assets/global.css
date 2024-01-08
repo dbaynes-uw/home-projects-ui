@@ -1,3 +1,9 @@
+#content-margin {
+  margin-top: 7rem;
+}
+#menu-dropdown-div {
+  width: 50%;
+}
 .toolbar-title {
   flex: .7;
   margin-inline-start: 2px;

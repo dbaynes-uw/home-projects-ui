@@ -19,7 +19,7 @@
         <div class="column" id="group" v-for="(product, group_index) in this.resultSet" :key="group_index">
           <!-- Toggle by Product -->
           <span v-if="group_index == 0">
-            <!--h2 @click='toggleProduct(group_index)'>{{ product.product_name }}</h2-->
+            <!--h2 @click='toggleProduct(group_indzzzzex)'>{{ product.product_name }}</h2-->
              <h2>{{ product.product_name }}</h2>
           </span>
           <span v-if="group_index > 0">

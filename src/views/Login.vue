@@ -54,6 +54,10 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, email, minLength} from '@vuelidate/validators';
 import { reactive, computed } from 'vue';
 export default {
+  mounted() {
+    console.log("Login!")
+    this.$store.dispatch('logout');
+  },
   setup () {
     const state = reactive({
       email: '',

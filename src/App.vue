@@ -2,53 +2,61 @@
 </script>
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <!--AppVue /-->
   <div id="nav">
     <v-app v-if="this.$route.name == 'home'">
       <v-app-bar color="teal-darken-2">
-        <!--h3 class="h3-title-sm">Home Projects</h3-->
-        <!--v-toolbar-title id="toolbar-title">Home Projects</v-toolbar-title-->
-        <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
+        <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
-      <v-content style="margin-top: 7rem">
+      <v-content id="content-margin">
         <router-view></router-view>
       </v-content>
     </v-app>
     <v-app v-else-if="this.$route.name == 'Login'">
       <v-app-bar color="teal-darken-2">
-        <!--h3 class="h3-title-sm">Home Projects</h3-->
-        <!--v-toolbar-title id="toolbar-title">Home Projects</v-toolbar-title-->
-        <p>&nbsp; &nbsp; {{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
+        <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
-      <v-content style="margin-top: 7rem">
+      <v-content id="content-margin">
         <router-view></router-view>
       </v-content>
     </v-app>
+    <!-- Good stuff Starts Here -->
     <v-app v-else>
-        <div class="text-left">
-          <v-menu :link="links" offset-y>
-            <template v-slot:activator="{ props }">
-              <v-select
-                v-model="menu"
-                :items="links"
-                v-bind="props"
-              ></v-select>
-            </template>  
-            <v-list>
-              <v-list-item
-                v-for="(link) in links"
-                :key="`${link.label}-header-link`"
-              >
-                <v-list-item-title>
-                  <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
-                  {{ link.title }}
-                </router-link>
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
-
+      <!--div-->
+      <div> <!--style="background-color: #41b88352; height: 10%;"-->
+        <v-menu id="menu-dropdown-div" :link="links" offset-y >
+          <template v-slot:activator="{ props }">
+            <!-- style="font-weight: bold; color: #000; font-family: sans-serif"-->
+            <v-select
+              v-model="menu"
+              :items="links"
+              v-bind="props"
+              style="font-weight: bold; color: #000; font-family: system-ui"
+            >                
+            </v-select>
+          </template>  
+          <v-list>
+            <v-card
+              flat
+              width="100%"
+              height="100%"
+              :style="{
+                backgroundColor: 'transparent',
+                position: 'absolute', top: '0px',
+              }"
+             /> 
+            <v-list-item
+              v-for="(link) in links"
+              :key="`${link.label}-header-link`"
+            >
+              <v-list-item-title>
+                <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
+                {{ link.title }}
+              </router-link>
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
       <v-content>
         <router-view></router-view>
       </v-content>
@@ -69,30 +77,18 @@
               {{ link.title }}
             </router-link>
           </button>
-          <button type="button" class="nav-button" @click="logout">
-            Exit
-          </button> 
           <p class="footer-info" style="margin-top: 0.75rem">{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>      
-          <!--v-flex primary lighten-2 py-4 text-center white--text xs12>
-            {{ new Date().getFullYear() }} — <strong>Vuetify Dashboard</strong>
-          </v-flex-->
         </v-layout>
       </v-footer>
     </v-app>
   </div>
 </template>
 <script>
-//import { RouterLink, useLink } from 'vue-router';
-//import axios from 'axios'
 import { authComputed } from './vuex/helpers.js'
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-//import AppVue from "@/components/AppVue.vue";
-
 export default {
-
   components: {
     ConfirmDialogue,
-    //AppVue,
   },
   computed: {
     ...authComputed
@@ -147,8 +143,13 @@ export default {
           url: "/travels",
           title: "Travels",
         },
+        {
+          label: "Login",
+          url: "/login",
+          title: "SignOut",
+        },
       ],
-      menu: "Home Projects",
+      menu: "Home Projects Menu",
     };
   },
 }

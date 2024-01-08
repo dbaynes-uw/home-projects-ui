@@ -153,6 +153,7 @@ export default {
 }
 th {
   background-color: #7ba8bd;
+  /*background-color: #41b883;*/
   text-align: left;
   padding-left: 1rem;
   padding-right: 1rem;

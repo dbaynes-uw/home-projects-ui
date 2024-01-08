@@ -6,8 +6,11 @@
         <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
       </h3>
       <h3>
-        <router-link :to="{ name: 'ProductList' }">Make Shopping List</router-link>
-      </h3>    
+        <router-link :to="{ name: 'ProductList' }">Make Shopping List By Product</router-link>
+      </h3>
+      <h3>
+        <router-link :to="{ name: 'ProductList' }">Make Shopping List By Location and Product</router-link>
+      </h3> 
     </v-card-title>
   </v-card>
   <v-card-text>
