@@ -23,7 +23,7 @@
           <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
             <h1 @click='toggleLocation(group_index)'><b><u>{{ location }}</u></b></h1>
-            <!--div v-show="isVendorToggled === group_index"-->
+            <div v-show="isVendorToggled === group_index">
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
@@ -53,15 +53,17 @@
                                   @change="isChecked(item, item.active)"
                                   class="field"
                                 />
-                                <label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label>
+                                <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
+                              <label class="checkbox-right">{{ item.product_name }}</label>
                             </span>
                           </span>
                         </div>
                       </div>
-                    </span> 
+                    <!--span--> 
                   </span>
+                </span>
               </div>
-            <!--div-->
+            </div>
           </div>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
@@ -186,8 +188,8 @@ input[type=checkbox] {
 .checkbox-right {
   font-size: 1.25rem;
   position: relative;
-  top: -2.25rem;
-  left: 3rem;
+  top: -2.65rem !important;
+  left: 3rem !important;
 }
 /* Create two equal columns that floats next to each other */
 .column {
