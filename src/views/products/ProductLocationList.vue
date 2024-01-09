@@ -15,37 +15,53 @@
   </v-card>
   <v-card-text>
     <v-form>
+      <h3>
+        <u @click='shoppingListDisplay(this.showShoppingList)'>Show Shopping List(Toggle)</u>
+      </h3>
       <v-container id="form-container">
         <div class="row">
           <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
             <h1 @click='toggleLocation(group_index)'><b><u>{{ location }}</u></b></h1>
-            <div v-show="isVendorToggled === group_index">
-              <div class="vendor-name" v-for="(vendor, vendor_index) in vendors_products" :key="vendor_index">
+            <!--div v-show="isVendorToggled === group_index"-->
+              <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
                   <h2 @click='toggleVendor(vendor_index)'><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
-                  <span v-for="(product, product_index) in vendors_products" :key="product_index">        
-                    <span v-show="isProductToggled === product_index">
+                  <!--resultSet Length: {{ this.resultSet[1] }}-->
+                  <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
+                    <!--span v-show="isProductToggled === product_index"-->
                       <div v-if="product.vendor_name == vendor.vendor_name">
                         <div v-if="product.location == vendor.location">
                           <span v-for="(item, item_index) in product.products" :key="item_index">
-                            <input
-                              type="checkbox"
-                              :checked="item.active"
-                              @change="isChecked(item, item.active)"
-                              class="field"
-                            />
-                            <label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label>
+                            <span v-if="this.showShoppingList == true">
+                              <span v-if="item.active == true">
+                                <input
+                                  type="checkbox"
+                                  :checked="item.active"
+                                  @change="isChecked(item, item.active)"
+                                  class="field"
+                                />
+                                <label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label>
+                              </span>
+                            </span>
+                            <span v-else>
+                              <input
+                                  type="checkbox"
+                                  :checked="item.active"
+                                  @change="isChecked(item, item.active)"
+                                  class="field"
+                                />
+                                <label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></label>
+                            </span>
                           </span>
                         </div>
                       </div>
-                    </span>
+                    </span> 
                   </span>
-                </span>
               </div>
-            </div>
+            <!--div-->
           </div>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
@@ -63,6 +79,9 @@ export default {
     return {
       product_active: true,
       productLocationList: null,
+      resultSet: [],
+      showShoppingList: false,
+      showFlag: false,
       vendors: {
         vendor_name: '',
         vendor_location: '',
@@ -77,7 +96,8 @@ export default {
       toggle0: false,
       toggle1: false,
       toggle2: false,
-      isVendorToggled: null,
+      toggleInPlay: false,
+      isVendorToggled: true,
       isProductToggled: null,
       home_safe: false,
       toggleArr: [],
@@ -91,13 +111,18 @@ export default {
   created() {
     this.$store.dispatch("fetchVendorsProducts");
     this.$store.dispatch("fetchVendorsLocationsGroup");
+    this.resultSet = this.vendors_products;
+    this.$store.dispatch("fetchShoppingList");
   },
   computed: {
-    vendors_products() {
-      return this.$store.state.vendors_products;
-    },
     vendorsLocationsGroup() {
       return this.$store.state.vendors_locations_group;
+    },
+    product_shopping_list() {
+      return this.$store.state.product_shopping_list;
+    },
+    vendors_products() {
+      return this.$store.state.vendors_products;
     },
   },
   methods: {
@@ -122,11 +147,29 @@ export default {
       item.active = active == true ? false : true
       return item.active
     },
+    shoppingListDisplay(showFlag) {
+      
+      this.showShoppingList = showFlag == true ? false : true
+      if (this.showShoppingList == true) {
+        this.resultSet = this.product_shopping_list       
+      } else {
+        this.resultSet = this.products
+      }
+      console.log("shoppingListDisplay - showFlag: ", showFlag)
+      return this.showShoppingList
+    },
     toggleLocation(index) {
-      this.isVendorToggled = index === this.isVendorToggled? null : index
+      //console.log("toggleLocation - toggleInPlay: ", this.toggleInPlay)
+      //if (this.toggleInPlay == true) {
+        this.isVendorToggled = index === this.isVendorToggled? null : index
+      //}
     },
     toggleVendor(index) {
-      this.isProductToggled = index === this.isProductToggled? null : index
+      //console.log("toggleVendor - toggleInPlay: ", this.toggleInPlay)
+
+      //if (this.toggleInPlay == true) {
+        this.isProductToggled = index === this.isProductToggled? null : index
+      //}
     }    
   },
 };
