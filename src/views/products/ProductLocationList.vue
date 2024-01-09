@@ -189,7 +189,7 @@ input[type=checkbox] {
   font-size: 1.25rem;
   position: relative;
   top: -2.65rem !important;
-  left: 3rem !important;
+  left: 4rem !important;
 }
 /* Create two equal columns that floats next to each other */
 .column {
