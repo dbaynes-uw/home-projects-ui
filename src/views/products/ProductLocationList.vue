@@ -1,17 +1,17 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Product List by Location and Vendor</h2>
-      <h3>
-        <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
-      </h3>
-      <h3>
-        <router-link :to="{ name: 'ProductList' }">Make Shopping List By Product</router-link>
-      </h3>
-      <h3>
-        <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor</router-link>
-      </h3> 
+      <h2>Products Location then Vendor</h2>
     </v-card-title>
+    <h3>
+      <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
+    </h3>
+    <h3>
+      <router-link :to="{ name: 'ProductList' }">Make Shopping List By Product</router-link>
+    </h3>
+    <h3>
+      <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor</router-link>
+    </h3> 
   </v-card>
   <v-card-text>
     <v-form>

@@ -7,7 +7,10 @@
       <router-link :to="{ name: 'ProductLocationList' }">Product Location List</router-link>
     </h3>
     <h3>
-       <router-link :to="{ name: 'ProductList' }">Make Shopping List</router-link>
+       <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor</router-link>
+    </h3> 
+    <h3>
+       <router-link :to="{ name: 'ProductList' }">Make Shopping List by Product</router-link>
     </h3> 
   </v-card>
   <v-card-text>
