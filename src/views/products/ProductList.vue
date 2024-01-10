@@ -6,6 +6,8 @@
         Product List by Location and Vendor
       </router-link>
       <br/>
+      <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor</router-link>
+      <br/>
       <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
     </h3>
     </v-card-title>
