@@ -9,7 +9,7 @@
         <router-link :to="{ name: 'ProductList' }">Make Shopping List By Product</router-link>
       </h3>
       <h3>
-        <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor and Location</router-link>
+        <router-link :to="{ name: 'ProductLocationList' }">Make Shopping List By Location</router-link>
       </h3> 
     </v-card-title>
   </v-card>
@@ -20,20 +20,21 @@
       </h3>
       <v-container id="form-container">
         <div class="row">
-          <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
+          <div class="column" id="group" v-for="(vendor, group_index) in this.vendorsGroup.vendorsGroup" :key="group_index">
             <!-- Toggle by Location -->
-            <h1 @click='toggleLocation(group_index)'><b><u>{{ location }}</u></b></h1>
-            <div v-show="isVendorToggled === group_index">
-              <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
-                <span v-if="vendor.location == location">
+             <h1 @click='toggleVendor(group_index)'><b><u>{{ vendor }}</u></b></h1>
+             <!--div v-show="isProductToggled === group_index"-->
+              <!--div class="product-name" v-for="(product, product_index) in this.vendors_products" :key="vendor_index"-->
+                <!--span v-if="vendor.location == location"-->
                   <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)'><b>{{ vendor.vendor_name }}</b></h2>  
+                  <!--h2 @click='toggleVendor(vendor_index)'><b>{{ vendor.vendor_name }}</b></!--h2-->  
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
-                  <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
+                
+                  <div v-for="(product, product_index) in this.vendors_products" :key="product_index">        
                     <!--span v-show="isProductToggled === product_index"-->
-                      <div v-if="product.vendor_name == vendor.vendor_name">
-                        <div v-if="product.location == vendor.location">
+                      <div v-if="product.vendor_name == vendor">
+                        <!--div v-if="product.location == vendor.location"-->
                           <span v-for="(item, item_index) in product.products" :key="item_index">
                             <span v-if="this.showShoppingList == true">
                               <span v-if="item.active == true">
@@ -58,13 +59,13 @@
                               <label class="checkbox-right">{{ item.product_name }}</label>
                             </span>
                           </span>
-                        </div>
+                        <!--div-->
                       </div>
                     <!--span--> 
-                  </span>
-                </span>
-              </div>
-            </div>
+                  </div>
+                <!--span-->
+              <!--div-->
+            <!--div-->
           </div>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
@@ -75,13 +76,14 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  name: "ProductVendorList",
+  name: "ProductLocationList",
   components: {
   },
   data() {
     return {
       product_active: true,
       productLocationList: null,
+      resultSet: [],
       showShoppingList: false,
       showFlag: false,
       vendors: {
@@ -99,7 +101,7 @@ export default {
       toggle1: false,
       toggle2: false,
       toggleInPlay: false,
-      isVendorToggled: true,
+      isVendorToggled: false,
       isProductToggled: null,
       home_safe: false,
       toggleArr: [],
@@ -112,17 +114,20 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchVendorsProducts");
-    this.$store.dispatch("fetchVendorsLocationsGroup");
-
+    //this.$store.dispatch("fetchVendorsLocationsGroup");
+    //this.vendors_products =
     this.$store.dispatch("fetchShoppingList");
   },
   computed: {
-    vendorsLocationsGroup() {
-      return this.$store.state.vendors_locations_group;
+    vendorsGroup() {
+      return this.$store.state.vendors_group;
     },
-    product_shopping_list() {
-      return this.$store.state.product_shopping_list;
-    },
+    //vendorsLocationsGroup() {
+    //  return this.$store.state.vendors_locations_group;
+    //},
+    //product_shopping_list() {
+    //  return this.$store.state.product_shopping_list;
+    //},
     vendors_products() {
       return this.$store.state.vendors_products;
     },
@@ -137,6 +142,9 @@ export default {
       
       if (this.$store.dispatch("putVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {
         alert("Vendors Products List Updated Successfully")
+        //const fresh_fetched_vendors_products = this.$store.dispatch("fetchVendorsProducts");
+        //this.$router.push({ name: "ProductLocationList", params: { fresh_fetched_vendors_products } });
+        //window.location.reload();
         location.reload();
       } else {
         alert("Error adding Products in ProductLocaionList View ");
@@ -147,14 +155,32 @@ export default {
       return item.active
     },
     shoppingListDisplay(showFlag) {
-      return this.showShoppingList = showFlag == true ? false : true
-    },
-    toggleLocation(index) {
-      this.isVendorToggled = index === this.isVendorToggled? null : index
+      console.log("showFlagIN: ", showFlag)
+      this.showShoppingList = showFlag == true ? false : true
+      //if (this.showShoppingList == true) {
+      //  this.resultSet = this.product_shopping_list       
+      //} else {
+      //  this.resultSet = this.products
+      //}
+      //console.log("shoppingListDisplay - showFlag: ", showFlag)
+      console.log("this.showShoppingList: ", this.showShoppingList)
+      return this.showShoppingList
     },
     toggleVendor(index) {
+      console.log("toggleVendor Index: ", index)
+      //console.log("toggleLocation - toggleInPlay: ", this.toggleInPlay)
+      //if (this.toggleInPlay == true) {
       this.isProductToggled = index === this.isProductToggled? null : index
-    }    
+      console.log("this.isProductToggled: ", this.isProductToggled)
+      //}
+    },
+    //toggleVendor(index) {
+    //  //console.log("toggleVendor - toggleInPlay: ", this.toggleInPlay)
+//
+    //  //if (this.toggleInPlay == true) {
+    //    this.isProductToggled = index === this.isProductToggled? null : index
+    //  //}
+    //}    
   },
 };
 </script>
