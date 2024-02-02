@@ -5,12 +5,14 @@
     <tr>
       <th id="background-blue" @click="sortList('date_of_occurrence')">Date of Occcurrence</th>
       <th id="background-blue" @click="sortList('duration')">Duration</th>
+      <th id="background-blue">Interval from Last </th>
       <th id="background-blue">Circumstances </th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
     <tr v-for="(med, medIndex) in meds" :key="medIndex">
       <td>{{ formatStandardDateTime(med.date_of_occurrence) }} </td>
       <td>{{ med.duration }}</td>
+      <td>{{ med.interval }} days</td>
       <td>{{ med.circumstances }} </td>
       <td class="td-center" >
         <span v-if="this.onlineStatus">

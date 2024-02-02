@@ -17,6 +17,10 @@
           <b>{{ med.duration }}</b>
         </li>
         <li>
+          Interval Since Last:
+          <b>{{med.interval }} Days</b>
+        </li>
+        <li>
           Circumstances:
           <b>{{med.circumstances }}</b>
         </li>

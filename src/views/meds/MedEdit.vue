@@ -11,9 +11,6 @@
           v-model="med.date_of_occurrence"
           type="datetime-local"
         >
-          <!--template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </!--template-->
         </v-text-field>
         <v-select
           label="Duration"
@@ -30,6 +27,10 @@
             {{ option }}
           </option>
         </v-select>
+        <v-text-field
+          label="Interval in Days"
+          v-model="med.interval"
+        />
         <v-text-field
           v-model="med.circumstances"
           rows="3"
@@ -72,6 +73,7 @@ export default {
         id: "",
         date_of_occurrence: "",
         duration: "",
+        interval: "",
         circumstances: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -102,6 +104,7 @@ export default {
           {
             date_of_occurrence: this.med.date_of_occurrence,
             duration: this.med.duration,
+            interval: this.med.interval,
             circumstances: this.med.circumstances,
           }
         );
