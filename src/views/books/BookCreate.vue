@@ -5,7 +5,7 @@
     </v-card-title>
   </v-card>
   <v-card-text>
-    <v-form id="isFormValid">
+    <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
           v-model="book.title"
@@ -50,7 +50,8 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
-        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
+        <v-btn type="submit" block class="mt-2">Submit</v-btn>
+        <!--button type="submit" block class="mt-2">Submit</~button-->
       </v-container>
     </v-form>
   </v-card-text>
@@ -87,7 +88,6 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
       if (this.isFormValid) {
         const book = {
           ...this.book,
@@ -97,15 +97,13 @@ export default {
         if (this.$store.dispatch("createBook", book)) {
           this.$router.push({ name: "BookList" });
         } else {
-          alert("Error adding Book Location " + book.title);
-        }
+          alert("Error adding Book Title" + book.title);
+        } 
       } else {
         alert("Please correct required fields and resubmit");
       }
     },
     requiredAuthor: function (value) {
-      console.log("requiredAuthor: - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("VALUE: ", value)
       if (value) {
           this.isAuthorValid = true
           return true;
@@ -116,9 +114,6 @@ export default {
       }
     },
     requiredTitle: function (value) {
-      console.log("requiredTitle: - this.isTitleValid: ", this.isTitleValid)
-      console.log("requiredTitle: - value: ", value)
-      console.log("VALUE: ", value)
       if (value) {
           this.isTitleValid = true
           return true;
@@ -129,19 +124,12 @@ export default {
       }
     },
     checkValidations() {
-      console.log("checkValidations - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations - this.isTitleValid: ", this.isTitleValid)
 
       if (this.isAuthorValid && this.isTitleValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false
       }
-      console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations Exit - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations Exit - this.isTitleValid: ", this.isTitleValid)
-
     }
   },
   book() {

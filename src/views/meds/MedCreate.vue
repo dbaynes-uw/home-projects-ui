@@ -5,7 +5,7 @@
     </v-card-title>
   </v-card>
   <v-card-text>
-    <v-form id="isFormValid">
+    <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field label="Date of Occurrence"
           v-model="med.date_of_occurrence"
@@ -39,7 +39,7 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
-        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
+        <v-btn type="submit" block class="mt-2">Submit</v-btn>
       </v-container>
     </v-form>
   </v-card-text>
@@ -75,7 +75,6 @@ export default {
         };
         if (this.$store.dispatch("createMed", med)) {
           this.$router.push({ name: "MedList" });
-          alert("Just pushed to MedList???????")
         } else {
           alert("Error adding Med Location " + med.title);
         }

@@ -135,7 +135,7 @@ export default {
         title: "Delete Med from List",
         message:
           "Are you sure you want to delete " +
-          med.title +
+          med.date_of_occurrence +
           "? It cannot be undone.",
         okButton: "Delete",
       });

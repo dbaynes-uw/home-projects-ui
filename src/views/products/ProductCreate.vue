@@ -119,8 +119,6 @@ export default {
       }
     },
     requiredAuthor: function (value) {
-      console.log("requiredAuthor: - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("VALUE: ", value)
       if (value) {
           this.isAuthorValid = true
           return true;
@@ -131,8 +129,6 @@ export default {
       }
     },
     requiredTitle: function (value) {
-      console.log("requiredTitle: - this.isTitleValid: ", this.isTitleValid)
-      console.log("VALUE: ", value)
       if (value) {
           this.isTitleValid = true
           return true;

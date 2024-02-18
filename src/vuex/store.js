@@ -307,6 +307,7 @@ export default new Vuex.Store({
       EventService.deleteBook(book)
         .then((response) => {
           commit("DELETE_BOOK", response.data);
+          alert("Book " + book.title + " was deleted");
         })
         .catch((error) => {
           console.log(error);
@@ -518,7 +519,7 @@ export default new Vuex.Store({
       EventService.postMed(med)
         .then(() => {
           commit("ADD_MED", med);
-          alert("Med was successfully added for " + med.date_of_occurrrence);
+          alert("Med was successfully added for " + med.date_of_occurrence);
         })
         .catch((error) => {
           alert("Error in postMed of createMed Action (index.js)");
@@ -529,7 +530,9 @@ export default new Vuex.Store({
     async deleteMed({ commit }, med) {
       EventService.deleteMed(med)
         .then((response) => {
+          console.log("Med to be deleted: ", med)
           commit("DELETE_MED", response.data);
+          alert("Med " + med.date_of_occurrence + " was deleted");
         })
         .catch((error) => {
           console.log(error);
@@ -707,10 +710,10 @@ export default new Vuex.Store({
         });
     },
     async createTrail({ commit }, trail) {
-      console.log("createTrail from index.js");
       EventService.postTrail(trail)
         .then(() => {
           commit("ADD_TRAIL", trail);
+          alert("Trail was successfully added for " + trail.location);
         })
         .catch((error) => {
           alert("Error in postTrail of createTrail Action (index.js)");

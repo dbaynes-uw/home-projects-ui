@@ -92,7 +92,6 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("createTrail", trail)) {
-        alert("Trail was successfully added for " + trail.location);
         this.$router.push({ name: "TrailList" });
       } else {
         alert("Error adding Trail Location" + trail.location);
@@ -123,7 +122,7 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="css">
 .add-form {
   display: flex;
   flex-direction: column;
