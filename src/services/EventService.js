@@ -88,6 +88,30 @@ export default {
     this.init();
     return axios.delete(api_url + "events" + `/${id}`);
   },
+  deleteFilm(film) {
+    this.init();
+    console.log("environment: ", environment);
+    console.log("ES Delete Film: ", film.id);
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "films/" + `${film.id}`);
+  },
+  getFilm(id) {
+    this.init();
+    console.log("environment: ", environment);
+    return axios.get(api_url + "films/" + id);
+  },
+  getFilms() {
+    this.init();
+    return axios.get(api_url + "films")
+  },
+  async putFilm(updatedFilm) {
+    this.init();
+    return axios.put(api_url + "books" + `/${updatedFilm.id}`, updatedFilm);
+  },
+  async postFilm(film) {
+    this.init();
+    return axios.post(api_url + 'films', film);
+  },
   deleteGolf(golf) {
     this.init();
     console.log("environment: ", environment);

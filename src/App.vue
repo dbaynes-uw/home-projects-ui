@@ -109,14 +109,19 @@ export default {
           title: "About",
         },
         {
+          label: "BookList",
+          url: "/books",
+          title: "Books",
+        },
+        {
           label: "EventList",
           url: "/",
           title: "Events",
         },
         {
-          label: "BookList",
-          url: "/books",
-          title: "Books",
+          label: "FilmList",
+          url: "/",
+          title: "Films",
         },
         {
           label: "GolfList",

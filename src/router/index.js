@@ -4,6 +4,10 @@ import BookCreate from "@/views/books/BookCreate.vue";
 import BookDetails from "@/views/books/BookDetails.vue";
 import BookEdit from "@/views/books/BookEdit.vue";
 import BookList from "../views/books/BookList.vue";
+import FilmCreate from "@/views/films/FilmCreate.vue";
+import FilmDetails from "@/views/films/FilmDetails.vue";
+import FilmEdit from "@/views/films/FilmEdit.vue";
+import FilmList from "../views/films/FilmList.vue";
 import EventCreate from "@/views/events/EventCreate.vue";
 import EventsAssigned from "@/views/events/EventsAssigned.vue";
 import EventDetails from "@/views/events/EventDetails.vue";
@@ -162,6 +166,33 @@ const routes = [
     component: EventsAssigned,
     meta: { requiresAuth: true}
   },
+  {
+    path: "/film/create",
+    name: "FilmCreate",
+    component: FilmCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/films",
+    name: "FilmList",
+    component: FilmList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/films/:id",
+    name: "FilmDetails",
+    props: true,
+    component: FilmDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/film/:id",
+    name: "FilmEdit",
+    props: true,
+    component: FilmEdit,
+    meta: { requiresAuth: true}
+  },
+
   {
     path: "/golf/create",
     name: "GolfCreate",

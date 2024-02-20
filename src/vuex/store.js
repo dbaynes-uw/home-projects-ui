@@ -70,6 +70,18 @@ export default new Vuex.Store({
     SET_EVENT_STATISTIC_DETAIL(state, eventStatisticDetail) {
       state.eventStatisticDetail = eventStatisticDetail;
     },
+    ADD_FILM(state, film) {
+      state.films.push(film);
+    },
+    DELETE_FILM(state, film) {
+      state.film = film;
+    },
+    SET_FILM(state, film) {
+      state.film = film;
+    },
+    SET_FILMS(state, films) {
+      state.films = films;
+    },
     ADD_GOLF(state, golf) {
       state.golfs.push(golf);
     },
@@ -464,6 +476,53 @@ export default new Vuex.Store({
           commit("SET_EVENT", response.data);
           alert("Event was successfully Updated for " + event.description);
           location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async createFilm({ commit }, film) {
+      EventService.postFilm(film)
+        .then(() => {
+          commit("ADD_FILM", film);
+          alert("Film was successfully added for " + film.title);
+        })
+        .catch((error) => {
+          alert("Error in postFilm of createFilm Action (index.js)");
+          console.log(error);
+        });
+    },
+    async deleteFilm({ commit }, film) {
+      EventService.deleteFilm(film)
+        .then((response) => {
+          commit("DELETE_FILM", response.data);
+          alert("Film " + film.title + " was deleted");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchFilm({ commit, state }, id) {
+      const existingFilm = state.films.find((film) => film.id === id);
+      if (existingFilm) {
+        console.log("ExistingFilm: ", existingFilm);
+        commit("SET_FILM", existingFilm);
+      } else {
+        EventService.getFilm(id)
+          .then((response) => {
+            commit("SET_FILM", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    async fetchFilms({ commit }) {
+      EventService.getFilms()
+        .then((response) => {
+          commit("SET_FILMS", response.data);
+          console.log("FetchFilms response.data: ", response.data);
+          return response.data;
         })
         .catch((error) => {
           console.log(error);
