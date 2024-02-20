@@ -32,7 +32,7 @@
               :to="{ name: 'FilmEdit', params: { id: `${result.id}` } }"
             >
               <i
-                id="medium-icon-edit"
+                id="long-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
@@ -41,14 +41,14 @@
               <router-link
                 :to="{ name: 'FilmDetails', params: { id: `${result.id}` } }"
               >
-                <i id="medium-icon-eye" class="fa fa-eye"></i>
+                <i id="long-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteFilm(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="medium-icon-delete"
+                id="long-icon-delete"
               >
               </i>
             </span>
@@ -149,9 +149,9 @@ export default {
       if (ok) {
         this.$store.dispatch("deleteFilm", film);
         this.statusMessage =
-          "Film was Deleted for " +
+          "Film " +
           film.title +
-          "! Page will restore in 2 seconds";
+          "will be Deleted in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }
     },

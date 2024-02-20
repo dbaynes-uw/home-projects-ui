@@ -72,6 +72,29 @@
   list-style-type: "-- ";
   text-align: left;
 }
+#long-icon-edit {
+  text-align: center;
+  position: relative;
+  padding: 0;
+  top: 0rem;
+  left: -1.75rem !important;
+  color: #00796b;
+}
+#long-icon-eye {
+  text-align: center;
+  position: relative;
+  top: -2rem;
+  left: -0.5rem;
+  font-size: 18px;
+  color: #00796b;
+}
+#long-icon-delete {
+  position: relative;
+  top: -4rem;
+  left: 1rem;
+  font-size: 18px;
+  color: #00796b;
+}
 #medium-icon-edit {
   text-align: center;
   position: relative;
