@@ -3,7 +3,6 @@
   <div class="bookEdit">
     <h2>Edit Med</h2>
     <form class="add-form" @submit.prevent="updateMed">
-      
       <div class="form-container">
         <p id="p-custom-left">Date of Occurrence: {{ formatStandardDateTime(med.date_of_occurrence) }}</p>
         <v-text-field

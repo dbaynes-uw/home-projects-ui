@@ -89,6 +89,7 @@
           </option>
         </select>
         <span v-if="vendor.product_name == 'Other'">
+          <br/><br/>
           <v-text-field
           v-model="vendor.other_product_name"
           label="Other Product Name"

@@ -60,6 +60,21 @@
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
+        <v-select
+          label="Rating(1-5)"
+          :items="ratings"
+          v-model="film.rating"
+        >
+          <option
+            v-for="option in ratings"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === film.rating"
+          >
+            {{ option }}
+          </option>
+        </v-select>        
         <v-text-field
           v-model="film.url_to_review"
           label="URL to Review"
@@ -94,10 +109,12 @@ export default {
         episodes: "",
         date_released: null,
         date_watched: null,
+        rating: '',
         url_to_review: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
+      ratings: ["1-Bad", "2-Less than Ok", "3-Ok", "4-Good", "5-Great"],
       isFormValid: false,
       isDirectorValid: false,
       isTitleValid: false,

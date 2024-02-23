@@ -30,6 +30,10 @@
           Date Film Watched:
           <b>{{ formatStandardDate(film.date_watched) }}</b>
         </li>
+        <li>
+          Rating:
+          <b>{{ film.rating }}</b>
+        </li>
         <li v-if="film.url_to_review">
           URL to Review:
           <a :href="film.url_to_review" target="_blank">Click</a>

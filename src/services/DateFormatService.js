@@ -10,6 +10,14 @@ export default {
       return action_date;
     }
   },
+  formatYearOnly(action_date) {
+    console.log("Format Date SERVICE Format YEAR Only: ", action_date);
+    // MM/DD/YY
+    if (action_date) {
+      action_date = moment(action_date).format("YYYY");
+      return action_date;
+    }
+  },
   formatYearDate(action_date) {
     //console.log("Format Date SERVICE Format Standard Date: ", action_date);
     // MM/DD/YY

@@ -29,6 +29,25 @@
           class="text-style"
           v-model="film.date_watched"
         />
+        <label for="rating">Rating</label>
+        &nbsp;
+        <select
+          id="select-box"
+          class="text-style"
+          v-model="film.rating"
+        >
+          <option
+            v-for="option in ratings"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === film.rating"
+          >
+            {{ option }}
+          </option>
+        </select>
+        <br/>
+        <br/>
         <label for="url_to_review">URL to Review:</label>
         <input type="text" class="text-style" v-model="film.url_to_review" />
         <label>Notes:</label>
@@ -79,10 +98,12 @@ export default {
         episodes: "",
         date_released: "",
         date_watched: "",
+        rating: "",
         url_to_review: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
+      ratings: ["1-Bad", "2-Less than Ok", "3-Ok", "4-Good", "5-Great"],
       api_url: ""
     };
   },
@@ -115,6 +136,7 @@ export default {
             date_released: this.film.date_released,
             seasons: this.film.seasons,
             episodes: this.film.episodes,
+            rating: this.film.rating,
             date_watched: this.film.date_watched,
             url_to_review: this.film.url_to_review,
             notes: this.film.notes,

@@ -12,6 +12,7 @@
       <th id="background-blue" @click="sortList('date_watched')">
         Date Watched
       </th>
+      <th id="background-blue">Rating</th>
       <th id="background-blue">URL to Review</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
@@ -19,9 +20,10 @@
       <td>{{ result.title }}</td>
       <td>{{ result.nationality }}</td>
       <td>{{ result.director }}</td>
-      <td>{{ result.seasons }}/{{ result.episodes }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_released) }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_watched) }}</td>
+      <td class="td-center">{{ result.seasons }}/{{ result.episodes }}</td>
+      <td class="td-center">{{ formatYearOnly(result.date_released) }}</td>
+      <td class="td-center">{{ formatStandardDate(result.date_watched) }}</td>
+      <td class="td-center">{{ result.rating }}</td>
       <td class="td-center">
         <a :href="result.url_to_review" target="_blank">Review</a>
       </td>
@@ -155,8 +157,11 @@ export default {
         setTimeout(() => location.reload(), 2500);
       }
     },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+    formatYearOnly(value) {
+      return DateFormatService.formatYearOnly(value);
+    },
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDate(value);
     },
   },
 };
