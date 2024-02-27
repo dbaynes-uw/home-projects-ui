@@ -25,19 +25,4 @@ export default {
 };
 </script>
 <style>
-#border-select {
-  font-size: 1.25rem;
-  text-align: center;
-  margin-top: 20px;
-  border-radius: 4px;
-  padding: 6px;
-  border-style: solid;
-  border-color: #7ba8bd;
-}
-select {
-  margin-top: 20px;
-  padding: 6px;
-  border-style: solid;
-  border-color: #7ba8bd;
-}
 </style>

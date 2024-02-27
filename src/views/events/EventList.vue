@@ -1,6 +1,6 @@
 <template>
   <div class="div-frame">
-    <h2>Events Created By</h2>
+    <h2>Events Created By:</h2>
     <h3>{{ user.email  }}</h3>
     <!--h2 id="status-message">
       <u>Status Message: {{ this.statusMessage }}</u>
