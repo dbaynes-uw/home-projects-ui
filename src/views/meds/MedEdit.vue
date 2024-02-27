@@ -60,10 +60,8 @@ export default {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/meds/";
     }
-    console.log("MedEdit Mounted: ", this.$route.params.id);
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
-    console.log("Results: ", result)
     this.med = result.data;
   },
   data() {
@@ -95,8 +93,6 @@ export default {
           ...this.med,
           updated_by: this.$store.state.created_by,
         };
-        console.log("This api_url: ", this.api_url);
-        console.log("This med to PUT: ", this.med);
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -112,7 +108,6 @@ export default {
           this.$router.push({ name: "MedDetails", params: { id: med.id } });
         } else {
           alert("Update Error Code ", result.status);
-          console.log("ERROR Result Status: ", result.status);
         }
       }
     },

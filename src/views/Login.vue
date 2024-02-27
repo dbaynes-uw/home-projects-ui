@@ -55,7 +55,6 @@ import { required, email, minLength} from '@vuelidate/validators';
 import { reactive, computed } from 'vue';
 export default {
   mounted() {
-    console.log("Login!")
     this.$store.dispatch('logout');
   },
   setup () {
@@ -94,8 +93,6 @@ export default {
   methods: {
     async login () {
       this.v$.$validate()
-      console.log("V$: ", this.v$)
-      console.log("V$.$error: ", this.v$.$error)
       if (!this.v$.$error) {
         this.$store
           .dispatch('login', {
@@ -108,7 +105,6 @@ export default {
             this.$router.push({ name: 'About' })
           })
           .catch(err => {
-            console.log("Login Error: ", err.response.data.error)
             this.message = err.response.data.error
             this.error = err.response.data.error
           })

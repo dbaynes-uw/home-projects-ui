@@ -217,7 +217,6 @@ export default {
   computed: {
   },
   async mounted() {
-    console.log("PATHNAME: ", window.location.pathname)
     if (window.location.pathname.includes("/create")) {
       this.action = "create"
     } else {
@@ -230,10 +229,8 @@ export default {
         work_url =
           "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/golfs/";
       }
-      console.log("Mounted: ", this.$route.params.id);
       this.api_url = work_url
       const result = await axios.get(this.api_url + +this.$route.params.id);
-      console.log("Result.Data: ", result.data)
       this.golf = result.data;
     }
   },
@@ -338,7 +335,6 @@ export default {
     onSubmit() {
       //this.checkValidations();
       this.isFormValid = true
-      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
       if (this.isFormValid) {
         const golf = {
           ...this.golf,
@@ -355,7 +351,6 @@ export default {
       }
     },
     async updateGolf() {
-      console.log("UPDATE: ", this.golf.course)
       const ok = await this.$refs.confirmDialogue.show({
         title: "Update Golf from List",
         message:
@@ -369,8 +364,6 @@ export default {
           ...this.golf,
           updated_by: this.$store.state.user.resource_owner.email ,
         };
-        console.log("This api_url: ", this.api_url);
-        console.log("This golf to PUT: ", golf);
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -462,13 +455,10 @@ export default {
           this.$router.push({ name: "GolfEdit", params: { id: golf.id } });
         } else {
           alert("Update Error Code ", result.status);
-          console.log("ERROR Result Status: ", result.status);
         }
       }
     },
     requiredCourse: function (value) {
-      console.log("requiredCourse: - this.isCourseValid: ", this.isCourseValid)
-      console.log("VALUE: ", value)
       if (value) {
           this.isCourseValid = true
           return true;
@@ -479,8 +469,6 @@ export default {
       }
     },
     requiredCourseLocation: function (value) {
-      console.log("requiredCourseLocation: - this.isCourseLocationValid: ", this.isCourseLocationValid)
-      console.log("VALUE: ", value)
       if (value) {
           this.isCourseLocationValid = true
           return true;
@@ -491,19 +479,11 @@ export default {
       }
     },
     checkValidations() {
-      console.log("checkValidations - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations - this.isCourseValid: ", this.isCourseValid)
-      console.log("checkValidations - this.isCourseLocationValid: ", this.isCourseLocationValid)
-
       if (this.isCourseValid && this.isCourseLocationValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false
       }
-      console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations Exit - this.isCourseValid: ", this.isCourseValid)
-      console.log("checkValidations Exit - this.isCourseLocationValid: ", this.isCourseLocationValid)
-
     },
     calculateFrontPar(golf) {
       return GolfCalculations.calculateFrontPar(golf)

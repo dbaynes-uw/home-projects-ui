@@ -108,7 +108,6 @@ export default {
     return this.calculateFrontPenalty(golf) + this.calculateBackPenalty(golf)
   },
   determineHolesPlayed(golf) {
-    console.log("determineHolesPlayed golf: ", golf)
     if (this.calculateBackScore(golf) == 0) {
       return 9
     }else {

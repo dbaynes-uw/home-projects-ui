@@ -63,13 +63,11 @@ export default {
     this.sortedData = this.travels;
   },
   created() {
-    console.log("Travel List Created Store Dispatch - fetchTravels. ");
     this.$store.dispatch("fetchTravels");
     this.sortedData = this.travels;
   },
   computed: {
     travels() {
-      console.log("Computed Store Dispatch - fetchTravels: ", this.$store.state.travels);
       return this.$store.state.travels;
     },
   },

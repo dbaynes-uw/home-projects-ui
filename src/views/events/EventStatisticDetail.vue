@@ -76,10 +76,6 @@ export default {
     };
   },
   created() {
-    console.log(
-      "Created Store Dispatch - EventStatisticDetail: ",
-      this.statistic
-    );
     this.$store.dispatch("fetchEventStatisticDetail", this.statistic);
   },
   computed: {

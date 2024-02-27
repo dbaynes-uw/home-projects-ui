@@ -58,7 +58,6 @@ export default {
     };
   },
   created() {
-    console.log("Created Store Dispatch - Assigned: ", this.assigned);
     this.$store.dispatch("fetchEventsAssigned", this.assigned);
   },
   computed: {

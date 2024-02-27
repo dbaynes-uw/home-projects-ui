@@ -99,7 +99,6 @@ export default {
           ...this.trail,
           updated_by: this.$store.state.created_by,
         };
-        console.log("This trail to PUT: ", this.trail);
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -117,7 +116,6 @@ export default {
           this.$router.push({ name: "TrailDetails", params: { id: trail.id } });
         } else {
           alert("Update Error Code ", result.status);
-          console.log("ERROR Result Status: ", result.status);
         }
       }
     },

@@ -50,9 +50,6 @@
       </div>
     </div-->
     <div class="event-list">
-      <!--span v-if="this.requestIndexDetailFlag == true">
-        console.log("Hell Yea! ", this.requestIndexDetailFlag)
-      </!--span-->
       <span v-if="filteredResults.length == 0">
         FilteredResults == 0
         <EventIndex :events="events" />
@@ -103,7 +100,6 @@ export default {
   },
   mounted() {},
   created() {
-    console.log("EventList created");
     this.$store.dispatch("fetchEvents");
     this.sortedData = this.events;
     this.user = this.$store.state.user.resource_owner
@@ -120,10 +116,7 @@ export default {
         this.requestIndexDetailFlag
       );
       this.requestIndexDetailFlag = true;
-      console.log(
-        "After RequestDetailIndexFlag: ",
-        this.requestIndexDetailFlag
-      );*/
+      */
     },
     showIndex() {
       this.filteredResults = [];

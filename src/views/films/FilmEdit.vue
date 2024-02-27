@@ -81,7 +81,6 @@ export default {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/films/";
     }
-    console.log("Mounted: ", this.$route.params.id);
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.film = result.data;
@@ -123,8 +122,6 @@ export default {
           ...this.film,
           updated_by: this.$store.state.created_by,
         };
-        console.log("This api_url: ", this.api_url);
-        console.log("This film to PUT: ", this.film);
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -147,7 +144,6 @@ export default {
           this.$router.push({ name: "FilmDetails", params: { id: film.id } });
         } else {
           alert("Update Error Code ", result.status);
-          console.log("ERROR Result Status: ", result.status);
         }
       }
     },

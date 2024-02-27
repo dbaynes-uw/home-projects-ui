@@ -38,7 +38,6 @@ export default {
           password: this.password
         })
         .then(() => {
-          console.log("login.vue for: ", this.email );
           this.$router.push({ name: 'home' })
         })
     }

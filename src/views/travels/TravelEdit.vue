@@ -56,7 +56,6 @@ export default {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/travels/";
     }
-    console.log("Mounted: ", this.$route.params.id);
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.travel = result.data;
@@ -82,7 +81,6 @@ export default {
         ...this.travel,
         updated_by: this.$store.state.created_by,
       };
-      console.log("This travel to PUT: ", this.travel);
       const result = await axios.put(
         this.api_url +
           this.$route.params.id,
@@ -101,7 +99,6 @@ export default {
         this.$router.push({ name: "TravelDetails", params: { id: travel.id } });
       } else {
         alert("Update Error Code ", result.status);
-        console.log("ERROR Result Status: ", result.status);
       }
     },
   },

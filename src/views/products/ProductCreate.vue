@@ -66,10 +66,6 @@
 //  const day = date.getDate();
 //  const month = date.getMonth() + 1;
 //  const year = date.getFullYear();
-//  console.log("DATE: ", date);
-//  console.log("Month: ", month);
-//  console.log("Day: ", day);
-//  console.log("Year: ", year);
 //  return `${month}/${day}/${year}`;
 //};
 </script>
@@ -102,7 +98,6 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
       if (this.isFormValid) {
         const book = {
           ...this.book,
@@ -139,19 +134,11 @@ export default {
       }
     },
     checkValidations() {
-      console.log("checkValidations - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations - this.isTitleValid: ", this.isTitleValid)
-
       if (this.isAuthorValid && this.isTitleValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false
       }
-      console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
-      console.log("checkValidations Exit - this.isAuthorValid: ", this.isAuthorValid)
-      console.log("checkValidations Exit - this.isTitleValid: ", this.isTitleValid)
-
     }
   },
   book() {

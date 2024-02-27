@@ -185,7 +185,6 @@ export default new Vuex.Store({
   },
   actions: {
     async register ({ commit }, credentials) {
-      console.log("CREDENTIALS: ", credentials)
       //this.init_authentication;
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
@@ -217,7 +216,6 @@ export default new Vuex.Store({
         });
     },
     async login ({ commit }, credentials) {
-      console.log("LOGIN CREDS: ", credentials)
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/users/tokens/";
@@ -225,7 +223,6 @@ export default new Vuex.Store({
         api_authenticate_url =
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
       }
-      console.log("api_authenticate_url: ", api_authenticate_url);
       //this.init_authentication;
       return axios
         .post(api_authenticate_url + "sign_in", credentials)
@@ -233,24 +230,20 @@ export default new Vuex.Store({
           commit('SET_USER_DATA', data)
         })
         .catch((error) => {
-          console.log(error);
           alert("Invalid Login Credentials or API problem - Please try again")
           //location.reload()
           //const message = error.response.request.statusText + '!';
           error = error.response.request.statusText + '!';
-          console.log("Message to be sent: ", error)
           router.back(error)
         });
     },
 
     async logout ({ commit }) {
-      console.log("LOGOUT - CLEAR_USER_DATA!");
       commit('CLEAR_USER_DATA')
       router.push({name: 'Login'});
     },
 
     async forgotPassword ({ commit }, email) {
-      console.log("ForgetPassword user: ", email)
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
@@ -258,7 +251,6 @@ export default new Vuex.Store({
         api_authenticate_url =
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/password_resets";
       }
-      console.log("api_authenticate_url: ", api_authenticate_url);
       //this.init_authentication;
       return axios
         .post(api_authenticate_url, { email: email })
@@ -267,12 +259,10 @@ export default new Vuex.Store({
          commit('SET_USER_DATA', data)
        })
        .catch((error) => {
-         console.log(error);
          alert("Invalid Login Credentials or API problem - Please try again")
          //location.reload()
          //const message = error.response.request.statusText + '!';
          error = error.response.request.statusText + '!';
-         console.log("Message to be sent: ", error)
          router.back(error)
        });
     },
@@ -285,7 +275,6 @@ export default new Vuex.Store({
         api_authenticate_url =
           "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/password/";
       }
-      console.log("api_authenticate_url: ", api_authenticate_url);
       //this.init_authentication;
       return axios
         .patch(`api_authenticate_url + /${this.$route.params.token}`, { password: this.password, password_confirmation: this.password_confirmation })
@@ -294,12 +283,10 @@ export default new Vuex.Store({
          commit('SET_USER_DATA', data)
        })
        .catch((error) => {
-         console.log(error);
          alert("Invalid Login Credentials or API problem - Please try again")
          //location.reload()
          //const message = error.response.request.statusText + '!';
          error = error.response.request.statusText + '!';
-         console.log("Message to be sent: ", error)
          router.back(error)
        });
     },
@@ -328,7 +315,6 @@ export default new Vuex.Store({
     async fetchBook({ commit, state }, id) {
       const existingBook = state.books.find((book) => book.id === id);
       if (existingBook) {
-        console.log("ExistingBook: ", existingBook);
         commit("SET_BOOK", existingBook);
       } else {
         EventService.getBook(id)
@@ -344,7 +330,6 @@ export default new Vuex.Store({
       EventService.getBooks()
         .then((response) => {
           commit("SET_BOOKS", response.data);
-          console.log("FetchBooks response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -371,7 +356,6 @@ export default new Vuex.Store({
           return response.data;
         })
         //.catch((error) => {
-        //  console.log(error);
         //  const message = error.response.request.statusText + '!';
         //  commit('SET_ERRORS', message)
         //  router.push({name:'home'})
@@ -381,7 +365,6 @@ export default new Vuex.Store({
         });
     },
     async deleteEvent({ commit }, event) {
-      console.log("deleteEvent event: ", event);
       EventService.deleteEvent(event.id)
         .then((response) => {
           commit("DELETE_EVENT", response.data);
@@ -393,7 +376,6 @@ export default new Vuex.Store({
     async fetchEvent({ commit, state }, id) {
       const existingEvent = state.events.find((event) => event.id === id);
       if (existingEvent) {
-        console.log("ExistingEVENT: ", existingEvent);
         commit("SET_EVENT", existingEvent);
       } else {
         EventService.getEvent(id)
@@ -406,13 +388,11 @@ export default new Vuex.Store({
       }
     },
     async fetchEventsAssigned({ commit }, assigned) {
-      console.log("Assigned to: ", assigned);
       EventService.getEventsAssigned(assigned)
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);
           commit("SET_EVENT_STATISTICS", response.data);
-          console.log("EVENT STATISTICS Assigned RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -420,11 +400,9 @@ export default new Vuex.Store({
         });
     },
     async eventsDueBy({ commit }, form) {
-      console.log("eventsDueBy - dueBy: ");
       EventService.getEventsDueBy(form)
         .then((response) => {
       commit("SET_EVENTS", response.data);
-      console.log("EVENT STATISTICS RESPONSE: ", response.data);
       return response.data;
       })
       .catch((error) => {
@@ -435,7 +413,6 @@ export default new Vuex.Store({
       EventService.getEventsPastDue(dueBy)
         .then((response) => {
       commit("SET_EVENTS", response.data);
-      console.log("EVENT STATISTICS RESPONSE: ", response.data);
       return response.data;
       })
       .catch((error) => {
@@ -443,13 +420,11 @@ export default new Vuex.Store({
       });
     },
     async fetchEventStatistics({ commit }) {
-      console.log("fetchEventStatistics Store!!!!");
       EventService.getEventStatistics()
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);
           commit("SET_EVENT_STATISTICS", response.data);
-          console.log("EVENT STATISTICS RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -462,7 +437,6 @@ export default new Vuex.Store({
           // No longer needed:
           //commit("RESET_STATE", response.data);
           commit("SET_EVENT_STATISTIC_DETAIL", response.data);
-          console.log("EVENTS STATISTIC DETAIL RESPONSE: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -470,7 +444,6 @@ export default new Vuex.Store({
         });
     },
     async updateEvent({ commit }, event) {
-      console.log("updateEvent event from dbl click: ", event);
       EventService.putEvent(event)
         .then((response) => {
           commit("SET_EVENT", response.data);
@@ -505,7 +478,6 @@ export default new Vuex.Store({
     async fetchFilm({ commit, state }, id) {
       const existingFilm = state.films.find((film) => film.id === id);
       if (existingFilm) {
-        console.log("ExistingFilm: ", existingFilm);
         commit("SET_FILM", existingFilm);
       } else {
         EventService.getFilm(id)
@@ -521,7 +493,6 @@ export default new Vuex.Store({
       EventService.getFilms()
         .then((response) => {
           commit("SET_FILMS", response.data);
-          console.log("FetchFilms response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -551,7 +522,6 @@ export default new Vuex.Store({
     async fetchGolf({ commit, state }, id) {
       const existingGolf = state.golfs.find((golf) => golf.id === id);
       if (existingGolf) {
-        console.log("ExistingGolf: ", existingGolf);
         commit("SET_GOLF", existingGolf);
       } else {
         EventService.getGolf(id)
@@ -567,7 +537,6 @@ export default new Vuex.Store({
       EventService.getGolfs()
         .then((response) => {
           commit("SET_GOLFS", response.data);
-          console.log("FetchGolfs response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -589,7 +558,6 @@ export default new Vuex.Store({
     async deleteMed({ commit }, med) {
       EventService.deleteMed(med)
         .then((response) => {
-          console.log("Med to be deleted: ", med)
           commit("DELETE_MED", response.data);
           alert("Med " + med.date_of_occurrence + " was deleted");
         })
@@ -600,7 +568,6 @@ export default new Vuex.Store({
     async fetchMed({ commit, state }, id) {
       const existingMed = state.meds.find((med) => med.id === id);
       if (existingMed) {
-        console.log("ExistingMed: ", existingMed);
         commit("SET_MED", existingMed);
       } else {
         EventService.getMed(id)
@@ -616,7 +583,6 @@ export default new Vuex.Store({
       EventService.getMeds()
         .then((response) => {
           commit("SET_MEDS", response.data);
-          console.log("FetchMeds response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -636,7 +602,6 @@ export default new Vuex.Store({
         });
     },
     async fetchShoppingList({ commit }) {
-      console.log("Store fetchShoppingList")
       EventService.getShoppingList()
         .then((response) => {
           commit("SET_SHOPPING_LIST", response.data);
@@ -648,7 +613,6 @@ export default new Vuex.Store({
         });
     },
     async putProducts({ commit }, products) {
-      console.log("STORE - update products: ")
       EventService.putProducts(products)
         .then(() => {
           console.log("STORE - update products: ")
@@ -660,7 +624,6 @@ export default new Vuex.Store({
         });
     },
     async putProductsVendors({ commit }, products_vendors) {
-      console.log("STORE - update products_vendors: ")
       EventService.putVendorsProducts(products_vendors)
         .then(() => {
           console.log("STORE - update products_vendors: ")
@@ -672,7 +635,6 @@ export default new Vuex.Store({
         });
     },
     async createVendor({ commit }, vendor) {
-      console.log("CREATE VENDOR: ", vendor)
       EventService.postVendor(vendor)
         .then(() => {
           commit("PUT_VENDOR", vendor);
@@ -683,7 +645,7 @@ export default new Vuex.Store({
           //console.log("Error Response Status: ", error.response.status)
           //console.log("Error Response Request: ", error.response.request)
           //console.log("Error Response Headers: ", error.response.headers)
-          console.log("Error Response Data.message: ", error.response.data.message)
+          //console.log("Error Response Data.message: ", error.response.data.message)
           //console.log("error.response.data.error: ", error.response.data.error)
           //console.log("Error Response Data Errors: ", error.response.data.errors)
           //console.log("Error Message: ", error.message)
@@ -692,7 +654,6 @@ export default new Vuex.Store({
         });
     },
     async editVendor({ commit }, vendor) {
-      console.log("Edit VENDOR/putVendor: ", vendor)
       EventService.putVendor(vendor)
         .then(() => {
           commit("PUT_VENDOR", vendor);
@@ -780,7 +741,6 @@ export default new Vuex.Store({
         });
     },
     async deleteTrail({ commit }, trail) {
-      console.log("deleteTrail event: ", trail);
       EventService.deleteTrail(trail.id)
         .then((response) => {
           commit("DELETE_TRAIL", response.data);
@@ -792,7 +752,6 @@ export default new Vuex.Store({
     async fetchTrail({ commit, state }, id) {
       const existingTrail = state.trails.find((trail) => trail.id === id);
       if (existingTrail) {
-        console.log("ExistingTrail: ", existingTrail);
         commit("SET_TRAIL", existingTrail);
       } else {
         EventService.getTrail(id)
@@ -811,7 +770,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log("STORE ERROR: ", error);
           const message = error.response.request.statusText + '!';
           commit('SET_ERRORS', message)
           router.push({name:'home'})
@@ -866,7 +824,6 @@ export default new Vuex.Store({
         });
     },
     async updateTravel({ commit }, travel) {
-      console.log("updateTravel event from dbl click: ", travel);
       EventService.putTravel(travel)
         .then((response) => {
           commit("SET_TRAVEL", response.data);
@@ -888,7 +845,6 @@ export default new Vuex.Store({
         });
     },
     async deleteUser({ commit }, user) {
-      console.log("deleteUser: ", user);
       EventService.deleteUser(user.id)
         .then((response) => {
           commit("DELETE_USER", response.data);
@@ -900,7 +856,6 @@ export default new Vuex.Store({
     async fetchUser({ commit, state }, id) {
       const existingUser = state.users.find((user) => user.id === id);
       if (existingUser) {
-        console.log("ExistingUser: ", existingUser);
         commit("SET_USER_DATA", existingUser);
       } else {
         EventService.getUser(id)
@@ -921,7 +876,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log("fetchUsers ERROR: ", error);
           //!const message = error.response.data.error.replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function(key) { return key.toUpperCase()}) + '!';
           const message = error.response.request.statusText + '!';
           commit('SET_ERRORS', message)
@@ -931,7 +885,6 @@ export default new Vuex.Store({
         });
     },
     async updateUser({ commit }, user) {
-      console.log("updateUser user: ", user);
       EventService.putUser(user)
         .then((response) => {
           commit("SET_USER", response.data);

@@ -62,7 +62,6 @@ export default {
     this.sortedData = this.golfs;
   },
   created() {
-    console.log("GolfList created");
     this.$store.dispatch("fetchGolfs");
     this.sortedData = this.golfs;
   },
@@ -76,7 +75,6 @@ export default {
       this.filteredResults = [];
     },
     searchColumns() {
-      console.log("SEARCH In LIST")
       this.filteredResults = [];
       this.columnDetails = null;
       if (

@@ -167,7 +167,6 @@ export default {
     };
   },
   created() {
-    console.log("Created Store Dispatch");
     this.$store.dispatch("fetchEventStatistics");
   },
   computed: {

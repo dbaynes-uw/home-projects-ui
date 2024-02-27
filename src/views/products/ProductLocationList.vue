@@ -31,7 +31,7 @@
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
-                    <!--span v-show="isProductToggled === product_index"-->
+                    <span v-show="isProductToggled === product_index">
                       <div v-if="product.vendor_name == vendor.vendor_name">
                         <div v-if="product.location == vendor.location">
                           <span v-for="(item, item_index) in product.products" :key="item_index">
@@ -60,7 +60,7 @@
                           </span>
                         </div>
                       </div>
-                    <!--span--> 
+                    </span> 
                   </span>
                 </span>
               </div>

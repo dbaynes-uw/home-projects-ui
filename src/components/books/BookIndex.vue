@@ -122,7 +122,6 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      console.log("BOOK INDEX sortBy: ", sortBy)
       this.sortedData = this.books;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));

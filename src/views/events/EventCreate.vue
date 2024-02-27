@@ -103,7 +103,6 @@ export default {
       };
       //Xthis.addEvent(event); in events.js
       //Vuex 2:
-      console.log("EVENT to be CREATED: ", event)
       this.$store.dispatch("createEvent", event);
       alert("Event was successfully added for " + event.description);
       this.$router.push({ name: "EventList" });

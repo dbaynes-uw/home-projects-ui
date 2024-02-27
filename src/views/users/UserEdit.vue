@@ -43,11 +43,9 @@ export default {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/";
     }
-    console.log("Mounted: ", this.$route.params.id);
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.user = result.data;
-    console.log("Returned User: ", this.user);
   },
   created(){},
   data() {
@@ -72,8 +70,6 @@ export default {
   setup() {},
   methods: {
     async updateUser() {
-      console.log("updateUser - API URL: ", this.api_url)
-      console.log("This user ID to PUT: ", this.$route.params.id);
       const result = await axios.put(this.api_url  +this.$route.params.id,
         {
             name: this.user.name,
@@ -87,7 +83,6 @@ export default {
         this.$router.push({ name: "UserList" });
       } else {
         alert("Update Error Code ", result.status);
-        console.log("ERROR Result Status: ", result.status);
       }
       //Not Yet:console.warn("Edit Event: ", event),
       //Not Yet:  EventService.putEvent(event)

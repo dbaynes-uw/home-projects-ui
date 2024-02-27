@@ -96,7 +96,6 @@ export default {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
     }
-    console.log("Mounted: ", this.$route.params.id);
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.event = result.data;
@@ -155,7 +154,6 @@ export default {
           this.$router.push({ name: "EventDetails", params: { id: event.id } });
         } else {
           alert("Update Error Code ", result.status);
-          console.log("ERROR Result Status: ", result.status);
         }
         //Not Yet:console.warn("Edit Event: ", event),
         //Not Yet:  EventService.putEvent(event)

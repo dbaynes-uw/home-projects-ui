@@ -59,7 +59,6 @@ export default {
     this.sortedData = this.meds;
   },
   created() {
-    console.log("MedList created");
     this.$store.dispatch("fetchMeds");
     this.sortedData = this.meds;
   },
@@ -73,7 +72,6 @@ export default {
       this.filteredResults = [];
     },
     searchColumns() {
-      console.log("Med LIST searchColumn: ")
       this.filteredResults = [];
       this.columnDetails = null;
       if (

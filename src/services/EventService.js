@@ -5,6 +5,7 @@ var environment = "";
 var api_url = "";
 export default {
   init() {
+    console.log("environment: ", environment);
     if (window.location.port == "8080") {
       environment = "development";
       //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
@@ -18,14 +19,11 @@ export default {
   },
   deleteBook(book) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES Delete Book: ", book.id);
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "books/" + `${book.id}`);
   },
   getBook(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.get(api_url + "books/" + id);
   },
   getBooks() {
@@ -48,7 +46,6 @@ export default {
     this.init();
     return axios.get(api_url + "events")
     //.catch(error=>{
-    // console.log("ERROR!!!", error)
       //this.$router.push({ name: 'About' })
       //this.router.push({name:'home'})
     //})
@@ -61,7 +58,6 @@ export default {
     this.init();
     const dueFilter =
       form.target.options[form.target.options.selectedIndex].innerText;
-    console.log("SERVICE.JS dueBY: ", dueFilter)
     return axios.get(api_url + "events/" + `?due_by=${dueFilter}`)
   },
   getEventsPastDue() {
@@ -90,14 +86,11 @@ export default {
   },
   deleteFilm(film) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES Delete Film: ", film.id);
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "films/" + `${film.id}`);
   },
   getFilm(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.get(api_url + "films/" + id);
   },
   getFilms() {
@@ -114,14 +107,11 @@ export default {
   },
   deleteGolf(golf) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES Delete Golf: ", golf.id);
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "golfs/" + `${golf.id}`);
   },
   getGolf(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.get(api_url + "golfs/" + id);
   },
   getGolfs() {
@@ -138,14 +128,11 @@ export default {
   },
   deleteMed(med) {
     this.init();
-    console.log("environment: ", environment);
-    console.log("ES Delete Med: ", med.id);
-    // For Testing: setTimeout(5000);
+       // For Testing: setTimeout(5000);
     return axios.delete(api_url + "meds/" + `${med.id}`);
   },
   getMed(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.get(api_url + "meds/" + id);
   },
   getMeds() {
@@ -167,11 +154,9 @@ export default {
   },
   async getShoppingList() {
     this.init();
-    console.log("ES getShoppingList")
     return axios.get(api_url + "shopping_list")
   },
   async putProducts(products) {
-    console.log("ES PutProducts: ", products)
     this.init();
     return axios.put(api_url + "products/update", products) //, { params: {vendors_products}});
   },
@@ -197,22 +182,18 @@ export default {
     return axios.get(api_url + "vendors_products_group")
   },
   async postVendor(vendor) {
-    console.log("POST VENDOR!")
     this.init();
     return axios.post(api_url + 'vendors', vendor);
   },
   async putVendor(updatedVendor) {
-    console.log("PUT VENDOR!")
     this.init();
     return axios.put(api_url + "vendors" + `/${updatedVendor.id}`, updatedVendor);
   },
   async postVendorsProduct(vendors_products) {
-    console.log("ES POST vendors products: ", vendors_products)
     this.init();
     return axios.post(api_url + 'vendors_products', vendors_products);
   },
   async putVendorsProducts(vendors_products) {
-    console.log("ES PutVendorsProducts: ", vendors_products)
     this.init();
     return axios.put(api_url + "vendors/update", vendors_products) //, { params: {vendors_products}});
   },
@@ -222,7 +203,6 @@ export default {
   },
   getUser(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.get(api_url + "users" + id);
 
   },
@@ -232,7 +212,6 @@ export default {
   },
   deleteUser(id) {
     this.init();
-    console.log("environment: ", environment);
     return axios.delete(api_url + "users" + `/${id}`);
   },
   async putUser(user) {

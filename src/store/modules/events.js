@@ -16,9 +16,7 @@ const actions = {
   'deleteEvent',
   */
   //async fetchEvents({ commit }) {
-  //  console.log("EVENTS.js fetchEvents");
   //  const response = await axios.get(api_url);
-  //  console.log("fetchEvents: ", response.data);
   //  commit("setEvents", response.data);
   //},
   async addEvent(
@@ -30,7 +28,6 @@ const actions = {
     notes,
     histories
   ) {
-    console.log("EVENTS.js addEvents");
     const response = await axios.post(api_url, {
       event: {
         name,
@@ -59,7 +56,6 @@ const actions = {
     commit("setEvents", response.data);
   },
   async eventsDueBy({ commit }, form) {
-    console.log("Events.js - eventsDueBy Not Used!!!");
     const dueFilter =
       form.target.options[form.target.options.selectedIndex].innerText;
     const response = await axios.get(api_url + `?_dueFilter=${dueFilter}`);

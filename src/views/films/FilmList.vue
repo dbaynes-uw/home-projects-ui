@@ -59,7 +59,6 @@ export default {
     this.sortedData = this.films;
   },
   created() {
-    console.log("FilmList created");
     this.$store.dispatch("fetchFilms");
     this.sortedData = this.films;
   },
@@ -73,7 +72,6 @@ export default {
       this.filteredResults = [];
     },
     searchColumns() {
-      console.log("BOOK LIST searchColumn: ")
       this.filteredResults = [];
       this.columnDetails = null;
       if (
@@ -122,11 +120,9 @@ export default {
     },
     //isOffline() {
     //  this.isOnline = false;
-    //  console.log("isOffline - this.isOnline = ", this.isOnline);
     //},
     //isOnline() {
     //  this.isOnline = true;
-    //  console.log("isOnline - this.isOnline = ", this.isOnline);
     //},
     formatFullYearDate(value) {
       return DateFormatService.formatFullYearDate(value);

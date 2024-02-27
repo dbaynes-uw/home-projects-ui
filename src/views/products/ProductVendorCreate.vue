@@ -127,7 +127,6 @@ export default {
       return this.$store.state.vendors_group;
     },
     vendorsLocationsGroup() {
-      console.log("PVC - Computed vendorsLocationsGroup")
       return this.$store.state.vendors_locations_group;
     },
     vendorsProductsGroup() {
@@ -154,7 +153,6 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
       const vendor = {
         ...this.vendor,
         id: uuidv4(),

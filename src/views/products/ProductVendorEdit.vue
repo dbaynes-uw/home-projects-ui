@@ -143,7 +143,6 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
       const vendor = {
         ...this.vendor,
         id: uuidv4(),

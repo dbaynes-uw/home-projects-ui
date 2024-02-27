@@ -20,7 +20,6 @@ export default createStore({
       state.user = userData
     },
     LOGOUT () {
-      console.log("Store/index.js - LOGOUT");
       localStorage.removeItem('user')
       location.reload()
     },
@@ -43,14 +42,12 @@ export default createStore({
   actions: {
 
     createUser({ commit }, user) {
-      console.log("createUser from index.js");
       EventService.postUser(user)
         .then(() => {
           commit("ADD_USER", user);
         })
         .catch((error) => {
-          alert("Error in postUser of createUser Action (index.js)");
-          console.log(error);
+          alert("Error in postUser of createUser Action (index.js): ", error);
         });
     },
     async fetchUsers({ commit }) {
@@ -64,7 +61,6 @@ export default createStore({
         });
     },
     async deleteUser({ commit }, user) {
-      console.log("deleteUser: ", user);
       EventService.deleteUser(user.id)
         .then((response) => {
           commit("DELETE_USER", response.data);
@@ -74,7 +70,6 @@ export default createStore({
         });
     },
     async updateUser({ commit }, user) {
-      console.log("updateUser user: ", user);
       EventService.putUser(user)
         .then((response) => {
           commit("SET_USER", response.data);

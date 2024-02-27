@@ -66,7 +66,6 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      console.log("onSubmit - this.isFormValid: ", this.isFormValid)
       if (this.isFormValid) {
         const med = {
           ...this.med,

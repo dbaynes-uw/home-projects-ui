@@ -46,7 +46,6 @@ export default {
   methods: {
     //Vuex...mapActions(["addUser"]),
     async onSubmit() {
-      console.log("ONSUBMIT: ", this.user.email);
       const errors = {};
       if (!this.user.email) {
         errors.email = "Email is required";
@@ -59,7 +58,6 @@ export default {
       } else {
         this.errors = null;
       }
-      console.log("Continue on");
       const user = {
         ...this.user,
         id: uuidv4(),

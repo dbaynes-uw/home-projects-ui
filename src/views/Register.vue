@@ -68,7 +68,6 @@ export default {
           message: this.message,
         })
         .then(() => {
-          console.log("Register this.message: ", this.$store.message)
           this.$router.push({ name: 'home', state: { message: this.$store.message } })
         })
         .catch(err => {
@@ -76,8 +75,6 @@ export default {
         })
     },
     requiredAdmin: function (value) {
-      console.log("requiredAdmin: - this.isAdminValid: ", this.isAdminValid)
-      console.log("VALUE: ", value)
       if (value == 'dlbaynes@gmail.com') {
           this.isAdminValid = true
           return true;

@@ -104,7 +104,6 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      console.log("SORT IN INDEX")
       this.sortedData = this.golfs;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
