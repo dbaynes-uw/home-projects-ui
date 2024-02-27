@@ -19,6 +19,9 @@
 .div-frame {
   padding: .25rem;
 }
+.div-select {
+  font-size: 1.5rem;
+}
 .icon-css {
   color: #0D2336;
 }
@@ -46,7 +49,14 @@
   font-size: 1.25rem;
   font-weight: bold;
 }
-
+#button-as-link {
+  margin: auto;
+  width: 12rem;
+  height: 2rem;
+  background-color: #7ba8bd;
+  border-radius: 5px;
+  font-size: 18px;
+}
 .th-center {
   text-align: center;
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="button" @click="eventsPastDue($event)">
+    <button id="button-as-link" @click="eventsPastDue($event)">
       <u>Click for Past Due</u>
     </button>
   </div>
@@ -14,6 +14,7 @@ export default {
 </script>
 
 <style scoped>
+/* no longer used...
 button {
   margin: 30px;
   background-color: #7ba8bd;
@@ -30,4 +31,5 @@ button {
   text-align: center;
   cursor: pointer;
 }
+*/
 </style>

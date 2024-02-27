@@ -1,6 +1,6 @@
 <template>
   <div class="div-frame">
-    <h2>Event Created By</h2>
+    <h2>Events Created By</h2>
     <h3>{{ user.email  }}</h3>
     <!--h2 id="status-message">
       <u>Status Message: {{ this.statusMessage }}</u>
@@ -9,13 +9,19 @@
       <h2>
         <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
         <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
+      </h2>
+      <br>
+      <h1>
         <button id="button-as-link" @click="refreshPage"><u>Refresh</u></button>  
+      </h1>
+      <br/>
+      <h1>
         <EventsPastDue />
       <!--button id="button-as-link" @click="requestIndexDetail">
         <u>Detail Index View</u>
       </button-->
         <EventsDueBy />
-      </h2>
+      </h1>
     </div>
     <br />
     <div class="legend">
@@ -274,11 +280,5 @@ select {
   .events {
     grid-template.columns: 1fr;
   }
-}
-#button-as-link {
-  background-color: #7ba8bd;
-  border-radius: 5px;
-  font-size: 18px;
-  margin-left: 3.5rem;
 }
 </style>
