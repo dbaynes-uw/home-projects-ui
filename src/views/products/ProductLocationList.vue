@@ -1,17 +1,27 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Products Location then Vendor</h2>
+      <h2>Products By Location</h2>
     </v-card-title>
-    <h3>
-      <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
-    </h3>
-    <h3>
-      <router-link :to="{ name: 'ProductList' }">Make Shopping List By Product</router-link>
-    </h3>
-    <h3>
-      <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor</router-link>
-    </h3> 
+    <br/>
+    <ul>
+      <li class="left">
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductVendorList' }">Shopping List By Vendor</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductList' }">Shopping List By Product</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
+        </button>
+      </li>
+    </ul> 
+    <br/>
   </v-card>
   <v-card-text>
     <v-form>
@@ -159,6 +169,35 @@ export default {
 };
 </script>
 <style lang="css">
+.a {
+  text-decoration: none;
+}
+.button,
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5em;
+  height: 2em;
+  margin: 0.5em;
+  border-radius: 5px;
+  background: linear-gradient(to right, #F5F5F5, #EEEEEE); 
+  text-decoration: none;
+  
+  font-size: 1em;
+  color: white;
+  border: none;
+  outline: none;
+}
+ul {
+    display: table;
+    width: 100%;
+}
+li {
+    display: table-cell;
+}
+li.left {text-align: left;}
+li.right {text-align: right;}
 .row-height {
   height: 2rem !important;
   margin: 0 0px 0;
@@ -203,7 +242,8 @@ input[type=checkbox] {
 }*/
 .button {
   margin: 30px;
-  background-color: #39495c;
+  /*background-color: #39495c;*/
+  background-color: lightgray;
   border-radius: 5px;
   font-size: 18px;
   width: 160px;

@@ -3,17 +3,26 @@
     <v-card-title class="pb-0">
       <h2>Product Shopping</h2>
     </v-card-title>
-    <h3>
-      <router-link :to="{ name: 'ProductLocationList', params: { vendors_products: vendors_products }}" >
-        Products Location then Vendor
-      </router-link>
-    </h3>
-    <h3>
-      <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor</router-link>
-    </h3>
-    <h3>
-      <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
-    </h3>
+    <ul>
+      <li class="left">
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductLocationList', params: { vendors_products: vendors_products }}" >
+            Products By Location
+          </router-link>
+        </button>
+      </li>
+      <li>
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductVendorList' }">Make List By Vendor</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
+        </button>
+      </li>
+    </ul> 
+    <br/>
   </v-card>
   <v-card-text>
     <v-form>

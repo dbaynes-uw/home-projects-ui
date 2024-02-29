@@ -25,7 +25,6 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
-import ProductCreate from "../views/products/ProductCreate.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
@@ -255,12 +254,6 @@ const routes = [
     path: "/products",
     name: "ProductList",
     component: ProductList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/product/create",
-    name: "ProductCreate",
-    component: ProductCreate,
     meta: { requiresAuth: true}
   },
   {
