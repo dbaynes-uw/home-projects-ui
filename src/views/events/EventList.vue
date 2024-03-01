@@ -27,11 +27,6 @@
       </h1>
     </div>
     <br />
-    <div class="legend">
-      <span>Double click to mark as complete.</span>
-      <span><span class="incomplete-box"></span> = Incomplete</span>
-      <span><span class="complete-box"></span> = Complete</span>
-    </div>
     <div style="width: 100%">
       <div class="auto-search-container">
         <v-text-field
@@ -47,8 +42,12 @@
         />
       </div>
     </div>
+    <div class="legend">
+      <span>Double click to mark as complete.</span>
+      <span><span class="incomplete-box"></span> = Incomplete</span>
+      <span><span class="complete-box"></span> = Complete</span>
+    </div>
     <div class="events">
-      EventCard: {{ events.length }}
       <EventCard
         v-for="event in events"
         :key="event.id"
@@ -59,9 +58,8 @@
       <br />
     </div>
     <div class="event-list">
-    <EventCard v-for="event in events" :key="event.id" :event="event" />
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@
-    <EventIndexDetail :events="events" />
+    <!--EventCard v-for="event in events" :key="event.id" :event="event" /-->
+    <!--EventIndexDetail :events="events" /-->
       <span v-if="filteredResults.length == 0">
         FilteredResults == 0
         <EventIndex :events="events" />
@@ -82,7 +80,7 @@ import EventCard from '@/components/EventCard'
 import EventsDueBy from "@/components/EventsDueBy.vue";
 import EventsPastDue from "@/components/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
-import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
+//import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
 import EventSearchResults from "@/components/events/EventSearchResults.vue";
 </script>
 <script>
@@ -92,7 +90,7 @@ export default {
   name: "EventList",
   components: {
     EventIndex,
-    EventIndexDetail,
+    /*EventIndexDetail,*/
     EventCard,
     EventSearchResults,
     EventsDueBy,

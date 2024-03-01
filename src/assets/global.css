@@ -77,7 +77,6 @@
   text-align: center;
 }
 .ul-left {
-  list-style-type: none;
   text-align: left;
 }
 .ul-dash {
@@ -89,8 +88,13 @@
   text-align: left;
 }
 .ul-left-dash {
-  list-style-type: "-- ";
+  list-style-type: circle !important;
   text-align: left;
+}
+.li-left {
+  text-align: left;
+  display: list-item;
+  list-style-type: disclosure-closed;
 }
 #long-icon-edit {
   text-align: center;

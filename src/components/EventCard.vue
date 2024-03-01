@@ -1,11 +1,16 @@
 <template>
   <div class="event-card">
-    <span>Event card for {{ event.description}}</span>
-    <h4>{{ event.action_due_date }}</h4>
+    <p id="p-custom-left">{{ event.description}}</p>
+    <ul>
+      <li class="li-left">Last Action: {{ formatYearDate(event.action_date) }}</li>
+      <li class="li-left">Every {{ event.frequency }} days</li>
+      <li class="li-left">Due {{ formatYearDate(event.action_due_date) }}</li>
+    </ul>
   </div>
 </template>
-
 <script>
+
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'EventCard',
   props: {
@@ -13,18 +18,23 @@ export default {
       type: Object,
       default: () => ({})
     }
+  },
+  methods: {
+    formatYearDate(value) {
+      return DateFormatService.formatYearDate(value);
+    },
   }
 }
 </script>
 
 <style scoped>
 .event-card {
-  width: 13em;
+  width: 100%;
   margin: 1em auto 1em auto;
   padding: 1em;
   border: solid 1px #2c3e50;
   cursor: pointer;
-  transition: all 0.2s linear;
+  /*transition: all 0.2s linear;*/
 }
 .event-card:hover {
   transform: scale(1.01);
