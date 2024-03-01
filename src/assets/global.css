@@ -53,7 +53,9 @@
   margin: auto;
   width: 12rem;
   height: 2rem;
-  background-color: #7ba8bd;
+  color: #000;
+  /*background-color: #7ba8bd; */
+  background-color: #adb4b7;
   border-radius: 5px;
   font-size: 18px;
 }

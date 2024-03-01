@@ -6,7 +6,7 @@
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
-    <!--Index Detail Flag: {{ this.RequestDetailIndexFlag }} -->
+    Index Detail Flag: {{ this.RequestDetailIndexFlag }} 
     <div class="events">
       <div
         v-for="event in eventsIndexDetail"

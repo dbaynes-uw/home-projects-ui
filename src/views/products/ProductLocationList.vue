@@ -181,7 +181,7 @@ button {
   height: 2em;
   margin: 0.5em;
   border-radius: 5px;
-  background: linear-gradient(to right, #F5F5F5, #EEEEEE); 
+  background: linear-gradient(to right, #d6d3d3, #EEEEEE); 
   text-decoration: none;
   
   font-size: 1em;

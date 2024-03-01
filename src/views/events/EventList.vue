@@ -17,9 +17,12 @@
       <br/>
       <h1>
         <EventsPastDue />
-      <!--button id="button-as-link" @click="requestIndexDetail">
+      </h1>
+      <br/>
+      <h1>
+      <button id="button-as-link" @click="requestIndexDetail">
         <u>Detail Index View</u>
-      </button-->
+      </button>
         <EventsDueBy />
       </h1>
     </div>
@@ -44,7 +47,7 @@
         />
       </div>
     </div>
-    <!--div class="events">
+    <div class="events">
       <div
         v-for="event in events"
         :key="event.id"
@@ -52,9 +55,9 @@
         class="event"
         @dblclick="onDoubleClick(event)"
       >
-        <br />
+      <br />
       </div>
-    </div-->
+    </div>
     <div class="event-list">
       <span v-if="filteredResults.length == 0">
         FilteredResults == 0
@@ -91,7 +94,7 @@ export default {
   props: ["id", "pastDue", "filteredResults[]"],
   data() {
     return {
-      //requestIndexDetailFlag: false,
+      requestIndexDetailFlag: false,
       assigned: "assigned",
       eventList: null,
       updatedEvent: null,
@@ -117,12 +120,11 @@ export default {
   },
   methods: {
     requestIndexDetail() {
-      /*console.log(
+      console.log(
         "Before RequestDetailIndexFlag: ",
         this.requestIndexDetailFlag
       );
       this.requestIndexDetailFlag = true;
-      */
     },
     showIndex() {
       this.filteredResults = [];
