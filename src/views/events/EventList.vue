@@ -42,32 +42,52 @@
         />
       </div>
     </div>
-    <div class="legend">
-      <span>Double click to mark as complete.</span>
-      <span><span class="incomplete-box"></span> = Incomplete</span>
-      <span><span class="complete-box"></span> = Complete</span>
-    </div>
-    <div class="events">
-      <EventCard
-        v-for="event in events"
-        :key="event.id"
-        :event="event"
-        class="event"
-        @dblclick="onDoubleClick(event)"
-      />
-      <br />
-    </div>
     <div class="event-list">
     <!--EventCard v-for="event in events" :key="event.id" :event="event" /-->
     <!--EventIndexDetail :events="events" /-->
       <span v-if="filteredResults.length == 0">
-        FilteredResults == 0
-        <EventIndex :events="events" />
+        <span v-if="requestIndexDetailFlag == true">
+          <div class="legend">
+            <span>Double click to mark as complete.</span>
+            <span><span class="incomplete-box"></span> = Incomplete</span>
+            <span><span class="complete-box"></span> = Complete</span>
+          </div>
+          <div class="events">
+            <EventCard
+              v-for="event in events"
+              :key="event.id"
+              :event="event"
+              class="event"
+              @dblclick="onDoubleClick(event)"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <EventIndex :events="events" />
+        </span>
       </span>
       <span v-if="filteredResults.length > 0">
-        FilteredResults > 0
-        <p>Search Results: {{ filteredResults.length }}</p>
-        <EventSearchResults :filteredResults="filteredResults" />
+        <span v-if="requestIndexDetailFlag == true">
+          <div class="legend">
+            <span>Double click to mark as complete.</span>
+            <span><span class="incomplete-box"></span> = Incomplete</span>
+            <span><span class="complete-box"></span> = Complete</span>
+          </div>
+          <div class="events">
+            <EventCard
+              v-for="event in filteredResults"
+              :key="event.id"
+              :event="event"
+              class="event"
+              @dblclick="onDoubleClick(event)"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <EventSearchResults :filteredResults="filteredResults" />
+        </span>
       </span>
     </div>
     <!--div>{{ $store.state.events }}</div-->
@@ -105,6 +125,7 @@ export default {
       updatedEvent: null,
       inputSearchText: "",
       filteredResults: [],
+      searchResults: false,
       columnDetails: null,
       sortedData: [],
       sortedbyASC: false,
@@ -125,17 +146,14 @@ export default {
   },
   methods: {
     requestIndexDetail() {
-      console.log(
-        "Before RequestDetailIndexFlag: ",
-        this.requestIndexDetailFlag
-      );
-      this.requestIndexDetailFlag = true;
+      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     showIndex() {
       this.filteredResults = [];
     },
     searchColumns() {
       this.filteredResults = [];
+      this.searchResults = true;
       this.columnDetails = null;
       if (
         this.inputSearchText == null ||
