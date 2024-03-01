@@ -48,17 +48,20 @@
       </div>
     </div>
     <div class="events">
-      <div
+      EventCard: {{ events.length }}
+      <EventCard
         v-for="event in events"
         :key="event.id"
         :event="event"
         class="event"
         @dblclick="onDoubleClick(event)"
-      >
+      />
       <br />
-      </div>
     </div>
     <div class="event-list">
+    <EventCard v-for="event in events" :key="event.id" :event="event" />
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@
+    <EventIndexDetail :events="events" />
       <span v-if="filteredResults.length == 0">
         FilteredResults == 0
         <EventIndex :events="events" />
@@ -75,9 +78,11 @@
 
 <script setup>
 //import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import EventCard from '@/components/EventCard'
 import EventsDueBy from "@/components/EventsDueBy.vue";
 import EventsPastDue from "@/components/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
+import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
 import EventSearchResults from "@/components/events/EventSearchResults.vue";
 </script>
 <script>
@@ -87,11 +92,13 @@ export default {
   name: "EventList",
   components: {
     EventIndex,
+    EventIndexDetail,
+    EventCard,
     EventSearchResults,
     EventsDueBy,
     EventsPastDue,
   },
-  props: ["id", "pastDue", "filteredResults[]"],
+  props: ["id", "pastDue", "eventCard", "filteredResults[]"],
   data() {
     return {
       requestIndexDetailFlag: false,

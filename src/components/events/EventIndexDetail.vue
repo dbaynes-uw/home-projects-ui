@@ -6,10 +6,11 @@
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
-    Index Detail Flag: {{ this.RequestDetailIndexFlag }} 
+    <EventCard v-for="event in events" :key="event.id" :event="event" />
+
     <div class="events">
       <div
-        v-for="event in eventsIndexDetail"
+        v-for="event in events"
         :key="event.id"
         :event="event"
         class="event"

@@ -1,7 +1,7 @@
 <template>
   <div class="event-card">
-    <span>@{{ event.time }} on {{ event.date }}</span>
-    <h4>{{ event.title }}</h4>
+    <span>Event card for {{ event.description}}</span>
+    <h4>{{ event.action_due_date }}</h4>
   </div>
 </template>
 
