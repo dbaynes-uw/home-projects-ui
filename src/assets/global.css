@@ -49,6 +49,12 @@
   font-size: 1.25rem;
   font-weight: bold;
 }
+#p-custom-left-u {
+  text-decoration: underline;
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
 #button-as-link {
   margin: auto;
   width: 12rem;
@@ -93,6 +99,12 @@
 }
 .li-left {
   text-align: left;
+  display: list-item;
+  list-style-type: disclosure-closed;
+}
+.li-left-bold {
+  text-align: left;
+  font-weight: bold;
   display: list-item;
   list-style-type: disclosure-closed;
 }

@@ -5,11 +5,12 @@
     <span><span class="complete-box"></span> = Complete</span>
   </div-->
   <div class="event-card">
-    <p id="p-custom-left">{{ event.description}}</p>
+    <p id="p-custom-left-u">{{ event.description}}</p>
     <ul>
+      <li class="li-left">Assigned To: <b>{{ event.assigned }}</b></li>
       <li class="li-left">Last Action: {{ formatYearDate(event.action_date) }}</li>
       <li class="li-left">Every {{ event.frequency }} days</li>
-      <li class="li-left">Due {{ formatYearDate(event.action_due_date) }}</li>
+      <li class="li-left">Due: <b>{{ formatYearDate(event.action_due_date) }}</b> </li>
     </ul>
   </div>
 </template>
