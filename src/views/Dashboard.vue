@@ -9,7 +9,7 @@
 
 <script>
 import axios from 'axios'
-import EventCard from '../components/EventCard'
+import EventCard from '../components/events/EventCard'
 
 export default {
   components: { EventCard },

@@ -96,9 +96,9 @@
 
 <script setup>
 //import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import EventCard from '@/components/EventCard'
-import EventsDueBy from "@/components/EventsDueBy.vue";
-import EventsPastDue from "@/components/EventsPastDue.vue";
+import EventCard from '@/components/events/EventCard'
+import EventsDueBy from "@/components/events/EventsDueBy.vue";
+import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 //import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
 import EventSearchResults from "@/components/events/EventSearchResults.vue";

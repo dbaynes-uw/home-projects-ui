@@ -1,12 +1,19 @@
 <template>
   <div class="div-frame">
-    <h2>Med List</h2>
-    <h2>
-      <router-link :to="{ name: 'MedCreate' }">Add Med</router-link>
-    </h2>
-    <h3 id="h3-left">
+    <h1>Med List</h1>
+    <h1>
+      <button id="button-as-link" router-link  :to="{ name: 'MedCreate' }">Add Med</button>
+    </h1>
+    <br/>
+    <h1>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <u>Detail Index View</u>
+      </button>
+    </h1>
+    <br/>
+    <h4 style="text-align: center;">
       <a href="https://myhealthchart.com/" target="_blank">MyHealthChart dj.@./sen...NagoSalib2.@</a>
-    </h3>
+    </h4>
     <br />
     <div style="width: 100%">
       <div class="auto-search-container">
@@ -25,25 +32,62 @@
     </div>
     <div class="med-list">
       <span v-if="filteredResults.length == 0">
-        <MedIndex :meds="meds" />
+        <span v-if="requestIndexDetailFlag == true">
+          <h3 id="h3-left">Total: {{ meds.length }}</h3>
+          <div class="events">
+            <MedCard
+              v-for="med in meds"
+              :key="med.id"
+              :med="med"
+              class="med"
+              @dblclick="onDoubleClick(med)"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <MedIndex :meds="meds" />
+        </span>
       </span>
       <span v-if="filteredResults.length > 0">
-        <MedIndex :meds="filteredResults" />
+        <span v-if="requestIndexDetailFlag == true">
+          <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+          <div class="meds">
+            <MedCard
+              v-for="med in filteredResults"
+              :key="med.id"
+              :med="med"
+              class="med"
+              @dblclick="onDoubleClick(med)"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <MedSearchResults :filteredResults="filteredResults" />
+        </span>
       </span>
+
     </div>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
+import MedCard from "@/components/meds/MedCard.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
+import MedSearchResults from "@/components/meds/MedSearchResults.vue";
+
 export default {
   name: "MedList",
   props: ["filteredResults[]"],
   components: {
+    MedCard,
     MedIndex,
+    MedSearchResults,
   },
   data() {
     return {
+      requestIndexDetailFlag: true,
       inputSearchText: "",
       filteredResults: [],
       columnDetails: null,
@@ -68,6 +112,9 @@ export default {
     },
   },
   methods: {
+    requestIndexDetail() {
+      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    },
     showIndex() {
       this.filteredResults = [];
     },
@@ -86,6 +133,7 @@ export default {
           this.meds.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
+          console.log("Made it past....")
           this.meds.forEach((med) => {
             const searchHasDate =
               med.date_of_occurrence &&
@@ -104,6 +152,7 @@ export default {
                 .includes(this.inputSearchText.toLowerCase());
 
             if (searchHasDate || searchHasDuration || searchHasCircumstances) {
+              console.log("Push to Med@@@@@@")
               this.filteredResults.push(med);
             }
           });
@@ -114,7 +163,6 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      //console.log("Med LIST sortBy: ", sortBy)
       this.sortedData = this.meds;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -182,6 +230,31 @@ tr.is-complete {
 }
 </style-->
 <style>
+.meds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+}
+.med {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+.med-link {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;

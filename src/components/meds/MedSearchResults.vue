@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total: {{ meds.length }}</h3>
+  <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('date_of_occurrence')">Date of Occcurrence</th>
@@ -9,16 +9,16 @@
       <th id="background-blue">Circumstances </th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="(med, medIndex) in meds" :key="medIndex">
-      <td>{{ formatStandardDateTime(med.date_of_occurrence) }} </td>
-      <td>{{ med.duration }}</td>
-      <td>{{ med.interval }} days</td>
-      <td>{{ med.circumstances }} </td>
+    <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
+      <td>{{ formatStandardDateTime(result.date_of_occurrence) }} </td>
+      <td>{{ result.duration }}</td>
+      <td>{{ result.interval }} days</td>
+      <td>{{ result.circumstances }} </td>
       <td class="td-center" >
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'MedEdit', params: { id: `${med.id}` } }"
+              :to="{ name: 'MedEdit', params: { id: `${result.id}` } }"
             >
               <i
                 id="medium-icon-edit"
@@ -28,14 +28,14 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'MedDetails', params: { id: `${med.id}` } }"
+                :to="{ name: 'MedDetails', params: { id: `${result.id}` } }"
               >
                 <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
-                @click="deleteMed(med)"
+                @click="deleteMed(result)"
                 class="fas fa-trash-alt fa-stack-1x"
                 id="medium-icon-delete"
               >
@@ -45,16 +45,16 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'MedDetails', params: { id: `${med.id}` } }"
+            :to="{ name: 'MedDetails', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'MedEdit', params: { id: `${med.id}` } }"
+            :to="{ name: 'MedEdit', params: { id: `${result.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteMed(med)"><u>Delete</u></span>
+          <span class="ok-btn" @click="deleteMed(result)"><u>Delete</u></span>
         </span>
       </td>
     </tr>
@@ -66,8 +66,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "MedIndex",
-  props: ["meds"],
+  name: "MedSearchResults",
+  props: ["filteredResults"],
   components: {
     ConfirmDialogue,
   },
@@ -83,6 +83,39 @@ export default {
     };
   },
   methods: {
+    searchColumns() {
+      this.filteredmeds = [];
+      this.columnDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        this.filteredmeds = [];
+        this.columnDetails = null;
+      } else {
+        if (
+          this.meds &&
+          this.meds.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.meds.forEach((med) => {
+            const searchHasDateOfOccurrence =
+              med.date_of_occurrence &&
+              med.date_of_occurrence
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            const searchHasDuration =
+              med.duration &&
+              med.duration
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            if (searchHasDateOfOccurrence || searchHasDuration) {
+              this.filteredmeds.push(med);
+            }
+          });
+        }
+      }
+    },
     showCharacterDetails(med) {
       this.characterDetails = med;
     },
