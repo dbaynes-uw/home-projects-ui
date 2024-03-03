@@ -32,21 +32,26 @@
     </div>
     <div class="med-list">
       <span v-if="filteredResults.length == 0">
-        <span v-if="requestIndexDetailFlag == true">
-          <h3 id="h3-left">Total: {{ meds.length }}</h3>
-          <div class="events">
-            <MedCard
-              v-for="med in meds"
-              :key="med.id"
-              :med="med"
-              class="med"
-              @dblclick="onDoubleClick(med)"
-            />
-            <br />
-          </div>
+        <span v-if="searchResults == false">
+          <h3 id="h3-left">No Search Results Returned</h3>
         </span>
         <span v-else>
-          <MedIndex :meds="meds" />
+          <span v-if="requestIndexDetailFlag == true">
+            <h3 id="h3-left">Total: {{ meds.length }}</h3>
+            <div class="events">
+              <MedCard
+                v-for="med in meds"
+                :key="med.id"
+                :med="med"
+                class="med"
+                @dblclick="onDoubleClick(med)"
+              />
+              <br />
+            </div>
+          </span>
+          <span v-else>
+            <MedIndex :meds="meds" />
+          </span>
         </span>
       </span>
       <span v-if="filteredResults.length > 0">
@@ -89,6 +94,7 @@ export default {
     return {
       requestIndexDetailFlag: true,
       inputSearchText: "",
+      searchResults: null,
       filteredResults: [],
       columnDetails: null,
       sortedData: [],
@@ -119,6 +125,7 @@ export default {
       this.filteredResults = [];
     },
     searchColumns() {
+      this.searchResults = true;
       this.filteredResults = [];
       this.columnDetails = null;
       if (
@@ -133,7 +140,6 @@ export default {
           this.meds.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          console.log("Made it past....")
           this.meds.forEach((med) => {
             const searchHasDate =
               med.date_of_occurrence &&
@@ -150,10 +156,20 @@ export default {
               med.circumstances
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-
+            
+            console.log("med.circumstances: ", med.circumstances.toLowerCase().includes(this.inputSearchText.toLowerCase()))
+            console.log("this.inputSearchText: ", this.inputSearchText)
+            
             if (searchHasDate || searchHasDuration || searchHasCircumstances) {
-              console.log("Push to Med@@@@@@")
+              console.log("searchHasDate: ", searchHasDate)
+              console.log("searchHasDuration: ", searchHasDuration)
+              console.log("searchHasCircumstances: ", searchHasCircumstances)
               this.filteredResults.push(med);
+            }
+            if (this.filteredResults.length > 0) {
+              this.searchResults = true;
+            } else {
+              this.searchResults = false;
             }
           });
         }
