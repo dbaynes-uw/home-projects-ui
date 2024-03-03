@@ -155,15 +155,8 @@ export default {
               med.circumstances &&
               med.circumstances
                 .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            
-            console.log("med.circumstances: ", med.circumstances.toLowerCase().includes(this.inputSearchText.toLowerCase()))
-            console.log("this.inputSearchText: ", this.inputSearchText)
-            
+                .includes(this.inputSearchText.toLowerCase());            
             if (searchHasDate || searchHasDuration || searchHasCircumstances) {
-              console.log("searchHasDate: ", searchHasDate)
-              console.log("searchHasDuration: ", searchHasDuration)
-              console.log("searchHasCircumstances: ", searchHasCircumstances)
               this.filteredResults.push(med);
             }
             if (this.filteredResults.length > 0) {
