@@ -2,7 +2,9 @@
   <div class="div-frame">
     <h1>Med List</h1>
     <h1>
-      <button id="button-as-link" router-link  :to="{ name: 'MedCreate' }">Add Med</button>
+      <button id="button-as-link">
+        <router-link  :to="{ name: 'MedCreate' }">Add Med</router-link>
+      </button>
     </h1>
     <br/>
     <h1>
