@@ -3,13 +3,14 @@
     <v-card-title class="pb-0">
       <h2>Products By Location</h2>
     </v-card-title>
-    <br/>
     <ul>
       <li class="left">
         <button id="link-as-button">
           <router-link :to="{ name: 'ProductVendorList' }">Shopping List By Vendor</router-link>
         </button>
       </li>
+    </ul>
+    <ul class="py-2">
       <li>
         <button id="link-as-button">
           <router-link :to="{ name: 'ProductList' }">Shopping List By Product</router-link>
@@ -33,6 +34,7 @@
           <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
             <h1 @click='toggleLocation(group_index)'><b><u>{{ location }}</u></b></h1>
+            isVendorToggled: {{ isVendorToggled }}
             <div v-show="isVendorToggled === group_index">
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">

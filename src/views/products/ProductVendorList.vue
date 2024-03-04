@@ -32,33 +32,35 @@
           <div class="column" id="group" v-for="(vendor, group_index) in this.vendorsGroup.vendorsGroup" :key="group_index">
             <!-- Toggle by Vendor -->
             <h1 @click='toggleVendor(group_index)'><b><u>{{ vendor }}</u></b></h1>
-            <br/>
-            <div v-for="(product, product_index) in this.vendors_products" :key="product_index">        
-              <div v-if="product.vendor_name == vendor">
-                <span v-for="(item, item_index) in product.products" :key="item_index">
-                  <span v-if="this.showShoppingList == true">
-                    <span v-if="item.active == true">
+            <div v-show="isProductToggled === group_index">
+              <br/>
+              <div v-for="(product, product_index) in this.vendors_products" :key="product_index">        
+                <div v-if="product.vendor_name == vendor">
+                  <span v-for="(item, item_index) in product.products" :key="item_index">
+                    <span v-if="this.showShoppingList == true">
+                      <span v-if="item.active == true">
+                        <input
+                          type="checkbox"
+                          :checked="item.active"
+                          @change="isChecked(item, item.active)"
+                          class="field"
+                        />
+                        <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
+                        <label class="checkbox-right">{{ item.product_name }}</label>
+                      </span>
+                    </span>
+                    <span v-else>
                       <input
-                        type="checkbox"
-                        :checked="item.active"
-                        @change="isChecked(item, item.active)"
-                        class="field"
-                      />
-                      <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
+                          type="checkbox"
+                          :checked="item.active"
+                          @change="isChecked(item, item.active)"
+                          class="field"
+                        />
+                        <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
                       <label class="checkbox-right">{{ item.product_name }}</label>
                     </span>
                   </span>
-                  <span v-else>
-                    <input
-                        type="checkbox"
-                        :checked="item.active"
-                        @change="isChecked(item, item.active)"
-                        class="field"
-                      />
-                      <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
-                    <label class="checkbox-right">{{ item.product_name }}</label>
-                  </span>
-                </span>
+                </div>
               </div>
             </div>
           </div>

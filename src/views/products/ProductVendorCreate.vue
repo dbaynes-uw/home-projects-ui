@@ -3,15 +3,25 @@
     <v-card-title class="pb-0">
       <h2>Add Vendor/Products</h2>
     </v-card-title>
-    <h3>
-      <router-link :to="{ name: 'ProductLocationList' }">Product Location List</router-link>
-    </h3>
-    <h3>
-       <router-link :to="{ name: 'ProductVendorList' }">Make Shopping List By Vendor</router-link>
-    </h3> 
-    <h3>
-       <router-link :to="{ name: 'ProductList' }">Make Shopping List by Product</router-link>
-    </h3> 
+    <ul>
+      <li class="left">
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductLocationList' }">Product Location List</router-link>
+        </button>
+      </li>
+    </ul>
+    <ul class="py-2">
+      <li>
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductVendorList' }">List By Vendor</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductList' }">List by Product</router-link>
+        </button>
+      </li>
+    </ul> 
   </v-card>
   <v-card-text>
     <v-form id="isFormValid">

@@ -57,7 +57,7 @@
               v-for="event in events"
               :key="event.id"
               :event="event"
-              class="event"
+              :class="duePastDue(event)"
               @dblclick="onDoubleClick(event)"
             />
             <br />
@@ -145,6 +145,17 @@ export default {
     },
   },
   methods: {
+    duePastDue(e) {
+      var moment = require('moment');
+      let formatDateToday = moment(new Date()).format("YYYY-MM-DD");
+      console.log("action_due_date: ", e.action_due_date)
+      console.log("formatDateToday: ", formatDateToday)
+      //if (e.action_due_date < formatDateToday)
+      // 2024-03-09 < 2024-03-03
+      console.log("e.action_due_date > formatDateToday: ", e.action_due_date > formatDateToday)
+      return e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
+
+    },
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
@@ -243,6 +254,16 @@ export default {
 .event {
   border: 1px solid #ccc;
   background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+.event-inactive {
+  border: 1px solid #ccc;
+  background: red;
   padding: 1rem;
   padding-top: 0em;
   border-radius: 5px;
