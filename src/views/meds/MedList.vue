@@ -1,67 +1,61 @@
 <template>
-  <div class="div-frame">
-    <h1>Med List</h1>
-    <h1>
-      <button id="button-as-link">
-        <router-link  :to="{ name: 'MedCreate' }">Add Med</router-link>
-      </button>
-    </h1>
+    <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h2>Med List</h2>
+    </v-card-title>
+    <ul>
+      <li class="left">
+        <button id="link-as-button">
+          <router-link  :to="{ name: 'MedCreate' }">Add Med</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Detail Index View</u>
+        </button>
+      </li>
+      <li>
+        <button id="link-as-button" @click="requestMedChart">
+          <u>MedChart</u>
+        </button>
+      </li>
+    </ul> 
     <br/>
-    <h1>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <u>Detail Index View</u>
-      </button>
-    </h1>
-    <br/>
-    <h4 style="text-align: center;">
-      <a href="https://myhealthchart.com/" target="_blank">MyHealthChart dj.@./sen...NagoSalib2.@</a>
-    </h4>
-    <br />
-    <div style="width: 100%">
-      <div class="auto-search-container">
-        <v-text-field
-          clearable
-          clear-icon="mdi-close"
-          @click:clear="showIndex"
-          type="text"
-          class="np-input-search"
-          v-model="inputSearchText"
-          placeholder="Search"
-          autocomplete="off"
-          v-on:keyup="searchColumns"
-        />
-      </div>
+  </v-card>
+  <br/>
+  <h4 style="text-align: center;">
+    <a href="https://myhealthchart.com/" target="_blank">MyHealthChart dj.@./sen...NagoSalib2.@</a>
+  </h4>
+  <br />
+  <div style="width: 100%">
+    <div class="auto-search-container">
+      <v-text-field
+        clearable
+        clear-icon="mdi-close"
+        @click:clear="showIndex"
+        type="text"
+        class="np-input-search"
+        v-model="inputSearchText"
+        placeholder="Search"
+        autocomplete="off"
+        v-on:keyup="searchColumns"
+      />
     </div>
-    <div class="med-list">
-      <span v-if="filteredResults.length == 0">
-        <span v-if="searchResults == false">
-          <h3 id="h3-left">No Search Results Returned</h3>
-        </span>
-        <span v-else>
-          <span v-if="requestIndexDetailFlag == true">
-            <h3 id="h3-left">Total: {{ meds.length }}</h3>
-            <div class="events">
-              <MedCard
-                v-for="med in meds"
-                :key="med.id"
-                :med="med"
-                class="med"
-                @dblclick="onDoubleClick(med)"
-              />
-              <br />
-            </div>
-          </span>
-          <span v-else>
-            <MedIndex :meds="meds" />
-          </span>
-        </span>
+  </div>
+  <span v-if="requestMedChartFlag == true">
+    <MedChart :meds="meds.reverse()"/>
+  </span>
+  <div class="med-list">
+    <span v-if="filteredResults.length == 0">
+      <span v-if="searchResults == false">
+        <h3 id="h3-left">No Search Results Returned</h3>
       </span>
-      <span v-if="filteredResults.length > 0">
+      <span v-else>
         <span v-if="requestIndexDetailFlag == true">
-          <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-          <div class="meds">
+          <h3 id="h3-left">Total: {{ meds.length }}</h3>
+          <div class="events">
             <MedCard
-              v-for="med in filteredResults"
+              v-for="med in meds"
               :key="med.id"
               :med="med"
               class="med"
@@ -71,16 +65,34 @@
           </div>
         </span>
         <span v-else>
-          <MedSearchResults :filteredResults="filteredResults" />
+          <MedIndex :meds="meds" />
         </span>
       </span>
-
-    </div>
+    </span>
+    <span v-if="filteredResults.length > 0">
+      <span v-if="requestIndexDetailFlag == true">
+        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+        <div class="meds">
+          <MedCard
+            v-for="med in filteredResults"
+            :key="med.id"
+            :med="med"
+            class="med"
+            @dblclick="onDoubleClick(med)"
+          />
+          <br />
+        </div>
+      </span>
+      <span v-else>
+        <MedSearchResults :filteredResults="filteredResults" />
+      </span>
+    </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import MedCard from "@/components/meds/MedCard.vue";
+import MedChart from "@/components/meds/MedChart.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
 import MedSearchResults from "@/components/meds/MedSearchResults.vue";
 
@@ -89,12 +101,14 @@ export default {
   props: ["filteredResults[]"],
   components: {
     MedCard,
+    MedChart,
     MedIndex,
     MedSearchResults,
   },
   data() {
     return {
       requestIndexDetailFlag: true,
+      requestMedChartFlag: false,
       inputSearchText: "",
       searchResults: null,
       filteredResults: [],
@@ -122,6 +136,9 @@ export default {
   methods: {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    },
+    requestMedChart() {
+      this.requestMedChartFlag = this.requestMedChartFlag == true ? false : true;
     },
     showIndex() {
       this.filteredResults = [];
