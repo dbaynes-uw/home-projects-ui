@@ -17,7 +17,7 @@ export default {
       data: {
         labels: [],
         datasets: [{
-          label: 'Occurrences by Intervals',
+          label: 'Occurrences by # of Days',
           backgroundColor: 'red',
           data: []
         }],
