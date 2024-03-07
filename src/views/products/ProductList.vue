@@ -78,7 +78,6 @@ export default {
       toggle0: false,
       toggle1: false,
       toggle2: false,
-      //isVendorToggled: null,
       isProductToggled: null,
       home_safe: false,
       toggleArr: [],
