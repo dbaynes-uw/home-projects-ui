@@ -59,11 +59,12 @@
   margin: auto;
   width: 12rem;
   height: 2rem;
-  color: #000;
   /*background-color: #7ba8bd; */
   background-color: #adb4b7;
   border-radius: 5px;
   font-size: 18px;
+  font-weight: bold;
+  color: #000;
 }
 #link-as-button {
   margin: auto;
@@ -72,6 +73,7 @@
   border-radius: 5px;
   font-size: 18px;
   font-weight: bold;
+  color: #000;
 }
 .th-center {
   text-align: center;
