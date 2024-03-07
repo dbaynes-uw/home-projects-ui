@@ -43,7 +43,7 @@
     </div>
   </div>
   <span v-if="requestMedChartFlag == true">
-    <MedChart :meds="meds.reverse()"/>
+    <MedChart :meds="meds"/>
   </span>
   <div class="med-list">
     <span v-if="filteredResults.length == 0">
