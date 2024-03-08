@@ -25,6 +25,7 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
+import MedChartView from "../views/meds/MedChartView.vue";
 import ProductEdit from "../views/products/ProductVendorEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
@@ -228,6 +229,12 @@ const routes = [
     path: "/meds",
     name: "MedList",
     component: MedList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/meds",
+    name: "MedChartView",
+    component: MedChartView,
     meta: { requiresAuth: true}
   },
   {

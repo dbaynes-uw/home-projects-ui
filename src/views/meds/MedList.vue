@@ -18,6 +18,10 @@
         <button id="link-as-button" @click="requestMedChart">
           <u>MedChart</u>
         </button>
+        <!--
+        <button id="link-as-button">
+          <router-link  :to="{ name: 'MedChartView' }">MedChart</router-link>
+        </button-->
       </li>
     </ul> 
     <br/>
@@ -44,7 +48,7 @@
   </div>
   <span v-if="requestMedChartFlag == true">
     Meds: {{ meds.length }}
-    <MedChart :meds="meds"/>
+    <MedChart :meds="meds" :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
   </span>
   <div class="med-list">
     <span v-if="filteredResults.length == 0">
@@ -108,6 +112,8 @@ export default {
   },
   data() {
     return {
+      chartLabels: [],
+      chartIntervals: [],
       requestIndexDetailFlag: true,
       requestMedChartFlag: false,
       inputSearchText: "",
@@ -128,6 +134,10 @@ export default {
   created() {
     this.$store.dispatch("fetchMeds");
     this.sortedData = this.meds;
+    for (let i=0; i < this.meds.length; i++) {
+      this.chartLabels[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
+      this.chartIntervals[i] = this.meds[i].interval
+    }
   },
   computed: {
     meds() {
@@ -137,6 +147,7 @@ export default {
   methods: {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+
     },
     requestMedChart() {
       this.requestMedChartFlag = this.requestMedChartFlag == true ? false : true;

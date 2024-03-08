@@ -1,6 +1,6 @@
 <template>
   <div class="med-chart">
-    DATA: {{ data.datasets[0].data[3] }}
+    <!--canvas id="medChart" width="400" height="400"></canvas-->
     <Bar :data="data" :options="options" />
   </div>
 </template>
@@ -12,15 +12,15 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default {
   name: 'MedChart',
   components: {Bar},
-  props: ["meds"],
+  props: ["meds","chartLabels","chartIntervals"],
   data() {
     return {
       data: {
-        labels: [],
+        labels: this.chartLabels,
         datasets: [{
           label: 'Occurrences by # of Days',
           backgroundColor: 'red',
-          data: []
+          data: this.chartIntervals
         }],
         chartData: [],
       },
@@ -30,13 +30,16 @@ export default {
     }
   },
   async mounted() {
-    for (let i=0; i < this.meds.length; i++) {
-      this.data.labels[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
-      this.data.datasets[0].data[i] = this.meds[i].interval
-      this.data.chartData[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
-    }
-    console.log("CHARTS DATA: ", this.data.datasets)
-
+    this.data.labels  = this.chartLabels
+    this.data.datasets.data = this.chartIntervals
+    //for (let i=0; i < this.meds.length; i++) {
+    //  this.data.labels[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
+    //  this.data.datasets[0].data[i] = this.meds[i].interval
+    //  this.data.chartData[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
+    //}
+    //console.log("CHARTS DATA: ", this.data.datasets)
+     // this.data.labels = ['Test4','Test5','Test6']
+      //this.data.chartData = ['Test4','Test5','Test6']
   },
   methods: {
     formatStandardDate(value) {
