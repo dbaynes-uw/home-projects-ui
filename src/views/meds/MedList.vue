@@ -43,6 +43,7 @@
     </div>
   </div>
   <span v-if="requestMedChartFlag == true">
+    Meds: {{ meds.length }}
     <MedChart :meds="meds"/>
   </span>
   <div class="med-list">

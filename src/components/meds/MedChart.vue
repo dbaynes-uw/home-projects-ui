@@ -33,6 +33,7 @@ export default {
       this.data.labels[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
       this.data.datasets[0].data[i] = this.meds[i].interval
     }
+    console.log("CHARTS DATA: ", this.data.datasets[0].data.length)
   },
   methods: {
     formatStandardDate(value) {
