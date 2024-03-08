@@ -1,6 +1,6 @@
 <template>
   <div class="med-chart">
-    DATA: {{ data.datasets[0].data[3] }}
+    CHART DATA: {{ data }}
     <Bar :data="data" :options="options" />
   </div>
 </template>
@@ -33,10 +33,8 @@ export default {
     for (let i=0; i < this.meds.length; i++) {
       this.data.labels[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
       this.data.datasets[0].data[i] = this.meds[i].interval
-      this.data.chartData[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
     }
-    console.log("CHARTS DATA: ", this.data.datasets)
-
+    console.log("CHARTS DATA: ", this.data.datasets[0].data.length)
   },
   methods: {
     formatStandardDate(value) {
