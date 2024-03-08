@@ -1,5 +1,6 @@
 <template>
   <div class="med-chart">
+    CHART this.data.datasets[0].data.length: {{ this.data.datasets[0].data.length }}
     <Bar :data="data" :options="options" />
   </div>
 </template>
