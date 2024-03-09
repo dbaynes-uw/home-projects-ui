@@ -47,7 +47,6 @@
     </div>
   </div>
   <span v-if="requestMedChartFlag == true">
-    Meds: {{ meds.length }}
     <MedChart :meds="meds" :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
   </span>
   <div class="med-list">
@@ -58,6 +57,7 @@
       <span v-else>
         <span v-if="requestIndexDetailFlag == true">
           <h3 id="h3-left">Total: {{ meds.length }}</h3>
+            <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="events">
             <MedCard
               v-for="med in meds"
@@ -76,7 +76,8 @@
     </span>
     <span v-if="filteredResults.length > 0">
       <span v-if="requestIndexDetailFlag == true">
-        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+        <h3 id="h3-left">Total: {{ filteredResults.length }} <span>Double click to Edit</span></h3>
+        <span>Double click to Edit</span>
         <div class="meds">
           <MedCard
             v-for="med in filteredResults"
@@ -147,10 +148,13 @@ export default {
   methods: {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
-
     },
     requestMedChart() {
       this.requestMedChartFlag = this.requestMedChartFlag == true ? false : true;
+    },
+    onDoubleClick(med) {
+      console.log("MED Edit ")
+      this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
     },
     showIndex() {
       this.filteredResults = [];

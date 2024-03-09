@@ -35,7 +35,7 @@
           rows="3"
           cols="40"
         />
-        <button class="button" type="submit" id="background-blue">
+        <button class="button" type="submit" id="link-as-button">
           Submit
         </button>
       </div>
