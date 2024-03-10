@@ -107,8 +107,9 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Med has been updated");
-          this.$router.push({ name: "MedDetails", params: { id: med.id } });
+          alert("Med has been updated for " + DateFormatService.formatStandardDate(med.date_of_occurrence));
+          //this.$router.push({ name: "MedDetails", params: { id: med.id } });
+          this.$router.push({ name: "MedList" });
         } else {
           alert("Update Error Code ", result.status);
         }
