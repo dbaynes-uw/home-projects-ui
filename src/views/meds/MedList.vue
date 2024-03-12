@@ -5,7 +5,7 @@
     </v-card-title>
     <ul>
       <li class="left">
-        <button id="link-as-button">
+        <button id="button-as-link">
           <router-link  :to="{ name: 'MedCreate' }">Add Med</router-link>
         </button>
       </li>

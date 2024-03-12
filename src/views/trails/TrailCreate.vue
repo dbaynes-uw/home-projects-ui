@@ -56,7 +56,8 @@
         cols="40"
         class="textarea-style"
       />
-      <button class="button" type="submit">Submit</button>
+      <br/>
+      <button class="button" id="link-as-button" type="submit">Submit</button>
     </v-form>
     <!--Vuex:-->
     <!--div>{{ $store.state.trails }}</div-->

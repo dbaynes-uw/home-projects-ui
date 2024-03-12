@@ -65,7 +65,7 @@
         class="text-style"
         required
       />
-      <button class="button" type="submit">Submit</button>
+      <button class="button" id="link-as-button" type="submit">Submit</button>
     </form>
     <!--Vuex:-->
     <!--div>{{ $store.state.events }}</div-->

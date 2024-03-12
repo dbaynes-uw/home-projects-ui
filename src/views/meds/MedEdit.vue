@@ -38,7 +38,8 @@
           rows="3"
           cols="40"
         />
-        <button class="button" type="submit" id="link-as-button">
+        <br/>
+        <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
       </div>

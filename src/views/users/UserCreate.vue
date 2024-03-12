@@ -13,7 +13,7 @@
       </div>
       <label>Telephone</label>
       <input type="text" required v-model="user.phone" />
-      <button class="button" type="submit">Submit</button>
+      <button class="button" id="link-as-button" type="submit">Submit</button>
     </form>
     <!--Vuex:-->
     <!--div>{{ $store.state.users }}</div-->

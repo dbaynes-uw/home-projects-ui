@@ -35,7 +35,8 @@
           cols="40"
           class="textarea-style"
         />
-        <button class="button" type="submit" id="background-blue">
+        <br/>
+        <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
       </div>

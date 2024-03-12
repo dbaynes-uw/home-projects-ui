@@ -24,7 +24,8 @@
           v-model="user.phone"
           required
         />
-        <button class="button" type="submit">Submit</button>
+        <br/>
+        <button class="button" id="link-as-button" type="submit">Submit</button>
       </div>
     </form>
   </div>

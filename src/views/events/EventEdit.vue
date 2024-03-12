@@ -69,7 +69,7 @@
           class="textarea-style"
           required
         />
-        <button class="button" type="submit" id="background-blue">
+        <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
       </div>
