@@ -76,7 +76,7 @@
     </span>
     <span v-if="filteredResults.length > 0">
       <span v-if="requestIndexDetailFlag == true">
-        <h3 id="h3-left">Total: {{ filteredResults.length }} <span>Double click to Edit</span></h3>
+        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
         <div class="meds">
           <MedCard
@@ -176,6 +176,7 @@ export default {
           this.inputSearchText.length >= 2
         ) {
           this.meds.forEach((med) => {
+            med.date_of_occurrence = DateFormatService.formatYearDate(med.date_of_occurrence)
             const searchHasDate =
               med.date_of_occurrence &&
               med.date_of_occurrence
@@ -224,6 +225,9 @@ export default {
     //  this.isOnline = true;
     //  console.log("isOnline - this.isOnline = ", this.isOnline);
     //},
+    formatYearDate(value) {
+      return DateFormatService.formatYearDate(value);
+    },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTime(value);
     },
