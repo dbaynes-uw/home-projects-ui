@@ -7,10 +7,12 @@
   <div class="event-card">
     <p id="p-custom-left-u">{{ event.description}}</p>
     <ul>
+      <li class="li-left">Active: <b>{{ event.action_active == true ? 'Yes' : 'No' }}</b> </li>
       <li class="li-left">Assigned To: <b>{{ event.assigned }}</b></li>
       <li class="li-left">Last Action: {{ formatYearDate(event.action_date) }}</li>
       <li class="li-left">Every {{ event.frequency }} days</li>
       <li class="li-left">Due: <b>{{ formatYearDate(event.action_due_date) }}</b> </li>
+
     </ul>
   </div>
 </template>
@@ -27,7 +29,7 @@ export default {
   },
   methods: {
     formatYearDate(value) {
-      return DateFormatService.formatYearDate(value);
+      return DateFormatService.formatYearDatejs(value);
     },
   }
 }

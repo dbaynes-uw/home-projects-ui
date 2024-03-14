@@ -95,7 +95,7 @@ export default {
       }
     },
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
   },
   created() {

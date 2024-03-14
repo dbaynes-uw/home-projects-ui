@@ -101,7 +101,6 @@ import MedCard from "@/components/meds/MedCard.vue";
 import MedChart from "@/components/meds/MedChart.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
 import MedSearchResults from "@/components/meds/MedSearchResults.vue";
-
 export default {
   name: "MedList",
   props: ["filteredResults[]"],
@@ -136,7 +135,7 @@ export default {
     this.$store.dispatch("fetchMeds");
     this.sortedData = this.meds;
     for (let i=0; i < this.meds.length; i++) {
-      this.chartLabels[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
+      this.chartLabels[i] = DateFormatService.formatStandardDatejs(this.meds[i].date_of_occurrence)
       this.chartIntervals[i] = this.meds[i].interval
     }
   },
@@ -176,7 +175,7 @@ export default {
           this.inputSearchText.length >= 2
         ) {
           this.meds.forEach((med) => {
-            med.date_of_occurrence = DateFormatService.formatYearDate(med.date_of_occurrence)
+            med.date_of_occurrence = DateFormatService.formatDatejs(med.date_of_occurrence)
             const searchHasDate =
               med.date_of_occurrence &&
               med.date_of_occurrence
@@ -225,12 +224,6 @@ export default {
     //  this.isOnline = true;
     //  console.log("isOnline - this.isOnline = ", this.isOnline);
     //},
-    formatYearDate(value) {
-      return DateFormatService.formatYearDate(value);
-    },
-    formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTime(value);
-    },
   },
 };
 </script>

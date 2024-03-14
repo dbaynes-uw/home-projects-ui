@@ -2,7 +2,7 @@
   <div class="med-card">
     <p id="p-custom-left-u">{{ med.description}}</p>
     <ul>
-      <li class="li-left">Date: <b>{{  formatYearDate(med.date_of_occurrence) }}</b></li>
+      <li class="li-left">Date: <b>{{ formatYearDate(med.date_of_occurrence) }}</b></li>
       <li class="li-left">Duration: {{ med.duration }}</li>
       <li class="li-left">Interval: {{ med.interval }} days</li>
       <li class="li-left">Notes: <b>{{ med.circumstances }}</b> </li>
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     formatYearDate(value) {
-      return DateFormatService.formatYearDate(value);
+      return DateFormatService.formatYearDatejs(value);
     },
   }
 }

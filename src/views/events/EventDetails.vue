@@ -147,22 +147,22 @@ export default {
       this.$store.dispatch("updateEvent", updatedEvent);
     },
     datePastDue(value) {
-      return DateFormatService.datePastDue(value);
+      return DateFormatService.datePastDuejs(value);
     },
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
     formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTime(value);
+      return DateFormatService.formatStandardDateTimejs(value);
     },
     formatSystemDate(value) {
-      return DateFormatService.formatSystemDate(value);
+      return DateFormatService.formatSystemDatejs(value);
     },
     calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDue(action_date, frequency);
+      return DateFormatService.calculateDuejs(action_date, frequency);
     },
     calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDue(action_date, frequency);
+      return DateFormatService.calculateDateDuejs(action_date, frequency);
     },
   },
   created() {

@@ -172,13 +172,13 @@ export default {
       }
     },
     datePastDue(value) {
-      return DateFormatService.datePastDue(value);
+      return DateFormatService.datePastDuejs(value);
     },
     calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDue(action_date, frequency);
+      return DateFormatService.calculateDuejs(action_date, frequency);
     },
     calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDue(action_date, frequency);
+      return DateFormatService.calculateDateDuejs(action_date, frequency);
     },
   },
 };

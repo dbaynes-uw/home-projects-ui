@@ -31,7 +31,7 @@ export default {
   },
   async mounted() {
     for (let i=0; i < this.meds.length; i++) {
-      this.data.labels[i] = DateFormatService.formatStandardDate(this.meds[i].date_of_occurrence)
+      this.data.labels[i] = DateFormatService.formatStandardDatejs(this.meds[i].date_of_occurrence)
       this.data.datasets[0].data[i] = this.meds[i].interval
     }
     this.data.chartData = {
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
   },
 }

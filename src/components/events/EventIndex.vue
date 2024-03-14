@@ -139,10 +139,10 @@ export default {
       }
     },
     calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDue(action_date, frequency);
+      return DateFormatService.calculateDuejs(action_date, frequency);
     },
     calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDue(action_date, frequency);
+      return DateFormatService.calculateDateDuejs(action_date, frequency);
     },
     async deleteEvent(event) {
       const ok = await this.$refs.confirmDialogue.show({
@@ -164,10 +164,7 @@ export default {
       }
     },
     formatYearDate(value) {
-      return DateFormatService.formatYearDate(value);
-    },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+      return DateFormatService.formatYearDatejs(value);
     },
   },
 };

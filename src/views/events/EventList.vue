@@ -48,7 +48,7 @@
       <span v-if="filteredResults.length == 0">
         <span v-if="requestIndexDetailFlag == true">
           <div class="legend">
-            <span>Double click to mark as complete.</span>
+            <span>Double click to mark as TBD/Done or Active/Inactive.</span>
             <span><span class="incomplete-box"></span> = Incomplete</span>
             <span><span class="complete-box"></span> = Complete</span>
           </div>
@@ -102,6 +102,7 @@ import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 //import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
 import EventSearchResults from "@/components/events/EventSearchResults.vue";
+
 </script>
 <script>
 // @ is an alias to /src
@@ -119,7 +120,7 @@ export default {
   props: ["id", "pastDue", "eventCard", "filteredResults[]"],
   data() {
     return {
-      requestIndexDetailFlag: false,
+      requestIndexDetailFlag: true,
       assigned: "assigned",
       eventList: null,
       updatedEvent: null,
@@ -146,15 +147,9 @@ export default {
   },
   methods: {
     duePastDue(e) {
-      var moment = require('moment');
-      let formatDateToday = moment(new Date()).format("YYYY-MM-DD");
-      console.log("action_due_date: ", e.action_due_date)
-      console.log("formatDateToday: ", formatDateToday)
-      //if (e.action_due_date < formatDateToday)
-      // 2024-03-09 < 2024-03-03
-      console.log("e.action_due_date > formatDateToday: ", e.action_due_date > formatDateToday)
-      return e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
-
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
+      return e.action_active == true && e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
     },
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
@@ -228,20 +223,23 @@ export default {
       this.$store.dispatch("updateEvent", updatedEvent);
     },
     DatePastDue(value) {
-      return DateFormatService.datePastDue(value);
+      return DateFormatService.datePastDuejs(value);
     },
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
     formatSystemDate(value) {
-      return DateFormatService.formatSystemDate(value);
+      return DateFormatService.formatSystemDatejs(value);
     },
+    //Keep for now:
     calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDue(action_date, frequency);
+      console.log("EL - Calc Due")
+      return DateFormatService.calculateDuejs(action_date, frequency);
     },
     calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDue(action_date, frequency);
+      return DateFormatService.calculateDateDuejs(action_date, frequency);
     },
+    //
   },
 };
 </script>
@@ -322,9 +320,11 @@ select {
 .fa-table {
   margin-top: 1rem;
 }
+/*
 @media (max-width: 500px) {
   .events {
     grid-template.columns: 1fr;
   }
 }
+*/
 </style>

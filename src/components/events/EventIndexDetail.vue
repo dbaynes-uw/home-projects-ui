@@ -249,11 +249,13 @@ select {
 .fa-table {
   margin-top: 1rem;
 }
+/*
 @media (max-width: 500px) {
   .events {
     grid-template.columns: 1fr;
   }
 }
+*/
 #button-as-link {
   background-color: #7ba8bd;
   border-radius: 5px;

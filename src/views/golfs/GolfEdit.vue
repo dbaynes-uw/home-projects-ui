@@ -13,7 +13,6 @@
 //import axios from "axios";
 import GolfInput from "@/components/golfs/GolfInput.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-//import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id"],
   components: {

@@ -157,10 +157,10 @@ export default {
       }
     },
     formatYearOnly(value) {
-      return DateFormatService.formatYearOnly(value);
+      return DateFormatService.formatYearOnlyjs(value);
     },
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
   },
 };

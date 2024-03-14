@@ -400,6 +400,7 @@ export default new Vuex.Store({
         });
     },
     async eventsDueBy({ commit }, form) {
+      console.log("STORE@@@")
       EventService.getEventsDueBy(form)
         .then((response) => {
       commit("SET_EVENTS", response.data);
@@ -410,6 +411,7 @@ export default new Vuex.Store({
       });
     },
     async eventsPastDue({ commit }, dueBy) {
+      console.log("STORE@@@")
       EventService.getEventsPastDue(dueBy)
         .then((response) => {
       commit("SET_EVENTS", response.data);

@@ -90,7 +90,7 @@ export default {
       this.$store.dispatch("updateEvent", updatedEvent);
     },
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
   },
 };

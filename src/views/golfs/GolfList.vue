@@ -125,7 +125,7 @@ export default {
     //  console.log("isOnline - this.isOnline = ", this.isOnline);
     //},
     formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+      return DateFormatService.formatFullYearDatejs(value);
     },
   },
 };
