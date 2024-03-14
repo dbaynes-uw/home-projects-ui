@@ -133,7 +133,7 @@ export default {
       }
     },
     formatFullYearDate(value) {
-      return DateFormatService.formatYearDate(value);
+      return DateFormatService.formatYearDatejs(value);
     },
     calculateTotalPar(golf) {
       return GolfCalculations.calculateTotalPar(golf)

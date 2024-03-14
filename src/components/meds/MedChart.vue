@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
   },
 }

@@ -151,7 +151,7 @@ export default {
       }
     },
     formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDate(value);
+      return DateFormatService.formatFullYearDatejs(value);
     },
   },
 };

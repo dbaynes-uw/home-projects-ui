@@ -522,7 +522,7 @@ export default {
       return GolfCalculations.calculateTotalPenalty(golf)
     },
     formatStandardDate(value) {
-      return DateFormatService.formatStandardDate(value);
+      return DateFormatService.formatStandardDatejs(value);
     },
     capitalized(name) {
       const capitalizedFirst = name.toUpperCase();
