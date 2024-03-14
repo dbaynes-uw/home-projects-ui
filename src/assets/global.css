@@ -1,3 +1,28 @@
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+}
+.card {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+.card-link {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
 #content-margin {
   margin-top: 7rem;
 }

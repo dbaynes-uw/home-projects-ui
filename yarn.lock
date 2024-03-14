@@ -7579,7 +7579,7 @@ vue-router@^4.2.5:
 
 vue-select@^3.20.2:
   version "3.20.2"
-  resolved "https://registry.npmjs.org/vue-select/-/vue-select-3.20.2.tgz"
+  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.20.2.tgz#eaa15012b032c154d4fb51ac82ebeda2beeae54b"
   integrity sha512-ZSzIDzyYsWZULGUxVp1h6u3yi9IZQBWX8r6kSudUI/I5J1HQKpBjRntvkrg6pr87xmm16kdChvHCDN+W84vTKw==
 
 vue-style-loader@^4.1.0, vue-style-loader@^4.1.3:

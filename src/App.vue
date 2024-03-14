@@ -7,17 +7,17 @@
       <v-app-bar color="teal-darken-2">
         <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
-      <v-content id="content-margin">
+      <span id="content-margin">
         <router-view></router-view>
-      </v-content>
+      </span>
     </v-app>
     <v-app v-else-if="this.$route.name == 'Login'">
       <v-app-bar color="teal-darken-2">
         <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
       </v-app-bar>
-      <v-content id="content-margin">
+      <span id="content-margin">
         <router-view></router-view>
-      </v-content>
+      </span>
     </v-app>
     <!-- Good stuff Starts Here -->
     <v-app v-else>
@@ -57,9 +57,9 @@
           </v-list>
         </v-menu>
       </div>
-      <v-content>
+      <span>
         <router-view></router-view>
-      </v-content>
+      </span>
       <v-footer
         color="teal-darken-2"
         padless

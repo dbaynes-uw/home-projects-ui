@@ -63,7 +63,7 @@
               v-for="med in meds"
               :key="med.id"
               :med="med"
-              class="med"
+              class="card"
               @dblclick="onDoubleClick(med)"
             />
             <br />
@@ -78,12 +78,12 @@
       <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
-        <div class="meds">
+        <div class="cards">
           <MedCard
             v-for="med in filteredResults"
             :key="med.id"
             :med="med"
-            class="med"
+            class="card"
             @dblclick="onDoubleClick(med)"
           />
           <br />
@@ -227,81 +227,13 @@ export default {
   },
 };
 </script>
-<!--style scoped>
-.table-index-style {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  background-color: #7ba8bd;
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-tr {
-  line-height: 1.6 !important;
-  border: none;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.eventAssigned {
-  background: #e8f7f0;
-}
-.fa-table-stack {
-  position: relative;
-  left: 2rem;
-}
-i {
-  bottom: 0px;
-  color: gray;
-}
-tr.is-complete {
-  background: #35495e;
-  color: #fff;
-}
-#status-message {
-  text-align: center;
-  color: navy;
-}
-</style-->
 <style>
-.meds {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1rem;
-}
-.med {
-  border: 1px solid #ccc;
-  background: #41b883;
-  padding: 1rem;
-  padding-top: 0em;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
-  cursor: pointer;
-}
-.med-link {
-  border: 1px solid #ccc;
-  background: #41b883;
-  padding: 1rem;
-  padding-top: 0em;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
-  cursor: pointer;
-}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
-
 td,
 th {
   border: 1px solid #dddddd;
