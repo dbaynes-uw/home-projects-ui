@@ -1,14 +1,28 @@
 <template>
-  <div class="div-frame">
-    <h2>Book List</h2>
-    <h2 id="status-message">
-      <!--{{ this.statusMessage }}</-->
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h2>Book List</h2>
+      <h2 id="status-message">
+      <u>{{ this.statusMessage }}</u>
     </h2>
-    <h2>
-      <router-link :to="{ name: 'BookCreate' }">Add Book</router-link>
-    </h2>
-    <br />
-    <div style="width: 100%">
+    </v-card-title>
+    <ul>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'BookCreate' }">Add Book</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Detail Index View</u>
+        </button>
+      </li>
+    </ul> 
+    <br/>
+  </v-card>
+  <br/>
+  <div style="width: 100%">
       <div class="auto-search-container">
         <v-text-field
           clearable
@@ -22,28 +36,73 @@
           v-on:keyup="searchColumns"
         />
       </div>
-    </div>
-    <div class="book-list">
-      <span v-if="filteredResults.length == 0">
-        <BookIndex :books="books" />
+  </div>
+  <div class="book-list">
+    <span v-if="filteredResults.length == 0">
+      <span v-if="searchResults == false">
+        <h3 id="h3-left">No Search Results Returned</h3>
       </span>
-      <span v-if="filteredResults.length > 0">
-        <BookIndex :books="filteredResults" />
+      <span v-else>
+        <span v-if="requestIndexDetailFlag == true">
+          <h3 id="h3-left">Total: {{ books.length }}</h3>
+            <span class="h3-left-total-child">Double click Item Below to Edit</span>
+          <div class="cards">
+            <BookCard
+              v-for="book in books"
+              :key="book.id"
+              :book="book"
+              class="card"
+              @dblclick="onDoubleClick(book)"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <BookIndex :books="books" />
+        </span>
       </span>
-    </div>
+    </span>
+    <span v-if="filteredResults.length > 0">
+      <span v-if="requestIndexDetailFlag == true">
+        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+        <span>Double click to Edit</span>
+        <div class="cards">
+          <BookCard
+            v-for="book in filteredResults"
+            :key="book.id"
+            :book="book"
+            class="card"
+            @dblclick="onDoubleClick(book)"
+          />
+          <br />
+        </div>
+      </span>
+      <span v-else>
+        <BookSearchResults :filteredResults="filteredResults" />
+      </span>
+    </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import BookIndex from "@/components/books/BookIndex.vue";
+import BookCard from "@/components/books/BookCard.vue";
+import BookSearchResults from "@/components/books/BookSearchResults.vue";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+
 export default {
   name: "BookList",
   props: ["filteredResults[]"],
   components: {
     BookIndex,
+    BookCard,
+    BookSearchResults,
+    ConfirmDialogue,
   },
   data() {
     return {
+      requestIndexDetailFlag: true,
+      searchResults: null,
       inputSearchText: "",
       filteredResults: [],
       columnDetails: null,
@@ -52,7 +111,7 @@ export default {
       description: null,
       frequency: null,
       completed: 0,
-      //statusMessage: "",
+      statusMessage: "",
     };
   },
   mounted() {
@@ -68,10 +127,18 @@ export default {
     },
   },
   methods: {
+    requestIndexDetail() {
+      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    },
+    onDoubleClick(book) {
+      console.log("book Edit ")
+      this.$router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
+    },
     showIndex() {
       this.filteredResults = [];
     },
     searchColumns() {
+      this.searchResults = true;
       this.filteredResults = [];
       this.columnDetails = null;
       if (
@@ -99,6 +166,11 @@ export default {
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasTitle || searchHasAuthor) {
               this.filteredResults.push(book);
+            }
+            if (this.filteredResults.length > 0) {
+              this.searchResults = true;
+            } else {
+              this.searchResults = false;
             }
           });
         }

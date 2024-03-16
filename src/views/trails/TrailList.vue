@@ -46,7 +46,7 @@
         <span v-if="requestIndexDetailFlag == true">
           <h3 id="h3-left">Total: {{ trails.length }}</h3>
             <span class="h3-left-total-child">Double click Item Below to Edit</span>
-          <div class="events">
+          <div class="cards">
             <TrailCard
               v-for="trail in trails"
               :key="trail.id"
@@ -67,7 +67,7 @@
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
         <div class="cards">
-          <trailCard
+          <TrailCard
             v-for="trail in filteredResults"
             :key="trail.id"
             :trail="trail"
@@ -186,25 +186,6 @@ export default {
       } else {
         this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
         this.sortedbyASC = true;
-      }
-    },
-    async deleteTrail(trail) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Trail from List",
-        message:
-          "Are you sure you want to delete " +
-          trail.trail_head_name +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteTrail", trail);
-        this.statusMessage =
-          "Trail was Deleted for " +
-          trail.trail_head_name +
-          "! Page will refresh in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
       }
     },
     formatStandardDate(value) {

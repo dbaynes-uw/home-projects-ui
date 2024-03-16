@@ -52,7 +52,7 @@
             <span><span class="incomplete-box"></span> = Incomplete</span>
             <span><span class="complete-box"></span> = Complete</span>
           </div>
-          <div class="events">
+          <div class="cards">
             <EventCard
               v-for="event in events"
               :key="event.id"

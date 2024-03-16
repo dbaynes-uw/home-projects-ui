@@ -117,25 +117,25 @@ export default {
         this.sortedbyASC = true;
       }
     },
-    async deleteTravel(travel) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Travel from List",
-        message:
-          "Are you sure you want to delete " +
-          travel.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteTravel", travel);
-        this.statusMessage =
-          "Travel was Deleted for " +
-          travel.title +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-      }
-    },
+    //async deleteTravel(travel) {
+    //  const ok = await this.$refs.confirmDialogue.show({
+    //    title: "Delete Travel from List",
+    //    message:
+    //      "Are you sure you want to delete " +
+    //      travel.title +
+    //      "? It cannot be undone.",
+    //    okButton: "Delete",
+    //  });
+    //  // If you throw an error, the method will terminate here unless you surround it wil try/catch
+    //  if (ok) {
+    //    this.$store.dispatch("deleteTravel", travel);
+    //    this.statusMessage =
+    //      "Travel was Deleted for " +
+    //      travel.title +
+    //      "! Page will restore in 2 seconds";
+    //    setTimeout(() => location.reload(), 2500);
+    //  }
+    //},
     formatFullYearDate(value) {
       return DateFormatService.formatFullYearDatejs(value);
     },
