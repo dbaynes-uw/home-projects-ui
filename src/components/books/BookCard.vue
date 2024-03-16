@@ -5,7 +5,7 @@
       <li class="li-left">Author: <b>{{ book.author }}</b></li>
       <li class="li-left">Date Written: {{ formatYearDate(book.date_written) }}</li>
       <li class="li-left">Date Read: {{ formatYearDate(book.date_read) }}</li>
-      <li class="li-left">Link to Review: {{ book.url_to_review }}</li>
+      <li class="li-left"><a :href="book.url_to_review" target="_blank">Link to Review</a></li>
       <li class="li-left">Notes: <b>{{ book.notes }}</b> </li>
     </ul>
   </div>
