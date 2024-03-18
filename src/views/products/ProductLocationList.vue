@@ -38,7 +38,7 @@
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)'><b>{{ vendor.vendor_name }}</b></h2>  
+                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClick(vendor.id)"><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
@@ -84,6 +84,7 @@
   </v-card-text>
 </template>
 <script>
+let time = null;  // define time be null 
 import { v4 as uuidv4 } from "uuid";
 export default {
   name: "ProductVendorList",
@@ -161,7 +162,17 @@ export default {
       return this.showShoppingList = showFlag == true ? false : true
     },
     toggleLocation(index) {
-      this.isVendorToggled = index === this.isVendorToggled? null : index
+      clearTimeout(time)
+      time=setTimeout(() => {
+        console.log("Single Click")
+        this.isVendorToggled = index === this.isVendorToggled? null : index
+      }, 300)
+      console.log("Timeout Done")
+    },
+    doubleClick(vendorId) {
+      clearTimeout(time);
+      console.log('double click on: ', vendorId)
+      this.$router.push({ name: 'ProductVendorEdit', params: { id: vendorId }  })
     },
     toggleVendor(index) {
       this.isProductToggled = index === this.isProductToggled? null : index

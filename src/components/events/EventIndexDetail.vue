@@ -16,7 +16,7 @@
         class="event"
         @dblclick="onDoubleClick(event)"
       >
-        <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
+        <router-link :to="{ name: 'EventShow', params: { id: event.id } }">
           <p class="p-align-left">
             <b>
               <u>{{ event.description }}</u>

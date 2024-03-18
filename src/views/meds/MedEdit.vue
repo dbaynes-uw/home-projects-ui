@@ -117,7 +117,7 @@ export default {
       }
     },
     formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTime(value);
+      return DateFormatService.formatStandardDateTimejs(value);
     },
   },
 };

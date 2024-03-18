@@ -1,5 +1,5 @@
 <template>
-  <div class="med-card">
+  <div class="card">
     <p id="p-custom-left-u">{{ med.description}}</p>
     <ul>
       <li class="li-left">Date: <b>{{ formatYearDate(med.date_of_occurrence) }}</b></li>
@@ -27,23 +27,5 @@ export default {
   }
 }
 </script>
-
 <style scoped>
-.med-card {
-  width: 100%;
-  margin: 1em auto 1em auto;
-  padding: 1em;
-  border: solid 1px #2c3e50;
-  cursor: pointer;
-  transition: all 0.2s linear;
-}
-.med-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
-}
-.med-card h4 {
-  font-size: 1.4em;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
-}
 </style>

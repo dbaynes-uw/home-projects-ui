@@ -151,7 +151,7 @@ export default {
         );
         if (result.status >= 200) {
           alert("Event has been updated");
-          this.$router.push({ name: "EventDetails", params: { id: event.id } });
+          this.$router.push({ name: "EventShow", params: { id: event.id } });
         } else {
           alert("Update Error Code ", result.status);
         }

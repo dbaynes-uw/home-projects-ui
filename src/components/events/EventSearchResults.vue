@@ -37,7 +37,7 @@
             <span class="fa-stack fa-table-stack">
               <router-link
                 :to="{
-                  name: 'EventDetails',
+                  name: 'EventShow',
                   params: { id: `${result.id}` },
                 }"
               >
@@ -56,7 +56,7 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'EventDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'EventShow', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>

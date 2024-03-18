@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Vendor or Product</h3>
+      <h3>Vendor Change or Delete</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
@@ -28,6 +28,7 @@
           </option>
         </select>
         <br />
+        VENDOR: {{ vendor }}
         <label>Vendor Name:</label>
         &nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;
@@ -104,10 +105,26 @@
 
 <script>
 import { v4 as uuidv4 } from "uuid";
-
+import axios from "axios";
 //!import vSelect from "vue-select";
 export default {
+  props: ["id"],
+  async mounted() {
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macmed-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3000/api/v1/vendors/";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/vendors/";
+    }
+    this.api_url = work_url
+    console.log("CALL@@: ", this.$route.params.id)
+    const result = await axios.get(this.api_url + +this.$route.params.id);
+    this.vendor = result.data;
+  },
   created() {
+      console.log("Props: ", )
       this.$store.dispatch("fetchVendorsGroup");
       this.$store.dispatch("fetchVendorsLocationsGroup");
       this.$store.dispatch("fetchVendorsProductsGroup");
@@ -127,6 +144,7 @@ export default {
   data() {
     return {
       vendor: {
+        id: '',
         vendor_name: null,
         location: '',
         created_by: this.$store.state.user.resource_owner.email,

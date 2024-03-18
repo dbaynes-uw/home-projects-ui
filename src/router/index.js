@@ -10,7 +10,7 @@ import FilmEdit from "@/views/films/FilmEdit.vue";
 import FilmList from "../views/films/FilmList.vue";
 import EventCreate from "@/views/events/EventCreate.vue";
 import EventsAssigned from "@/views/events/EventsAssigned.vue";
-import EventDetails from "@/views/events/EventDetails.vue";
+import EventShow from "@/views/events/EventShow.vue";
 import EventEdit from "@/views/events/EventEdit.vue";
 import EventList from "../views/events/EventList.vue";
 import EventStatistics from "@/views/events/EventStatistics.vue";
@@ -134,9 +134,9 @@ const routes = [
   },
   {
     path: "/events/:id",
-    name: "EventDetails",
+    name: "EventShow",
     props: true,
-    component: EventDetails,
+    component: EventShow,
     meta: { requiresAuth: true}
   },
   {
@@ -238,7 +238,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/med/:id",
+    path: "/meds/:id",
     name: "MedEdit",
     props: true,
     component: MedEdit,
@@ -270,11 +270,18 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/vendor/edit",
+    path: "/vendors/:id",
     name: "ProductVendorEdit",
     component: ProductVendorEdit,
     meta: { requiresAuth: true}
   },
+  //{
+  //  path: "/meds/:id",
+  //  name: "MedEdit",
+  //  props: true,
+  //  component: MedEdit,
+  //  meta: { requiresAuth: true}
+  //},
   {
     path: "/vendors_products",
     name: "ProductLocationList",
