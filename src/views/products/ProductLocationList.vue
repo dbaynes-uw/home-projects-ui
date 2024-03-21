@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Products By Location</h2>
@@ -38,7 +39,7 @@
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClick(vendor.id)"><b>{{ vendor.vendor_name }}</b></h2>  
+                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClick(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
@@ -86,9 +87,16 @@
 <script>
 let time = null;  // define time be null 
 import { v4 as uuidv4 } from "uuid";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
   name: "ProductVendorList",
+  //props: {
+  //  statusMessage: {
+  //    type: String,
+  //  }
+  //},
   components: {
+    ConfirmDialogue,
   },
   data() {
     return {
@@ -107,6 +115,7 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
+      passedMessage: '',
       toggle0: false,
       toggle1: false,
       toggle2: false,
@@ -164,15 +173,15 @@ export default {
     toggleLocation(index) {
       clearTimeout(time)
       time=setTimeout(() => {
-        console.log("Single Click")
         this.isVendorToggled = index === this.isVendorToggled? null : index
       }, 300)
-      console.log("Timeout Done")
     },
-    doubleClick(vendorId) {
+    doubleClick(vendor) {
+      console.log("Vendor from dblclick: ", vendor)
       clearTimeout(time);
-      console.log('double click on: ', vendorId)
-      this.$router.push({ name: 'ProductVendorEdit', params: { id: vendorId }  })
+      console.log('double click on: ', vendor)
+      this.$router.push({ name: 'VendorEdit', params: { id: `${vendor.id}` } });
+
     },
     toggleVendor(index) {
       this.isProductToggled = index === this.isProductToggled? null : index

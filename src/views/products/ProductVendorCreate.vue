@@ -171,6 +171,7 @@ export default {
       if (this.$store.dispatch("createVendor", vendor)) {
         //this.$router.push({ name: "ProductLocationList", params: {} });
         alert("Vendor/Product was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+        this.$router.push({ name: "ProductLocationList" });
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);
       }

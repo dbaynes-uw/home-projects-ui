@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="bookEdit">
+  <div class="edit">
     <h2>Edit Med</h2>
     <button id="link-as-button">
       <router-link  :to="{ name: 'MedList' }">Back to Med List</router-link>
@@ -123,7 +123,4 @@ export default {
 };
 </script>
 <style>
-select {
-  border-color: darkgreen;
-}
 </style>

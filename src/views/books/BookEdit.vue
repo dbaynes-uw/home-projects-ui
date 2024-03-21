@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="bookEdit">
+  <div class="edit">
     <h2>Edit Book {{ book.head_name }}</h2>
     Date Written {{ book.date_written }}
     <form class="add-form" @submit.prevent="updateBook">

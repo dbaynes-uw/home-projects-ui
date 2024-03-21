@@ -1,254 +1,126 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h3>Vendor Change or Delete</h3>
-    </v-card-title>
-  </v-card>
-  <v-card-text>
-    <v-form id="isFormValid">
-      <v-container id="form-container">
-        <br/>
-        <label>Vendor Location:</label>
-        &nbsp;&nbsp;&nbsp;
-        <select
-          id="select-box"
-          class="text-style"
-          v-model="vendor.location"
-          required
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <div class="edit">
+    <h2>Edit or Delete Vendor</h2>
+    <button id="link-as-button">
+      <router-link  :to="{ name: 'MedList' }">Back to Med List</router-link>
+    </button>
+    <form class="add-form" @submit.prevent="updateMed">
+      <div class="form-container">
+        <p id="p-custom-left">Date of Occurrence: {{ formatStandardDateTime(med.date_of_occurrence) }}</p>
+        <v-text-field
+          label="Click calendar at right to change Date/Time of Occurrence"
+          v-model="med.date_of_occurrence"
+          type="datetime-local"
         >
-        <br/>
+        </v-text-field>
+        <v-select
+          label="Duration"
+          :items="durations"
+          v-model="med.duration"
+        >
           <option
-            v-for="option in this.vendorsLocationsGroup.vendorsLocationsGroup"
+            v-for="option in durations"
             :value="option"
             :key="option"
             id="select-box"
-            :selected="option === vendor.location"
+            :selected="option === med.duration"
           >
             {{ option }}
           </option>
-        </select>
-        <br />
-        VENDOR: {{ vendor }}
-        <label>Vendor Name:</label>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;
-        <select
-          id="select-box"
-          class="text-style"
-          v-model="vendor.vendor_name"
-          required
-        >
-          <option
-            v-for="option in this.vendorsGroup.vendorsGroup"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === vendor.vendor_name"
-          >
-            {{ option }}
-          </option>
-        </select>
+        </v-select>
+        <v-text-field
+          label="Interval in Days"
+          v-model="med.interval"
+        />
+        <v-text-field
+          v-model="med.circumstances"
+          rows="3"
+          cols="40"
+        />
         <br/>
-        <span v-if="vendor.vendor_name == 'Other'">
-          <v-text-field
-          v-model="vendor.other_vendor_name"
-          label="Other Vendor Name"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-magnify</v-icon>
-            </template>
-          </v-text-field>
-        </span>
-        <label>Product:</label>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;
-        <select
-          id="select-box"
-          class="text-style"
-          v-model="vendor.product_name"
-        >
-          <option
-            v-for="product in this.vendorsProductsGroup.vendorsProductsGroup"
-            :value="product"
-            :key="product"
-            id="select-box"
-            :selected="product === vendor.product_name"
-          >
-            {{ product }}
-          </option>
-        </select>
-        <span v-if="vendor.product_name == 'Other'">
-          <v-text-field
-          v-model="vendor.other_product_name"
-          label="Other Product Name"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-magnify</v-icon>
-            </template>
-          </v-text-field>
-        </span>
-
-        <br/>
-        <br/>
-        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
-        <!--button class="button" type="submit">Submit</button-->
-      </v-container>
-    </v-form>
-  </v-card-text>
+        <button class="button" id="link-as-button" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
 </template>
-<script setup>
-//const format = (date) => {
-</script>
-
 <script>
-import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-//!import vSelect from "vue-select";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id"],
+  components: {
+    ConfirmDialogue,
+  },
   async mounted() {
     var work_url = ""
     if (window.location.port == "8080") {
       // or: "http://davids-macmed-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/vendors/";
+      work_url = "http://localhost:3000/api/v1/meds/";
     } else {
       work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/vendors/";
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/meds/";
     }
     this.api_url = work_url
-    console.log("CALL@@: ", this.$route.params.id)
     const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.vendor = result.data;
+    this.med = result.data;
   },
-  created() {
-      console.log("Props: ", )
-      this.$store.dispatch("fetchVendorsGroup");
-      this.$store.dispatch("fetchVendorsLocationsGroup");
-      this.$store.dispatch("fetchVendorsProductsGroup");
-  },
-  computed: {
-    vendorsGroup() {
-      return this.$store.state.vendors_group;
-    },
-    vendorsLocationsGroup() {
-      return this.$store.state.vendors_locations_group;
-    },
-    vendorsProductsGroup() {
-      return this.$store.state.vendors_products_group;
-    },
-  },    
-  components: {},
   data() {
     return {
-      vendor: {
-        id: '',
-        vendor_name: null,
-        location: '',
+      med: {
+        id: "",
+        date_of_occurrence: "",
+        duration: "",
+        interval: "",
+        circumstances: "",
         created_by: this.$store.state.user.resource_owner.email,
-        other_vendor_name: '',
-        product_name: '',
-        other_product_name: '',
       },
-      isFormValid: false,
-      isVendorNameValid: false,
-      isVendorLocationValid: false,
-      urlMaxLength: 255,
-      num: 1,
+      durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
+      api_url: ""
     };
   },
+  setup() {},
   methods: {
-    onSubmit() {
-      const vendor = {
-        ...this.vendor,
-        id: uuidv4(),
-        created_by: this.$store.state.user.resource_owner.email,
-      };
-      if (this.$store.dispatch("editVendor", vendor)) {
-        alert("Vendor Product List Updated Successfully")
-        const fresh_fetched_vendors_products = this.$store.dispatch("fetchVendorsProducts");
-        this.$router.push({ name: "ProductLocationList", params: { fresh_fetched_vendors_products } });
-      } else {
-        alert("Error adding Vendor " + vendor.vendor_name);
+    async updateMed() {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Update Med from List ",
+        message:
+          "Are you sure you want to Update this record ",
+        okButton: "Update",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        const med = {
+          ...this.med,
+          updated_by: this.$store.state.created_by,
+        };
+        const result = await axios.put(
+            this.api_url + 
+            this.$route.params.id,
+          {
+            date_of_occurrence: this.med.date_of_occurrence,
+            duration: this.med.duration,
+            interval: this.med.interval,
+            circumstances: this.med.circumstances,
+          }
+        );
+        if (result.status >= 200) {
+          alert("Med has been updated for " + DateFormatService.formatStandardDatejs(med.date_of_occurrence));
+          //this.$router.push({ name: "MedDetails", params: { id: med.id } });
+          this.$router.push({ name: "MedList" });
+        } else {
+          alert("Update Error Code ", result.status);
+        }
       }
     },
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTimejs(value);
+    },
   },
-}
+};
 </script>
 <style>
-@import "vue-select/dist/vue-select.css";
-#form-container {
-  width: 75% !important;
-}
-#id {
-  width: 100%;
-}
-#select-box{
-  width: 50%;
-}
-#notes {
-  width: 100%;
-  height: 4rem;
-}
-.button {
-  margin: 30px;
-  background-color: #39495c;
-  border-radius: 5px;
-  font-size: 18px;
-  width: 160px;
-  height: 60px;
-  color: white;
-  padding: 20px;
-  box-shadow: inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.17),
-    inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15),
-    inset 0 0 0em 0.05em rgba(255, 255, 255, 0.12);
-  text-align: center;
-  cursor: pointer;
-}
-label {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-}
-fieldset {
-  border: 0;
-  margin: 0;
-  padding: 0;
-}
-select {
-  border-color: darkgreen;
-}
-legend {
-  font-size: 28px;
-  font-weight: 700;
-  margin-top: 20px;
-}
-.label-visible {
-  top: -35px;
-  left: 4px;
-  visibility: visible;
-}
-.label-invisible {
-  top: -10px;
-  left: 4px;
-  visibility: hidden;
-}
-.input-field {
-  margin-top: 30px;
-  position: relative;
-}
-.input-field > input {
-  width: 100%;
-}
-.input-field > p {
-  position: absolute;
-  font-size: 14px;
-  transition: 0.3s;
-}
 </style>

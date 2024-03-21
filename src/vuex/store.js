@@ -25,7 +25,7 @@ export default new Vuex.Store({
     eventsDueBy: [],
     eventsAssigned: [],
     event: {},
-    med: [],
+    med: {},
     meds: [],
     products: [],
     shopping_list: [],
@@ -33,6 +33,7 @@ export default new Vuex.Store({
     trails: [],
     travels: [],
     users: [],
+    vendor: {},
     vendors: [],
     vendors_group: [],
     vendors_locations_group: [],
@@ -114,6 +115,9 @@ export default new Vuex.Store({
     },
     SET_SHOPPING_LIST(state, shopping_list) {
       state.shopping_list = shopping_list;
+    },
+    DELETE_VENDOR(state, vendor) {
+      state.vendor = vendor;
     },
     ADD_TRAIL(state, trail) {
       state.trails.push(trail);
@@ -655,6 +659,17 @@ export default new Vuex.Store({
           alert("Store: " + error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
         });
     },
+    async deleteVendor({ commit }, vendor) {
+      EventService.deleteVendor(vendor)
+        .then((response) => {
+          commit("DELETE_VENDOR", response.data);
+          alert("Vendor " + vendor.title + " was deleted");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     async editVendor({ commit }, vendor) {
       EventService.putVendor(vendor)
         .then(() => {

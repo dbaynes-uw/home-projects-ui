@@ -4,8 +4,8 @@
     <v-card-title class="pb-0">
       <h2>Trail List</h2>
       <h2 id="status-message">
-      <u>{{ this.statusMessage }}</u>
-    </h2>
+        <u>{{ this.statusMessage }}</u>
+      </h2>
     </v-card-title>
     <ul>
       <li class="left">

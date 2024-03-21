@@ -160,11 +160,14 @@ export default {
     this.init();
     return axios.put(api_url + "products/update", products) //, { params: {vendors_products}});
   },
+  async deleteVendor(vendor) {
+    this.init();
+    return axios.delete(api_url + "vendors/" + `${vendor.id}`);
+  },
   async getVendors() {
     this.init();
     return axios.get(api_url + "vendors")
   },
-
   async getVendorsGroup() {
     this.init();
     return axios.get(api_url + "vendors_group")

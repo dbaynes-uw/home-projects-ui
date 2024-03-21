@@ -30,7 +30,7 @@ import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
 import ProductList from "../views/products/ProductList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
-import ProductVendorEdit from "../views/products/ProductVendorEdit.vue";
+import VendorEdit from "../views/vendors/VendorEdit.vue";
 import TrailCreate from "@/views/trails/TrailCreate.vue";
 import TrailDetails from "@/views/trails/TrailDetails.vue";
 import TrailEdit from "@/views/trails/TrailEdit.vue";
@@ -91,6 +91,13 @@ const routes = [
     name: "About",
     component: About,
     //meta: { requiresAuth: true}
+  },
+  {
+    path: "/book/:id",
+    name: "BookEdit",
+    props: true,
+    component: BookEdit,
+    meta: { requiresAuth: true}
   },
   {
     path: "/book/create",
@@ -248,6 +255,7 @@ const routes = [
     path: "/products_by_location",
     name: "ProductLocationList",
     component: ProductLocationList,
+    props: true,
     meta: { requiresAuth: true}
   },
   {
@@ -270,18 +278,12 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/vendors/:id",
-    name: "ProductVendorEdit",
-    component: ProductVendorEdit,
+    path: "/vendor/:id",
+    name: "VendorEdit",
+    props: true,
+    component: VendorEdit,
     meta: { requiresAuth: true}
   },
-  //{
-  //  path: "/meds/:id",
-  //  name: "MedEdit",
-  //  props: true,
-  //  component: MedEdit,
-  //  meta: { requiresAuth: true}
-  //},
   {
     path: "/vendors_products",
     name: "ProductLocationList",
