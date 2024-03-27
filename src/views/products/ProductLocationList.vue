@@ -39,7 +39,7 @@
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClick(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
+                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClickVendor(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
@@ -56,7 +56,7 @@
                                   class="field"
                                 />
                                 <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
-                                <label class="checkbox-right">{{ item.product_name }}</label>
+                                <label class="checkbox-right" >{{ item.product_name }}!!!!</label>
                               </span>
                             </span>
                             <span v-else>
@@ -67,7 +67,7 @@
                                   class="field"
                                 />
                                 <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
-                              <label class="checkbox-right">{{ item.product_name }}</label>
+                              <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
                             </span>
                           </span>
                         </div>
@@ -134,7 +134,6 @@ export default {
   created() {
     this.$store.dispatch("fetchVendorsProducts");
     this.$store.dispatch("fetchVendorsLocationsGroup");
-
     this.$store.dispatch("fetchShoppingList");
   },
   computed: {
@@ -176,11 +175,14 @@ export default {
         this.isVendorToggled = index === this.isVendorToggled? null : index
       }, 300)
     },
-    doubleClick(vendor) {
-      console.log("Vendor from dblclick: ", vendor)
+    doubleClickVendor(vendor) {
       clearTimeout(time);
-      console.log('double click on: ', vendor)
       this.$router.push({ name: 'VendorEdit', params: { id: `${vendor.id}` } });
+
+    },
+    doubleClickProduct(product) {
+      clearTimeout(time);
+      this.$router.push({ name: 'ProductEdit', params: { id: `${product.id}`} });
 
     },
     toggleVendor(index) {

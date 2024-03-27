@@ -106,6 +106,9 @@ export default new Vuex.Store({
     },
     SET_MEDS(state, meds) {
       state.meds = meds;
+    },
+    DELETE_PRODUCT(state, product) {
+      state.product = product;
     },    
     SET_PRODUCT(state, product) {
       state.product = product;
@@ -595,6 +598,17 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async deleteProduct({ commit }, product) {
+      EventService.deleteProduct(product)
+        .then((response) => {
+          commit("DELETE_PRODUCT", response.data);
+          alert("Product " + product.product_name + " was deleted");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
 
     async fetchProducts({ commit }) {
       EventService.getProducts()

@@ -45,7 +45,7 @@
       <span v-else>
         <span v-if="requestIndexDetailFlag == true">
           <h3 id="h3-left">Total: {{ books.length }}</h3>
-            <span class="h3-left-total-child">Double click Item Below to Edit</span>
+          <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
             <BookCard
               v-for="book in books"

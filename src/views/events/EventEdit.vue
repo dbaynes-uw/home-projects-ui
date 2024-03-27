@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       assignees: ["David", "Jane", "Both", "Up for Grabs"],
-      frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "360"],
+      frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "180", "360"],
       event: {
         id: "",
         description: "",

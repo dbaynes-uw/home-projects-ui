@@ -147,7 +147,10 @@ export default {
     this.init();
     return axios.post(api_url + 'meds', med);
   },
-
+  async deleteProduct(product) {
+    this.init();
+    return axios.delete(api_url + "products/" + `${product.id}`);
+  },
   async getProducts() {
     this.init();
     return axios.get(api_url + "products")

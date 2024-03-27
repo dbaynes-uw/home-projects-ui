@@ -25,7 +25,7 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
-import ProductEdit from "../views/products/ProductVendorEdit.vue";
+import ProductEdit from "../views/products/ProductEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
 import ProductList from "../views/products/ProductList.vue";

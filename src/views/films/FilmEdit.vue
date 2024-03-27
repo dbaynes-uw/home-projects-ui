@@ -2,7 +2,6 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="filmEdit">
     <h2>Edit Film {{ film.title }}</h2>
-    Date Written {{ film.date_released }}
     <form class="add-form" @submit.prevent="updateFilm">
       <div class="form-container">
         <label>Title:</label>
@@ -13,10 +12,10 @@
         <input type="text" class="text-style" v-model="film.director" required />
         <label>Actors:</label>
         <input type="text" class="text-style" v-model="film.actors"/>
-        <input type="text" class="text-style" v-model="film.seasons" />
         <label>Seasons:</label>
-        <input type="text" class="text-style" v-model="film.episodes" />
+        <input type="text" class="text-style" v-model="film.seasons" />
         <label>Episodes:</label>
+        <input type="text" class="text-style" v-model="film.episodes" />
         <label for="date_written">Date Released:</label>
         <input
           type="date"

@@ -8,6 +8,35 @@
       <li class="li-left"><a :href="book.url_to_review" target="_blank">Link to Review</a></li>
       <li class="li-left">Notes: <b>{{ book.notes }}</b> </li>
     </ul>
+    <br/>
+    <span v-if="origin == 'BookDetails'">
+      <span class="fa-stack" style="text-align: center">
+        <router-link
+          :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
+        >
+          <i
+            id="card-medium-icon-edit"
+            class="fa-solid fa-pen-to-square fa-stack-1x"
+          >
+          </i>
+        </router-link>
+        <router-link :to="{ name: 'BookList' }">
+        <i
+          id="card-medium-icon-eye"
+          class="fa-solid fa-backward fa-stack-1x"
+        >
+        </i>
+      </router-link>
+        <span class="fa-table-stack">
+          <i
+            @click="deleteBook(book)"
+            class="fas fa-trash-alt fa-stack-1x"
+            id="card-medium-icon-delete"
+          >
+          </i>
+        </span>
+      </span>
+    </span>
   </div>
 </template>
 <script>
@@ -19,7 +48,15 @@ export default {
     book: {
       type: Object,
       default: () => ({})
+    },
+    origin: {
+      type: String,
+      default: '',
     }
+  },
+  setup() {
+    //const vm = this.app.getCurrentInstance()
+    //console.log("VM: ", vm)
   },
   methods: {
     formatYearDate(value) {

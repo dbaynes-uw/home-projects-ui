@@ -35,7 +35,7 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'BookDetails', params: { id: `${result.id}`, origin: 'INDEX' } }"
               >
                 <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
