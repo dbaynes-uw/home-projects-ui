@@ -51,6 +51,7 @@
               v-for="book in books"
               :key="book.id"
               :book="book"
+              :origin="origin"
               class="card"
               @dblclick="onDoubleClick(book)"
             />
@@ -72,6 +73,7 @@
             :key="book.id"
             :book="book"
             class="card"
+            :origin="origin"
             @dblclick="onDoubleClick(book)"
           />
           <br />
@@ -125,6 +127,9 @@ export default {
     books() {
       return this.$store.state.books;
     },
+    origin() {
+      return "BookList"
+    }
   },
   methods: {
     requestIndexDetail() {
