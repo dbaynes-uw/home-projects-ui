@@ -30,22 +30,6 @@ export default {
     };
   },
   methods: {
-    async deleteBook(book) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Book",
-        message:
-          "Are you sure you want to delete " +
-          book.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteBook", book);
-        alert("Book was Deleted for " + book.title);
-        this.$router.push({ name: "BookList" });
-      }
-    },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },

@@ -1,5 +1,6 @@
 <template>
-  <div class="card">
+   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+   <div class="card">
     <p id="p-custom-left-u">{{ book.title}}</p>
     <ul>
       <li class="li-left">Author: <b>{{ book.author }}</b></li>
@@ -49,13 +50,15 @@
             >
             </i>
           </router-link>
-          <router-link :to="{ name: 'BookDetails', params: { id: `${book.id}` } }">
-            <i
-              id="card-medium-icon-eye"
-              class="fa fa-eye"
-            >
-            </i>
-          </router-link>
+          <span v-if="book.id > 0">
+            <router-link :to="{ name: 'BookDetails', params: { id: `${book.id}` } }">
+              <i
+                id="card-medium-icon-eye"
+                class="fa fa-eye"
+              >
+              </i>
+            </router-link>
+          </span>
           <span class="fa-table-stack">
             <i
               @click="deleteBook(book)"
@@ -70,7 +73,7 @@
   </div>
 </template>
 <script>
-
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'BookCard',
@@ -84,11 +87,35 @@ export default {
       default: '',
     }
   },
+  components: {
+    ConfirmDialogue,
+  },
   setup() {
     //const vm = this.app.getCurrentInstance()
     //console.log("VM: ", vm)
   },
   methods: {
+    async deleteBook(book) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Book from List",
+        message:
+          "Are you sure you want to delete " +
+          book.title +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteBook", book);
+        this.statusMessage =
+          "Book was Deleted for " +
+          book.title +
+          "! Page will restore in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
+        this.$router.push({ name: "BookList" });
+      }
+    },
+
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },

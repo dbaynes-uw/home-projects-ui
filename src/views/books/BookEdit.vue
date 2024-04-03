@@ -3,9 +3,11 @@
   <div class="edit">
     <h2>Edit Book {{ book.head_name }}</h2>
     <router-link :to="{ name: 'BookList' }">
-      Back to Book List 
+      <b>Back to Book List</b>
     </router-link>
-    <form class="add-form" @submit.prevent="updateBook">
+    <br/>
+    <br/>
+    <form class="form-card-display" @submit.prevent="updateBook">
       <div class="form-container">
         <label>Title:</label>
         <input type="text" class="text-style" v-model="book.title" required />

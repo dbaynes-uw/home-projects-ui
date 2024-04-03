@@ -120,6 +120,7 @@ export default {
     this.sortedData = this.books;
   },
   created() {
+    console.log("BOOKLIST CREATED@@@@@@@")
     this.$store.dispatch("fetchBooks");
     this.sortedData = this.books;
   },

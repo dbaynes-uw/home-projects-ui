@@ -56,7 +56,8 @@
                                   class="field"
                                 />
                                 <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
-                                <label class="checkbox-right" >{{ item.product_name }}!!!!</label>
+                                <!--!!!! here-->
+                                <label class="checkbox-right" >{{ item.product_name }}</label>
                               </span>
                             </span>
                             <span v-else>
