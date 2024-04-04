@@ -31,9 +31,21 @@
         </v-select>
         <v-text-field
           label="Interval in Days"
-          v-model="med.interval"
+          v-model="med.interval_days"
+          :readonly="true"
         />
         <v-text-field
+          label="Interval in Hours"
+          v-model="med.interval_hours"
+          :readonly="true"
+        />
+        <v-text-field
+          label="Interval in Minutes"
+          v-model="med.interval_minutes"
+          :readonly="true"
+        />
+        <v-text-field
+          label="Circumstances"
           v-model="med.circumstances"
           rows="3"
           cols="40"
@@ -74,7 +86,9 @@ export default {
         id: "",
         date_of_occurrence: "",
         duration: "",
-        interval: "",
+        interval_days: "",
+        interval_hours: "",
+        interval_minutes: "",
         circumstances: "",
         created_by: this.$store.state.user.resource_owner.email,
       },

@@ -4,7 +4,10 @@
     <ul>
       <li class="li-left">Date: <b>{{ formatYearDate(med.date_of_occurrence) }}</b></li>
       <li class="li-left">Duration: {{ med.duration }}</li>
-      <li class="li-left">Interval: {{ med.interval }} days</li>
+      <li class="li-left">Since Last:</li>
+      <li class="li-left">&nbsp;&nbsp;Days: {{ med.interval_days }} days</li>
+      <li class="li-left">&nbsp;&nbsp;Hours: {{ med.interval_hours }} hours</li>
+      <li class="li-left">&nbsp;&nbsp;Minutes: {{ med.interval_minutes }} minutes</li>
       <li class="li-left">Notes: <b>{{ med.circumstances }}</b> </li>
     </ul>
   </div>
