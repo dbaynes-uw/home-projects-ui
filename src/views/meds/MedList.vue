@@ -136,7 +136,7 @@ export default {
     this.sortedData = this.meds;
     for (let i=0; i < this.meds.length; i++) {
       this.chartLabels[i] = DateFormatService.formatStandardDatejs(this.meds[i].date_of_occurrence)
-      this.chartIntervals[i] = this.meds[i].interval
+      this.chartIntervals[i] = this.meds[i].interval_days
     }
   },
   computed: {
