@@ -1,7 +1,7 @@
 <template>
   <div class="div-select">
     Due in next:
-    <select id="border-select" @change="eventsDueBy($event)">
+    <select class="border-select" @change="eventsDueBy($event)">
       <option></option>
       <option>7</option>
       <option>10</option>
