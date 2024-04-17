@@ -2,7 +2,7 @@
   <div class="med-chart">
     <!--canvas id="medChart" width="400" height="400"></canvas-->
     <div class="div-select">
-    Timeframe:
+    Time Frame:
     <select class="border-select select-range" @change="filterTimeFrame($event)">
       <option></option>
       <option value="7">Week</option>
@@ -12,6 +12,7 @@
       <option value="365">Year</option>
     </select>
   </div>
+  <p>Number of occurrences: {{ timeFrameCount }}</p>
     <Bar v-if="renderComponent" :data="data" :options="options" />
   </div>
 </template>
@@ -39,6 +40,7 @@ export default {
         responsive: true,
       },
       timeFrames: ["Week", "Month", "Quarter","YTD"],
+      timeFrameCount: "All",
       renderComponent: true,
     }
   },
@@ -50,23 +52,28 @@ export default {
     async filterTimeFrame(value) {
       this.renderComponent = false
       await this.$nextTick();
-      var timeFrame = ""
-      if (value.target.value > this.meds.length) {
-        timeFrame = this.meds.length
-      } else {
-        timeFrame = value.target.value
-      }
+      this.timeFrameCount = 0
       this.data.labels = []
       this.data.datasets.data = []
-        for (let i=0; i < timeFrame; i++) {
-          this.data.labels[i] = DateFormatService.formatStandardDatejs(this.meds[i].date_of_occurrence)
-          this.data.datasets.data[i] = this.meds[i].interval_days
+      let compareDate = new Date()
+      compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value.target.value)).slice(0, 10)
+      for (let i=0; i < this.meds.length; i++) {
+        if (DateFormatService.formatFullYearFirstjs(this.meds[i].date_of_occurrence) > 
+            DateFormatService.formatFullYearFirstjs(compareDate))
+          {
+            this.data.labels[i] = DateFormatService.formatStandardDatejs(this.meds[i].date_of_occurrence)
+            this.data.datasets.data[i] = this.meds[i].interval_days
+            this.timeFrameCount += 1
+          }
         }
-      this.renderComponent = true;
+        this.renderComponent = true;
+      }
     },  
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
-  },
+    //compareDatejs(from, to) {
+    //  return DateFormatService.compareDatejs(from, to);
+    //},
 }
 </script>

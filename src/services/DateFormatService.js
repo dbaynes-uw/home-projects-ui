@@ -1,6 +1,6 @@
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 export default {
   formatDatejs(action_date) {
     if (action_date) {
@@ -42,6 +42,13 @@ export default {
     // MM/DD/YYYY
     if (action_date) {
       action_date = dayjs(action_date).format("MM-DD-YYYY");
+      return action_date;
+    }
+  },
+  formatFullYearFirstjs(action_date) {
+    // MM/DD/YYYY
+    if (action_date) {
+      action_date = dayjs(action_date).format("YYYY-MM-DD");
       return action_date;
     }
   },
