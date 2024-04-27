@@ -36,16 +36,14 @@
       <p id="p-custom-left">Notes:</p>
       <ul class="ul-left">
         <li>
-          <b>{{ event.notes }}</b>
+          {{ event.notes }}
         </li>
       </ul>
-      <p id="p-custom-left">History: {{ event.histories.length }}</p>
+      <p id="p-custom-left">History:</p>
       <ul class="ul-left" v-for="(event_history) in event.histories" :key="event_history.id">
         <span v-if="event.id == event_history.event_id">
           <li>
-            <span v-html="formatStandardDateTime(event_history.created_at)"></span>
-            <br/>
-            <b> - <span v-html="event_history.notes"></span></b>
+            <span v-html="formatStandardDateTime(event_history.created_at)"></span> - <b><span v-html="event_history.notes"></span></b>
           </li>
         </span>
       </ul>

@@ -22,7 +22,7 @@
           <!--{{ calculateDateDue(result.action_date, result.frequency) }}-->
       </td>
       <td class="td-center">{{ formatYearDate(result.action_completed_date) }}</td>
-      <td class="td-center"> - {{ result.histories.length }}</td>
+      <td class="td-center">{{ result.assigned }}</td>
       <td class="td-center-capitalize">{{ result.status }}</td>
       <td>
         <span v-if="this.onlineStatus">
