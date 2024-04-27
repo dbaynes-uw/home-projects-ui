@@ -5,11 +5,17 @@
     <span><span class="complete-box"></span> = Complete</span>
   </div-->
   <div class="event-card">
-    <p id="p-custom-left-u">{{ event.description}}</p>
+    <p id="p-custom-u">
+      <router-link
+        :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
+      >
+        {{ event.description }}
+      </router-link>
+    </p>
     <ul>
-      <li class="li-left">Active: <b>{{ event.action_active == true ? 'Yes' : 'No' }}</b> </li>
+      <li class="li-left-capitalize">Active: <b>{{ event.status }}</b> </li>
       <li class="li-left">Assigned To: <b>{{ event.assigned }}</b></li>
-      <li class="li-left">Last Action: {{ formatYearDate(event.action_date) }}</li>
+      <li class="li-left">Last Action: {{ formatYearDate(event.action_completed_date) }}</li>
       <li class="li-left">Every {{ event.frequency }} days</li>
       <li class="li-left">Due: <b>{{ formatYearDate(event.action_due_date) }}</b> </li>
 

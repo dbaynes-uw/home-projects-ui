@@ -4,13 +4,21 @@
     <h2>Edit Event {{ event.description }}</h2>
     <form class="add-form" @submit.prevent="updateEvent">
       <div class="form-container">
-        <label for="action_date">Action Date:</label>
-        <input
-          type="date"
-          class="text-style"
-          v-model="event.action_date"
-          required
-        />
+        <label>Status: {{ event.status }}</label>
+        <br/>
+        <select class="select-status" v-model="event.status" required>
+          <option
+            v-for="option in statuses"
+            :value="option"
+            :key="option"
+            :selected="option === event.status"
+          >
+            &nbsp;&nbsp;
+            {{ option }}
+          </option>
+        </select>
+        <br/>
+        <br/>
         <label for="action_date">Action Due Date:</label>
         <br/>
         <input
@@ -19,10 +27,9 @@
           v-model="event.action_due_date"
           required
         />
-        <span v-if="datePastDue(event.action_date, event.frequency)">
+        <span v-if="datePastDue(event.action_completed_date, event.frequency)">
           <span style="color: red; font-weight: bold">
-            &nbsp;{{ calculateDue(event.action_date, event.frequency) }}
-            {{ calculateDateDue(event.action_date, event.frequency) }}
+            &nbsp;{{ calculateDateDue(event.action_completed_date, event.frequency) }}
           </span>
         </span>
         <br/>
@@ -41,6 +48,7 @@
             :key="option"
             :selected="option === event.assigned"
           >
+            &nbsp;&nbsp;
             {{ option }}
           </option>
         </select>
@@ -54,6 +62,7 @@
             :key="option"
             :selected="option === event.frequency"
           >
+            &nbsp;&nbsp;
             {{ option }}
           </option>
         </select>
@@ -99,17 +108,21 @@ export default {
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.event = result.data;
+    const capitalizedFirst = this.event.status.toUpperCase();
+    const rest = this.event.status.slice(1);
+    this.event.status = capitalizedFirst[0] + rest
   },
   data() {
     return {
+      statuses: ["Active", "Inactive"],
       assignees: ["David", "Jane", "Both", "Up for Grabs"],
       frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "180", "360"],
       event: {
         id: "",
         description: "",
-        action_date: "",
-        action_due_date: "",
+        status: "",
         action_completed_date: "",
+        action_due_date: "",
         assigned: "",
         frequency: "",
         completed: "",
@@ -139,10 +152,10 @@ export default {
           this.api_url +
           +this.$route.params.id,
           {
-            action_date: this.event.action_date,
-            action_due_date: this.event.action_due_date,
             description: this.event.description,
+            status: this.event.status.toLowerCase(),
             action_completed_date: this.event.action_completed_date,
+            action_due_date: this.event.action_due_date,
             assigned: this.event.assigned,
             frequency: this.event.frequency,
             notes: this.event.notes,
@@ -174,11 +187,8 @@ export default {
     datePastDue(value) {
       return DateFormatService.datePastDuejs(value);
     },
-    calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDuejs(action_date, frequency);
-    },
-    calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDuejs(action_date, frequency);
+    calculateDateDue(action_completed_date, frequency) {
+      return DateFormatService.calculateDateDuejs(action_completed_date, frequency);
     },
   },
 };

@@ -18,11 +18,7 @@
       <h1>
         <EventsPastDue />
       </h1>
-      <br/>
       <h1>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <u>Detail Index View</u>
-      </button>
         <EventsDueBy />
       </h1>
     </div>
@@ -47,6 +43,10 @@
     <!--EventIndexDetail :events="events" /-->
       <span v-if="filteredResults.length == 0">
         <span v-if="requestIndexDetailFlag == true">
+          <button id="button-as-link" @click="requestIndexDetail">
+            <u>Detail Index View</u>
+          </button>
+          <br/>
           <div class="legend">
             <span>Double click to mark as TBD/Done or Active/Inactive.</span>
             <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -64,6 +64,10 @@
           </div>
         </span>
         <span v-else>
+          <button id="button-as-link" @click="requestIndexDetail">
+            <u>Event Card View</u>
+          </button>
+          <br/>
           <EventIndex :events="events" />
         </span>
       </span>
@@ -149,7 +153,7 @@ export default {
     duePastDue(e) {
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
-      return e.action_active == true && e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
+      return e.status == 'active' && e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
     },
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;

@@ -52,6 +52,12 @@
 #menu-dropdown-div {
   width: 50%;
 }
+.select-status {
+  width: 100%;
+  border-style: groove;
+  border-width: 1px;
+  border-color: lightgray;
+}
 .toolbar-title {
   flex: .7;
   margin-inline-start: 2px;
@@ -98,6 +104,11 @@
 #select-box-style {
   height: 140%
 }
+#p-custom-u {
+  text-decoration: underline;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
 #p-custom-left {
   text-align: left;
   font-size: 1.25rem;
@@ -132,8 +143,9 @@
 .th-center {
   text-align: center;
 }
-.td-center {
+.td-center-capitalize {
   text-align: center;
+  text-transform: capitalize;
 }
 .div-center {
   text-align: center;
@@ -154,6 +166,12 @@
   text-align: left;
 }
 .li-left {
+  text-align: left;
+  display: list-item;
+  list-style-type: disclosure-closed;
+}
+.li-left-capitalize {
+  text-transform: capitalize;
   text-align: left;
   display: list-item;
   list-style-type: disclosure-closed;

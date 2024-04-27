@@ -11,7 +11,7 @@
         Completed
       </th>
       <th id="background-blue" @click="sortList('assigned')">Assigned</th>
-      <th id="background-blue">Status</th>
+      <th id="background-blue" @click="sortList('status')">Status</th>
       <th id="background-blue">Action</th>
     </tr>
     <tr v-for="(result, resultIndex) in events" :key="resultIndex">
@@ -22,8 +22,8 @@
           <!--{{ calculateDateDue(result.action_date, result.frequency) }}-->
       </td>
       <td class="td-center">{{ formatYearDate(result.action_completed_date) }}</td>
-      <td class="td-center">{{ result.assigned }}</td>
-      <td class="td-center">{{ result.action_active == true ? "Active" : "Not Active" }}</td>
+      <td class="td-center"> - {{ result.histories.length }}</td>
+      <td class="td-center-capitalize">{{ result.status }}</td>
       <td>
         <span v-if="this.onlineStatus">
           <span class="fa-stack">

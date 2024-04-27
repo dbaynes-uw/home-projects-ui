@@ -1,7 +1,22 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
-    <h3>Event Detail</h3>
+    <router-link
+      :to="{
+          name: 'EventStatisticDetail',
+          params: { statistic: 'assigned-' + event.assigned },
+        }"
+      >
+      <h2>Event Detail</h2>
+    </router-link>
+    <div class="card-display">
+      <EventCard
+      class="card"
+      :event="event"
+      @dblclick="onDoubleClick(event)"
+      v-bind:class="{ 'is-complete': event.completed }"
+      />
+    </div>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -18,75 +33,21 @@
       <h1>
         <b>{{ event.description }}</b>
       </h1>
+      <p id="p-custom-left">Notes:</p>
       <ul class="ul-left">
         <li>
           <b>{{ event.notes }}</b>
         </li>
-        <li v-if="event.assigned">
-          Whose Turn?
-          <router-link
-            :to="{
-              name: 'EventStatisticDetail',
-              params: { statistic: 'assigned-' + event.assigned },
-            }"
-          >
-            <b>{{ event.assigned }}</b>
-          </router-link>
-        </li>
-        <li v-if="event.completed">
-          Date completed:
-          <b>{{ formatStandardDate(event.action_date) }}</b>
-        </li>
-        <li>
-          Action Date:
-          <b>{{ formatStandardDate(event.action_date) }}</b>
-        </li>
-        <li>
-          How Often:
-          <b>Every {{ event.frequency }} days</b>
-        </li>
-        <li>
-          Date Due:
-          <b>{{ formatStandardDate(event.action_due_date) }} - </b>
-          <span v-if="datePastDue(event.action_date, event.frequency)">
-            <span style="color: red; font-weight: bold">
-              {{ calculateDue(event.action_date, event.frequency) }}
-              {{ calculateDateDue(event.action_date, event.frequency) }}
-            </span>
-          </span>
-          <span v-else>
-            <span>
-              {{ calculateDue(event.action_date, event.frequency) }}
-              {{ calculateDateDue(event.action_date, event.frequency) }}
-            </span>
-          </span>
-        </li>
-        <li v-if="event.action_date">
-          History:
-          <!--ul
-            v-for="(history, index) in event.histories.slice.reverse"
-            :key="history.id"
-          -->
-          <!--ul
-            v-for="(history, index) in event.histories.reverse"
-            :key="history.id"
-          -->
-          <ul v-for="(history, index) in event.histories" :key="history.id">
-            <span v-if="index < 5">
-              <li>
-                <!--b>{{ formatStandardDateTime(history.created_at) }}</b-->
-                <span v-html="formatStandardDateTime(history.created_at)">
-                </span>
-                <br />
-                <span v-html="history.notes"></span>
-              </li>
-            </span>
-          </ul>
-        </li>
-        <li>
-          Date Created:
-          <b>{{ formatStandardDate(event.created_at) }}</b>
-        </li>
+      </ul>
+      <p id="p-custom-left">History: {{ event.histories.length }}</p>
+      <ul class="ul-left" v-for="(event_history) in event.histories" :key="event_history.id">
+        <span v-if="event.id == event_history.event_id">
+          <li>
+            <span v-html="formatStandardDateTime(event_history.created_at)"></span>
+            <br/>
+            <b> - <span v-html="event_history.notes"></span></b>
+          </li>
+        </span>
       </ul>
       <br />
       <router-link :to="{ name: 'EventList' }">
@@ -111,10 +72,13 @@
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import EventCard from '@/components/events/EventCard'
+
 export default {
   props: ["id"],
   components: {
     ConfirmDialogue,
+    EventCard,
   },
   data() {
     return {
@@ -143,7 +107,8 @@ export default {
     },
     onDoubleClick(event) {
       var updatedEvent = event;
-      updatedEvent.action_active = !event.action_active;
+      console.log("STATUS: ", event.status)
+      updatedEvent.status = event.status == 'active' ? 'inactive' : 'active';
       this.$store.dispatch("updateEvent", updatedEvent);
     },
     datePastDue(value) {
@@ -158,11 +123,11 @@ export default {
     formatSystemDate(value) {
       return DateFormatService.formatSystemDatejs(value);
     },
-    calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDuejs(action_date, frequency);
+    calculateDue(action_completed_date, frequency) {
+      return DateFormatService.calculateDuejs(action_completed_date, frequency);
     },
-    calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDuejs(action_date, frequency);
+    calculateDateDue(action_completed_date, frequency) {
+      return DateFormatService.calculateDateDuejs(action_completed_date, frequency);
     },
   },
   created() {
@@ -184,6 +149,34 @@ export default {
 };
 </script>
 <style scoped>
+.event {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+.event-card {
+  width: 100%;
+  margin: 1em auto 1em auto;
+  padding: 1em;
+  border: solid 1px #2c3e50;
+  cursor: pointer;
+  /*transition: all 0.2s linear;*/
+}
+.event-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
+}
+.event-card h4 {
+  font-size: 1.4em;
+  margin-top: 0.5em;
+  margin-bottom: 0.3em;
+}
+
 #align-right {
   text-align: center;
 }
