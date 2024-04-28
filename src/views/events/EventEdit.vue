@@ -78,8 +78,15 @@
           class="textarea-style"
           required
         />
+        <br/>
         <button class="button" id="link-as-button" type="submit">
           Submit
+        </button>
+        <br>
+        <button id="button-as-link">
+          <router-link :to="{ name: 'EventShow', id: `${event.id}` }">
+            Details and History
+          </router-link>
         </button>
       </div>
     </form>
@@ -91,6 +98,7 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import axios from "axios";
 import DateFormatService from "@/services/DateFormatService.js";
+
 export default {
   props: ["id", "assigned"],
   components: {
@@ -164,7 +172,7 @@ export default {
         );
         if (result.status >= 200) {
           alert("Event has been updated");
-          this.$router.push({ name: "EventShow", params: { id: event.id } });
+          this.$router.push({ name: "EventShow", params: { id: result.id } });
         } else {
           alert("Update Error Code ", result.status);
         }
