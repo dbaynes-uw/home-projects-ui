@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       med: {
-        id: null,
+        id: "",
         date_of_occurrence: null,
         duration: "",
         circumstance: null,
