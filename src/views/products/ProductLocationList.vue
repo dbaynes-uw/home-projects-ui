@@ -34,7 +34,7 @@
         <div class="row">
           <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
-            <h1 @click='toggleLocation(group_index)'><b><u>{{ location }}</u></b></h1>
+            <h1 @click='toggleLocation(group_index)' @dblclick="doubleClickLocation(location)"><b><u>{{ location }}</u></b></h1>
             <div v-show="isVendorToggled === group_index">
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
@@ -176,7 +176,14 @@ export default {
         this.isVendorToggled = index === this.isVendorToggled? null : index
       }, 300)
     },
+    doubleClickLocation(location) {
+      console.log("DBLCLICK LOC", location)
+      clearTimeout(time);
+      //this.$router.push({ name: 'VendorLocation', params: { id: `${location.id}` } });
+
+    },
     doubleClickVendor(vendor) {
+      
       clearTimeout(time);
       this.$router.push({ name: 'VendorEdit', params: { id: `${vendor.id}` } });
 

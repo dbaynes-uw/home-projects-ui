@@ -629,7 +629,13 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
-          alert("Store getShoppingList Error from ES: " + error.response.data.error);
+          if (!error.response) {
+            alert("API Error - No data returned from Store getShoppingList")
+            router.push({name:'About'})
+          }else {
+            alert("Store getShoppingList Error from ES: " + error.response.data.error);
+            router.push({name:'About'})
+          }
         });
     },
     async putProducts({ commit }, products) {
@@ -724,6 +730,7 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
+          return;
         });
     },
     async fetchVendorsProductsGroup({ commit }) {
@@ -735,6 +742,7 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
+          router.push({name:'home'})
         });
     },
     async fetchVendorsProducts({ commit }) {
@@ -745,7 +753,8 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
-          alert("Store getVendorsProducts Error from ES: " + error.response.data.error);
+          alert("API Error - Store getVendorsProducts Error from ES: ");
+          
         });
     },
     async putVendorsProducts({ commit }, vendors_products) {
