@@ -179,6 +179,11 @@ export default {
     this.init();
     return axios.get(api_url + "vendors_products")
   },
+  async getLocationProducts(location) {
+    console.log("getLocationProducts - location: ", location)
+    this.init();
+    return axios.get(api_url + "location_products/" + `?location=${location}`)
+  },
   async getVendorsLocationsGroup() {
     this.init();
     return axios.get(api_url + "vendors_locations_group")

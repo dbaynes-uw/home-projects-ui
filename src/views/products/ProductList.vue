@@ -6,7 +6,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationList', params: { vendors_products: vendors_products }}" >
+          <router-link :to="{ name: 'ProductLocationsList', params: { vendors_products: vendors_products }}" >
             Products By Location
           </router-link>
         </button>

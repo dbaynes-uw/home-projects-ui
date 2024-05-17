@@ -6,7 +6,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationList' }">Product Location List</router-link>
+          <router-link :to="{ name: 'ProductLocationsList' }">Product Location List</router-link>
         </button>
       </li>
     </ul>
@@ -169,9 +169,9 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("createVendor", vendor)) {
-        //this.$router.push({ name: "ProductLocationList", params: {} });
+        //this.$router.push({ name: "ProductLocationsList", params: {} });
         alert("Vendor/Product was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
-        this.$router.push({ name: "ProductLocationList" });
+        this.$router.push({ name: "ProductLocationsList" });
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);
       }

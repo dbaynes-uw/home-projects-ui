@@ -6,7 +6,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationList' }">Shopping List By Location</router-link>
+          <router-link :to="{ name: 'ProductLocationsList' }">Shopping List By Location</router-link>
         </button>
       </li>
       <li>
@@ -73,7 +73,7 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  name: "ProductLocationList",
+  name: "ProductLocationsList",
   components: {
   },
   data() {

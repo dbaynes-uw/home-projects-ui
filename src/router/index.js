@@ -27,6 +27,7 @@ import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
+import ProductLocationsList from "../views/products/ProductLocationsList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
 import ProductList from "../views/products/ProductList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
@@ -252,9 +253,16 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/products_by_location",
+    path: "/products_location_list/:location",
     name: "ProductLocationList",
+    props: true,
     component: ProductLocationList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/products_by_location",
+    name: "ProductLocationsList",
+    component: ProductLocationsList,
     props: true,
     meta: { requiresAuth: true}
   },
@@ -286,9 +294,9 @@ const routes = [
   },
   {
     path: "/vendors_products",
-    name: "ProductLocationList",
+    name: "ProductLocationsList",
     props: true,
-    component: ProductLocationList,
+    component: ProductLocationsList,
     meta: { requiresAuth: true}
   },
   {

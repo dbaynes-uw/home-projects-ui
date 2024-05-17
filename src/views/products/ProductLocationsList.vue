@@ -2,15 +2,8 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Location Product List Location: {{ location }}</h2>
+      <h2>Products By Location</h2>
     </v-card-title>
-    <!--
-    LIST Length: {{ this.locationProductsList.length }}
-    Prods 1 Length: {{ this.locationProductsList[0].products.length }}
-    Prods 2 Length: {{ this.locationProductsList[1].products.length }}
-    Prods 3 Length: {{ this.locationProductsList[2].products.length }}
-    LIST: {{ this.locationProductsList[0].products[0].product_name }}
-    -->
     <ul>
       <li class="left">
         <button id="link-as-button">
@@ -29,15 +22,9 @@
           <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
         </button>
       </li>
-      <li class="left">
-        <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationsList', params: { vendors_products: vendors_products }}" >
-            Products By Location
-          </router-link>
-        </button>
-      </li>
     </ul> 
     <br/>
+    <h2>Double Click Location to see Products for that Location</h2>
   </v-card>
   <v-card-text>
     <v-form>
@@ -46,21 +33,18 @@
       </h3>
       <v-container id="form-container">
         <div class="row">
-          <!--div class="column" id="group" v-for="(product, group_index) in this.locationProductsList" :key="group_index"-->
+          <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
-            <!--h1 @click='toggleLocation(group_index)' @dblclick="doubleClickLocation(location)"><b><u>{{ location }}</u></b></h1-->
-            <h1><b><u>{{ this.locationProductsList[0].location }}</u></b></h1>
-            <!--div v-show="isVendorToggled === group_index"-->
+            <h1 @click='toggleLocation(group_index)' @dblclick="doubleClickLocation(location)"><b><u>{{ location }}</u></b></h1>
+            <div v-show="isVendorToggled === group_index">
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
-                <!-- Can be eliminated with fetch by location:-->
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
-                  <!--h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClickVendor(vendor)"><b>{{ vendor.vendor_name }}</b></!--h2-->  
-                  <h2><b>{{ vendor.vendor_name }}</b></h2> 
+                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClickVendor(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
-                    <!--span v-show="isProductToggled === product_index"-->
+                    <span v-show="isProductToggled === product_index">
                       <div v-if="product.vendor_name == vendor.vendor_name">
                         <div v-if="product.location == vendor.location">
                           <span v-for="(item, item_index) in product.products" :key="item_index">
@@ -90,12 +74,12 @@
                           </span>
                         </div>
                       </div>
-                    <!--span--> 
+                    </span> 
                   </span>
                 </span>
               </div>
-            <!--/div-->
-          <!--/div-->
+            </div>
+          </div>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
@@ -107,8 +91,7 @@ let time = null;  // define time be null
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "ProductLocationList",
-  props: ["location"],
+  name: "ProductVendorList",
   //props: {
   //  statusMessage: {
   //    type: String,
@@ -117,31 +100,6 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  created() {
-    console.log("ProductLocationList Params: ", this.$route.params.location)
-    this.$store.dispatch("fetchLocationProducts", this.$route.params.location);
-    //this.$store.dispatch("fetchVendorsLocationsGroup");
-    //this.$store.dispatch("fetchShoppingList");
-  },
-  async mounted() {
-    console.log("Mounted Params: ", this.$route.params)
-  },
-  computed: {
-    locationProductsList() {
-      return this.$store.state.location_products_list;
-    },
-    vendorsLocationsGroup() {
-      console.log("vendorsLocationsGroup Computed@@@@")
-      return this.$store.state.vendors_locations_group;
-    },
-    product_shopping_list() {
-      return this.$store.state.product_shopping_list;
-    },
-    vendors_products() {
-      return this.$store.state.vendors_products;
-    },
-  },
-
   data() {
     return {
       product_active: true,
@@ -159,9 +117,6 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      vendor: {
-        location: '',
-      },
       passedMessage: '',
       toggle0: false,
       toggle1: false,
@@ -178,6 +133,22 @@ export default {
       num: 1,
     };
   },
+  created() {
+    this.$store.dispatch("fetchVendorsProducts");
+    this.$store.dispatch("fetchVendorsLocationsGroup");
+    this.$store.dispatch("fetchShoppingList");
+  },
+  computed: {
+    vendorsLocationsGroup() {
+      return this.$store.state.vendors_locations_group;
+    },
+    product_shopping_list() {
+      return this.$store.state.product_shopping_list;
+    },
+    vendors_products() {
+      return this.$store.state.vendors_products;
+    },
+  },
   methods: {
     onSubmit() {
       const sub_vendors_products = {
@@ -190,7 +161,7 @@ export default {
         alert("Vendors Products List Updated Successfully")
         location.reload();
       } else {
-        alert("Error adding Products in ProductLocaionList View ");
+        alert("Error adding Products in ProductLocaionsList View ");
       }
     },
     isChecked(item, active) {
@@ -206,11 +177,12 @@ export default {
         this.isVendorToggled = index === this.isVendorToggled? null : index
       }, 300)
     },
-    //doubleClickLocation(location) {
-    //  console.log("DBLCLICK LOC", location)
-    //  clearTimeout(time);
-    //  this.$router.push({ name: 'ProductLocationList', params: { location: `${location}` } });
-    //},
+    doubleClickLocation(location) {
+      console.log("DBLCLICK LOC", `${location}`)
+      clearTimeout(time);
+      this.$router.push({ name: 'ProductLocationList', params: { location: `${location}` } });
+
+    },
     doubleClickVendor(vendor) {
       
       clearTimeout(time);

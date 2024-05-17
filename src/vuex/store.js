@@ -25,6 +25,7 @@ export default new Vuex.Store({
     eventsDueBy: [],
     eventsAssigned: [],
     event: {},
+    location: {},
     med: {},
     meds: [],
     products: [],
@@ -115,6 +116,9 @@ export default new Vuex.Store({
     },
     SET_PRODUCTS(state, products) {
       state.products = products;
+    },
+    SET_LOCATION_PRODUCTS(state, location_products_list) {
+      state.location_products_list = location_products_list;
     },
     SET_SHOPPING_LIST(state, shopping_list) {
       state.shopping_list = shopping_list;
@@ -440,8 +444,8 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async fetchEventStatisticDetail({ commit }, statistic) {
-      EventService.getEventStatisticDetail(statistic)
+    async fetchEventStatisticDetail({ commit }, eventStatisticDetail) {
+      EventService.getEventStatisticDetail(eventStatisticDetail)
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);
@@ -619,6 +623,19 @@ export default new Vuex.Store({
         .catch((error) => {
           console.log(error);
           alert("Store getProducts Error from ES: " + error.response.data.error);
+        });
+    },
+    async fetchLocationProducts({ commit }, location) {
+      console.log("ES - Location: ", location )
+      EventService.getLocationProducts(location)
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_LOCATION_PRODUCTS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
         });
     },
     async fetchShoppingList({ commit }) {

@@ -11,7 +11,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'ProductLocationList' }">Back to Shopping</router-link>
+          <router-link  :to="{ name: 'ProductLocationsList' }">Back to Shopping</router-link>
         </button>
       </li>
       <li>
@@ -122,7 +122,7 @@ export default {
         );
         if (result.status >= 200) {
           this.statusMessage = "Product has been updated for Vendor " + this.vendor.vendor_name + " Product: " + product.product_name
-          //this.$router.push({ name: "ProductLocationList" });
+          //this.$router.push({ name: "ProductLocationsList" });
         } else {
           alert("Update Error Code ", result.status);
         }
@@ -145,7 +145,7 @@ export default {
           product.product_name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "ProductLocationList" });
+        this.$router.push({ name: "ProductLocationsList" });
       }
     },
   },

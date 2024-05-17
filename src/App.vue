@@ -133,8 +133,13 @@ export default {
           url: "/meds",
           title: "Meds",
         },
+        //{
+        //  label: "ProductLocationList",
+        //  url: "/products",
+        //  title: "location_list",
+        //},
         {
-          label: "ProductLocationList",
+          label: "ProductLocationsList",
           url: "/products",
           title: "Shopping",
         },
