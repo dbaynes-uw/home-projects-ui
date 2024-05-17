@@ -52,7 +52,7 @@
                   @change="isChecked(product, product.active)"
                   class="field"
                 />
-                <label class="checkbox-right">{{ vendor.vendor_name }} - {{ vendor.location }}</label>
+                <label class="checkbox-right">{{ vendor.location }} - {{ vendor.vendor_name }}</label>
               </h2>
             </span>
           </div>
