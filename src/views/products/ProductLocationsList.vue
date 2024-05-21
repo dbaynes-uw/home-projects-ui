@@ -56,9 +56,7 @@
                                   @change="isChecked(item, item.active)"
                                   class="field"
                                 />
-                                <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
-                                <!--!!!! here-->
-                                <label class="checkbox-right" >{{ item.product_name }}</label>
+                                <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
                               </span>
                             </span>
                             <span v-else>
@@ -68,7 +66,6 @@
                                   @change="isChecked(item, item.active)"
                                   class="field"
                                 />
-                                <!--label class="checkbox-right"><router-link :to="{ name: 'ProductEdit', params: { id: `${vendor.id}` }  }">{{ item.product_name }}</router-link></!--label-->
                               <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
                             </span>
                           </span>
