@@ -63,7 +63,6 @@
         type="text"
         placeholder="Notes"
         class="text-style"
-        required
       />
       <button class="button" id="link-as-button" type="submit">Submit</button>
     </form>
@@ -82,12 +81,12 @@ export default {
       assignees: ["David", "Jane", "Both", "Up for Grabs"],
       frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "180", "360"],
       event: {
-        id: "",
         description: "",
         assigned: "",
         assigned_email: "",
         frequency: "",
         action_completed_date: "",
+        status: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -99,12 +98,12 @@ export default {
       const event = {
         ...this.event,
         id: uuidv4(),
+        status: 'active',
         created_by: this.$store.state.user.resource_owner.email,
       };
       //Xthis.addEvent(event); in events.js
       //Vuex 2:
       this.$store.dispatch("createEvent", event);
-      alert("Event was successfully added for " + event.description);
       this.$router.push({ name: "EventList" });
     },
   },

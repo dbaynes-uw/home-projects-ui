@@ -44,7 +44,7 @@
       <span v-if="filteredResults.length == 0">
         <span v-if="requestIndexDetailFlag == true">
           <button id="button-as-link" @click="requestIndexDetail">
-            <u>Detail Index View</u>
+            <u>Detail for Edit/Delete</u>
           </button>
           <br/>
           <div class="legend">
