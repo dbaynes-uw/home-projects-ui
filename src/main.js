@@ -26,6 +26,7 @@ createApp({
     axios.interceptors.response.use(
       response => response,
       error => {
+        console.log("DEBUG: error: ", error)
         if (error.response.status === 401) {
           this.$store.dispatch('logout')
         }
