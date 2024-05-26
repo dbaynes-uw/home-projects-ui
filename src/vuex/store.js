@@ -769,8 +769,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
-          alert("API Error - Store getVendorsProducts Error from ES: ", error);
+          console.log("API ERROR Store getVendorsProducts error: ", error);
+          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
         });
     },
     async putVendorsProducts({ commit }, vendors_products) {
