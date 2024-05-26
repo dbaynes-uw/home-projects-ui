@@ -647,10 +647,9 @@ export default new Vuex.Store({
         .catch((error) => {
           console.log(error);
           if (!error.response) {
-            alert("API Error - No data returned from Store getShoppingList")
             router.push({name:'About'})
           }else {
-            alert("Store getShoppingList Error from ES: " + error.response.data.error);
+            console.log("Store getShoppingList error.response from ES: " + error.response);
             router.push({name:'About'})
           }
         });
@@ -724,9 +723,9 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
-          alert("Store getVendors Error from ES: " + error.response.data.error);
-          alert("Store getVendors Error: " + error);
+          console.log("Store getVendors Error from ES: " + error);
+          //alert("Store getVendors Error from ES: " + error.response.data.error);
+          //alert("Store getVendors Error: " + error);
         });
     },
     async fetchVendorsGroup({ commit }) {

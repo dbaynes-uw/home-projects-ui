@@ -26,9 +26,10 @@ createApp({
     axios.interceptors.response.use(
       response => response,
       error => {
-        alert("Error Main.js 29: ", error);
+        //alert("Error Main.js 29: ", error);
+        console.log("DEBUG: error: ", error)
         //if (error.response.status === 401) {
-        //  this.$store.dispatch('logout')
+        this.$store.dispatch('logout')
         //}
         return Promise.reject(error)
       }
