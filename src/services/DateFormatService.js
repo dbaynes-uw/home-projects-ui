@@ -72,8 +72,6 @@ export default {
     let returnMessage = "";
     let start = dayjs(new Date());
     let end = dayjs(action_date);
-    console.log("Start Date: ", start)
-    console.log("Action Date: ", action_date)
     let duration = end.diff(start, "days") + frequency;
     // duration is days over due date so + is good, - is over due
     if (duration >= 0) {
@@ -88,7 +86,6 @@ export default {
     let returnMessage = "";
     let dateCompleted = dayjs(action_date);
     let dueDate = dayjs(dateCompleted).add(frequency, "days");
-    console.log("Due Date: ", dueDate)
     returnMessage = `${dayjs(dueDate).format("MM-DD-YY")}`;
     return returnMessage;
   },
