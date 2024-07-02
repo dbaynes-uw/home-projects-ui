@@ -101,7 +101,7 @@ export default {
     return {
       product_active: true,
       productLocationList: null,
-      showShoppingList: false,
+      showShoppingList: true,
       showFlag: false,
       vendors: {
         vendor_name: '',
