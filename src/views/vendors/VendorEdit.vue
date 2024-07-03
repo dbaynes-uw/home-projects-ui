@@ -71,6 +71,7 @@ export default {
         id: "",
         vendor_name: "",
         location: "",
+        created_by: this.$store.state.user.resource_owner.email,
       },
       api_url: "",
       statusMessage: ''
