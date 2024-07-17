@@ -2,9 +2,16 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Products By Locations</h2>
+      <h2>Product By Location</h2>
     </v-card-title>
     <ul>
+      <li class="left">
+        <button id="link-as-button">
+          <router-link :to="{ name: 'ProductLocationsList', params: { vendors_products: vendors_products }}" >
+            Products By Locations
+          </router-link>
+        </button>
+      </li>
       <li class="left">
         <button id="link-as-button">
           <router-link :to="{ name: 'ProductVendorList' }">Shopping List By Vendor</router-link>
@@ -24,58 +31,49 @@
       </li>
     </ul> 
     <br/>
-    <h2>Double Click Location to see Products for that Location</h2>
   </v-card>
   <v-card-text>
     <v-form>
+      <h1>{{ this.$route.params.location }} </h1>
       <h3>
         <u @click='shoppingListDisplay(this.showShoppingList)'>Show Shopping List(Toggle)</u>
       </h3>
+      <!--ALL: {{ this.products_by_location }} -->
       <v-container id="form-container">
         <div class="row">
-          <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
-            <!-- Toggle by Location -->
-            <h1 @click='toggleLocation(group_index)' @dblclick="doubleClickLocation(location)"><b><u>{{ location }}</u></b></h1>
-            <div v-show="isVendorToggled === group_index">
-              <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
-                <span v-if="vendor.location == location">
-                  <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClickVendor(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
-                  <br/>
-                  <!--resultSet Length: {{ this.resultSet[1] }}-->
-                  <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
-                    <span v-show="isProductToggled === product_index">
-                      <div v-if="product.vendor_name == vendor.vendor_name">
-                        <div v-if="product.location == vendor.location">
-                          <span v-for="(item, item_index) in product.products" :key="item_index">
-                            <span v-if="this.showShoppingList == true">
-                              <span v-if="item.active == true">
-                                <input
-                                  type="checkbox"
-                                  :checked="item.active"
-                                  @change="isChecked(item, item.active)"
-                                  class="field"
-                                />
-                                <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
-                              </span>
-                            </span>
-                            <span v-else>
-                              <input
-                                  type="checkbox"
-                                  :checked="item.active"
-                                  @change="isChecked(item, item.active)"
-                                  class="field"
-                                />
-                              <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                    </span> 
+          <div class="vendor-name" v-for="(vendor, vendor_index) in this.products_by_location" :key="vendor_index">
+            <span v-if="this.current_vendor == ''">
+              {{ this.current_vendor = vendor.vendor_name }}
+            </span>
+            <span v-else-if="this.current_vendor != vendor.vendor_name">
+              <h1>{{ this.current_vendor = vendor.vendor_name }}</h1>
+            </span>
+            <span v-for="(product, product_index) in this.products_by_location" :key="product_index">        
+              <div v-if="product.vendor_name == vendor.vendor_name">
+                <span v-for="(item, item_index) in product.products" :key="item_index">
+                  <span v-if="this.showShoppingList == true">
+                    <span v-if="item.active == true">
+                      <input
+                        type="checkbox"
+                        :checked="item.active"
+                        @change="isChecked(item, item.active)"
+                        class="field"
+                      />
+                      <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
+                    </span>
+                  </span>
+                  <span v-else>
+                    <input
+                        type="checkbox"
+                        :checked="item.active"
+                        @change="isChecked(item, item.active)"
+                        class="field"
+                      />
+                    <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
                   </span>
                 </span>
               </div>
-            </div>
+            </span>
           </div>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
@@ -84,30 +82,53 @@
   </v-card-text>
 </template>
 <script>
-let time = null;  // define time be null 
+let time = null;  // define time be null
+import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "ProductVendorList",
-  //props: {
-  //  location: {
-  //    type: String,
-  //  }
-  //},
+  name: "ProductLocationList",
+  props: {
+    location: {
+      type: String, required: true
+    }
+  },
+  //Xprops: ["location"],
   components: {
     ConfirmDialogue,
   },
+  async mounted() {
+    console.log("ProductLocationList Mounted")
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macbook-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3000/api/v1/products_by_location/";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/products_by_location/";
+    }
+    this.api_url = work_url
+    console.log("Mounted URL: ", this.api_url)
+    const product_location = location.pathname.split("/").pop()
+    console.log("PRODUCT LOCATION: ", product_location)
+    console.log("this.$route.params.location: ", this.$route.params.location)
+    const result = await axios.get(this.api_url+ `${this.$route.params.location}`)
+    this.products_by_location = result.data;
+    console.log("Products Length: ", this.products_by_location.length)
+  },
   data() {
     return {
-      location: '',
+      current_vendor: '',
       product_active: true,
       productLocationList: null,
       showShoppingList: true,
       showFlag: false,
+      products_by_location: {},
       vendors: {
         vendor_name: '',
         vendor_location: '',
         products: {
+          location: '',
           product_name: '',
           active: false,
           notes: null,
@@ -133,8 +154,11 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchVendorsProducts");
+    console.log("CREATED: ", location.pathname)
     this.$store.dispatch("fetchVendorsLocationsGroup");
     this.$store.dispatch("fetchShoppingList");
+    //this.$store.dispatch("fetchProductsByLocation");
+
   },
   computed: {
     vendorsLocationsGroup() {
@@ -146,6 +170,9 @@ export default {
     vendors_products() {
       return this.$store.state.vendors_products;
     },
+    //products_by_location() {
+    //  return this.$store.state.products_by_location;
+    //},
   },
   methods: {
     onSubmit() {
