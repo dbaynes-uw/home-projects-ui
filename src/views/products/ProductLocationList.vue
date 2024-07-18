@@ -108,10 +108,6 @@ export default {
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/products_by_location/";
     }
     this.api_url = work_url
-    console.log("Mounted URL: ", this.api_url)
-    const product_location = location.pathname.split("/").pop()
-    console.log("PRODUCT LOCATION: ", product_location)
-    console.log("this.$route.params.location: ", this.$route.params.location)
     const result = await axios.get(this.api_url+ `${this.$route.params.location}`)
     this.products_by_location = result.data;
     console.log("Products Length: ", this.products_by_location.length)
@@ -153,26 +149,23 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchVendorsProducts");
-    console.log("CREATED: ", location.pathname)
-    this.$store.dispatch("fetchVendorsLocationsGroup");
-    this.$store.dispatch("fetchShoppingList");
-    //this.$store.dispatch("fetchProductsByLocation");
+    //this.$store.dispatch("fetchVendorsProducts");
+    //console.log("CREATED: ", location.pathname)
+    //this.$store.dispatch("fetchVendorsLocationsGroup");
+    //this.$store.dispatch("fetchShoppingList");
+    ////this.$store.dispatch("fetchProductsByLocation");
 
   },
   computed: {
-    vendorsLocationsGroup() {
-      return this.$store.state.vendors_locations_group;
-    },
-    product_shopping_list() {
-      return this.$store.state.product_shopping_list;
-    },
+    //vendorsLocationsGroup() {
+    //  return this.$store.state.vendors_locations_group;
+    //},
+    //product_shopping_list() {
+    //  return this.$store.state.product_shopping_list;
+    //},
     vendors_products() {
       return this.$store.state.vendors_products;
     },
-    //products_by_location() {
-    //  return this.$store.state.products_by_location;
-    //},
   },
   methods: {
     onSubmit() {
