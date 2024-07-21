@@ -62,7 +62,7 @@ export default {
   },
   computed: {
     events() {
-      return this.$store.state.eventStats;
+      return this.$store.state.eventStatistics;
     },
   },
   methods: {

@@ -29,6 +29,7 @@ export default new Vuex.Store({
     meds: [],
     location: {},
     products: [],
+    products_by_location: [],
     shopping_list: [],
     trail: {},
     trails: [],
@@ -120,8 +121,8 @@ export default new Vuex.Store({
     SET_LOCATION_PRODUCTS(state, location_products_list) {
       state.location_products_list = location_products_list;
     },
-    SET_PRODUCTS_BY_LOCATION(state, location) {
-      state.products_by_location = location;
+    SET_PRODUCTS_BY_LOCATION(state, products_by_location) {
+      state.products_by_location = products_by_location;
     },
     DELETE_VENDOR(state, vendor) {
       state.vendor = vendor;
@@ -628,9 +629,9 @@ export default new Vuex.Store({
           alert("Store getProducts Error from ES: " + error.response.data.error);
         });
     },
-    async fetchProductsByLocation({ commit }, location) {
-      console.log("ES - Products by Location: ", location )
-      EventService.getProductsByLocation(location)
+    async fetchProductsByLocation({ commit }, products_by_location) {
+      console.log("ES - Products by Location: ", products_by_location )
+      EventService.getProductsByLocation(products_by_location)
         .then((response) => {
           // No longer needed:
           //commit("RESET_STATE", response.data);

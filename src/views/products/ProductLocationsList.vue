@@ -112,6 +112,14 @@ export default {
           active: false,
           notes: null,
         },
+      products_by_location: {
+        vendor_name: '',
+        products: {
+          product_name: '',
+          active: false,
+          notes: null,
+        },
+      },
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },

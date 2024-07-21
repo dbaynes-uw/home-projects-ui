@@ -38,16 +38,10 @@
       <h3>
         <u @click='shoppingListDisplay(this.showShoppingList)'>Show Shopping List(Toggle)</u>
       </h3>
-      <!--ALL: {{ this.products_by_location }} -->
       <v-container id="form-container">
         <div class="row">
-          <div class="vendor-name" v-for="(vendor, vendor_index) in this.products_by_location" :key="vendor_index">
-            <span v-if="this.current_vendor == ''">
-              {{ this.current_vendor = vendor.vendor_name }}
-            </span>
-            <span v-else-if="this.current_vendor != vendor.vendor_name">
-              <h1>{{ this.current_vendor = vendor.vendor_name }}</h1>
-            </span>
+          <div class="vendor-name" v-for="(vendor, vendor_index) in products_by_location" :key="vendor_index">
+            <h1>{{ vendor.vendor_name }}</h1>
             <span v-for="(product, product_index) in this.products_by_location" :key="product_index">        
               <div v-if="product.vendor_name == vendor.vendor_name">
                 <span v-for="(item, item_index) in product.products" :key="item_index">
@@ -83,7 +77,6 @@
 </template>
 <script>
 let time = null;  // define time be null
-import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
@@ -93,45 +86,15 @@ export default {
       type: String, required: true
     }
   },
-  //Xprops: ["location"],
   components: {
     ConfirmDialogue,
-  },
-  async mounted() {
-    console.log("ProductLocationList Mounted")
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macbook-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/products_by_location/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/products_by_location/";
-    }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url+ `${this.$route.params.location}`)
-    this.products_by_location = result.data;
-    console.log("Products Length: ", this.products_by_location.length)
   },
   data() {
     return {
       current_vendor: '',
       product_active: true,
-      productLocationList: null,
       showShoppingList: true,
       showFlag: false,
-      products_by_location: {},
-      vendors: {
-        vendor_name: '',
-        vendor_location: '',
-        products: {
-          location: '',
-          product_name: '',
-          active: false,
-          notes: null,
-        },
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
       passedMessage: '',
       toggle0: false,
       toggle1: false,
@@ -149,20 +112,13 @@ export default {
     };
   },
   created() {
-    //this.$store.dispatch("fetchVendorsProducts");
-    //console.log("CREATED: ", location.pathname)
-    //this.$store.dispatch("fetchVendorsLocationsGroup");
-    //this.$store.dispatch("fetchShoppingList");
-    ////this.$store.dispatch("fetchProductsByLocation");
+    this.$store.dispatch("fetchProductsByLocation", this.$route.params.location );
 
   },
   computed: {
-    //vendorsLocationsGroup() {
-    //  return this.$store.state.vendors_locations_group;
-    //},
-    //product_shopping_list() {
-    //  return this.$store.state.product_shopping_list;
-    //},
+    products_by_location() {
+      return this.$store.state.products_by_location;
+    },
     vendors_products() {
       return this.$store.state.vendors_products;
     },
