@@ -7,7 +7,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationsList', params: { vendors_products: vendors_products }}" >
+          <router-link :to="{ name: 'ProductLocationsList'}" >
             Products By Locations
           </router-link>
         </button>
@@ -119,9 +119,6 @@ export default {
     products_by_location() {
       return this.$store.state.products_by_location;
     },
-    vendors_products() {
-      return this.$store.state.vendors_products;
-    },
   },
   methods: {
     onSubmit() {
@@ -131,7 +128,7 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       
-      if (this.$store.dispatch("putVendorsProducts", sub_products_by_location, {params: { vendors_products: sub_products_by_location }} )) {
+      if (this.$store.dispatch("putVendorsProducts", sub_products_by_location)) {
         alert("Vendors Products List Updated Successfully")
         location.reload();
       } else {
