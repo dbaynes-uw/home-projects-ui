@@ -125,13 +125,13 @@ export default {
   },
   methods: {
     onSubmit() {
-      const sub_vendors_products = {
-        ...this.vendors_products,
+      const sub_products_by_location = {
+        ...this.products_by_location,
         id: uuidv4(),
         created_by: this.$store.state.user.resource_owner.email,
       };
       
-      if (this.$store.dispatch("putVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {
+      if (this.$store.dispatch("putVendorsProducts", sub_products_by_location, {params: { vendors_products: sub_products_by_location }} )) {
         alert("Vendors Products List Updated Successfully")
         location.reload();
       } else {
