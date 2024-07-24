@@ -35,9 +35,9 @@
   <v-card-text>
     <v-form>
       <h1>{{ this.$route.params.location }} </h1>
-      <h3>
-        <u @click='shoppingListDisplay(this.showShoppingList)'>Show Shopping List(Toggle)</u>
-      </h3>
+      <h2>
+        <u @click='shoppingListDisplay(this.showShoppingList)'>Toggle Shopping List</u>
+      </h2>
       <v-container id="form-container">
         <div class="row">
           <div class="vendor-name" v-for="(vendor, vendor_index) in products_by_location" :key="vendor_index">

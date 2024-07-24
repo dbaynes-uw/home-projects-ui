@@ -26,9 +26,9 @@
   </v-card>
   <v-card-text>
     <v-form>
-      <h3>
-        <u @click='shoppingListDisplay(this.showShoppingList)'>Show Shopping List(Toggle)</u>
-      </h3>
+      <h2>
+        <u @click='shoppingListDisplay(this.showShoppingList)'>Toggle Shopping List</u>
+      </h2>
       <v-container id="form-container">
         <div class="column" id="group" v-for="(product, group_index) in this.resultSet" :key="group_index">
           <!-- Toggle by Product -->
