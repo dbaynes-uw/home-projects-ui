@@ -1,13 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h1>Watering Card</h1>
+  <h1>Plant Card</h1>
   <div class="card-display">
-    <WateringCard
-      :key="watering.id"
-      :watering="watering"
+    <PlantCard
+      :key="plant.id"
+      :plant="plant"
       :origin="origin"
       class="card"
-      @dblclick="onDoubleClick(watering)"
+      @dblclick="onDoubleClick(plant)"
       />
   </div>
 </template>
@@ -16,17 +16,17 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import WateringCard from "@/components/waterings/WateringCard.vue";
+import PlantCard from "@/components/plants/PlantCard.vue";
 export default {
-  name: 'WateringDetails',
+  name: 'PlantDetails',
   props: ["id"],
   components: {
     ConfirmDialogue,
-    WateringCard,
+    PlantCard,
   },
   data() {
     return {
-      updatedWatering: null,
+      updatedPlant: null,
     };
   },
   methods: {
@@ -35,14 +35,14 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchWatering", this.id);
+    this.$store.dispatch("fetchPlant", this.id);
   },
   computed: {
-    watering() {
-      return this.$store.state.watering;
+    plant() {
+      return this.$store.state.plant;
     },
     origin() {
-      return "WateringDetails"
+      return "PlantDetails"
     }
   },
 };

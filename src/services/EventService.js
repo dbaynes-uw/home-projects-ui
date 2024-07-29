@@ -6,7 +6,7 @@ var api_url = "";
 export default {
   data() {
     return {
-      waterings: [
+      plants: [
         {author: 'A1'},
         {author: 'A2'},
       ],
@@ -38,11 +38,11 @@ export default {
     this.init();
     return axios.get(api_url + "books")
   },
-  getWaterings() {
+  getPlants() {
     //this.init();
     //return axios.get(api_url + "books")
-    console.log("getWaterings: ", this.waterings)
-    return this.waterings
+    console.log("getPlants: ", this.plants)
+    return this.plants
   },
   async putBook(updatedBook) {
     this.init();

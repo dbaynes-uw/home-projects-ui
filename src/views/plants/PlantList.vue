@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Watering List</h2>
+      <h2>Plant List</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -10,7 +10,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringCreate' }">Add Watering</router-link>
+          <router-link  :to="{ name: 'PlantCreate' }">Add Plant</router-link>
         </button>
       </li>
       <li>
@@ -37,29 +37,29 @@
         />
       </div>
   </div>
-  <div class="watering-list">
+  <div class="plant-list">
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
         <span v-if="requestIndexDetailFlag == true">
-          <h3 id="h3-left">Total: {{ waterings.length }}</h3>
+          <h3 id="h3-left">Total: {{ plants.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
-            <WateringCard
-              v-for="watering in waterings"
-              :key="watering.id"
-              :watering="watering"
+            <PlantCard
+              v-for="plant in plants"
+              :key="plant.id"
+              :plant="plant"
               :origin="origin"
               class="card"
-              @dblclick="onDoubleClick(watering)"
+              @dblclick="onDoubleClick(plant)"
             />
             <br />
           </div>
         </span>
         <span v-else>
-          <WateringIndex :waterings="waterings" />
+          <PlantIndex :plants="plants" />
         </span>
       </span>
     </span>
@@ -68,37 +68,37 @@
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
         <div class="cards">
-          <WateringCard
-            v-for="watering in filteredResults"
-            :key="watering.id"
-            :watering="watering"
+          <PlantCard
+            v-for="plant in filteredResults"
+            :key="plant.id"
+            :plant="plant"
             class="card"
             :origin="origin"
-            @dblclick="onDoubleClick(watering)"
+            @dblclick="onDoubleClick(plant)"
           />
           <br />
         </div>
       </span>
       <span v-else>
-        <WateringSearchResults :filteredResults="filteredResults" />
+        <PlantSearchResults :filteredResults="filteredResults" />
       </span>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import WateringIndex from "@/components/waterings/WateringIndex.vue";
-import WateringCard from "@/components/waterings/WateringCard.vue";
-import WateringSearchResults from "@/components/waterings/WateringSearchResults.vue";
+import PlantIndex from "@/components/plants/PlantIndex.vue";
+import PlantCard from "@/components/plants/PlantCard.vue";
+import PlantSearchResults from "@/components/plants/PlantSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
-  name: "WateringList",
+  name: "PlantList",
   props: ["filteredResults[]"],
   components: {
-    WateringIndex,
-    WateringCard,
-    WateringSearchResults,
+    PlantIndex,
+    PlantCard,
+    PlantSearchResults,
     ConfirmDialogue,
   },
   data() {
@@ -117,17 +117,17 @@ export default {
     };
   },
   mounted() {
-    this.sortedData = this.waterings;
+    this.sortedData = this.plants;
   },
   created() {
-    this.$store.dispatch("fetchWaterings");
-    console.log("CREATED WATERINGS: ", this.waterings )
-    this.sortedData = this.waterings;
+    this.$store.dispatch("fetchPlants");
+    console.log("CREATED WATERINGS: ", this.plants )
+    this.sortedData = this.plants;
   },
   computed: {
-    waterings() {
-      //console.log("COMPUTED WATERINGS: ", this.$store.state.waterings )
-      //return this.$store.state.waterings;
+    plants() {
+      //console.log("COMPUTED WATERINGS: ", this.$store.state.plants )
+      //return this.$store.state.plants;
       return [
         { plant_name: 'A1',
           description: 'Desc 1',
@@ -162,16 +162,16 @@ export default {
       ]
     },
     origin() {
-      return "WateringList"
+      return "PlantList"
     }
   },
   methods: {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
-    onDoubleClick(watering) {
-      console.log("watering Edit ")
-      this.$router.push({ name: 'WateringEdit', params: { id: `${watering.id}` } });
+    onDoubleClick(plant) {
+      console.log("plant Edit ")
+      this.$router.push({ name: 'PlantEdit', params: { id: `${plant.id}` } });
     },
     showIndex() {
       this.filteredResults = [];
@@ -188,23 +188,23 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.waterings &&
-          this.waterings.length > 0 &&
+          this.plants &&
+          this.plants.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.waterings.forEach((watering) => {
+          this.plants.forEach((plant) => {
             const searchHasPlantName =
-              watering.plant_name &&
-              watering.plant_name
+              plant.plant_name &&
+              plant.plant_name
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchNotes =
-              watering.notes &&
-              watering.notes
+              plant.notes &&
+              plant.notes
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasPlantName || searchNotes) {
-              this.filteredResults.push(watering);
+              this.filteredResults.push(plant);
             }
             if (this.filteredResults.length > 0) {
               this.searchResults = true;
@@ -220,7 +220,7 @@ export default {
     },
     sortList(sortBy) {
       //console.log("BOOK LIST sortBy: ", sortBy)
-      this.sortedData = this.waterings;
+      this.sortedData = this.plants;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;

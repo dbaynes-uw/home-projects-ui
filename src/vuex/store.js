@@ -40,14 +40,14 @@ export default new Vuex.Store({
     vendors_group: [],
     vendors_locations_group: [],
     vendors_products_group: [],
-    waterings: [
+    plants: [
       {author: 'Test Author 1'},
       {author: 'Test Author 2'},
     ]  
   },
   data() {
     return {
-      waterings: [
+      plants: [
         {author: 'A1'},
         {author: 'A2'},
       ],
@@ -209,8 +209,8 @@ export default new Vuex.Store({
     SET_ERRORS(state, errors) {
       state.errors = errors
     },
-    SET_WATERINGS(state, waterings) {
-      state.waterings = waterings
+    SET_WATERINGS(state, plants) {
+      state.plants = plants
     },
   },
   actions: {
@@ -366,14 +366,14 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async fetchWaterings() {
-      //async fetchWaterings({ commit }) {
-      const waterings = [
+    async fetchPlants() {
+      //async fetchPlants({ commit }) {
+      const plants = [
         {author: 'A1'},
         {author: 'A2'}
       ]
-      console.log("STORE WATERING: ", waterings)
-        //EventService.getWaterings()
+      console.log("STORE WATERING: ", plants)
+        //EventService.getPlants()
         //  .then((response) => {
         //    commit("SET_WATERINGS", response.data);
         //    console.log("STORE: ", response.data)
@@ -382,7 +382,7 @@ export default new Vuex.Store({
         //  .catch((error) => {
         //    console.log(error);
         //  });
-        return waterings
+        return plants
 
       },
     async createEvent({ commit }, event) {

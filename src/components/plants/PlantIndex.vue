@@ -12,7 +12,7 @@
       <th id="background-blue">Link to Info</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="(result, resultIndex) in waterings" :key="resultIndex">
+    <tr v-for="(result, resultIndex) in plants" :key="resultIndex">
       <td>{{ result.plant_name }}</td>
       <td>{{ result.description }}</td>
       <td>{{ result.location }}</td>
@@ -25,7 +25,7 @@
         <span v-if="this.onlineStatus">
           <span class="fa-stack" style="text-align: center">
             <router-link
-              :to="{ name: 'WateringEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'PlantEdit', params: { id: `${result.id}` } }"
             >
               <i
                 id="medium-icon-edit"
@@ -35,14 +35,14 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'WateringDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'PlantDetails', params: { id: `${result.id}` } }"
               >
                 <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
-                @click="deleteWatering(result)"
+                @click="deletePlant(result)"
                 class="fas fa-trash-alt fa-stack-1x"
                 id="medium-icon-delete"
               >
@@ -52,16 +52,16 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'WateringDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'PlantDetails', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'WateringEdit', params: { id: `${result.id}` } }"
+            :to="{ name: 'PlantEdit', params: { id: `${result.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteWatering(result)"><u>Delete</u></span>
+          <span class="ok-btn" @click="deletePlant(result)"><u>Delete</u></span>
         </span>
       </td>
     </tr>
@@ -73,8 +73,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "WateringIndex",
-  props: ["waterings"],
+  name: "PlantIndex",
+  props: ["plants"],
   components: {
     ConfirmDialogue,
   },
@@ -96,23 +96,23 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.waterings &&
-          this.waterings.length > 0 &&
+          this.plants &&
+          this.plants.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.waterings.forEach((watering) => {
+          this.plants.forEach((plant) => {
             const searchHasTitle =
-              watering.plant_name &&
-              watering.plant_name
+              plant.plant_name &&
+              plant.plant_name
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchHasAuthor =
-              watering.description &&
-              watering.description
+              plant.description &&
+              plant.description
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(watering);
+              this.filteredResults.push(plant);
             }
           });
         }
@@ -122,7 +122,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.waterings;
+      this.sortedData = this.plants;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;
@@ -131,21 +131,21 @@ export default {
         this.sortedbyASC = true;
       }
     },
-    async deleteWatering(watering) {
+    async deletePlant(plant) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Watering from List",
+        title: "Delete Plant from List",
         message:
           "Are you sure you want to delete " +
-          watering.plant_name +
+          plant.plant_name +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteWatering", watering);
+        this.$store.dispatch("deletePlant", plant);
         this.statusMessage =
-          "Watering was Deleted for " +
-          watering.plant_name +
+          "Plant was Deleted for " +
+          plant.plant_name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }

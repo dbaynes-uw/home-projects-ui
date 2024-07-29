@@ -1,45 +1,45 @@
 <template>
    <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
    <div class="card">
-    <p id="p-custom-left-u">{{ watering.plant_name}}</p>
+    <p id="p-custom-left-u">{{ plant.plant_name}}</p>
     <ul>
-      <li class="li-left">Description: <b>{{ watering.description }}</b></li>
-      <li class="li-left">Date Planted: {{ formatYearDate(watering.date_planted) }}</li>
-      <li class="li-left">Date Harvest: {{ formatYearDate(watering.date_harvest) }}</li>
-      <li class="li-left">Actual Harvest: {{ formatYearDate(watering.date_actual_harvest) }}</li>
-      <li class="li-left"><a :href="watering.link_to_label" target="_blank">Link to Review</a></li>
-      <li class="li-left">Notes: <b>{{ watering.notes }}</b> </li>
+      <li class="li-left">Description: <b>{{ plant.description }}</b></li>
+      <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
+      <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
+      <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
+      <li class="li-left"><a :href="plant.link_to_label" target="_blank">Link to Review</a></li>
+      <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
     </ul>
     <br/>
     <div class="icon-stack">
-      <span v-if="origin == 'WateringDetails'">
+      <span v-if="origin == 'PlantDetails'">
         <table>
         <tr>
           <td id="icon-block">
             <router-link
-            :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
           >
             <i
-              id="card-medium-watering-icon-edit"
+              id="card-medium-plant-icon-edit"
               class="fa-solid fa-pen-to-square fa-stack-1x"
             >
             </i>
           </router-link>
           </td>
           <td>          <router-link
-            :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
           >
             <i
-              id="card-medium-watering-icon-edit"
+              id="card-medium-plant-icon-edit"
               class="fa-solid fa-pen-to-square fa-stack-1x"
             >
             </i>
           </router-link></td>
           <td>          <router-link
-            :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
           >
             <i
-              id="card-medium-watering-icon-edit"
+              id="card-medium-plant-icon-edit"
               class="fa-solid fa-pen-to-square fa-stack-1x"
             >
             </i>
@@ -50,10 +50,10 @@
       
     </div>
     <div class="icon-stack">
-      <span v-if="origin == 'WateringDetails'">
+      <span v-if="origin == 'PlantDetails'">
         <span class="fa-stack">
           <router-link
-            :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
           >
             <i
               id="card-medium-icon-edit"
@@ -61,7 +61,7 @@
             >
             </i>
           </router-link>
-          <router-link :to="{ name: 'WateringList'}">
+          <router-link :to="{ name: 'PlantList'}">
             <i
               id="card-medium-icon-eye"
               class="fa-solid fa-backward fa-stack-1x"
@@ -70,7 +70,7 @@
           </router-link>
           <span class="fa-table-stack">
             <i
-              @click="deleteWatering(watering)"
+              @click="deletePlant(plant)"
               class="fas fa-trash-alt fa-stack-1x"
               id="card-medium-icon-delete"
             >
@@ -78,23 +78,23 @@
           </span>
         </span>
       </span>
-      <span v-if="origin == 'WateringList'">
+      <span v-if="origin == 'PlantList'">
         <table>
           <tr>
             <td id="icon-block">
               <router-link
-              :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+              :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
             >
               <i
-                id="card-medium-watering-icon-edit"
+                id="card-medium-plant-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
             </router-link>
             </td>
-            <!--span v-if="watering.id > 0"-->
+            <!--span v-if="plant.id > 0"-->
               <td id="icon-block">
-                <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
+                <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
                   <i
                     id="card-medium-block-icon-eye"
                     class="fa fa-eye"
@@ -106,7 +106,7 @@
             <td id="icon-block">
               <span class="fa-table-stack">
                 <i
-                  @click="deleteWatering(watering)"
+                  @click="deletePlant(plant)"
                   class="fas fa-trash-alt fa-stack-1x"
                   id="card-medium-block-icon-delete"
                 >
@@ -123,9 +123,9 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: 'WateringCard',
+  name: 'PlantCard',
   props: {
-    watering: {
+    plant: {
       type: Object,
       default: () => ({})
     },
@@ -142,24 +142,24 @@ export default {
     //console.log("VM: ", vm)
   },
   methods: {
-    async deleteWatering(watering) {
+    async deletePlant(plant) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Watering from List",
+        title: "Delete Plant from List",
         message:
           "Are you sure you want to delete " +
-          watering.title +
+          plant.title +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteWatering", watering);
+        this.$store.dispatch("deletePlant", plant);
         this.statusMessage =
-          "Watering was Deleted for " +
-          watering.title +
+          "Plant was Deleted for " +
+          plant.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "WateringList" });
+        this.$router.push({ name: "PlantList" });
       }
     },
 

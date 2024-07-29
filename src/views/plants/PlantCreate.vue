@@ -1,14 +1,14 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Watering to Collection</h3>
+      <h3>Add Plant to Collection</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="watering.title"
+          v-model="plant.title"
           :rules="[requiredTitle]"
           label="Title"
         >
@@ -16,13 +16,13 @@
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Author" v-model="watering.author" :rules="[requiredAuthor]">
+        <v-text-field label="Author" v-model="plant.author" :rules="[requiredAuthor]">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
         <v-text-field label="Date Written"
-          v-model="watering.date_written"
+          v-model="plant.date_written"
           type="date"
         >
           <template v-slot:prepend-inner>
@@ -30,7 +30,7 @@
           </template>
         </v-text-field>
         <v-text-field label="Date Read"
-          v-model="watering.date_read"
+          v-model="plant.date_read"
           type="date"
         >
           <template v-slot:prepend-inner>
@@ -38,14 +38,14 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="watering.url_to_review"
+          v-model="plant.url_to_review"
           label="URL to Review"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-link</v-icon>
           </template>
         </v-text-field>        
-        <v-text-field label="Notes" v-model="watering.notes">
+        <v-text-field label="Notes" v-model="plant.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
@@ -63,7 +63,7 @@ export default {
   },
   data() {
     return {
-      watering: {
+      plant: {
         title: null,
         author: "",
         date_written: null,
@@ -89,15 +89,15 @@ export default {
     onSubmit() {
       this.checkValidations();
       if (this.isFormValid) {
-        const watering = {
-          ...this.watering,
+        const plant = {
+          ...this.plant,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createWatering", watering)) {
-          this.$router.push({ name: "WateringList" });
+        if (this.$store.dispatch("createPlant", plant)) {
+          this.$router.push({ name: "PlantList" });
         } else {
-          alert("Error adding Watering Title" + watering.title);
+          alert("Error adding Plant Title" + plant.title);
         } 
       } else {
         alert("Please correct required fields and resubmit");
@@ -132,8 +132,8 @@ export default {
       }
     }
   },
-  watering() {
-    return this.$store.state.watering;
+  plant() {
+    return this.$store.state.plant;
   },
 };
 </script>

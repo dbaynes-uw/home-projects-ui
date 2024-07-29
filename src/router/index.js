@@ -43,10 +43,10 @@ import TravelList from "../views/travels/TravelList.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
-import WateringCreate from "@/views/waterings/WateringCreate.vue";
-import WateringDetails from "@/views/waterings/WateringDetails.vue";
-import WateringEdit from "@/views/waterings/WateringEdit.vue";
-import WateringList from "../views/waterings/WateringList.vue";
+import PlantCreate from "@/views/plants/PlantCreate.vue";
+import PlantDetails from "@/views/plants/PlantDetails.vue";
+import PlantEdit from "@/views/plants/PlantEdit.vue";
+import PlantList from "../views/plants/PlantList.vue";
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
@@ -383,36 +383,36 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/watering/:id",
-    name: "WateringEdit",
+    path: "/plant/:id",
+    name: "PlantEdit",
     props: true,
-    component: WateringEdit,
+    component: PlantEdit,
     meta: { requiresAuth: true}
   },
   {
-    path: "/watering/create",
-    name: "WateringCreate",
-    component: WateringCreate,
+    path: "/plant/create",
+    name: "PlantCreate",
+    component: PlantCreate,
     meta: { requiresAuth: true}
   },
   {
-    path: "/waterings",
-    name: "WateringList",
-    component: WateringList,
+    path: "/plants",
+    name: "PlantList",
+    component: PlantList,
     meta: { requiresAuth: true}
   },
   {
-    path: "/waterings/:id",
-    name: "WateringDetails",
+    path: "/plants/:id",
+    name: "PlantDetails",
     props: true,
-    component: WateringDetails,
+    component: PlantDetails,
     meta: { requiresAuth: true}
   },
   {
-    path: "/watering/:id",
-    name: "WateringEdit",
+    path: "/plant/:id",
+    name: "PlantEdit",
     props: true,
-    component: WateringEdit,
+    component: PlantEdit,
     meta: { requiresAuth: true}
   },
 
