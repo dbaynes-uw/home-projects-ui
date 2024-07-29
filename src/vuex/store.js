@@ -39,7 +39,19 @@ export default new Vuex.Store({
     vendors: [],
     vendors_group: [],
     vendors_locations_group: [],
-    vendors_products_group: [],  
+    vendors_products_group: [],
+    waterings: [
+      {author: 'Test Author 1'},
+      {author: 'Test Author 2'},
+    ]  
+  },
+  data() {
+    return {
+      waterings: [
+        {author: 'A1'},
+        {author: 'A2'},
+      ],
+    }
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -197,6 +209,9 @@ export default new Vuex.Store({
     SET_ERRORS(state, errors) {
       state.errors = errors
     },
+    SET_WATERINGS(state, waterings) {
+      state.waterings = waterings
+    },
   },
   actions: {
     async register ({ commit }, credentials) {
@@ -351,6 +366,25 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async fetchWaterings() {
+      //async fetchWaterings({ commit }) {
+      const waterings = [
+        {author: 'A1'},
+        {author: 'A2'}
+      ]
+      console.log("STORE WATERING: ", waterings)
+        //EventService.getWaterings()
+        //  .then((response) => {
+        //    commit("SET_WATERINGS", response.data);
+        //    console.log("STORE: ", response.data)
+        //    return response.data;
+        //  })
+        //  .catch((error) => {
+        //    console.log(error);
+        //  });
+        return waterings
+
+      },
     async createEvent({ commit }, event) {
       EventService.postEvent(event)
         .then(() => {

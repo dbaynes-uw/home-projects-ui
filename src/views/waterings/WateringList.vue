@@ -1,0 +1,311 @@
+<template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h2>Watering List</h2>
+      <h2 id="status-message">
+        <u>{{ this.statusMessage }}</u>
+      </h2>
+    </v-card-title>
+    <ul>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringCreate' }">Add Watering</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Detail Index View</u>
+        </button>
+      </li>
+    </ul> 
+    <br/>
+  </v-card>
+  <br/>
+  <div style="width: 100%">
+      <div class="auto-search-container">
+        <v-text-field
+          clearable
+          clear-icon="mdi-close"
+          @click:clear="showIndex"
+          type="text"
+          class="np-input-search"
+          v-model="inputSearchText"
+          placeholder="Search"
+          autocomplete="off"
+          v-on:keyup="searchColumns"
+        />
+      </div>
+  </div>
+  <div class="watering-list">
+    <span v-if="filteredResults.length == 0">
+      <span v-if="searchResults == false">
+        <h3 id="h3-left">No Search Results Returned</h3>
+      </span>
+      <span v-else>
+        <span v-if="requestIndexDetailFlag == true">
+          <h3 id="h3-left">Total: {{ waterings.length }}</h3>
+          <span class="h3-left-total-child">Double click Item Below to Edit</span>
+          <div class="cards">
+            <WateringCard
+              v-for="watering in waterings"
+              :key="watering.id"
+              :watering="watering"
+              :origin="origin"
+              class="card"
+              @dblclick="onDoubleClick(watering)"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <WateringIndex :waterings="waterings" />
+        </span>
+      </span>
+    </span>
+    <span v-if="filteredResults.length > 0">
+      <span v-if="requestIndexDetailFlag == true">
+        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+        <span>Double click to Edit</span>
+        <div class="cards">
+          <WateringCard
+            v-for="watering in filteredResults"
+            :key="watering.id"
+            :watering="watering"
+            class="card"
+            :origin="origin"
+            @dblclick="onDoubleClick(watering)"
+          />
+          <br />
+        </div>
+      </span>
+      <span v-else>
+        <WateringSearchResults :filteredResults="filteredResults" />
+      </span>
+    </span>
+  </div>
+</template>
+<script>
+import DateFormatService from "@/services/DateFormatService.js";
+import WateringIndex from "@/components/waterings/WateringIndex.vue";
+import WateringCard from "@/components/waterings/WateringCard.vue";
+import WateringSearchResults from "@/components/waterings/WateringSearchResults.vue";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+
+export default {
+  name: "WateringList",
+  props: ["filteredResults[]"],
+  components: {
+    WateringIndex,
+    WateringCard,
+    WateringSearchResults,
+    ConfirmDialogue,
+  },
+  data() {
+    return {
+      requestIndexDetailFlag: true,
+      searchResults: null,
+      inputSearchText: "",
+      filteredResults: [],
+      columnDetails: null,
+      sortedData: [],
+      sortedbyASC: false,
+      description: null,
+      frequency: null,
+      completed: 0,
+      statusMessage: "",
+    };
+  },
+  mounted() {
+    this.sortedData = this.waterings;
+  },
+  created() {
+    this.$store.dispatch("fetchWaterings");
+    console.log("CREATED WATERINGS: ", this.waterings )
+    this.sortedData = this.waterings;
+  },
+  computed: {
+    waterings() {
+      //console.log("COMPUTED WATERINGS: ", this.$store.state.waterings )
+      //return this.$store.state.waterings;
+      return [
+        { plant_name: 'A1',
+          description: 'Desc 1',
+          location: '1-A-1',
+          date_planted: '2023-04-15',
+          date_harvest: '2023-05-15',
+          date_actual_harvest: '2023-07-01',
+          link_to_label: 'https://bonnieplants.com/blogs/how-to-grow/growing-cabbage',
+          special_instructions: 'Special Instrs 1',
+          notes: 'Bed-Section-Position - E/W Row ex: 1-A-1, 1-B-1, 1-C-1 N/S ex: 1-A-1, 1-A-2 ',
+        },
+        { plant_name: 'A2',
+          description: 'Desc 2',
+          location: '2-A-1',
+          date_planted: '2023-04-15',
+          date_harvest: '2023-05-15',
+          date_actual_harvest: '2023-07-01',
+          link_to_label: 'www.facebook.com',
+          special_instructions: 'Special Instrs 2',
+          notes: 'Bed-Section-Position - E/W Row ex: 2-A-1, 2-B-1, 2-C-1 N/S ex: 2-A-1, 2-A-2 ',
+        },
+        { plant_name: 'A3',
+          description: 'Desc 3',
+          location: '3-A-1',
+          date_planted: '2023-04-15',
+          date_harvest: '2023-05-15',
+          date_actual_harvest: '2023-07-01',
+          link_to_label: 'www.facebook.com',
+          special_instructions: 'Special Instrs 3',
+          notes: 'Bed-Section-Position - E/W Row ex: 3-A-1, 3-B-1, 3-C-1 N/S ex: 3-A-1, 3-A-2 ',
+        },
+      ]
+    },
+    origin() {
+      return "WateringList"
+    }
+  },
+  methods: {
+    requestIndexDetail() {
+      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    },
+    onDoubleClick(watering) {
+      console.log("watering Edit ")
+      this.$router.push({ name: 'WateringEdit', params: { id: `${watering.id}` } });
+    },
+    showIndex() {
+      this.filteredResults = [];
+    },
+    searchColumns() {
+      this.searchResults = true;
+      this.filteredResults = [];
+      this.columnDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        this.filteredResults = [];
+        this.columnDetails = null;
+      } else {
+        if (
+          this.waterings &&
+          this.waterings.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.waterings.forEach((watering) => {
+            const searchHasPlantName =
+              watering.plant_name &&
+              watering.plant_name
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            const searchNotes =
+              watering.notes &&
+              watering.notes
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            if (searchHasPlantName || searchNotes) {
+              this.filteredResults.push(watering);
+            }
+            if (this.filteredResults.length > 0) {
+              this.searchResults = true;
+            } else {
+              this.searchResults = false;
+            }
+          });
+        }
+      }
+    },
+    showCharacterDetails(result) {
+      this.characterDetails = result;
+    },
+    sortList(sortBy) {
+      //console.log("BOOK LIST sortBy: ", sortBy)
+      this.sortedData = this.waterings;
+      if (this.sortedbyASC) {
+        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+        this.sortedbyASC = false;
+      } else {
+        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+        this.sortedbyASC = true;
+      }
+    },
+    //isOffline() {
+    //  this.isOnline = false;
+    //},
+    //isOnline() {
+    //  this.isOnline = true;
+    //},
+    formatFullYearDate(value) {
+      return DateFormatService.formatFullYearDatejs(value);
+    },
+  },
+};
+</script>
+<!--style scoped>
+.table-index-style {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  background-color: #7ba8bd;
+  text-align: left;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+tr {
+  line-height: 1.6 !important;
+  border: none;
+}
+tr:nth-child(odd) {
+  background-color: #41b88352;
+  border: none !important;
+}
+td {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.eventAssigned {
+  background: #e8f7f0;
+}
+.fa-table-stack {
+  position: relative;
+  left: 2rem;
+}
+i {
+  bottom: 0px;
+  color: gray;
+}
+tr.is-complete {
+  background: #35495e;
+  color: #fff;
+}
+#status-message {
+  text-align: center;
+  color: navy;
+}
+</style-->
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+th:hover {
+  cursor: pointer;
+  background: rgb(229, 255, 211);
+}
+tr:nth-child(even) {
+  background-color: #f3f3f3;
+}
+tr:nth-child(odd) {
+  background-color: #41b88352;
+  border: none !important;
+}
+</style>

@@ -43,6 +43,10 @@ import TravelList from "../views/travels/TravelList.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
+import WateringCreate from "@/views/waterings/WateringCreate.vue";
+import WateringDetails from "@/views/waterings/WateringDetails.vue";
+import WateringEdit from "@/views/waterings/WateringEdit.vue";
+import WateringList from "../views/waterings/WateringList.vue";
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
@@ -378,6 +382,40 @@ const routes = [
     component: UserEdit,
     meta: { requiresAuth: true}
   },
+  {
+    path: "/watering/:id",
+    name: "WateringEdit",
+    props: true,
+    component: WateringEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/watering/create",
+    name: "WateringCreate",
+    component: WateringCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings",
+    name: "WateringList",
+    component: WateringList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings/:id",
+    name: "WateringDetails",
+    props: true,
+    component: WateringDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/watering/:id",
+    name: "WateringEdit",
+    props: true,
+    component: WateringEdit,
+    meta: { requiresAuth: true}
+  },
+
 ];
 
 const router = createRouter({

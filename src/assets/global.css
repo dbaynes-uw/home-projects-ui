@@ -39,6 +39,10 @@
   width: 50%;
   grid-gap: 1rem;
 }
+#icon-block {
+  text-align: center;
+  border: none;
+}
 .form-card-display {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -217,6 +221,13 @@
   left: -1rem !important;
   color: #fff;
 }
+#card-medium-watering-icon-edit {
+  text-align: center;
+  position: relative;
+  padding: 0;
+  top: 0rem;
+  color: #fff;
+}
 #card-medium-icon-eye {
   text-align: center;
   position: relative;
@@ -225,10 +236,26 @@
   font-size: 18px;
   color: #fff;
 }
+#card-medium-block-icon-eye {
+  text-align: center;
+  color: #fff;
+  position: relative;
+  left: auto;
+  top:  0rem;
+
+}
 #card-medium-icon-delete {
   position: relative;
   top: -4rem;
   left: 3.5rem;
+  font-size: 18px;
+  color: #fff;
+}
+#card-medium-block-icon-delete {
+  position: relative;
+  position: relative;
+  left: auto;
+  top:  0rem;
   font-size: 18px;
   color: #fff;
 }

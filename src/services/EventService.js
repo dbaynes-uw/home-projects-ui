@@ -4,6 +4,14 @@ moment.tz.setDefault("America/Los_Angeles");
 var environment = "";
 var api_url = "";
 export default {
+  data() {
+    return {
+      waterings: [
+        {author: 'A1'},
+        {author: 'A2'},
+      ],
+    }
+  },
   init() {
     console.log("environment: ", environment);
     if (window.location.port == "8080") {
@@ -29,6 +37,12 @@ export default {
   getBooks() {
     this.init();
     return axios.get(api_url + "books")
+  },
+  getWaterings() {
+    //this.init();
+    //return axios.get(api_url + "books")
+    console.log("getWaterings: ", this.waterings)
+    return this.waterings
   },
   async putBook(updatedBook) {
     this.init();

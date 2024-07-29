@@ -124,9 +124,14 @@ export default {
           title: "Films",
         },
         {
+          label: "WateringList",
+          url: "/waterings",
+          title: "Garden",
+        },
+        {
           label: "GolfList",
           url: "/golfs",
-          title: "Golfs",
+          title: "Golf",
         },
         {
           label: "MedList",
