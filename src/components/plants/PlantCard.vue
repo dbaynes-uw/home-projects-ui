@@ -5,6 +5,8 @@
     <ul>
       <li class="li-left">Description: <b>{{ plant.description }}</b></li>
       <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
+      <li class="li-left">Location: {{plant.location }}</li>
+      <li class="li-left">Water Line: {{plant.water_line }}</li>  
       <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
       <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
       <li class="li-left"><a :href="plant.link_to_label" target="_blank">Link to Review</a></li>

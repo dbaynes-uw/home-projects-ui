@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Plant List</h2>
+      <h2>Garden Facts</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -132,6 +132,7 @@ export default {
         { plant_name: 'A1',
           description: 'Desc 1',
           location: '1-A-1',
+          water_line: 'East Back',
           date_planted: '2023-04-15',
           date_harvest: '2023-05-15',
           date_actual_harvest: '2023-07-01',
@@ -142,6 +143,7 @@ export default {
         { plant_name: 'A2',
           description: 'Desc 2',
           location: '2-A-1',
+          water_line: 'West Back',
           date_planted: '2023-04-15',
           date_harvest: '2023-05-15',
           date_actual_harvest: '2023-07-01',
@@ -152,6 +154,7 @@ export default {
         { plant_name: 'A3',
           description: 'Desc 3',
           location: '3-A-1',
+          water_line: 'West Front (Hydrangeas)',
           date_planted: '2023-04-15',
           date_harvest: '2023-05-15',
           date_actual_harvest: '2023-07-01',

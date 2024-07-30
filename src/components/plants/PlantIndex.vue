@@ -5,6 +5,7 @@
       <th id="background-blue" @click="sortList('plant_name')">Plant</th>
       <th id="background-blue" @click="sortList('description')">Description</th>
       <th id="background-blue" @click="sortList('location')">Location</th>
+      <th id="background-blue" @click="sortList('water_line')">Water Line</th>
       <th id="background-blue" @click="sortList('date_planted')">
         Date Planted
       </th>
@@ -16,8 +17,9 @@
       <td>{{ result.plant_name }}</td>
       <td>{{ result.description }}</td>
       <td>{{ result.location }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_planted) }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_harvest) }}</td>
+      <td>{{ result.water_line }}</td>
+      <td class="td-center">{{ formatYearDate(result.date_planted) }}</td>
+      <td class="td-center">{{ formatYearDate(result.date_harvest) }}</td>
       <td class="td-center">
         <a :href="result.link_to_label" target="_blank">Review</a>
       </td>
@@ -150,8 +152,8 @@ export default {
         setTimeout(() => location.reload(), 2500);
       }
     },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
+    formatYearDate(value) {
+      return DateFormatService.formatYearDatejs(value);
     },
   },
 };

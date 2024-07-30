@@ -25,6 +25,10 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
+import PlantCreate from "@/views/plants/PlantCreate.vue";
+import PlantDetails from "@/views/plants/PlantDetails.vue";
+import PlantEdit from "@/views/plants/PlantEdit.vue";
+import PlantList from "../views/plants/PlantList.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductLocationsList from "../views/products/ProductLocationsList.vue";
@@ -43,10 +47,6 @@ import TravelList from "../views/travels/TravelList.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
-import PlantCreate from "@/views/plants/PlantCreate.vue";
-import PlantDetails from "@/views/plants/PlantDetails.vue";
-import PlantEdit from "@/views/plants/PlantEdit.vue";
-import PlantList from "../views/plants/PlantList.vue";
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
@@ -257,6 +257,40 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/plant/:id",
+    name: "PlantEdit",
+    props: true,
+    component: PlantEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/plant/create",
+    name: "PlantCreate",
+    component: PlantCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/plants",
+    name: "PlantList",
+    component: PlantList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/plants/:id",
+    name: "PlantDetails",
+    props: true,
+    component: PlantDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/plant/:id",
+    name: "PlantEdit",
+    props: true,
+    component: PlantEdit,
+    meta: { requiresAuth: true}
+  },
+
+  {
     path: "/products_by_location/:location",
     component: ProductLocationList,
     props: true,
@@ -382,40 +416,6 @@ const routes = [
     component: UserEdit,
     meta: { requiresAuth: true}
   },
-  {
-    path: "/plant/:id",
-    name: "PlantEdit",
-    props: true,
-    component: PlantEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/plant/create",
-    name: "PlantCreate",
-    component: PlantCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/plants",
-    name: "PlantList",
-    component: PlantList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/plants/:id",
-    name: "PlantDetails",
-    props: true,
-    component: PlantDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/plant/:id",
-    name: "PlantEdit",
-    props: true,
-    component: PlantEdit,
-    meta: { requiresAuth: true}
-  },
-
 ];
 
 const router = createRouter({
