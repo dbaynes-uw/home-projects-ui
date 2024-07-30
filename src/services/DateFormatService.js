@@ -1,6 +1,7 @@
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
 import dayjs from 'dayjs'
+import customParseFormat from "dayjs/plugin/customParseFormat";
 export default {
   formatDatejs(action_date) {
     if (action_date) {
@@ -67,6 +68,13 @@ export default {
       action_date = dayjs(action_date).format("YYYY");
       return action_date;
     }
+  },
+  formatTimejs(action_time) {
+    dayjs.extend(customParseFormat)
+    if (action_time) {
+      action_time =  dayjs(action_time).format('h:mma')
+      return action_time;
+    } 
   },
   calculateDuejs(action_date, frequency) {
     let returnMessage = "";

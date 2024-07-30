@@ -16,7 +16,7 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import PlantCard from "@/components/plants/PlantCard.vue";
+import PlantCard from "@/components/vegetable_garden/PlantCard.vue";
 export default {
   name: 'PlantDetails',
   props: ["id"],

@@ -2,7 +2,13 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Garden Facts</h2>
+      <h2>Vegetable Garden Details</h2>
+      <v-img
+          :src="require('../../assets/vegetable_garden_summer_2024.png')"
+          class="my-3"
+          contain
+          height="400"
+        />
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -11,6 +17,11 @@
       <li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'PlantCreate' }">Add Plant</router-link>
+        </button>
+      </li>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringList' }">Watering Layout</router-link>
         </button>
       </li>
       <li>
@@ -87,9 +98,9 @@
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import PlantIndex from "@/components/plants/PlantIndex.vue";
-import PlantCard from "@/components/plants/PlantCard.vue";
-import PlantSearchResults from "@/components/plants/PlantSearchResults.vue";
+import PlantIndex from "@/components/vegetable_garden/PlantIndex.vue";
+import PlantCard from "@/components/vegetable_garden/PlantCard.vue";
+import PlantSearchResults from "@/components/vegetable_garden/PlantSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
@@ -129,7 +140,7 @@ export default {
       //console.log("COMPUTED WATERINGS: ", this.$store.state.plants )
       //return this.$store.state.plants;
       return [
-        { plant_name: 'A1',
+        { plant_name: 'Avacodes',
           description: 'Desc 1',
           location: '1-A-1',
           water_line: 'East Back',
@@ -137,10 +148,10 @@ export default {
           date_harvest: '2023-05-15',
           date_actual_harvest: '2023-07-01',
           link_to_label: 'https://bonnieplants.com/blogs/how-to-grow/growing-cabbage',
-          special_instructions: 'Special Instrs 1',
-          notes: 'Bed-Section-Position - E/W Row ex: 1-A-1, 1-B-1, 1-C-1 N/S ex: 1-A-1, 1-A-2 ',
+          special_instructions: 'Bed - Section - Row',
+          notes: 'Bed-Section-Position - Bed: North to South: 1,2,3 | Section East to West: A,B,C; Rows North to South 1,2,3 ex: 1-A-1 = Bed 1, Section A, Row 1 / OR Bed 1 Row 1 = B1 R1, etc.'
         },
-        { plant_name: 'A2',
+        { plant_name: 'Broccoli',
           description: 'Desc 2',
           location: '2-A-1',
           water_line: 'West Back',
@@ -151,7 +162,7 @@ export default {
           special_instructions: 'Special Instrs 2',
           notes: 'Bed-Section-Position - E/W Row ex: 2-A-1, 2-B-1, 2-C-1 N/S ex: 2-A-1, 2-A-2 ',
         },
-        { plant_name: 'A3',
+        { plant_name: 'Carrots',
           description: 'Desc 3',
           location: '3-A-1',
           water_line: 'West Front (Hydrangeas)',

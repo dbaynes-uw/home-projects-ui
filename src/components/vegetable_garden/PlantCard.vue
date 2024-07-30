@@ -15,44 +15,6 @@
     <br/>
     <div class="icon-stack">
       <span v-if="origin == 'PlantDetails'">
-        <table>
-        <tr>
-          <td id="icon-block">
-            <router-link
-            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
-          >
-            <i
-              id="card-medium-plant-icon-edit"
-              class="fa-solid fa-pen-to-square fa-stack-1x"
-            >
-            </i>
-          </router-link>
-          </td>
-          <td>          <router-link
-            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
-          >
-            <i
-              id="card-medium-plant-icon-edit"
-              class="fa-solid fa-pen-to-square fa-stack-1x"
-            >
-            </i>
-          </router-link></td>
-          <td>          <router-link
-            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
-          >
-            <i
-              id="card-medium-plant-icon-edit"
-              class="fa-solid fa-pen-to-square fa-stack-1x"
-            >
-            </i>
-          </router-link></td>
-        </tr>
-        </table>
-      </span>
-      
-    </div>
-    <div class="icon-stack">
-      <span v-if="origin == 'PlantDetails'">
         <span class="fa-stack">
           <router-link
             :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
@@ -85,10 +47,10 @@
           <tr>
             <td id="icon-block">
               <router-link
-              :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
-            >
+                :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
+              >
               <i
-                id="card-medium-plant-icon-edit"
+                id="card-medium-block-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>

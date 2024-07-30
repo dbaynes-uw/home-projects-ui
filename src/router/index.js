@@ -25,10 +25,10 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
-import PlantCreate from "@/views/plants/PlantCreate.vue";
-import PlantDetails from "@/views/plants/PlantDetails.vue";
-import PlantEdit from "@/views/plants/PlantEdit.vue";
-import PlantList from "../views/plants/PlantList.vue";
+import PlantCreate from "@/views/vegetable_garden/PlantCreate.vue";
+import PlantDetails from "@/views/vegetable_garden/PlantDetails.vue";
+import PlantEdit from "@/views/vegetable_garden/PlantEdit.vue";
+import PlantList from "../views/vegetable_garden/PlantList.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductLocationsList from "../views/products/ProductLocationsList.vue";
@@ -47,6 +47,11 @@ import TravelList from "../views/travels/TravelList.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
+import WateringCreate from "@/views/waterings/WateringCreate.vue";
+import WateringDetails from "@/views/waterings/WateringDetails.vue";
+import WateringEdit from "@/views/waterings/WateringEdit.vue";
+import WateringList from "../views/waterings/WateringList.vue";
+
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
@@ -270,13 +275,13 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/plants",
+    path: "/vegetable_garden",
     name: "PlantList",
     component: PlantList,
     meta: { requiresAuth: true}
   },
   {
-    path: "/plants/:id",
+    path: "/vegetable_garden/:id",
     name: "PlantDetails",
     props: true,
     component: PlantDetails,
@@ -289,7 +294,6 @@ const routes = [
     component: PlantEdit,
     meta: { requiresAuth: true}
   },
-
   {
     path: "/products_by_location/:location",
     component: ProductLocationList,
@@ -315,33 +319,6 @@ const routes = [
     name: "ProductEdit",
     props: true,
     component: ProductEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/vendor/create",
-    name: "ProductVendorCreate",
-    component: ProductVendorCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/vendor/:id",
-    name: "VendorEdit",
-    props: true,
-    component: VendorEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/vendors_products",
-    name: "ProductLocationsList",
-    props: true,
-    component: ProductLocationsList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/locations_vendors",
-    name: "ProductVendorList",
-    props: true,
-    component: ProductVendorList,
     meta: { requiresAuth: true}
   },
   {
@@ -414,6 +391,59 @@ const routes = [
     name: "UserEdit",
     props: true,
     component: UserEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/vendor/create",
+    name: "ProductVendorCreate",
+    component: ProductVendorCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/vendor/:id",
+    name: "VendorEdit",
+    props: true,
+    component: VendorEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/vendors_products",
+    name: "ProductLocationsList",
+    props: true,
+    component: ProductLocationsList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/locations_vendors",
+    name: "ProductVendorList",
+    props: true,
+    component: ProductVendorList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings/:id",
+    name: "WateringDetails",
+    props: true,
+    component: WateringDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/watering/:id",
+    name: "WateringEdit",
+    props: true,
+    component: WateringEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/watering/create",
+    name: "WateringCreate",
+    component: WateringCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings",
+    name: "WateringList",
+    component: WateringList,
     meta: { requiresAuth: true}
   },
 ];
