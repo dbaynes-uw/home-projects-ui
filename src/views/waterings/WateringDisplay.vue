@@ -35,19 +35,19 @@
   </v-card>
   <br/>
   <div style="width: 100%">
-      <div class="auto-search-container">
-        <v-text-field
-          clearable
-          clear-icon="mdi-close"
-          @click:clear="showIndex"
-          type="text"
-          class="np-input-search"
-          v-model="inputSearchText"
-          placeholder="Search"
-          autocomplete="off"
-          v-on:keyup="searchColumns"
-        />
-      </div>
+    <div class="auto-search-container">
+      <v-text-field
+        clearable
+        clear-icon="mdi-close"
+        @click:clear="showIndex"
+        type="text"
+        class="np-input-search"
+        v-model="inputSearchText"
+        placeholder="Search"
+        autocomplete="off"
+        v-on:keyup="searchColumns"
+      />
+    </div>
   </div>
   <div class="watering-list">
     <span v-if="filteredResults.length == 0">
@@ -55,7 +55,6 @@
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
-        <span v-if="requestIndexDetailFlag == true">
           <h3 id="h3-left">Total: {{ waterings.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
@@ -69,35 +68,28 @@
             />
             <br />
           </div>
-        </span>
-        <span v-else>
-          <WateringIndex :waterings="waterings" />
-        </span>
       </span>
     </span>
     <span v-if="filteredResults.length > 0">
-      <span v-if="requestIndexDetailFlag == true">
-        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-        <span>Double click to Edit</span>
-        <div class="cards">
-          <WateringCard
-            v-for="watering in filteredResults"
-            :key="watering.id"
-            :watering="watering"
-            class="card"
-            :origin="origin"
-            @dblclick="onDoubleClick(plant)"
-          />
-          <br />
-        </div>
-      </span>
+      <h3 id="h3-left">Index Total: {{ filteredResults.length }}</h3>
+      <span>Double click to Edit</span>
+      <div class="cards">
+        <WateringCard
+          v-for="watering in filteredResults"
+          :key="watering.id"
+          :watering="watering"
+          class="card"
+          :origin="origin"
+          @dblclick="onDoubleClick(plant)"
+        />
+        <br />
+      </div>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import WateringCard from "@/components/waterings/WateringCard.vue";
-import WateringIndex from "@/components/waterings/WateringIndex.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
@@ -105,12 +97,10 @@ export default {
   props: ["filteredResults[]"],
   components: {
     WateringCard,
-    WateringIndex,
     ConfirmDialogue,
   },
   data() {
     return {
-      requestIndexDetailFlag: true,
       searchResults: null,
       inputSearchText: "",
       filteredResults: [],
@@ -198,9 +188,6 @@ export default {
     }
   },
   methods: {
-    requestIndexDetail() {
-      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
-    },
     onDoubleClick(watering) {
       console.log("watering Edit ")
       this.$router.push({ name: 'WateringEdit', params: { id: `${watering.id}` } });
