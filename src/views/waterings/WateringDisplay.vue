@@ -91,9 +91,6 @@
           <br />
         </div>
       </span>
-      <span v-else>
-        <WateringSearchResults :filteredResults="filteredResults" />
-      </span>
     </span>
   </div>
 </template>
@@ -101,8 +98,6 @@
 import DateFormatService from "@/services/DateFormatService.js";
 import WateringCard from "@/components/waterings/WateringCard.vue";
 import WateringIndex from "@/components/waterings/WateringIndex.vue";
-
-import WateringSearchResults from "@/components/waterings/WateringSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
@@ -110,7 +105,6 @@ export default {
   props: ["filteredResults[]"],
   components: {
     WateringCard,
-    WateringSearchResults,
     WateringIndex,
     ConfirmDialogue,
   },
