@@ -53,7 +53,6 @@
               :book="book"
               :origin="origin"
               class="card"
-              @dblclick="onDoubleClick(book)"
             />
             <br />
           </div>
@@ -74,7 +73,6 @@
             :book="book"
             class="card"
             :origin="origin"
-            @dblclick="onDoubleClick(book)"
           />
           <br />
         </div>
@@ -99,7 +97,7 @@ export default {
     BookIndex,
     BookCard,
     BookSearchResults,
-    ConfirmDialogue,
+    ConfirmDialogue
   },
   data() {
     return {

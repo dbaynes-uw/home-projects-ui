@@ -1,11 +1,10 @@
 <template>
-   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
    <div class="card">
     <p id="p-custom-u">
       <router-link
         :to="{ name: 'PlantList' }"
       >
-        {{ watering.location }} - {{ watering.faucet_location }}
+        {{ watering.location }} - {{ watering.faucet_location }} - {{ watering.line_number }}
       </router-link>
     </p>
     <ul>
@@ -84,10 +83,12 @@
         </table>
       </span>
     </div>
+
   </div>
 </template>
+
 <script>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+//import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'WateringCard',
@@ -102,7 +103,7 @@ export default {
     }
   },
   components: {
-    ConfirmDialogue,
+    //ConfirmDialogue,
   },
   setup() {
     //const vm = this.app.getCurrentInstance()

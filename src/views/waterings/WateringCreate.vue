@@ -1,16 +1,16 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Plant to Collection</h3>
+      <h3>Add Watering System</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="plant.title"
+          v-model="watering.name"
           :rules="[requiredTitle]"
-          label="Title"
+          label="Name"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>

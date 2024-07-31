@@ -1,20 +1,21 @@
 <template>
-   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-   <div class="card">
-    <p id="p-custom-left-u">{{ plant.plant_name}}</p>
-    <ul>
-      <li class="li-left">Description: <b>{{ plant.description }}</b></li>
-      <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
-      <li class="li-left">Location: {{plant.location }}</li>
-      <li class="li-left">Water Line: {{plant.water_line }}</li>  
-      <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
-      <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
-      <li class="li-left"><a :href="plant.link_to_label" target="_blank">Link to Review</a></li>
-      <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
-    </ul>
-    <br/>
-    <div class="icon-stack">
-      <span v-if="origin == 'PlantDetails'">
+  <div id="required-to-prevent-vue-warning">
+    <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+    <div class="card">
+      <p id="p-custom-left-u">{{ plant.plant_name}}</p>
+      <ul>
+        <li class="li-left">Description: <b>{{ plant.description }}</b></li>
+        <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
+        <li class="li-left">Location: {{plant.location }}</li>
+        <li class="li-left">Water Line: {{plant.water_line }}</li>  
+        <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
+        <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
+        <li class="li-left"><a :href="plant.link_to_label" target="_blank">Link to Review</a></li>
+        <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
+      </ul>
+      <br/>
+      <div class="icon-stack">
+        <span v-if="origin == 'PlantDetails'">
         <span class="fa-stack">
           <router-link
             :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
@@ -41,45 +42,46 @@
             </i>
           </span>
         </span>
-      </span>
-      <span v-if="origin == 'PlantList'">
-        <table>
-          <tr>
-            <td id="icon-block">
-              <router-link
-                :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
-              >
-              <i
-                id="card-medium-block-icon-edit"
-                class="fa-solid fa-pen-to-square fa-stack-1x"
-              >
-              </i>
-            </router-link>
-            </td>
-            <!--span v-if="plant.id > 0"-->
+        </span>
+        <span v-if="origin == 'PlantList'">
+          <table>
+            <tr>
               <td id="icon-block">
-                <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
-                  <i
-                    id="card-medium-block-icon-eye"
-                    class="fa fa-eye"
-                  >
-                  </i>
-                </router-link>
-              </td>
-            <!--span-->
-            <td id="icon-block">
-              <span class="fa-table-stack">
+                <router-link
+                  :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
+                >
                 <i
-                  @click="deletePlant(plant)"
-                  class="fas fa-trash-alt fa-stack-1x"
-                  id="card-medium-block-icon-delete"
+                  id="card-medium-block-icon-edit"
+                  class="fa-solid fa-pen-to-square fa-stack-1x"
                 >
                 </i>
-              </span>
-            </td>
-          </tr>
-        </table>
-      </span>
+              </router-link>
+              </td>
+              <!--span v-if="plant.id > 0"-->
+                <td id="icon-block">
+                  <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
+                    <i
+                      id="card-medium-block-icon-eye"
+                      class="fa fa-eye"
+                    >
+                    </i>
+                  </router-link>
+                </td>
+              <!--span-->
+              <td id="icon-block">
+                <span class="fa-table-stack">
+                  <i
+                    @click="deletePlant(plant)"
+                    class="fas fa-trash-alt fa-stack-1x"
+                    id="card-medium-block-icon-delete"
+                  >
+                  </i>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </span>
+      </div>
     </div>
   </div>
 </template>

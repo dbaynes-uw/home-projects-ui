@@ -5,7 +5,8 @@
   padding-left: 1rem;
 }
 .card {
-  border: 1px solid #ccc;
+  /*border: 1px solid #ccc;*/
+  
   background: #41b883;
   padding: 1rem;
   padding-top: 0em;

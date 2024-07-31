@@ -15,12 +15,12 @@
       </li>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'PlantList' }">Vegetable Garden</router-link>
+          <router-link  :to="{ name: 'WateringCreate' }">Edit Watering</router-link>
         </button>
       </li>
-      <li>
-        <button id="button-as-link" @click="requestIndexDetail">
-          <u>Detail Index View</u>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'PlantList' }">Vegetable Garden</router-link>
         </button>
       </li>
     </ul> 
@@ -133,53 +133,56 @@ export default {
     waterings() {
       //console.log("COMPUTED WATERINGS: ", this.$store.state.waterings )
       //return this.$store.state.waterings;
+
       return [
-      {   id: 1,
-          location: 'Back',
-          faucet_location: 'East 1',
+      {   location: 'South',
+          faucet_location: 'East',
+          line_number: '1',
           description: 'Vegetable Garden',
           frequency: 'Everyday',
           start_time: '06:40',
           duration: '20mins',
           notes: 'Note or two',
         },
-        { id: 2,
-          location: 'Back',
-          faucet_location: 'East 2',
+        { location: 'South',
+          faucet_location: 'East',
+          line_number: '2',
           description: 'Fense: Helibores, Daisies, Rhododendrons',
           frequency: 'Everyday',
           start_time: '6:40',
           duration: '20mins',
           notes: '',
         },
-        { id: 3,
-          location: 'Back',
-          faucet_location: 'West 1',
+        { location: 'South',
+          faucet_location: 'West',
+          line_number: '1',
           description: 'Keyhole',
           frequency: 'T,Th,Sun',
           start_time: '6:00',
           duration: '30mins',
           notes: '',
         },
-        { id: 4,
-          location: 'Front',
-          faucet_location: 'East 1',
+        { location: 'North',
+          faucet_location: 'East',
+          line_number: '1',
           description: 'Pots',
           frequency: 'Every 2 days',
           start_time: '9:00',
           duration: '20mins',
           notes: '',
         },
-        { location: 'Front',
-          faucet_location: 'East 2',
+        { location: 'North',
+          faucet_location: 'East',
+          line_number: '2',
           description: 'Gate - Witch Hazel',
           frequency: 'Every 3 days',
           start_time: '7:00',
           duration: '20mins',
           notes: '',
         },
-        { location: 'Front',
-          faucet_location: 'East 3',
+        { location: 'North',
+          faucet_location: 'East',
+          line_number: '3',
           description: 'West Fence - Hydrangeas',
           frequency: 'T,F,Sun',
           start_time: '7:30',
