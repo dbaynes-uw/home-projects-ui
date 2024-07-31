@@ -124,9 +124,9 @@ export default {
           title: "Films",
         },
         {
-          label: "WateringList",
-          url: "/waterings",
-          title: "Garden",
+          label: "GardenStart",
+          url: "/gardens",
+          title: "Gardens",
         },
         {
           label: "GolfList",

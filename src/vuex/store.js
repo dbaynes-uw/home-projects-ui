@@ -366,14 +366,14 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async fetchPlants() {
-      //async fetchPlants({ commit }) {
+    async fetchGardenPlants() {
+      //async fetchGardenPlants({ commit }) {
       const plants = [
         {author: 'A1'},
         {author: 'A2'}
       ]
       console.log("STORE WATERING: ", plants)
-        //EventService.getPlants()
+        //EventService.getGardenPlants()
         //  .then((response) => {
         //    commit("SET_WATERINGS", response.data);
         //    console.log("STORE: ", response.data)

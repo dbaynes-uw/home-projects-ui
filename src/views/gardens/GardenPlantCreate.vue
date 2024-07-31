@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Plant to Collection</h3>
+      <h3>Add GardenPlant to Collection</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
@@ -94,10 +94,10 @@ export default {
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createPlant", plant)) {
-          this.$router.push({ name: "PlantList" });
+        if (this.$store.dispatch("createGardenPlant", plant)) {
+          this.$router.push({ name: "GardenPlantList" });
         } else {
-          alert("Error adding Plant Title" + plant.title);
+          alert("Error adding GardenPlant Title" + plant.title);
         } 
       } else {
         alert("Please correct required fields and resubmit");

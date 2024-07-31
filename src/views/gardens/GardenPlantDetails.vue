@@ -1,8 +1,8 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h1>Plant Card</h1>
+  <h1>GardenPlant Card</h1>
   <div class="card-display">
-    <PlantCard
+    <GardenPlantCard
       :key="plant.id"
       :plant="plant"
       :origin="origin"
@@ -16,17 +16,17 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import PlantCard from "@/components/vegetable_garden/PlantCard.vue";
+import GardenPlantCard from "@/components/gardens/GardenPlantCard.vue";
 export default {
-  name: 'PlantDetails',
+  name: 'GardenPlantDetails',
   props: ["id"],
   components: {
     ConfirmDialogue,
-    PlantCard,
+    GardenPlantCard,
   },
   data() {
     return {
-      updatedPlant: null,
+      updatedGardenPlant: null,
     };
   },
   methods: {
@@ -35,14 +35,14 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchPlant", this.id);
+    this.$store.dispatch("fetchGardenPlant", this.id);
   },
   computed: {
     plant() {
       return this.$store.state.plant;
     },
     origin() {
-      return "PlantDetails"
+      return "GardenPlantDetails"
     }
   },
 };

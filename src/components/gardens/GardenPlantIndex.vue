@@ -2,12 +2,12 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('plant_name')">Plant</th>
+      <th id="background-blue" @click="sortList('plant_name')">GardenPlant</th>
       <th id="background-blue" @click="sortList('description')">Description</th>
       <th id="background-blue" @click="sortList('location')">Location</th>
       <th id="background-blue" @click="sortList('water_line')">Water Line</th>
       <th id="background-blue" @click="sortList('date_planted')">
-        Date Planted
+        Date GardenPlanted
       </th>
       <th id="background-blue" @click="sortList('date_harvest')">Harvest Date</th>
       <th id="background-blue">Link to Info</th>
@@ -27,7 +27,7 @@
         <span v-if="this.onlineStatus">
           <span class="fa-stack" style="text-align: center">
             <router-link
-              :to="{ name: 'PlantEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'GardenPlantEdit', params: { id: `${result.id}` } }"
             >
               <i
                 id="medium-icon-edit"
@@ -37,14 +37,14 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'PlantDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'GardenPlantDetails', params: { id: `${result.id}` } }"
               >
                 <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
-                @click="deletePlant(result)"
+                @click="deleteGardenPlant(result)"
                 class="fas fa-trash-alt fa-stack-1x"
                 id="medium-icon-delete"
               >
@@ -54,16 +54,16 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'PlantDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'GardenPlantDetails', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'PlantEdit', params: { id: `${result.id}` } }"
+            :to="{ name: 'GardenPlantEdit', params: { id: `${result.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deletePlant(result)"><u>Delete</u></span>
+          <span class="ok-btn" @click="deleteGardenPlant(result)"><u>Delete</u></span>
         </span>
       </td>
     </tr>
@@ -75,7 +75,7 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "PlantIndex",
+  name: "GardenPlantIndex",
   props: ["plants"],
   components: {
     ConfirmDialogue,
@@ -133,9 +133,9 @@ export default {
         this.sortedbyASC = true;
       }
     },
-    async deletePlant(plant) {
+    async deleteGardenPlant(plant) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Plant from List",
+        title: "Delete GardenPlant from List",
         message:
           "Are you sure you want to delete " +
           plant.plant_name +
@@ -144,9 +144,9 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deletePlant", plant);
+        this.$store.dispatch("deleteGardenPlant", plant);
         this.statusMessage =
-          "Plant was Deleted for " +
+          "GardenPlant was Deleted for " +
           plant.plant_name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);

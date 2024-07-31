@@ -94,10 +94,10 @@ export default {
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createPlant", plant)) {
-          this.$router.push({ name: "PlantList" });
+        if (this.$store.dispatch("createGardenPlant", plant)) {
+          this.$router.push({ name: "GardenPlantList" });
         } else {
-          alert("Error adding Plant Title" + plant.title);
+          alert("Error adding GardenPlant Title" + plant.title);
         } 
       } else {
         alert("Please correct required fields and resubmit");

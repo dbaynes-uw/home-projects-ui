@@ -38,10 +38,10 @@ export default {
     this.init();
     return axios.get(api_url + "books")
   },
-  getPlants() {
+  getGardenPlants() {
     //this.init();
     //return axios.get(api_url + "books")
-    console.log("getPlants: ", this.plants)
+    console.log("getGardenPlants: ", this.plants)
     return this.plants
   },
   async putBook(updatedBook) {

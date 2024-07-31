@@ -3,14 +3,6 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Vegetable Garden Details</h2>
-      <span v-if="showGardenLayout">
-        <v-img
-            :src="require('../../assets/vegetable_garden_summer_2024.png')"
-            class="my-3"
-            contain
-            height="400"
-          />
-    </span>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -18,12 +10,12 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'PlantCreate' }">Add Plant</router-link>
+          <router-link  :to="{ name: 'GardenPlantCreate' }">Add GardenPlant</router-link>
         </button>
       </li>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringList' }">Watering Layout</router-link>
+          <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
         </button>
       </li>
       <li>
@@ -60,7 +52,7 @@
           <h3 id="h3-left">Total: {{ plants.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
-            <PlantCard
+            <GardenPlantCard
               v-for="plant in plants"
               :key="plant.id"
               :plant="plant"
@@ -72,7 +64,7 @@
           </div>
         </span>
         <span v-else>
-          <PlantIndex :plants="plants" />
+          <GardenPlantIndex :plants="plants" />
         </span>
       </span>
     </span>
@@ -81,7 +73,7 @@
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
         <div class="cards">
-          <PlantCard
+          <GardenPlantCard
             v-for="plant in filteredResults"
             :key="plant.id"
             :plant="plant"
@@ -93,25 +85,25 @@
         </div>
       </span>
       <span v-else>
-        <PlantSearchResults :filteredResults="filteredResults" />
+        <GardenPlantSearchResults :filteredResults="filteredResults" />
       </span>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import PlantIndex from "@/components/vegetable_garden/PlantIndex.vue";
-import PlantCard from "@/components/vegetable_garden/PlantCard.vue";
-import PlantSearchResults from "@/components/vegetable_garden/PlantSearchResults.vue";
+import GardenPlantIndex from "@/components/gardens/GardenPlantIndex.vue";
+import GardenPlantCard from "@/components/gardens/GardenPlantCard.vue";
+import GardenPlantSearchResults from "@/components/gardens/GardenPlantSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
-  name: "PlantList",
+  name: "GardenPlantList",
   props: ["filteredResults[]"],
   components: {
-    PlantIndex,
-    PlantCard,
-    PlantSearchResults,
+    GardenPlantIndex,
+    GardenPlantCard,
+    GardenPlantSearchResults,
     ConfirmDialogue,
   },
   data() {
@@ -134,7 +126,7 @@ export default {
     this.sortedData = this.plants;
   },
   created() {
-    this.$store.dispatch("fetchPlants");
+    this.$store.dispatch("fetchGardenPlants");
     console.log("CREATED WATERINGS: ", this.plants )
     this.sortedData = this.plants;
   },
@@ -179,7 +171,7 @@ export default {
       ]
     },
     origin() {
-      return "PlantList"
+      return "GardenPlantList"
     }
   },
   methods: {
@@ -188,7 +180,7 @@ export default {
     },
     onDoubleClick(plant) {
       console.log("plant Edit ")
-      this.$router.push({ name: 'PlantEdit', params: { id: `${plant.id}` } });
+      this.$router.push({ name: 'GardenPlantEdit', params: { id: `${plant.id}` } });
     },
     showIndex() {
       this.filteredResults = [];
@@ -210,7 +202,7 @@ export default {
           this.inputSearchText.length >= 2
         ) {
           this.plants.forEach((plant) => {
-            const searchHasPlantName =
+            const searchHasGardenPlantName =
               plant.plant_name &&
               plant.plant_name
                 .toLowerCase()
@@ -220,7 +212,7 @@ export default {
               plant.notes
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasPlantName || searchNotes) {
+            if (searchHasGardenPlantName || searchNotes) {
               this.filteredResults.push(plant);
             }
             if (this.filteredResults.length > 0) {
@@ -258,49 +250,6 @@ export default {
   },
 };
 </script>
-<!--style scoped>
-.table-index-style {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  background-color: #7ba8bd;
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-tr {
-  line-height: 1.6 !important;
-  border: none;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.eventAssigned {
-  background: #e8f7f0;
-}
-.fa-table-stack {
-  position: relative;
-  left: 2rem;
-}
-i {
-  bottom: 0px;
-  color: gray;
-}
-tr.is-complete {
-  background: #35495e;
-  color: #fff;
-}
-#status-message {
-  text-align: center;
-  color: navy;
-}
-</style-->
 <style>
 table {
   font-family: arial, sans-serif;

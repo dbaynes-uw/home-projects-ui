@@ -3,10 +3,17 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Watering System</h2>
+      <v-img
+          :src="require('../../assets/vegetable_garden_summer_2024.png')"
+          class="my-3"
+          contain
+          height="400"
+      />
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
     </v-card-title>
+    <br/>
     <ul>
       <li class="left">
         <button id="button-as-link">
@@ -20,7 +27,7 @@
       </li>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'PlantList' }">Vegetable Garden</router-link>
+          <router-link  :to="{ name: 'GardenPlantList' }">Vegetable Garden</router-link>
         </button>
       </li>
     </ul> 
@@ -79,7 +86,7 @@
             :watering="watering"
             class="card"
             :origin="origin"
-            @dblclick="onDoubleClick(watering)"
+            @dblclick="onDoubleClick(plant)"
           />
           <br />
         </div>
@@ -92,18 +99,19 @@
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import WateringIndex from "@/components/waterings/WateringIndex.vue";
 import WateringCard from "@/components/waterings/WateringCard.vue";
+import WateringIndex from "@/components/waterings/WateringIndex.vue";
+
 import WateringSearchResults from "@/components/waterings/WateringSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
-  name: "WateringList",
+  name: "WateringDisplay",
   props: ["filteredResults[]"],
   components: {
-    WateringIndex,
     WateringCard,
     WateringSearchResults,
+    WateringIndex,
     ConfirmDialogue,
   },
   data() {
@@ -192,7 +200,7 @@ export default {
       ]
     },
     origin() {
-      return "WateringList"
+      return "WateringDisplay"
     }
   },
   methods: {

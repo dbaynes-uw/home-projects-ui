@@ -2,7 +2,7 @@
    <div class="card">
     <p id="p-custom-u">
       <router-link
-        :to="{ name: 'PlantList' }"
+        :to="{ name: 'GardenPlantList' }"
       >
         {{ watering.location }} - {{ watering.faucet_location }} - {{ watering.line_number }}
       </router-link>
@@ -16,35 +16,7 @@
     </ul>
     <br/>
     <div class="icon-stack">
-      <span v-if="origin == 'WateringDetails'">
-        <span class="fa-stack">
-          <router-link
-            :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
-          >
-            <i
-              id="card-medium-icon-edit"
-              class="fa-solid fa-pen-to-square fa-stack-1x"
-            >
-            </i>
-          </router-link>
-          <router-link :to="{ name: 'WateringList'}">
-            <i
-              id="card-medium-icon-eye"
-              class="fa-solid fa-backward fa-stack-1x"
-            >
-            </i>
-          </router-link>
-          <span class="fa-table-stack">
-            <i
-              @click="deleteWatering(watering)"
-              class="fas fa-trash-alt fa-stack-1x"
-              id="card-medium-icon-delete"
-            >
-            </i>
-          </span>
-        </span>
-      </span>
-      <span v-if="origin == 'WateringList'">
+      <span v-if="origin == 'WateringDisplay'">
         <table>
           <tr>
             <td id="icon-block">
@@ -127,7 +99,7 @@ export default {
           watering.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "WateringList" });
+        this.$router.push({ name: "WateringDisplay" });
       }
     },
 

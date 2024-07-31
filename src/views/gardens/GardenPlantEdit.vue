@@ -1,13 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Plant {{ plant.head_name }}</h2>
-    <router-link :to="{ name: 'PlantList' }">
-      <b>Back to Plant List</b>
+    <h2>Edit GardenPlant {{ plant.head_name }}</h2>
+    <router-link :to="{ name: 'GardenPlantList' }">
+      <b>Back to GardenPlant List</b>
     </router-link>
     <br/>
     <br/>
-    <form class="form-card-display" @submit.prevent="updatePlant">
+    <form class="form-card-display" @submit.prevent="updateGardenPlant">
       <div class="form-container">
         <label>Title:</label>
         <input type="text" class="text-style" v-model="plant.title" required />
@@ -53,10 +53,10 @@ export default {
     var work_url = ""
     if (window.location.port == "8080") {
       // or: "http://davids-macplant-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/vegetable_garden/";
+      work_url = "http://localhost:3000/api/v1/gardens/";
     } else {
       work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/vegetable_garden/";
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/gardens/";
     }
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
@@ -79,9 +79,9 @@ export default {
   },
   setup() {},
   methods: {
-    async updatePlant() {
+    async updateGardenPlant() {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Plant from List ",
+        title: "Update GardenPlant from List ",
         message:
           "Are you sure you want to update " + 
           this.plant.title,
@@ -106,8 +106,8 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Plant has been updated");
-          this.$router.push({ name: "PlantDetails", params: { id: plant.id } });
+          alert("GardenPlant has been updated");
+          this.$router.push({ name: "GardenPlantDetails", params: { id: plant.id } });
         } else {
           alert("Update Error Code ", result.status);
         }

@@ -25,11 +25,12 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
-import PlantCreate from "@/views/vegetable_garden/PlantCreate.vue";
-import PlantDetails from "@/views/vegetable_garden/PlantDetails.vue";
-import PlantEdit from "@/views/vegetable_garden/PlantEdit.vue";
-import PlantList from "../views/vegetable_garden/PlantList.vue";
+import GardenPlantCreate from "@/views/gardens/GardenPlantCreate.vue";
+import GardenPlantDetails from "@/views/gardens/GardenPlantDetails.vue";
+import GardenPlantEdit from "@/views/gardens/GardenPlantEdit.vue";
+import GardenStart from "../views/gardens/GardenStart.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
+import GardenPlantList from "../views/gardens/GardenPlantList.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductLocationsList from "../views/products/ProductLocationsList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
@@ -50,7 +51,7 @@ import UserList from "../views/users/UserList.vue";
 import WateringCreate from "@/views/waterings/WateringCreate.vue";
 import WateringDetails from "@/views/waterings/WateringDetails.vue";
 import WateringEdit from "@/views/waterings/WateringEdit.vue";
-import WateringList from "../views/waterings/WateringList.vue";
+import WateringDisplay from "../views/waterings/WateringDisplay.vue";
 
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
@@ -262,38 +263,39 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/plant/:id",
-    name: "PlantEdit",
+    path: "/garden_plant/:id",
+    name: "GardenPlantEdit",
     props: true,
-    component: PlantEdit,
+    component: GardenPlantEdit,
     meta: { requiresAuth: true}
   },
   {
-    path: "/plant/create",
-    name: "PlantCreate",
-    component: PlantCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/vegetable_garden",
-    name: "PlantList",
-    component: PlantList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/vegetable_garden/:id",
-    name: "PlantDetails",
+    path: "/gardens",
+    name: "GardenPlantList",
     props: true,
-    component: PlantDetails,
+    component: GardenPlantList,
     meta: { requiresAuth: true}
   },
   {
-    path: "/plant/:id",
-    name: "PlantEdit",
-    props: true,
-    component: PlantEdit,
+    path: "/garden_plant/create",
+    name: "GardenPlantCreate",
+    component: GardenPlantCreate,
     meta: { requiresAuth: true}
   },
+  {
+    path: "/gardens/start",
+    name: "GardenStart",
+    component: GardenStart,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/gardens/:id",
+    name: "GardenPlantDetails",
+    props: true,
+    component: GardenPlantDetails,
+    meta: { requiresAuth: true}
+  },
+
   {
     path: "/products_by_location/:location",
     component: ProductLocationList,
@@ -442,8 +444,8 @@ const routes = [
   },
   {
     path: "/waterings",
-    name: "WateringList",
-    component: WateringList,
+    name: "WateringDisplay",
+    component: WateringDisplay,
     meta: { requiresAuth: true}
   },
 ];
