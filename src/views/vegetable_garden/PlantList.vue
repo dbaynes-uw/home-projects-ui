@@ -3,12 +3,14 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Vegetable Garden Details</h2>
-      <v-img
-          :src="require('../../assets/vegetable_garden_summer_2024.png')"
-          class="my-3"
-          contain
-          height="400"
-        />
+      <span v-if="showGardenLayout">
+        <v-img
+            :src="require('../../assets/vegetable_garden_summer_2024.png')"
+            class="my-3"
+            contain
+            height="400"
+          />
+    </span>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -125,6 +127,7 @@ export default {
       frequency: null,
       completed: 0,
       statusMessage: "",
+      showGardenLayout: true,
     };
   },
   mounted() {
