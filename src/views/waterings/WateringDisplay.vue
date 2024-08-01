@@ -3,12 +3,12 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Watering System</h2>
-      <v-img
+      <!--v-img
           :src="require('../../assets/vegetable_garden_summer_2024.png')"
           class="my-3"
           contain
           height="400"
-      />
+      /-->
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -17,7 +17,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringCreate' }">Add Watering</router-link>
+          <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
         </button>
       </li>
       <li class="left">
@@ -105,21 +105,15 @@ export default {
       inputSearchText: "",
       filteredResults: [],
       columnDetails: null,
-      sortedData: [],
-      sortedbyASC: false,
       description: null,
       frequency: null,
       completed: 0,
       statusMessage: "",
     };
   },
-  mounted() {
-    this.sortedData = this.waterings;
-  },
+  mounted() {},
   created() {
     this.$store.dispatch("fetchWaterings");
-    console.log("CREATED WATERINGS: ", this.waterings )
-    this.sortedData = this.waterings;
   },
   computed: {
     waterings() {
@@ -236,17 +230,6 @@ export default {
     },
     showCharacterDetails(result) {
       this.characterDetails = result;
-    },
-    sortList(sortBy) {
-      //console.log("BOOK LIST sortBy: ", sortBy)
-      this.sortedData = this.waterings;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
-      } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
-      }
     },
     //isOffline() {
     //  this.isOnline = false;

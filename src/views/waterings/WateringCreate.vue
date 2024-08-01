@@ -63,15 +63,8 @@ export default {
   },
   data() {
     return {
-      plant: {
-        title: null,
-        author: "",
-        date_written: null,
-        date_read: null,
-        vendor_product: [],
-        audio_format: false,
-        print_format: false,
-        url_to_review: "",
+      watering: {
+        name: null,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
