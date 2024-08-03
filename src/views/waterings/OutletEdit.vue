@@ -21,8 +21,8 @@
     <br/>
     <form class="form-card-display" @submit.prevent="updateWatering">
       <div class="form-container">
-        <label>Name:</label>
-        <input type="text" class="text-style" v-model="watering.name" required />
+        <label>Yard Location:</label>
+        <input type="text" class="text-style" v-model="output.yard_location" required />
         <label>Active:</label>
         <select class="select-status" v-model="watering.active" required>
           <option
@@ -91,9 +91,16 @@ export default {
   },
   data() {
     return {
-      watering: {
+      outlet: {
         id: null,
-        name: null,
+        watering_id: null,
+        yard_location: null,
+        faucet_location: null,
+        line_number: null,
+        target: null,
+        frequency: null,
+        start_time: null,
+        duration: null,
         active: null,
         notes: null,
         created_at: null,

@@ -39,7 +39,7 @@
         :key="outlet.id"
         :outlet="outlet"
         class="card"
-        @dblclick="onDoubleClick(watering.id, outlet)"
+        @dblclick="onDoubleClick(outlet)"
       />
     </div>
     <v-img
@@ -64,7 +64,23 @@ export default {
   },
   data() {
     return {
-      outlet: null,
+      outlet: {
+        id: null,
+        watering_id: null,
+        yard_location: null,
+        faucet_location: null,
+        line_number: null,
+        target: null,
+        frequency: null,
+        start_time: null,
+        duration: null,
+        active: null,
+        notes: null,
+        created_at: null,
+        updated_at: null,
+        created_by: this.$store.state.user.resource_owner.email,
+        updated_by: this.$store.state.user.resource_owner.email,
+      },
       statusMessage: "",
     };
   },
@@ -96,9 +112,9 @@ export default {
     }
   },
   methods: {
-    onDoubleClick(watering, outlet) {
-      console.log("watering Edit watering:  ", watering)
-      this.$router.push({ name: 'WateringOutletEdit', params: { watering_id: `${watering.id}`, id: `${outlet.id}` } });
+    onDoubleClick(outlet) {
+      console.log("watering Edit outlet:  ", outlet)
+      this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
     },
   },
 };
