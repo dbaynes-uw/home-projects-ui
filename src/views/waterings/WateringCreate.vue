@@ -135,7 +135,7 @@ export default {
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
-  width: 33%;
+  /*width: 33%;*/
   padding: 10px;
   /*height: 300px; /* Should be removed. Only for demonstration */
 }
