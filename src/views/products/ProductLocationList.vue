@@ -218,7 +218,7 @@ input[type=checkbox] {
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
-  width: 90%;
+  width: 90% !important;
   /*Xwidth: 50%;*/
   padding: 2px;
   /*height: 300px; /* Should be removed. Only for demonstration */
