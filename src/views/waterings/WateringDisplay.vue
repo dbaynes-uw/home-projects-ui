@@ -3,12 +3,6 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Watering System</h2>
-      <!--v-img
-          :src="require('../../assets/vegetable_garden_summer_2024.png')"
-          class="my-3"
-          contain
-          height="400"
-      /-->
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -22,223 +16,89 @@
       </li>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringCreate' }">Edit Watering</router-link>
-        </button>
-      </li>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'GardenPlantList' }">Vegetable Garden</router-link>
+          <router-link  :to="{ name: 'GardenPlantList' }">Gardens</router-link>
         </button>
       </li>
     </ul> 
     <br/>
   </v-card>
   <br/>
-  <div style="width: 100%">
-    <div class="auto-search-container">
-      <v-text-field
-        clearable
-        clear-icon="mdi-close"
-        @click:clear="showIndex"
-        type="text"
-        class="np-input-search"
-        v-model="inputSearchText"
-        placeholder="Search"
-        autocomplete="off"
-        v-on:keyup="searchColumns"
-      />
+  <div class="watering-display">
+    <span class="h3-left-total-child">Click Change</span>
+    <div class="cards-1-center">
+      <WateringCard :watering="watering">      
+      </WateringCard>
+      <br />
     </div>
   </div>
-  <div class="watering-list">
-    <span v-if="filteredResults.length == 0">
-      <span v-if="searchResults == false">
-        <h3 id="h3-left">No Search Results Returned</h3>
-      </span>
-      <span v-else>
-          <h3 id="h3-left">Total: {{ waterings.length }}</h3>
-          <span class="h3-left-total-child">Double click Item Below to Edit</span>
-          <div class="cards">
-            <WateringCard
-              v-for="watering in waterings"
-              :key="watering.id"
-              :watering="watering"
-              :origin="origin"
-              class="card"
-              @dblclick="onDoubleClick(watering)"
-            />
-            <br />
-          </div>
-      </span>
-    </span>
-    <span v-if="filteredResults.length > 0">
-      <h3 id="h3-left">Index Total: {{ filteredResults.length }}</h3>
-      <span>Double click to Edit</span>
-      <div class="cards">
-        <WateringCard
-          v-for="watering in filteredResults"
-          :key="watering.id"
-          :watering="watering"
-          class="card"
-          :origin="origin"
-          @dblclick="onDoubleClick(plant)"
-        />
-        <br />
-      </div>
-    </span>
-  </div>
+  <h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</h3>
+  <span class="h3-left-total-child">Double click Item Below to Edit</span>
+    <div class="cards">
+      <OutletCard
+        v-for="outlet in watering.outlets"
+        :key="outlet.id"
+        :outlet="outlet"
+        class="card"
+        @dblclick="onDoubleClick(watering.id, outlet)"
+      />
+    </div>
+    <v-img
+        :src="require('../../assets/vegetable_garden_summer_2024.png')"
+        class="my-3"
+        contain
+        height="400"
+    />
 </template>
 <script>
-import DateFormatService from "@/services/DateFormatService.js";
-import WateringCard from "@/components/waterings/WateringCard.vue";
+import WateringCard from "@/components/watering/WateringCard.vue";
+import OutletCard from "@/components/outlets/OutletCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
   name: "WateringDisplay",
-  props: ["filteredResults[]"],
+  props: [],
   components: {
     WateringCard,
+    OutletCard,
     ConfirmDialogue,
   },
   data() {
     return {
-      searchResults: null,
-      inputSearchText: "",
-      filteredResults: [],
-      columnDetails: null,
-      description: null,
-      frequency: null,
-      completed: 0,
+      outlet: null,
       statusMessage: "",
     };
   },
   mounted() {},
   created() {
-    this.$store.dispatch("fetchWaterings");
+    this.$store.dispatch("fetchWatering");
   },
   computed: {
-    waterings() {
-      //console.log("COMPUTED WATERINGS: ", this.$store.state.waterings )
-      //return this.$store.state.waterings;
-
+    watering() {
+      return this.$store.state.watering;
+      /* For local testing: Outlet
       return [
-      {   location: 'South',
+      {   yard_location: 'South',
           faucet_location: 'East',
           line_number: '1',
-          description: 'Vegetable Garden',
+          target: 'Vegetable Garden',
           frequency: 'Everyday',
           start_time: '06:40',
           duration: '20mins',
           notes: 'Note or two',
         },
-        { location: 'South',
-          faucet_location: 'East',
-          line_number: '2',
-          description: 'Fense: Helibores, Daisies, Rhododendrons',
-          frequency: 'Everyday',
-          start_time: '6:40',
-          duration: '20mins',
-          notes: '',
-        },
-        { location: 'South',
-          faucet_location: 'West',
-          line_number: '1',
-          description: 'Keyhole',
-          frequency: 'T,Th,Sun',
-          start_time: '6:00',
-          duration: '30mins',
-          notes: '',
-        },
-        { location: 'North',
-          faucet_location: 'East',
-          line_number: '1',
-          description: 'Pots',
-          frequency: 'Every 2 days',
-          start_time: '9:00',
-          duration: '20mins',
-          notes: '',
-        },
-        { location: 'North',
-          faucet_location: 'East',
-          line_number: '2',
-          description: 'Gate - Witch Hazel',
-          frequency: 'Every 3 days',
-          start_time: '7:00',
-          duration: '20mins',
-          notes: '',
-        },
-        { location: 'North',
-          faucet_location: 'East',
-          line_number: '3',
-          description: 'West Fence - Hydrangeas',
-          frequency: 'T,F,Sun',
-          start_time: '7:30',
-          duration: '20mins',
-          notes: '',
-        },
-      ]
+      */
     },
+  outlets() {
+    return this.$store.state.outlets;
+  },
     origin() {
       return "WateringDisplay"
     }
   },
   methods: {
-    onDoubleClick(watering) {
-      console.log("watering Edit ")
-      this.$router.push({ name: 'WateringEdit', params: { id: `${watering.id}` } });
-    },
-    showIndex() {
-      this.filteredResults = [];
-    },
-    searchColumns() {
-      this.searchResults = true;
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.waterings &&
-          this.waterings.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.waterings.forEach((watering) => {
-            const searchHasWateringLocation =
-              watering.location &&
-              watering.location
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasLocationDirection =
-              watering.faucet_location &&
-              watering.faucet_location
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasWateringLocation || searchHasLocationDirection) {
-              this.filteredResults.push(watering);
-            }
-            if (this.filteredResults.length > 0) {
-              this.searchResults = true;
-            } else {
-              this.searchResults = false;
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    //isOffline() {
-    //  this.isOnline = false;
-    //},
-    //isOnline() {
-    //  this.isOnline = true;
-    //},
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
+    onDoubleClick(watering, outlet) {
+      console.log("watering Edit watering:  ", watering)
+      this.$router.push({ name: 'WateringOutletEdit', params: { watering_id: `${watering.id}`, id: `${outlet.id}` } });
     },
   },
 };

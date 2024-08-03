@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Watering {{ watering.name }}</h2>
+    <h2>Edit Watering Outlet {{ watering.name }}</h2>
     <router-link :to="{ name: 'WateringDisplay' }">
       <b>Back to Watering List</b>
     </router-link>

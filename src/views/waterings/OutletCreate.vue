@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Watering System</h3>
+      <h3>Add Outlet to {{ watering.name }} System</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
@@ -9,14 +9,18 @@
       <v-container id="form-container">
         <v-text-field
           v-model="watering.name"
-          :rules="[requiredTitle]"
           label="Name"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Notes" v-model="watering.notes">
+        <v-text-field label="Yard Location" v-model="outlet.yard_location">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-note</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Faucet Location" v-model="outlet.faucet_location">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
@@ -34,57 +38,48 @@ export default {
   },
   data() {
     return {
-      watering: {
-        name: null,
+      outlet: {
+        watering_name: "",
+        yard_location: "",
+        faucet_location: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
       toggle1: false,
       toggle2: false,
       toggle3: false,
-      isFormValid: false,
+      isFormValid: true,
       isAuthorValid: false,
       isTitleValid: false,
       urlMaxLength: 255,
       num: 1,
     };
   },
+  created() {
+    this.$store.dispatch("fetchWateringOnly");
+  },
+  computed: {
+    watering() {
+      return this.$store.state.watering_only;
+    },
+  },
   methods: {
     onSubmit() {
-      this.checkValidations();
+      //this.checkValidations();
+      this.outlet.watering_name = this.watering.name
       if (this.isFormValid) {
         const watering = {
-          ...this.watering,
+          ...this.outlet,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createWatering", watering)) {
+        if (this.$store.dispatch("createWateringOutlet", watering)) {
           this.$router.push({ name: "WateringDisplay" });
         } else {
           alert("Error adding Watering System " + watering.name);
         } 
       } else {
         alert("Please correct required fields and resubmit");
-      }
-    },
-    requiredAuthor: function (value) {
-      if (value) {
-          this.isAuthorValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isAuthorValid = false
-          return 'Please enter Author';
-      }
-    },
-    requiredTitle: function (value) {
-      if (value) {
-          this.isNameValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isNameValid = false
-          return 'Please enter Name';
       }
     },
     checkValidations() {
@@ -95,9 +90,6 @@ export default {
         this.isFormValid = false
       }
     }
-  },
-  watering() {
-    return this.$store.state.watering;
   },
 };
 </script>

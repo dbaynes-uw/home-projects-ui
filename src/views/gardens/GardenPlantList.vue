@@ -135,7 +135,8 @@ export default {
       //console.log("COMPUTED WATERINGS: ", this.$store.state.plants )
       //return this.$store.state.plants;
       return [
-        { plant_name: 'Avacodes',
+        { id: 1,
+          plant_name: 'Avacodes',
           description: 'Desc 1',
           location: '1-A-1',
           water_line: 'East Back',
@@ -146,7 +147,8 @@ export default {
           special_instructions: 'Bed - Section - Row',
           notes: 'Bed-Section-Position - Bed: North to South: 1,2,3 | Section East to West: A,B,C; Rows North to South 1,2,3 ex: 1-A-1 = Bed 1, Section A, Row 1 / OR Bed 1 Row 1 = B1 R1, etc.'
         },
-        { plant_name: 'Broccoli',
+        { id: 2,
+          plant_name: 'Broccoli',
           description: 'Desc 2',
           location: '2-A-1',
           water_line: 'West Back',
@@ -157,7 +159,8 @@ export default {
           special_instructions: 'Special Instrs 2',
           notes: 'Bed-Section-Position - E/W Row ex: 2-A-1, 2-B-1, 2-C-1 N/S ex: 2-A-1, 2-A-2 ',
         },
-        { plant_name: 'Carrots',
+        { id: 3,
+          plant_name: 'Carrots',
           description: 'Desc 3',
           location: '3-A-1',
           water_line: 'West Front (Hydrangeas)',

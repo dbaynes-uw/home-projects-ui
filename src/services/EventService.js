@@ -177,6 +177,66 @@ export default {
     this.init();
     return axios.put(api_url + "products/update", products) //, { params: {vendors_products}});
   },
+  async postTrail(trail) {
+    this.init();
+    return axios.post(api_url + "trails", trail);
+  },
+  getTrails() {
+    this.init();
+    return axios.get(api_url + "trails");
+  },
+  getTrail(id) {
+    this.init();
+    return axios.get(api_url + "trails/" + id);
+  },
+  async putTrail(updatedTrail) {
+    this.init();
+    return axios.put(api_url + "trails" + `/${updatedTrail.id}`, updatedTrail);
+  },
+  deleteTrail(id) {
+    this.init();
+    return axios.delete(api_url + "trails" + `/${id}`);
+  },
+  async postTravel(travel) {
+    this.init();
+    return axios.post(api_url + "travels", travel);
+  },
+  getTravels() {
+    this.init();
+    return axios.get(api_url + "travels")
+  },
+  getTravel(id) {
+    this.init();
+    return axios.get(api_url + "travels/" + id);
+  },
+  async putTravel(updatedTravel) {
+    this.init();
+    return axios.put(api_url + "travels" + `/${updatedTravel.id}`)
+  },
+  deleteTravel(id) {
+    this.init();
+    return axios.delete(api_url + "travels" + `/${id}`);
+  },
+  async postUser(user) {
+    this.init();
+    return axios.get(api_url + "users", user);
+  },
+  getUser(id) {
+    this.init();
+    return axios.get(api_url + "users" + id);
+  },
+  getUsers() {
+    this.init();
+    return axios.get(api_url + "users")
+  },
+  deleteUser(id) {
+    this.init();
+    return axios.delete(api_url + "users" + `/${id}`);
+  },
+  async putUser(user) {
+    this.init();
+    return axios.put(api_url + "users" + `/${user.id}`, user);
+  },
   async deleteVendor(vendor) {
     this.init();
     return axios.delete(api_url + "vendors/" + `${vendor.id}`);
@@ -222,66 +282,22 @@ export default {
     this.init();
     return axios.put(api_url + "vendors/update", vendors_products) //, { params: {vendors_products}});
   },
-  async postUser(user) {
+  async postWatering(watering) {
     this.init();
-    return axios.get(api_url + "users", user);
+    return axios.post(api_url + 'waterings', watering);
   },
-  getUser(id) {
+  async postWateringOutlet(watering_outlet) {
+    console.log("Post Watering Outlet@@@")
     this.init();
-    return axios.get(api_url + "users" + id);
-
+    return axios.post(api_url + 'watering_outlet', watering_outlet);
   },
-  getUsers() {
+  async getWatering() {
     this.init();
-    return axios.get(api_url + "users")
+    return axios.get(api_url + "watering")
   },
-  deleteUser(id) {
+  async getWateringOnly() {
     this.init();
-    return axios.delete(api_url + "users" + `/${id}`);
-  },
-  async putUser(user) {
-    this.init();
-    return axios.put(api_url + "users" + `/${user.id}`, user);
-  },
-  
-  async postTrail(trail) {
-    this.init();
-    return axios.post(api_url + "trails", trail);
-  },
-  getTrails() {
-    this.init();
-    return axios.get(api_url + "trails");
-  },
-  getTrail(id) {
-    this.init();
-    return axios.get(api_url + "trails/" + id);
-  },
-  async putTrail(updatedTrail) {
-    this.init();
-    return axios.put(api_url + "trails" + `/${updatedTrail.id}`, updatedTrail);
-  },
-  deleteTrail(id) {
-    this.init();
-    return axios.delete(api_url + "trails" + `/${id}`);
-  },
-  async postTravel(travel) {
-    this.init();
-    return axios.post(api_url + "travels", travel);
-  },
-  getTravels() {
-    this.init();
-    return axios.get(api_url + "travels")
-  },
-  getTravel(id) {
-    this.init();
-    return axios.get(api_url + "travels/" + id);
-  },
-  async putTravel(updatedTravel) {
-    this.init();
-    return axios.put(api_url + "travels" + `/${updatedTravel.id}`)
-  },
-  deleteTravel(id) {
-    this.init();
-    return axios.delete(api_url + "travels" + `/${id}`);
+    console.log("GETWATERING Only api_url: ", api_url + "watering_only")
+    return axios.get(api_url + "watering_only")
   },
 };
