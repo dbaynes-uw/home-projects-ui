@@ -128,6 +128,7 @@ export default {
             name: this.watering.name,
             active: this.watering.active,
             notes: this.watering.notes,
+            updated_by: this.$store.state.user.resource_owner.email,
           }
         );
         if (result.status >= 200) {

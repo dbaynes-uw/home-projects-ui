@@ -6,7 +6,7 @@
       <li class="li-left">Line: <b>{{ outlet.line_number }}</b></li>
       <li class="li-left">Target: {{ outlet.target }}</li>
       <li class="li-left">Frequency: {{ outlet.frequency }}</li>
-      <li class="li-left">Start: {{ formatTime(outlet.start_time)}} days</li>
+      <li class="li-left">Start: {{ formatTime(outlet.start_time)}}</li>
       <li class="li-left">Duration: {{ outlet.duration }}</li>
       <li class="li-left">Notes: <b>{{ outlet.notes }}</b> </li>
       <!--{{ formatYearDate(outlet.date_of_occurrence) }}-->

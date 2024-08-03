@@ -456,7 +456,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/outlet/edit",
+    path: "/outlet/edit/:id",
     name: "OutletEdit",
     component: OutletEdit,
     meta: { requiresAuth: true}

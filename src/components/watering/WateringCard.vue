@@ -53,12 +53,6 @@ export default {
         this.$router.push({ name: "WateringDisplay" });
       }
     },
-
-    formatTime(time) {
-      var today = new Date()
-      var today_date = (today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate());
-      return DateFormatService.formatFullYearDate(today_date + ' ' + time);
-    },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
