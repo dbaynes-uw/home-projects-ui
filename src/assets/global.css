@@ -4,9 +4,13 @@
   grid-gap: 1rem;
   padding-left: 1rem;
 }
+.cards-1-center {
+  position: relative;
+  left: 25%;
+  width: 50%;
+}
 .card {
   /*border: 1px solid #ccc;*/
-  
   background: #41b883;
   padding: 1rem;
   padding-top: 0em;

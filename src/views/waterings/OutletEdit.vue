@@ -1,35 +1,35 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Watering {{ watering.name }}</h2>
+    <h2>Edit Outlet {{ outlet.yard_location }} {{ outlet.faucet_location }}</h2>
     <router-link :to="{ name: 'WateringDisplay' }">
       <b>Back to Watering List</b>
     </router-link>
     <br/><br/>
-    <ul>
-      <!--li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringDisplay' }">Back to Watering</router-link>
-        </button>
-      </!--li-->
-      <li class="center">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'OutletCreate' }">Add Outlet</router-link>
-        </button>
-      </li>
-    </ul> 
     <br/>
     <form class="form-card-display" @submit.prevent="updateWatering">
       <div class="form-container">
-        <label>Name:</label>
-        <input type="text" class="text-style" v-model="watering.name" required />
-        <label>Active:</label>
-        <select class="select-status" v-model="watering.active" required>
+        <label>Yard Location:</label>
+        <input type="text" class="text-style" v-model="outlet.yard_location" required />
+        <label>Faucet Location:</label>
+        <input type="text" class="text-style" v-model="outlet.faucet_location" required />
+        <label>Line #:</label>
+        <input type="text" class="text-style" v-model="outlet.line_number" required />
+        <label>Target:</label>
+        <input type="text" class="text-style" v-model="outlet.target" required />
+        <label>Frequency:</label>
+        <input type="text" class="text-style" v-model="outlet.frequency" required />
+        <label>Start Time:</label>
+        <input type="text" class="text-style" v-model="outlet.start_time" required />
+        <label>Duration:</label>
+        <input type="text" class="text-style" v-model="outlet.duration" required />
+        <label>Status:</label>
+        <select class="select-status" v-model="outlet.active" required>
           <option
             v-for="option in active_statuses"
             :value="option"
             :key="option"
-            :selected="option === watering.active"
+            :selected="option === outlet.active"
           >
             &nbsp;&nbsp;
             {{ option }}
@@ -52,7 +52,7 @@
         /-->
         <label>Notes:</label>
         <textarea
-          v-model="watering.notes"
+          v-model="outlet.notes"
           rows="3"
           cols="40"
           class="textarea-style"
@@ -77,29 +77,42 @@ export default {
     var work_url = ""
     if (window.location.port == "8080") {
       // or: "http://davids-macwatering-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/waterings/";
+      work_url = "http://localhost:3000/api/v1/outlets/";
     } else {
       work_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/";
     }
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.watering = result.data;
-    this.watering.created_at = this.formatFullYearDate(this.watering.created_at)
-    this.watering.updated_at = this.formatFullYearDate(this.watering.updated_at)
-    this.watering.active = this.watering.active == 1 ? 'Active' : 'Inactive'
+    this.outlet = result.data;
+    this.outlet.active = this.outlet.active == 1 ? 'Active' : 'Inactive'
+    this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
+    this.watering = await axios.get(this.api_url + +this.outlet.watering_id);
+  },
+  created() {
+    //this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
   },
   data() {
     return {
-      watering: {
+      outlet: {
         id: null,
-        name: null,
+        watering_id: null,
+        yard_location: null,
+        faucet_location: null,
+        line_number: null,
+        target: null,
+        frequency: null,
+        start_time: null,
+        duration: null,
         active: null,
         notes: null,
         created_at: null,
         updated_at: null,
         created_by: this.$store.state.user.resource_owner.email,
         updated_by: this.$store.state.user.resource_owner.email,
+      },
+      watering: {
+        //name: "",
       },
       active_statuses: ["Active", "Inactive"],
       api_url: ""
@@ -109,10 +122,10 @@ export default {
   methods: {
     async updateWatering() {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Watering ",
+        title: "Update Watering Outlet ",
         message:
           "Are you sure you want to update " + 
-          this.watering.name,
+          this.outlet.yard_location + ' ' + this.outlet.faucet_location,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
@@ -125,22 +138,29 @@ export default {
             this.api_url + 
             this.$route.params.id,
           {
-            name: this.watering.name,
-            active: this.watering.active,
-            notes: this.watering.notes,
-            updated_by: this.$store.state.user.resource_owner.email,
+            yard_location: this.outlet.yard_location,
+            faucet_location: this.outlet.faucet_location,
+            line_number: this.outlet.line_number,
+            target: this.outlet.target,
+            frequency: this.outlet.frequency,
+            start_time: this.outlet.start_time,
+            duration: this.outlet.duration,
+            active: this.outlet.active,
+            notes: this.outlet.notes,
+            updated_by: this.$store.state.user.resource_owner.email
           }
         );
         if (result.status >= 200) {
           alert("Watering has been updated");
-          this.$router.push({ name: "WateringEdit", params: { id: this.watering.id } });
+          this.$router.push({ name: "WateringDisplay" });
         } else {
           alert("Update Error Code ", result.status);
         }
       }
     },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
+    formatTime(value) {
+      console.log("Format Time: ", value)
+      return DateFormatService.formatTimejs(value);
     },
   },
 };

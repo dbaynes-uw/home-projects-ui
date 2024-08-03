@@ -4,6 +4,7 @@
     <v-card-title class="pb-0">
       <h2>Home Gardening</h2>
     </v-card-title>
+    <br/>
     <ul>
       <li class="left">
         <button id="button-as-link">
@@ -11,67 +12,13 @@
         </button>
       </li>
       <li class="left">
-        <button id="link-as-button">
-          <router-link :to="{ name: 'ProductVendorList' }">Shopping List By Vendor</router-link>
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'GardenPlantList' }">Gardens</router-link>
         </button>
       </li>
     </ul>
-    <ul class="py-2">
-      <li>
-        <button id="link-as-button">
-          <router-link :to="{ name: 'ProductList' }">Shopping List By Product</router-link>
-        </button>
-      </li>
-      <li>
-        <button id="link-as-button">
-          <router-link :to="{ name: 'ProductVendorCreate' }">Create Vendor/Product</router-link>
-        </button>
-      </li>
-    </ul> 
     <br/>
   </v-card>
-  <v-card-text>
-    <v-form>
-      <h1>{{ this.$route.params.location }} </h1>
-      <h2>
-        <u @click='shoppingListDisplay(this.showShoppingList)'>Toggle Shopping List</u>
-      </h2>
-      <v-container id="form-container">
-        <div class="row">
-          <div class="vendor-name" v-for="(vendor, vendor_index) in products_by_location" :key="vendor_index">
-            <h1>{{ vendor.vendor_name }}</h1>
-            <span v-for="(product, product_index) in this.products_by_location" :key="product_index">        
-              <div v-if="product.vendor_name == vendor.vendor_name">
-                <span v-for="(item, item_index) in product.products" :key="item_index">
-                  <span v-if="this.showShoppingList == true">
-                    <span v-if="item.active == true">
-                      <input
-                        type="checkbox"
-                        :checked="item.active"
-                        @change="isChecked(item, item.active)"
-                        class="field"
-                      />
-                      <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
-                    </span>
-                  </span>
-                  <span v-else>
-                    <input
-                        type="checkbox"
-                        :checked="item.active"
-                        @change="isChecked(item, item.active)"
-                        class="field"
-                      />
-                    <label class="checkbox-right" @dblclick="doubleClickProduct(item, vendor)">{{ item.product_name }}</label>
-                  </span>
-                </span>
-              </div>
-            </span>
-          </div>
-        </div>
-        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
-      </v-container>
-    </v-form>
-  </v-card-text>
 </template>
 <script>
 let time = null;  // define time be null

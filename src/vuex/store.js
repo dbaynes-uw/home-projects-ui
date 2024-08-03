@@ -209,8 +209,17 @@ export default new Vuex.Store({
     SET_ERRORS(state, errors) {
       state.errors = errors
     },
-    SET_WATERINGS(state, plants) {
-      state.plants = plants
+    ADD_WATERING(state, watering) {
+      state.watering.push(watering);
+    },
+    SET_WATERING(state, watering) {
+      state.watering = watering
+    },
+    SET_WATERING_ONLY(state, watering_only) {
+      state.watering_only = watering_only
+    },
+    SET_OUTLET(state, outlet) {
+      state.outlet = outlet
     },
   },
   actions: {
@@ -366,13 +375,13 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    //async fetchGardenPlants() {
     async fetchGardenPlants() {
-      //async fetchGardenPlants({ commit }) {
       const plants = [
         {author: 'A1'},
         {author: 'A2'}
       ]
-      console.log("STORE WATERING: ", plants)
+      //console.log("STORE WATERING: ", plants)
         //EventService.getGardenPlants()
         //  .then((response) => {
         //    commit("SET_WATERINGS", response.data);
@@ -714,115 +723,6 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async createVendor({ commit }, vendor) {
-      EventService.postVendor(vendor)
-        .then(() => {
-          commit("PUT_VENDOR", vendor);
-          console.log("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
-        })
-        .catch((error) => {
-          //console.log("Error Response: ", error.response)
-          //console.log("Error Response Status: ", error.response.status)
-          //console.log("Error Response Request: ", error.response.request)
-          //console.log("Error Response Headers: ", error.response.headers)
-          //console.log("Error Response Data.message: ", error.response.data.message)
-          //console.log("error.response.data.error: ", error.response.data.error)
-          //console.log("Error Response Data Errors: ", error.response.data.errors)
-          //console.log("Error Message: ", error.message)
-          //console.log("Display Error: ", error.response.data.error);
-          alert("Store: " + error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
-        });
-    },
-    async deleteVendor({ commit }, vendor) {
-      EventService.deleteVendor(vendor)
-        .then((response) => {
-          commit("DELETE_VENDOR", response.data);
-          alert("Vendor " + vendor.title + " was deleted");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-
-    async editVendor({ commit }, vendor) {
-      EventService.putVendor(vendor)
-        .then(() => {
-          commit("PUT_VENDOR", vendor);
-          alert("Vendor was successfully updated.");
-        })
-        .catch((error) => {
-          alert(error.response.data.error);
-        });
-    },
-    async fetchVendors({ commit }) {
-      EventService.getVendors()
-        .then((response) => {
-          commit("SET_VENDORS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log("Store getVendors Error from ES: " + error);
-          //alert("Store getVendors Error from ES: " + error.response.data.error);
-          //alert("Store getVendors Error: " + error);
-        });
-    },
-    async fetchVendorsGroup({ commit }) {
-      EventService.getVendorsGroup()
-        .then((response) => {
-          commit("SET_VENDORS_GROUP", response.data);
-          console.log("ES FetchVendorsGroup response.data: ", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    async fetchVendorsLocationsGroup({ commit }) {
-      EventService.getVendorsLocationsGroup()
-        .then((response) => {
-          commit("SET_VENDORS_LOCATIONS_GROUP", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-          return;
-        });
-    },
-    async fetchVendorsProductsGroup({ commit }) {
-      EventService.getVendorsProductsGroup()
-        .then((response) => {
-          commit("SET_VENDORS_PRODUCTS_GROUP", response.data);
-          console.log("ES FetchVendorsProductsGroup response.data: ", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-          router.push({name:'home'})
-        });
-    },
-    async fetchVendorsProducts({ commit }) {
-      EventService.getVendorsProducts()
-        .then((response) => {
-          commit("SET_VENDORS_PRODUCTS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log("API ERROR Store getVendorsProducts error: ", error);
-          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
-        });
-    },
-    async putVendorsProducts({ commit }, vendors_products) {
-      console.log("STORE - update vendors_products: ")
-      EventService.putVendorsProducts(vendors_products)
-        .then(() => {
-          console.log("STORE - update vendors_products: ")
-          commit("SET_VENDORS_PRODUCTS", vendors_products);
-        })
-        .catch((error) => {
-          alert("Error in putVendorsProducts");
-          console.log(error);
-        });
-    },
     async createTrail({ commit }, trail) {
       EventService.postTrail(trail)
         .then(() => {
@@ -987,6 +887,161 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           console.log(error);
+        });
+    },
+    async createVendor({ commit }, vendor) {
+      EventService.postVendor(vendor)
+        .then(() => {
+          commit("PUT_VENDOR", vendor);
+          console.log("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+        })
+        .catch((error) => {
+          //console.log("Error Response: ", error.response)
+          //console.log("Error Response Status: ", error.response.status)
+          //console.log("Error Response Request: ", error.response.request)
+          //console.log("Error Response Headers: ", error.response.headers)
+          //console.log("Error Response Data.message: ", error.response.data.message)
+          //console.log("error.response.data.error: ", error.response.data.error)
+          //console.log("Error Response Data Errors: ", error.response.data.errors)
+          //console.log("Error Message: ", error.message)
+          //console.log("Display Error: ", error.response.data.error);
+          alert("Store: " + error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
+        });
+    },
+    async deleteVendor({ commit }, vendor) {
+      EventService.deleteVendor(vendor)
+        .then((response) => {
+          commit("DELETE_VENDOR", response.data);
+          alert("Vendor " + vendor.title + " was deleted");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    async editVendor({ commit }, vendor) {
+      EventService.putVendor(vendor)
+        .then(() => {
+          commit("PUT_VENDOR", vendor);
+          alert("Vendor was successfully updated.");
+        })
+        .catch((error) => {
+          alert(error.response.data.error);
+        });
+    },
+    async fetchVendors({ commit }) {
+      EventService.getVendors()
+        .then((response) => {
+          commit("SET_VENDORS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log("Store getVendors Error from ES: " + error);
+          //alert("Store getVendors Error from ES: " + error.response.data.error);
+          //alert("Store getVendors Error: " + error);
+        });
+    },
+    async fetchVendorsGroup({ commit }) {
+      EventService.getVendorsGroup()
+        .then((response) => {
+          commit("SET_VENDORS_GROUP", response.data);
+          console.log("ES FetchVendorsGroup response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchVendorsLocationsGroup({ commit }) {
+      EventService.getVendorsLocationsGroup()
+        .then((response) => {
+          commit("SET_VENDORS_LOCATIONS_GROUP", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          return;
+        });
+    },
+    async fetchVendorsProductsGroup({ commit }) {
+      EventService.getVendorsProductsGroup()
+        .then((response) => {
+          commit("SET_VENDORS_PRODUCTS_GROUP", response.data);
+          console.log("ES FetchVendorsProductsGroup response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+          router.push({name:'home'})
+        });
+    },
+    async fetchVendorsProducts({ commit }) {
+      EventService.getVendorsProducts()
+        .then((response) => {
+          commit("SET_VENDORS_PRODUCTS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log("API ERROR Store getVendorsProducts error: ", error);
+          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
+        });
+    },
+    async putVendorsProducts({ commit }, vendors_products) {
+      console.log("STORE - update vendors_products: ")
+      EventService.putVendorsProducts(vendors_products)
+        .then(() => {
+          console.log("STORE - update vendors_products: ")
+          commit("SET_VENDORS_PRODUCTS", vendors_products);
+        })
+        .catch((error) => {
+          alert("Error in putVendorsProducts");
+          console.log(error);
+        });
+    },
+    async createWatering({ commit }, watering) {
+      EventService.postWatering(watering)
+        .then(() => {
+          commit("ADD_WATERING", watering);
+          alert("Watering was successfully added for " + watering.name);
+        })
+        .catch((error) => {
+          alert("Error in postWatering of createWatering Action");
+          console.log(error);
+        });
+    },
+    async createWateringOutlet({ commit }, watering_outlet) {
+      console.log("createWateringOutlet: ", watering_outlet)
+      EventService.postWateringOutlet(watering_outlet)
+        .then(() => {
+          commit("ADD_WATERING_OUTLET", watering_outlet);
+          alert("Watering was successfully added for " + watering_outlet.yard_location + " " + watering_outlet.faucet_location);
+        })
+        .catch((error) => {
+          alert("Error in postWatering of createWateringOutlet Action");
+          console.log(error);
+        });
+    },
+
+    async fetchWatering({ commit }) {
+      EventService.getWatering()
+        .then((response) => {
+          commit("SET_WATERING", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log("API ERROR Store getWatering error: ", error);
+          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
+        });
+    },
+    async fetchWateringOnly({ commit }) {
+      EventService.getWateringOnly()
+        .then((response) => {
+          commit("SET_WATERING_ONLY", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log("API ERROR Store getWateringOnly error: ", error);
+          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
         });
     },
 
