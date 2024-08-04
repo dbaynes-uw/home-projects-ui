@@ -8,6 +8,11 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
+        </button>
+      </li>
+      <li class="left">
+        <button id="button-as-link">
           <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
         </button>
       </li>
