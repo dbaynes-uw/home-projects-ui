@@ -139,6 +139,10 @@ export default new Vuex.Store({
     DELETE_VENDOR(state, vendor) {
       state.vendor = vendor;
     },
+    DELETE_WATERING(state, watering) {
+      console.log("Delete Watering: ", watering)
+      state.watering = watering;
+    },
     SET_SHOPPING_LIST(state, shopping_list) {
       state.shopping_list = shopping_list;
     },
@@ -209,11 +213,9 @@ export default new Vuex.Store({
     SET_ERRORS(state, errors) {
       state.errors = errors
     },
-    ADD_WATERING(state, watering) {
-      state.watering.push(watering);
-    },
-    SET_WATERING(state, watering) {
-      state.watering = watering
+    SET_WATERINGS(state, waterings) {
+      console.log("SET Watering@@: ", waterings)
+      state.waterings = waterings;
     },
     SET_WATERING_ONLY(state, watering_only) {
       state.watering_only = watering_only
@@ -1001,7 +1003,7 @@ export default new Vuex.Store({
     async createWatering({ commit }, watering) {
       EventService.postWatering(watering)
         .then(() => {
-          commit("ADD_WATERING", watering);
+          commit("SET_WATERINGS", watering);
           alert("Watering was successfully added for " + watering.name);
         })
         .catch((error) => {
@@ -1021,15 +1023,26 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
-    async fetchWatering({ commit }) {
-      EventService.getWatering()
+    async deleteWatering({ commit }, watering) {
+      EventService.deleteWatering(watering)
         .then((response) => {
-          commit("SET_WATERING", response.data);
+          commit("DELETE_WATERING", response.data);
+          alert("Watering " + watering.title + " was deleted");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    async fetchWaterings({ commit }) {
+      EventService.getWaterings()
+        .then((response) => {
+          console.log("FetchWaterings: ", response.data.outlets)
+          commit("SET_WATERINGS", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log("API ERROR Store getWatering error: ", error);
+          console.log("API ERROR Store getWaterings error: ", error);
           //alert("API Error - Store getVendorsProducts Error from ES: ", error);
         });
     },

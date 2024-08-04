@@ -2,9 +2,9 @@
    <div class="card">
     <p id="p-custom-u">
       <router-link
-        :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+        :to="{ name: 'WateringEdit', params: { id: `${waterings.id}` } }"
       >
-        {{ watering.name }}
+        {{ waterings.name }}
       </router-link>
     </p>
   </div>
@@ -16,7 +16,7 @@ import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'WateringCard',
   props: {
-    watering: {
+    waterings: {
       type: Object,
       default: () => ({})
     },

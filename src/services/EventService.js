@@ -291,13 +291,18 @@ export default {
     this.init();
     return axios.post(api_url + 'watering_outlet', watering_outlet);
   },
-  async getWatering() {
+  async getWaterings() {
     this.init();
-    return axios.get(api_url + "watering")
+    return axios.get(api_url + "get_waterings")
   },
   async getWateringOnly() {
     this.init();
     console.log("GETWATERING Only api_url: ", api_url + "watering_only")
     return axios.get(api_url + "watering_only")
+  },
+  deleteWatering() {
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "watering/");
   },
 };

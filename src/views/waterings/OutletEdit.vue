@@ -7,7 +7,7 @@
     </router-link>
     <br/><br/>
     <br/>
-    <form class="form-card-display" @submit.prevent="updateWatering">
+    <form class="form-card-display" @submit.prevent="updateOutlet">
       <div class="form-container">
         <label>Yard Location:</label>
         <input type="text" class="text-style" v-model="outlet.yard_location" required />
@@ -80,17 +80,20 @@ export default {
       work_url = "http://localhost:3000/api/v1/outlets/";
     } else {
       work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/";
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/outlets/";
     }
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.outlet = result.data;
+    
     this.outlet.active = this.outlet.active == 1 ? 'Active' : 'Inactive'
     this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
-    this.watering = await axios.get(this.api_url + +this.outlet.watering_id);
+    console.log("Outlet Edit: ", this.outlet)
+    //this.watering = await axios.get(this.api_url + +this.outlet.watering_id);
   },
   created() {
     //this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
+    //Xthis.$store.dispatch("fetchOutlets"
   },
   data() {
     return {
@@ -111,16 +114,16 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
         updated_by: this.$store.state.user.resource_owner.email,
       },
-      watering: {
-        //name: "",
-      },
+      //watering: {
+      //  //name: "",
+      //},
       active_statuses: ["Active", "Inactive"],
       api_url: ""
     };
   },
   setup() {},
   methods: {
-    async updateWatering() {
+    async updateOutlet() {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Update Watering Outlet ",
         message:
@@ -136,7 +139,7 @@ export default {
         //};
         const result = await axios.put(
             this.api_url + 
-            this.$route.params.id,
+            this.outlet.id,
           {
             yard_location: this.outlet.yard_location,
             faucet_location: this.outlet.faucet_location,

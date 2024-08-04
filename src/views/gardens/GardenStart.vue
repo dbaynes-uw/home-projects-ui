@@ -22,15 +22,15 @@
 </template>
 <script>
 let time = null;  // define time be null
-import { v4 as uuidv4 } from "uuid";
+//import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "ProductLocationList",
-  props: {
-    location: {
-      type: String, required: true
-    }
-  },
+  name: "GardenStart",
+ //props: {
+ //  location: {
+ //    type: String, required: true
+ //  }
+ //},
   components: {
     ConfirmDialogue,
   },
@@ -57,29 +57,29 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchProductsByLocation", this.$route.params.location );
+    //this.$store.dispatch("fetchProductsByLocation", this.$route.params.location );
 
   },
   computed: {
-    products_by_location() {
-      return this.$store.state.products_by_location;
-    },
+    //products_by_location() {
+    //  return this.$store.state.products_by_location;
+    //},
   },
   methods: {
-    onSubmit() {
-      const sub_products_by_location = {
-        ...this.products_by_location,
-        id: uuidv4(),
-        created_by: this.$store.state.user.resource_owner.email,
-      };
-      
-      if (this.$store.dispatch("putVendorsProducts", sub_products_by_location)) {
-        alert("Vendors Products List Updated Successfully")
-        location.reload();
-      } else {
-        alert("Error adding Products in ProductLocaionsList View ");
-      }
-    },
+    //onSubmit() {
+    //  const sub_products_by_location = {
+    //    ...this.products_by_location,
+    //    id: uuidv4(),
+    //    created_by: this.$store.state.user.resource_owner.email,
+    //  };
+    //  
+    //  if (this.$store.dispatch("putVendorsProducts", sub_products_by_location)) {
+    //    alert("Vendors Products List Updated Successfully")
+    //    location.reload();
+    //  } else {
+    //    alert("Error adding Products in ProductLocaionsList View ");
+    //  }
+    //},
     isChecked(item, active) {
       item.active = active == true ? false : true
       return item.active

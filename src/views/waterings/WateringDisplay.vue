@@ -26,30 +26,33 @@
   <div class="watering-display">
     <span class="h3-left-total-child">Click Change</span>
     <div class="cards-1-center">
-      <WateringCard :watering="watering">      
+      <WateringCard :waterings="waterings">      
       </WateringCard>
       <br />
     </div>
   </div>
-  <h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</h3>
-  <span class="h3-left-total-child">Double click Item Below to Edit</span>
+  <!--!ID {{ waterings.outlets[0].yard_location }}-->
+  <!--!YL {{ outlets.yard_location }}-->
+  <h3 id="h3-left">Total Outlets: {{ waterings.outlets.length }}</h3>
+  <span class="h3-left-total-child">Double click Item Change</span>
     <div class="cards">
       <OutletCard
-        v-for="outlet in watering.outlets"
+        v-for="outlet in waterings.outlets"
         :key="outlet.id"
         :outlet="outlet"
         class="card"
         @dblclick="onDoubleClick(outlet)"
       />
     </div>
-    <v-img
+    <!--v-img
         :src="require('../../assets/vegetable_garden_summer_2024.png')"
         class="my-3"
         contain
         height="400"
-    />
+    /-->
 </template>
 <script>
+import axios from "axios";
 import WateringCard from "@/components/watering/WateringCard.vue";
 import OutletCard from "@/components/outlets/OutletCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
@@ -64,7 +67,7 @@ export default {
   },
   data() {
     return {
-      outlet: {
+      outlets: {
         id: null,
         watering_id: null,
         yard_location: null,
@@ -85,13 +88,34 @@ export default {
       statusMessage: "",
     };
   },
-  mounted() {},
+  mounted() {
+    console.log("MOUNTED@@ Watering@@: ", this.$store.state.waterings)
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macwatering-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3000/api/v1/waterings/get_waterings";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/get_waterings";
+    }
+    this.api_url = work_url
+    this.waterings = axios.get(this.api_url);
+    console.log("Waterings in Mounted: ", this.waterings.outlets)
+    //this.$store.state.waterings = {}
+    //Object.keys(this.$store.state.waterings).forEach(key => 
+    //  delete(this.$store.state.waterings, key)
+    //)
+    console.log("STATE OUT: ", this.$store.state.waterings)
+
+  },
   created() {
-    this.$store.dispatch("fetchWatering");
+    this.$store.dispatch("fetchWaterings");
   },
   computed: {
-    watering() {
-      return this.$store.state.watering;
+    waterings() {
+      console.log("Computed: ", this.$store.state.waterings)
+      return this.$store.state.waterings;
+    },
       /* For local testing: Outlet
       return [
       {   yard_location: 'South',
@@ -103,18 +127,22 @@ export default {
           duration: '20mins',
           notes: 'Note or two',
         },
-      */
     },
-  outlets() {
-    return this.$store.state.outlets;
-  },
+   */
+  //outlets() {
+  //  return this.$store.state.outlets;
+  //},
     origin() {
       return "WateringDisplay"
     }
   },
   methods: {
+    //waterings() {
+    //  console.log("Watering@@: ", this.$store.state.waterings)
+    //  return this.$store.state.waterings;
+    //},
     onDoubleClick(outlet) {
-      console.log("watering Edit outlet:  ", outlet)
+      console.log("watering Edit outlet:  ", outlet.id)
       this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
     },
   },

@@ -1,5 +1,6 @@
 <template>
   <div class="card">
+    
     <p id="p-custom-left-u">{{ outlet.yard_location }} - {{ outlet.faucet_location }}</p>
     <ul>
       <li class="li-left">Status: <b>{{ outlet.active == 1 ? 'Active' : 'Inactive' }}</b></li>
