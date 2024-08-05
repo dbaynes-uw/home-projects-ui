@@ -6,11 +6,13 @@
     </v-card-title>
     <br/>
     <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
-        </button>
-      </li>
+      <span v-if="!waterings">
+        <li class="left">
+          <button id="button-as-link">
+           <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
+          </button>
+        </li>
+      </span>
       <li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
@@ -62,13 +64,12 @@ export default {
     };
   },
   created() {
-    //this.$store.dispatch("fetchProductsByLocation", this.$route.params.location );
-
+    this.$store.dispatch("fetchWaterings");
   },
   computed: {
-    //products_by_location() {
-    //  return this.$store.state.products_by_location;
-    //},
+    waterings() {
+    return this.$store.state.waterings;
+    },
   },
   methods: {
     //onSubmit() {

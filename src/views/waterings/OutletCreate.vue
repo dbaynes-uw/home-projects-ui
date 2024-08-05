@@ -25,6 +25,50 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
+        <v-text-field label="Line #" v-model="outlet.line_number">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-note</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Target" v-model="outlet.target">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Frequency" v-model="outlet.frequency">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-clock</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Start Time" v-model="outlet.start_time">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Duration" v-model="outlet.duration">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-clock</v-icon>
+          </template>
+        </v-text-field>
+        <v-select
+          label="Status"
+          :items="active_statuses"
+          v-model="outlet.active"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
+          <option
+            v-for="option in active_statuses"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === outlet.active"
+          >
+            {{ option }}
+          </option>
+        </v-select>        
+
         <v-btn type="submit" block class="mt-2">Submit</v-btn>
         <!--button type="submit" block class="mt-2">Submit</~button-->
       </v-container>
@@ -38,10 +82,17 @@ export default {
   },
   data() {
     return {
+      active_statuses: ["Active", "Inactive"],
       outlet: {
         watering_name: "",
         yard_location: "",
         faucet_location: "",
+        line_number: "",
+        target: "",
+        frequency: "",
+        start_time: "",
+        duration: "",
+        active: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -94,7 +145,9 @@ export default {
 };
 </script>
 <style lang="css">
-
+.v-field__field {
+  font-size: 1.4rem !important
+}
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
