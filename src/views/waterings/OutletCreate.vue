@@ -3,6 +3,10 @@
     <v-card-title class="pb-0">
       <h3>Add Outlet to {{ watering.name }} System</h3>
     </v-card-title>
+    <router-link :to="{ name: 'WateringDisplay' }">
+      <b>Back to Watering List</b>
+    </router-link>
+    <br/><br/>
   </v-card>
   <v-card-text>
     <v-form @submit.prevent="onSubmit">

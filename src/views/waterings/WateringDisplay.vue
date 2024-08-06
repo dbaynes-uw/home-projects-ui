@@ -9,11 +9,13 @@
     </v-card-title>
     <br/>
     <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
-        </button>
-      </li>
+      <span v-if="!waterings">
+        <li class="left">
+          <button id="button-as-link">
+           <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
+          </button>
+        </li>
+      </span>
       <li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'GardenPlantList' }">Gardens</router-link>
@@ -89,7 +91,6 @@ export default {
     };
   },
   mounted() {
-    console.log("MOUNTED@@ Watering@@: ", this.$store.state.waterings)
     var work_url = ""
     if (window.location.port == "8080") {
       // or: "http://davids-macwatering-pro.local:3000/api/v1/";
@@ -100,33 +101,26 @@ export default {
     }
     this.api_url = work_url
     this.waterings = axios.get(this.api_url);
-    console.log("Waterings in Mounted: ", this.waterings.outlets)
-    //this.$store.state.waterings = {}
-    //Object.keys(this.$store.state.waterings).forEach(key => 
-    //  delete(this.$store.state.waterings, key)
-    //)
-    console.log("STATE OUT: ", this.$store.state.waterings)
-
   },
   created() {
     this.$store.dispatch("fetchWaterings");
   },
   computed: {
     waterings() {
-      console.log("Computed: ", this.$store.state.waterings)
       return this.$store.state.waterings;
     },
       /* For local testing: Outlet
+    waterings() {
       return [
-      {   yard_location: 'South',
-          faucet_location: 'East',
-          line_number: '1',
-          target: 'Vegetable Garden',
-          frequency: 'Everyday',
-          start_time: '06:40',
-          duration: '20mins',
-          notes: 'Note or two',
-        },
+      { yard_location: 'South',
+        faucet_location: 'East',
+        line_number: '1',
+        target: 'Vegetable Garden',
+        frequency: 'Everyday',
+        start_time: '06:40',
+        duration: '20mins',
+        notes: 'Note or two',
+      },
     },
    */
   //outlets() {
@@ -137,10 +131,6 @@ export default {
     }
   },
   methods: {
-    //waterings() {
-    //  console.log("Watering@@: ", this.$store.state.waterings)
-    //  return this.$store.state.waterings;
-    //},
     onDoubleClick(outlet) {
       console.log("watering Edit outlet:  ", outlet.id)
       this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });

@@ -214,7 +214,6 @@ export default new Vuex.Store({
       state.errors = errors
     },
     SET_WATERINGS(state, waterings) {
-      console.log("SET Watering@@: ", waterings)
       state.waterings = waterings;
     },
     SET_WATERING_ONLY(state, watering_only) {
@@ -1037,7 +1036,6 @@ export default new Vuex.Store({
     async fetchWaterings({ commit }) {
       EventService.getWaterings()
         .then((response) => {
-          console.log("FetchWaterings: ", response.data.outlets)
           commit("SET_WATERINGS", response.data);
           return response.data;
         })

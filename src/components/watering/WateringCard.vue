@@ -7,6 +7,13 @@
         {{ waterings.name }}
       </router-link>
     </p>
+    <p id="p-custom-u">
+      <router-link
+        :to="{ name: 'OutletCreate' }"
+      >
+        Add Outlet
+      </router-link>
+    </p>
   </div>
 </template>
 

@@ -7,11 +7,6 @@
     </router-link>
     <br/><br/>
     <ul>
-      <!--li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringDisplay' }">Back to Watering</router-link>
-        </button>
-      </!--li-->
       <li class="center">
         <button id="button-as-link">
           <router-link  :to="{ name: 'OutletCreate' }">Add Outlet</router-link>

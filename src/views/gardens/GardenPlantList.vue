@@ -127,12 +127,10 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchGardenPlants");
-    console.log("CREATED WATERINGS: ", this.plants )
     this.sortedData = this.plants;
   },
   computed: {
     plants() {
-      //console.log("COMPUTED WATERINGS: ", this.$store.state.plants )
       //return this.$store.state.plants;
       return [
         { id: 1,
