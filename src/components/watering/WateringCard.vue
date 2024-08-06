@@ -7,7 +7,7 @@
         {{ waterings.name }}
       </router-link>
     </p>
-    <p id="p-custom-u">
+    <p id="p-custom-link">
       <router-link
         :to="{ name: 'OutletCreate' }"
       >

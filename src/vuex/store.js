@@ -219,8 +219,8 @@ export default new Vuex.Store({
     SET_WATERING_ONLY(state, watering_only) {
       state.watering_only = watering_only
     },
-    SET_OUTLET(state, outlet) {
-      state.outlet = outlet
+    SET_WATERING_OUTLETS(state, watering_outlets) {
+      state.watering_outlets = watering_outlets
     },
   },
   actions: {
@@ -1014,7 +1014,7 @@ export default new Vuex.Store({
       console.log("createWateringOutlet: ", watering_outlet)
       EventService.postWateringOutlet(watering_outlet)
         .then(() => {
-          commit("ADD_WATERING_OUTLET", watering_outlet);
+          commit("SET_WATERING_OUTLET", watering_outlet);
           alert("Watering was successfully added for " + watering_outlet.yard_location + " " + watering_outlet.faucet_location);
         })
         .catch((error) => {

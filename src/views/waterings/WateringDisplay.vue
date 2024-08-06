@@ -46,12 +46,12 @@
         @dblclick="onDoubleClick(outlet)"
       />
     </div>
-    <!--v-img
+    <v-img
         :src="require('../../assets/vegetable_garden_summer_2024.png')"
         class="my-3"
         contain
         height="400"
-    /-->
+    />
 </template>
 <script>
 import axios from "axios";
