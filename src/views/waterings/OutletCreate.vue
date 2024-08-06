@@ -19,21 +19,63 @@
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Yard Location" v-model="outlet.yard_location">
+        <v-select
+          label="Yard Location"
+          :items="yard_locations"
+          :rules="[requiredYardLocation]"
+          v-model="outlet.yard_location"
+        >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
           </template>
-        </v-text-field>
-        <v-text-field label="Faucet Location" v-model="outlet.faucet_location">
+          <option
+            v-for="option in yard_locations"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === outlet.yard_location"
+          >
+            {{ option }}
+          </option>
+        </v-select>          
+        <v-select
+          label="Faucet Location"
+          :items="faucet_locations"
+          :rules="[requiredFaucetLocation]"
+          v-model="outlet.faucet_location"
+        >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
           </template>
-        </v-text-field>
-        <v-text-field label="Line #" v-model="outlet.line_number">
+          <option
+            v-for="option in faucet_locations"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === outlet.faucet_location"
+          >
+            {{ option }}
+          </option>
+        </v-select>   
+        <v-select
+          label="Line #"
+          :items="line_numbers"
+          v-model="outlet.line_number"
+          :rules="[requiredLineNumber]"
+        >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
           </template>
-        </v-text-field>
+          <option
+            v-for="option in line_number"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === outlet.line_number"
+          >
+            {{ option }}
+          </option>
+        </v-select>   
         <v-text-field label="Target" v-model="outlet.target">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
@@ -86,7 +128,6 @@ export default {
   },
   data() {
     return {
-      active_statuses: ["Active", "Inactive"],
       outlet: {
         watering_name: "",
         yard_location: "",
@@ -100,14 +141,14 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      toggle1: false,
-      toggle2: false,
-      toggle3: false,
-      isFormValid: true,
-      isAuthorValid: false,
-      isTitleValid: false,
-      urlMaxLength: 255,
-      num: 1,
+      active_statuses: ["Active", "Inactive"],
+      yard_locations: ["North", "South"],
+      faucet_locations: ["East", "West"],
+      line_numbers: ["1","2","3","4"],
+      ifFormValid: false,
+      isYardLocationValid: false,
+      isFaucetLocationValid: false,
+      isLineNumberValid: false,
     };
   },
   created() {
@@ -120,8 +161,9 @@ export default {
   },
   methods: {
     onSubmit() {
-      //this.checkValidations();
+      this.checkValidations();
       this.outlet.watering_name = this.watering.name
+      console.log("@@FORM VALID? ", this.isFormValid)
       if (this.isFormValid) {
         const watering = {
           ...this.outlet,
@@ -133,17 +175,56 @@ export default {
         } else {
           alert("Error adding Watering System " + watering.name);
         } 
+      } 
+    },
+    requiredYardLocation: function (value) {
+      if (value) {
+          this.isYardLocationValid = true
+          return true;
       } else {
-        alert("Please correct required fields and resubmit");
+          this.isFormValid = false
+          this.isYardLocationValid = false
+          return 'Please enter Yard Location';
+      }
+    },
+    requiredFaucetLocation: function (value) {
+      if (value) {
+          this.isFaucetLocationValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isFaucetLocationValid = false
+          return 'Please enter Faucet Location';
+      }
+    },
+    requiredLineNumber: function (value) {
+      if (value) {
+          this.isLineNumberValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isLineNumberValid = false
+          return 'Please enter Line Number';
       }
     },
     checkValidations() {
 
-      if (this.isNameValid) {
+      if (this.isYardLocationValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false
       }
+      if (this.isFaucetLocationValid) {
+        this.isFormValid = true
+      } else {
+        this.isFormValid = false
+      }
+      if (this.isLineNumberValid) {
+        this.isFormValid = true
+      } else {
+        this.isFormValid = false
+      }
+      console.log("Check Validations Form Valid? ", this.isFormValid)
     }
   },
 };

@@ -25,40 +25,39 @@
     <br/>
   </v-card>
   <br/>
-  <div class="watering-display">
-    <span class="h3-left-total-child">Click Change</span>
-    <div class="cards-1-center">
-      <WateringCard :waterings="waterings">      
-      </WateringCard>
+  <span v-if="waterings">
+    <div class="watering-display">
+      <span class="h3-left-total-child">Click to Change</span>
+      <div class="cards-1-center">
+        <WateringCard :waterings="waterings">      
+        </WateringCard>
       <br />
+      </div>
     </div>
-  </div>
-  <!--!ID {{ waterings.outlets[0].yard_location }}-->
-  <!--!YL {{ outlets.yard_location }}-->
-  <h3 id="h3-left">Total Outlets: {{ waterings.outlets.length }}</h3>
-  <span class="h3-left-total-child">Double click Item Change</span>
-    <div class="cards">
-      <OutletCard
-        v-for="outlet in waterings.outlets"
-        :key="outlet.id"
-        :outlet="outlet"
-        class="card"
-        @dblclick="onDoubleClick(outlet)"
+    <h3 id="h3-left">Total Outlets: {{ waterings.outlets.length }}</h3>
+    <span class="h3-left-total-child">Double Click Item to Change</span>
+      <div class="cards">
+        <OutletCard
+          v-for="outlet in waterings.outlets"
+          :key="outlet.id"
+          :outlet="outlet"
+          class="card"
+          @dblclick="onDoubleClick(outlet)"
+        />
+      </div>
+      <v-img
+          :src="require('../../assets/vegetable_garden_summer_2024.png')"
+          class="my-3"
+          contain
+          height="400"
       />
-    </div>
-    <v-img
-        :src="require('../../assets/vegetable_garden_summer_2024.png')"
-        class="my-3"
-        contain
-        height="400"
-    />
+  </span>
 </template>
 <script>
 import axios from "axios";
 import WateringCard from "@/components/watering/WateringCard.vue";
 import OutletCard from "@/components/outlets/OutletCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-
 export default {
   name: "WateringDisplay",
   props: [],
@@ -86,7 +85,6 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
         updated_by: this.$store.state.user.resource_owner.email,
       },
-
       statusMessage: "",
     };
   },
@@ -123,16 +121,12 @@ export default {
       },
     },
    */
-  //outlets() {
-  //  return this.$store.state.outlets;
-  //},
     origin() {
       return "WateringDisplay"
     }
   },
   methods: {
     onDoubleClick(outlet) {
-      console.log("watering Edit outlet:  ", outlet.id)
       this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
     },
   },
@@ -144,7 +138,6 @@ table {
   border-collapse: collapse;
   width: 100%;
 }
-
 td,
 th {
   border: 1px solid #dddddd;

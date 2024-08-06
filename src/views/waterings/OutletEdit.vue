@@ -9,47 +9,91 @@
     <br/>
     <form class="form-card-display" @submit.prevent="updateOutlet">
       <div class="form-container">
-        <label>Yard Location:</label>
-        <input type="text" class="text-style" v-model="outlet.yard_location" required />
-        <label>Faucet Location:</label>
-        <input type="text" class="text-style" v-model="outlet.faucet_location" required />
-        <label>Line #:</label>
-        <input type="text" class="text-style" v-model="outlet.line_number" required />
+        <v-select
+          label="Yard Location"
+          :items="yard_locations"
+          v-model="outlet.yard_location"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
+          <option
+            v-for="option in yard_locations"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === outlet.yard_location"
+          >
+            {{ option }}
+          </option>
+        </v-select>
+        <v-select
+          label="Faucet Location"
+          :items="faucet_locations"
+          v-model="outlet.faucet_location"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
+          <option
+            v-for="option in faucet_locations"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === outlet.faucet_location"
+          >
+            {{ option }}
+          </option>
+        </v-select>        
+        <v-select
+          label="Line #"
+          :items="line_numbers"
+          v-model="outlet.line_number"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
+          <option
+            v-for="option in line_number"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === outlet.line_number"
+          >
+            {{ option }}
+          </option>
+        </v-select>   
+
         <label>Target:</label>
-        <input type="text" class="text-style" v-model="outlet.target" required />
+        <input type="text" class="text-style" v-model="outlet.target" />
         <label>Frequency:</label>
-        <input type="text" class="text-style" v-model="outlet.frequency" required />
+        <input type="text" class="text-style" v-model="outlet.frequency" />
         <label>Start Time:</label>
-        <input type="text" class="text-style" v-model="outlet.start_time" required />
+        <input type="text" class="text-style" v-model="outlet.start_time" />
         <label>Duration:</label>
-        <input type="text" class="text-style" v-model="outlet.duration" required />
+        <input type="text" class="text-style" v-model="outlet.duration"  />
         <label>Status:</label>
-        <select class="select-status" v-model="outlet.active" required>
+        <v-select
+          label="Status"
+          :items="active_statuses"
+          v-model="outlet.active"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
           <option
             v-for="option in active_statuses"
             :value="option"
             :key="option"
+            id="select-box"
             :selected="option === outlet.active"
           >
-            &nbsp;&nbsp;
             {{ option }}
           </option>
-        </select>
+        </v-select>        
+
         <br/><br/>
-        <!--label for="created_at">Date Created:</!--label>
-        <input
-          readonly
-          type="text"
-          class="text-style"
-          v-model="watering.created_at"
-        />
-        <label for="updated_at">Date Updated:</label>
-        <input
-          readonly
-          type="text"
-          class="text-style"
-          v-model="watering.updated_at"
-        /-->
+
         <label>Notes:</label>
         <textarea
           v-model="outlet.notes"
@@ -118,6 +162,9 @@ export default {
       //  //name: "",
       //},
       active_statuses: ["Active", "Inactive"],
+      yard_locations: ["North", "South"],
+      faucet_locations: ["East", "West"],
+      line_numbers: ["1","2","3","4"],
       api_url: ""
     };
   },

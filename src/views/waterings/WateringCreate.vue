@@ -9,7 +9,7 @@
       <v-container id="form-container">
         <v-text-field
           v-model="watering.name"
-          :rules="[requiredTitle]"
+          :rules="[requiredName]"
           label="Name"
         >
           <template v-slot:prepend-inner>
@@ -39,14 +39,8 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      toggle1: false,
-      toggle2: false,
-      toggle3: false,
       isFormValid: false,
-      isAuthorValid: false,
-      isTitleValid: false,
-      urlMaxLength: 255,
-      num: 1,
+      isNameValid: false,
     };
   },
   methods: {
@@ -63,21 +57,9 @@ export default {
         } else {
           alert("Error adding Watering System " + watering.name);
         } 
-      } else {
-        alert("Please correct required fields and resubmit");
-      }
+      } 
     },
-    requiredAuthor: function (value) {
-      if (value) {
-          this.isAuthorValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isAuthorValid = false
-          return 'Please enter Author';
-      }
-    },
-    requiredTitle: function (value) {
+    requiredName: function (value) {
       if (value) {
           this.isNameValid = true
           return true;

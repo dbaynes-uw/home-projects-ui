@@ -1015,7 +1015,7 @@ export default new Vuex.Store({
       EventService.postWateringOutlet(watering_outlet)
         .then(() => {
           commit("SET_WATERING_OUTLET", watering_outlet);
-          alert("Watering was successfully added for " + watering_outlet.yard_location + " " + watering_outlet.faucet_location);
+          alert("Watering Outlet was successfully added for " + watering_outlet.yard_location + " " + watering_outlet.faucet_location);
         })
         .catch((error) => {
           alert("Error in postWatering of createWateringOutlet Action");
