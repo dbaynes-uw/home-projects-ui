@@ -26,7 +26,7 @@ import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
 import GardenPlantCreate from "@/views/gardens/GardenPlantCreate.vue";
-//import GardenPlantDetails from "@/views/gardens/GardenPlantDetails.vue";
+import GardenPlantDetails from "@/views/gardens/GardenPlantDetails.vue";
 import GardenPlantEdit from "@/views/gardens/GardenPlantEdit.vue";
 import GardenStart from "../views/gardens/GardenStart.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
@@ -288,7 +288,7 @@ const routes = [
     component: GardenStart,
     meta: { requiresAuth: true}
   },
-  /*
+  
   {
     path: "/gardens/:id",
     name: "GardenPlantDetails",
@@ -296,7 +296,7 @@ const routes = [
     component: GardenPlantDetails,
     meta: { requiresAuth: true}
   },
-  */
+  
 
   {
     path: "/products_by_location/:location",

@@ -13,11 +13,13 @@
           <router-link  :to="{ name: 'GardenPlantCreate' }">Add GardenPlant</router-link>
         </button>
       </li>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
-        </button>
-      </li>
+      <span v-if="waterings.id">
+        <li class="left">
+          <button id="button-as-link">
+            <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
+          </button>
+        </li>
+      </span>
       <li>
         <button id="button-as-link" @click="requestIndexDetail">
           <u>Detail Index View</u>
@@ -130,6 +132,9 @@ export default {
     this.sortedData = this.plants;
   },
   computed: {
+    waterings() {
+      return this.$store.state.waterings;
+    },
     plants() {
       //return this.$store.state.plants;
       return [

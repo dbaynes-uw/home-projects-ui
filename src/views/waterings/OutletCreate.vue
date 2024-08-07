@@ -229,7 +229,7 @@ export default {
   },
 };
 </script>
-<style lang="css">
+<style scoped lang="css">
 .v-field__field {
   font-size: 1.4rem !important
 }

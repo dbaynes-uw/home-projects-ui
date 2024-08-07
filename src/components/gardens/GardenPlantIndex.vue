@@ -26,7 +26,7 @@
        <td class="td-center" >
         <span v-if="this.onlineStatus">
           <span class="fa-stack" style="text-align: center">
-            <router-link
+            <!--router-link
               :to="{ name: 'GardenPlantEdit', params: { id: `${result.id}` } }"
             >
               <i
@@ -34,14 +34,14 @@
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
-            </router-link>
-            <span class="fa-stack fa-table-stack">
+            </!--router-link>
+            <span-- class="fa-stack fa-table-stack">
               <router-link
                 :to="{ name: 'GardenPlantDetails', params: { id: `${result.id}` } }"
               >
                 <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
-            </span>
+            </span-->
             <span class="fa-table-stack">
               <i
                 @click="deleteGardenPlant(result)"

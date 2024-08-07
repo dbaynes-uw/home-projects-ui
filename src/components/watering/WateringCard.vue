@@ -1,20 +1,23 @@
 <template>
-   <div class="card">
-    <p id="p-custom-u">
-      <router-link
-        :to="{ name: 'WateringEdit', params: { id: `${waterings.id}` } }"
-      >
-        {{ waterings.name }}
-      </router-link>
-    </p>
-    <p id="p-custom-link">
-      <router-link
-        :to="{ name: 'OutletCreate' }"
-      >
-        Add Outlet
-      </router-link>
-    </p>
-  </div>
+  ACT: {{ waterings.active }}
+  <span v-if="waterings.active == true">
+    <div class="card">
+     <p id="p-custom-u">
+       <router-link
+         :to="{ name: 'WateringEdit', params: { id: `${waterings.id}` } }"
+       >
+         {{ waterings.name }}
+       </router-link>
+     </p>
+     <p id="p-custom-link">
+       <router-link
+         :to="{ name: 'OutletCreate' }"
+       >
+         Add Outlet
+       </router-link>
+     </p>
+    </div>
+  </span>
 </template>
 
 <script>

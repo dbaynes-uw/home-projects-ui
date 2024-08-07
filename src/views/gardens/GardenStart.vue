@@ -6,18 +6,20 @@
     </v-card-title>
     <br/>
     <ul>
-      <span v-if="!waterings">
+      <span v-if="waterings.id">
+        <li class="left">
+          <button id="button-as-link">
+            <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
+          </button>
+        </li>
+      </span>
+      <span v-else>
         <li class="left">
           <button id="button-as-link">
            <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
           </button>
         </li>
       </span>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
-        </button>
-      </li>
       <li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'GardenPlantList' }">Gardens</router-link>
