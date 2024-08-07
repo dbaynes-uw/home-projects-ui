@@ -26,7 +26,6 @@
   </v-card>
   <br/>
   <span v-if="waterings.active == true">
-    WATERINGS: {{ waterings.active == 'Active' }}
     <div class="watering-display">
       <span class="h3-left-total-child">Click to Change</span>
       <div class="cards-1-center">

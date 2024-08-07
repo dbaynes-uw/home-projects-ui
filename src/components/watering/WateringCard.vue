@@ -1,5 +1,4 @@
 <template>
-  ACT: {{ waterings.active }}
   <span v-if="waterings.active == true">
     <div class="card">
      <p id="p-custom-u">

@@ -5,7 +5,7 @@
       <ul>
         <li class="li-left">Status: <b>{{ outlet.active == 1 ? 'Active' : 'Inactive' }}</b></li>
         <li class="li-left">Line: <b>{{ outlet.line_number }}</b></li>
-        <li class="li-left">Target: {{ outlet.target }}</li>
+        <li class="li-left">Target: <b><u>{{ outlet.target }}</u></b></li>
         <li class="li-left">Frequency: {{ outlet.frequency }}</li>
         <li class="li-left">Start: {{ formatTime(outlet.start_time)}}</li>
         <li class="li-left">Duration: {{ outlet.duration }}</li>
