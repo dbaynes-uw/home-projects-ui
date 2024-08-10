@@ -25,12 +25,16 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
-import GardenPlantCreate from "@/views/gardens/GardenPlantCreate.vue";
-import GardenPlantDetails from "@/views/gardens/GardenPlantDetails.vue";
-import GardenPlantEdit from "@/views/gardens/GardenPlantEdit.vue";
+import GardenCreate from "@/views/gardens/GardenCreate.vue";
+import GardenDetails from "@/views/gardens/GardenDetails.vue";
+import GardenEdit from "@/views/gardens/GardenEdit.vue";
 import GardenStart from "../views/gardens/GardenStart.vue";
+import PlantCreate from "@/views/plants/PlantCreate.vue";
+//import PlantDetails from "@/views/plants/PlantDetails.vue";
+import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
-import GardenPlantList from "../views/gardens/GardenPlantList.vue";
+import GardenList from "../views/gardens/GardenList.vue";
+import GardenPlants from "../views/gardens/GardenPlants.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductLocationsList from "../views/products/ProductLocationsList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
@@ -263,23 +267,23 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/garden_plant/:id",
-    name: "GardenPlantEdit",
+    path: "/garden/:id",
+    name: "GardenEdit",
     props: true,
-    component: GardenPlantEdit,
+    component: GardenEdit,
     meta: { requiresAuth: true}
   },
   {
     path: "/gardens",
-    name: "GardenPlantList",
+    name: "GardenList",
     props: true,
-    component: GardenPlantList,
+    component: GardenList,
     meta: { requiresAuth: true}
   },
   {
-    path: "/garden_plant/create",
-    name: "GardenPlantCreate",
-    component: GardenPlantCreate,
+    path: "/garden/create",
+    name: "GardenCreate",
+    component: GardenCreate,
     meta: { requiresAuth: true}
   },
   {
@@ -288,16 +292,41 @@ const routes = [
     component: GardenStart,
     meta: { requiresAuth: true}
   },
-  
   {
     path: "/gardens/:id",
-    name: "GardenPlantDetails",
+    name: "GardenDetails",
     props: true,
-    component: GardenPlantDetails,
+    component: GardenDetails,
     meta: { requiresAuth: true}
   },
-  
+  {
+    path: "/gardens/garden_plants/:garden",
+    name: "GardenPlants",
+    props: true,
+    component: GardenPlants,
+    meta: { requiresAuth: true}
+  },
 
+  //{
+  //  path: "/plants/:id",
+  //  name: "PlantDetails",
+  //  props: true,
+  //  component: PlantDetails,
+  //  meta: { requiresAuth: true}
+  //},
+  {
+    path: "/plant/edit/:id",
+    name: "PlantEdit",
+    props: true,
+    component: PlantEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/plant/create",
+    name: "PlantCreate",
+    component: PlantCreate,
+    meta: { requiresAuth: true}
+  },
   {
     path: "/products_by_location/:location",
     component: ProductLocationList,

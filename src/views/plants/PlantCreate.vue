@@ -1,10 +1,10 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Outlet to {{ watering.name }} System</h3>
+      <h3>Add Plant to {{ garden.garden_name }} System</h3>
     </v-card-title>
-    <router-link :to="{ name: 'WateringDisplay' }">
-      <b>Back to Watering List</b>
+    <router-link :to="{ name: 'GardenList' }">
+      <b>Back to Gardens</b>
     </router-link>
     <br/><br/>
   </v-card>
@@ -12,18 +12,27 @@
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="watering.name"
-          label="Name"
+          v-model="garden.garden_name"
+          label="Garden"
+          :readonly="true"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
+        <v-text-field label="Plant Name"
+          v-model="plant.plant_name"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template>
+        </v-text-field> 
         <v-select
           label="Yard Location"
+          class="test"
           :items="yard_locations"
           :rules="[requiredYardLocation]"
-          v-model="outlet.yard_location"
+          v-model="plant.yard_location"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-list-status</v-icon>
@@ -32,88 +41,54 @@
             v-for="option in yard_locations"
             :value="option"
             :key="option"
-            id="select-box"
-            :selected="option === outlet.yard_location"
+            class="select-box"
+            :selected="option === plant.yard_location"
           >
             {{ option }}
           </option>
-        </v-select>          
-        <v-select
-          label="Faucet Location"
-          :items="faucet_locations"
-          :rules="[requiredFaucetLocation]"
-          v-model="outlet.faucet_location"
+        </v-select>            
+        <v-text-field label="Water Line"
+          v-model="plant.water_line"
         >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-list-status</v-icon>
-          </template>
-          <option
-            v-for="option in faucet_locations"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === outlet.faucet_location"
-          >
-            {{ option }}
-          </option>
-        </v-select>   
-        <v-select
-          label="Line #"
-          :items="line_numbers"
-          v-model="outlet.line_number"
-          :rules="[requiredLineNumber]"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-list-status</v-icon>
-          </template>
-          <option
-            v-for="option in line_number"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === outlet.line_number"
-          >
-            {{ option }}
-          </option>
-        </v-select>   
-        <v-text-field label="Target" v-model="outlet.target">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
-        </v-text-field>
-        <v-text-field label="Frequency" v-model="outlet.frequency">
+        </v-text-field>  
+        <v-text-field
+          v-model="plant.online_link"
+          label="Online Link"
+        >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-clock</v-icon>
+            <v-icon class="icon-css">mdi-link</v-icon>
           </template>
-        </v-text-field>
-        <v-text-field label="Start Time" v-model="outlet.start_time">
+        </v-text-field>        
+        <v-text-field label="Date Planted"
+          v-model="plant.date_planted"
+          type="date"
+        >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Duration" v-model="outlet.duration">
+        <v-text-field label="Date Harvested"
+          v-model="plant.date_harvested"
+          type="date"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field label="Duration" v-model="plant.frequency">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-clock</v-icon>
           </template>
         </v-text-field>
-        <v-select
-          label="Status"
-          :items="active_statuses"
-          v-model="outlet.active"
-        >
+       
+        <v-text-field label="Notes" v-model="plant.notes">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-list-status</v-icon>
+            <v-icon class="icon-css">mdi-note</v-icon>
           </template>
-          <option
-            v-for="option in active_statuses"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === outlet.active"
-          >
-            {{ option }}
-          </option>
-        </v-select>        
+        </v-text-field>
 
         <v-btn type="submit" block class="mt-2">Submit</v-btn>
         <!--button type="submit" block class="mt-2">Submit</~button-->
@@ -128,13 +103,16 @@ export default {
   },
   data() {
     return {
-      outlet: {
+      plant: {
+        id: "",
+        garden_id: "",
+        plant_name: "",
         yard_location: "",
-        faucet_location: "",
-        line_number: "",
-        target: "",
-        frequency: "",
-        start_time: "",
+        description: "",
+        water_line: "",
+        online_link: "",
+        date_planted: "",
+        date_harvested: "",
         duration: "",
         active: "",
         notes: "",
@@ -142,38 +120,36 @@ export default {
       },
       active_statuses: ["Active", "Inactive"],
       yard_locations: ["North", "South"],
-      faucet_locations: ["East", "West"],
-      line_numbers: ["1","2","3","4"],
+
       ifFormValid: false,
       isYardLocationValid: false,
-      isFaucetLocationValid: false,
-      isLineNumberValid: false,
     };
   },
   created() {
-    this.$store.dispatch("fetchWatering");
+    console.log("PlantCreate Created: ", this.id)
+    this.$store.dispatch("fetchGarden", this.id);
   },
   computed: {
-    watering() {
-      return this.$store.state.watering;
+    garden() {
+      return this.$store.state.garden;
     },
   },
   methods: {
     onSubmit() {
       this.checkValidations();
-      //this.outlet.watering_name = this.watering.name
-      this.outlet.watering_name = this.watering.name
       console.log("@@FORM VALID? ", this.isFormValid)
+      console.log("Plant: ", this.plant)
+      this.plant.garden_id = this.garden.id
       if (this.isFormValid) {
-        const watering = {
-          ...this.outlet,
+        const garden = {
+          ...this.plant,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createWateringOutlet", watering)) {
-          this.$router.push({ name: "WateringDisplay" });
+        if (this.$store.dispatch("createPlant", garden)) {
+          this.$router.push({ name: "GardenList" });
         } else {
-          alert("Error adding Watering System " + watering.name);
+          alert("Error adding Plant " + this.plant.plant_name);
         } 
       } 
     },
@@ -187,39 +163,9 @@ export default {
           return 'Please enter Yard Location';
       }
     },
-    requiredFaucetLocation: function (value) {
-      if (value) {
-          this.isFaucetLocationValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isFaucetLocationValid = false
-          return 'Please enter Faucet Location';
-      }
-    },
-    requiredLineNumber: function (value) {
-      if (value) {
-          this.isLineNumberValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isLineNumberValid = false
-          return 'Please enter Line Number';
-      }
-    },
     checkValidations() {
 
       if (this.isYardLocationValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-      if (this.isFaucetLocationValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-      if (this.isLineNumberValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false

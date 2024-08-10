@@ -6,7 +6,7 @@
       <ul>
         <li class="li-left">Description: <b>{{ plant.description }}</b></li>
         <li class="li-left">Date GardenPlanted: {{ formatYearDate(plant.date_planted) }}</li>
-        <li class="li-left">Location: {{plant.location }}</li>
+        <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
         <li class="li-left">Water Line: {{plant.water_line }}</li>  
         <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
@@ -15,10 +15,10 @@
       </ul>
       <br/>
       <div class="icon-stack">
-        <span v-if="origin == 'GardenPlantDetails'">
+        <span v-if="origin == 'PlantDetails'">
         <span class="fa-stack">
           <router-link
-            :to="{ name: 'GardenPlantEdit', params: { id: `${plant.id}` } }"
+            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
           >
             <i
               id="card-medium-icon-edit"
@@ -26,7 +26,7 @@
             >
             </i>
           </router-link>
-          <router-link :to="{ name: 'GardenPlantList'}">
+          <router-link :to="{ name: 'PlantList'}">
             <i
               id="card-medium-icon-eye"
               class="fa-solid fa-backward fa-stack-1x"
@@ -43,12 +43,12 @@
           </span>
         </span>
         </span>
-        <span v-if="origin == 'GardenPlantList'">
+        <span v-if="origin == 'PlantList'">
           <table>
             <tr>
               <td id="icon-block">
                 <router-link
-                  :to="{ name: 'GardenPlantEdit', params: { id: `${plant.id}` } }"
+                  :to="{ name: 'GardenEdit', params: { id: `${plant.id}` } }"
                 >
                 <i
                   id="card-medium-block-icon-edit"
@@ -59,7 +59,7 @@
               </td>
               <!--span v-if="plant.id > 0"-->
                 <td id="icon-block">
-                  <router-link :to="{ name: 'GardenPlantDetails', params: { id: `${plant.id}` } }">
+                  <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
                     <i
                       id="card-medium-block-icon-eye"
                       class="fa fa-eye"
@@ -108,9 +108,9 @@ export default {
     //console.log("VM: ", vm)
   },
   methods: {
-    async deleteGardenPlant(plant) {
+    async deletePlant(plant) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete GardenPlant from List",
+        title: "Delete Plant from List",
         message:
           "Are you sure you want to delete " +
           plant.title +
@@ -119,13 +119,13 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteGardenPlant", plant);
+        this.$store.dispatch("deletePlant", plant);
         this.statusMessage =
           "GardenPlant was Deleted for " +
           plant.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "GardenPlantList" });
+        this.$router.push({ name: "PlantList" });
       }
     },
 

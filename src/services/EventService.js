@@ -5,12 +5,12 @@ var environment = "";
 var api_url = "";
 export default {
   data() {
-    return {
-      plants: [
-        {author: 'A1'},
-        {author: 'A2'},
-      ],
-    }
+    //return {
+    //  plants: [
+    //    {author: 'A1'},
+    //    {author: 'A2'},
+    //  ],
+    //}
   },
   init() {
     console.log("environment: ", environment);
@@ -38,11 +38,13 @@ export default {
     this.init();
     return axios.get(api_url + "books")
   },
-  getGardenPlants() {
-    //this.init();
-    //return axios.get(api_url + "books")
-    console.log("getGardenPlants: ", this.plants)
-    return this.plants
+  getGarden(id) {
+    this.init();
+    return axios.get(api_url + "gardens/" + id);
+  },
+  getGardens() {
+    this.init();
+    return axios.get(api_url + "gardens")
   },
   async putBook(updatedBook) {
     this.init();
@@ -137,8 +139,13 @@ export default {
     return axios.put(api_url + "golfs" + `/${updatedGolf.id}`, updatedGolf);
   },
   async postGolf(golf) {
+    console.log("ES - Post Golf: ", golf)
     this.init();
     return axios.post(api_url + 'golfs', golf);
+  },
+  async postGarden(garden) {
+    this.init();
+    return axios.post(api_url + 'gardens', garden);
   },
   deleteMed(med) {
     this.init();
@@ -160,6 +167,18 @@ export default {
   async postMed(med) {
     this.init();
     return axios.post(api_url + 'meds', med);
+  },
+  getPlants(garden) {
+    this.init();
+    return axios.get(api_url + "plants",`${garden}`);
+  },
+  getGardenPlants(id) {
+    this.init();
+    return axios.get(api_url + "garden_plants", `${id}`);
+  },
+  async postPlant(plant) {
+    this.init();
+    return axios.post(api_url + 'plants', plant);
   },
   async deleteProduct(product) {
     this.init();
@@ -291,14 +310,9 @@ export default {
     this.init();
     return axios.post(api_url + 'watering_outlet', watering_outlet);
   },
-  async getWaterings() {
+  async getWatering() {
     this.init();
-    return axios.get(api_url + "get_waterings")
-  },
-  async getWateringOnly() {
-    this.init();
-    console.log("GETWATERING Only api_url: ", api_url + "watering_only")
-    return axios.get(api_url + "watering_only")
+    return axios.get(api_url + "get_watering")
   },
   deleteWatering() {
     this.init();

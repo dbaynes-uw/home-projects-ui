@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Vegetable Garden Details</h2>
+      <h2>Garden Details</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -10,10 +10,10 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'GardenPlantCreate' }">Add GardenPlant</router-link>
+          <router-link  :to="{ name: 'PlantCreate' }">Add GardenPlant</router-link>
         </button>
       </li>
-      <span v-if="waterings.id">
+      <span v-if="watering.id">
         <li class="left">
           <button id="button-as-link">
             <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
@@ -94,14 +94,14 @@
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import GardenPlantIndex from "@/components/gardens/GardenPlantIndex.vue";
-import GardenPlantCard from "@/components/gardens/GardenPlantCard.vue";
-import GardenPlantSearchResults from "@/components/gardens/GardenPlantSearchResults.vue";
+import GardenPlantIndex from "@/components/gardens/GardenIndex.vue";
+import GardenPlantCard from "@/components/plants/PlantCard.vue";
+import GardenPlantSearchResults from "@/components/gardens/GardenSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
-  name: "GardenPlantList",
-  props: ["filteredResults[]"],
+  name: "PlantList",
+  props: ["filteredResults[]", "garden_id"],
   components: {
     GardenPlantIndex,
     GardenPlantCard,
@@ -128,56 +128,57 @@ export default {
     this.sortedData = this.plants;
   },
   created() {
-    this.$store.dispatch("fetchGardenPlants");
+    this.$store.dispatch("fetchPlants", this.garden_id);
+    console.log("PlantList Created - Garden: ", this.garden_id)
     this.sortedData = this.plants;
   },
   computed: {
-    waterings() {
-      return this.$store.state.waterings;
+    watering() {
+      return this.$store.state.watering;
     },
     plants() {
-      //return this.$store.state.plants;
-      return [
-        { id: 1,
-          plant_name: 'Avacodes',
-          description: 'Desc 1',
-          location: '1-A-1',
-          water_line: 'East Back',
-          date_planted: '2023-04-15',
-          date_harvest: '2023-05-15',
-          date_actual_harvest: '2023-07-01',
-          link_to_label: 'https://bonnieplants.com/blogs/how-to-grow/growing-cabbage',
-          special_instructions: 'Bed - Section - Row',
-          notes: 'Bed-Section-Position - Bed: North to South: 1,2,3 | Section East to West: A,B,C; Rows North to South 1,2,3 ex: 1-A-1 = Bed 1, Section A, Row 1 / OR Bed 1 Row 1 = B1 R1, etc.'
-        },
-        { id: 2,
-          plant_name: 'Broccoli',
-          description: 'Desc 2',
-          location: '2-A-1',
-          water_line: 'West Back',
-          date_planted: '2023-04-15',
-          date_harvest: '2023-05-15',
-          date_actual_harvest: '2023-07-01',
-          link_to_label: 'www.facebook.com',
-          special_instructions: 'Special Instrs 2',
-          notes: 'Bed-Section-Position - E/W Row ex: 2-A-1, 2-B-1, 2-C-1 N/S ex: 2-A-1, 2-A-2 ',
-        },
-        { id: 3,
-          plant_name: 'Carrots',
-          description: 'Desc 3',
-          location: '3-A-1',
-          water_line: 'West Front (Hydrangeas)',
-          date_planted: '2023-04-15',
-          date_harvest: '2023-05-15',
-          date_actual_harvest: '2023-07-01',
-          link_to_label: 'www.facebook.com',
-          special_instructions: 'Special Instrs 3',
-          notes: 'Bed-Section-Position - E/W Row ex: 3-A-1, 3-B-1, 3-C-1 N/S ex: 3-A-1, 3-A-2 ',
-        },
-      ]
+      return this.$store.state.plants;
+      //return [
+      //  { id: 1,
+      //    plant_name: 'Avacodes',
+      //    description: 'Desc 1',
+      //    location: '1-A-1',
+      //    water_line: 'East Back',
+      //    date_planted: '2023-04-15',
+      //    date_harvest: '2023-05-15',
+      //    date_actual_harvest: '2023-07-01',
+      //    link_to_label: 'https://bonnieplants.com/blogs/how-to-grow/growing-cabbage',
+      //    special_instructions: 'Bed - Section - Row',
+      //    notes: 'Bed-Section-Position - Bed: North to South: 1,2,3 | Section East to West: A,B,C; Rows North to South 1,2,3 ex: 1-A-1 = Bed 1, Section A, Row 1 / OR Bed 1 Row 1 = B1 R1, etc.'
+      //  },
+      //  { id: 2,
+      //    plant_name: 'Broccoli',
+      //    description: 'Desc 2',
+      //    location: '2-A-1',
+      //    water_line: 'West Back',
+      //    date_planted: '2023-04-15',
+      //    date_harvest: '2023-05-15',
+      //    date_actual_harvest: '2023-07-01',
+      //    link_to_label: 'www.facebook.com',
+      //    special_instructions: 'Special Instrs 2',
+      //    notes: 'Bed-Section-Position - E/W Row ex: 2-A-1, 2-B-1, 2-C-1 N/S ex: 2-A-1, 2-A-2 ',
+      //  },
+      //  { id: 3,
+      //    plant_name: 'Carrots',
+      //    description: 'Desc 3',
+      //    location: '3-A-1',
+      //    water_line: 'West Front (Hydrangeas)',
+      //    date_planted: '2023-04-15',
+      //    date_harvest: '2023-05-15',
+      //    date_actual_harvest: '2023-07-01',
+      //    link_to_label: 'www.facebook.com',
+      //    special_instructions: 'Special Instrs 3',
+      //    notes: 'Bed-Section-Position - E/W Row ex: 3-A-1, 3-B-1, 3-C-1 N/S ex: 3-A-1, 3-A-2 ',
+      //  },
+      //]
     },
     origin() {
-      return "GardenPlantList"
+      return "PlantList"
     }
   },
   methods: {
@@ -186,7 +187,7 @@ export default {
     },
     onDoubleClick(plant) {
       console.log("plant Edit ")
-      this.$router.push({ name: 'GardenPlantEdit', params: { id: `${plant.id}` } });
+      this.$router.push({ name: 'GardenEdit', params: { id: `${plant.id}` } });
     },
     showIndex() {
       this.filteredResults = [];

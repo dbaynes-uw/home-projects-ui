@@ -1,18 +1,18 @@
 <template>
-  <span v-if="watering.active == true">
+  <span v-if="garden.active == true">
     <div class="card">
      <p id="p-custom-u">
        <router-link
-         :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+         :to="{ name: 'GardenDetails', params: { id: this.garden.id} }"
        >
-         {{ watering.name }}
+        @@{{ garden.garden_name }}
        </router-link>
      </p>
      <p id="p-custom-link">
        <router-link
-         :to="{ name: 'OutletCreate' }"
+         :to="{ name: 'PlantCreate' }"
        >
-         Add Outlet
+         Add Plant
        </router-link>
      </p>
     </div>
@@ -23,9 +23,9 @@
 //import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: 'WateringCard',
+  name: 'GardenCard',
   props: {
-    watering: {
+    garden: {
       type: Object,
       default: () => ({})
     },
@@ -42,21 +42,21 @@ export default {
     //console.log("VM: ", vm)
   },
   methods: {
-    async deleteWatering(watering) {
+    async deleteWatering(garden) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Watering from List",
+        title: "Delete Garden from List",
         message:
           "Are you sure you want to delete " +
-          watering.title +
+          garden.title +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteWatering", watering);
+        this.$store.dispatch("deleteWatering", garden);
         this.statusMessage =
-          "Watering was Deleted for " +
-          watering.title +
+          "Garden was Deleted for " +
+          garden.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
         this.$router.push({ name: "WateringDisplay" });

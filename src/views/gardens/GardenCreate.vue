@@ -1,51 +1,22 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add GardenPlant to Collection</h3>
+      <h3>Add Garden</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="plant.title"
-          :rules="[requiredTitle]"
-          label="Title"
+          v-model="garden.garden_name"
+          :rules="[requiredGardenName]"
+          label="Garden Name"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Author" v-model="plant.author" :rules="[requiredAuthor]">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Date Written"
-          v-model="plant.date_written"
-          type="date"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Date Read"
-          v-model="plant.date_read"
-          type="date"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field
-          v-model="plant.url_to_review"
-          label="URL to Review"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
-          </template>
-        </v-text-field>        
-        <v-text-field label="Notes" v-model="plant.notes">
+        <v-text-field label="Notes" v-model="garden.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
@@ -63,15 +34,9 @@ export default {
   },
   data() {
     return {
-      plant: {
-        title: null,
-        author: "",
-        date_written: null,
-        date_read: null,
-        vendor_product: [],
-        audio_format: false,
-        print_format: false,
-        url_to_review: "",
+      garden: {
+        garden_name: null,
+        active: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -79,61 +44,48 @@ export default {
       toggle2: false,
       toggle3: false,
       isFormValid: false,
-      isAuthorValid: false,
-      isTitleValid: false,
-      urlMaxLength: 255,
-      num: 1,
+      isGardenNameValid: false,
     };
   },
   methods: {
     onSubmit() {
       this.checkValidations();
       if (this.isFormValid) {
-        const plant = {
-          ...this.plant,
+        const garden = {
+          ...this.garden,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createGardenPlant", plant)) {
-          this.$router.push({ name: "GardenPlantList" });
+        if (this.$store.dispatch("createGarden", garden)) {
+          this.$router.push({ name: "GardenList" });
         } else {
-          alert("Error adding GardenPlant Title" + plant.title);
+          alert("Error adding Garden Title" + garden.garden_name);
         } 
       } else {
         alert("Please correct required fields and resubmit");
       }
     },
-    requiredAuthor: function (value) {
+    requiredGardenName: function (value) {
       if (value) {
-          this.isAuthorValid = true
+          this.isGardenNameValid = true
           return true;
       } else {
           this.isFormValid = false
-          this.isAuthorValid = false
-          return 'Please enter Author';
-      }
-    },
-    requiredTitle: function (value) {
-      if (value) {
-          this.isTitleValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isTitleValid = false
-          return 'Please enter Title';
+          this.isGardenNameValid = false
+          return 'Please enter Garden Name';
       }
     },
     checkValidations() {
 
-      if (this.isAuthorValid && this.isTitleValid) {
+      if (this.isGardenNameValid ) {
         this.isFormValid = true
       } else {
         this.isFormValid = false
       }
     }
   },
-  plant() {
-    return this.$store.state.plant;
+  garden() {
+    return this.$store.state.garden;
   },
 };
 </script>

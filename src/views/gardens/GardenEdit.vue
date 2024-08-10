@@ -1,39 +1,34 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit GardenPlant {{ plant.head_name }}</h2>
-    <router-link :to="{ name: 'GardenPlantList' }">
-      <b>Back to GardenPlant List</b>
+    <h2>Edit Garden {{ garden.garden_name }}</h2>
+    <router-link :to="{ name: 'GardenList' }">
+      <b>Back to Garden List</b>
     </router-link>
     <br/>
     <br/>
     <form class="form-card-display" @submit.prevent="updateGardenPlant">
       <div class="form-container">
-        <label>Title:</label>
-        <input type="text" class="text-style" v-model="plant.title" required />
-        <label>Author:</label>
-        <input type="text" class="text-style" v-model="plant.author" required />
-        <label for="date_written">Date Written:</label>
-        <input
-          type="date"
-          class="text-style"
-          v-model="plant.date_written"
-        />
-        <label for="date_read">Date Read:</label>
-        <input
-          type="date"
-          class="text-style"
-          v-model="plant.date_read"
-        />
-        <label for="url_to_review">URL to Review:</label>
-        <input type="text" class="text-style" v-model="plant.url_to_review" />
-        <label>Notes:</label>
-        <textarea
-          v-model="plant.notes"
-          rows="3"
-          cols="40"
-          class="textarea-style"
-        />
+        <label>Garden Name:</label>
+        <input type="text" class="text-style" v-model="garden.garden_name" required />
+        <label>Status:</label>
+        <v-select
+          :items="active_statuses"
+          v-model="garden.active"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
+          <option
+            v-for="option in active_statuses"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === garden.active"
+          >
+            {{ option }}
+          </option>
+        </v-select> 
         <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
@@ -60,21 +55,21 @@ export default {
     }
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.plant = result.data;
+    this.garden = result.data;
+    this.garden.active = this.garden.active == 1 ? 'Active' : 'Inactive'
+
   },
   data() {
     return {
-      plant: {
+      garden: {
         id: "",
-        title: "",
-        author: "",
-        date_written: "",
-        date_read: "",
-        url_to_review: "",
+        garden_name: "",
+        active: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      api_url: ""
+      api_url: "",
+      active_statuses: ["Active", "Inactive"],
     };
   },
   setup() {},
@@ -107,7 +102,7 @@ export default {
         );
         if (result.status >= 200) {
           alert("GardenPlant has been updated");
-          this.$router.push({ name: "GardenPlantDetails", params: { id: plant.id } });
+          this.$router.push({ name: "PlantDetails", params: { id: plant.id } });
         } else {
           alert("Update Error Code ", result.status);
         }

@@ -37,7 +37,7 @@
             </!--router-link>
             <span-- class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'GardenPlantDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'PlantDetails', params: { id: `${result.id}` } }"
               >
                 <i id="medium-icon-eye" class="fa fa-eye"></i>
               </router-link>
@@ -54,16 +54,16 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'GardenPlantDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'PlantDetails', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'GardenPlantEdit', params: { id: `${result.id}` } }"
+            :to="{ name: 'PlantEdit', params: { id: `${result.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteGardenPlant(result)"><u>Delete</u></span>
+          <span class="ok-btn" @click="deletePlant(result)"><u>Delete</u></span>
         </span>
       </td>
     </tr>

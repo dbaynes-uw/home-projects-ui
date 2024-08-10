@@ -10,6 +10,7 @@ var api_authenticate_url = "";
 export default new Vuex.Store({
   props: ["message"],
   state: {
+    id: "",
     token: "",
     errors: null,
     user: null,
@@ -27,6 +28,7 @@ export default new Vuex.Store({
     event: {},
     med: {},
     meds: [],
+    garden_plants: [],
     location: {},
     products: [],
     products_by_location: [],
@@ -40,17 +42,17 @@ export default new Vuex.Store({
     vendors_group: [],
     vendors_locations_group: [],
     vendors_products_group: [],
-    plants: [
-      {author: 'Test Author 1'},
-      {author: 'Test Author 2'},
-    ]  
+    //plants: [
+    //  {author: 'Test Author 1'},
+    //  {author: 'Test Author 2'},
+    //]  
   },
   data() {
     return {
-      plants: [
-        {author: 'A1'},
-        {author: 'A2'},
-      ],
+      //plants: [
+      //  {author: 'A1'},
+      //  {author: 'A2'},
+      //],
     }
   },
   plugins: [createPersistedState()],
@@ -96,6 +98,19 @@ export default new Vuex.Store({
     },
     SET_FILMS(state, films) {
       state.films = films;
+    },
+    SET_GARDEN(state, garden) {
+      state.garden = garden;
+    },
+    SET_GARDENS(state, gardens) {
+      console.log("SET_GARDENS: ", gardens)
+      state.gardens = gardens;
+    },
+    SET_GARDEN_PLANTS(state, garden_plants) {
+      state.garden_plants = garden_plants
+    },
+    ADD_GARDEN(state, garden) {
+      state.gardens.push(garden);
     },
     ADD_GOLF(state, golf) {
       state.golfs.push(golf);
@@ -213,14 +228,8 @@ export default new Vuex.Store({
     SET_ERRORS(state, errors) {
       state.errors = errors
     },
-    SET_WATERINGS(state, waterings) {
-      state.waterings = waterings;
-    },
-    SET_WATERING_ONLY(state, watering_only) {
-      state.watering_only = watering_only
-    },
-    SET_WATERING_OUTLETS(state, watering_outlets) {
-      state.watering_outlets = watering_outlets
+    SET_WATERING(state, watering) {
+      state.watering = watering;
     },
   },
   actions: {
@@ -376,25 +385,37 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    //async fetchGardenPlants() {
-    async fetchGardenPlants() {
-      const plants = [
-        {author: 'A1'},
-        {author: 'A2'}
-      ]
-      //console.log("STORE WATERING: ", plants)
-        //EventService.getGardenPlants()
-        //  .then((response) => {
-        //    commit("SET_WATERINGS", response.data);
-        //    console.log("STORE: ", response.data)
-        //    return response.data;
-        //  })
-        //  .catch((error) => {
-        //    console.log(error);
-        //  });
-        return plants
-
-      },
+    async fetchGarden({ commit, state }, id) {
+      console.log("FETCHGARDEN: ", id)
+      const existingGarden = state.gardens.find((garden) => garden.id === id);
+      if (existingGarden) {
+        commit("SET_GARDEN", existingGarden);
+      } else {
+        EventService.getGarden(id)
+          .then((response) => {
+            commit("SET_GARDEN", response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    async fetchGardens({ commit }) {
+      console.log("@@FETCH GARDENS@@")
+      //const gardens = [
+      //  {garden_name: 'A1'},
+      //  {garden_name: 'A2'}
+      //]
+      EventService.getGardens()
+        .then((response) => {
+          commit("SET_GARDENS", response.data);
+          console.log("GARDEN STORE: ", response.data)
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async createEvent({ commit }, event) {
       EventService.postEvent(event)
         .then(() => {
@@ -560,7 +581,32 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async createGarden({ commit }, garden) {
+      EventService.postGarden(garden)
+        .then(() => {
+          commit("ADD_GARDEN", garden);
+          alert("Garden was successfully added for " + garden.garden_name);
+        })
+        .catch((error) => {
+          alert("Error in postGarden of createGarden Action (index.js)");
+          console.log(error);
+        });
+    },
+    async createPlant({ commit }, plant) {
+      console.log("createPlant: ", plant)
+      EventService.postPlant(plant)
+        .then(() => {
+          commit("SET_PLANT", plant);
+          alert("Plant was successfully added for " + plant.yard_location);
+        })
+        .catch((error) => {
+          alert("Error in postPlant of createPlant Action");
+          console.log(error);
+        });
+    },
+
     async createGolf({ commit }, golf) {
+      console.log("Store createGolf: ", golf)
       EventService.postGolf(golf)
         .then(() => {
           commit("ADD_GOLF", golf);
@@ -644,6 +690,30 @@ export default new Vuex.Store({
       EventService.getMeds()
         .then((response) => {
           commit("SET_MEDS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchPlants({ commit }, garden) {
+      console.log("@@FETCH PLANTS - Garden: @@", garden)
+      EventService.getPlants(garden)
+        .then((response) => {
+          commit("SET_PLANTS", response.data);
+          console.log("GARDEN PLANTS: ", response.data)
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchGardenPlants({ commit }, id) {
+      console.log("@@FETCH GARDEN PLANTS - Garden: @@", id)
+      EventService.getGardenPlants(id)
+        .then((response) => {
+          commit("SET_GARDEN_PLANTS", response.data);
+          console.log("GARDEN PLANTS: ", response.data)
           return response.data;
         })
         .catch((error) => {
@@ -1002,23 +1072,11 @@ export default new Vuex.Store({
     async createWatering({ commit }, watering) {
       EventService.postWatering(watering)
         .then(() => {
-          commit("SET_WATERINGS", watering);
+          commit("SET_WATERING", watering);
           alert("Watering was successfully added for " + watering.name);
         })
         .catch((error) => {
           alert("Error in postWatering of createWatering Action");
-          console.log(error);
-        });
-    },
-    async createWateringOutlet({ commit }, watering_outlet) {
-      console.log("createWateringOutlet: ", watering_outlet)
-      EventService.postWateringOutlet(watering_outlet)
-        .then(() => {
-          commit("SET_WATERING_OUTLET", watering_outlet);
-          alert("Watering Outlet was successfully added for " + watering_outlet.yard_location + " " + watering_outlet.faucet_location);
-        })
-        .catch((error) => {
-          alert("Error in postWatering of createWateringOutlet Action");
           console.log(error);
         });
     },
@@ -1033,29 +1091,17 @@ export default new Vuex.Store({
         });
     },
 
-    async fetchWaterings({ commit }) {
-      EventService.getWaterings()
+    async fetchWatering({ commit }) {
+      EventService.getWatering()
         .then((response) => {
-          commit("SET_WATERINGS", response.data);
+          commit("SET_WATERING", response.data);
           return response.data;
         })
         .catch((error) => {
-          console.log("API ERROR Store getWaterings error: ", error);
+          console.log("API ERROR Store getWatering error: ", error);
           //alert("API Error - Store getVendorsProducts Error from ES: ", error);
         });
     },
-    async fetchWateringOnly({ commit }) {
-      EventService.getWateringOnly()
-        .then((response) => {
-          commit("SET_WATERING_ONLY", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log("API ERROR Store getWateringOnly error: ", error);
-          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
-        });
-    },
-
   },
   getters: {
     loggedIn (state) {

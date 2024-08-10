@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Book List</h2>
+      <h2>Garden List</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -10,7 +10,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'BookCreate' }">Add Book</router-link>
+          <router-link  :to="{ name: 'GardenCreate' }">Add Garden</router-link>
         </button>
       </li>
       <li>
@@ -37,29 +37,30 @@
         />
       </div>
   </div>
-  <div class="book-list">
-    FilteredResults: {{ filterResults }}
+  <div class="garden-list">
+    filteredResults.length: {{ filteredResults.length }}
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
         <span v-if="requestIndexDetailFlag == true">
-          <h3 id="h3-left">Total: {{ books.length }}</h3>
-          <span class="h3-left-total-child">Double click Item Below to Edit</span>
+          <h3 id="h3-left">Total: {{ gardens.length }}</h3>
+          <span class="h3-left-total-child">*Double click Item Below to Edit</span>
           <div class="cards">
-            <BookCard
-              v-for="book in books"
-              :key="book.id"
-              :book="book"
+            <GardenCard
+              v-for="garden in gardens"
+              :key="garden.id"
+              :garden="garden"
               :origin="origin"
               class="card"
+              @dblclick="onDoubleClick(garden)"
             />
             <br />
           </div>
         </span>
         <span v-else>
-          <BookIndex :books="books" />
+          <GardenIndex :gardens="gardens" />
         </span>
       </span>
     </span>
@@ -68,10 +69,10 @@
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
         <div class="cards">
-          <BookCard
-            v-for="book in filteredResults"
-            :key="book.id"
-            :book="book"
+          <GardenCard
+            v-for="garden in filteredResults"
+            :key="garden.id"
+            :garden="garden"
             class="card"
             :origin="origin"
           />
@@ -79,25 +80,25 @@
         </div>
       </span>
       <span v-else>
-        <BookSearchResults :filteredResults="filteredResults" />
+        <GardenSearchResults :filteredResults="filteredResults" />
       </span>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import BookIndex from "@/components/books/BookIndex.vue";
-import BookCard from "@/components/books/BookCard.vue";
-import BookSearchResults from "@/components/books/BookSearchResults.vue";
+import GardenIndex from "@/components/gardens/GardenIndex.vue";
+import GardenCard from "@/components/gardens/GardenCard.vue";
+import GardenSearchResults from "@/components/gardens/GardenSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
-  name: "BookList",
+  name: "GardenList",
   props: ["filteredResults[]"],
   components: {
-    BookIndex,
-    BookCard,
-    BookSearchResults,
+    GardenIndex,
+    GardenCard,
+    GardenSearchResults,
     ConfirmDialogue
   },
   data() {
@@ -116,27 +117,28 @@ export default {
     };
   },
   mounted() {
-    this.sortedData = this.books;
+    this.sortedData = this.gardens;
   },
   created() {
-    this.$store.dispatch("fetchBooks");
-    this.sortedData = this.books;
+    this.$store.dispatch("fetchGardens");
+    this.sortedData = this.$store.dispatch("fetchGardens");
   },
   computed: {
-    books() {
-      return this.$store.state.books;
+    gardens() {
+      return this.$store.state.gardens;
     },
     origin() {
-      return "BookList"
+      return "GardenList"
     }
   },
   methods: {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
-    onDoubleClick(book) {
-      console.log("book Edit ")
-      this.$router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
+    onDoubleClick(garden) {
+      console.log("Garden Plants: ", garden)
+      this.$router.push({ name: 'GardenEdit', params: { id: `${garden.id}` } });
+      //this.$router.push({ name: 'GardenPlants', params: { id: `${garden.id}`} });
     },
     showIndex() {
       this.filteredResults = [];
@@ -153,23 +155,23 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.books &&
-          this.books.length > 0 &&
+          this.gardens &&
+          this.gardens.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.books.forEach((book) => {
+          this.gardens.forEach((garden) => {
             const searchHasTitle =
-              book.title &&
-              book.title
+              garden.title &&
+              garden.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchHasAuthor =
-              book.author &&
-              book.author
+              garden.author &&
+              garden.author
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(book);
+              this.filteredResults.push(garden);
             }
             if (this.filteredResults.length > 0) {
               this.searchResults = true;
@@ -185,7 +187,7 @@ export default {
     },
     sortList(sortBy) {
       //console.log("BOOK LIST sortBy: ", sortBy)
-      this.sortedData = this.books;
+      this.sortedData = this.gardens;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;

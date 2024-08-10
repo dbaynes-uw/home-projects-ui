@@ -16,9 +16,9 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import GardenPlantCard from "@/components/gardens/GardenPlantCard.vue";
+import GardenPlantCard from "@/components/plants/PlantCard.vue";
 export default {
-  name: 'GardenPlantDetails',
+  name: 'PlantDetails',
   props: ["id"],
   components: {
     ConfirmDialogue,
@@ -35,14 +35,14 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchGardenPlants", this.id);
+    this.$store.dispatch("fetchPlants", this.id);
   },
   computed: {
     plant() {
       return this.$store.state.plant;
     },
     origin() {
-      return "GardenPlantDetails"
+      return "PlantDetails"
     }
   },
 };

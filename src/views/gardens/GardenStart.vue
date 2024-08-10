@@ -6,7 +6,7 @@
     </v-card-title>
     <br/>
     <ul>
-      <span v-if="waterings.id">
+      <span v-if="watering.id">
         <li class="left">
           <button id="button-as-link">
             <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
@@ -22,7 +22,7 @@
       </span>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'GardenPlantList' }">Gardens</router-link>
+          <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
         </button>
       </li>
     </ul>
@@ -66,11 +66,11 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchWaterings");
+    this.$store.dispatch("fetchWatering");
   },
   computed: {
-    waterings() {
-    return this.$store.state.waterings;
+    watering() {
+    return this.$store.state.watering;
     },
   },
   methods: {
