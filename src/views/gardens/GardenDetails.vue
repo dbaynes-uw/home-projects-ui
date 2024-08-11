@@ -1,6 +1,11 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Garden and Plants</h1>
+  <router-link :to="{ name: 'GardenList' }">
+      <b>Back to Garden List</b>
+    </router-link>
+    <br/>
+    <br/>
   <div class="card-display">
     <GardenCard
       :key="garden.id"
@@ -55,14 +60,15 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchGarden", this.id);
+    this.sortedData = this.$store.dispatch("fetchGardens");
   },
   computed: {
     garden() {
       return this.$store.state.garden;
     },
-    origin() {
-      return "GardenDetails"
-    }
+    //origin() {
+    //  return "GardenDetails"
+    //}
   },
 };
 </script>

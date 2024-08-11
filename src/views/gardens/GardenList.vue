@@ -53,7 +53,6 @@
               v-for="garden in gardens"
               :key="garden.id"
               :garden="garden"
-              :origin="origin"
               class="card"
               @dblclick="onDoubleClick(garden)"
             />
@@ -75,7 +74,6 @@
             :key="garden.id"
             :garden="garden"
             class="card"
-            :origin="origin"
           />
           <br />
         </div>
@@ -128,9 +126,9 @@ export default {
     gardens() {
       return this.$store.state.gardens;
     },
-    origin() {
-      return "GardenList"
-    }
+    //origin() {
+    //  return "GardenList"
+    //}
   },
   methods: {
     requestIndexDetail() {
@@ -139,7 +137,6 @@ export default {
     onDoubleClick(garden) {
       console.log("Garden Plants: ", garden)
       this.$router.push({ name: 'GardenEdit', params: { id: `${garden.id}` } });
-      //this.$router.push({ name: 'GardenPlants', params: { id: `${garden.id}`} });
     },
     showIndex() {
       this.filteredResults = [];

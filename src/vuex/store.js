@@ -597,7 +597,7 @@ export default new Vuex.Store({
       EventService.postPlant(plant)
         .then(() => {
           commit("SET_PLANT", plant);
-          alert("Plant was successfully added for " + plant.yard_location);
+          alert("Plant was successfully added for " + plant.plant_name);
         })
         .catch((error) => {
           alert("Error in postPlant of createPlant Action");

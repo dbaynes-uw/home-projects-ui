@@ -104,7 +104,6 @@ export default {
   data() {
     return {
       plant: {
-        id: "",
         garden_id: "",
         plant_name: "",
         yard_location: "",
@@ -114,20 +113,15 @@ export default {
         date_planted: "",
         date_harvested: "",
         duration: "",
-        active: "",
+        active: true,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      active_statuses: ["Active", "Inactive"],
       yard_locations: ["North", "South"],
 
       ifFormValid: false,
       isYardLocationValid: false,
     };
-  },
-  created() {
-    console.log("PlantCreate Created: ", this.id)
-    this.$store.dispatch("fetchGarden", this.id);
   },
   computed: {
     garden() {
@@ -137,16 +131,15 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      console.log("@@FORM VALID? ", this.isFormValid)
-      console.log("Plant: ", this.plant)
       this.plant.garden_id = this.garden.id
       if (this.isFormValid) {
-        const garden = {
+        const plant = {
           ...this.plant,
+          //?active: true,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createPlant", garden)) {
+        if (this.$store.dispatch("createPlant", plant)) {
           this.$router.push({ name: "GardenList" });
         } else {
           alert("Error adding Plant " + this.plant.plant_name);
