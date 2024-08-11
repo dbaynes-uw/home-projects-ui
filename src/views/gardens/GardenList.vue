@@ -47,6 +47,7 @@
         <span v-if="requestIndexDetailFlag == true">
           <h3 id="h3-left">Total: {{ gardens.length }}</h3>
           <span class="h3-left-total-child">*Double click Item Below to Edit</span>
+          Gardens: {{ gardens.length }}
           <div class="cards">
             <GardenCard
               v-for="garden in gardens"

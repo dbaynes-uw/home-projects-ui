@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Plant {{ plant.plant_name }}</h2>
+    <h2>Edit Plant {{ plant.plant_name }} for {{ garden.garden_name }}</h2>
     <router-link :to="{ name: 'GardenList' }">
       <b>Back to Plant List</b>
     </router-link>
@@ -87,6 +87,12 @@ export default {
     this.plant = result.data;
     this.plant.active = this.plant.active == 1 ? 'Active' : 'Inactive'
   },
+  computed: {
+    garden() {
+      console.log("Garden: ", this.$store.state.garden)
+      return this.$store.state.garden;
+    }
+  },
   data() {
     return {
       plant: {
@@ -128,17 +134,23 @@ export default {
             this.api_url + 
             this.$route.params.id,
           {
-            title: this.plant.title,
-            author: this.plant.author,
-            date_written: this.plant.date_written,
-            date_read: this.plant.date_read,
-            url_to_review: this.plant.url_to_review,
+            garden_id:  this.garden.id,
+            plant_name: this.plant.plant_name,
+            yard_location: this.plant.yard_location,
+            description: this.plant.description,
+            water_line: this.plant.water_line,
+            online_link: this.plant.online_link,
+            date_planted: this.plant.date_planted,
+            date_harvested: this.plant.date_harvested,
+            duration: this.plant.duration,
+            active: this.plant.active,
             notes: this.plant.notes,
+            updated_by: this.$store.state.user.resource_owner.email,
           }
         );
         if (result.status >= 200) {
-          alert("GardenPlant has been updated");
-          this.$router.push({ name: "PlantDetails", params: { id: plant.id } });
+          alert("Garden Plant has been updated for: ", plant.plant_name);
+          this.$router.push({ name: "GardenDetails", params: { id: this.garden.id } });
         } else {
           alert("Update Error Code ", result.status);
         }

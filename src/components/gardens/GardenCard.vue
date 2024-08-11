@@ -5,7 +5,7 @@
        <router-link
          :to="{ name: 'GardenDetails', params: { id: this.garden.id} }"
        >
-        @@{{ garden.garden_name }}
+        {{ garden.garden_name }}
        </router-link>
      </p>
      <p id="p-custom-link">
