@@ -25,6 +25,13 @@
       @dblclick="editPlant(plant)"
     />
   </div>
+  <br>
+  <v-img
+          :src="require('../../assets/VegetableGardenLayoutSummer2024.png')"
+          class="my-3"
+          contain
+          height="400"
+      />
 </template>
 
 <script>

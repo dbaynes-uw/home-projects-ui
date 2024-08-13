@@ -27,26 +27,13 @@
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
         </v-text-field> 
-        <v-select
-          label="Yard Location"
-          class="test"
-          :items="yard_locations"
-          :rules="[requiredYardLocation]"
+        <v-text-field label="Location (North, South, Other like 1-A-1 for Vegetable Garden)"
           v-model="plant.yard_location"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-list-status</v-icon>
+            <v-icon class="icon-css">mdi-target</v-icon>
           </template>
-          <option
-            v-for="option in yard_locations"
-            :value="option"
-            :key="option"
-            class="select-box"
-            :selected="option === plant.yard_location"
-          >
-            {{ option }}
-          </option>
-        </v-select>            
+        </v-text-field> 
         <v-text-field label="Water Line"
           v-model="plant.water_line"
         >
@@ -140,7 +127,7 @@ export default {
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createPlant", plant)) {
-          this.$router.push({ name: "GardenList" });
+          this.$router.push({ name: 'GardenDetails', params: { id: this.garden.id}})
         } else {
           alert("Error adding Plant " + this.plant.plant_name);
         } 
@@ -157,7 +144,6 @@ export default {
       }
     },
     checkValidations() {
-
       if (this.isYardLocationValid) {
         this.isFormValid = true
       } else {

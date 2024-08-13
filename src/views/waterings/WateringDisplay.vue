@@ -48,7 +48,7 @@
         />
       </div>
       <v-img
-          :src="require('../../assets/vegetable_garden_summer_2024.png')"
+          :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
           class="my-3"
           contain
           height="400"
