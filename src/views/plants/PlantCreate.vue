@@ -29,6 +29,7 @@
         </v-text-field> 
         <v-text-field label="Location (North, South, Other like 1-A-1 for Vegetable Garden)"
           v-model="plant.yard_location"
+          :rules="[requiredYardLocation]"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
