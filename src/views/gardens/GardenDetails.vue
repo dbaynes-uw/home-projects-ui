@@ -3,7 +3,19 @@
   <h1>Garden and Plants</h1>
   <router-link :to="{ name: 'GardenList' }">
       <b>Back to Garden List</b>
+      <br>
     </router-link>
+    <!--tr v-for="(result, resultIndex) in plants" :key="resultIndex"></!--tr-->
+    <span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex">
+      <span v-if="garden.garden_name == outlet.target">
+          <router-link
+              :to="{ name: 'OutletDetails', params: { id: `${outlet.id}` } }"
+              target="_blank"
+              >
+            <b>See Watering Schedule</b>
+          </router-link>
+      </span>
+    </span>
     <br/>
     <br/>
   <div class="card-display">
@@ -15,6 +27,7 @@
       @dblclick="editGarden(garden)"
       />
   </div>
+  <!--watering.outlets.where(target: p.garden.garden_name).first-->
   <span class="h3-left-total-child">Double Click Item to Change</span>
   <div class="cards">
     <PlantCard
@@ -40,7 +53,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import PlantCard from "@/components/plants/PlantCard.vue";
-
+import EventService from '@/services/EventService'
 export default {
   name: 'GardenDetails',
   props: ["id"],
@@ -54,12 +67,23 @@ export default {
       updatedGardenPlant: null,
     };
   },
+
   methods: {
     editGarden(garden) {
       this.$router.push({ name: 'GardenEdit', params: { id: `${garden.id}`} });
     },
     editPlant(plant) {
       this.$router.push({ name: 'PlantEdit', params: { id: `${plant.id}`} });
+    },
+    getOutlet(garden) {
+      console.log("Garden: ", garden)
+      EventService.getGardenOutlet(garden.id)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
@@ -73,9 +97,12 @@ export default {
     garden() {
       return this.$store.state.garden;
     },
-    //origin() {
-    //  return "GardenDetails"
-    //}
+    origin() {
+      return "GardenDetails"
+    },
+    watering() {
+      return this.$store.state.watering;
+    },
   },
 };
 </script>

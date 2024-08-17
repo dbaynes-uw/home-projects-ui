@@ -30,9 +30,10 @@ import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
 import GardenStart from "../views/gardens/GardenStart.vue";
 import PlantCreate from "@/views/plants/PlantCreate.vue";
-//import PlantDetails from "@/views/plants/PlantDetails.vue";
+import PlantDetails from "@/views/plants/PlantDetails.vue";
 import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
+import OutletDetails from "@/views/waterings/OutletDetails.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import GardenPlants from "../views/gardens/GardenPlants.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
@@ -306,14 +307,20 @@ const routes = [
     component: GardenPlants,
     meta: { requiresAuth: true}
   },
-
-  //{
-  //  path: "/plants/:id",
-  //  name: "PlantDetails",
-  //  props: true,
-  //  component: PlantDetails,
-  //  meta: { requiresAuth: true}
-  //},
+  {
+    path: "/outlets/:id",
+    name: "OutletDetails",
+    props: true,
+    component: OutletDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/plants/:id",
+    name: "PlantDetails",
+    props: true,
+    component: PlantDetails,
+    meta: { requiresAuth: true}
+  },
   {
     path: "/plant/edit/:id",
     name: "PlantEdit",

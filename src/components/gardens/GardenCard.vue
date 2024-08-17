@@ -1,4 +1,6 @@
 <template>
+  <!-- watering.outlets.where(target: p.garden.garden_name).first }} -->
+  <!-- WWW: {{ watering }} -->
   <span v-if="garden.active == true">
     <div class="card">
      <p id="p-custom-u">
@@ -36,6 +38,11 @@ export default {
   },
   components: {
     //ConfirmDialogue,
+  },
+  computed: {
+    watering() {
+    return this.$store.state.watering;
+    },
   },
   setup() {
     //const vm = this.app.getCurrentInstance()

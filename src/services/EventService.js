@@ -172,9 +172,14 @@ export default {
     this.init();
     return axios.get(api_url + "plants",`${garden}`);
   },
-  getGardenPlants(id) {
+ getGardenPlants(id) {
+   this.init();
+   return axios.get(api_url + "garden_plants", `${id}`);
+ },
+  async getGardenOutlet(garden) {
     this.init();
-    return axios.get(api_url + "garden_plants", `${id}`);
+    console.log("GET GARDEN OUTLET: ", garden)
+    return axios.get(api_url + "gardens/garden_outlet", `${garden}`)
   },
   async postPlant(plant) {
     this.init();
@@ -318,5 +323,10 @@ export default {
     this.init();
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "watering/");
+  },
+  getOutlet(id) {
+    console.log("ES getOutlet: ", id)
+    this.init();
+    return axios.get(api_url + "outlets/" + id);
   },
 };

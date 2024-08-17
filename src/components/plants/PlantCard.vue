@@ -7,7 +7,7 @@
         <li class="li-left">Description: <b>{{ plant.description }}</b></li>
         <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
         <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
-        <li class="li-left">Water Line: {{plant.water_line }}</li>  
+        <li class="li-left"><a :href="plant.online_link" target="_blank">Water Line</a></li>  
         <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
         <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>
@@ -35,7 +35,7 @@
           </router-link>
           <span class="fa-table-stack">
             <i
-              @click="deleteGardenPlant(plant)"
+              @click="deletePlant(plant)"
               class="fas fa-trash-alt fa-stack-1x"
               id="card-medium-icon-delete"
             >
@@ -71,7 +71,7 @@
               <td id="icon-block">
                 <span class="fa-table-stack">
                   <i
-                    @click="deleteGardenPlant(plant)"
+                    @click="deletePlant(plant)"
                     class="fas fa-trash-alt fa-stack-1x"
                     id="card-medium-block-icon-delete"
                   >
@@ -89,7 +89,7 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: 'GardenPlantCard',
+  name: 'PlantCard',
   props: {
     plant: {
       type: Object,
@@ -98,10 +98,15 @@ export default {
     origin: {
       type: String,
       default: '',
-    }
+    },
   },
   components: {
     ConfirmDialogue,
+  },
+  computed: {
+    watering() {
+    return this.$store.state.watering;
+    },
   },
   setup() {
     //const vm = this.app.getCurrentInstance()
@@ -121,7 +126,7 @@ export default {
       if (ok) {
         this.$store.dispatch("deletePlant", plant);
         this.statusMessage =
-          "GardenPlant was Deleted for " +
+          "Plant was Deleted for " +
           plant.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);

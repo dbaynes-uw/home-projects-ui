@@ -96,7 +96,6 @@ export default {
   data() {
     return {
       plant: {
-        id: "",
         garden_id: "",
         plant_name: "",
         yard_location: "",

@@ -76,7 +76,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "GardenPlantIndex",
-  props: ["plants"],
+  //props: ["plants"],
   components: {
     ConfirmDialogue,
   },

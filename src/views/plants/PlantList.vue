@@ -10,7 +10,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'PlantCreate' }">Add GardenPlant</router-link>
+          <router-link  :to="{ name: 'PlantCreate' }">Add Plant</router-link>
         </button>
       </li>
       <span v-if="watering.id">
@@ -54,7 +54,7 @@
           <h3 id="h3-left">Total: {{ plants.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
-            <GardenPlantCard
+            <PlantCard
               v-for="plant in plants"
               :key="plant.id"
               :plant="plant"
@@ -66,7 +66,7 @@
           </div>
         </span>
         <span v-else>
-          <GardenPlantIndex :plants="plants" />
+          <PlantIndex :plants="plants" />
         </span>
       </span>
     </span>
@@ -75,7 +75,7 @@
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
         <div class="cards">
-          <GardenPlantCard
+          <PlantCard
             v-for="plant in filteredResults"
             :key="plant.id"
             :plant="plant"
@@ -87,25 +87,25 @@
         </div>
       </span>
       <span v-else>
-        <GardenPlantSearchResults :filteredResults="filteredResults" />
+        <PlantSearchResults :filteredResults="filteredResults" />
       </span>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import GardenPlantIndex from "@/components/gardens/GardenIndex.vue";
-import GardenPlantCard from "@/components/plants/PlantCard.vue";
-import GardenPlantSearchResults from "@/components/gardens/GardenSearchResults.vue";
+import PlantIndex from "@/components/gardens/GardenIndex.vue";
+import PlantCard from "@/components/plants/PlantCard.vue";
+import PlantSearchResults from "@/components/gardens/GardenSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
   name: "PlantList",
   props: ["filteredResults[]", "garden_id"],
   components: {
-    GardenPlantIndex,
-    GardenPlantCard,
-    GardenPlantSearchResults,
+    PlantIndex,
+    PlantCard,
+    PlantSearchResults,
     ConfirmDialogue,
   },
   data() {
@@ -209,7 +209,7 @@ export default {
           this.inputSearchText.length >= 2
         ) {
           this.plants.forEach((plant) => {
-            const searchHasGardenPlantName =
+            const searchHasPlantName =
               plant.plant_name &&
               plant.plant_name
                 .toLowerCase()
@@ -219,7 +219,7 @@ export default {
               plant.notes
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasGardenPlantName || searchNotes) {
+            if (searchHasPlantName || searchNotes) {
               this.filteredResults.push(plant);
             }
             if (this.filteredResults.length > 0) {

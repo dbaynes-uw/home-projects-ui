@@ -165,15 +165,15 @@ export default {
       this.outlet.watering_name = this.watering.name
       console.log("@@FORM VALID? ", this.isFormValid)
       if (this.isFormValid) {
-        const watering = {
+        const outlet = {
           ...this.outlet,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createWateringOutlet", watering)) {
+        if (this.$store.dispatch("createOutlet", HTMLOptGroupElement)) {
           this.$router.push({ name: "WateringDisplay" });
         } else {
-          alert("Error adding Watering System " + watering.name);
+          alert("Error adding Outlet System " + outlet.yard_location);
         } 
       } 
     },
