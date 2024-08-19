@@ -38,6 +38,9 @@
           :items="outlet_group.outletGroup"
           v-model="plant.water_line"
         >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template> 
           <option
             v-for="option in outlet_group"
             :value="option"

@@ -41,7 +41,26 @@
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
-        </v-text-field>  
+        </v-text-field>   
+        <v-select
+          :items="outlet_group.outletGroup"
+          label="Water Line"
+          v-model="plant.water_line"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template>
+          <option
+            v-for="option in outlet_group"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === plant.water_line"
+          >
+            {{ option }}
+          </option>
+        </v-select>
+
         <v-text-field
           v-model="plant.online_link"
           label="Online Link"
@@ -115,6 +134,13 @@ export default {
     garden() {
       return this.$store.state.garden;
     },
+    outlet_group() {
+      console.log("OutletGroup: ", this.$store.state.outlet_group)
+      return this.$store.state.outlet_group;
+    }, 
+  },
+    created() {
+    this.$store.dispatch("fetchOutletGroup" );
   },
   methods: {
     onSubmit() {
