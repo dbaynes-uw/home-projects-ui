@@ -11,7 +11,7 @@
         <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
         <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>
-        <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
+        <!--li class="li-left">Notes: <b>{{ plant.notes }}</b> </li-->
       </ul>
       <br/>
       <div class="icon-stack">

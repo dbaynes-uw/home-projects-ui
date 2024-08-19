@@ -172,6 +172,10 @@ export default {
     this.init();
     return axios.get(api_url + "plants",`${garden}`);
   },
+  async getOutletGroup() {
+    this.init();
+    return axios.get(api_url + "outlet_group")
+  },
  getGardenPlants(id) {
    this.init();
    return axios.get(api_url + "garden_plants", `${id}`);

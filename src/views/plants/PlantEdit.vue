@@ -33,8 +33,22 @@
         </v-select>        
         <label>Location:</label>
         <input type="text" class="text-style" v-model="plant.yard_location"/>
-        <label>Water Line:</label>
-        <input type="text" class="text-style" v-model="plant.water_line" />
+        <label>Water Line:</label>      
+        <v-select
+          :items="outlet_group.outletGroup"
+          v-model="plant.water_line"
+        >
+          <option
+            v-for="option in outlet_group"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === plant.water_line"
+          >
+            {{ option }}
+          </option>
+        </v-select>
+      
         <label>Duration:</label>
         <input type="text" class="text-style" v-model="plant.duration" />
         <label for="date_written">Date Planted:</label>
@@ -91,7 +105,14 @@ export default {
     garden() {
       console.log("Garden: ", this.$store.state.garden)
       return this.$store.state.garden;
-    }
+    },
+    outlet_group() {
+      console.log("OutletGroup: ", this.$store.state.outlet_group)
+      return this.$store.state.outlet_group;
+    }, 
+  },
+    created() {
+    this.$store.dispatch("fetchOutletGroup" );
   },
   data() {
     return {

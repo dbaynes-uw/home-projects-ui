@@ -237,6 +237,9 @@ export default new Vuex.Store({
     SET_OUTLET(state, outlet) {
       state.outlet = outlet;
     },
+    SET_OUTLET_GROUP(state, outlet_group) {
+      state.outlet_group = outlet_group;
+    },
   },
   actions: {
     async register ({ commit }, credentials) {
@@ -745,6 +748,20 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async fetchOutletGroup({ commit }) {
+      console.log("ES Start FetchOutletGroup");
+
+      EventService.getOutletGroup()
+        .then((response) => {
+          commit("SET_OUTLET_GROUP", response.data);
+          console.log("ES FetchOutletGroup response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     //async fetchGardenPlants({ commit }, id) {
     //  console.log("@@FETCH GARDEN PLANTS - Garden: @@", id)
     //  EventService.getGardenPlants(id)

@@ -39,12 +39,14 @@
     />
   </div>
   <br>
-  <v-img
-          :src="require('../../assets/VegetableGardenLayoutSummer2024.png')"
-          class="my-3"
-          contain
-          height="400"
-      />
+  <span v-if="garden.garden_name == 'Vegetable Garden'">
+    <v-img
+        :src="require('../../assets/VegetableGardenLayoutSummer2024.png')"
+        class="my-3"
+        contain
+        height="400"
+    />
+  </span>
 </template>
 
 <script>

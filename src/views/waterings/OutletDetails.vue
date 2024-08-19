@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     outlet() {
-      //console.log("Computed Outlet: ", this.$store.state.outlet)
+      console.log("Computed Outlet: ", this.$store.state.outlet)
       return this.$store.state.outlet;
     },
     //origin() {
