@@ -22,6 +22,7 @@
         </v-text-field>
         <v-text-field label="Plant Name"
           v-model="plant.plant_name"
+          :rules="[requiredPlantName]"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
@@ -34,18 +35,12 @@
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
-        </v-text-field> 
-        <v-text-field label="Water Line"
-          v-model="plant.water_line"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-target</v-icon>
-          </template>
-        </v-text-field>   
+        </v-text-field>  
         <v-select
           :items="outlet_group.outletGroup"
           label="Water Line"
           v-model="plant.water_line"
+          :rules="[requiredWaterLine]"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
@@ -126,8 +121,10 @@ export default {
       },
       yard_locations: ["North", "South"],
 
-      ifFormValid: false,
+      isFormValid: false,
+      isPlantNameValid: false,
       isYardLocationValid: false,
+      isWaterLineValid: false,
     };
   },
   computed: {
@@ -160,6 +157,16 @@ export default {
         } 
       } 
     },
+    requiredPlantName: function (value) {
+      if (value) {
+          this.isPlantNameValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isPlantNameValid = false
+          return 'Plant Name is Required';
+      }
+    },
     requiredYardLocation: function (value) {
       if (value) {
           this.isYardLocationValid = true
@@ -170,8 +177,19 @@ export default {
           return 'Please enter Yard Location';
       }
     },
+    requiredWaterLine: function (value) {
+      if (value) {
+          this.isWaterLineValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isWaterLineValid = false
+          return 'Waterline is Required';
+      }
+    },
+    
     checkValidations() {
-      if (this.isYardLocationValid) {
+      if (this.isPlantNameValid && this.isYardLocationValid && this.isWaterLineValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false

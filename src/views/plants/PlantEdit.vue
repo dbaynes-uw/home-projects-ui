@@ -7,10 +7,13 @@
     </router-link>
     <br/>
     <br/>
-    <form class="form-card-display" @submit.prevent="updateGardenPlant">
+    <v-form class="form-card-display" @submit.prevent="updateGardenPlant">
       <div class="form-container">
         <label>Plant Name:</label>
-        <input type="text" class="text-style" v-model="plant.plant_name" required />
+        <input type="text" class="text-style"
+          v-model="plant.plant_name"
+          required
+        />
         <label>Description:</label>
         <input type="text" class="text-style" v-model="plant.description" />
         <v-select
@@ -37,10 +40,11 @@
         <v-select
           :items="outlet_group.outletGroup"
           v-model="plant.water_line"
+          :rules="[requiredWaterLine]"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-target</v-icon>
-          </template> 
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
           <option
             v-for="option in outlet_group"
             :value="option"
@@ -79,7 +83,7 @@
           Submit
         </button>
       </div>
-    </form>
+    </v-form>
   </div>
 </template>
 <script>
@@ -135,50 +139,75 @@ export default {
       },
       api_url: "",
       active_statuses: ["Active", "Inactive"],
+      isFormValid: false,
+      isPlantNameValid: false,
+      isYardLocationValid: false,
+      isWaterLineValid: false,
     };
   },
   setup() {},
   methods: {
     async updateGardenPlant() {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Update GardenPlant from List ",
-        message:
-          "Are you sure you want to update " + 
-          this.plant.title,
-        okButton: "Update",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        const plant = {
-          ...this.plant,
-          updated_by: this.$store.state.created_by,
-        };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            garden_id:  this.garden.id,
-            plant_name: this.plant.plant_name,
-            yard_location: this.plant.yard_location,
-            description: this.plant.description,
-            water_line: this.plant.water_line,
-            online_link: this.plant.online_link,
-            date_planted: this.plant.date_planted,
-            date_harvested: this.plant.date_harvested,
-            duration: this.plant.duration,
-            active: this.plant.active,
-            notes: this.plant.notes,
-            updated_by: this.$store.state.user.resource_owner.email,
+      this.checkValidations();
+      if (this.isFormValid) {
+        const ok = await this.$refs.confirmDialogue.show({
+          title: "Update GardenPlant from List ",
+          message:
+            "Are you sure you want to update " + 
+            this.plant.plant_name,
+          okButton: "Update",
+        });
+        // If you throw an error, the method will terminate here unless you surround it wil try/catch
+        if (ok) {
+          const plant = {
+            ...this.plant,
+            updated_by: this.$store.state.created_by,
+          };
+          const result = await axios.put(
+              this.api_url + 
+              this.$route.params.id,
+            {
+              garden_id:  this.garden.id,
+              plant_name: this.plant.plant_name,
+              yard_location: this.plant.yard_location,
+              description: this.plant.description,
+              water_line: this.plant.water_line,
+              online_link: this.plant.online_link,
+              date_planted: this.plant.date_planted,
+              date_harvested: this.plant.date_harvested,
+              duration: this.plant.duration,
+              active: this.plant.active,
+              notes: this.plant.notes,
+              updated_by: this.$store.state.user.resource_owner.email,
+            }
+          );
+          if (result.status >= 200) {
+            alert("Garden Plant has been updated for: " + plant.plant_name);
+            this.$router.push({ name: "GardenDetails", params: { id: this.garden.id } });
+          } else {
+            alert("Update Error Code ", result.status);
           }
-        );
-        if (result.status >= 200) {
-          alert("Garden Plant has been updated for: ", plant.plant_name);
-          this.$router.push({ name: "GardenDetails", params: { id: this.garden.id } });
-        } else {
-          alert("Update Error Code ", result.status);
         }
       }
     },
+    requiredWaterLine: function (value) {
+      if (value) {
+          this.isWaterLineValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isWaterLineValid = false
+          return 'Waterline is Required';
+      }
+    },
+    checkValidations() {
+      if (this.isWaterLineValid) {
+        this.isFormValid = true
+      } else {
+        this.isFormValid = false
+      }
+      console.log("Check Validations Form Valid? ", this.isFormValid)
+    }
   },
 };
 </script>
