@@ -78,7 +78,7 @@
             </div>
           </div>
         </div>
-        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
+        <v-btn type="submit" block class="mt-2" @click="onSubmit(location)">Submit</v-btn>
       </v-container>
     </v-form>
   </v-card-text>
@@ -187,7 +187,6 @@ export default {
       console.log("DBLCLICK LOC", `${location}`)
       clearTimeout(time);
       this.$router.push({ name: 'ProductLocationList', params: { location: `${location}` } });
-
     },
     doubleClickVendor(vendor) {
       

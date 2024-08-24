@@ -112,6 +112,7 @@ export default {
     };
   },
   created() {
+    console.log("ProductLocationList FETCH!")
     this.$store.dispatch("fetchProductsByLocation", this.$route.params.location );
 
   },

@@ -281,11 +281,6 @@ export default {
     this.init();
     return axios.get(api_url + "vendors_products")
   },
-  async getProductsByLocation(location) {
-    console.log("getProductsByLocation - location: ", location)
-    this.init();
-    return axios.get(api_url + "products_by_location/" + `?location=${location}`)
-  },
   async getVendorsLocationsGroup() {
     this.init();
     return axios.get(api_url + "vendors_locations_group")
@@ -332,5 +327,15 @@ export default {
     console.log("ES getOutlet: ", id)
     this.init();
     return axios.get(api_url + "outlets/" + id);
+  },
+  getOutletDetailsByName(name) {
+    console.log("ES getOutlet name: ", name)
+    this.init();
+    return axios.get(api_url + "outlets/get_plant_watering_outlet/" + `?name=${name}`);
+  },
+  async getProductsByLocation(location) {
+    console.log("getProductsByLocation - location: ", location)
+    this.init();
+    return axios.get(api_url + "products_by_location/" + `?location=${location}`)
   },
 };

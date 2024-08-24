@@ -7,15 +7,14 @@
         <li class="li-left">Description: <b>{{ plant.description }}</b></li>
         <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
         <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
-        <li class="li-left"><a :href="plant.online_link" target="_blank">Water Line {{ plant.water_line }}</a></li>  
+        <li class="li-left" @click="onClickOutlet(plant)">{{ plant.water_line }}</li>  
         <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
-        <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>
-        <!--li class="li-left">Notes: <b>{{ plant.notes }}</b> </li-->
+        <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
       </ul>
       <br/>
       <div class="icon-stack">
-        <span v-if="origin == 'PlantDetails'">
+        <!--span v-if="origin == 'PlantDetails'">
         <span class="fa-stack">
           <router-link
             :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
@@ -42,7 +41,7 @@
             </i>
           </span>
         </span>
-        </span>
+        </!--span>
         <span v-if="origin == 'PlantList'">
           <table>
             <tr>
@@ -57,7 +56,8 @@
                 </i>
               </router-link>
               </td>
-              <!--span v-if="plant.id > 0"-->
+            -->
+              <!--span v-if="plant.id > 0">
                 <td id="icon-block">
                   <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
                     <i
@@ -67,7 +67,7 @@
                     </i>
                   </router-link>
                 </td>
-              <!--span-->
+              </span>
               <td id="icon-block">
                 <span class="fa-table-stack">
                   <i
@@ -80,14 +80,16 @@
               </td>
             </tr>
           </table>
-        </span>
+        </span-->
       </div>
     </div>
   </div>
 </template>
 <script>
+let time = null; 
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+//import axios from "axios";
 export default {
   name: 'PlantCard',
   props: {
@@ -95,10 +97,20 @@ export default {
       type: Object,
       default: () => ({})
     },
-    origin: {
-      type: String,
-      default: '',
-    },
+    //origin: {
+    //  type: String,
+    //  default: '',
+    //},
+    //outlet_details_by_name: {
+    //  type: String,
+    //  default: '',
+    //}
+  },
+  async mounted() {},
+  data() {
+    return {
+      outlet: "outlet",
+    }
   },
   components: {
     ConfirmDialogue,
@@ -133,7 +145,11 @@ export default {
         this.$router.push({ name: "PlantList" });
       }
     },
-
+    onClickOutlet(plant) {
+      console.log("onClickOutlet - Plant: ", `${plant}`)
+      clearTimeout(time);
+      this.$router.push({ name: 'OutletDetailsByName', params: { outlet_details_by_name: `${plant.water_line}` } });
+    },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },

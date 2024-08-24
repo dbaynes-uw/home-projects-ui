@@ -103,7 +103,7 @@ export default new Vuex.Store({
       state.garden = garden;
     },
     SET_GARDENS(state, gardens) {
-      console.log("SET_GARDENS: ", gardens)
+      //console.log("SET_GARDENS: ", gardens)
       state.gardens = gardens;
     },
     //SET_GARDEN_PLANTS(state, garden_plants) {
@@ -236,6 +236,9 @@ export default new Vuex.Store({
     },
     SET_OUTLET(state, outlet) {
       state.outlet = outlet;
+    },
+    SET_OUTLET_DETAILS_BY_NAME(state, outlet_details_by_name) {
+      state.outlet_details_by_name = outlet_details_by_name;
     },
     SET_OUTLET_GROUP(state, outlet_group) {
       state.outlet_group = outlet_group;
@@ -410,7 +413,7 @@ export default new Vuex.Store({
       }
     },
     async fetchGardens({ commit }) {
-      console.log("@@FETCH GARDENS@@")
+      //console.log("@@FETCH GARDENS@@")
       //const gardens = [
       //  {garden_name: 'A1'},
       //  {garden_name: 'A2'}
@@ -418,7 +421,7 @@ export default new Vuex.Store({
       EventService.getGardens()
         .then((response) => {
           commit("SET_GARDENS", response.data);
-          console.log("GARDEN STORE: ", response.data)
+          //console.log("GARDEN STORE: ", response.data)
           return response.data;
         })
         .catch((error) => {
@@ -735,9 +738,34 @@ export default new Vuex.Store({
           });
       //}
     },
+    async fetchProductsByLocation({ commit }, products_by_location) {
+      console.log("Store - Products by Location: ", products_by_location )
+      EventService.getProductsByLocation(products_by_location)
+        .then((response) => {
+          // No longer needed:
+          //commit("RESET_STATE", response.data);
+          commit("SET_PRODUCTS_BY_LOCATION", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async fetchOutletDetailsByName({ commit }, outlet_name) {
+      console.log("Store FetchOutletDetailsByName name: ", outlet_name)
+      EventService.getOutletDetailsByName(outlet_name)
+        .then((response) => {
+          console.log("fetchOutletDetailsByName STORE Repsonse: ", response.data)
+          commit("SET_OUTLET_DETAILS_BY_NAME", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
 
     async fetchPlants({ commit }, garden) {
-      console.log("@@FETCH PLANTS - Garden: @@", garden)
+      //console.log("@@FETCH PLANTS - Garden: @@", garden)
       EventService.getPlants(garden)
         .then((response) => {
           commit("SET_PLANTS", response.data);
@@ -795,19 +823,6 @@ export default new Vuex.Store({
         .catch((error) => {
           console.log(error);
           alert("Store getProducts Error from ES: " + error.response.data.error);
-        });
-    },
-    async fetchProductsByLocation({ commit }, products_by_location) {
-      console.log("ES - Products by Location: ", products_by_location )
-      EventService.getProductsByLocation(products_by_location)
-        .then((response) => {
-          // No longer needed:
-          //commit("RESET_STATE", response.data);
-          commit("SET_PRODUCTS_BY_LOCATION", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
     async fetchShoppingList({ commit }) {
@@ -1144,7 +1159,6 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
     async fetchWatering({ commit }) {
       EventService.getWatering()
         .then((response) => {

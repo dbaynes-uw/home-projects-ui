@@ -34,6 +34,7 @@ import PlantDetails from "@/views/plants/PlantDetails.vue";
 import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
 import OutletDetails from "@/views/waterings/OutletDetails.vue";
+import OutletDetailsByName from "@/views/waterings/OutletDetailsByName.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import GardenPlants from "../views/gardens/GardenPlants.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
@@ -148,13 +149,7 @@ const routes = [
     component: EventList,
     meta: { requiresAuth: true}
   },
-  {
-    path: "/events/statistic_detail/:statistic",
-    name: "EventStatisticDetail",
-    props: true,
-    component: EventStatisticDetail,
-    meta: { requiresAuth: true}
-  },
+
   {
     path: "/events/:id",
     name: "EventShow",
@@ -315,6 +310,27 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/products_by_location/:location",
+    component: ProductLocationList,
+    props: true,
+    name: "ProductLocationList",
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/get_plant_watering_outlet/:outlet_details_by_name",
+    name: "OutletDetailsByName",
+    props: true,
+    component: OutletDetailsByName,
+    meta: { requiresAuth: true}
+  },
+    {
+    path: "/events/statistic_detail/:statistic",
+    name: "EventStatisticDetail",
+    props: true,
+    component: EventStatisticDetail,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/plants/:id",
     name: "PlantDetails",
     props: true,
@@ -334,13 +350,7 @@ const routes = [
     component: PlantCreate,
     meta: { requiresAuth: true}
   },
-  {
-    path: "/products_by_location/:location",
-    component: ProductLocationList,
-    props: true,
-    name: "ProductLocationList",
-    meta: { requiresAuth: true}
-  },
+
   {
     path: "/products_by_locations",
     name: "ProductLocationsList",
@@ -477,12 +487,6 @@ const routes = [
     path: "/watering",
     name: "WateringDisplay",
     component: WateringDisplay,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/watering_only",
-    name: "WateringOnly",
-    component: OutletCreate,
     meta: { requiresAuth: true}
   },
   {
