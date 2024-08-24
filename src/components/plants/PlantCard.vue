@@ -58,7 +58,8 @@
                 </i>
               </router-link>
               </td>
-              <!--span v-if="plant.id > 0"-->
+              
+              <span v-if="plant.id > 0">
                 <td id="icon-block">
                   <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
                     <i
@@ -68,7 +69,7 @@
                     </i>
                   </router-link>
                 </td>
-              <!--span-->
+              </span>
               <td id="icon-block">
                 <span class="fa-table-stack">
                   <i
@@ -87,6 +88,7 @@
   </div>
 </template>
 <script>
+let time = null; 
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
