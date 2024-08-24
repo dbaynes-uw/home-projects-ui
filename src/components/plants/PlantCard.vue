@@ -134,7 +134,11 @@ export default {
         this.$router.push({ name: "PlantList" });
       }
     },
-
+    onClickOutlet(plant) {
+      console.log("onClickOutlet - Plant: ", `${plant}`)
+      clearTimeout(time);
+      this.$router.push({ name: 'OutletDetailsByName', params: { outlet_details_by_name: `${plant.water_line}` } });
+    },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },
