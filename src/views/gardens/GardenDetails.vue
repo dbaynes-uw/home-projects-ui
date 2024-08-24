@@ -10,7 +10,6 @@
       <span v-if="garden.garden_name == outlet.target">
           <router-link
               :to="{ name: 'OutletDetails', params: { id: `${outlet.id}` } }"
-              target="_blank"
               >
             <b>See Watering Schedule</b>
           </router-link>

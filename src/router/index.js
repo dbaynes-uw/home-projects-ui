@@ -492,7 +492,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/outlet/edit/:id",
+    path: "/outlets/:id",
     name: "OutletEdit",
     component: OutletEdit,
     meta: { requiresAuth: true}
