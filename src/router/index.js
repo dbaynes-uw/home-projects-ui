@@ -55,6 +55,7 @@ import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
 import WateringCreate from "@/views/waterings/WateringCreate.vue";
 import OutletCreate from "@/views/waterings/OutletCreate.vue";
+import OutletDetailsByName from "@/views/waterings/OutletDetailsByName.vue";
 import WateringEdit from "@/views/waterings/WateringEdit.vue";
 import OutletEdit from "@/views/waterings/OutletEdit.vue";
 import WateringDisplay from "../views/waterings/WateringDisplay.vue";
@@ -315,6 +316,13 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/outlets/:outlet_name",
+    name: "OutletDetailsByName",
+    props: true,
+    component: OutletDetailsByName,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/plants/:id",
     name: "PlantDetails",
     props: true,
@@ -341,6 +349,14 @@ const routes = [
     name: "ProductLocationList",
     meta: { requiresAuth: true}
   },
+  {
+    path: "/get_plant_watering_outlet/:outlet_details_by_name",
+    name: "OutletDetailsByName",
+    props: true,
+    component: OutletDetailsByName,
+    meta: { requiresAuth: true}
+  },
+
   {
     path: "/products_by_locations",
     name: "ProductLocationsList",

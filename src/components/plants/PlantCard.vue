@@ -8,7 +8,7 @@
         <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
         <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
         <!--li class="li-left"><a :href="plant.online_link" target="_blank">Water Line</a></!--li-->
-        <li class="li-left" @click="onClickOutlet(plant)">{{ plant.water_line }}</li>    
+        <li class="li-left" @click="showOutlet(plant)">{{ plant.water_line }}</li>    
         <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
         <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>
@@ -136,10 +136,11 @@ export default {
         this.$router.push({ name: "PlantList" });
       }
     },
-    onClickOutlet(plant) {
+    showOutlet(plant) {
       console.log("onClickOutlet - Plant: ", `${plant}`)
       clearTimeout(time);
       this.$router.push({ name: 'OutletDetailsByName', params: { outlet_details_by_name: `${plant.water_line}` } });
+      //this.$router.push({ name: 'OutletDetailsByName', state: { outlet_details_by_name}})
     },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);

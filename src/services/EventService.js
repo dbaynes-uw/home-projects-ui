@@ -329,4 +329,9 @@ export default {
     this.init();
     return axios.get(api_url + "outlets/" + id);
   },
+  getOutletDetailsByName(name) {
+    console.log("ES getOutlet name: ", name)
+    this.init();
+    return axios.get(api_url + "outlets/get_plant_watering_outlet/" + `?name=${name}`);
+  },
 };

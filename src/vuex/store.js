@@ -237,6 +237,9 @@ export default new Vuex.Store({
     SET_OUTLET(state, outlet) {
       state.outlet = outlet;
     },
+    SET_OUTLET_DETAILS_BY_NAME(state, outlet_details_by_name) {
+      state.outlet_details_by_name = outlet_details_by_name;
+    },
   },
   actions: {
     async register ({ commit }, credentials) {
@@ -732,7 +735,18 @@ export default new Vuex.Store({
           });
       //}
     },
-
+    async fetchOutletDetailsByName({ commit }, outlet_name) {
+      console.log("Store FetchOutletDetailsByName name: ", outlet_name)
+      EventService.getOutletDetailsByName(outlet_name)
+        .then((response) => {
+          console.log("fetchOutletDetailsByName STORE Repsonse: ", response.data)
+          commit("SET_OUTLET_DETAILS_BY_NAME", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async fetchPlants({ commit }, garden) {
       console.log("@@FETCH PLANTS - Garden: @@", garden)
       EventService.getPlants(garden)
