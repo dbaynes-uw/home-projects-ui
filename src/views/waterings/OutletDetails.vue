@@ -30,13 +30,10 @@ export default {
     };
   },
   created() {
-    console.log("Outlet Details Created ID: ", this.id)
-    console.log("Created Outlet: ", this.$store.dispatch("fetchOutlet", this.id))
     this.$store.dispatch("fetchOutlet", this.id);
   },
   computed: {
     outlet() {
-      //console.log("Computed Outlet: ", this.$store.state.outlet)
       return this.$store.state.outlet;
     },
     //origin() {

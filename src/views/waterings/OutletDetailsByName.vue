@@ -1,15 +1,14 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h1>Outlet Details By Name</h1>
-  <!--ODBN Target: {{ outlet_details_by_name.outlet_details_by_name.target }}-->
-  ODBN ID: {{ outlet_details_by_name.outlet_details_by_name.id }}
+  <h2>Watering Outlet</h2>
+  <h1>{{ outlet.yard_location }} {{ outlet.faucet_location }} Line - {{ outlet.line_number }}</h1>
   <br/>
   <div class="card-display">
-    <OutletDetailsByNameCard
-      :key="outlet_details_by_name.outlet_details_by_name.id"
-      :outlet="outlet_details_by_name.outlet_details_by_name"
+    <OutletCard
+      :key="outlet.id"
+      :outlet="outlet"
       class="card"
-      @dblclick="onDoubleClick(outlet_details_by_name)"
+      @dblclick="onDoubleClick(outlet)"
       />
   </div>
   <!--      :origin="origin"-->
@@ -19,20 +18,13 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import OutletDetailsByNameCard from "@/components/outlets/OutletDetailsByNameCard.vue";
+import OutletCard from "@/components/outlets/OutletCard.vue";
 export default {
   name: 'OutletDetailsByName',
-  props: {
-    //outlet_name: {
-    //  type: String, required: true
-    //},
-    //outlet_details_by_name: {
-    //  type: String, required: true
-    //}
-  },
+  props: {},
   components: {
     ConfirmDialogue,
-    OutletDetailsByNameCard,
+    OutletCard,
   },
   data() {
     return {
@@ -40,12 +32,10 @@ export default {
     };
   },
   created() {
-    console.log("Created Outlet Details By Name: ", this.$store.dispatch("fetchOutletDetailsByName", this.$route.params.outlet_details_by_name))
     this.$store.dispatch("fetchOutletDetailsByName", this.$route.params.outlet_details_by_name);
   },
   computed: {
-    outlet_details_by_name() {
-      console.log("ODBN - Computed Outlet By Name: ", this.$store.state.outlet_details_by_name)
+    outlet() {
       return this.$store.state.outlet_details_by_name //, this.$route.params.outlet_details_by_name;
     },
     //origin() {

@@ -1,10 +1,12 @@
 <template>
   <span v-if="outlet.active == 1">
     <div class="card">
-      <p id="p-custom-left-u">{{ outlet.yard_location }} - {{ outlet.faucet_location }}</p>
       <ul>
-        <li class="li-left">Status: <b>{{ outlet.active == 1 ? 'Active' : 'Inactive' }}</b></li>
+        <li class="li-left">Outlet Name: <b>{{ outlet.outlet_name }}</b></li>
+        <li class="li-left">Yard Location: <b>{{  outlet.yard_location }}</b></li>
+        <li class="li-left">Faucet Location: <b>{{  outlet.faucet_location }}</b></li>
         <li class="li-left">Line: <b>{{ outlet.line_number }}</b></li>
+        <li class="li-left">Status: <b>{{ outlet.active == 1 ? 'Active' : 'Inactive' }}</b></li>
         <li class="li-left">Target: <b><u>{{ outlet.target }}</u></b></li>
         <li class="li-left">Frequency: {{ outlet.frequency }}</li>
         <li class="li-left">Start: {{ formatTime(outlet.start_time)}}</li>
