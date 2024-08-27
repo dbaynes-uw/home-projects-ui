@@ -1,5 +1,7 @@
 <template>
   <div id="required-to-prevent-vue-warning">
+    <!--Garden: {{ garden }}
+    Plant: {{ plant }}-->
     <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
     <div class="card">
       <p id="p-custom-left-u">{{ plant.plant_name}}</p>
@@ -94,6 +96,10 @@ import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'PlantCard',
   props: {
+    garden: {
+      type: Object,
+      default: () => ({})
+    },
     plant: {
       type: Object,
       default: () => ({})
@@ -108,7 +114,7 @@ export default {
   },
   computed: {
     watering() {
-    return this.$store.state.watering;
+      return this.$store.state.watering;
     },
   },
   setup() {

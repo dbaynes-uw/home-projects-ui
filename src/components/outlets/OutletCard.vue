@@ -1,4 +1,7 @@
 <template>
+  <!--Garden: {{ garden }}
+  Outlet: {{ outlet }}
+  -->
   <span v-if="outlet.active == 1">
     <div class="card">
       <ul>
@@ -24,6 +27,10 @@ export default {
   name: 'OutletCard',
   props: {
     outlet: {
+      type: Object,
+      default: () => ({})
+    },
+    garden: {
       type: Object,
       default: () => ({})
     }
