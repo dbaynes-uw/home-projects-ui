@@ -90,6 +90,7 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchGarden", this.id);
+    this.$store.dispatch('resetModule', 'fetchOutletDetailsByName')
     this.sortedData = this.$store.dispatch("fetchGardens");
   },
   computed: {

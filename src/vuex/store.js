@@ -240,6 +240,9 @@ export default new Vuex.Store({
     SET_OUTLET_DETAILS_BY_NAME(state, outlet_details_by_name) {
       state.outlet_details_by_name = outlet_details_by_name;
     },
+    DELETE_OUTLET_DETAILS_BY_NAME(state, outlet_details_by_name) {
+      state.outlet_details_by_name = outlet_details_by_name;
+    },
   },
   actions: {
     async register ({ commit }, credentials) {
@@ -410,7 +413,6 @@ export default new Vuex.Store({
       }
     },
     async fetchGardens({ commit }) {
-      console.log("@@FETCH GARDENS@@")
       //const gardens = [
       //  {garden_name: 'A1'},
       //  {garden_name: 'A2'}
@@ -418,7 +420,7 @@ export default new Vuex.Store({
       EventService.getGardens()
         .then((response) => {
           commit("SET_GARDENS", response.data);
-          console.log("GARDEN STORE: ", response.data)
+          
           return response.data;
         })
         .catch((error) => {
@@ -705,14 +707,14 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async createOutlet({ commit }, outlet) {
-      EventService.postOutlet(outlet)
+    async createWateringOutlet({ commit }, outlet) {
+      EventService.postWateringOutlet(outlet)
         .then(() => {
-          commit("ADD_OUTLET", outlet);
-          alert("Outlet was successfully added for " + outlet.yard_location);
+          commit("SET_OUTLET", outlet);
+          alert("Outlet was successfully added for " + outlet.outlet_name);
         })
         .catch((error) => {
-          alert("Error in postBook of createBook Action (index.js)");
+          alert("Error in postBook of createOutlet Action (index.js)");
           console.log(error);
         });
     },
@@ -744,7 +746,10 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
+          alert("Outlet " + outlet_name + " was not found. Water Line for Plant must be changed."); 
+          commit("DELETE_OUTLET_DETAILS_BY_NAME"); 
           console.log(error);
+          router.push({ name: 'GardenList'});
         });
     },
     async fetchPlants({ commit }, garden) {
@@ -1142,8 +1147,8 @@ export default new Vuex.Store({
         });
     },
 
-    async fetchWatering({ commit }) {
-      EventService.getWatering()
+    async fetchWatering({ commit }, watering) {
+      EventService.getWatering(watering)
         .then((response) => {
           commit("SET_WATERING", response.data);
           return response.data;

@@ -19,6 +19,11 @@
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
+        <v-text-field label="Outlet Name" v-model="outlet.outlet_name">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template>
+        </v-text-field>
         <v-select
           label="Yard Location"
           :items="yard_locations"
@@ -114,7 +119,11 @@
             {{ option }}
           </option>
         </v-select>        
-
+        <v-text-field label="Notes" v-model="outlet.notes">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-note</v-icon>
+          </template>
+        </v-text-field>
         <v-btn type="submit" block class="mt-2">Submit</v-btn>
         <!--button type="submit" block class="mt-2">Submit</~button-->
       </v-container>
@@ -129,6 +138,8 @@ export default {
   data() {
     return {
       outlet: {
+        watering_name: "",
+        outlet_name: "",
         yard_location: "",
         faucet_location: "",
         line_number: "",
@@ -170,7 +181,7 @@ export default {
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createOutlet", HTMLOptGroupElement)) {
+        if (this.$store.dispatch("createWateringOutlet", outlet)) {
           this.$router.push({ name: "WateringDisplay" });
         } else {
           alert("Error adding Outlet System " + outlet.yard_location);

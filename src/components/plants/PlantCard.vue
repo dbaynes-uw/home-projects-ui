@@ -8,7 +8,7 @@
         <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
         <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
         <!--li class="li-left"><a :href="plant.online_link" target="_blank">Water Line</a></!--li-->
-        <li class="li-left" @click="showOutlet(plant)">{{ plant.water_line }}</li>    
+        <li class="li-left" @click="showOutlet(plant)"> Water Line: {{ plant.water_line }}</li>    
         <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
         <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>

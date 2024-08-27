@@ -94,10 +94,10 @@ export default {
     var work_url = ""
     if (window.location.port == "8080") {
       // or: "http://davids-macwatering-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/waterings/get_watering";
+      work_url = "http://localhost:3000/api/v1/waterings/";
     } else {
       work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/get_watering";
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/";
     }
     this.api_url = work_url
     this.watering = axios.get(this.api_url);

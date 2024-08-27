@@ -1,16 +1,20 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h2>Watering Outlet</h2>
-  <h1>{{ outlet.yard_location }} {{ outlet.faucet_location }} Line - {{ outlet.line_number }}</h1>
-  <br/>
-  <div class="card-display">
-    <OutletCard
-      :key="outlet.id"
-      :outlet="outlet"
-      class="card"
-      @dblclick="onDoubleClick(outlet)"
-      />
-  </div>
+  <span v-if="outlet">
+    <!--span v-if="this.$route.params.outlet_details_by_name == outlet.outlet_name"-->
+      <h2>Watering Outlet</h2>
+      <h1>{{ outlet.yard_location }} {{ outlet.faucet_location }} Line - {{ outlet.line_number }}</h1>
+      <br/>
+      <div class="card-display">
+        <OutletCard
+          :key="outlet.id"
+          :outlet="outlet"
+          class="card"
+          @dblclick="onDoubleClick(outlet)"
+          />
+      </div>
+    <!--/span-->
+  </span>
   <!--      :origin="origin"-->
 </template>
 
@@ -36,6 +40,7 @@ export default {
   },
   computed: {
     outlet() {
+      console.log("STORE: ", this.$store.state.outlet_details_by_name)
       return this.$store.state.outlet_details_by_name //, this.$route.params.outlet_details_by_name;
     },
     //origin() {

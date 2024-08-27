@@ -315,9 +315,9 @@ export default {
     this.init();
     return axios.post(api_url + 'watering_outlet', watering_outlet);
   },
-  async getWatering() {
+  async getWatering(id) {
     this.init();
-    return axios.get(api_url + "get_watering")
+    return axios.get(api_url + "waterings/" + id)
   },
   deleteWatering() {
     this.init();
