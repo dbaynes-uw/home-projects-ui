@@ -1,5 +1,4 @@
 <template>
-  this.$route.params.outlet_details_by_name: {{ this.$route.params.outlet_details_by_name }}
   <span v-if="outlet.active == 1">
     <div class="card">
       <ul>
