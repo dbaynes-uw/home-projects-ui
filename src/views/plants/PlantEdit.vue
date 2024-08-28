@@ -36,14 +36,14 @@
         <v-select
           label="Outlet Name:"
           :items="outletsGroup.outletsGroup"
-          v-model="plant.outlet_id"
+          v-model="plant.outlet_name"
         >
           <option
             v-for="option in outletsGroup"
             :value="option"
             :key="option"
             id="select-box"
-            :selected="option === plant.outlet_id"
+            :selected="option === plant.outlet_name"
           >
             {{ option }}
           </option>
@@ -149,7 +149,6 @@ export default {
           ...this.plant,
           updated_by: this.$store.state.created_by,
         };
-        console.log("Plant: ", plant.plant_name)
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -157,6 +156,7 @@ export default {
             garden_id:  this.garden.id,
             plant_name: this.plant.plant_name,
             outlet_id:  this.plant.outlet_id,
+            outlet_name:  this.plant.outlet_name,
             yard_location: this.plant.yard_location,
             description: this.plant.description,
             online_link: this.plant.online_link,

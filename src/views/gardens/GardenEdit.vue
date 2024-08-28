@@ -1,13 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Garden {{ garden.garden_name }}</h2>
+    <h2>Edit Garden '{{ garden.garden_name }}'</h2>
     <router-link :to="{ name: 'GardenList' }">
       <b>Back to Garden List</b>
     </router-link>
     <br/>
     <br/>
-    <form class="form-card-display" @submit.prevent="updateGardenPlant">
+    <form class="form-card-display" @submit.prevent="updateGarden">
       <div class="form-container">
         <label>Garden Name:</label>
         <input type="text" class="text-style" v-model="garden.garden_name" required />
@@ -29,6 +29,15 @@
             {{ option }}
           </option>
         </v-select> 
+        <label>Notes:</label>
+        <textarea
+          v-model="garden.notes"
+          rows="3"
+          cols="40"
+          class="textarea-style"
+        />
+        <br/>
+        <br/>
         <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
@@ -62,7 +71,6 @@ export default {
   data() {
     return {
       garden: {
-        id: "",
         garden_name: "",
         active: "",
         notes: "",
@@ -74,35 +82,32 @@ export default {
   },
   setup() {},
   methods: {
-    async updateGardenPlant() {
+    async updateGarden() {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Update GardenPlant from List ",
+        title: "Update Garden",
         message:
           "Are you sure you want to update " + 
-          this.plant.title,
+          this.garden.garden_name,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        const plant = {
-          ...this.plant,
+        const garden = {
+          ...this.garden,
           updated_by: this.$store.state.created_by,
         };
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
           {
-            title: this.plant.title,
-            author: this.plant.author,
-            date_written: this.plant.date_written,
-            date_read: this.plant.date_read,
-            url_to_review: this.plant.url_to_review,
-            notes: this.plant.notes,
+            garden_name: this.garden.garden_name,
+            active: this.garden.active,
+            notes: this.garden.notes,
           }
         );
         if (result.status >= 200) {
-          alert("GardenPlant has been updated");
-          this.$router.push({ name: "PlantDetails", params: { id: plant.id } });
+          alert("Garden has been updated for ", this.garden.garden_name);
+          this.$router.push({ name: "GardenDetails", params: { id: garden.id } });
         } else {
           alert("Update Error Code ", result.status);
         }

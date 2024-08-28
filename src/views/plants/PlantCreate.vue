@@ -111,6 +111,7 @@ export default {
       plant: {
         garden_id: "",
         outlet_id: "",
+        outlet_name: "",
         plant_name: "",
         yard_location: "",
         description: "",
@@ -119,7 +120,6 @@ export default {
         date_planted: "",
         date_harvested: "",
         duration: "",
-        active: true,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -147,7 +147,6 @@ export default {
       if (this.isFormValid) {
         const plant = {
           ...this.plant,
-          //?active: true,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
