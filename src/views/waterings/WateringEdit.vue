@@ -16,8 +16,8 @@
     <br/>
     <form class="form-card-display" @submit.prevent="updateWatering">
       <div class="form-container">
-        <label>Name:</label>
-        <input type="text" class="text-style" v-model="watering.name" required />
+        <label>Watering Name:</label>
+        <input type="text" class="text-style" v-model="watering.watering_name" required />
         <label>Active:</label>
         <select class="select-status" v-model="watering.active" required>
           <option

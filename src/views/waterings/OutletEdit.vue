@@ -9,6 +9,11 @@
     <br/>
     <form class="form-card-display" @submit.prevent="updateOutlet">
       <div class="form-container">
+        <v-text-field label="Outlet Name" v-model="outlet.outlet_name">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template>
+        </v-text-field>
         <v-select
           label="Yard Location"
           :items="yard_locations"
@@ -138,6 +143,7 @@ export default {
     return {
       outlet: {
         id: null,
+        outlet_name: null,
         watering_id: null,
         yard_location: null,
         faucet_location: null,
@@ -183,6 +189,7 @@ export default {
             this.api_url + 
             this.outlet.id,
           {
+            outlet_name: this.outlet.outlet_name,
             yard_location: this.outlet.yard_location,
             faucet_location: this.outlet.faucet_location,
             line_number: this.outlet.line_number,
@@ -196,7 +203,7 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Watering has been updated");
+          alert("Watering has been updated for Outlet" + this.outlet.outlet_name);
           this.$router.push({ name: "WateringDisplay" });
         } else {
           alert("Update Error Code ", result.status);
