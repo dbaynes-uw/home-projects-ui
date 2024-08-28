@@ -30,6 +30,7 @@ export default new Vuex.Store({
     meds: [],
     garden_plants: [],
     location: {},
+    outlets_group: [],
     products: [],
     products_by_location: [],
     shopping_list: [],
@@ -103,7 +104,6 @@ export default new Vuex.Store({
       state.garden = garden;
     },
     SET_GARDENS(state, gardens) {
-      console.log("SET_GARDENS: ", gardens)
       state.gardens = gardens;
     },
     //SET_GARDEN_PLANTS(state, garden_plants) {
@@ -135,6 +135,9 @@ export default new Vuex.Store({
     },
     SET_MEDS(state, meds) {
       state.meds = meds;
+    },
+    SET_OUTLETS_GROUP(state, outlets_group) {
+      state.outlets_group = outlets_group;
     },
     DELETE_PRODUCT(state, product) {
       state.product = product;
@@ -398,7 +401,6 @@ export default new Vuex.Store({
         });
     },
     async fetchGarden({ commit, state }, id) {
-      console.log("FETCHGARDEN: ", id)
       const existingGarden = state.gardens.find((garden) => garden.id === id);
       if (existingGarden) {
         commit("SET_GARDEN", existingGarden);
@@ -721,12 +723,6 @@ export default new Vuex.Store({
 
     //async fetchOutlet({ commit, state }, id) {
     async fetchOutlet({ commit }, id) {
-      console.log("FetchOutlet id: ", id)
-      //const existingOutlet = state.outlet.find((outlet) => outlet.id === id);
-      //if (existingOutlet) {
-      //  commit("SET_OUTLET", existingOutlet);
-      //} else {
-        console.log("Exec ES for id: ", id)
         EventService.getOutlet(id)
           .then((response) => {
             console.log("Repsonse: ", response.data)
@@ -752,6 +748,18 @@ export default new Vuex.Store({
           router.push({ name: 'GardenList'});
         });
     },
+    async fetchOutletsGroup({ commit }) {
+      EventService.getOutletsGroup()
+        .then((response) => {
+          commit("SET_OUTLETS_GROUP", response.data);
+          console.log("ES FetchOutletsGroup response.data: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     async fetchPlants({ commit }, garden) {
       console.log("@@FETCH PLANTS - Garden: @@", garden)
       EventService.getPlants(garden)
@@ -1129,7 +1137,7 @@ export default new Vuex.Store({
       EventService.postWatering(watering)
         .then(() => {
           commit("SET_WATERING", watering);
-          alert("Watering was successfully added for " + watering.name);
+          alert("Watering was successfully added for " + watering.watering_name);
         })
         .catch((error) => {
           alert("Error in postWatering of createWatering Action");

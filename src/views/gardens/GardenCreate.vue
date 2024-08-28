@@ -40,10 +40,6 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      toggle1: false,
-      toggle2: false,
-      toggle3: false,
-      isFormValid: false,
       isGardenNameValid: false,
     };
   },

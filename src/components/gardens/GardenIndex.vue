@@ -5,7 +5,7 @@
       <th id="background-blue" @click="sortList('plant_name')">GardenPlant</th>
       <th id="background-blue" @click="sortList('description')">Description</th>
       <th id="background-blue" @click="sortList('location')">Location</th>
-      <th id="background-blue" @click="sortList('water_line')">Water Line</th>
+      <th id="background-blue" @click="sortList('water_outlet')">Water Outlet</th>
       <th id="background-blue" @click="sortList('date_planted')">
         Date GardenPlanted
       </th>
@@ -17,7 +17,7 @@
       <td>{{ result.plant_name }}</td>
       <td>{{ result.description }}</td>
       <td>{{ result.location }}</td>
-      <td>{{ result.water_line }}</td>
+      <td>{{ result.water_outlet }}</td>
       <td class="td-center">{{ formatYearDate(result.date_planted) }}</td>
       <td class="td-center">{{ formatYearDate(result.date_harvest) }}</td>
       <td class="td-center">

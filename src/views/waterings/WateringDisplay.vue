@@ -129,7 +129,6 @@ export default {
   },
   methods: {
     onDoubleClick(outlet) {
-      console.log("DBL CLICK to Outlet Edit")
       this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
     },
   },

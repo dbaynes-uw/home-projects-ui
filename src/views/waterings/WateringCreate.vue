@@ -8,9 +8,9 @@
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="watering.name"
-          :rules="[requiredName]"
-          label="Name"
+          v-model="watering.watering_name"
+          :rules="[requiredWateringName]"
+          label="Watering Name"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
@@ -35,12 +35,13 @@ export default {
   data() {
     return {
       watering: {
-        name: null,
+        watering_name: null,
+        active: true,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
       isFormValid: false,
-      isNameValid: false,
+      isWateringNameValid: false,
     };
   },
   methods: {
@@ -55,23 +56,23 @@ export default {
         if (this.$store.dispatch("createWatering", watering)) {
           this.$router.push({ name: "WateringDisplay" });
         } else {
-          alert("Error adding Watering System " + watering.name);
+          alert("Error adding Watering System " + watering.watering_name);
         } 
       } 
     },
-    requiredName: function (value) {
+    requiredWateringName: function (value) {
       if (value) {
-          this.isNameValid = true
+          this.isWateringNameValid = true
           return true;
       } else {
           this.isFormValid = false
-          this.isNameValid = false
-          return 'Please enter Name';
+          this.isWateringNameValid = false
+          return 'Please enter Watering Name';
       }
     },
     checkValidations() {
 
-      if (this.isNameValid) {
+      if (this.isWateringNameValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false

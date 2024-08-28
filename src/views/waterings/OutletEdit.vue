@@ -132,13 +132,8 @@ export default {
     
     this.outlet.active = this.outlet.active == 1 ? 'Active' : 'Inactive'
     this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
-    console.log("Outlet Edit: ", this.outlet)
-    //this.watering = await axios.get(this.api_url + +this.outlet.watering_id);
   },
-  created() {
-    //this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
-    //Xthis.$store.dispatch("fetchOutlets"
-  },
+  created() {},
   data() {
     return {
       outlet: {

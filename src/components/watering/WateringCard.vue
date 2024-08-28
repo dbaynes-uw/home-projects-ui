@@ -5,7 +5,7 @@
        <router-link
          :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
        >
-         {{ watering.name }}
+         {{ watering.watering_name }}
        </router-link>
      </p>
      <p id="p-custom-link">

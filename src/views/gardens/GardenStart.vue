@@ -6,7 +6,7 @@
     </v-card-title>
     <br/>
     <ul>
-      <span v-if="watering.id">
+      <span v-if="watering">
         <li class="left">
           <button id="button-as-link">
             <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>

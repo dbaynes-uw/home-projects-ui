@@ -1,6 +1,17 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Outlet Details</h1>
+  <br/>
+  <ul>
+    <li class="left">
+      <button id="button-as-link">
+        <router-link  :to="{ name: 'GardenDetails', params: { id: `${outlet.garden_id}` } }">
+          Back to the Garden
+        </router-link>
+      </button>
+    </li>
+  </ul>
+  <br/>
   <div class="card-display">
     <OutletCard
       :key="outlet.id"
@@ -42,7 +53,6 @@ export default {
   },
   methods: {
     onDoubleClick(outlet) {
-      console.log("DBL CLICK to Outlet Edit")
       this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
     },
     formatStandardDate(value) {

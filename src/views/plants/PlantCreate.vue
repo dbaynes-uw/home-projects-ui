@@ -35,13 +35,30 @@
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
         </v-text-field> 
-        <v-text-field label="Water Line"
-          v-model="plant.water_line"
+        <!--v-text-field label="Water Line"
+          v-model="plant.water_outlet"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
-        </v-text-field>  
+        </v-text-field-->
+        <br />
+        <v-select
+          label="Outlet Name:"
+          :items="outletsGroup.outletsGroup"
+          v-model="plant.outlet_id"
+        >
+          <option
+            v-for="option in outletsGroup.outletsGroup"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === plant.outlet_id"
+          >
+            {{ option }}
+          </option>
+        </v-select>
+
         <v-text-field
           v-model="plant.online_link"
           label="Online Link"
@@ -93,10 +110,11 @@ export default {
     return {
       plant: {
         garden_id: "",
+        outlet_id: "",
         plant_name: "",
         yard_location: "",
         description: "",
-        water_line: "",
+        water_outlet: "",
         online_link: "",
         date_planted: "",
         date_harvested: "",
@@ -111,9 +129,15 @@ export default {
       isYardLocationValid: false,
     };
   },
+  created() {
+    this.$store.dispatch("fetchOutletsGroup");
+  },
   computed: {
     garden() {
       return this.$store.state.garden;
+    },
+    outletsGroup() {
+      return this.$store.state.outlets_group;
     },
   },
   methods: {

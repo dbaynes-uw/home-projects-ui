@@ -181,6 +181,10 @@ export default {
     console.log("GET GARDEN OUTLET: ", garden)
     return axios.get(api_url + "gardens/garden_outlet", `${garden}`)
   },
+  async getOutletsGroup() {
+    this.init();
+    return axios.get(api_url + "outlets_group")
+  },
   async postPlant(plant) {
     this.init();
     return axios.post(api_url + 'plants', plant);
@@ -325,7 +329,6 @@ export default {
     return axios.delete(api_url + "watering/");
   },
   getOutlet(id) {
-    console.log("ES getOutlet: ", id)
     this.init();
     return axios.get(api_url + "outlets/" + id);
   },

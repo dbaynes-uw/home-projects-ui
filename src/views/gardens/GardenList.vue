@@ -13,11 +13,16 @@
           <router-link  :to="{ name: 'GardenCreate' }">Add Garden</router-link>
         </button>
       </li>
-      <li>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
+        </button>
+      </li>
+      <!--li>
         <button id="button-as-link" @click="requestIndexDetail">
           <u>Detail Index View</u>
         </button>
-      </li>
+      </li-->
     </ul> 
     <br/>
   </v-card>
@@ -38,7 +43,6 @@
       </div>
   </div>
   <div class="garden-list">
-    filteredResults.length: {{ filteredResults.length }}
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
@@ -47,7 +51,6 @@
         <span v-if="requestIndexDetailFlag == true">
           <h3 id="h3-left">Total: {{ gardens.length }}</h3>
           <span class="h3-left-total-child">*Double click Item Below to Edit</span>
-          Gardens: {{ gardens.length }}
           <div class="cards">
             <GardenCard
               v-for="garden in gardens"

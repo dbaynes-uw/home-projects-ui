@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Outlet to {{ watering.name }} System</h3>
+      <h3>Add Outlet to {{ watering.watering_name }} System</h3>
     </v-card-title>
     <router-link :to="{ name: 'WateringDisplay' }">
       <b>Back to Watering List</b>
@@ -12,8 +12,8 @@
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="watering.name"
-          label="Name"
+          v-model="watering.watering_name"
+          label="Watering System Name"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
@@ -173,14 +173,15 @@ export default {
     onSubmit() {
       this.checkValidations();
       //this.outlet.watering_name = this.watering.name
-      this.outlet.watering_name = this.watering.name
-      console.log("@@FORM VALID? ", this.isFormValid)
+      this.outlet.watering_name = this.watering.watering_name
+      console.log("OUTLET: ", this.outlet)
       if (this.isFormValid) {
         const outlet = {
           ...this.outlet,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
+        console.log("Ready to Store: ", outlet)
         if (this.$store.dispatch("createWateringOutlet", outlet)) {
           this.$router.push({ name: "WateringDisplay" });
         } else {

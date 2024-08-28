@@ -33,8 +33,21 @@
         </v-select>        
         <label>Location:</label>
         <input type="text" class="text-style" v-model="plant.yard_location"/>
-        <label>Water Line:</label>
-        <input type="text" class="text-style" v-model="plant.water_line" />
+        <v-select
+          label="Outlet Name:"
+          :items="outletsGroup.outletsGroup"
+          v-model="plant.outlet_id"
+        >
+          <option
+            v-for="option in outletsGroup"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === plant.outlet_id"
+          >
+            {{ option }}
+          </option>
+        </v-select>
         <label>Duration:</label>
         <input type="text" class="text-style" v-model="plant.duration" />
         <label for="date_written">Date Planted:</label>
@@ -87,20 +100,27 @@ export default {
     this.plant = result.data;
     this.plant.active = this.plant.active == 1 ? 'Active' : 'Inactive'
   },
+  created() {
+    this.$store.dispatch("fetchOutletsGroup");
+  },
   computed: {
     garden() {
       console.log("Garden: ", this.$store.state.garden)
       return this.$store.state.garden;
-    }
+    },
+    outletsGroup() {
+      return this.$store.state.outlets_group;
+    },
   },
   data() {
     return {
       plant: {
         garden_id: "",
+        outlet_id: "",
         plant_name: "",
         yard_location: "",
         description: "",
-        water_line: "",
+        water_outlet: "",
         online_link: "",
         date_planted: "",
         date_harvested: "",
@@ -120,7 +140,7 @@ export default {
         title: "Update GardenPlant from List ",
         message:
           "Are you sure you want to update " + 
-          this.plant.title,
+          this.plant.plant_name,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
@@ -129,15 +149,16 @@ export default {
           ...this.plant,
           updated_by: this.$store.state.created_by,
         };
+        console.log("Plant: ", plant.plant_name)
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
           {
             garden_id:  this.garden.id,
             plant_name: this.plant.plant_name,
+            outlet_id:  this.plant.outlet_id,
             yard_location: this.plant.yard_location,
             description: this.plant.description,
-            water_line: this.plant.water_line,
             online_link: this.plant.online_link,
             date_planted: this.plant.date_planted,
             date_harvested: this.plant.date_harvested,

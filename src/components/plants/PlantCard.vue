@@ -10,11 +10,11 @@
         <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
         <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
         <!--li class="li-left"><a :href="plant.online_link" target="_blank">Water Line</a></!--li-->
-        <li class="li-left" @click="showOutlet(plant)"> Water Line: {{ plant.water_line }}</li>    
+        <li class="li-left" @click="showOutlet(plant)"> Water Line: {{ plant.outlet_id }}</li>    
         <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
         <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>
-        <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
+        <!--li class="li-left">Notes: <b>{{ plant.notes }}</b> </li-->
       </ul>
       <br/>
       <div class="icon-stack">
@@ -143,10 +143,8 @@ export default {
       }
     },
     showOutlet(plant) {
-      console.log("onClickOutlet - Plant: ", `${plant}`)
       clearTimeout(time);
-      this.$router.push({ name: 'OutletDetailsByName', params: { outlet_details_by_name: `${plant.water_line}` } });
-      //this.$router.push({ name: 'OutletDetailsByName', state: { outlet_details_by_name}})
+      this.$router.push({ name: 'OutletDetails', params: { id: `${plant.outlet_id}` } });
     },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
