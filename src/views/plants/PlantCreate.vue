@@ -59,6 +59,14 @@
           </option>
         </v-select>
         <v-text-field
+          v-model="plant.online_link"
+          label="Online Link"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-link</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field
           v-model="plant.description"
           label="Description"
         >
@@ -66,15 +74,7 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>  
-        <v-text-field
-          v-model="plant.online_link"
-          label="Online Link"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
-          </template>
-        </v-text-field>        
-        <v-text-field label="Date Planted"
+\        <v-text-field label="Date Planted"
           v-model="plant.date_planted"
           type="date"
         >

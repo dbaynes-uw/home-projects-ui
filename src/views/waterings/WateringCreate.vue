@@ -36,7 +36,6 @@ export default {
     return {
       watering: {
         watering_name: null,
-        active: true,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },

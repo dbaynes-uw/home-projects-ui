@@ -89,6 +89,8 @@ export default {
     return {
       watering: {
         id: null,
+        garden_id: null,
+        watering_name: null,
         name: null,
         active: null,
         notes: null,
@@ -108,20 +110,20 @@ export default {
         title: "Update Watering ",
         message:
           "Are you sure you want to update " + 
-          this.watering.name,
+          this.watering.watering_name,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        //const watering = {
-        //  ...this.watering,
-        //  updated_by: this.$store.state.created_by,
-        //};
+        const watering = {
+          ...this.watering,
+          updated_by: this.$store.state.created_by,
+        };
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
           {
-            name: this.watering.name,
+            watering_name: this.watering.watering_name,
             active: this.watering.active,
             notes: this.watering.notes,
             updated_by: this.$store.state.user.resource_owner.email,
@@ -129,7 +131,7 @@ export default {
         );
         if (result.status >= 200) {
           alert("Watering has been updated");
-          this.$router.push({ name: "WateringEdit", params: { id: this.watering.id } });
+          this.$router.push({ name: "WateringEdit", params: { id: watering.id } });
         } else {
           alert("Update Error Code ", result.status);
         }
