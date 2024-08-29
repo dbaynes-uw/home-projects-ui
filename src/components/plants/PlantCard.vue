@@ -6,7 +6,7 @@
       <div class="card">
         <p id="p-custom-left-u">{{ plant.plant_name}}</p>
         <ul>
-          <li class="li-left">Description: <b>{{ plant.description }}</b></li>
+          <li class="li-left"><b>{{ plant.description }}</b></li>
           <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
           <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
           <!--li class="li-left"><a :href="plant.online_link" target="_blank">Water Line</a></!--li-->

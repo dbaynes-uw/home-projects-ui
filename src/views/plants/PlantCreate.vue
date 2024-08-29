@@ -58,7 +58,14 @@
             {{ option }}
           </option>
         </v-select>
-
+        <v-text-field
+          v-model="plant.description"
+          label="Description"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-note</v-icon>
+          </template>
+        </v-text-field>  
         <v-text-field
           v-model="plant.online_link"
           label="Online Link"
@@ -109,6 +116,7 @@ export default {
   data() {
     return {
       plant: {
+        id: "",
         garden_id: "",
         outlet_id: "",
         outlet_name: "",

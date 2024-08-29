@@ -28,7 +28,7 @@ export default new Vuex.Store({
     event: {},
     med: {},
     meds: [],
-    garden_plants: [],
+    plants: [],
     location: {},
     outlets_group: [],
     products: [],
@@ -761,7 +761,6 @@ export default new Vuex.Store({
     },
 
     async fetchPlants({ commit }, garden) {
-      console.log("@@FETCH PLANTS - Garden: @@", garden)
       EventService.getPlants(garden)
         .then((response) => {
           commit("SET_PLANTS", response.data);
@@ -772,18 +771,6 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    //async fetchGardenPlants({ commit }, id) {
-    //  console.log("@@FETCH GARDEN PLANTS - Garden: @@", id)
-    //  EventService.getGardenPlants(id)
-    //    .then((response) => {
-    //      commit("SET_GARDEN_PLANTS", response.data);
-    //      console.log("GARDEN PLANTS: ", response.data)
-    //      return response.data;
-    //    })
-    //    .catch((error) => {
-    //      console.log(error);
-    //    });
-    //},
     async deleteProduct({ commit }, product) {
       EventService.deleteProduct(product)
         .then((response) => {
@@ -794,8 +781,6 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
-
     async fetchProducts({ commit }) {
       EventService.getProducts()
         .then((response) => {

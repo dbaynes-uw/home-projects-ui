@@ -137,7 +137,7 @@ export default {
   methods: {
     async updateGardenPlant() {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Update GardenPlant from List ",
+        title: "Update Garden Plant from List ",
         message:
           "Are you sure you want to update " + 
           this.plant.plant_name,
@@ -145,10 +145,10 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        const plant = {
-          ...this.plant,
-          updated_by: this.$store.state.created_by,
-        };
+        //const plant = {
+        //  ...this.plant,
+        //  updated_by: this.$store.state.created_by,
+        //};
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -169,7 +169,7 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Garden Plant has been updated for: ", plant.plant_name);
+          alert("Garden Plant has been updated for: " + this.plant.plant_name);
           this.$router.push({ name: "GardenDetails", params: { id: this.garden.id } });
         } else {
           alert("Update Error Code ", result.status);

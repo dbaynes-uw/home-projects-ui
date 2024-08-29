@@ -172,10 +172,6 @@ export default {
     this.init();
     return axios.get(api_url + "plants",`${garden}`);
   },
- getGardenPlants(id) {
-   this.init();
-   return axios.get(api_url + "garden_plants", `${id}`);
- },
   async getGardenOutlet(garden) {
     this.init();
     console.log("GET GARDEN OUTLET: ", garden)
