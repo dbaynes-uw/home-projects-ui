@@ -26,8 +26,12 @@
       @dblclick="editGarden(garden)"
       />
   </div>
-  <!--watering.outlets.where(target: p.garden.garden_name).first-->
-  <span class="h3-left-total-child">Double Click Item to Change</span>
+  <span v-if="garden.garden_name.toLowerCase().includes('vegetable')">
+    <span class="h3-left-total-child"><b>See Vegetable Garden Layout Below</b></span>
+  </span>
+  <br/>
+  <span class="h3-left-total-child"><b>Double Click Item to Change</b></span>
+
   <div class="cards">
     <PlantCard
       v-for="plant in garden.plants"
@@ -54,7 +58,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import PlantCard from "@/components/plants/PlantCard.vue";
-import EventService from '@/services/EventService'
+//>import EventService from '@/services/EventService'
 export default {
   name: 'GardenDetails',
   props: ["id"],
@@ -76,16 +80,16 @@ export default {
     editPlant(plant) {
       this.$router.push({ name: 'PlantEdit', params: { id: `${plant.id}`} });
     },
-    getOutlet(garden) {
-      console.log("Garden: ", garden)
-      EventService.getGardenOutlet(garden.id)
-        .then((response) => {
-          return response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+    //>getOutlet(garden) {
+    //>  console.log("Garden: ", garden)
+    //>  EventService.getGardenOutlet(garden.id)
+    //>    .then((response) => {
+    //>      return response.data;
+    //>    })
+    //>    .catch((error) => {
+    //>      console.log(error);
+    //>    });
+    //>},
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },

@@ -203,7 +203,7 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Watering has been updated for Outlet" + this.outlet.outlet_name);
+          alert("Watering has been updated for Outlet " + this.outlet.outlet_name);
           this.$router.push({ name: "WateringDisplay" });
         } else {
           alert("Update Error Code ", result.status);

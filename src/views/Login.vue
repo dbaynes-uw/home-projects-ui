@@ -1,6 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
+      <h1>Home Projects</h1>
       <h3>Log In</h3>
     </v-card-title>
   </v-card>
@@ -46,7 +47,8 @@
   Forgot or Need Password Reset?  
   <router-link to="/forgot_password">
     Forgot or Reset Password
-  </router-link>     
+  </router-link>
+  <p>T: dl..@.. t...t... P: dl..@.. sen...H...P</p>
 </template>
 
 <script>
