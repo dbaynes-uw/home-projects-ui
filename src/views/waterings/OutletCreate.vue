@@ -91,7 +91,7 @@
             <v-icon class="icon-css">mdi-clock</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Start Time" v-model="outlet.start_time">
+        <v-text-field label="Start Time" v-model="outlet.start_time" type="time">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>

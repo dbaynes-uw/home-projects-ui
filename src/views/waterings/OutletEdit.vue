@@ -73,8 +73,15 @@
         <input type="text" class="text-style" v-model="outlet.target" />
         <label>Frequency:</label>
         <input type="text" class="text-style" v-model="outlet.frequency" />
-        <label>Start Time:</label>
-        <input type="text" class="text-style" v-model="outlet.start_time" />
+        <h3>Set new Start Time or Pick Start Time from Clock below right:</h3>
+        <!--label>Start Time:&nbsp;&nbsp;</label-->
+        <b><u>{{ outlet.start_time }}</u></b>
+        <input type="time"
+          class="text-style"
+          label="Change:"
+          :value="outlet.start_time"
+          />
+
         <label>Duration:</label>
         <input type="text" class="text-style" v-model="outlet.duration"  />
         <label>Status:</label>

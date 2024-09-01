@@ -17,13 +17,13 @@
   </div>
 </template>
 <script>
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import { Bar } from 'vue-chartjs';
+//import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+//import { Bar } from 'vue-chartjs';
 import DateFormatService from "@/services/DateFormatService.js";
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+//ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default {
   name: 'MedChart',
-  components: {Bar},
+  //components: {Bar},
   props: ["meds","chartLabels","chartIntervals"],
   data() {
     return {
