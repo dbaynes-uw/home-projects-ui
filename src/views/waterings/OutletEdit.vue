@@ -73,15 +73,16 @@
         <input type="text" class="text-style" v-model="outlet.target" />
         <label>Frequency:</label>
         <input type="text" class="text-style" v-model="outlet.frequency" />
-        <h3>Set new Start Time or Pick Start Time from Clock below right:</h3>
-        <!--label>Start Time:&nbsp;&nbsp;</label-->
-        <b><u>{{ outlet.start_time }}</u></b>
-        <input type="time"
-          class="text-style"
-          label="Change:"
-          :value="outlet.start_time"
+        <br/>
+        <h3 style="text-align: left" @click='startTimeDisplay(this.showTimePickerFlag)'>{{ this.start_time_display }} Start Time - Click to Edit.</h3>
+        <span v-if="this.showTimePickerFlag == true">
+          <input type="time"
+            class="text-style"
+            label="Start Time"
+            v-model="outlet.start_time"
           />
-
+        </span> 
+        <br/>   
         <label>Duration:</label>
         <input type="text" class="text-style" v-model="outlet.duration"  />
         <label>Status:</label>
@@ -144,6 +145,8 @@ export default {
     
     this.outlet.active = this.outlet.active == 1 ? 'Active' : 'Inactive'
     this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
+    this.start_time_display = this.outlet.start_time
+    console.log("Mount this.start_time_display: ", this.start_time_display)
   },
   created() {},
   data() {
@@ -173,7 +176,9 @@ export default {
       yard_locations: ["North", "South"],
       faucet_locations: ["East", "West"],
       line_numbers: ["1","2","3","4"],
-      api_url: ""
+      api_url: "",
+      start_time_display: null,
+      showTimePickerFlag: false,
     };
   },
   setup() {},
@@ -216,6 +221,10 @@ export default {
           alert("Update Error Code ", result.status);
         }
       }
+    },
+    startTimeDisplay(showTimePickerFlag) {
+      console.log("startTimeDisplay - showTimePickerFlag: ", showTimePickerFlag)
+      return this.showTimePickerFlag = showTimePickerFlag == true ? false : true
     },
     formatTime(value) {
       console.log("Format Time: ", value)
