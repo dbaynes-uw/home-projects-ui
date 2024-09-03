@@ -3,6 +3,9 @@
     <v-card-title class="pb-0">
       <h3>Add Golf Round View</h3>
     </v-card-title>
+    <h4>
+      <router-link :to="{ name: 'GolfList' }">Back to Golf List</router-link>
+    </h4>
   </v-card>
   <GolfInput :golf="golf" />
 </template>

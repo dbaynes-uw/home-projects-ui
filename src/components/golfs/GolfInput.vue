@@ -4,7 +4,8 @@
     <span v-if="this.action == 'edit'">
       <h2>{{ golf.course}} on {{ formatStandardDate(golf.date_played) }} </h2>
     </span>
-    <!--v-form id="isFormValid"-->
+    <v-form id="isFormValid">
+    <!--v-form @submit.prevent="onSubmit"-->
       <v-container id="form-container">
         <v-text-field
           v-model="golf.course"
@@ -38,6 +39,7 @@
         <v-text-field label="Date Round Played"
           v-model="golf.date_played"
           type="date"
+          :rules="[requiredDatePlayed]"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
@@ -45,16 +47,20 @@
         </v-text-field>
         <br/>
         <label>Tees Played: &nbsp;&nbsp;</label>
-        <select class="text-style-select" v-model="golf.tees_played" required>
+        <v-select
+          :items="color_tees_played"
+          v-model="golf.tees_played"
+          :rules="[requiredTeesPlayed]"
+          >
           <option
-            v-for="option in tees_played"
+            v-for="option in color_tees_played"
             :value="option"
             :key="option"
             :selected="option === golf.tees_played"
           >
             {{ option }}
           </option>
-        </select>
+        </v-select>    
         <br/>
         <br />
         <h3>Totals</h3>
@@ -201,7 +207,7 @@
           <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
         </span>
       </v-container>
-    <!--/v-form-->
+    </v-form>
   </v-card-text>
 </template>
 <script>
@@ -320,21 +326,23 @@ export default {
         updated_by: this.$store.state.user.resource_owner.email,
       },
       action: "",
-      tees_played: ["Black", "Blue", "Red", "White"],
+      color_tees_played: ["Black", "Blue", "Red", "White"],
       toggle1: false,
       toggle2: false,
       toggle3: false,
       isFormValid: false,
       isCourseValid: false,
       isCourseLocationValid: false,
+      isDatePlayedValid: false,
+      isTeesPlayedValid: false,
       urlMaxLength: 255,
       num: 1,
     };
   },
   methods: {                     
     onSubmit() {
-      //this.checkValidations();
-      this.isFormValid = true
+      this.checkValidations();
+      //this.isFormValid = true
       if (this.isFormValid) {
         const golf = {
           ...this.golf,
@@ -460,8 +468,8 @@ export default {
     },
     requiredCourse: function (value) {
       if (value) {
-          this.isCourseValid = true
-          return true;
+        this.isCourseValid = true
+        return true;
       } else {
           this.isFormValid = false
           this.isCourseValid = false
@@ -470,16 +478,41 @@ export default {
     },
     requiredCourseLocation: function (value) {
       if (value) {
-          this.isCourseLocationValid = true
-          return true;
+        this.isCourseLocationValid = true
+        return true;
       } else {
           this.isFormValid = false
           this.isCourseLocationValid = false
           return 'Please enter Course Location';
       }
     },
+    requiredDatePlayed: function (value) {
+      if (value) {
+        this.isDatePlayedValid = true
+        return true;
+      } else {
+          this.isFormValid = false
+          this.isDatePlayedValid = false
+          return 'Please enter Date Round Played';
+      }
+    },
+    requiredTeesPlayed: function (value) {
+      if (value) {
+        this.isTeesPlayedValid = true
+        return true;
+      } else {
+          this.isFormValid = false
+          this.isTeesPlayedValid = false
+          return 'Please enter Tees Played';
+      }
+    },
     checkValidations() {
-      if (this.isCourseValid && this.isCourseLocationValid) {
+      if (this.isCourseValid &&
+          this.isCourseLocationValid &&
+          this.isDatePlayedValid &&
+          this.isTeesPlayedValid
+        ) 
+      {
         this.isFormValid = true
       } else {
         this.isFormValid = false
