@@ -23,7 +23,7 @@
       <th id="background-blue"></th>
       <th id="background-blue-right" colspan="2" >Averages:</th>
       <th id="background-blue-left">
-        9 - {{ calculateAverageScore9(golfs) }}<br/>18-{{ calculateAverageScore18(golfs) }}
+        &nbsp;&nbsp;9 - {{ calculateAverageScore9(golfs) }}<br/>18 - {{ calculateAverageScore18(golfs) }}
       </th>
       <th id="background-blue" ></th>
       <th id="background-blue"></th>

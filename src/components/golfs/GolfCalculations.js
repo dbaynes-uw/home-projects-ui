@@ -126,7 +126,7 @@ export default {
     if (this.number_9_holes == 0) {
       return 0
     } else {
-      return (this.score_9 / this.number_9_holes).toFixed(0)
+      return (this.score_9 / this.number_9_holes).toFixed(1)
     }
   },
   calculateAverageScore18(golfs) {
@@ -138,7 +138,7 @@ export default {
         this.score_18 += this.calculateFrontScore(golfs[i]) + this.calculateBackScore(golfs[i])
       }
     }
-    return this.number_18_holes == 0 ? 0 : (this.score_18 / this.number_18_holes).toFixed(0)
+    return this.number_18_holes == 0 ? 0 : (this.score_18 / this.number_18_holes).toFixed(1)
   },
 
 }
