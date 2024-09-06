@@ -17,8 +17,9 @@
           <li class="li-left">Duration: {{ outlet.duration }}</li>
         </span>
         <li class="li-left">Status: <b>{{ outlet.active == 1 ? 'Active' : 'Inactive' }}</b></li>
-        <li class="li-left">Notes: <b>{{ outlet.notes }}</b> </li>
-        <!--{{ formatYearDate(outlet.date_of_occurrence) }}-->
+        <li class="li-left">Notes:
+          <span v-html="outlet.notes"></span>
+        </li>
       </ul>
       <br/>
       <div class="icon-stack">
