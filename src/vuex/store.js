@@ -136,8 +136,14 @@ export default new Vuex.Store({
     SET_MEDS(state, meds) {
       state.meds = meds;
     },
+    DELETE_OUTLET(state, outlet) {
+      state.outlet = outlet;
+    },
     SET_OUTLETS_GROUP(state, outlets_group) {
       state.outlets_group = outlets_group;
+    },
+    DELETE_PLANT(state, plant) {
+      state.plant = plant;
     },
     DELETE_PRODUCT(state, product) {
       state.product = product;
@@ -720,8 +726,16 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
-    //async fetchOutlet({ commit, state }, id) {
+    async deleteOutlet({ commit }, outlet) {
+      EventService.deleteOutlet(outlet)
+        .then((response) => {
+          commit("DELETE_OUTLET", response.data);
+          alert("Outlet " + outlet.outlet_name + " was deleted");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async fetchOutlet({ commit }, id) {
         EventService.getOutlet(id)
           .then((response) => {
@@ -759,7 +773,16 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-
+    async deletePlant({ commit }, plant) {
+      EventService.deletePlant(plant)
+        .then((response) => {
+          commit("DELETE_PLANT", response.data);
+          alert("Plant " + plant.plant_name + " was Successfully Deleted");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async fetchPlants({ commit }, garden) {
       EventService.getPlants(garden)
         .then((response) => {

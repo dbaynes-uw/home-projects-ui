@@ -3,25 +3,50 @@
   Outlet: {{ outlet }}
   -->
   <span v-if="outlet.active == 1">
+    <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
     <div class="card">
       <ul>
-        <li class="li-left">Outlet Name: <b>{{ outlet.outlet_name }}</b></li>
-        <li class="li-left">Yard Location: <b>{{  outlet.yard_location }}</b></li>
-        <li class="li-left">Faucet Location: <b>{{  outlet.faucet_location }}</b></li>
-        <li class="li-left">Line: <b>{{ outlet.line_number }}</b></li>
+        <li class="li-left"><b>{{ outlet.outlet_name }}</b></li>
+        <span v-if="outlet.yard_location">
+          <li class="li-left">Location: <b>{{  outlet.yard_location }}</b></li>
+          <li class="li-left">Faucet: <b>{{  outlet.faucet_location }}</b></li>
+          <li class="li-left">Line: <b>{{ outlet.line_number }}</b></li>
+          <li class="li-left">Target: <b><u>{{ outlet.target }}</u></b></li>
+          <li class="li-left">Frequency: <b><u>{{ outlet.target }}</u></b></li>
+          <li class="li-left">Start: {{ formatTime(outlet.start_time)}}</li>
+          <li class="li-left">Duration: {{ outlet.duration }}</li>
+        </span>
         <li class="li-left">Status: <b>{{ outlet.active == 1 ? 'Active' : 'Inactive' }}</b></li>
-        <li class="li-left">Target: <b><u>{{ outlet.target }}</u></b></li>
-        <li class="li-left">Frequency: {{ outlet.frequency }}</li>
-        <li class="li-left">Start: {{ formatTime(outlet.start_time)}}</li>
-        <li class="li-left">Duration: {{ outlet.duration }}</li>
         <li class="li-left">Notes: <b>{{ outlet.notes }}</b> </li>
         <!--{{ formatYearDate(outlet.date_of_occurrence) }}-->
       </ul>
+      <br/>
+      <div class="icon-stack">
+        <span class="fa-stack">
+          <router-link
+            :to="{ name: 'OutletEdit', params: { id: `${outlet.id}` } }"
+          >
+            <i
+              id="card-medium-icon-edit"
+              class="fa-solid fa-pen-to-square fa-stack-1x"
+            >
+            </i>
+          </router-link>
+          <span class="fa-table-stack">
+            <i
+              @click="deleteOutlet(outlet)"
+              class="fas fa-trash-alt fa-stack-1x"
+              id="card-outlet-icon-delete"
+            >
+            </i>
+          </span>
+        </span>
+      </div>
     </div>
   </span>
 </template>
 <script>
-
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'OutletCard',
@@ -35,7 +60,31 @@ export default {
       default: () => ({})
     }
   },
+  components: {
+    ConfirmDialogue,
+  },
   methods: {
+    async deleteOutlet(outlet) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Outlet from List",
+        message:
+          "Are you sure you want to delete " +
+          outlet.outlet_name +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteOutlet", outlet);
+        this.statusMessage =
+          "Outlet was Deleted for " +
+          outlet.outlet_name +
+          "! Page will restore in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
+        this.$router.push({ name: "WateringDisplay" });
+      }
+    },
+
     formatTime(value) {
       return DateFormatService.formatTimejs(value);
     },

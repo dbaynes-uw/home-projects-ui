@@ -168,6 +168,16 @@ export default {
     this.init();
     return axios.post(api_url + 'meds', med);
   },
+  deleteOutlet(outlet) {
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "outlets/" + `${outlet.id}`);
+  },
+  deletePlant(plant) {
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "plants/" + `${plant.id}`);
+  },
   getPlants(garden) {
     this.init();
     return axios.get(api_url + "plants",`${garden}`);

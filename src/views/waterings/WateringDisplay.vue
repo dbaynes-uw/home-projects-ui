@@ -8,6 +8,12 @@
       </h2>
     </v-card-title>
     <br/>
+    <v-img
+          :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
+          class="my-3"
+          contain
+          height="400"
+      />
     <ul>
       <span v-if="!watering">
         <li class="left">
@@ -38,21 +44,15 @@
     </div>
     <!--h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</!--h3-->
     <span class="h3-left-total-child">Double Click Item to Change</span>
-      <div class="cards">
-        <OutletCard
-          v-for="outlet in watering.outlets"
-          :key="outlet.id"
-          :outlet="outlet"
-          class="card"
-          @dblclick="onDoubleClick(outlet)"
-        />
-      </div>
-      <v-img
-          :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
-          class="my-3"
-          contain
-          height="400"
+    <div class="cards">
+      <OutletCard
+        v-for="outlet in watering.outlets"
+        :key="outlet.id"
+        :outlet="outlet"
+        class="card"
+        @dblclick="onDoubleClick(outlet)"
       />
+    </div>
   </span>
 </template>
 <script>

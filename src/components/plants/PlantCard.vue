@@ -18,7 +18,6 @@
         </ul>
         <br/>
         <div class="icon-stack">
-          <span v-if="origin == 'PlantDetails'">
           <span class="fa-stack">
             <router-link
               :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
@@ -29,7 +28,7 @@
               >
               </i>
             </router-link>
-            <router-link :to="{ name: 'PlantList'}">
+            <router-link :to="{ name: 'GardenDetails', params: { id: this.garden.id } }">
               <i
                 id="card-medium-icon-eye"
                 class="fa-solid fa-backward fa-stack-1x"
@@ -44,7 +43,6 @@
               >
               </i>
             </span>
-          </span>
           </span>
           <span v-if="origin == 'PlantList'">
             <table>
@@ -127,7 +125,7 @@ export default {
         title: "Delete Plant from List",
         message:
           "Are you sure you want to delete " +
-          plant.title +
+          plant.plant_name +
           "? It cannot be undone.",
         okButton: "Delete",
       });
@@ -135,11 +133,11 @@ export default {
       if (ok) {
         this.$store.dispatch("deletePlant", plant);
         this.statusMessage =
-          "Plant was Deleted for " +
-          plant.title +
+          "Plant was Successfully Deleted for " +
+          plant.plant_name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "PlantList" });
+        this.$router.push({ name: "GardenDetails", params: { id: plant.garden.id } });
       }
     },
     showOutlet(plant) {

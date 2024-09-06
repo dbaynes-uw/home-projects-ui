@@ -293,10 +293,6 @@
   font-size: 18px;
   color: #00796b;
 }
-.icon-stack {
-  position: relative;
-  left: -1rem;
-}
 #event-icon-edit {
   text-align: center;
   position: relative;
@@ -319,6 +315,13 @@
   left: 2.3rem;
   font-size: 18px;
   color: #00796b;
+}
+#card-outlet-icon-delete {
+  position: relative;
+  top: -2rem;
+  left: 2rem;
+  font-size: 18px;
+  color: #fff;
 }
 .border-select {
   font-size: 1rem;

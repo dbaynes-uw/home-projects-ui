@@ -119,7 +119,6 @@ export default {
         id: "",
         garden_id: "",
         outlet_id: "",
-        outlet_name: "",
         plant_name: "",
         yard_location: "",
         description: "",

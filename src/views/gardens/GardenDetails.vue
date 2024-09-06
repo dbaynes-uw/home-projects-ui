@@ -27,10 +27,10 @@
       />
   </div>
   <span v-if="garden.garden_name.toLowerCase().includes('vegetable')">
-    <span class="h3-left-total-child"><b>See Vegetable Garden Layout Below</b></span>
+    <span class="h3-left-total-child"><b>See Vegetable Garden Layout at bottom of page</b></span>
   </span>
   <br/>
-  <span class="h3-left-total-child"><b>Double Click Item to Change</b></span>
+  <span class="h3-left-total-child"><b>Double Click Plant to Change</b></span>
 
   <div class="cards">
     <PlantCard
