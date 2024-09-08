@@ -1,22 +1,36 @@
 <template>
-  <!-- watering.outlets.where(target: p.garden.garden_name).first }} -->
-  <!-- WWW: {{ watering }} -->
   <span v-if="garden.active == true">
     <div class="card">
-     <p id="p-custom-u">
-       <router-link
-         :to="{ name: 'GardenDetails', params: { id: this.garden.id} }"
-       >
-        {{ garden.garden_name }}
-       </router-link>
-     </p>
-     <p id="p-custom-link">
-       <router-link
-         :to="{ name: 'PlantCreate' }"
-       >
-         Add Plant
-       </router-link>
-     </p>
+      <p id="p-custom-u">
+        <router-link
+          :to="{ name: 'GardenDetails', params: { id: this.garden.id} }"
+        >
+         {{ garden.garden_name }}
+        </router-link>
+      </p>
+      
+      <span v-if="garden.plants.length > 0">
+        <p id="p-custom-left">Plants:</p>
+        <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex">
+          <ul class="ul-left">
+            <li>
+              <router-link
+                :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }"
+              >
+              <b>{{plant.plant_name}}</b>
+              </router-link>
+            </li>
+          </ul>          
+        </span>
+      </span>
+      <br/>
+      <p id="p-custom-link">
+        <router-link
+          :to="{ name: 'PlantCreate' }"
+        >
+          Add Plant
+        </router-link>
+      </p>
     </div>
   </span>
 </template>

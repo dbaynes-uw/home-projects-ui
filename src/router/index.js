@@ -35,7 +35,6 @@ import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
 import OutletDetails from "@/views/waterings/OutletDetails.vue";
 import GardenList from "../views/gardens/GardenList.vue";
-import GardenPlants from "../views/gardens/GardenPlants.vue";
 import ProductLocationList from "../views/products/ProductLocationList.vue";
 import ProductLocationsList from "../views/products/ProductLocationsList.vue";
 import ProductVendorList from "../views/products/ProductVendorList.vue";
@@ -299,13 +298,6 @@ const routes = [
     name: "GardenDetails",
     props: true,
     component: GardenDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/gardens/garden_plants/:garden",
-    name: "GardenPlants",
-    props: true,
-    component: GardenPlants,
     meta: { requiresAuth: true}
   },
   {

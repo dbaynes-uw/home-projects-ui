@@ -18,11 +18,6 @@
           <router-link  :to="{ name: 'GardenCreate' }">Add Garden</router-link>
         </button>
       </li>
-      <!--li>
-        <button id="button-as-link" @click="requestIndexDetail">
-          <u>Detail Index View</u>
-        </button>
-      </li-->
     </ul> 
     <br/>
   </v-card>
@@ -63,7 +58,6 @@
           </div>
         </span>
         <span v-else>
-          <GardenIndex :gardens="gardens" />
         </span>
       </span>
     </span>
@@ -89,7 +83,6 @@
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import GardenIndex from "@/components/gardens/GardenIndex.vue";
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import GardenSearchResults from "@/components/gardens/GardenSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
@@ -98,7 +91,6 @@ export default {
   name: "GardenList",
   props: ["filteredResults[]"],
   components: {
-    GardenIndex,
     GardenCard,
     GardenSearchResults,
     ConfirmDialogue
@@ -209,56 +201,12 @@ export default {
   },
 };
 </script>
-<!--style scoped>
-.table-index-style {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  background-color: #7ba8bd;
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-tr {
-  line-height: 1.6 !important;
-  border: none;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.eventAssigned {
-  background: #e8f7f0;
-}
-.fa-table-stack {
-  position: relative;
-  left: 2rem;
-}
-i {
-  bottom: 0px;
-  color: gray;
-}
-tr.is-complete {
-  background: #35495e;
-  color: #fff;
-}
-#status-message {
-  text-align: center;
-  color: navy;
-}
-</style-->
 <style>
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
-
 td,
 th {
   border: 1px solid #dddddd;

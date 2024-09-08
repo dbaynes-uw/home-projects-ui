@@ -145,6 +145,9 @@ export default new Vuex.Store({
     DELETE_PLANT(state, plant) {
       state.plant = plant;
     },
+    SET_PLANT(state, plant) {
+      state.plant = plant;
+    },
     DELETE_PRODUCT(state, product) {
       state.product = product;
     },    
@@ -783,6 +786,19 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async fetchPlant({ commit }, plant) {
+      console.log("FetchPlant: ", plant)
+      EventService.getPlant(plant)
+        .then((response) => {
+          commit("SET_PLANT", response.data);
+          console.log("GARDEN PLANT: ", response.data)
+          return response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     async fetchPlants({ commit }, garden) {
       EventService.getPlants(garden)
         .then((response) => {

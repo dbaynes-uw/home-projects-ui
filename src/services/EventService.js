@@ -178,6 +178,12 @@ export default {
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "plants/" + `${plant.id}`);
   },
+  getPlant(plant) {
+    console.log("ES GET PLANT: ", plant)
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.get(api_url + "plants/" + `${plant}`);
+  },
   getPlants(garden) {
     this.init();
     return axios.get(api_url + "plants",`${garden}`);
