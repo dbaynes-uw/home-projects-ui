@@ -33,10 +33,11 @@
           v-model="inputSearchText"
           placeholder="Search"
           autocomplete="off"
-          v-on:keyup="searchColumns"
+          v-on:keyup="searchCards"
         />
       </div>
   </div>
+  FilteredResults: {{ filteredResults.length }}
   <div class="garden-list">
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
@@ -101,7 +102,7 @@ export default {
       searchResults: null,
       inputSearchText: "",
       filteredResults: [],
-      columnDetails: null,
+      cardDetails: null,
       sortedData: [],
       sortedbyASC: false,
       description: null,
@@ -136,41 +137,43 @@ export default {
     showIndex() {
       this.filteredResults = [];
     },
-    searchColumns() {
+    searchCards() {
       this.searchResults = true;
       this.filteredResults = [];
-      this.columnDetails = null;
+      this.cardDetails = null;
       if (
         this.inputSearchText == null ||
         (this.inputSearchText != null && this.inputSearchText.length === 0)
       ) {
         this.filteredResults = [];
-        this.columnDetails = null;
+        this.cardDetails = null;
       } else {
+        console.log("this.gardens[0].plants[0].plant_name: ", this.gardens[0].plants[0].plant_name)
         if (
           this.gardens &&
           this.gardens.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
           this.gardens.forEach((garden) => {
-            const searchHasTitle =
-              garden.title &&
-              garden.title
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasAuthor =
-              garden.author &&
-              garden.author
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(garden);
-            }
-            if (this.filteredResults.length > 0) {
-              this.searchResults = true;
-            } else {
-              this.searchResults = false;
-            }
+            console.log("garden.plants.length: ", garden.plants.length)
+            garden.plants.forEach((plant) => {
+              console.log("ForEach Garden/Plant: ", plant.plant_name)
+              const searchHasPlantName =
+                plant.plant_name &&
+                plant.plant_name
+                  .toLowerCase()
+                  .includes(this.inputSearchText.toLowerCase());
+              console.log("searchHasPlantName: ", searchHasPlantName)
+              if (searchHasPlantName) {
+                console.log("Plant to Push: ", plant)
+                this.filteredResults.push(garden);
+              }
+              if (this.filteredResults.length > 0) {
+                this.searchResults = true;
+              } else {
+                this.searchResults = false;
+              }
+            })
           });
         }
       }

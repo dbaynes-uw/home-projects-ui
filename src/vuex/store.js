@@ -787,11 +787,9 @@ export default new Vuex.Store({
         });
     },
     async fetchPlant({ commit }, plant) {
-      console.log("FetchPlant: ", plant)
       EventService.getPlant(plant)
         .then((response) => {
           commit("SET_PLANT", response.data);
-          console.log("GARDEN PLANT: ", response.data)
           return response.data;
         })
         .catch((error) => {
