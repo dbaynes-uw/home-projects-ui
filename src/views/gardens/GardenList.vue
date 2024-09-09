@@ -37,7 +37,6 @@
         />
       </div>
   </div>
-  FilteredResults: {{ filteredResults.length }}
   <div class="garden-list">
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">

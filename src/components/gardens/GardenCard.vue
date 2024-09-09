@@ -8,7 +8,6 @@
          {{ garden.garden_name }}
         </router-link>
       </p>
-      
       <span v-if="garden.plants.length > 0">
         <p id="p-custom-left">Plants:</p>
         <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex">

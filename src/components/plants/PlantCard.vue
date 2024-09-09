@@ -4,17 +4,25 @@
     Plant: {{ plant }}-->
     <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
       <div class="card">
-        <p id="p-custom-left-u">{{ plant.plant_name}}</p>
+        <br/>
+        <h2><u>{{ plant.plant_name}}</u></h2>
+        <br/>
         <ul>
           <li class="li-left"><b>{{ plant.description }}</b></li>
           <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
           <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
           <!--li class="li-left"><a :href="plant.online_link" target="_blank">Water Line</a></!--li-->
           <li class="li-left" @click="showOutlet(plant)"><b><u>Water Line: {{ plant.outlet_name }}</u></b></li>    
-          <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
-          <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
+          <span v-if="plant.date_harvest">
+            <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
+          </span>
+          <span v-if="plant.actual_harvest">
+            <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
+          </span>
           <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>
-          <!--li class="li-left">Notes: <b>{{ plant.notes }}</b> </li-->
+          <span v-if="plant.notes">
+            <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
+          </span>
         </ul>
         <br/>
         <div class="icon-stack">

@@ -1,6 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Plant Card</h1>
+  <h2><router-link
+      :to="{ name: 'GardenDetails', params: { id: this.garden.id} }"
+    >
+      Back to the Garden
+    </router-link>
+  </h2>
+  <br/>
   <div class="card-display">
     <PlantCard
       :key="plant.id"
@@ -19,11 +26,17 @@ import DateFormatService from "@/services/DateFormatService.js";
 import PlantCard from "@/components/plants/PlantCard.vue";
 export default {
   name: 'PlantDetails',
-  props: ["id"],
+  props: {
+    id: {
+      type: String,
+      default: '',
+    }
+  },
   components: {
     ConfirmDialogue,
     PlantCard,
   },
+
   data() {
     return {
       updatedPlant: null,
@@ -41,6 +54,9 @@ export default {
     plant() {
       return this.$store.state.plant;
     },
+    garden() {
+      return this.$store.state.garden;
+     },
     origin() {
       return "PlantDetails"
     }

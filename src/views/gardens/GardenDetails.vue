@@ -3,9 +3,7 @@
   <h1>Garden and Plants</h1>
   <router-link :to="{ name: 'GardenList' }">
       <b>Back to Garden List</b>
-      <br>
     </router-link>
-    <!--tr v-for="(result, resultIndex) in plants" :key="resultIndex"></!--tr-->
     <span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex">
       <span v-if="garden.garden_name == outlet.target">
           <router-link
@@ -51,14 +49,11 @@
     />
   </span>
 </template>
-
 <script>
-//import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import PlantCard from "@/components/plants/PlantCard.vue";
-//>import EventService from '@/services/EventService'
 export default {
   name: 'GardenDetails',
   props: ["id"],
@@ -80,16 +75,6 @@ export default {
     editPlant(plant) {
       this.$router.push({ name: 'PlantEdit', params: { id: `${plant.id}`} });
     },
-    //>getOutlet(garden) {
-    //>  console.log("Garden: ", garden)
-    //>  EventService.getGardenOutlet(garden.id)
-    //>    .then((response) => {
-    //>      return response.data;
-    //>    })
-    //>    .catch((error) => {
-    //>      console.log(error);
-    //>    });
-    //>},
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
@@ -112,17 +97,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.event {
-  font-size: 1.5rem;
-}
-#align-right {
-  text-align: center;
-}
-body {
-  font-size: 1.6rem;
-}
-.right-align {
-  text-align: right;
-}
-</style>
