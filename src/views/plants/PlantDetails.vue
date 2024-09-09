@@ -1,12 +1,14 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Plant Card</h1>
-  <h3><router-link
+  <router-link :to="{ name: 'GardenList' }">
+      <h2>Back to Garden List</h2>
+    </router-link>
+    <router-link
       :to="{ name: 'GardenDetails', params: { id: this.plant.garden_id} }"
     >
-      Back to {{ garden.garden_name }}
+      <h2>Back to {{ garden.garden_name }}</h2>
     </router-link>
-  </h3>
   <br/>
   <div class="card-display">
     <PlantCard
