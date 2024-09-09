@@ -14,7 +14,7 @@
           <ul class="ul-left">
             <li>
               <router-link
-                :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }"
+                :to="{ name: 'PlantDetails', params: { id: `${plant.id}`}, props: { garden: `${garden}` } }"
               >
               <b>{{plant.plant_name}}</b>
               </router-link>
@@ -44,10 +44,10 @@ export default {
       type: Object,
       default: () => ({})
     },
-    origin: {
+    garden_id: {
       type: String,
       default: '',
-    }
+    },
   },
   components: {
     //ConfirmDialogue,

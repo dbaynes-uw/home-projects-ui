@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Garden and Plants</h1>
   <router-link :to="{ name: 'GardenList' }">
-      <b>Back to Garden List</b>
+      <h2>Back to Garden List</h2>
     </router-link>
     <span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex">
       <span v-if="garden.garden_name == outlet.target">
@@ -13,7 +13,7 @@
           </router-link>
       </span>
     </span>
-    <br/>
+
     <br/>
   <div class="card-display">
     <GardenCard
@@ -78,6 +78,9 @@ export default {
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
+    getGardenName(garden_id) {
+      console.log("Get Garden Name: ", garden_id)
+    }
   },
   created() {
     this.$store.dispatch("fetchGarden", this.id);

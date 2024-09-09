@@ -1,7 +1,5 @@
 <template>
   <div id="required-to-prevent-vue-warning">
-    <!--Garden: {{ garden }}
-    Plant: {{ plant }}-->
     <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
       <div class="card">
         <br/>
@@ -155,6 +153,9 @@ export default {
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },
+    getGardenName(garden_id) {
+      console.log("Get Garden Name: ", garden_id)
+    }
   }
 }
 </script>
