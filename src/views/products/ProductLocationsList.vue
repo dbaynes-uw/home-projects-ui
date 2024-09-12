@@ -36,7 +36,7 @@
           <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
             <h1 @click='toggleLocation(group_index)' @dblclick="doubleClickLocation(location)"><b><u>{{ location }}</u></b></h1>
-            <div v-show="isVendorToggled === group_index">
+            <!--div v-show="isVendorToggled === group_index"-->
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
@@ -44,7 +44,7 @@
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
-                    <span v-show="isProductToggled === product_index">
+                    <!--span v-show="isProductToggled === product_index"-->
                       <div v-if="product.vendor_name == vendor.vendor_name">
                         <div v-if="product.location == vendor.location">
                           <span v-for="(item, item_index) in product.products" :key="item_index">
@@ -71,11 +71,11 @@
                           </span>
                         </div>
                       </div>
-                    </span> 
+                    <!--span--> 
                   </span>
                 </span>
               </div>
-            </div>
+            <!--div-->
           </div>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
@@ -124,11 +124,7 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       },
       passedMessage: '',
-      toggle0: false,
-      toggle1: false,
-      toggle2: false,
-      toggleInPlay: false,
-      isVendorToggled: true,
+      isVendorToggled: null,
       isProductToggled: null,
       home_safe: false,
       toggleArr: [],

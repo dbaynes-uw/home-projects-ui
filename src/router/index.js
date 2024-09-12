@@ -348,14 +348,6 @@ const routes = [
     component: OutletDetailsByName,
     meta: { requiresAuth: true}
   },
-
-  {
-    path: "/products_by_locations",
-    name: "ProductLocationsList",
-    component: ProductLocationsList,
-    props: true,
-    meta: { requiresAuth: true}
-  },
   {
     path: "/products",
     name: "ProductList",

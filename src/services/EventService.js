@@ -307,7 +307,7 @@ export default {
   },
   async postVendor(vendor) {
     this.init();
-    return axios.post(api_url + 'vendors', vendor);
+    return await axios.post(api_url + 'vendors', vendor);
   },
   async putVendor(updatedVendor) {
     this.init();
