@@ -1047,10 +1047,10 @@ export default new Vuex.Store({
         });
     },
     async createVendor({ commit }, vendor) {
-      await EventService.postVendor(vendor)
+      EventService.postVendor(vendor)
         .then(() => {
           commit("PUT_VENDOR", vendor);
-          alert("ES Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+          alert("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
         })
         .catch((error) => {
           //console.log("Error Response: ", error.response)

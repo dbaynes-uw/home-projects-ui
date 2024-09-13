@@ -125,7 +125,6 @@
 import { v4 as uuidv4 } from "uuid";
 export default {
   created() {
-    console.log("PVC Created")
     this.$store.dispatch("fetchVendorsGroup");
     this.$store.dispatch("fetchVendorsLocationsGroup");
     this.$store.dispatch("fetchVendorsProductsGroup");
@@ -167,7 +166,8 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("createVendor", vendor)) {
-        alert("Vendor/Product was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+        setTimeout(() => location.reload(), 2500);
+        alert("Vendor/Product was submitted for " + vendor.location + " - " + vendor.vendor_name);
         this.$router.push({ name: "ProductLocationsList" });
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);

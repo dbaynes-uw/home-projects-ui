@@ -88,7 +88,7 @@ let time = null;  // define time be null
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "ProductVendorList",
+  name: "ProductLocationsList",
   //props: {
   //  location: {
   //    type: String,
@@ -141,6 +141,7 @@ export default {
     this.$store.dispatch("fetchShoppingList");
   },
   computed: {
+    
     vendorsLocationsGroup() {
       return this.$store.state.vendors_locations_group;
     },
@@ -150,9 +151,11 @@ export default {
     vendors_products() {
       return this.$store.state.vendors_products;
     },
+    
   },
   methods: {
     onSubmit() {
+      console.log("PLL onSubmit: ", this.vendors_products)
       const sub_vendors_products = {
         ...this.vendors_products,
         id: uuidv4(),
