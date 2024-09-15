@@ -36,7 +36,7 @@
           <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
             <h1 @click='toggleLocation(group_index)' @dblclick="doubleClickLocation(location)"><b><u>{{ location }}</u></b></h1>
-            <!--div v-show="isVendorToggled === group_index"-->
+            <div v-show="isVendorToggled === group_index">
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
@@ -75,7 +75,7 @@
                   </span>
                 </span>
               </div>
-            <!--div-->
+            </div>
           </div>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>

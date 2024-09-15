@@ -1051,6 +1051,7 @@ export default new Vuex.Store({
         .then(() => {
           commit("PUT_VENDOR", vendor);
           alert("Vendor was successfully updated for " + vendor.location + " - " + vendor.vendor_name);
+          router.push({name:'ProductLocationsList'})
         })
         .catch((error) => {
           //console.log("Error Response: ", error.response)
