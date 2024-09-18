@@ -12,12 +12,20 @@
       </h2>
       <br>
       <h1>
-        <button id="button-as-link" @click="refreshPage"><u>Refresh</u></button>  
-      </h1>
-      <br/>
-      <h1>
         <EventsPastDue />
       </h1>
+      <ul>
+        <li class="left">
+          <h1>
+            <button id="button-as-link" @click="refreshPage"><u>Active Events</u></button>  
+          </h1>
+        </li>
+        <li>
+          <h1>
+            <EventsInactive />
+          </h1>
+        </li>
+      </ul>
       <h1>
         <EventsDueBy />
       </h1>
@@ -62,6 +70,16 @@
             />
             <br />
           </div>
+          <div class="cards">
+            <!--EventCard
+              v-for="event in events"
+              :key="event.id"
+              :event="event"
+              :class="inactive(event)"
+              @dblclick="onDoubleClick(event)"
+            /-->
+            <br />
+          </div>
         </span>
         <span v-else>
           <button id="button-as-link" @click="requestIndexDetail">
@@ -102,6 +120,7 @@
 //import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import EventCard from '@/components/events/EventCard'
 import EventsDueBy from "@/components/events/EventsDueBy.vue";
+import EventsInactive from "@/components/events/EventsInactive.vue";
 import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 //import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
@@ -119,6 +138,7 @@ export default {
     EventCard,
     EventSearchResults,
     EventsDueBy,
+    EventsInactive,
     EventsPastDue,
   },
   props: ["id", "pastDue", "eventCard", "filteredResults[]"],
@@ -154,6 +174,10 @@ export default {
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
       return e.status == 'active' && e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
+    },
+    inactive(e) {
+      console.log("Inactive@@@")
+      return e.status == 'inactive'
     },
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
@@ -229,6 +253,7 @@ export default {
     DatePastDue(value) {
       return DateFormatService.datePastDuejs(value);
     },
+
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },

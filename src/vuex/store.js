@@ -21,6 +21,7 @@ export default new Vuex.Store({
     book: [],
     books: [],
     events: [],
+    eventsInactive: [],
     eventStatistics: [],
     eventsPastDue: [],
     eventsDueBy: [],
@@ -515,6 +516,17 @@ export default new Vuex.Store({
     async eventsPastDue({ commit }, dueBy) {
       console.log("STORE@@@")
       EventService.getEventsPastDue(dueBy)
+        .then((response) => {
+      commit("SET_EVENTS", response.data);
+      return response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    async eventsInactive({ commit }, inactive) {
+      console.log("STORE@@@")
+      EventService.getEventsInactive(inactive)
         .then((response) => {
       commit("SET_EVENTS", response.data);
       return response.data;

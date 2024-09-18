@@ -76,6 +76,10 @@ export default {
       form.target.options[form.target.options.selectedIndex].innerText;
     return axios.get(api_url + "events/" + `?due_by=${dueFilter}`)
   },
+  getEventsInactive() {
+    this.init();
+    return axios.get(api_url + "events/" + `?inactive=true`)
+  },
   getEventsPastDue() {
     this.init();
     return axios.get(api_url + "events/" + `?past_due=true`)
