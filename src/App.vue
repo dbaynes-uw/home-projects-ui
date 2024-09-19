@@ -23,7 +23,8 @@
     <v-app v-else>
       <!--div-->
       <div> <!--style="background-color: #41b88352; height: 10%;"-->
-        <v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y >
+        <!--v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y -->
+        <v-menu :link="links" offset-y >          
           <template v-slot:activator="{ props }">
             <!-- style="font-weight: bold; color: #000; font-family: sans-serif"-->
             <v-select

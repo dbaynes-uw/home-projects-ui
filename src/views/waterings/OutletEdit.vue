@@ -7,7 +7,7 @@
     </router-link>
     <br/><br/>
     <br/>
-    <form class="form-card-display" @submit.prevent="updateOutlet">
+    <v-form class="form-card-display" @submit.prevent="updateOutlet">
       <div class="form-container">
         <v-text-field label="Outlet Name" v-model="outlet.outlet_name">
           <template v-slot:prepend-inner>
@@ -118,7 +118,7 @@
           Submit
         </button>
       </div>
-    </form>
+    </v-form>
   </div>
 </template>
 <script>
