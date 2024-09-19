@@ -25,6 +25,15 @@
         />
       </div>
     </div>
+    <div class="form-group" style="display: flex">
+        <label>Enter number of outings to average:&nbsp;&nbsp;</label>
+        <input 
+          type="number"
+          v-model="var_number"
+          class="width-9"
+          @keyup.enter="showVarNumber(var_number)"
+        />
+    </div>
     <div class="golf-list">
       <span v-if="filteredResults.length == 0">
         <GolfIndex :golfs="golfs" />
@@ -57,6 +66,7 @@ export default {
       description: null,
       frequency: null,
       completed: 0,
+      var_number: 0,
       //statusMessage: "",
     };
   },
@@ -75,6 +85,20 @@ export default {
   methods: {
     showIndex() {
       this.filteredResults = [];
+    },
+    showVarNumber(var_num){
+      this.filteredResults = [];
+      if (
+        this.golfs &&
+        this.golfs.length > 0
+      ){
+        if (var_num > this.golfs.length ) {
+          var_num = this.golfs.length
+        }
+        for (let i = 0; i < var_num; i++) {
+          this.filteredResults.push(this.golfs[i]);
+        }
+      }
     },
     searchColumns() {
       this.filteredResults = [];
