@@ -5,6 +5,7 @@
     <h2 id="status-message">
       <!--{{ this.statusMessage }}</-->
     </h2>
+    <b>Internet: {{ this.onlineStatus == true ? 'Online' : 'Offline' }}</b>
     <h2>
       <router-link :to="{ name: 'GolfCreate' }">Add Golf Round</router-link>
     </h2>
@@ -47,6 +48,7 @@ export default {
   },
   data() {
     return {
+      onlineStatus: navigator.onLine,
       inputSearchText: "",
       filteredResults: [],
       columnDetails: null,
@@ -95,7 +97,17 @@ export default {
               golf.course
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasCourse) {
+            const searchHasTeesPlayed =
+              golf.tees_played &&
+              golf.tees_played
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase()); 
+            var dayjs = require('dayjs')
+            const searchHasDatePlayed =
+              golf.date_played &&
+              dayjs(golf.date_played).format("MM-DD-YY")
+                .includes(this.inputSearchText);
+            if (searchHasCourse ||searchHasTeesPlayed || searchHasDatePlayed) {
               this.filteredResults.push(golf);
             }
           });

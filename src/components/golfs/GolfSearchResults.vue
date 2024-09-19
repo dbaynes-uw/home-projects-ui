@@ -1,6 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <b>Online Status: {{ this.onlineStatus }}</b>
+  <br>
+  <b>Returned Items: {{ this.filteredResults.length }}</b>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('course')">Course</th>
