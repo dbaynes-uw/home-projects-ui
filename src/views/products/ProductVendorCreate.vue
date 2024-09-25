@@ -24,7 +24,7 @@
     </ul> 
   </v-card>
   <v-card-text>
-    <v-form id="isFormValid">
+    <v-form id="isFormValid" @submit.prevent="onSubmit" >
       <v-container id="form-container">
         <br/>
         <label>Vendor Location:</label>
@@ -109,11 +109,9 @@
             </template>
           </v-text-field>
         </span>
-
         <br/>
         <br/>
-        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
-        <!--button class="button" type="submit">Submit</button-->
+        <v-btn type="submit" block class="mt-2">Submit</v-btn>
       </v-container>
     </v-form>
   </v-card-text>
@@ -166,8 +164,6 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("createVendor", vendor)) {
-        setTimeout(() => location.reload(), 2500);
-        alert("Vendor/Product was submitted for " + vendor.location + " - " + vendor.vendor_name);
         this.$router.push({ name: "ProductLocationsList" });
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);
