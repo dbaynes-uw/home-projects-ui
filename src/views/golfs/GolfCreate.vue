@@ -7,10 +7,9 @@
       <router-link :to="{ name: 'GolfList' }">Back to Golf List</router-link>
     </h4>
   </v-card>
-  <GolfInput :golf="golf" />
+  <GolfInput />
 </template>
 <script>
-//import { v4 as uuidv4 } from "uuid";
 import GolfInput from "@/components/golfs/GolfInput.vue";
 export default {
   components: {
@@ -117,125 +116,6 @@ export default {
     };
   },
   methods: {                          
-    //onSubmit() {
-    //  //this.checkValidations();
-    //  console.log("CREATE@@@@@@@@@")
-    //  this.isFormValid = true
-    //  console.log("onSubmit - this.isFormValid: ", this.isFormValid)
-    //  if (this.isFormValid) {
-    //    const golf = {
-    //      ...this.golf,
-    //      id: uuidv4(),
-    //      created_by: this.$store.state.user,
-    //    };
-    //    if (this.$store.dispatch("createGolf", golf)) {
-    //      this.$router.push({ name: "GolfList" });
-    //    } else {
-    //      alert("Error adding Golf Course Location " + golf.course_location);
-    //    }
-    //  } else {
-    //    alert("Please correct required fields and resubmit");
-    //  }
-    //},
-    //requiredCourse: function (value) {
-    //console.log("requiredCourse: - this.isCourseValid: ", this.isCourseValid)
-    //console.log("VALUE: ", value)
-    //if (value) {
-    //    this.isCourseValid = true
-    //    return true;
-    //} else {
-    //    this.isFormValid = false
-    //    this.isCourseValid = false
-    //    return 'Please enter Course';
-    //}
-    //},
-    //requiredCourseLocation: function (value) {
-     // console.log("requiredCourseLocation: - this.isCourseLocationValid: ", this.isCourseLocationValid)
-     // console.log("VALUE: ", value)
-     // if (value) {
-     //     this.isCourseLocationValid = true
-     //     return true;
-     // } else {
-     //     this.isFormValid = false
-     //     this.isCourseLocationValid = false
-     //     return 'Please enter Course Location';
-     // }
-    //},
-    //checkValidations() {
-    //  console.log("checkValidations - this.isFormValid: ", this.isFormValid)
-    //  console.log("checkValidations - this.isCourseValid: ", this.isCourseValid)
-    //  console.log("checkValidations - this.isCourseLocationValid: ", this.isCourseLocationValid)
-//
-    //  if (this.isCourseValid && this.isCourseLocationValid) {
-    //    this.isFormValid = true
-    //  } else {
-    //    this.isFormValid = false
-    //  }
-    //  console.log("checkValidations Exit - this.isFormValid: ", this.isFormValid)
-    //  console.log("checkValidations Exit - this.isCourseValid: ", this.isCourseValid)
-    //  console.log("checkValidations Exit - this.isCourseLocationValid: ", this.isCourseLocationValid)
-
-    //},
-    //calculateFrontPar() {
-    //  this.front_nine_par = 0
-    //  return this.front_nine_par = this.golf.par_1_hole + 
-    //                               this.golf.par_2_hole +
-    //                               this.golf.par_3_hole +
-    //                               this.golf.par_4_hole +
-    //                               this.golf.par_5_hole +
-    //                               this.golf.par_6_hole +
-    //                               this.golf.par_7_hole +
-    //                               this.golf.par_8_hole +
-    //                               this.golf.par_9_hole +
-    //                               this.golf.par_10_hole +
-    //                               this.golf.par_11_hole +
-    //                               this.golf.par_12_hole +
-    //                               this.golf.par_13_hole +
-    //                               this.golf.par_14_hole +
-    //                               this.golf.par_15_hole +
-    //                               this.golf.par_16_hole +
-    //                               this.golf.par_17_hole +
-    //                               this.golf.par_18_hole 
-    //},
-    //calculateFrontScore() {
-    //  this.front_nine_score = 0
-    //  return this.front_nine_score = this.golf.score_1_hole + 
-    //                                 this.golf.score_2_hole +
-    //                                 this.golf.score_3_hole +
-    //                                 this.golf.score_4_hole +
-    //                                 this.golf.score_5_hole +
-    //                                 this.golf.score_6_hole +
-    //                                 this.golf.score_7_hole +
-    //                                 this.golf.score_8_hole +
-    //                                 this.golf.score_9_hole 
-    //},
-    //calculateFrontPutts() {
-    //  this.front_nine_putts = 0
-    //  return this.front_nine_putts = this.golf.putts_1_hole + 
-    //                                 this.golf.putts_2_hole +
-    //                                 this.golf.putts_3_hole +
-    //                                 this.golf.putts_4_hole +
-    //                                 this.golf.putts_5_hole +
-    //                                 this.golf.putts_6_hole +
-    //                                 this.golf.putts_7_hole +
-    //                                 this.golf.putts_8_hole +
-    //                                 this.golf.putts_9_hole 
-    //},
-    //calculateFrontPenalty() {
-    //  this.front_nine_penalty = 0
-    //  return this.front_nine_penalty = this.golf.penalty_1_hole + 
-    //                                   this.golf.penalty_2_hole +
-    //                                   this.golf.penalty_3_hole +
-    //                                   this.golf.penalty_4_hole +
-    //                                   this.golf.penalty_5_hole +
-    //                                   this.golf.penalty_6_hole +
-    //                                   this.golf.penalty_7_hole +
-    //                                   this.golf.penalty_8_hole +
-    //                                   this.golf.penalty_9_hole 
-    //},   
-  //},
-  //golf() {
-  //  return this.$store.state.golf;
   },
 };
 </script>

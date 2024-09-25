@@ -4,8 +4,7 @@
     <span v-if="this.action == 'edit'">
       <h2>{{ golf.course}} on {{ formatStandardDate(golf.date_played) }} </h2>
     </span>
-    <v-form id="isFormValid">
-    <!--v-form @submit.prevent="onSubmit"-->
+    <v-form id="isFormValid" @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
           v-model="golf.course"
@@ -200,18 +199,13 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
-        <span v-if="(this.action == 'edit')">
-          <v-btn type="submit" block class="mt-2" @click="updateGolf">Update</v-btn>
-        </span>
-        <span v-else>
-          <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
-        </span>
+        <v-btn type="submit" block class="mt-2">Submit</v-btn>
       </v-container>
     </v-form>
   </v-card-text>
 </template>
 <script>
-import axios from "axios";
+//?import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
@@ -221,24 +215,6 @@ export default {
     ConfirmDialogue
   },
   computed: {
-  },
-  async mounted() {
-    if (window.location.pathname.includes("/create")) {
-      this.action = "create"
-    } else {
-      this.action = "edit"
-      var work_url = ""
-      if (window.location.port == "8080") {
-        // or: "http://davids-macbook-pro.local:3000/api/v1/";
-        work_url = "http://localhost:3000/api/v1/golfs/";
-      } else {
-        work_url =
-          "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/golfs/";
-      }
-      this.api_url = work_url
-      const result = await axios.get(this.api_url + +this.$route.params.id);
-      this.golf = result.data;
-    }
   },
   data() {
     return {
@@ -358,114 +334,6 @@ export default {
         alert("Please correct required fields and resubmit");
       }
     },
-    async updateGolf() {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Golf from List",
-        message:
-          "Are you sure you want to update " +
-          this.golf.course,
-        okButton: "Update",
-      });
-      // If you throw an error, the method will terminate here unless //you surround it wil try/catch
-      if (ok) {
-        const golf = {
-          ...this.golf,
-          updated_by: this.$store.state.user.resource_owner.email ,
-        };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            course: this.golf.course,
-            course_location: this.golf.course_location,
-            date_played: this.golf.date_played,
-            tees_played: this.golf.tees_played,
-            par_1_hole: this.golf.par_1_hole,
-            par_2_hole: this.golf.par_2_hole,
-            par_3_hole: this.golf.par_3_hole,
-            par_4_hole: this.golf.par_4_hole,
-            par_5_hole: this.golf.par_5_hole,
-            par_6_hole: this.golf.par_6_hole,
-            par_7_hole: this.golf.par_7_hole,
-            par_8_hole: this.golf.par_8_hole,
-            par_9_hole: this.golf.par_9_hole,
-            par_10_hole: this.golf.par_10_hole,
-            par_11_hole: this.golf.par_11_hole,
-            par_12_hole: this.golf.par_12_hole,
-            par_13_hole: this.golf.par_13_hole,
-            par_14_hole: this.golf.par_14_hole,
-            par_15_hole: this.golf.par_15_hole,
-            par_16_hole: this.golf.par_16_hole,
-            par_17_hole: this.golf.par_17_hole,
-            par_18_hole: this.golf.par_18_hole,
-            score_1_hole: this.golf.score_1_hole,
-            score_2_hole: this.golf.score_2_hole,
-            score_3_hole: this.golf.score_3_hole,
-            score_4_hole: this.golf.score_4_hole,
-            score_5_hole: this.golf.score_5_hole,
-            score_6_hole: this.golf.score_6_hole,
-            score_7_hole: this.golf.score_7_hole,
-            score_8_hole: this.golf.score_8_hole,
-            score_9_hole: this.golf.score_9_hole,
-            score_10_hole: this.golf.score_10_hole,
-            score_11_hole: this.golf.score_11_hole,
-            score_12_hole: this.golf.score_12_hole,
-            score_13_hole: this.golf.score_13_hole,
-            score_14_hole: this.golf.score_14_hole,
-            score_15_hole: this.golf.score_15_hole,
-            score_16_hole: this.golf.score_16_hole,
-            score_17_hole: this.golf.score_17_hole,
-            score_18_hole: this.golf.score_18_hole,
-            putts_1_hole: this.golf.putts_1_hole,
-            putts_2_hole: this.golf.putts_2_hole,
-            putts_3_hole: this.golf.putts_3_hole,
-            putts_4_hole: this.golf.putts_4_hole,
-            putts_5_hole: this.golf.putts_5_hole,
-            putts_6_hole: this.golf.putts_6_hole,
-            putts_7_hole: this.golf.putts_7_hole,
-            putts_8_hole: this.golf.putts_8_hole,
-            putts_9_hole: this.golf.putts_9_hole,
-            putts_10_hole: this.golf.putts_10_hole,
-            putts_11_hole: this.golf.putts_11_hole,
-            putts_12_hole: this.golf.putts_12_hole,
-            putts_13_hole: this.golf.putts_13_hole,
-            putts_14_hole: this.golf.putts_14_hole,
-            putts_15_hole: this.golf.putts_15_hole,
-            putts_16_hole: this.golf.putts_16_hole,
-            putts_17_hole: this.golf.putts_17_hole,
-            putts_18_hole: this.golf.putts_18_hole,
-            penalty_1_hole: this.golf.penalty_1_hole,
-            penalty_2_hole: this.golf.penalty_2_hole,
-            penalty_3_hole: this.golf.penalty_3_hole,
-            penalty_4_hole: this.golf.penalty_4_hole,
-            penalty_5_hole: this.golf.penalty_5_hole,
-            penalty_6_hole: this.golf.penalty_6_hole,
-            penalty_7_hole: this.golf.penalty_7_hole,
-            penalty_8_hole: this.golf.penalty_8_hole,
-            penalty_9_hole: this.golf.penalty_9_hole,
-            penalty_10_hole: this.golf.penalty_10_hole,
-            penalty_11_hole: this.golf.penalty_11_hole,
-            penalty_12_hole: this.golf.penalty_12_hole,
-            penalty_13_hole: this.golf.penalty_13_hole,
-            penalty_14_hole: this.golf.penalty_14_hole,
-            penalty_15_hole: this.golf.penalty_15_hole,
-            penalty_16_hole: this.golf.penalty_16_hole,
-            penalty_17_hole: this.golf.penalty_17_hole,
-            penalty_18_hole: this.golf.penalty_18_hole,
-            players: this.golf.players,
-            url_to_course: this.golf.url_to_course,
-            notes: this.golf.notes,
-            updated_by: this.$store.state.user.resource_owner.email, 
-          }
-        );
-        if (result.status >= 200) {
-          alert("Golf has been updated!!");
-          this.$router.push({ name: "GolfEdit", params: { id: golf.id } });
-        } else {
-          alert("Update Error Code ", result.status);
-        }
-      }
-    },
     requiredCourse: function (value) {
       if (value) {
         this.isCourseValid = true
@@ -564,9 +432,6 @@ export default {
       //WORKS for ALL CAPS: return name.toUpperCase();
     }             
   },
-  //golf() {
-  //  return this.$store.state.golf;
-  //},
 };
 </script>
 <style lang="css">

@@ -208,15 +208,12 @@
 </template>
 <script>
 import axios from "axios";
-//import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-//import DateFormatService from "@/services/DateFormatService.js";
 import GolfCalculations from "@/components/golfs/GolfCalculations.js";
 
 export default {
   props: ["id"],
   components: {
-    //GolfInput,
     ConfirmDialogue,
   },
   async mounted() {
@@ -232,9 +229,7 @@ export default {
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.golf = result.data;
   },
-  created() {
-    //this.user = this.$store.dispatch("fetchUser", this.$store.state.user.resource_owner.id);
-  },
+  created() {},
   data() {
     return {
       golf: {
@@ -535,12 +530,6 @@ export default {
     calculateTotalPenalty(golf) {
       return GolfCalculations.calculateTotalPenalty(golf)
     },
-    //capitalized(name) {
-    //  const capitalizedFirst = name.toUpperCase();
-    //  const  rest = name.slice(1);
-    //  return capitalizedFirst[0] + rest;
-    //  //WORKS for ALL CAPS: return name.toUpperCase();
-    //}  
   }           
 };
 </script>

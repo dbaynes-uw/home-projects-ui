@@ -4,6 +4,8 @@ import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import EventService from '@/services/EventService'
 import router from '../router'
+import DateFormatService from "@/services/DateFormatService.js";
+
 //Vuex.use(Vuex)
 //const localStorage = new Vuex.localStorage({
 var api_authenticate_url = "";
@@ -644,7 +646,7 @@ export default new Vuex.Store({
       EventService.postGolf(golf)
         .then(() => {
           commit("ADD_GOLF", golf);
-          alert("Golf was successfully added for " + golf.course);
+          alert("Golf was successfully added for date " + DateFormatService.formatDatejs(golf.date_played));
         })
         .catch((error) => {
           alert("Error in postGolf of createGolf Action (index.js)");

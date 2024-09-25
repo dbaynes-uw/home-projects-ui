@@ -3,7 +3,7 @@
     <h2>Golf Rounds Played</h2>
     <h2>Current User: {{ this.$store.state.user.resource_owner.email }}</h2>
     <h2 id="status-message">
-      <!--{{ this.statusMessage }}</-->
+      {{ this.statusMessage }}
     </h2>
     <b>Internet: {{ this.onlineStatus == true ? 'Online' : 'Offline' }}</b>
     <h2>
@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="form-group" style="display: flex">
-        <label>Enter number of outings to average:&nbsp;&nbsp;</label>
+        <label>Enter number of outings to average and then hit enter:&nbsp;&nbsp;</label>
         <input 
           type="number"
           v-model="var_number"
@@ -66,8 +66,8 @@ export default {
       description: null,
       frequency: null,
       completed: 0,
-      var_number: 0,
-      //statusMessage: "",
+      var_number: null,
+      statusMessage: "",
     };
   },
   mounted() {

@@ -143,7 +143,6 @@ export default {
     return axios.put(api_url + "golfs" + `/${updatedGolf.id}`, updatedGolf);
   },
   async postGolf(golf) {
-    console.log("ES - Post Golf: ", golf)
     this.init();
     return axios.post(api_url + 'golfs', golf);
   },

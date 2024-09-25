@@ -1,5 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('course')">Course</th>
@@ -96,6 +97,7 @@ export default {
     return {
       inputSearchText: "",
       onlineStatus: navigator.onLine,
+      statusMessage: "",
       par: 0,
     };
   },
@@ -117,19 +119,23 @@ export default {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Golf from List",
         message:
-          "Are you sure you want to delete " +
-          golf.title +
+          "Are you sure you want to delete entry for " +
+          DateFormatService.formatDatejs(golf.date_played) +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
+      if (ok == true) {
         this.$store.dispatch("deleteGolf", golf);
-        this.statusMessage =
-          "Golf was Deleted for " +
-          golf.title +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
+        // Below doesn't work because of location.reload()
+        //this.statusMessage =
+        //  "Golf was Deleted for " +
+        //  DateFormatService.formatDatejs(golf.date_played) + 
+        //  "! Page will restore in 2 seconds";
+        alert("Golf was Deleted for " +
+          DateFormatService.formatDatejs(golf.date_played))
+        //setTimeout(() => location.reload(), 2000);
+        location.reload()
       }
     },
     formatFullYearDate(value) {
