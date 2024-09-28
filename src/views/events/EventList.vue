@@ -10,27 +10,32 @@
         <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
         <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
       </h2>
-      <br>
-      <h1>
-        <EventsPastDue />
-      </h1>
+      <br/>
       <ul>
-        <li class="left">
+        <li>
+          <button id="button-as-link" @click="refreshPage"><u>Active Events</u></button>  
+        </li>
+        <li>
           <h1>
-            <button id="button-as-link" @click="refreshPage"><u>Active Events</u></button>  
+            <EventsPastDue />
           </h1>
         </li>
+        
         <li>
           <h1>
             <EventsInactive />
           </h1>
         </li>
       </ul>
-      <h1>
-        <EventsDueBy />
-      </h1>
     </div>
-    <br />
+    <h1>
+      <EventsDueBy />
+    </h1>
+    <span v-if="$store.state.user.resource_owner.email.toLowerCase().includes('baynes')">
+      <br/>
+      <button id="button-as-link-wide" @click="notifyEventsDue"><u>Send Events Due Notification</u></button>  
+      <br />
+    </span>
     <div style="width: 100%">
       <div class="auto-search-container">
         <v-text-field
@@ -125,7 +130,7 @@ import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 //import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
 import EventSearchResults from "@/components/events/EventSearchResults.vue";
-
+import axios from "axios";
 </script>
 <script>
 // @ is an alias to /src
@@ -144,6 +149,7 @@ export default {
   props: ["id", "pastDue", "eventCard", "filteredResults[]"],
   data() {
     return {
+      isAdmin: false,
       requestIndexDetailFlag: true,
       assigned: "assigned",
       eventList: null,
@@ -158,11 +164,25 @@ export default {
       user: null,
     };
   },
-  mounted() {},
+  async mounted() {
+    var work_url = ""
+    if (window.location.port == "8080") {
+      // or: "http://davids-macbook-pro.local:3000/api/v1/";
+      work_url = "http://localhost:3000/api/v1/events/";
+    } else {
+      work_url =
+        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
+    }
+    this.api_url = work_url
+  },
   created() {
     this.$store.dispatch("fetchEvents");
     this.sortedData = this.events;
     this.user = this.$store.state.user.resource_owner
+    if (this.user.email == 'dlbaynes@gmail.com') {
+      this.isAdmin = true;
+    }
+    console.log("isAdmin? ", this.isAdmin)
   },
   computed: {    
     events() {
@@ -170,6 +190,19 @@ export default {
     },
   },
   methods: {
+    async notifyEventsDue(){
+      console.log("notifyEventsDue@@@@@@@@ - API URL: ", this.api_url + "/notification_events_due")
+      alert("Email Notification Sent")
+      const result = await axios.put(this.api_url + "notification_events_due");
+      //console.log("Result Status:", result.status)
+      //console.log("Result StatusText:", result.statusText)
+      //console.log("Result Data StatusText:", result.data.statusText)
+      if (result.statusText.toLowerCase() == 'ok') {
+        alert("Notification emails were successfully sent to assignees")
+      } else {
+        alert("There was an error send emails to assignees")
+      }
+    },
     duePastDue(e) {
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");

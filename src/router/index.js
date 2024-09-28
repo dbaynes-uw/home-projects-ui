@@ -148,6 +148,13 @@ const routes = [
     component: EventList,
     meta: { requiresAuth: true}
   },
+  //{
+  //  path: "/events/notification_events_due/",
+  //  name: "EventList",
+  //  props: true,
+  //  component: EventList,
+  //  meta: { requiresAuth: true}
+  //},
   {
     path: "/events/statistic_detail/:statistic",
     name: "EventStatisticDetail",

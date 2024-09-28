@@ -14,9 +14,11 @@
       <table class="table-index-style">
         <tr>
           <th>Description</th>
+          <th>Assigned</th>
           <th>Frequency</th>
           <th>Date Due</th>
-          <th>Assigned</th>
+          <th>Status</th>
+
           <th style="text-align: right">Actions</th>
         </tr>
         <tr
@@ -27,9 +29,10 @@
           v-bind:class="{ 'is-complete': event.completed }"
         >
           <td>{{ event.description }}</td>
+          <td>{{ event.assigned }}</td>
           <td>Every {{ event.frequency }} days</td>
           <td>{{ formatStandardDate(event.action_due_date) }}</td>
-          <td>{{ event.assigned }}</td>
+          <td>{{ event.status[0].toUpperCase() + event.status.slice(1) }}</td>
           <td>
             <span class="fa-stack fa-table-stack">
               <router-link
