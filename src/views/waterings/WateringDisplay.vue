@@ -12,7 +12,7 @@
           :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
           class="my-3"
           contain
-          height="400"
+          height="500"
       />
     <ul>
       <span v-if="!watering">
