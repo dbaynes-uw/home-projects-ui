@@ -3,11 +3,7 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Watering System</h2>
-      <h2 id="status-message">
-        <u>{{ this.statusMessage }}</u>
-      </h2>
     </v-card-title>
-    <br/>
     <v-img
           :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
           class="my-3"
