@@ -93,6 +93,7 @@ export default {
           ...this.book,
           updated_by: this.$store.state.created_by,
         };
+        console.log("book.id: ", book.id)
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -105,11 +106,11 @@ export default {
             notes: this.book.notes,
           }
         );
-        if (result.status >= 200) {
+        if (result){
           alert("Book has been updated");
-          this.$router.push({ name: "BookDetails", params: { id: book.id } });
+          this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "Book Updated Successfully"} });
         } else {
-          alert("Update Error Code ", result.status);
+          this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "ERROR in processing update - change did not take place"} });
         }
       }
     },

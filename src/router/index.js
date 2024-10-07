@@ -144,7 +144,6 @@ const routes = [
   {
     path: "/events",
     name: "EventList",
-    props: true,
     component: EventList,
     meta: { requiresAuth: true}
   },

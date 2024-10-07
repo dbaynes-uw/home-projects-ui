@@ -4,7 +4,7 @@
     <v-card-title class="pb-0">
       <h2>Book List</h2>
       <h2 id="status-message">
-        <u>{{ this.statusMessage }}</u>
+        <u>{{ this.$route.query.success }}</u>
       </h2>
     </v-card-title>
     <ul>
@@ -38,7 +38,6 @@
       </div>
   </div>
   <div class="book-list">
-    FilteredResults: {{ filterResults }}
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
@@ -93,7 +92,6 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
   name: "BookList",
-  props: ["filteredResults[]"],
   components: {
     BookIndex,
     BookCard,
