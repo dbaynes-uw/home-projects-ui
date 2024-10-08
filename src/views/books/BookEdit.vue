@@ -60,7 +60,9 @@ export default {
     }
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.book = result.data;
+    if (result.data) {
+      this.book = result.data;
+    }
   },
   data() {
     return {
@@ -110,7 +112,8 @@ export default {
           alert("Book has been updated");
           this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "Book Updated Successfully"} });
         } else {
-          this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "ERROR in processing update - change did not take place"} });
+          console.log("Error")
+          //this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "ERROR in processing update - change did NOT take place"} });
         }
       }
     },

@@ -17,6 +17,7 @@ module.exports = {
     "vue/multi-word-component-names": 0,
     "vue/no-deprecated-slot-attribute": "off",
     'prettier/prettier': 0,
+    "vue/script-setup-uses-vars": "error"
   },
   overrides: [
     {

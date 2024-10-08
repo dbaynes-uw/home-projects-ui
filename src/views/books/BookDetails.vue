@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Book Card</h1>
-  {{ this.statusMessage }}
+  <h3>{{ this.statusMessage }}</h3>
   <div class="card-display">
     <BookCard
       :key="book.id"
@@ -30,9 +30,7 @@ export default {
   mounted() {
     this.sortedData = this.books;      
     successMessage.value = this.$route.query.success;
-    console.log("MOUNTED successMessage: ", successMessage.value )
     this.statusMessage = successMessage.value
-    console.log("StatusMessage: ", this.statusMessage )
   },
   data() {
     return {
