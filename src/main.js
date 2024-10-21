@@ -33,7 +33,14 @@ createApp({
         //return Promise.reject(error)
         //router.back(error)
         if (error.code){
-          this.$router.push({ name: "About", query: {success: error.message} });
+          if (error.message.includes("401")) {
+            console.log("401 INCLUDED!")
+            this.$router.push({ name: "Login", query: {success: "Invalid Login - also "} });
+          } else {
+            this.$router.push({ name: "About", query: {success: error.message} });
+          }
+        } else {
+          console.log("NO ERROR CODE: ", error.code)
         }
       }
     )

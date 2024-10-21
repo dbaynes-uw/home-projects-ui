@@ -2,7 +2,7 @@
   <div class="card">
     <p id="p-custom-left-u">{{ med.description}}</p>
     <ul>
-      <li class="li-left">Date: <b>{{ formatYearDate(med.date_of_occurrence) }}</b></li>
+      <li class="li-left">Date: <b>{{ formatStandardDateTime(med.date_of_occurrence) }}</b></li>
       <li class="li-left">Duration: {{ med.duration }}</li>
       <li class="li-left">Since Last:</li>
       <li class="li-left">&nbsp;&nbsp;Days: {{ med.interval_days }} days</li>
@@ -24,8 +24,8 @@ export default {
     }
   },
   methods: {
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTimejs(value);
     },
   }
 }

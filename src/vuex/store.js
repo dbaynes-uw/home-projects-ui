@@ -306,11 +306,12 @@ export default new Vuex.Store({
           commit('SET_USER_DATA', data)
         })
         .catch((error) => {
-          alert("Invalid Login Credentials or API problem - Please try again")
+          //alert("Invalid Login Credentials or API problem - Please try again")
           //location.reload()
           //const message = error.response.request.statusText + '!';
           error = error.response.request.statusText + '!';
-          router.back(error)
+          //!!!router.back(error)
+          error
         });
     },
 
@@ -690,7 +691,6 @@ export default new Vuex.Store({
       EventService.postMed(med)
         .then(() => {
           commit("ADD_MED", med);
-          alert("Med was successfully added for " + med.date_of_occurrence);
         })
         .catch((error) => {
           alert("Error in postMed of createMed Action (index.js)");

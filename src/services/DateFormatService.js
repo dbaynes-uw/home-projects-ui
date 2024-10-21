@@ -18,7 +18,7 @@ export default {
   },
   formatStandardDateTimejs(date_time) {
     if (date_time) {
-      date_time = dayjs(date_time).format("M/DD/YY h:MMa");
+      date_time = dayjs(date_time).format("M/DD/YY H:mma");
       return date_time;
     }
   },

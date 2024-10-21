@@ -55,7 +55,7 @@ export default {
         id: "",
         date_of_occurrence: null,
         duration: "",
-        circumstance: null,
+        circumstances: null,
         created_by: this.$store.state.user.resource_owner.email,
       },
       durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
@@ -74,6 +74,7 @@ export default {
         };
         if (this.$store.dispatch("createMed", med)) {
           this.$router.push({ name: "MedList" });
+          alert("Med was successfully added for " + med.date_of_occurrence);
         } else {
           alert("Error adding Med Location " + med.title);
         }
@@ -101,6 +102,7 @@ export default {
     }
   },
   med() {
+    console.log("this.$store.state.med: ", this.$store.state.med)
     return this.$store.state.med;
   },
 };

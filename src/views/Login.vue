@@ -5,6 +5,11 @@
       <h3>Log In</h3>
     </v-card-title>
   </v-card>
+  <span v-if="statusMessage">
+      <h2 style="color: red">
+        {{ statusMessage }}
+      </h2>
+    </span>
   <v-card-text>
     <v-form @submit.prevent="login">
       <v-container id="form-container">
@@ -55,9 +60,20 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, minLength} from '@vuelidate/validators';
 import { reactive, computed } from 'vue';
+import { ref } from 'vue';
+const successMessage = ref('')
 export default {
   mounted() {
     this.$store.dispatch('logout');
+    if (this.$route.query.success) {
+      successMessage.value = this.$route.query.success;
+      console.log("MOUNTED successMessage: ", successMessage.value )
+      this.statusMessage = successMessage.value
+      //!!this.statusMessage = this.statusMessage.toLowerCase().replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function(key) {
+      //!!    return key.toUpperCase();
+      //!!}); 
+      console.log("StatusMessage: ", this.statusMessage )
+    }
   },
   setup () {
     const state = reactive({
@@ -67,7 +83,8 @@ export default {
     const rules = computed(() => {
       return {
         email: { required, email},
-        password: { required, minLength: minLength(8) }
+        password: { required, minLength: minLength(8) },
+        statusMessage: '',
       } 
     })
     const v$ = useVuelidate(rules, state)
@@ -107,8 +124,12 @@ export default {
             this.$router.push({ name: 'About' })
           })
           .catch(err => {
-            this.message = err.response.data.error
-            this.error = err.response.data.error
+            console.log("Login this.v$.$error: ", this.v$.$error)
+            console.log("Login err: ", err)
+            this.$router.push({ name: "Login", query: {success: "Invalid Login Credentials - also make sure that API has started."} });
+            location.reload()
+            //this.message = err.response.data.error
+            //?this.error = err.response.data.error
           })
         }
     }
