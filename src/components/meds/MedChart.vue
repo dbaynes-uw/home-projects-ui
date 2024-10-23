@@ -1,8 +1,9 @@
 <template>
   <div class="med-chart">
     <!--canvas id="medChart" width="400" height="400"></canvas-->
+    <!--Bar :data="data" :options="options" /-->
     <div class="div-select">
-    Time Frame:
+      Time Frame:
     <select class="border-select select-range" @change="filterTimeFrame($event)">
       <option></option>
       <option value="7">Week</option>
@@ -17,13 +18,13 @@
   </div>
 </template>
 <script>
-//import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-//import { Bar } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Bar } from 'vue-chartjs';
 import DateFormatService from "@/services/DateFormatService.js";
-//ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default {
   name: 'MedChart',
-  //components: {Bar},
+  components: {Bar},
   props: ["meds","chartLabels","chartIntervals"],
   data() {
     return {
