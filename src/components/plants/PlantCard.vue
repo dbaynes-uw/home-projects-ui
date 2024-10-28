@@ -64,18 +64,15 @@
                   </i>
                 </router-link>
                 </td>
-                
-                <span v-if="plant.id > 0">
-                  <td id="icon-block">
-                    <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
-                      <i
-                        id="card-medium-block-icon-eye"
-                        class="fa fa-eye"
-                      >
-                      </i>
-                    </router-link>
-                  </td>
-                </span>
+                <td id="icon-block">
+                  <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
+                    <i
+                      id="card-medium-block-icon-eye"
+                      class="fa fa-eye"
+                    >
+                    </i>
+                  </router-link>
+                </td>
                 <td id="icon-block">
                   <span class="fa-table-stack">
                     <i
