@@ -11,16 +11,18 @@
     </div>
     <br />
     <div class="eventStatisticDetail">
-      <table class="table-index-style">
+      <table>
+      <thead class="table-index-style">
         <tr>
           <th>Description</th>
           <th>Assigned</th>
           <th>Frequency</th>
           <th>Date Due</th>
           <th>Status</th>
-
           <th style="text-align: right">Actions</th>
         </tr>
+      </thead>
+      <tbody>
         <tr
           v-for="event in events"
           :key="event.id"
@@ -61,6 +63,7 @@
             </span>
           </td>
         </tr>
+      </tbody>
       </table>
     </div>
   </div>
