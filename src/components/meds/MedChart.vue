@@ -39,6 +39,10 @@ export default {
       },
       options: {
         responsive: true,
+        ticks: {
+          min: 0,
+          stepSize: 5,
+        }
       },
       timeFrames: ["Week", "Month", "Quarter","YTD"],
       timeFrameCount: "All",
@@ -73,8 +77,5 @@ export default {
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
-    //compareDatejs(from, to) {
-    //  return DateFormatService.compareDatejs(from, to);
-    //},
 }
 </script>

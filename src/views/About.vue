@@ -19,15 +19,9 @@ import { ref } from 'vue';
 const successMessage = ref('')
 export default {
   mounted() {   
-    console.log("this.$route.query.success: ", this.$route.query.success)
     if (this.$route.query.success) {
       successMessage.value = this.$route.query.success;
-      console.log("MOUNTED successMessage: ", successMessage.value )
       this.statusMessage = successMessage.value
-      //!!this.statusMessage = this.statusMessage.toLowerCase().replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function(key) {
-      //!!    return key.toUpperCase();
-      //!!}); 
-      console.log("StatusMessage: ", this.statusMessage )
     }
   },
   data() {
