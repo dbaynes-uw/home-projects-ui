@@ -9,12 +9,15 @@
     <br />
     <div class="eventAssigned">
       <table class="table-index-style">
-        <tr>
-          <th>Description</th>
-          <th>Frequency</th>
-          <th>Date Due</th>
-          <th>Actions</th>
-        </tr>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Frequency</th>
+            <th>Date Due</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
         <tr
           v-for="event in events"
           :key="event.id"
@@ -40,6 +43,7 @@
             </span>
           </td>
         </tr>
+        </tbody>
       </table>
     </div>
   </div>

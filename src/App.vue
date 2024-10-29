@@ -185,5 +185,4 @@ export default {
   .footer-info {
     margin-top: 0.75rem !important;
   }
-  
 </style>

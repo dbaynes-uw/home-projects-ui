@@ -35,7 +35,6 @@
           v-model="vendor.location"
           required
         >
-        <br/>
           <option
             v-for="option in vendorsLocationsGroup.vendorsLocationsGroup"
             :value="option"
