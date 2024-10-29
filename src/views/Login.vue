@@ -67,11 +67,7 @@ export default {
     this.$store.dispatch('logout');
     if (this.$route.query.success) {
       successMessage.value = this.$route.query.success;
-      console.log("MOUNTED successMessage: ", successMessage.value )
       this.statusMessage = successMessage.value
-      //!!this.statusMessage = this.statusMessage.toLowerCase().replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function(key) {
-      //!!    return key.toUpperCase();
-      //!!}); 
       console.log("StatusMessage: ", this.statusMessage )
     }
   },
@@ -84,7 +80,6 @@ export default {
       return {
         email: { required, email},
         password: { required, minLength: minLength(8) },
-        statusMessage: '',
       } 
     })
     const v$ = useVuelidate(rules, state)
@@ -102,6 +97,7 @@ export default {
       message: '',
       isFormValid: true,
       urlMinLength: 8,
+      statusMessage: '',
     }
   },
 
