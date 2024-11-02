@@ -342,7 +342,7 @@
   border-color: #7ba8bd;
 }
 .border-select, .select-range{
-  /*width: 10rem;*/
+  width: 10rem;
   text-align: center;
 }
 #trail-icon-eye {

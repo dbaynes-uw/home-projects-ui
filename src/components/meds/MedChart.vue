@@ -26,6 +26,13 @@ export default {
   name: 'MedChart',
   components: {Bar},
   props: ["meds","chartLabels","chartIntervals"],
+  async mounted() {
+    //Xthis.$emit('filterTimeFrame', '10');
+    this.filterTimeFrame('30')
+    this.data.labels  = this.chartLabels
+    this.data.datasets.data = this.chartIntervals
+  },
+
   data() {
     return {
       data: {
@@ -49,10 +56,6 @@ export default {
       renderComponent: true,
     }
   },
-  async mounted() {
-    this.data.labels  = this.chartLabels
-    this.data.datasets.data = this.chartIntervals
-  },
   methods: {
     async filterTimeFrame(value) {
       this.renderComponent = false
@@ -61,7 +64,15 @@ export default {
       this.data.labels = []
       this.data.datasets.data = []
       let compareDate = new Date()
-      compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value.target.value)).slice(0, 10)
+      if (!value.target) {
+        // Default set to 30 days in mounted()
+        console.log("TimeValue: ", value)
+        compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value)).slice(0, 10)
+      } else {
+        console.log("ValueTargetValue: ", value.target.value)
+        compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value.target.value)).slice(0, 10)
+      }
+      console.log("compareDate: ", DateFormatService.formatFullYearFirstjs(compareDate))
       for (let i=0; i < this.meds.length; i++) {
         if (DateFormatService.formatFullYearFirstjs(this.meds[i].date_of_occurrence) > 
             DateFormatService.formatFullYearFirstjs(compareDate))
