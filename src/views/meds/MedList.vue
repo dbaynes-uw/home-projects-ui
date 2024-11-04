@@ -23,7 +23,7 @@
           <router-link  :to="{ name: 'MedChartView' }">MedChart</router-link>
         </button-->
       </li>
-    </ul> 
+    </ul>
     <br/>
   </v-card>
   <br/>
@@ -31,6 +31,17 @@
     <a href="https://myhealthchart.com/" target="_blank">MyHealthChart dj.@./sen...NagoSalib2.@</a>
   </h4>
   <br />
+  <div class="div-select">
+    Time Frame:
+    <select class="border-select select-range" @change="filterTimeFrame($event)">
+      <option></option>
+      <option value="7">Week</option>
+      <option value="14">2 Weeks</option>
+      <option value="30">Month</option>
+      <option value="90">Quarter</option>
+      <option value="365">Year</option>
+    </select>
+  </div>
   <div style="width: 100%">
     <div class="auto-search-container">
       <v-text-field
@@ -46,8 +57,14 @@
       />
     </div>
   </div>
+  TimeFrame: {{ this.timeFrame }} days
   <span v-if="requestMedChartFlag == true">
-    <MedChart :meds="meds" :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
+    <span v-if="filteredResults.length > 0">
+      <MedChart :meds="filteredResults" :timeFrame=this.timeFrame :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
+    </span>
+    <span v-else>
+      <MedChart :meds="meds" :timeFrame="30" :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
+    </span>
   </span>
   <div class="med-list">
     <span v-if="filteredResults.length == 0">
@@ -60,7 +77,7 @@
             <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="events">
             <MedCard
-              v-for="med in meds"
+              v-for="med in filteredResults"
               :key="med.id"
               :med="med"
               class="card"
@@ -70,7 +87,7 @@
           </div>
         </span>
         <span v-else>
-          <MedIndex :meds="meds" />
+          <MedIndex :meds="filteredResults" />
         </span>
       </span>
     </span>
@@ -90,7 +107,7 @@
         </div>
       </span>
       <span v-else>
-        <MedSearchResults :filteredResults="filteredResults" />
+        <MedSearchResults :filteredResults="meds" />
       </span>
     </span>
   </div>
@@ -110,6 +127,10 @@ export default {
     MedIndex,
     MedSearchResults,
   },
+  mounted() {
+    this.sortedData = this.meds;
+    this.filterTimeFrame("30")
+  },
   data() {
     return {
       chartLabels: [],
@@ -125,11 +146,9 @@ export default {
       description: null,
       frequency: null,
       completed: 0,
+      timeFrame: 0,
       //statusMessage: "",
     };
-  },
-  mounted() {
-    this.sortedData = this.meds;
   },
   created() {
     this.$store.dispatch("fetchMeds");
@@ -139,12 +158,35 @@ export default {
       this.chartIntervals[i] = this.meds[i].interval_days
     }
   },
+
   computed: {
     meds() {
       return this.$store.state.meds;
     },
   },
   methods: {
+    async filterTimeFrame(value) {
+      this.filteredResults = []
+      await this.$nextTick();
+      this.timeFrameCount = 0
+      let compareDate = new Date()
+      if (!value.target) {
+        // Default set to 30 days in mounted()
+        compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value)).slice(0, 10)
+        this.timeFrame = value
+      } else {
+        this.timeFrame = value.target.value
+        compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value.target.value)).slice(0, 10)
+      }
+      for (let i=0; i < this.meds.length; i++) {
+        if (DateFormatService.formatFullYearFirstjs(this.meds[i].date_of_occurrence) > 
+            DateFormatService.formatFullYearFirstjs(compareDate))
+          {
+            this.timeFrameCount += 1
+            this.filteredResults.push(this.meds[i])
+          }
+      }
+    }, 
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
@@ -152,7 +194,6 @@ export default {
       this.requestMedChartFlag = this.requestMedChartFlag == true ? false : true;
     },
     onDoubleClick(med) {
-      console.log("MED Edit ")
       this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
     },
     showIndex() {

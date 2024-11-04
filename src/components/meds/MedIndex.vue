@@ -75,6 +75,10 @@ export default {
   components: {
     ConfirmDialogue,
   },
+  async mounted() {
+    //#this.$emit('filterTimeFrame', '30');
+    this.filterTimeFrame("30")
+  },
   data() {
     return {
       med: {

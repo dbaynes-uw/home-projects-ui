@@ -2,19 +2,19 @@
   <div class="med-chart">
     <!--canvas id="medChart" width="400" height="400"></canvas-->
     <!--Bar :data="data" :options="options" /-->
-    <div class="div-select">
+    <!--div class="div-select">
       Time Frame:
-    <select class="border-select select-range" @change="filterTimeFrame($event)">
-      <option></option>
-      <option value="7">Week</option>
-      <option value="14">2 Weeks</option>
-      <option value="30">Month</option>
-      <option value="90">Quarter</option>
-      <option value="365">Year</option>
-    </select>
-  </div>
-  <p>Number of occurrences: {{ timeFrameCount }}</p>
-    <Bar v-if="renderComponent" :data="data" :options="options" />
+      <select class="border-select select-range" @change="filterTimeFrame($event)">
+        <option></option>
+        <option value="7">Week</option>
+        <option value="14">2 Weeks</option>
+        <option value="30">Month</option>
+        <option value="90">Quarter</option>
+        <option value="365">Year</option>
+      </select>
+    </!--div-->
+    <p>Number of occurrences: {{ timeFrameCount }}</p>
+      <Bar v-if="renderComponent" :data="data" :options="options" />
   </div>
 </template>
 <script>
@@ -25,14 +25,14 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default {
   name: 'MedChart',
   components: {Bar},
-  props: ["meds","chartLabels","chartIntervals"],
+  props: ["meds","timeFrame","chartLabels","chartIntervals"],
   async mounted() {
     //Xthis.$emit('filterTimeFrame', '10');
-    this.filterTimeFrame('30')
+    console.log("Prop timeFrame: ", this.timeFrame)
+    this.filterTimeFrame(this.timeFrame)
     this.data.labels  = this.chartLabels
     this.data.datasets.data = this.chartIntervals
   },
-
   data() {
     return {
       data: {
@@ -66,13 +66,10 @@ export default {
       let compareDate = new Date()
       if (!value.target) {
         // Default set to 30 days in mounted()
-        console.log("TimeValue: ", value)
         compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value)).slice(0, 10)
       } else {
-        console.log("ValueTargetValue: ", value.target.value)
         compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value.target.value)).slice(0, 10)
       }
-      console.log("compareDate: ", DateFormatService.formatFullYearFirstjs(compareDate))
       for (let i=0; i < this.meds.length; i++) {
         if (DateFormatService.formatFullYearFirstjs(this.meds[i].date_of_occurrence) > 
             DateFormatService.formatFullYearFirstjs(compareDate))
