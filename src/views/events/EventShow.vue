@@ -13,7 +13,7 @@
       <EventCard
       class="card"
       :event="event"
-      @dblclick="onDoubleClick(event)"
+      @dblclick="editEvent(event)"
       v-bind:class="{ 'is-complete': event.completed }"
       />
     </div>
@@ -27,7 +27,7 @@
       v-if="event"
       class="event"
       id="center-align"
-      @dblclick="onDoubleClick(event)"
+      @dblclick="editEvent(event)"
       v-bind:class="{ 'is-complete': event.completed }"
     >
       <h1>
@@ -103,11 +103,13 @@ export default {
         this.$router.push({ name: "EventList" });
       }
     },
-    onDoubleClick(event) {
-      var updatedEvent = event;
-      console.log("STATUS: ", event.status)
-      updatedEvent.status = event.status == 'active' ? 'inactive' : 'active';
-      this.$store.dispatch("updateEvent", updatedEvent);
+    editEvent(event) {
+      this.$router.push({ name: 'EventEdit', params: { id: `${event.id}` } });
+      //var updatedEvent = event;
+      //console.log("STATUS: ", event.status)
+      //updatedEvent.status = event.status == 'active' ? 'inactive' : 'active';
+      //this.$store.dispatch("updateEvent", updatedEvent);
+
     },
     datePastDue(value) {
       return DateFormatService.datePastDuejs(value);

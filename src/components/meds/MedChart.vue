@@ -28,7 +28,6 @@ export default {
   props: ["meds","timeFrame","chartLabels","chartIntervals"],
   async mounted() {
     //Xthis.$emit('filterTimeFrame', '10');
-    console.log("Prop timeFrame: ", this.timeFrame)
     this.filterTimeFrame(this.timeFrame)
     this.data.labels  = this.chartLabels
     this.data.datasets.data = this.chartIntervals

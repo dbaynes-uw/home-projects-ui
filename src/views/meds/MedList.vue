@@ -81,7 +81,7 @@
               :key="med.id"
               :med="med"
               class="card"
-              @dblclick="onDoubleClick(med)"
+              @dblclick="editMed(med)"
             />
             <br />
           </div>
@@ -101,7 +101,7 @@
             :key="med.id"
             :med="med"
             class="card"
-            @dblclick="onDoubleClick(med)"
+            @dblclick="editMed(med)"
           />
           <br />
         </div>
@@ -193,7 +193,7 @@ export default {
     requestMedChart() {
       this.requestMedChartFlag = this.requestMedChartFlag == true ? false : true;
     },
-    onDoubleClick(med) {
+    editMed(med) {
       this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
     },
     showIndex() {

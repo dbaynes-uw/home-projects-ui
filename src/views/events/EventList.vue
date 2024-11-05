@@ -71,7 +71,7 @@
               :key="event.id"
               :event="event"
               :class="duePastDue(event)"
-              @dblclick="onDoubleClick(event)"
+              @dblclick="editEvent(event)"
             />
             <br />
           </div>
@@ -81,7 +81,7 @@
               :key="event.id"
               :event="event"
               :class="inactive(event)"
-              @dblclick="onDoubleClick(event)"
+              @dblclick="editEvent(event)"
             /-->
             <br />
           </div>
@@ -107,7 +107,7 @@
               :key="event.id"
               :event="event"
               class="event"
-              @dblclick="onDoubleClick(event)"
+              @dblclick="editEvent(event)"
             />
             <br />
           </div>
@@ -278,10 +278,11 @@ export default {
     //    setTimeout(() => location.reload(), 2500);
     //  }
     //},
-    onDoubleClick(event) {
-      var updatedEvent = event;
-      updatedEvent.action_active = !event.action_active;
-      this.$store.dispatch("updateEvent", updatedEvent);
+    editEvent(event) {
+      //var updatedEvent = event;
+      //updatedEvent.action_active = !event.action_active;
+      //this.$store.dispatch("updateEvent", updatedEvent);
+      this.$router.push({ name: 'EventEdit', params: { id: `${event.id}` } });
     },
     DatePastDue(value) {
       return DateFormatService.datePastDuejs(value);
