@@ -1,5 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <h3 id="h3-left">Total: {{ books.length }}</h3>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('title')">Title</th>
