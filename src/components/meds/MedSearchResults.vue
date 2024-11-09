@@ -1,18 +1,22 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+  <h3 id="h3-left">SR Total: {{ filteredResults.length }}</h3>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('date_of_occurrence')">Date of Occcurrence</th>
       <th id="background-blue" @click="sortList('duration')">Duration</th>
-      <th id="background-blue">Interval from Last </th>
+      <th id="background-blue">Days since Last </th>
+      <th id="background-blue">Hours since Last </th>
+      <th id="background-blue">Minutes since Last </th>
       <th id="background-blue">Circumstances </th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
     <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
       <td>{{ formatStandardDateTime(result.date_of_occurrence) }} </td>
       <td>{{ result.duration }}</td>
-      <td>{{ result.interval }} days</td>
+      <td>{{ result.interval_days }} days</td>
+      <td>{{ result.interval_hours }} hours</td>
+      <td>{{ result.interval_minutes }} minutes</td>
       <td>{{ result.circumstances }} </td>
       <td class="td-center" >
         <span v-if="this.onlineStatus">
@@ -30,14 +34,14 @@
               <router-link
                 :to="{ name: 'MedDetails', params: { id: `${result.id}` } }"
               >
-                <i id="medium-icon-eye" class="fa fa-eye"></i>
+                <i id="medlist-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteMed(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="medium-icon-delete"
+                id="medlist-icon-delete"
               >
               </i>
             </span>

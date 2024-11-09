@@ -34,14 +34,14 @@
               <router-link
                 :to="{ name: 'MedDetails', params: { id: `${med.id}` } }"
               >
-                <i id="medium-icon-eye" class="fa fa-eye"></i>
+                <i id="medlist-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteMed(med)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="medium-icon-delete"
+                id="medlist-icon-delete"
               >
               </i>
             </span>
@@ -75,10 +75,7 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  async mounted() {
-    //#this.$emit('filterTimeFrame', '30');
-    this.filterTimeFrame("30")
-  },
+  async mounted() {},
   data() {
     return {
       med: {
@@ -88,6 +85,7 @@ export default {
       },
       inputSearchText: "",
       onlineStatus: navigator.onLine,
+      filteredResults: [],
     };
   },
   methods: {

@@ -3,7 +3,7 @@
   <div class="book-list">
     <v-table density="compact">
       <tr>
-        <th @click="sortList('title')">Title</th>
+        <th @click="sortList('title')">Searched Title</th>
         <th @click="sortList('author')">Author</th>
         <th @click="sortList('date_written')">Date Written</th>
         <th @click="sortList('date_read')">Date Read</th>

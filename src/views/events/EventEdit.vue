@@ -2,6 +2,9 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="eventEdit">
     <h2>Edit Event {{ event.description }}</h2>
+    <router-link :to="{ name: 'EventList' }">
+      <h3>Back to Event List</h3>
+    </router-link>
     <form class="add-form" @submit.prevent="updateEvent">
       <div class="form-container">
         <label>Status: {{ event.status }}</label>

@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto mt-5">
+  <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Med List</h2>
     </v-card-title>
@@ -18,10 +18,6 @@
         <button id="link-as-button" @click="requestMedChart">
           <u>MedChart</u>
         </button>
-        <!--
-        <button id="link-as-button">
-          <router-link  :to="{ name: 'MedChartView' }">MedChart</router-link>
-        </button-->
       </li>
     </ul>
     <br/>
@@ -58,6 +54,7 @@
     </div>
   </div>
   TimeFrame: {{ this.timeFrame }} days
+  <br>
   <span v-if="requestMedChartFlag == true">
     <span v-if="filteredResults.length > 0">
       <MedChart :meds="filteredResults" :timeFrame=this.timeFrame :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
@@ -67,29 +64,30 @@
     </span>
   </span>
   <div class="med-list">
-    <span v-if="filteredResults.length == 0">
+    <span v-if="filteredResults.length == 0" >
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
-      <span v-else>
-        <span v-if="requestIndexDetailFlag == true">
-          <h3 id="h3-left">Total: {{ meds.length }}</h3>
-            <span class="h3-left-total-child">Double click Item Below to Edit</span>
-          <div class="events">
-            <MedCard
-              v-for="med in filteredResults"
-              :key="med.id"
-              :med="med"
-              class="card"
-              @dblclick="editMed(med)"
-            />
-            <br />
-          </div>
-        </span>
-        <span v-else>
-          <MedIndex :meds="filteredResults" />
-        </span>
+    <span v-else>
+      <span v-if="requestIndexDetailFlag == true">
+        <h3 id="h3-left">Total: {{ meds.length }}</h3>
+        <span class="h3-left-total-child">Double click Item Below to Edit</span>
+        <div class="cards">
+          <MedCard
+            v-for="med in meds"
+            :key="med.id"
+            :med="med"
+            :origin="origin"
+            class="card"
+            @dblclick="editMed(med)"
+          />
+          <br />
+        </div>
       </span>
+      <span v-else>
+        <MedIndex :meds="meds"/>
+      </span>
+    </span>
     </span>
     <span v-if="filteredResults.length > 0">
       <span v-if="requestIndexDetailFlag == true">
@@ -101,31 +99,32 @@
             :key="med.id"
             :med="med"
             class="card"
-            @dblclick="editMed(med)"
+            :origin="origin"
           />
           <br />
         </div>
       </span>
       <span v-else>
-        <MedSearchResults :filteredResults="meds" />
+        <MedIndex :meds="filteredResults" />
       </span>
     </span>
   </div>
+
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import MedCard from "@/components/meds/MedCard.vue";
 import MedChart from "@/components/meds/MedChart.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
-import MedSearchResults from "@/components/meds/MedSearchResults.vue";
+//import MedSearchResults from "@/components/meds/MedSearchResults.vue";
 export default {
   name: "MedList",
-  props: ["filteredResults[]"],
+  //props: ["filteredResults[]"],
   components: {
     MedCard,
     MedChart,
     MedIndex,
-    MedSearchResults,
+    //MedSearchResults,
   },
   mounted() {
     this.sortedData = this.meds;
@@ -163,6 +162,9 @@ export default {
     meds() {
       return this.$store.state.meds;
     },
+    origin() {
+      return "MedList"
+    }
   },
   methods: {
     async filterTimeFrame(value) {

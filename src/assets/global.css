@@ -293,10 +293,40 @@
   font-size: 18px;
   color: #00796b;
 }
+#medlist-icon-eye {
+  text-align: center;
+  position: relative;
+  top: -1.7rem;
+  left: 1.3rem;
+  font-size: 18px;
+  color: #00796b;
+}
+#booklist-icon-eye {
+  text-align: center;
+  position: relative;
+  top: -1.7rem;
+  left: 1rem;
+  font-size: 18px;
+  color: #00796b;
+}
 #medium-icon-delete {
   position: relative;
   top: -4rem;
   left: 2.3rem;
+  font-size: 18px;
+  color: #00796b;
+}
+#medlist-icon-delete {
+  position: relative;
+  top: -3.6rem;
+  left: 2.3rem;
+  font-size: 18px;
+  color: #00796b;
+}
+#booklist-icon-delete {
+  position: relative;
+  top: -3.6rem;
+  left: 2.5rem;
   font-size: 18px;
   color: #00796b;
 }
@@ -311,15 +341,15 @@
 #event-icon-eye {
   text-align: center;
   position: relative;
-  top: -2rem;
+  top: -1.7rem;
   left: 1.5rem;
   font-size: 18px;
   color: #00796b;
 }
 #event-icon-delete {
   position: relative;
-  top: -4rem;
-  left: 2.3rem;
+  top: -3.6rem;
+  left: 2.5rem;
   font-size: 18px;
   color: #00796b;
 }

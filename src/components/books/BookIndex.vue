@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('title')">Title</th>
+      <th id="background-blue" @click="sortList('title')">IDX Title</th>
       <th id="background-blue" @click="sortList('author')">Author</th>
       <th id="background-blue" @click="sortList('date_written')">
         Date Written
@@ -37,14 +37,14 @@
               <router-link
                 :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
               >
-                <i id="medium-icon-eye" class="fa fa-eye"></i>
+                <i id="booklist-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteBook(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="medium-icon-delete"
+                id="booklist-icon-delete"
               >
               </i>
             </span>

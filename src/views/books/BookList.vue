@@ -38,6 +38,7 @@
       </div>
   </div>
   <div class="book-list">
+    filteredResults.length: {{ filteredResults.length }}
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
