@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('title')">IDX Title</th>
+      <th id="background-blue" @click="sortList('title')">Title</th>
       <th id="background-blue" @click="sortList('author')">Author</th>
       <th id="background-blue" @click="sortList('date_written')">
         Date Written

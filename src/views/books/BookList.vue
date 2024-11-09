@@ -38,7 +38,6 @@
       </div>
   </div>
   <div class="book-list">
-    filteredResults.length: {{ filteredResults.length }}
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
@@ -79,7 +78,7 @@
         </div>
       </span>
       <span v-else>
-        <BookSearchResults :filteredResults="filteredResults" />
+        <BookIndex :books="filteredResults" />
       </span>
     </span>
   </div>
@@ -88,7 +87,6 @@
 import DateFormatService from "@/services/DateFormatService.js";
 import BookIndex from "@/components/books/BookIndex.vue";
 import BookCard from "@/components/books/BookCard.vue";
-import BookSearchResults from "@/components/books/BookSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
@@ -96,7 +94,6 @@ export default {
   components: {
     BookIndex,
     BookCard,
-    BookSearchResults,
     ConfirmDialogue
   },
   data() {
@@ -183,7 +180,6 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      //console.log("BOOK LIST sortBy: ", sortBy)
       this.sortedData = this.books;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -205,49 +201,6 @@ export default {
   },
 };
 </script>
-<!--style scoped>
-.table-index-style {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  background-color: #7ba8bd;
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-tr {
-  line-height: 1.6 !important;
-  border: none;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.eventAssigned {
-  background: #e8f7f0;
-}
-.fa-table-stack {
-  position: relative;
-  left: 2rem;
-}
-i {
-  bottom: 0px;
-  color: gray;
-}
-tr.is-complete {
-  background: #35495e;
-  color: #fff;
-}
-#status-message {
-  text-align: center;
-  color: navy;
-}
-</style-->
 <style>
 table {
   font-family: arial, sans-serif;
