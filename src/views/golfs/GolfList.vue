@@ -39,7 +39,7 @@
         <GolfIndex :golfs="golfs" />
       </span>
       <span v-if="filteredResults.length > 0">
-        <GolfSearchResults :filteredResults="filteredResults" />
+        <GolfIndex :golfs="filteredResults" />
       </span>
     </div>
   </div>
@@ -47,13 +47,13 @@
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import GolfIndex from "@/components/golfs/GolfIndex.vue";
-import GolfSearchResults from "@/components/golfs/GolfSearchResults.vue";
+//import GolfSearchResults from "@/components/golfs/GolfSearchResults.vue";
 export default {
   name: "GolfList",
   props: ["filteredResults[]"],
   components: {
     GolfIndex,
-    GolfSearchResults,
+  //  GolfSearchResults,
   },
   data() {
     return {

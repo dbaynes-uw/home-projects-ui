@@ -75,16 +75,12 @@
           <br />
         </div>
       </span>
-      <span v-else>
-        <GardenSearchResults :filteredResults="filteredResults" />
-      </span>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import GardenCard from "@/components/gardens/GardenCard.vue";
-import GardenSearchResults from "@/components/gardens/GardenSearchResults.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
@@ -92,7 +88,6 @@ export default {
   props: ["filteredResults[]"],
   components: {
     GardenCard,
-    GardenSearchResults,
     ConfirmDialogue
   },
   data() {

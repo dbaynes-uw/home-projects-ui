@@ -78,7 +78,7 @@
         </div>
       </span>
       <span v-else>
-        <TrailSearchResults :filteredResults="filteredResults" />
+        <trailIndex :trails="filteredResults" />
       </span>
     </span>
   </div>
@@ -86,8 +86,6 @@
 <script>
 import TrailIndex from "@/components/trails/TrailIndex.vue";
 import TrailCard from "@/components/trails/TrailCard.vue";
-import TrailSearchResults from "@/components/trails/TrailSearchResults.vue";
-
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
@@ -97,7 +95,6 @@ export default {
     TrailCard,
     ConfirmDialogue,
     TrailIndex,
-    TrailSearchResults,
   },
   data() {
     return {

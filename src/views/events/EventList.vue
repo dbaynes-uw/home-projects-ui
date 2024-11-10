@@ -54,12 +54,12 @@
     <div class="event-list">
     <!--EventCard v-for="event in events" :key="event.id" :event="event" /-->
     <!--EventIndexDetail :events="events" /-->
+      <button id="button-as-link" @click="requestIndexDetail">
+        <u>Detail for Edit/Delete</u>
+      </button>
+      <br/>
       <span v-if="filteredResults.length == 0">
         <span v-if="requestIndexDetailFlag == true">
-          <button id="button-as-link" @click="requestIndexDetail">
-            <u>Detail for Edit/Delete</u>
-          </button>
-          <br/>
           <div class="legend">
             <span>Double click to mark as TBD/Done or Active/Inactive.</span>
             <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -87,9 +87,6 @@
           </div>
         </span>
         <span v-else>
-          <button id="button-as-link" @click="requestIndexDetail">
-            <u>Event Card View</u>
-          </button>
           <br/>
           <EventIndex :events="events" />
         </span>
@@ -107,17 +104,16 @@
               :key="event.id"
               :event="event"
               class="event"
-              @dblclick="editEvent(event)"
+              @dblclick="onDoubleClick(event)"
             />
             <br />
           </div>
         </span>
         <span v-else>
-          <EventSearchResults :filteredResults="filteredResults" />
+          <EventIndex :events="filteredResults" />
         </span>
       </span>
     </div>
-    <!--div>{{ $store.state.events }}</div-->
   </div>
 </template>
 
@@ -128,8 +124,7 @@ import EventsDueBy from "@/components/events/EventsDueBy.vue";
 import EventsInactive from "@/components/events/EventsInactive.vue";
 import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
-//import EventIndexDetail from "@/components/events/EventIndexDetail.vue";
-import EventSearchResults from "@/components/events/EventSearchResults.vue";
+//import EventSearchResults from "@/components/events/EventSearchResults.vue";
 import axios from "axios";
 </script>
 <script>
@@ -141,7 +136,7 @@ export default {
     EventIndex,
     /*EventIndexDetail,*/
     EventCard,
-    EventSearchResults,
+    //EventSearchResults,
     EventsDueBy,
     EventsInactive,
     EventsPastDue,
