@@ -5,7 +5,7 @@
     <tr>
       <th id="background-blue" @click="sortList('date_of_occurrence')">Date of Occcurrence</th>
       <th id="background-blue" @click="sortList('duration')">Duration</th>
-      <th id="background-blue">Days since Last </th>
+      <th id="background-blue" @click="sortList('interval_days')">Days Since Last</th>
       <th id="background-blue">Hours since Last </th>
       <th id="background-blue">Minutes since Last </th>
       <th id="background-blue">Circumstances </th>
@@ -94,12 +94,22 @@ export default {
     },
     sortList(sortBy) {
       this.sortedData = this.meds;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
+      if (sortBy.includes('interval')){
+        if (this.sortedbyASC) {
+          this.sortedData.sort((x, y) => (parseInt(x[sortBy]) > parseInt(y[sortBy]) ? -1 : 1));
+          this.sortedbyASC = false;
+        } else {
+          this.sortedData.sort((x, y) => (parseInt(x[sortBy]) < parseInt(y[sortBy]) ? -1 : 1));
+          this.sortedbyASC = true;
+        }
       } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
+          if (this.sortedbyASC) {
+            this.sortedData.sort((x, y) => x[sortBy] > y[sortBy] ? -1 : 1);
+            this.sortedbyASC = false;
+          } else {
+            this.sortedData.sort((x, y) => x[sortBy] < y[sortBy] ? -1 : 1);
+            this.sortedbyASC = true;
+          }
       }
     },
     async deleteMed(med) {
