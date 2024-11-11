@@ -24,7 +24,7 @@
       </ul>
       <br/>
     </div>
-    <div class="icon-stack">
+    <!--div class="icon-stack">
       <span class="fa-stack">
         <router-link
           :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
@@ -51,7 +51,7 @@
           </i>
         </span>
       </span>
-    </div>
+    </div-->
     <div> <!--span v-if="origin == 'PlantList'"-->
       <table>
         <thead>
