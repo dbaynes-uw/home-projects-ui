@@ -7,7 +7,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductVendorList' }">Shopping List By Vendor</router-link>
+          <router-link :to="{ name: 'ProductsVendorList' }">Shopping List By Vendor</router-link>
         </button>
       </li>
     </ul>
@@ -40,11 +40,11 @@
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClickVendor(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
+                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClickEditVendor(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
-                    <!--span v-show="isProductToggled === product_index"-->
+                    <span v-show="isProductToggled === product_index">
                       <div v-if="product.vendor_name == vendor.vendor_name">
                         <div v-if="product.location == vendor.location">
                           <span v-for="(item, item_index) in product.products" :key="item_index">
@@ -71,7 +71,7 @@
                           </span>
                         </div>
                       </div>
-                    <!--span--> 
+                    </span> 
                   </span>
                 </span>
               </div>
@@ -101,7 +101,7 @@ export default {
     return {
       location: '',
       product_active: true,
-      productLocationList: null,
+      productsLocationList: null,
       showShoppingList: true,
       showFlag: false,
       vendors: {
@@ -185,11 +185,10 @@ export default {
     doubleClickLocation(location) {
       console.log("DBLCLICK LOC", `${location}`)
       clearTimeout(time);
-      this.$router.push({ name: 'ProductLocationList', params: { location: `${location}` } });
+      this.$router.push({ name: 'ProductsLocationList', params: { location: `${location}` } });
 
     },
-    doubleClickVendor(vendor) {
-      
+    doubleClickEditVendor(vendor) {
       clearTimeout(time);
       this.$router.push({ name: 'VendorEdit', params: { id: `${vendor.id}` } });
 

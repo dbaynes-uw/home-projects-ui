@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Product By Location</h2>
+      <h2>Products By Location</h2>
     </v-card-title>
     <ul>
       <li class="left">
@@ -14,7 +14,7 @@
       </li>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductVendorList' }">Shopping List By Vendor</router-link>
+          <router-link :to="{ name: 'ProductsVendorList' }">Shopping List By Vendor</router-link>
         </button>
       </li>
     </ul>
@@ -80,7 +80,7 @@ let time = null;  // define time be null
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "ProductLocationList",
+  name: "ProductsLocationList",
   props: {
     location: {
       type: String, required: true
@@ -151,11 +151,10 @@ export default {
     doubleClickLocation(location) {
       console.log("DBLCLICK LOC", `${location}`)
       clearTimeout(time);
-      this.$router.push({ name: 'ProductLocationList', params: { location: `${location}` } });
+      this.$router.push({ name: 'ProductsLocationList', params: { location: `${location}` } });
 
     },
     doubleClickVendor(vendor) {
-      
       clearTimeout(time);
       this.$router.push({ name: 'VendorEdit', params: { id: `${vendor.id}` } });
 

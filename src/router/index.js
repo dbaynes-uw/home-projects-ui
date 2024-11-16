@@ -35,9 +35,9 @@ import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
 import OutletDetails from "@/views/waterings/OutletDetails.vue";
 import GardenList from "../views/gardens/GardenList.vue";
-import ProductLocationList from "../views/products/ProductLocationList.vue";
+import ProductsLocationList from "../views/products/ProductsLocationList.vue";
 import ProductLocationsList from "../views/products/ProductLocationsList.vue";
-import ProductVendorList from "../views/products/ProductVendorList.vue";
+import ProductsVendorList from "../views/products/ProductsVendorList.vue";
 import ProductList from "../views/products/ProductList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
 import VendorEdit from "../views/vendors/VendorEdit.vue";
@@ -342,9 +342,9 @@ const routes = [
   },
   {
     path: "/products_by_location/:location",
-    component: ProductLocationList,
+    component: ProductsLocationList,
     props: true,
-    name: "ProductLocationList",
+    name: "ProductsLocationList",
     meta: { requiresAuth: true}
   },
   {
@@ -461,9 +461,9 @@ const routes = [
   },
   {
     path: "/locations_vendors",
-    name: "ProductVendorList",
+    name: "ProductsVendorList",
     props: true,
-    component: ProductVendorList,
+    component: ProductsVendorList,
     meta: { requiresAuth: true}
   },
   {

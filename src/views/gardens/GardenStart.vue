@@ -30,16 +30,9 @@
   </v-card>
 </template>
 <script>
-let time = null;  // define time be null
-//import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
   name: "GardenStart",
- //props: {
- //  location: {
- //    type: String, required: true
- //  }
- //},
   components: {
     ConfirmDialogue,
   },
@@ -73,55 +66,7 @@ export default {
     return this.$store.state.watering;
     },
   },
-  methods: {
-    //onSubmit() {
-    //  const sub_products_by_location = {
-    //    ...this.products_by_location,
-    //    id: uuidv4(),
-    //    created_by: this.$store.state.user.resource_owner.email,
-    //  };
-    //  
-    //  if (this.$store.dispatch("putVendorsProducts", sub_products_by_location)) {
-    //    alert("Vendors Products List Updated Successfully")
-    //    location.reload();
-    //  } else {
-    //    alert("Error adding Products in ProductLocaionsList View ");
-    //  }
-    //},
-    isChecked(item, active) {
-      item.active = active == true ? false : true
-      return item.active
-    },
-    shoppingListDisplay(showFlag) {
-      return this.showShoppingList = showFlag == true ? false : true
-    },
-    toggleLocation(index) {
-      clearTimeout(time)
-      time=setTimeout(() => {
-        this.isVendorToggled = index === this.isVendorToggled? null : index
-      }, 300)
-    },
-    doubleClickLocation(location) {
-      console.log("DBLCLICK LOC", `${location}`)
-      clearTimeout(time);
-      this.$router.push({ name: 'ProductLocationList', params: { location: `${location}` } });
-
-    },
-    doubleClickVendor(vendor) {
-      
-      clearTimeout(time);
-      this.$router.push({ name: 'VendorEdit', params: { id: `${vendor.id}` } });
-
-    },
-    doubleClickProduct(product) {
-      clearTimeout(time);
-      this.$router.push({ name: 'ProductEdit', params: { id: `${product.id}`} });
-
-    },
-    toggleVendor(index) {
-      this.isProductToggled = index === this.isProductToggled? null : index
-    }    
-  },
+  methods: {},
 };
 </script>
 <style lang="css">

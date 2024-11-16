@@ -13,7 +13,7 @@
       </li>
       <li>
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductVendorList' }">Product List By Vendor</router-link>
+          <router-link :to="{ name: 'ProductsVendorList' }">Product List By Vendor</router-link>
         </button>
       </li>
       <li>
