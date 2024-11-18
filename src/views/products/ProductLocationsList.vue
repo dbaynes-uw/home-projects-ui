@@ -29,22 +29,22 @@
   <v-card-text>
     <v-form>
       <h2>
-        <u @click='shoppingListDisplay(this.showShoppingList)'>Toggle Shopping List</u>
+        <u @click='shoppingListDisplay(this.showShoppingList)'>Toggle Shopping List to {{ this.showShoppingList == true? 'All Items' : 'Selected Items' }}</u>
       </h2>
       <v-container id="form-container">
         <div class="row">
           <div class="column" id="group" v-for="(location, group_index) in this.vendorsLocationsGroup.vendorsLocationsGroup" :key="group_index">
             <!-- Toggle by Location -->
             <h1 @click='toggleLocation(group_index)' @dblclick="doubleClickLocation(location)"><b><u>{{ location }}</u></b></h1>
-            <div v-show="isVendorToggled === group_index">
+            <div v-show="isLocationToggled === group_index">
               <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors_products" :key="vendor_index">
                 <span v-if="vendor.location == location">
                   <!-- Toggle by Vendor -->
-                  <h2 @click='toggleVendor(vendor_index)' @dblclick="doubleClickEditVendor(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
+                  <h2 @click='toggleVendor(isVendorToggled)' @dblclick="doubleClickEditVendor(vendor)"><b>{{ vendor.vendor_name }}</b></h2>  
                   <br/>
                   <!--resultSet Length: {{ this.resultSet[1] }}-->
                   <span v-for="(product, product_index) in this.vendors_products" :key="product_index">        
-                    <span v-show="isProductToggled === product_index">
+                    <span v-show="isVendorToggled === true">
                       <div v-if="product.vendor_name == vendor.vendor_name">
                         <div v-if="product.location == vendor.location">
                           <span v-for="(item, item_index) in product.products" :key="item_index">
@@ -124,8 +124,8 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       },
       passedMessage: '',
-      isVendorToggled: null,
-      isProductToggled: null,
+      isLocationToggled: null,
+      isVendorToggled: true,
       home_safe: false,
       toggleArr: [],
       isFormValid: false,
@@ -179,28 +179,29 @@ export default {
     toggleLocation(index) {
       clearTimeout(time)
       time=setTimeout(() => {
-        this.isVendorToggled = index === this.isVendorToggled? null : index
+        this.isLocationToggled = index === this.isLocationToggled? null : index
       }, 300)
+    },
+    //toggleVendor(index) {
+    //  console.log("@@ToggleVendor idx: ", index)
+    //  this.isVendorToggled = index === this.isVendorToggled? null : index
+    //},
+    toggleVendor(toggle) {
+      this.isVendorToggled = toggle === true? false : true
     },
     doubleClickLocation(location) {
       console.log("DBLCLICK LOC", `${location}`)
       clearTimeout(time);
       this.$router.push({ name: 'ProductsLocationList', params: { location: `${location}` } });
-
     },
     doubleClickEditVendor(vendor) {
       clearTimeout(time);
       this.$router.push({ name: 'VendorEdit', params: { id: `${vendor.id}` } });
-
     },
     doubleClickProduct(product) {
       clearTimeout(time);
       this.$router.push({ name: 'ProductEdit', params: { id: `${product.id}`} });
-
-    },
-    toggleVendor(index) {
-      this.isProductToggled = index === this.isProductToggled? null : index
-    }    
+    },  
   },
 };
 </script>
