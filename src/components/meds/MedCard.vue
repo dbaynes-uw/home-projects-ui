@@ -8,7 +8,8 @@
       <li class="li-left">&nbsp;&nbsp;Days: {{ med.interval_days }} days</li>
       <li class="li-left">&nbsp;&nbsp;Hours: {{ med.interval_hours }} hours</li>
       <li class="li-left">&nbsp;&nbsp;Minutes: {{ med.interval_minutes }} minutes</li>
-      <li class="li-left">Notes: <b>{{ med.circumstances }}</b> </li>
+      <li class="li-left">Notes:</li> <!-- {{med.circumstances}}</li>-->
+      <b class="li-left-none" v-for="(circumstance, idx) in splitList(med)" :key="idx">{{ circumstance }}</b>
     </ul>
   </div>
 </template>
@@ -23,7 +24,21 @@ export default {
       default: () => ({})
     }
   },
+  data() {
+    return {
+      splitLength: 20,
+    }
+  },
   methods: {
+    splitList(medData) {
+      const result = []
+      if (medData.circumstances != null) {
+        for (let i = 0; i < medData.circumstances.length; i += this.splitLength) {
+         result.push(medData.circumstances.slice(i, i + this.splitLength));
+        }
+      }
+      return result;
+    },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);
     },

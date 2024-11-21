@@ -100,6 +100,7 @@
             :med="med"
             class="card"
             :origin="origin"
+            @dblclick="editMed(med)"
           />
           <br />
         </div>

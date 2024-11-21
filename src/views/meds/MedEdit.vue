@@ -44,7 +44,7 @@
           v-model="med.interval_minutes"
           :readonly="true"
         />
-        <v-text-field
+        <v-textarea
           label="Circumstances"
           v-model="med.circumstances"
           rows="3"

@@ -45,11 +45,15 @@
             <v-icon class="icon-css">mdi-link</v-icon>
           </template>
         </v-text-field>        
-        <v-text-field label="Notes" v-model="book.notes">
+        <v-textarea
+          label="Notes"
+          v-model="book.notes"
+          clearable
+        >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
-        </v-text-field>
+        </v-textarea>
         <v-btn type="submit" block class="mt-2">Submit</v-btn>
         <!--button type="submit" block class="mt-2">Submit</~button-->
       </v-container>

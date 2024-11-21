@@ -117,7 +117,9 @@ export default {
         this.$router.push({ name: "BookList" });
       }
     },
-
+    editMed(med) {
+      this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
+    },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },

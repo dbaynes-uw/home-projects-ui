@@ -2,45 +2,15 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h1>Med Details</h1>
-    <br />
-    <div v-if="med" class="event" id="center-align">
-      <h3>
-        <b></b>
-      </h3>
-      <ul class="ul-left">
-        <li>
-          Date of Occurrence:
-          <b>{{ formatStandardDateTime(med.date_of_occurrence) }} </b>
-        </li>
-        <li>
-          Duration:
-          <b>{{ med.duration }}</b>
-        </li>
-        <li>
-          Interval Since Last:
-          <b>{{med.interval }} Days</b>
-        </li>
-        <li>
-          Circumstances:
-          <b>{{med.circumstances }}</b>
-        </li>
-      </ul>
-      <br />
-      <router-link :to="{ name: 'MedList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
-      <span class="fa-stack">
-        <router-link :to="{ name: 'MedEdit', params: { id: `${med.id}` } }">
-          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack">
-        <i @click="deleteMed(med)" class="fas fa-trash-alt fa-stack-1x"></i>
-      </span>
-      <br />
-      <router-link :to="{ name: 'MedList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
+    <span class="h3-left-total-child">Double click Item Below to Edit</span>
+    <br/><br/>
+    <div class="card-display">
+      <MedCard
+        :key="med.id"
+        :med="med"
+        class="card"
+        @dblclick="editMed(med)"
+      />
     </div>
   </div>
 </template>
@@ -49,10 +19,13 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import MedCard from "@/components/meds/MedCard.vue";
+
 export default {
   props: ["id"],
   components: {
     ConfirmDialogue,
+    MedCard,
   },
   data() {
     return {
@@ -60,6 +33,10 @@ export default {
     };
   },
   methods: {
+    editMed(med) {
+      console.log("MEDDetails")
+      this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
+    },
     async deleteMed(med) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Med",

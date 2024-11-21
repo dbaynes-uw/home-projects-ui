@@ -17,7 +17,9 @@
       <td>{{ med.interval_days }} days</td>
       <td>{{ med.interval_hours }} hours</td>
       <td>{{ med.interval_minutes }} minutes</td>
-      <td>{{ med.circumstances }} </td>
+      <td>
+        <textarea v-if="med.circumstances" id="" cols="30" rows="3" v-model="med.circumstances"></textarea>
+      </td>
       <td class="td-center" >
         <span v-if="this.onlineStatus">
           <span class="fa-stack">
@@ -61,7 +63,7 @@
           <span class="ok-btn" @click="deleteMed(med)"><u>Delete</u></span>
         </span>
       </td>
-    </tr>
+    </tr> 
   </v-table>
   <br />
   <!--b>Online Status: {{ this.onlineStatus }}</b!-->

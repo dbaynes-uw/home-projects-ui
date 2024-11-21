@@ -188,6 +188,11 @@
   display: list-item;
   list-style-type: disclosure-closed;
 }
+.li-left-none {
+  text-align: left;
+  display: list-item;
+  list-style-type: none;
+}
 .li-left-capitalize {
   text-transform: capitalize;
   text-align: left;

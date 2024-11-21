@@ -17,11 +17,10 @@
           </template>
         </v-text-field>
         <v-select
-          id="select-box"
-          class="text-style"
           label="Duration"
           :items="durations"
           v-model="med.duration"
+          :rules="[requiredDuration]"
         >
           <option
             v-for="option in durations"
@@ -33,12 +32,15 @@
             {{ option }}
           </option>
         </v-select>
-        <v-text-field label="Circumstances: sugar, sleep, alcohol, etc..."
-          v-model="med.circumstances">
+        <v-textarea
+          label="Circumstances: sugar, sleep, alcohol, etc..."
+          v-model="med.circumstances"
+          clearable
+          >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
-        </v-text-field>
+        </v-textarea>
         <v-btn type="submit" block class="mt-2">Submit</v-btn>
       </v-container>
     </v-form>
@@ -61,6 +63,7 @@ export default {
       durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
       isFormValid: false,
       isDateOccurrenceValid: false,
+      isDurationValid: false,
     };
   },
   methods: {
@@ -92,9 +95,19 @@ export default {
           return 'Please enter Date of Occurrence';
       }
     },
+    requiredDuration: function (value) {
+      if (value) {
+          this.isDurationValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isDurationValid = false
+          return 'Please Select Duration';
+      }
+    },
     checkValidations() {
-
-      if (this.isDateOccurrenceValid) {
+      console.log("Checkvalidations: ", this.isDateOccurrenceValid + ' @ ' + this.isDurationValid)
+      if (this.isDateOccurrenceValid && this.isDurationValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false
@@ -108,7 +121,9 @@ export default {
 };
 </script>
 <style lang="css">
-
+.v-field__clearable {
+  padding: 1rem !important;
+}
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
