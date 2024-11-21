@@ -1,6 +1,10 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Book Card</h1>
+  <router-link :to="{ name: 'BookList' }">
+      <b>Back to Book List</b>
+    </router-link>
+  <br/>
   <h3>{{ this.statusMessage }}</h3>
   <div class="card-display">
     <BookCard
@@ -8,7 +12,7 @@
       :book="book"
       :origin="origin"
       class="card"
-      @dblclick="onDoubleClick(book)"
+      @dblclick="editBook(book)"
       />
   </div>
 </template>
@@ -39,6 +43,9 @@ export default {
     };
   },
   methods: {
+    editBook(book) {
+      this.$router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
+    },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
@@ -56,17 +63,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.event {
-  font-size: 1.5rem;
-}
-#align-right {
-  text-align: center;
-}
-body {
-  font-size: 1.6rem;
-}
-.right-align {
-  text-align: right;
-}
-</style>

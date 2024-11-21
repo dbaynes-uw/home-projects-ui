@@ -9,13 +9,13 @@
       <li class="li-left">&nbsp;&nbsp;Hours: {{ med.interval_hours }} hours</li>
       <li class="li-left">&nbsp;&nbsp;Minutes: {{ med.interval_minutes }} minutes</li>
       <li class="li-left">Notes:</li> <!-- {{med.circumstances}}</li>-->
-      <b class="li-left-none" v-for="(circumstance, idx) in splitList(med)" :key="idx">{{ circumstance }}</b>
+      <b class="li-left-none" v-for="(circumstance, idx) in splitList(med, this.splitLength)" :key="idx">{{ circumstance }}</b>
     </ul>
   </div>
 </template>
 <script>
-
 import DateFormatService from "@/services/DateFormatService.js";
+import SplitStringService from "@/services/SplitStringService.js";
 export default {
   name: 'MedCard',
   props: {
@@ -26,18 +26,12 @@ export default {
   },
   data() {
     return {
-      splitLength: 20,
+      splitLength: 30,
     }
   },
   methods: {
-    splitList(medData) {
-      const result = []
-      if (medData.circumstances != null) {
-        for (let i = 0; i < medData.circumstances.length; i += this.splitLength) {
-         result.push(medData.circumstances.slice(i, i + this.splitLength));
-        }
-      }
-      return result;
+    splitList(medData, splitLength) {
+      return SplitStringService.splitList(medData.circumstances, splitLength) 
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);

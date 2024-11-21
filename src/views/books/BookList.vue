@@ -53,6 +53,7 @@
               :book="book"
               :origin="origin"
               class="card"
+              @dblclick="editBook(book)"
             />
             <br />
           </div>
@@ -73,6 +74,7 @@
             :book="book"
             class="card"
             :origin="origin"
+            @dblclick="editBook(book)"
           />
           <br />
         </div>
@@ -130,8 +132,7 @@ export default {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
-    onDoubleClick(book) {
-      console.log("book Edit ")
+    editBook(book) {
       this.$router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
     },
     showIndex() {

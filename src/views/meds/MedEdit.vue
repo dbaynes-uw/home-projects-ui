@@ -7,7 +7,7 @@
     </button>
     <form class="add-form" @submit.prevent="updateMed">
       <div class="form-container">
-        <p id="p-custom-left">Date of Occurrence: {{ formatStandardDateTime(med.date_of_occurrence) }}</p>
+        <p id="p-custom-left">Date of Occurrence: {{ formatStandardDateTime(med.date_of_occurrence)}}</p>
         <v-text-field
           label="Click calendar at right to change Date/Time of Occurrence"
           v-model="med.date_of_occurrence"
@@ -124,7 +124,8 @@ export default {
         if (result.status >= 200) {
           alert("Med has been updated for " + DateFormatService.formatStandardDatejs(med.date_of_occurrence));
           //this.$router.push({ name: "MedDetails", params: { id: med.id } });
-          this.$router.push({ name: "MedList" });
+          //this.$router.push({ name: "MedList" });
+          location.reload()
         } else {
           alert("Update Error Code ", result.status);
         }

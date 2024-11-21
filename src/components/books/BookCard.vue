@@ -8,75 +8,18 @@
         <li class="li-left">Date Written: {{ formatYearDate(book.date_written) }}</li>
         <li class="li-left">Date Read: {{ formatYearDate(book.date_read) }}</li>
         <li class="li-left"><a :href="book.url_to_review" target="_blank">Link to Review</a></li>
-        <li class="li-left">Notes: <b>{{ book.notes }}</b> </li>
+        <li class="li-left">Notes:</li>
+        <b class="li-left-none" v-for="(notes, idx) in splitList(book, this.splitLength)" :key="idx">{{ notes }}</b>
+
       </ul>
       <br/>
-      <div class="icon-stack">
-        <span v-if="origin == 'BookDetails'">
-          <span class="fa-stack">
-            <router-link
-              :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
-            >
-              <i
-                id="card-medium-icon-edit"
-                class="fa-solid fa-pen-to-square fa-stack-1x"
-              >
-              </i>
-            </router-link>
-            <router-link :to="{ name: 'BookList'}">
-              <i
-                id="card-medium-icon-eye"
-                class="fa-solid fa-backward fa-stack-1x"
-              >
-              </i>
-            </router-link>
-            <span class="fa-table-stack">
-              <i
-                @click="deleteBook(book)"
-                class="fas fa-trash-alt fa-stack-1x"
-                id="card-medium-icon-delete"
-              >
-              </i>
-            </span>
-          </span>
-        </span>
-        <span v-if="origin == 'BookList'">
-          <span class="fa-stack">
-            <router-link
-              :to="{ name: 'BookEdit', params: { id: `${book.id}` } }"
-            >
-              <i
-                id="card-medium-icon-edit"
-                class="fa-solid fa-pen-to-square fa-stack-1x"
-              >
-              </i>
-            </router-link>
-            <span v-if="book.id > 0">
-              <router-link :to="{ name: 'BookDetails', params: { id: `${book.id}` } }">
-                <i
-                  id="card-medium-icon-eye"
-                  class="fa fa-eye"
-                >
-                </i>
-              </router-link>
-            </span>
-            <span class="fa-table-stack">
-              <i
-                @click="deleteBook(book)"
-                class="fas fa-trash-alt fa-stack-1x"
-                id="card-medium-icon-delete"
-              >
-              </i>
-            </span>
-          </span>
-        </span>
-      </div>
     </div>
   </div>
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import SplitStringService from "@/services/SplitStringService.js";
 export default {
   name: 'BookCard',
   props: {
@@ -95,6 +38,11 @@ export default {
   setup() {
     //const vm = this.app.getCurrentInstance()
     //console.log("VM: ", vm)
+  },
+  data() {
+    return {
+      splitLength: 30,
+    }
   },
   methods: {
     async deleteBook(book) {
@@ -117,8 +65,9 @@ export default {
         this.$router.push({ name: "BookList" });
       }
     },
-    editMed(med) {
-      this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
+    //Services:
+    splitList(bookData, splitLength) {
+      return SplitStringService.splitList(bookData.notes, splitLength) 
     },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);

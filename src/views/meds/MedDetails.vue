@@ -2,6 +2,9 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <h1>Med Details</h1>
+    <button id="link-as-button">
+      <router-link  :to="{ name: 'MedList' }">Back to Med List</router-link>
+    </button>
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <br/><br/>
     <div class="card-display">
@@ -67,17 +70,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.event {
-  font-size: 1.5rem;
-}
-#align-right {
-  text-align: center;
-}
-body {
-  font-size: 1.6rem;
-}
-.right-align {
-  text-align: right;
-}
-</style>
