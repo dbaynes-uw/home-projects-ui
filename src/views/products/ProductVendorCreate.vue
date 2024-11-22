@@ -163,7 +163,7 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       if (this.$store.dispatch("createVendor", vendor)) {
-        this.$router.push({ name: "ProductLocationsList" });
+        alert("Product " + vendor.product_name + "was added for " + vendor.vendor_name);
       } else {
         alert("Error adding Vendor " + vendor.vendor_name);
       }

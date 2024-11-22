@@ -1138,7 +1138,6 @@ export default new Vuex.Store({
       EventService.getVendorsProductsGroup()
         .then((response) => {
           commit("SET_VENDORS_PRODUCTS_GROUP", response.data);
-          console.log("ES FetchVendorsProductsGroup response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {

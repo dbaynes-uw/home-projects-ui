@@ -86,7 +86,7 @@
 <script>
 let time = null;  // define time be null 
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+//import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
   name: "ProductLocationsList",
@@ -98,18 +98,18 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-mac-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/vendors_products/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/vendors_products/";
-    }
-    this.api_url = work_url
-    await axios.get(this.api_url);
-  },
+  //async mounted() {
+  //  var work_url = ""
+  //  if (window.location.port == "8080") {
+  //    // or: "http://davids-mac-pro.local:3000/api/v1/";
+  //    work_url = "http://localhost:3000/api/v1/vendors_products/";
+  //  } else {
+  //    work_url =
+  //      "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/vendors_products/";
+  //  }
+  //  this.api_url = work_url
+  //  await axios.get(this.api_url);
+  //},
 
   data() {
     return {
