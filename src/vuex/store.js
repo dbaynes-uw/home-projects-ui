@@ -783,7 +783,6 @@ export default new Vuex.Store({
       EventService.getOutletsGroup()
         .then((response) => {
           commit("SET_OUTLETS_GROUP", response.data);
-          console.log("ES FetchOutletsGroup response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {
@@ -1116,7 +1115,6 @@ export default new Vuex.Store({
       EventService.getVendorsGroup()
         .then((response) => {
           commit("SET_VENDORS_GROUP", response.data);
-          console.log("ES FetchVendorsGroup response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {

@@ -27,8 +27,7 @@
     <v-form id="isFormValid" @submit.prevent="onSubmit" >
       <v-container id="form-container">
         <br/>
-        <label>Vendor Location:</label>
-        &nbsp;&nbsp;&nbsp;
+        <label class="label-for-select">Vendor Location:</label>
         <select
           id="select-box"
           class="text-style"
@@ -46,9 +45,7 @@
           </option>
         </select>
         <br />
-        <label>Vendor Name:</label>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;
+        <label class="label-for-select">Vendor Name:</label>
         <select
           id="select-box"
           class="text-style"
@@ -76,12 +73,7 @@
             </template>
           </v-text-field>
         </span>
-        <label>Product:</label>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;
+        <label class="label-for-select">Product:</label>
         <select
           id="select-box"
           class="text-style"
@@ -176,11 +168,20 @@ export default {
 #form-container {
   width: 75% !important;
 }
+.label-for-select {
+ padding-left: 2rem;
+}
+.text-style {
+  float: right;
+  margin-right: 10rem;
+  width: 20px;
+  overflow: hidden;
+}
 #id {
   width: 100%;
 }
 #select-box{
-  width: 50%;
+  width: 35%;
 }
 #notes {
   width: 100%;
