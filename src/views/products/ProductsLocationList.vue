@@ -129,7 +129,7 @@ export default {
       };
       
       if (this.$store.dispatch("putVendorsProducts", sub_products_by_location)) {
-        alert("Vendors Products List Updated Successfully")
+        alert("PsLL: Vendors Products List Updated Successfully")
         location.reload();
       } else {
         alert("Error adding Products in ProductLocaionsList View ");
@@ -149,7 +149,6 @@ export default {
       }, 300)
     },
     doubleClickLocation(location) {
-      console.log("DBLCLICK LOC", `${location}`)
       clearTimeout(time);
       this.$router.push({ name: 'ProductsLocationList', params: { location: `${location}` } });
 
