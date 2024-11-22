@@ -5,13 +5,16 @@
       <li class="li-left">Location: <b>{{ trail.location }}</b></li>
       <li class="li-left">Distance: {{ trail.distance }}</li>
       <li class="li-left">When: {{ formatYearDate(trail.date_last_hiked) }}</li>
-      <li class="li-left">Notes: <b>{{ trail.notes }}</b> </li>
+      <li class="li-left">Notes:</li>
+      <b class="li-left-none" v-for="(notes, idx) in splitList(trail, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>
   </div>
 </template>
 <script>
 
 import DateFormatService from "@/services/DateFormatService.js";
+import SplitStringService from "@/services/SplitStringService.js";
+
 export default {
   name: 'TrailCard',
   props: {
@@ -20,7 +23,16 @@ export default {
       default: () => ({})
     }
   },
+  data() {
+    return {
+      splitLength: 30,
+    };
+  },
   methods: {
+    splitList(trailData, splitLength) {
+      console.log("SplitList: ", trailData.notes)
+      return SplitStringService.splitList(trailData.notes, splitLength) 
+    },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },

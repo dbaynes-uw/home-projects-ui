@@ -1,5 +1,6 @@
 export default {
   splitList(metaData, splitLength) {
+    console.log("Meta: ", metaData + ' ' + splitLength)
     const result = []
     if (metaData != null) {
       for (let i = 0; i < metaData.length; i += splitLength) {

@@ -37,7 +37,6 @@ export default {
   },
   methods: {
     editMed(med) {
-      console.log("MEDDetails")
       this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
     },
     async deleteMed(med) {
