@@ -102,6 +102,7 @@
         </span>
         <br/>
         <br/>
+        <br/>
         <v-btn type="submit" block class="mt-2">Submit</v-btn>
       </v-container>
     </v-form>
@@ -169,11 +170,11 @@ export default {
   width: 75% !important;
 }
 .label-for-select {
- padding-left: 2rem;
+ padding-left: 0rem;
 }
 .text-style {
   float: right;
-  margin-right: 10rem;
+  margin-right: 6rem;
   width: 20px;
   overflow: hidden;
 }
@@ -181,7 +182,7 @@ export default {
   width: 100%;
 }
 #select-box{
-  width: 35%;
+  width: 40%;
 }
 #notes {
   width: 100%;
