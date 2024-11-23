@@ -182,7 +182,10 @@ export default {
   width: 100%;
 }
 #select-box{
-  width: 40%;
+  /*width: 40%;*/
+  width: 45%;
+  position: relative;
+  left: 1rem;
 }
 #notes {
   width: 100%;
