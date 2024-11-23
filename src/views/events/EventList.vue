@@ -20,7 +20,6 @@
             <EventsPastDue />
           </h1>
         </li>
-        
         <li>
           <h1>
             <EventsInactive />
@@ -51,17 +50,18 @@
         />
       </div>
     </div>
+  
     <div class="event-list">
     <!--EventCard v-for="event in events" :key="event.id" :event="event" /-->
     <!--EventIndexDetail :events="events" /-->
       <button id="button-as-link" @click="requestIndexDetail">
         <u>Detail for Edit/Delete</u>
       </button>
-      <br/>
       <span v-if="filteredResults.length == 0">
         <span v-if="requestIndexDetailFlag == true">
+          <p id="p-informational">Number of events returned: {{ events.length }}</p>
           <div class="legend">
-            <span>Double click to mark as TBD/Done or Active/Inactive.</span>
+            <span><b>Double click to mark as TBD/Done or Active/Inactive.</b></span>
             <span><span class="incomplete-box"></span> = Incomplete</span>
             <span><span class="complete-box"></span> = Complete</span>
           </div>
@@ -73,7 +73,6 @@
               :class="duePastDue(event)"
               @dblclick="editEvent(event)"
             />
-            <br />
           </div>
           <div class="cards">
             <!--EventCard
@@ -93,6 +92,7 @@
       </span>
       <span v-if="filteredResults.length > 0">
         <span v-if="requestIndexDetailFlag == true">
+          <p id="p-informational">Number of events returned: {{ filteredResults.length }}</p>
           <div class="legend">
             <span>Double click to mark as complete.</span>
             <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -336,6 +336,10 @@ export default {
   text-align: center;
   position: relative;
   cursor: pointer;
+}
+#p-informational {
+  font-weight: bold;
+  font-size: 1.25rem;
 }
 i {
   position: absolute;
