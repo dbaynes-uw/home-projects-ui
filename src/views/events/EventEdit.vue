@@ -7,85 +7,79 @@
     </router-link>
     <form class="add-form" @submit.prevent="updateEvent">
       <div class="form-container">
-        <label>Status: {{ event.status }}</label>
-        <br/>
-        <select class="select-status" v-model="event.status" required>
+        <v-select
+          label="Status"
+          :items="statuses"
+          v-model="event.status"
+        >
           <option
             v-for="option in statuses"
             :value="option"
             :key="option"
-            :selected="option === event.status"
+            id="select-box"
+            :selected="option === med.duration"
           >
-            &nbsp;&nbsp;
             {{ option }}
           </option>
-        </select>
-        <br/>
-        <br/>
-        <label for="action_date">Action Due Date:</label>
-        <br/>
-        <input
-          type="date"
-          class="text-style"
-          v-model="event.action_due_date"
-          required
-        />
+        </v-select>
+        <!--p id="p-custom-left">Action Due Date: {{ formatStandardDate(event.action_due_date)}}</p-->
         <span v-if="datePastDue(event.action_completed_date, event.frequency)">
           <span style="color: red; font-weight: bold">
-            &nbsp;{{ calculateDateDue(event.action_completed_date, event.frequency) }}
+            Event is Past Due: {{ calculateDateDue(event.action_completed_date, event.frequency) }}
           </span>
         </span>
-        <br/>
-        <label for="action_completed_date">Action Last Completed Date:</label>
-        <input
+        <v-text-field
+          label="Action Due Date"
+          v-model="event.action_due_date"
           type="date"
-          class="text-style"
-          v-model="event.action_completed_date"
-          required
         />
-        <label>Whose Turn? </label>
-        <select class="text-style" v-model="event.assigned" required>
+        <!--p id="p-custom-left">Action Completed Date: {{ formatStandardDate(event.action_completed_date)}}</p-->
+        <v-text-field
+          label="Action Last Completed Date"
+          v-model="event.action_completed_date"
+          type="date"
+        />
+        <v-select
+          label="Whose Turn?"
+          :items="assignees"
+          v-model="event.assigned"
+        >
           <option
             v-for="option in assignees"
             :value="option"
             :key="option"
+            id="select-box"
             :selected="option === event.assigned"
           >
-            &nbsp;&nbsp;
             {{ option }}
           </option>
-        </select>
-        <br />
-        <br />
-        <label>Select a Frequency: </label>
-        <select class="text-style" v-model="event.frequency" required>
+        </v-select>
+        <v-select
+          label="Frequency in Days"
+          :items="frequency"
+          v-model="event.frequency"
+        >
           <option
             v-for="option in frequency"
             :value="option"
             :key="option"
+            id="select-box"
             :selected="option === event.frequency"
           >
-            &nbsp;&nbsp;
             {{ option }}
           </option>
-        </select>
-        <br />
-        <br />
-        <label for="notes">Notes:</label>
-        <input
-          type="textarea"
-          rows="8"
-          columns="10"
+        </v-select>
+        <v-textarea
+          label="Notes"
           v-model="event.notes"
-          id="notes"
-          class="textarea-style"
-          required
+          rows="3"
+          cols="40"
         />
-        <br/>
+        <br>
         <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
-        <br>
+        <br/>
         <button id="button-as-link">
           <router-link :to="{ name: 'EventShow', id: `${event.id}` }">
             Details and History
@@ -195,8 +189,11 @@ export default {
         //Not Yet:    });
       }
     },
-    datePastDue(value) {
-      return DateFormatService.datePastDuejs(value);
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDatejs(value);
+    },
+    datePastDue(action_date, frequency) {
+      return DateFormatService.datePastDuejs(action_date, frequency);
     },
     calculateDateDue(action_completed_date, frequency) {
       return DateFormatService.calculateDateDuejs(action_completed_date, frequency);

@@ -1,39 +1,46 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Book {{ book.head_name }}</h2>
-    <router-link :to="{ name: 'BookList' }">
-      <b>Back to Book List</b>
-    </router-link>
+    <button id="link-as-button">
+      <router-link  :to="{ name: 'BookList' }">Back to Book List</router-link>
+    </button>
     <br/>
     <br/>
-    <form class="form-card-display" @submit.prevent="updateBook">
+    <form class="add-form" @submit.prevent="updateBook">
       <div class="form-container">
-        <label>Title:</label>
-        <input type="text" class="text-style" v-model="book.title" required />
-        <label>Author:</label>
-        <input type="text" class="text-style" v-model="book.author" required />
-        <label for="date_written">Date Written:</label>
-        <input
-          type="date"
-          class="text-style"
+        <v-text-field
+          label="Title"
+          v-model="book.title"
+          required
+        />
+        <v-text-field
+          label="Author"
+          v-model="book.author"
+          required
+        />
+        <p id="p-custom-left">Date Written: {{ formatStandardDate(book.date_written)}}</p>
+        <v-text-field
+          label="Click calendar at right to change Date Written"
           v-model="book.date_written"
-        />
-        <label for="date_read">Date Read:</label>
-        <input
           type="date"
-          class="text-style"
-          v-model="book.date_read"
         />
-        <label for="url_to_review">URL to Review:</label>
-        <input type="text" class="text-style" v-model="book.url_to_review" />
-        <label>Notes:</label>
-        <textarea
+        <p id="p-custom-left">Date Read: {{ formatStandardDate(book.date_read)}}</p>
+        <v-text-field
+          label="Click calendar at right to change Date Read"
+          v-model="book.date_read"
+          type="date"
+        />
+        <v-text-field
+          label="URL to Review"
+          v-model="book.url_to_review"
+        />        
+        <v-textarea
+          label="Notes"
           v-model="book.notes"
           rows="3"
           cols="40"
-          class="textarea-style"
         />
+        <br/>
         <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
@@ -44,6 +51,7 @@
 <script>
 import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   props: ["id"],
   components: {
@@ -116,6 +124,9 @@ export default {
           //this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "ERROR in processing update - change did NOT take place"} });
         }
       }
+    },
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDatejs(value);
     },
   },
 };

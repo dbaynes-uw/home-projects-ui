@@ -12,8 +12,7 @@
           label="Click calendar at right to change Date/Time of Occurrence"
           v-model="med.date_of_occurrence"
           type="datetime-local"
-        >
-        </v-text-field>
+        />
         <v-select
           label="Duration"
           :items="durations"

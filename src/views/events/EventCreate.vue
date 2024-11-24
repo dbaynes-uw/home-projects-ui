@@ -5,29 +5,25 @@
       <h3>Create an Event View</h3>
     </v-card-title>
   </v-card>
-  <div class="form-container">
-    <form class="add-form" @submit.prevent="onSubmit">
-      <label>Description</label>
-      <input
+  <router-link :to="{ name: 'EventList' }">
+    <h3>Back to Event List</h3>
+  </router-link>
+  <form class="add-form" @submit.prevent="onSubmit">
+    <div class="form-container">
+      <v-text-field
+        label="Description"
         v-model="event.description"
-        type="text"
-        class="text-style"
-        placeholder="Description"
         required
       />
-      <label for="action_date">Action Date:</label>
-      <input
+      <v-text-field
+        label="Action Date"
+        v-model="event.action_due_date"
         type="date"
-        class="text-style"
-        v-model="event.action_date"
-        required
       />
-      <label>Whose Turn? </label>
-      <select
-        id="select-box"
-        class="text-style"
+      <v-select
+        label="Whose Turn?"
+        :items="assignees"
         v-model="event.assigned"
-        required
       >
         <option
           v-for="option in assignees"
@@ -38,37 +34,36 @@
         >
           {{ option }}
         </option>
-      </select>
-      <br />
-      <label>Select a Frequency: </label>
-      <select
-        id="select-box"
-        class="text-style"
+      </v-select>
+      <v-select
+        label="Frequency in Days"
+        :items="frequency"
         v-model="event.frequency"
-        required
       >
         <option
           v-for="option in frequency"
           :value="option"
           :key="option"
+          id="select-box"
           :selected="option === event.frequency"
         >
           {{ option }}
         </option>
-      </select>
-      <br />
-      <label>Notes</label>
-      <input
+      </v-select>
+      <v-textarea
+        label="Notes"
         v-model="event.notes"
-        type="text"
-        placeholder="Notes"
-        class="text-style"
+        rows="3"
+        cols="40"
       />
-      <button class="button" id="link-as-button" type="submit">Submit</button>
-    </form>
-    <!--Vuex:-->
-    <!--div>{{ $store.state.events }}</div-->
-  </div>
+      <br>
+      <button class="button" id="link-as-button" type="submit">
+        Submit
+      </button>
+    </div>
+  </form>
+  <!--Vuex:-->
+  <!--div>{{ $store.state.events }}</div-->
 </template>
 <script>
 import { v4 as uuidv4 } from "uuid";

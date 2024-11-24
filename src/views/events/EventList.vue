@@ -104,7 +104,7 @@
               :key="event.id"
               :event="event"
               class="event"
-              @dblclick="onDoubleClick(event)"
+              @dblclick="editEvent(event)"
             />
             <br />
           </div>
@@ -177,7 +177,6 @@ export default {
     if (this.user.email == 'dlbaynes@gmail.com') {
       this.isAdmin = true;
     }
-    console.log("isAdmin? ", this.isAdmin)
   },
   computed: {    
     events() {
