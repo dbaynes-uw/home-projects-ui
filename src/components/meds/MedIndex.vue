@@ -126,6 +126,7 @@ export default {
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
         this.$store.dispatch("deleteMed", med);
+        alert("Med " + med.date_of_occurrence + " was deleted");
         this.statusMessage =
           "Med was Deleted for " +
           med.title +

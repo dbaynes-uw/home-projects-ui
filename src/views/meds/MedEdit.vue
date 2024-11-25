@@ -77,6 +77,7 @@ export default {
     }
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
+    //console.log("Result: ", result.data)
     this.med = result.data;
   },
   data() {
@@ -121,10 +122,11 @@ export default {
           }
         );
         if (result.status >= 200) {
+          this.$store.dispatch("updateMed", med);
           alert("Med has been updated for " + DateFormatService.formatStandardDatejs(med.date_of_occurrence));
           //this.$router.push({ name: "MedDetails", params: { id: med.id } });
-          //this.$router.push({ name: "MedList" });
-          location.reload()
+          sessionStorage.clear()
+          this.$router.push({ name: "MedList" })
         } else {
           alert("Update Error Code ", result.status);
         }

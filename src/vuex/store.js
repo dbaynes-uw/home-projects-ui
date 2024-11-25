@@ -702,7 +702,6 @@ export default new Vuex.Store({
       EventService.deleteMed(med)
         .then((response) => {
           commit("DELETE_MED", response.data);
-          alert("Med " + med.date_of_occurrence + " was deleted");
         })
         .catch((error) => {
           console.log(error);
@@ -732,6 +731,17 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
+    async updateMed({ commit }, med) {
+      EventService.putMed(med)
+        .then((response) => {
+          commit("SET_MEDS", response.data);
+          //location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     async createWateringOutlet({ commit }, outlet) {
       EventService.postWateringOutlet(outlet)
         .then(() => {

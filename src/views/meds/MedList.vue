@@ -53,7 +53,7 @@
       />
     </div>
   </div>
-  TimeFrame: {{ this.timeFrame }} days
+  TimeFrame: {{ timeFrame }} days
   <br>
   <span v-if="requestMedChartFlag == true">
     <span v-if="filteredResults.length > 0">
@@ -77,7 +77,6 @@
             v-for="med in meds"
             :key="med.id"
             :med="med"
-            :origin="origin"
             class="card"
             @dblclick="editMed(med)"
           />
@@ -99,7 +98,6 @@
             :key="med.id"
             :med="med"
             class="card"
-            :origin="origin"
             @dblclick="editMed(med)"
           />
           <br />
@@ -112,24 +110,19 @@
   </div>
 
 </template>
-<script>
-import DateFormatService from "@/services/DateFormatService.js";
+<script setup>
 import MedCard from "@/components/meds/MedCard.vue";
 import MedChart from "@/components/meds/MedChart.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
-//import MedSearchResults from "@/components/meds/MedSearchResults.vue";
+</script>
+<script>
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: "MedList",
-  //props: ["filteredResults[]"],
   components: {
     MedCard,
     MedChart,
     MedIndex,
-    //MedSearchResults,
-  },
-  mounted() {
-    this.sortedData = this.meds;
-    this.filterTimeFrame("30")
   },
   data() {
     return {
@@ -150,7 +143,13 @@ export default {
       //statusMessage: "",
     };
   },
+  mounted() {
+    this.sortedData = this.meds;
+    this.filterTimeFrame("30")
+  },
   created() {
+    this.sortedbyASC = true
+    this.sortList('date_of_occurrence')
     this.$store.dispatch("fetchMeds");
     this.sortedData = this.meds;
     for (let i=0; i < this.meds.length; i++) {
@@ -163,9 +162,6 @@ export default {
     meds() {
       return this.$store.state.meds;
     },
-    origin() {
-      return "MedList"
-    }
   },
   methods: {
     async filterTimeFrame(value) {

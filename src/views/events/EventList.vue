@@ -153,7 +153,7 @@ export default {
       filteredResults: [],
       searchResults: false,
       columnDetails: null,
-      sortedData: [],
+      //sortedData: [],
       sortedbyASC: false,
       statusMessage: "",
       user: null,
@@ -172,7 +172,7 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchEvents");
-    this.sortedData = this.events;
+    //this.sortedData = this.events;
     this.user = this.$store.state.user.resource_owner
     if (this.user.email == 'dlbaynes@gmail.com') {
       this.isAdmin = true;

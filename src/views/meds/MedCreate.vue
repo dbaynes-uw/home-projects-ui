@@ -84,6 +84,7 @@ export default {
       } else {
         alert("Please correct required fields and resubmit");
       }
+
     },
     requiredDateOccurrence: function (value) {
       if (value) {
@@ -115,7 +116,6 @@ export default {
     }
   },
   med() {
-    console.log("this.$store.state.med: ", this.$store.state.med)
     return this.$store.state.med;
   },
 };
