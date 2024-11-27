@@ -149,6 +149,8 @@ export default {
   mounted() {
     //Executed at start
     this.sortedData = this.meds;
+    this.sortedbyASC = true
+    this.sortList('date_of_occurrence')
     this.filterTimeFrame("30")
   },
   created() {
