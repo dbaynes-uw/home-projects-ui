@@ -131,7 +131,7 @@ export default {
           "Med was Deleted for " +
           med.title +
           "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
+        this.$router.push({ name: "MedList" })
       }
     },
     formatStandardDateTime(value) {

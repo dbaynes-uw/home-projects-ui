@@ -72,12 +72,12 @@ export default {
       if (this.isFormValid) {
         const med = {
           ...this.med,
-          id: uuidv4(),
+          id: uuidv4,
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createMed", med)) {
-          this.$router.push({ name: "MedList" });
           alert("Med was successfully added for " + med.date_of_occurrence);
+          this.$router.push({ name: "MedList" });
         } else {
           alert("Error adding Med Location " + med.title);
         }

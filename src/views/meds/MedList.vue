@@ -72,9 +72,10 @@
       <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ meds.length }}</h3>
         <span class="h3-left-total-child">Double click Item Below to Edit</span>
+        <!--No Long In Action???-->
         <div class="cards">
           <MedCard
-            v-for="med in meds"
+            v-for="med in filteredResults"
             :key="med.id"
             :med="med"
             class="card"
@@ -92,6 +93,8 @@
       <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
+        <p># Meds: {{ meds.length }}</p>
+        <p># filteredResults: {{ filteredResults.length }}</p>
         <div class="cards">
           <MedCard
             v-for="med in filteredResults"
@@ -144,12 +147,11 @@ export default {
     };
   },
   mounted() {
+    //Executed at start
     this.sortedData = this.meds;
     this.filterTimeFrame("30")
   },
   created() {
-    this.sortedbyASC = true
-    this.sortList('date_of_occurrence')
     this.$store.dispatch("fetchMeds");
     this.sortedData = this.meds;
     for (let i=0; i < this.meds.length; i++) {

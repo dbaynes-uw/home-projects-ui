@@ -701,7 +701,7 @@ export default new Vuex.Store({
     async deleteMed({ commit }, med) {
       EventService.deleteMed(med)
         .then((response) => {
-          commit("DELETE_MED", response.data);
+          commit("SET_MEDS", response.data);
         })
         .catch((error) => {
           console.log(error);

@@ -125,7 +125,6 @@ export default {
           this.$store.dispatch("updateMed", med);
           alert("Med has been updated for " + DateFormatService.formatStandardDatejs(med.date_of_occurrence));
           //this.$router.push({ name: "MedDetails", params: { id: med.id } });
-          sessionStorage.clear()
           this.$router.push({ name: "MedList" })
         } else {
           alert("Update Error Code ", result.status);
