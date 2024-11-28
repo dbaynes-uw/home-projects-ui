@@ -75,7 +75,7 @@
         <!--No Long In Action???-->
         <div class="cards">
           <MedCard
-            v-for="med in filteredResults"
+            v-for="med in meds"
             :key="med.id"
             :med="med"
             class="card"
@@ -89,12 +89,11 @@
       </span>
     </span>
     </span>
+    
     <span v-if="filteredResults.length > 0">
       <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
-        <p># Meds: {{ meds.length }}</p>
-        <p># filteredResults: {{ filteredResults.length }}</p>
         <div class="cards">
           <MedCard
             v-for="med in filteredResults"
@@ -148,12 +147,15 @@ export default {
   },
   mounted() {
     //Executed at start
-    this.sortedData = this.meds;
-    this.sortedbyASC = true
-    this.sortList('date_of_occurrence')
+    if (this.meds.length > 0){
+      this.sortedData = this.meds;
+      this.sortedbyASC = true
+      this.sortList('date_of_occurrence')
+    }
     this.filterTimeFrame("30")
   },
   created() {
+    
     this.$store.dispatch("fetchMeds");
     this.sortedData = this.meds;
     for (let i=0; i < this.meds.length; i++) {
