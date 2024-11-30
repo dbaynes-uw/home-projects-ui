@@ -690,7 +690,7 @@ export default new Vuex.Store({
     async createMed({ commit }, med) {
       EventService.postMed(med)
         .then(() => {
-          commit("ADD_MED", med);
+          commit("SET_MEDS", med);
         })
         .catch((error) => {
           alert("Error in postMed of createMed Action (index.js)");
