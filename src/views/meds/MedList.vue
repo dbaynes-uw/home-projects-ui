@@ -57,7 +57,7 @@
   <br>
   <span v-if="requestMedChartFlag == true">
     <span v-if="filteredResults.length > 0">
-      <MedChart :meds="filteredResults" :timeFrame=this.timeFrame :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
+      <MedChart :meds="filteredResults" :timeFrame=timeFrame :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
     </span>
     <span v-else>
       <MedChart :meds="meds" :timeFrame="30" :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
