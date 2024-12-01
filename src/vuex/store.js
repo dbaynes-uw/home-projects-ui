@@ -382,8 +382,7 @@ export default new Vuex.Store({
     async deleteBook({ commit }, book) {
       EventService.deleteBook(book)
         .then((response) => {
-          commit("DELETE_BOOK", response.data);
-          alert("Book " + book.title + " was deleted");
+          commit("SET_BOOKS", response.data);
         })
         .catch((error) => {
           console.log(error);

@@ -10,9 +10,24 @@
         <li class="li-left"><a :href="book.url_to_review" target="_blank">Link to Review</a></li>
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(book, this.splitLength)" :key="idx">{{ notes }}</b>
-
       </ul>
       <br/>
+      <router-link :to="{ name: 'BookList' }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
+      </router-link>
+      <span class="fa-stack">
+        <router-link :to="{ name: 'BookEdit', params: { id: `${book.id}` } }">
+          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span class="fa-stack">
+        <i @click="deleteBook(book)" class="fas fa-trash-alt fa-stack-1x">
+        </i>
+      </span>
+      <br />
+      <router-link :to="{ name: 'BookList' }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
+      </router-link>
     </div>
   </div>
 </template>

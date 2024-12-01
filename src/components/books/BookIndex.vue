@@ -149,7 +149,7 @@ export default {
           "Book was Deleted for " +
           book.title +
           "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
+        setTimeout(() => location.reload(), 2000);
       }
     },
     formatFullYearDate(value) {

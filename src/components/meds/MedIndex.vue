@@ -18,7 +18,7 @@
       <td>{{ med.interval_hours }} hours</td>
       <td>{{ med.interval_minutes }} minutes</td>
       <td>
-        <textarea v-if="med.circumstances" id="" cols="30" rows="3" v-model="med.circumstances"></textarea>
+        <textarea v-if="med.circumstances" cols="30" rows="3" v-model="med.circumstances"></textarea>
       </td>
       <td class="td-center" >
         <span v-if="this.onlineStatus">
@@ -81,6 +81,7 @@ export default {
   data() {
     return {
       med: {
+        id: "",
         date_of_occurrence: "",
         duration: "",
         circumstances: "",
@@ -129,7 +130,7 @@ export default {
         alert("Med " + med.date_of_occurrence + " was deleted");
         this.statusMessage =
           "Med was Deleted for " +
-          med.title +
+          med.date_of_occurrence +
           "! Page will restore in 2 seconds";
           setTimeout(() => location.reload(), 2000);
       }

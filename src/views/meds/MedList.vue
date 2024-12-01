@@ -74,9 +74,11 @@
         <span class="h3-left-total-child">Double click Item Below to Edit</span>
         <!--No Long In Action???-->
         <div class="cards">
+          <!--tr v-for="(result, resultIndex) in films" :key="resultIndex"-->
+
           <MedCard
-            v-for="med in meds"
-            :key="med.id"
+            v-for="(med, medIndex) in meds"
+            :key="medIndex"
             :med="med"
             class="card"
             @dblclick="editMed(med)"
@@ -199,7 +201,7 @@ export default {
       this.requestMedChartFlag = this.requestMedChartFlag == true ? false : true;
     },
     editMed(med) {
-      this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
+      this.$router.push({ name: 'MedEdit', params: { id: `${med}` } });
     },
     showIndex() {
       this.filteredResults = [];
