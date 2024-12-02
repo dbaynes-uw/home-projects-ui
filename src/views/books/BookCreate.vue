@@ -55,7 +55,6 @@
           </template>
         </v-textarea>
         <v-btn type="submit" block class="mt-2">Submit</v-btn>
-        <!--button type="submit" block class="mt-2">Submit</~button-->
       </v-container>
     </v-form>
   </v-card-text>
@@ -63,8 +62,7 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  components: {
-  },
+  components: {},
   data() {
     return {
       book: {
@@ -79,9 +77,6 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      toggle1: false,
-      toggle2: false,
-      toggle3: false,
       isFormValid: false,
       isAuthorValid: false,
       isTitleValid: false,

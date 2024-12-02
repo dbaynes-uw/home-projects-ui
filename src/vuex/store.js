@@ -505,7 +505,6 @@ export default new Vuex.Store({
         });
     },
     async eventsDueBy({ commit }, form) {
-      console.log("STORE@@@")
       EventService.getEventsDueBy(form)
         .then((response) => {
       commit("SET_EVENTS", response.data);
@@ -516,7 +515,6 @@ export default new Vuex.Store({
       });
     },
     async eventsPastDue({ commit }, dueBy) {
-      console.log("STORE@@@")
       EventService.getEventsPastDue(dueBy)
         .then((response) => {
       commit("SET_EVENTS", response.data);
@@ -527,7 +525,6 @@ export default new Vuex.Store({
       });
     },
     async eventsInactive({ commit }, inactive) {
-      console.log("STORE@@@")
       EventService.getEventsInactive(inactive)
         .then((response) => {
       commit("SET_EVENTS", response.data);
@@ -989,7 +986,6 @@ export default new Vuex.Store({
       EventService.getTravels()
         .then((response) => {
           commit("SET_TRAVELS", response.data);
-          console.log("FetchTravels response.data: ", response.data);
           return response.data;
         })
         .catch((error) => {

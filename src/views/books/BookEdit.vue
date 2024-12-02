@@ -1,11 +1,11 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <h2>Edit Book {{ book.title }}</h2>
+  <br/>
   <div class="edit">
     <button id="link-as-button">
       <router-link  :to="{ name: 'BookList' }">Back to Book List</router-link>
     </button>
-    <br/>
-    <br/>
     <form class="add-form" @submit.prevent="updateBook">
       <div class="form-container">
         <v-text-field
@@ -67,23 +67,22 @@ export default {
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/books/";
     }
     this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    if (result.data) {
-      this.book = result.data;
-    }
+    //const result = await axios.get(this.api_url + +this.$route.params.id);
+    //if (result.data) {
+    //  this.book = result.data;
+    //}
   },
+  created() {
+    this.$store.dispatch("fetchBook", this.id);
+  },
+  computed: {
+    book() {
+      return this.$store.state.book;
+    },
+  },
+
   data() {
     return {
-      book: {
-        id: "",
-        title: "",
-        author: "",
-        date_written: "",
-        date_read: "",
-        url_to_review: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
       api_url: ""
     };
   },
@@ -131,8 +130,4 @@ export default {
   },
 };
 </script>
-<style>
-select {
-  border-color: darkgreen;
-}
-</style>
+<style></style>

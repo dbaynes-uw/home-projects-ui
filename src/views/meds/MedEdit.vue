@@ -76,22 +76,17 @@ export default {
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/meds/";
     }
     this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    //console.log("Result: ", result.data)
-    this.med = result.data;
+  },
+  created() {
+    this.$store.dispatch("fetchMed", this.id);
+  },
+  computed: {
+    med() {
+      return this.$store.state.med;
+    },
   },
   data() {
     return {
-      med: {
-        id: "",
-        date_of_occurrence: "",
-        duration: "",
-        interval_days: "",
-        interval_hours: "",
-        interval_minutes: "",
-        circumstances: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
       durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
       api_url: ""
     };

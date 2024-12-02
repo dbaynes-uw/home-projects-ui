@@ -157,7 +157,6 @@ export default {
     this.filterTimeFrame("30")
   },
   created() {
-    
     this.$store.dispatch("fetchMeds");
     this.sortedData = this.meds;
     for (let i=0; i < this.meds.length; i++) {
@@ -165,7 +164,6 @@ export default {
       this.chartIntervals[i] = this.meds[i].interval_days
     }
   },
-
   computed: {
     meds() {
       return this.$store.state.meds;
@@ -201,7 +199,7 @@ export default {
       this.requestMedChartFlag = this.requestMedChartFlag == true ? false : true;
     },
     editMed(med) {
-      this.$router.push({ name: 'MedEdit', params: { id: `${med}` } });
+      this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
     },
     showIndex() {
       this.filteredResults = [];
