@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       resultSet: [],
-      showShoppingList: false,
+      showShoppingList: true,
       showFlag: false,
       vendors: {
         vendor_name: '',
@@ -92,8 +92,6 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-      toggleInPlay: false,
-      isVendorToggled: false,
       isProductToggled: null,
     };
   },
@@ -138,10 +136,6 @@ export default {
 };
 </script>
 <style lang="css">
-.row-height {
-  height: 2rem !important;
-  margin: 0 0px 0;
-}
 input[type=checkbox] { 
   width: 10%;
   height: 1rem;

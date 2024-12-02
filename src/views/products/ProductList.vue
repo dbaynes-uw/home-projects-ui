@@ -6,7 +6,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationsList', params: { vendors_products: vendors_products }}" >
+          <router-link :to="{ name: 'ProductLocationsList'}" >
             Products By Locations
           </router-link>
         </button>
@@ -27,22 +27,19 @@
   <v-card-text>
     <v-form>
       <h2>
-        <u @click='shoppingListDisplay(this.showShoppingList)'>Toggle Shopping List</u>
+        <u @click='shoppingListDisplay(showShoppingList)'>Toggle Shopping List</u>
       </h2>
       <v-container id="form-container">
         <div class="column" id="group" v-for="(product, group_index) in this.resultSet" :key="group_index">
           <!-- Toggle by Product -->
           <span v-if="group_index == 0">
-            <!--h2 @click='toggleProduct(group_indzzzzex)'>{{ product.product_name }}</h2-->
              <h2>{{ product.product_name }}</h2>
           </span>
           <span v-if="group_index > 0">
             <span v-if="product.product_name != resultSet[group_index-1].product_name">
-              <!--h2 @click='toggleProduct(group_index)'>{{ product.product_name }}</h2-->
               <h2>{{ product.product_name }}</h2>
             </span>
           </span>
-          <!--div v-show="isProductToggled === group_index"-->
           <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
             <span v-if="product.vendor_id == vendor.id">
               <h2>
@@ -70,23 +67,15 @@ export default {
   },
   data() {
     return {
-      product_active: true,
       Location: null,
       resultSet: [],
       showShoppingList: false,
       showFlag: false,
-      toggle0: false,
-      toggle1: false,
-      toggle2: false,
       isProductToggled: null,
-      home_safe: false,
-      toggleArr: [],
-      isFormValid: false,
-      isAuthorValid: false,
-      isTitleValid: false,
-      urlMaxLength: 255,
-      num: 1,
     };
+  },
+  async mounted() {
+    this.shoppingListDisplay(this.showShoppingList)
   },
   created() {
     this.$store.dispatch("fetchProducts");
@@ -135,9 +124,6 @@ export default {
       }
       return this.showShoppingList
     },
-    //toggleProduct(index) {
-    //  this.isProductToggled = index === this.isProductToggled? null : index
-    //},
     toggleProduct(index) {
       this.isProductToggled = index === this.isProductToggled? null : index
     }    
