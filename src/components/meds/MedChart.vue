@@ -45,9 +45,14 @@ export default {
       },
       options: {
         responsive: true,
+        scales: {
+          y: {
+            beginAtZero: false,
+          }
+        },
         ticks: {
-          min: 0,
-          stepSize: 5,
+          max: 5,
+          stepSize: 1,
         }
       },
       timeFrames: ["Week", "Month", "Quarter","YTD"],

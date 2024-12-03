@@ -128,25 +128,6 @@ export default {
     MedChart,
     MedIndex,
   },
-  data() {
-    return {
-      chartLabels: [],
-      chartIntervals: [],
-      requestIndexDetailFlag: true,
-      requestMedChartFlag: false,
-      inputSearchText: "",
-      searchResults: null,
-      filteredResults: [],
-      columnDetails: null,
-      sortedData: [],
-      sortedbyASC: false,
-      description: null,
-      frequency: null,
-      completed: 0,
-      timeFrame: 0,
-      //statusMessage: "",
-    };
-  },
   mounted() {
     //Executed at start
     if (this.meds.length > 0){
@@ -168,6 +149,25 @@ export default {
     meds() {
       return this.$store.state.meds;
     },
+  },
+  data() {
+    return {
+      chartLabels: [],
+      chartIntervals: [],
+      requestIndexDetailFlag: true,
+      requestMedChartFlag: false,
+      inputSearchText: "",
+      searchResults: null,
+      filteredResults: [],
+      columnDetails: null,
+      sortedData: [],
+      sortedbyASC: false,
+      description: null,
+      frequency: null,
+      completed: 0,
+      timeFrame: 0,
+      //statusMessage: "",
+    };
   },
   methods: {
     async filterTimeFrame(value) {
