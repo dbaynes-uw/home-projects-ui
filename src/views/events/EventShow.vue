@@ -3,11 +3,18 @@
   <div>
     <router-link
       :to="{
+          name: 'EventList'
+          }"
+      >
+      <h2>Events List</h2>
+    </router-link>
+    <router-link
+      :to="{
           name: 'EventStatisticDetail',
           params: { statistic: 'assigned-' + event.assigned },
         }"
       >
-      <h2>Event Detail</h2>
+      <h2>Events Assigned to {{ event.assigned }}</h2>
     </router-link>
     <div class="card-display">
       <EventCard
