@@ -51,7 +51,7 @@ export default {
           }
         },
         ticks: {
-          max: 5,
+          max: 15,
           stepSize: 1,
         }
       },

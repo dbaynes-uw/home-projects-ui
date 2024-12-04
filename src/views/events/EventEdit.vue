@@ -7,6 +7,10 @@
     </router-link>
     <form class="add-form" @submit.prevent="updateEvent">
       <div class="form-container">
+        <v-text-field
+          label="Event Name or Description"
+          v-model="event.description"
+        />
         <v-select
           label="Status"
           :items="statuses"
