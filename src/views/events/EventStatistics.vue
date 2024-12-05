@@ -50,7 +50,7 @@
           </router-link>
         </td>
         <td>
-          {{ events.active }}
+          {{ events.inactive }}
         </td>
       </tr>
       <tr>
@@ -129,14 +129,14 @@
           <router-link
             :to="{
               name: 'EventStatisticDetail',
-              params: { statistic: othersDue },
+              params: { statistic: futureDue },
             }"
           >
-            Other Events Due:
+            Future Events Due:
           </router-link>
         </td>
         <td>
-          {{ events.othersDue }}
+          {{ events.futureDue }}
         </td>
       </tr>      
     </v-table>
@@ -166,7 +166,7 @@ export default {
       dueToday: "due_today",
       dueThisWeek: "due_this_week",
       dueNextWeek: "due_next_week",
-      othersDue: "others_due"
+      futureDue: "future_due"
     };
   },
   created() {
