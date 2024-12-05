@@ -4,78 +4,98 @@
       <router-link :to="{ name: 'EventStatistics' }">Event Statistics</router-link>
     </h2>
     <br/>
+    <button id="button-as-link" @click="requestIndexDetail">
+        <u>Toggle Card/Index</u>
+    </button>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
       <span><span class="complete-box"></span> = Complete</span>
     </div>
     <br />
-    <div class="eventStatisticDetail">
-      <table>
-      <thead class="table-index-style">
-        <tr>
-          <th>Description</th>
-          <th>Assigned</th>
-          <th>Frequency</th>
-          <th>Date Due</th>
-          <th>Status</th>
-          <th style="text-align: right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
+    <span v-if="requestIndexDetailFlag != true">
+      <div class="cards">
+        <EventCard
           v-for="event in events"
           :key="event.id"
           :event="event"
-          @dblclick="onDoubleClick(event)"
-          v-bind:class="{ 'is-complete': event.completed }"
-        >
-          <td>{{ event.description }}</td>
-          <td>{{ event.assigned }}</td>
-          <td>Every {{ event.frequency }} days</td>
-          <td>{{ formatStandardDate(event.action_due_date) }}</td>
-          <td>{{ event.status[0].toUpperCase() + event.status.slice(1) }}</td>
-          <td>
-            <span class="fa-stack fa-table-stack">
-              <router-link
-                :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
-              >
-                <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-              </router-link>
-              <span
-                class="fa-stack fa-table-stack"
-                style="position: relative; top: -0.4rem"
-              >
+          :class="duePastDue(event)"
+          @dblclick="editEvent(event)"
+        />
+      </div>
+    </span>
+    <span v-if="requestIndexDetailFlag == true">
+      <div class="eventStatisticDetail">
+        <table>
+        <thead class="table-index-style">
+          <tr>
+            <th>Description</th>
+            <th>Assigned</th>
+            <th>Frequency</th>
+            <th>Date Due</th>
+            <th>Status</th>
+            <th style="text-align: right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="event in events"
+            :key="event.id"
+            :event="event"
+            @dblclick="onDoubleClick(event)"
+            v-bind:class="{ 'is-complete': event.completed }"
+          >
+            <td>{{ event.description }}</td>
+            <td>{{ event.assigned }}</td>
+            <td>Every {{ event.frequency }} days</td>
+            <td>{{ formatStandardDate(event.action_due_date) }}</td>
+            <td>{{ event.status[0].toUpperCase() + event.status.slice(1) }}</td>
+            <td>
+              <span class="fa-stack fa-table-stack">
                 <router-link
-                  :to="{ name: 'EventShow', params: { id: `${event.id}` } }"
+                  :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
                 >
-                  <i class="fa fa-eye" style="font-size: 18px"></i>
+                  <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
                 </router-link>
+                <span
+                  class="fa-stack fa-table-stack"
+                  style="position: relative; top: -0.4rem"
+                >
+                  <router-link
+                    :to="{ name: 'EventShow', params: { id: `${event.id}` } }"
+                  >
+                    <i class="fa fa-eye" style="font-size: 18px"></i>
+                  </router-link>
+                </span>
+                <span
+                  class="fa-table-stack"
+                  style="position: relative; top: 0.5rem; left: 2.3rem"
+                >
+                  <router-link :to="{ name: 'EventList' }">
+                    <i class="fa-solid fa-backward fa-stack-1x"></i>
+                  </router-link>
+                </span>
               </span>
-              <span
-                class="fa-table-stack"
-                style="position: relative; top: 0.5rem; left: 2.3rem"
-              >
-                <router-link :to="{ name: 'EventList' }">
-                  <i class="fa-solid fa-backward fa-stack-1x"></i>
-                </router-link>
-              </span>
-            </span>
-          </td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+            </td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+    </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
+import EventCard from '@/components/events/EventCard'
 export default {
   name: "EventStatisticDetail",
-  components: {},
+  components: {
+    EventCard,
+  },
   props: ["statistic"],
   data() {
     return {
+      requestIndexDetailFlag: false,
       description: null,
       frequency: null,
       completed: 0,
@@ -90,10 +110,16 @@ export default {
     },
   },
   methods: {
-    onDoubleClick(event) {
-      var updatedEvent = event;
-      updatedEvent.action_active = !event.action_active;
-      this.$store.dispatch("updateEvent", updatedEvent);
+    editEvent(event) {
+      this.$router.push({ name: 'EventEdit', params: { id: `${event.id}` } });
+    },
+    duePastDue(e) {
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
+      return e.status == 'active' && e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
+    },
+    requestIndexDetail() {
+      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
@@ -102,6 +128,87 @@ export default {
 };
 </script>
 <style scoped>
+.events {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+}
+.event {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+.event-inactive {
+  border: 1px solid #ccc;
+  background: red;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+.event-link {
+  border: 1px solid #ccc;
+  background: #41b883;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+#p-informational {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+i {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+.legend {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+.complete-box {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #35495e;
+}
+.is-active {
+  background: #41b882;
+  color: #000;
+}
+.incomplete-box {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #41b882;
+}
+.is-inactive {
+  background: #35495e;
+  color: #fff;
+}
+.is-complete-for-link {
+  color: #41b883;
+}
+select {
+  border-color: darkgreen;
+}
+.fa-table {
+  margin-top: 1rem;
+}
+
 .table-index-style {
   width: 100%;
   border-collapse: collapse;

@@ -1,18 +1,12 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
-    <router-link
-      :to="{
-          name: 'EventList'
-          }"
-      >
+    <router-link :to="{name: 'EventList'}">
       <h2>Events List</h2>
     </router-link>
     <router-link
-      :to="{
-          name: 'EventStatisticDetail',
-          params: { statistic: 'assigned-' + event.assigned },
-        }"
+      :to="{name: 'EventStatisticDetail',
+            params: { statistic: 'assigned-' + event.assigned }}"
       >
       <h2>Events Assigned to {{ event.assigned }}</h2>
     </router-link>

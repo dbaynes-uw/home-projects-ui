@@ -7,7 +7,7 @@
           <h3>Event Assignments:</h3>
         </td>
         <td><h3>Count</h3></td>
-      </tr>
+      </tr> 
       <tr v-for="(v, k) in events.assigned" :key="k">
         <td>
           &nbsp;&nbsp;
@@ -28,14 +28,29 @@
           <router-link
             :to="{
               name: 'EventStatisticDetail',
-              params: { statistic: notCompleted },
+              params: { statistic: active },
             }"
           >
-            Events Planned:
+            Active Events:
           </router-link>
         </td>
         <td>
-          {{ events.notCompleted }}
+          {{ events.active }}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <router-link
+            :to="{
+              name: 'EventStatisticDetail',
+              params: { statistic: inactive },
+            }"
+          >
+            Inactive Events:
+          </router-link>
+        </td>
+        <td>
+          {{ events.active }}
         </td>
       </tr>
       <tr>
@@ -50,19 +65,6 @@
           </router-link>
         </td>
         <td>{{ events.notAssigned }}</td>
-      </tr>
-      <tr>
-        <td>
-          <router-link
-            :to="{
-              name: 'EventStatisticDetail',
-              params: { statistic: completed },
-            }"
-          >
-            Events Completed:
-          </router-link>
-        </td>
-        <td>{{ events.completed }}</td>
       </tr>
       <tr>
         <td>
@@ -159,7 +161,8 @@ export default {
       assigned: "assigned",
       notAssigned: "not_assigned",
       completed: "completed",
-      notCompleted: "not_completed",
+      active: "active",
+      inactive: "inactive",
       dueToday: "due_today",
       dueThisWeek: "due_this_week",
       dueNextWeek: "due_next_week",
