@@ -52,8 +52,6 @@
     </div>
   
     <div class="event-list">
-    <!--EventCard v-for="event in events" :key="event.id" :event="event" /-->
-    <!--EventIndexDetail :events="events" /-->
       <button id="button-as-link" @click="requestIndexDetail">
         <u>Detail for Edit/Delete</u>
       </button>
@@ -70,7 +68,7 @@
               v-for="event in events"
               :key="event.id"
               :event="event"
-              :class="duePastDue(event)"
+              :class="duePastDueOrInactive(event)"
               @dblclick="editEvent(event)"
             />
           </div>
@@ -103,7 +101,7 @@
               v-for="event in filteredResults"
               :key="event.id"
               :event="event"
-              class="event"
+              class="card"
               @dblclick="editEvent(event)"
             />
             <br />
@@ -197,13 +195,23 @@ export default {
         alert("There was an error send emails to assignees")
       }
     },
-    duePastDue(e) {
+    duePastDueOrInactive(e) {
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
-      return e.status == 'active' && e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
+      if (e.status == 'active') {
+        if (e.action_due_date < formatDateToday ){
+          return 'event-pastdue'
+        } else {
+          return 'card'
+        }
+      } else {
+        return 'event-inactive'
+      }
+      //e.status == 'inactive' ? 'event-inactive' : 'event'
+      //console.log("RETURN: ", e.status)
+      //return e.status
     },
     inactive(e) {
-      console.log("Inactive@@@")
       return e.status == 'inactive'
     },
     requestIndexDetail() {
@@ -306,74 +314,12 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 }
-.event {
-  border: 1px solid #ccc;
-  background: #41b883;
-  padding: 1rem;
-  padding-top: 0em;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
-  cursor: pointer;
-}
-.event-inactive {
-  border: 1px solid #ccc;
-  background: red;
-  padding: 1rem;
-  padding-top: 0em;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
-  cursor: pointer;
-}
-.event-link {
-  border: 1px solid #ccc;
-  background: #41b883;
-  padding: 1rem;
-  padding-top: 0em;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
-  cursor: pointer;
-}
-#p-informational {
-  font-weight: bold;
-  font-size: 1.25rem;
-}
 i {
   position: absolute;
   bottom: 10px;
   right: 10px;
   color: #fff;
   cursor: pointer;
-}
-.legend {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 1rem;
-}
-.complete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #35495e;
-}
-.is-active {
-  background: #41b882;
-  color: #000;
-}
-.incomplete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #41b882;
-}
-.is-inactive {
-  background: #35495e;
-  color: #fff;
-}
-.is-complete-for-link {
-  color: #41b883;
 }
 select {
   border-color: darkgreen;

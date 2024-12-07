@@ -208,11 +208,4 @@ tr {
   line-height: 0.5 !important;
 }
 */
-.h2-status {
-  text-decoration-line: underline;
-}
-.h2-status-category {
-  text-align: right;
-  font-size: 1.3rem;
-}
 </style>

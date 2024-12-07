@@ -19,7 +19,7 @@
           v-for="event in events"
           :key="event.id"
           :event="event"
-          :class="duePastDue(event)"
+          :class="duePastDueOrInactive(event)"
           @dblclick="editEvent(event)"
         />
       </div>
@@ -113,10 +113,18 @@ export default {
     editEvent(event) {
       this.$router.push({ name: 'EventEdit', params: { id: `${event.id}` } });
     },
-    duePastDue(e) {
+    duePastDueOrInactive(e) {
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
-      return e.status == 'active' && e.action_due_date > formatDateToday ? 'event' : 'event-inactive'
+      if (e.status == 'active') {
+        if (e.action_due_date < formatDateToday ){
+          return 'event-pastdue'
+        } else {
+          return 'event'
+        }
+      } else {
+        return 'event-inactive'
+      }
     },
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
@@ -163,10 +171,6 @@ export default {
   position: relative;
   cursor: pointer;
 }
-#p-informational {
-  font-weight: bold;
-  font-size: 1.25rem;
-}
 i {
   position: absolute;
   bottom: 10px;
@@ -178,29 +182,6 @@ i {
   display: flex;
   justify-content: space-around;
   margin-bottom: 1rem;
-}
-.complete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #35495e;
-}
-.is-active {
-  background: #41b882;
-  color: #000;
-}
-.incomplete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #41b882;
-}
-.is-inactive {
-  background: #35495e;
-  color: #fff;
-}
-.is-complete-for-link {
-  color: #41b883;
 }
 select {
   border-color: darkgreen;

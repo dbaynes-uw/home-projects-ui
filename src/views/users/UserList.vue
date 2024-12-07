@@ -122,25 +122,7 @@ i {
   justify-content: space-around;
   margin-bottom: 1rem;
 }
-.complete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #35495e;
-}
-.incomplete-box {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #41b882;
-}
-.is-complete {
-  background: #35495e;
-  color: #fff;
-}
-.is-complete-for-link {
-  color: #41b883;
-}
+
 select {
   border-color: darkgreen;
 }
