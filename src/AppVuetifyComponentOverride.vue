@@ -1,4 +1,3 @@
-
 <script setup>
 </script>
 <template>
@@ -6,41 +5,37 @@
   <div id="nav">
     <v-locale-provider rtl>
       <v-app v-if="this.$route.name == 'home'">
-      <v-app-bar color="teal-darken-2">
-        <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
-      </v-app-bar>
-      <span id="content-margin">
-        <router-view></router-view>
-      </span>
+        <v-app-bar color="teal-darken-2">
+          <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
+        </v-app-bar>
+        <span id="content-margin">
+          <router-view></router-view>
+        </span>
       </v-app>
       <v-app v-else-if="this.$route.name == 'Login'">
-      <v-app-bar color="teal-darken-2">
-        <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
-      </v-app-bar>
-      <span id="content-margin">
-        <router-view></router-view>
-      </span>
+        <v-app-bar color="teal-darken-2">
+          <p>&nbsp; &nbsp;{{ this.onlineStatus == true ? "Online" : "Offline" }}&nbsp;</p>
+        </v-app-bar>
+        <span id="content-margin">
+          <router-view></router-view>
+        </span>
       </v-app>
       <!-- Good stuff Starts Here -->
-      <v-app v-else>     
-        <div style="background-color: #d3d3d340; text-align: left; width:100%;font-size: 1.5rem;">
-          <b>Home Projects</b>
-        </div>
-        <div id="menu-dropdown" style="width: 10%; height: 10%; background-color: '#41b8835';">
+      <v-app v-else>
+        <!--div-->
+        <div style="height: 1.75rem;font-weight: bold; font-family: system-ui; background-color: #d3d3d338;">Home Projects</div>
+        <div style="width:2rem;"> <!--style="background-color: #41b88352; height: 10%;"-->
           <!--v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y -->
-          <v-menu :link="links" offset-y>          
+          <v-menu :link="links" offset-y >          
             <template v-slot:activator="{ props }">
-              <!-- style="font-weight: bold; color: #000; font-family: sans-serif"-->
               <v-select
                 v-model="menu"
-                id="menu-dropdown"
                 :items="links"
                 v-bind="props"
-                style="font-weight: bold; color: #000; font-family: system-ui;" 
-              > 
-              <!--width: 15%-->               
+                style="position: relative; left: 0.5rem;font-weight: bold; color: #000; font-family: system-ui"
+              >                
               </v-select>
-            </template>  
+            </template>
             <v-list>
               <v-card
                 flat
@@ -88,7 +83,7 @@
           </v-layout>
         </v-footer>
       </v-app>
-    </v-locale-provider>      
+    </v-locale-provider>
   </div>
 </template>
 <script>
@@ -172,22 +167,12 @@ export default {
           title: "SignOut",
         },
       ],
-      menu: "...",
+      menu: "|||",
     };
   },
 }
 </script>
 <style scoped>
-#menu-dropdown {
-  background-color: red;
-  text-align: right;
-}
-.v-select--selected >>> .v-locale--is-ltr {
-  direction: rtl;
-}
-.v-locale--is-rtl {
-  direction: rtl !important;
-}
 #tool-bar-title {
   flex: .7;
   margin-inline-start: 2px;
