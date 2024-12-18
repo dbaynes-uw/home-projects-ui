@@ -21,8 +21,8 @@
     </v-app>
     <!-- Good stuff Starts Here -->
     <v-app v-else>
-      <!--div-->
-      <div style="width: 12rem;"> <!--style="background-color: #41b88352; height: 10%;"-->
+      <div class="header-base">
+      <div style="width: 8rem; height: 3.1rem;"> <!--style="background-color: #41b88352; height: 10%;"-->
         <!--v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y -->
         <v-menu :link="links" offset-y >          
           <template v-slot:activator="{ props }">
@@ -38,8 +38,8 @@
           <v-list>
             <v-card
               flat
-              width="100%"
-              height="100%"
+              width="10rem"
+              height="10rem"
               :style="{
                 backgroundColor: 'transparent',
                 position: 'absolute', top: '0px',
@@ -57,6 +57,8 @@
             </v-list-item>
           </v-list>
         </v-menu>
+      </div>
+      <h1 style="color: #555151;">&nbsp;Home Projects</h1>
       </div>
       <span>
         <router-view></router-view>
@@ -165,7 +167,7 @@ export default {
           title: "SignOut",
         },
       ],
-      menu: "Menu Home Projects",
+      menu: "Menu",
     };
   },
 }

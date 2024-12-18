@@ -1,3 +1,13 @@
+.header-base {
+  display: flex;
+  /*height: 3.25rem;*/
+  background-color: #d3d3d338;
+  border-style: solid;
+  border-top-color: #d3d3d338;
+  border-left-color: #d3d3d338;
+  border-right-color: #d3d3d338;
+  border-bottom-color: #d3d3d338;
+}
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -849,7 +849,6 @@ export default new Vuex.Store({
         });
     },
     async fetchProductsByLocation({ commit }, products_by_location) {
-      console.log("ES - Products by Location: ", products_by_location )
       EventService.getProductsByLocation(products_by_location)
         .then((response) => {
           // No longer needed:
@@ -880,7 +879,6 @@ export default new Vuex.Store({
     async putProducts({ commit }, products) {
       EventService.putProducts(products)
         .then(() => {
-          console.log("STORE - update products: ")
           commit("SET_PRODUCTS", products);
         })
         .catch((error) => {
@@ -891,7 +889,6 @@ export default new Vuex.Store({
     async putProductsVendors({ commit }, products_vendors) {
       EventService.putVendorsProducts(products_vendors)
         .then(() => {
-          console.log("STORE - update products_vendors: ")
           commit("SET_PRODUCTS_VENDORS", products_vendors);
         })
         .catch((error) => {

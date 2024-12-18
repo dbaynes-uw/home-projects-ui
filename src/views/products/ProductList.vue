@@ -31,26 +31,63 @@
       </h2>
       <v-container id="form-container">
         <div class="column" id="group" v-for="(product, group_index) in this.resultSet" :key="group_index">
+          <!--Prod ID: {{ product.id }} -- VID: {{ product.vendor_id }} -- {{ product.product_name }} -- {{ product.active }} -- {{ showShoppingList }}-->
           <!-- Toggle by Product -->
-          <span v-if="group_index == 0">
-             <h2>{{ product.product_name }}</h2>
-          </span>
-          <span v-if="group_index > 0">
+          <!--span v-if="group_index == 0">
+             <h2>{{ resultSet[0].product_name }}</h2>
+          </~span>
+          <span-- v-if="group_index > 0">
             <span v-if="product.product_name != resultSet[group_index-1].product_name">
-              <h2>{{ product.product_name }}</h2>
+              <h2>{{ resultSet[group_index-1].product_name }}</h2>
             </span>
-          </span>
+          </span-->
+
           <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
-            <span v-if="product.vendor_id == vendor.id">
-              <h2>
-                <input
-                  type="checkbox"
-                  :checked="product.active"
-                  @change="isChecked(product, product.active)"
-                  class="field"
-                />
-                <label class="checkbox-right">{{ vendor.location }} - {{ vendor.vendor_name }}</label>
-              </h2>
+            <span v-if="showShoppingList == true">
+              <span v-if="product.vendor_id == vendor.id ">
+                <span v-if="product.active == true">
+                  <!--span v-if="group_index == 0">
+                    <h2>{{ resultSet[0].product_name }}</h2>
+                  </!--span>
+                  <span-- v-if="group_index > 0">
+                    <span v-if="product.product_name != resultSet[group_index-1].product_name">
+                      <h2>{{ resultSet[group_index-1].product_name }}</h2>
+                    </span>
+                  </span-->
+                  <h2>{{ resultSet[group_index].product_name }}</h2>
+                  <h2>
+                    <input
+                      type="checkbox"
+                      :checked="product.active"
+                      @change="isChecked(product, product.active)"
+                      class="field"
+                    />
+                    <label class="checkbox-right">{{ vendor.location }} - {{ vendor.vendor_name }}</label>
+                  </h2>
+                </span>
+              </span>
+            </span>
+            <span v-if="showShoppingList != true">
+              <span v-if="product.vendor_id == vendor.id ">
+                <!--span v-if="group_index == 0">
+                  <h2>{{ resultSet[0].product_name }}</h2>
+                </!--span>
+                <span-- v-if="group_index > 0">
+                  <span v-if="product.product_name != resultSet[group_index-1].product_name">
+                    <h2>{{ resultSet[group_index-1].product_name }}</h2>
+                  </span>
+                </span-->
+                <h2>{{ resultSet[group_index].product_name }}</h2>
+                <h2>
+                  <input
+                    type="checkbox"
+                    :checked="product.active"
+                    @change="isChecked(product, product.active)"
+                    class="field"
+                  />
+                  <label class="checkbox-right">{{ vendor.location }} - {{ vendor.vendor_name }}</label>
+                </h2>
+              </span>
             </span>
           </div>
         </div>
@@ -74,14 +111,14 @@ export default {
       isProductToggled: null,
     };
   },
-  async mounted() {
-    this.shoppingListDisplay(this.showShoppingList)
-  },
+  async mounted() {},
   created() {
     this.$store.dispatch("fetchProducts");
     this.$store.dispatch("fetchShoppingList");
     this.$store.dispatch("fetchVendors");
+    this.$store.dispatch("fetchVendorsProducts");
     this.resultSet = this.products;
+    this.shoppingListDisplay(this.showShoppingList)
   },
   computed: {
     products() {
@@ -96,17 +133,22 @@ export default {
     vendors_products() {
       return this.$store.state.vendors_products;
     },
+
   },
   methods: {
     onSubmit() {
+
       const sub_products = {
         ...this.resultSet,
         id: uuidv4(),
         created_by: this.$store.state.user.resource_owner.email,
       };   
       if (this.$store.dispatch("putProducts", sub_products, {params: { products: sub_products }} )) {
-        alert("Products List Updated Successfully")
+        //FETCH SHOPPING LIST???
+        this.$store.dispatch("fetchShoppingList");
+        alert("Products List Updated Successfully - RS: " + this.resultSet[0].product_name + ' - ' + this.resultSet[0].active)
         location.reload();
+        //XXXXthis.$router.push({ name: 'ProductLocationsList'})
       } else {
         alert("Error adding Products in Products View ");
       }
@@ -122,8 +164,10 @@ export default {
       } else {
         this.resultSet = this.products
       }
+      this.resultSet = this.products
       return this.showShoppingList
     },
+    
     toggleProduct(index) {
       this.isProductToggled = index === this.isProductToggled? null : index
     }    

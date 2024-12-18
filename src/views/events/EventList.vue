@@ -158,6 +158,7 @@ export default {
     };
   },
   async mounted() {
+    // FOR URL:
     var work_url = ""
     if (window.location.port == "8080") {
       // or: "http://davids-macbook-pro.local:3000/api/v1/";
