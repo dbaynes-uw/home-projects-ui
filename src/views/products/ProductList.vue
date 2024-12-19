@@ -30,30 +30,11 @@
         <u @click='shoppingListDisplay(showShoppingList)'>Toggle Shopping List</u>
       </h2>
       <v-container id="form-container">
-        <div class="column" id="group" v-for="(product, group_index) in this.resultSet" :key="group_index">
-          <!--Prod ID: {{ product.id }} -- VID: {{ product.vendor_id }} -- {{ product.product_name }} -- {{ product.active }} -- {{ showShoppingList }}-->
-          <!-- Toggle by Product -->
-          <!--span v-if="group_index == 0">
-             <h2>{{ resultSet[0].product_name }}</h2>
-          </~span>
-          <span-- v-if="group_index > 0">
-            <span v-if="product.product_name != resultSet[group_index-1].product_name">
-              <h2>{{ resultSet[group_index-1].product_name }}</h2>
-            </span>
-          </span-->
-
-          <div class="vendor-name" v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
+        <div id="group" v-for="(product, group_index) in this.resultSet" :key="group_index">
+          <div v-for="(vendor, vendor_index) in this.vendors" :key="vendor_index">
             <span v-if="showShoppingList == true">
               <span v-if="product.vendor_id == vendor.id ">
                 <span v-if="product.active == true">
-                  <!--span v-if="group_index == 0">
-                    <h2>{{ resultSet[0].product_name }}</h2>
-                  </!--span>
-                  <span-- v-if="group_index > 0">
-                    <span v-if="product.product_name != resultSet[group_index-1].product_name">
-                      <h2>{{ resultSet[group_index-1].product_name }}</h2>
-                    </span>
-                  </span-->
                   <h2>{{ resultSet[group_index].product_name }}</h2>
                   <h2>
                     <input
@@ -67,7 +48,7 @@
                 </span>
               </span>
             </span>
-            <span v-if="showShoppingList != true">
+            <span v-else>
               <span v-if="product.vendor_id == vendor.id ">
                 <!--span v-if="group_index == 0">
                   <h2>{{ resultSet[0].product_name }}</h2>
@@ -137,7 +118,6 @@ export default {
   },
   methods: {
     onSubmit() {
-
       const sub_products = {
         ...this.resultSet,
         id: uuidv4(),
