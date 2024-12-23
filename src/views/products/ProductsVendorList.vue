@@ -29,10 +29,16 @@
       </h2>
       <v-container id="form-container">
         <div class="row">
-          <div class="column" id="group" v-for="(vendor, group_index) in vendors_products" :key="group_index">
+          <span class="column" id="group" v-for="(vendor, group_index) in vendors_products" :key="group_index">
             <!-- Toggle by Vendor -->
-            <h1 @click='toggleVendor(group_index)'><u><b>{{ vendor.vendor_name }}</b><small style="font-size: 1rem;"> ({{ vendor.location }})</small></u></h1>
-            <div v-show="isProductToggled === group_index">
+            <br/>
+             <span v-if="showVendorDisplay(showVendorName, group_index)">
+              <h1 @click='toggleVendor(group_index)'><u>{{ vendor.vendor_name }}</u></h1>
+            </span>
+            <span v-else>
+              <u><small style="font-size: 1rem;"> ({{ vendor.location }} - {{ vendor.vendor_name }})</small></u>    
+            </span>
+            <div> <!-- v-show="isProductToggled === group_index"-->
               <br/>
               <div v-for="(item, product_index) in vendor.products" :key="product_index">        
                 <span v-if="this.showShoppingList == true">
@@ -59,7 +65,7 @@
                 </span>
               </div>
             </div>
-          </div>
+          </span>
         </div>
         <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
       </v-container>
@@ -75,6 +81,7 @@ export default {
   data() {
     return {
       resultSet: [],
+      showVendorName: true,
       showShoppingList: true,
       showFlag: false,
       vendors: {
@@ -112,6 +119,19 @@ export default {
         location.reload();
       } else {
         alert("Error adding Products in ProductLocaionList View ");
+      }
+    },
+    showVendorDisplay(showVendorName, index) {
+      if (index == 0){
+        return showVendorName = true
+      }
+      if (!this.vendors_products[index].vendor_name) {
+        return true //SHOW VENDOR NAME
+      }
+      if ( this.vendors_products[index].vendor_name == this.vendors_products[index-1].vendor_name) {
+        return showVendorName = false
+      } else {
+        return showVendorName = true
       }
     },
     isChecked(item, active) {
