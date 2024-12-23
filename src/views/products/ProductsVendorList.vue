@@ -31,15 +31,16 @@
         <div class="row">
           <span class="column" id="group" v-for="(vendor, group_index) in vendors_products" :key="group_index">
             <!-- Toggle by Vendor -->
-            <br/>
              <span v-if="showVendorDisplay(showVendorName, group_index)">
               <h1 @click='toggleVendor(group_index)'><u>{{ vendor.vendor_name }}</u></h1>
-            </span>
-            <span v-else>
-              <u><small style="font-size: 1rem;"> ({{ vendor.location }} - {{ vendor.vendor_name }})</small></u>    
-            </span>
-            <div> <!-- v-show="isProductToggled === group_index"-->
               <br/>
+            </span>
+            <span>
+              <u><small style="font-size: 1rem;"> <b>({{ vendor.location }}- {{ vendor.vendor_name }})</b> </small></u>    
+              <br/>
+            </span>
+            <br/>
+            <div> <!-- v-show="isProductToggled === group_index"-->
               <div v-for="(item, product_index) in vendor.products" :key="product_index">        
                 <span v-if="this.showShoppingList == true">
                   <span v-if="item.active == true">
