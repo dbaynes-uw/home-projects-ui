@@ -36,7 +36,7 @@
               <br/>
             </span>
             <span>
-              <u><small style="font-size: 1rem;"> <b>({{ vendor.location }}- {{ vendor.vendor_name }})</b> </small></u>    
+              <u><small style="font-size: 1rem;"> <b>({{ vendor.location }} - {{ vendor.vendor_name }})</b> </small></u>    
               <br/>
             </span>
             <br/>
