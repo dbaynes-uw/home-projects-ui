@@ -58,7 +58,9 @@
           </v-list>
         </v-menu>
       </div>
-      <h1 style="color: #555151;">&nbsp;Home Projects</h1>
+        <h1>&nbsp;
+          <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
+        </h1>
       </div>
       <span>
         <router-view></router-view>

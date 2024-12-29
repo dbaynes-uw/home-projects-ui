@@ -23,6 +23,7 @@ export default new Vuex.Store({
     book: [],
     books: [],
     events: [],
+    eventsRequest: [],
     eventsInactive: [],
     eventStatistics: [],
     eventsPastDue: [],
@@ -84,6 +85,9 @@ export default new Vuex.Store({
     },
     SET_EVENTS(state, events) {
       state.events = events;
+    },
+    SET_EVENTS_REQUEST(state, request) {
+      state.eventsRequest = request;
     },
     SET_EVENT_STATISTICS(state, eventStatistics) {
       state.eventStatistics = eventStatistics;
@@ -458,6 +462,7 @@ export default new Vuex.Store({
           // No longer needed:
           //commit("RESET_STATE", response.data);
           commit("SET_EVENTS", response.data);
+          commit("SET_EVENTS_REQUEST", '');
           return response.data;
         })
         //.catch((error) => {
@@ -507,9 +512,29 @@ export default new Vuex.Store({
     async eventsDueBy({ commit }, form) {
       EventService.getEventsDueBy(form)
         .then((response) => {
-      commit("SET_EVENTS", response.data);
-      return response.data;
-      })
+          //const dueBy = response.config.url.split('?')
+          //console.log("Response dueBY: ", dueBy[1])
+          commit("SET_EVENTS_REQUEST", 'DueBy');
+          commit("SET_EVENTS", response.data);
+          //const q = response.config.url.split('=')
+          //console.log("Reponse + Q: ", response.data + q[1])
+          //console.log("Store Response Request responseURL : ", response.request.responseURL)
+          //console.log("Store Response Data : ", response.data)
+          return response.data;
+        })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    async eventsLocations({ commit }, form) {
+      EventService.getEventsLocations(form)
+        .then((response) => {
+          //const location = response.config.url.split('?')
+          //console.log("Response Location: ", location[1])
+          commit("SET_EVENTS_REQUEST", 'Location');
+          commit("SET_EVENTS", response.data);
+          return response.data;
+          })
       .catch((error) => {
         console.log(error);
       });
@@ -518,6 +543,7 @@ export default new Vuex.Store({
       EventService.getEventsPastDue(dueBy)
         .then((response) => {
       commit("SET_EVENTS", response.data);
+      commit("SET_EVENTS_REQUEST", '');
       return response.data;
       })
       .catch((error) => {
@@ -528,6 +554,7 @@ export default new Vuex.Store({
       EventService.getEventsInactive(inactive)
         .then((response) => {
       commit("SET_EVENTS", response.data);
+      commit("SET_EVENTS_REQUEST", '');
       return response.data;
       })
       .catch((error) => {

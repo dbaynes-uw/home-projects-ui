@@ -1,7 +1,7 @@
 <template>
-  <div class="div-select">
+  <span class="div-select">
     Due in next:
-    <select class="border-select" @change="eventsDueBy($event)">
+    <select v-model="selectedDueByValue" class="border-select-event" @change="eventsDueBy($event)">
       <option></option>
       <option>7</option>
       <option>10</option>
@@ -15,14 +15,25 @@
       <option>360</option>
     </select>
     Days
-  </div>
+  </span>
 </template>
-<script>
+<script setup>
 import { mapActions } from "vuex";
+import { defineModel } from 'vue';
+const selectedDueByValue = defineModel('selectedDueByValue');
+//watch(() => {
+//  //if (selectedDueByValue != null){
+//  //  resetValue()
+//  //}
+//}),
+//function resetValue() {
+//  selectedDueByValue.value = ''; // Or your default value
+//}
+</script>
+<script>
 export default {
   name: "EventsDueBy",
   methods: mapActions(["eventsDueBy"]),
 };
+
 </script>
-<style>
-</style>

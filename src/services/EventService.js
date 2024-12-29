@@ -74,11 +74,20 @@ export default {
     this.init();
     const dueFilter =
       form.target.options[form.target.options.selectedIndex].innerText;
+    //form.target.options[form.target.options.selectedIndex].innerText = null
+    form.target.options.selectedIndex = 0
     return axios.get(api_url + "events/" + `?due_by=${dueFilter}`)
   },
   getEventsInactive() {
     this.init();
     return axios.get(api_url + "events/" + `?inactive=true`)
+  },
+  getEventsLocations(form) {
+    this.init();
+    const location =
+      form.target.options[form.target.options.selectedIndex].innerText;
+    form.target.options.selectedIndex = 0
+    return axios.get(api_url + "events/" + `?location=${location}`)
   },
   getEventsPastDue() {
     this.init();

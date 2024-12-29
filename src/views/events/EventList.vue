@@ -17,7 +17,7 @@
         </li>
         <li>
           <h1>
-            <EventsPastDue />
+            <EventsPastDue/>
           </h1>
         </li>
         <li>
@@ -27,9 +27,12 @@
         </li>
       </ul>
     </div>
-    <h1>
-      <EventsDueBy />
-    </h1>
+    <ul>
+    <li><EventsDueBy v-model:selectedDueByValue="parentDueBy"/>
+      &nbsp;
+      &nbsp;
+      <EventsLocations v-model:selectedLocationValue="parentLocation"/></li>
+    </ul>
     <span v-if="$store.state.user.resource_owner.email.toLowerCase().includes('baynes')">
       <br/>
       <button id="button-as-link-wide" @click="notifyEventsDue"><u>Send Events Due Notification</u></button>  
@@ -57,7 +60,13 @@
       </button>
       <span v-if="filteredResults.length == 0">
         <span v-if="requestIndexDetailFlag == true">
-          <p id="p-informational">Number of events returned: {{ events.length }}</p>
+          <span v-if="events_request == 'DueBy'">
+            <p id="p-informational">{{ events.length }} events Due in the next {{ parentDueBy }} Days.</p>
+          </span>
+          <span v-if="events_request == 'Location'">
+            <p id="p-informational">{{ events.length }} Active {{ parentLocation }} events </p>
+          </span>
+          <br/>
           <div class="legend">
             <span><b>Double click to mark as TBD/Done or Active/Inactive.</b></span>
             <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -88,6 +97,7 @@
           <EventIndex :events="events" />
         </span>
       </span>
+  
       <span v-if="filteredResults.length > 0">
         <span v-if="requestIndexDetailFlag == true">
           <p id="p-informational">Number of events returned: {{ filteredResults.length }}</p>
@@ -117,13 +127,17 @@
 
 <script setup>
 //import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { ref } from 'vue';
 import EventCard from '@/components/events/EventCard'
 import EventsDueBy from "@/components/events/EventsDueBy.vue";
 import EventsInactive from "@/components/events/EventsInactive.vue";
+import EventsLocations from "@/components/events/EventsLocations.vue";
 import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 //import EventSearchResults from "@/components/events/EventSearchResults.vue";
 import axios from "axios";
+const parentDueBy = ref('');
+const parentLocation = ref('');
 </script>
 <script>
 // @ is an alias to /src
@@ -137,6 +151,7 @@ export default {
     //EventSearchResults,
     EventsDueBy,
     EventsInactive,
+    EventsLocations,
     EventsPastDue,
   },
   props: ["id", "pastDue", "eventCard", "filteredResults[]"],
@@ -181,6 +196,9 @@ export default {
     events() {
       return this.$store.state.events;
     },
+    events_request() {
+      return this.$store.state.eventsRequest
+    }
   },
   methods: {
     async notifyEventsDue(){

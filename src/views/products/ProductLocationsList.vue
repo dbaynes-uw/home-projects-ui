@@ -127,7 +127,6 @@ export default {
       passedMessage: '',
       isLocationToggled: null,
       isVendorToggled: true,
-      home_safe: false,
       toggleArr: [],
       isFormValid: false,
       isAuthorValid: false,
