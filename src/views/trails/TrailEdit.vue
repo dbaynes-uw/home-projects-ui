@@ -1,44 +1,43 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="trailEdit">
+    <br/>
     <h2>Edit Trail {{ trail.trail_head_name }}</h2>
+    <button id="link-as-button">
+      <router-link  :to="{ name: 'TrailList' }">Back to Trail List</router-link>
+    </button>
     <form class="add-form" @submit.prevent="updateTrail">
       <div class="form-container">
-        <label>Head Name:</label>
-        <input
-          type="text"
-          class="text-style"
+        <v-text-field
+          label="Trail Head"
           v-model="trail.trail_head_name"
           required
         />
-        <label>Location:</label>
-        <input
-          type="text"
-          class="text-style"
+        <v-text-field
+          label="Trail Head"
           v-model="trail.location"
           required
         />
-        <label>Distance:</label>
-        <input type="text" class="text-style" v-model="trail.distance" />
-        <label for="date_last_hiked">Date Last Hiked:</label>
-        <input
-          type="date"
-          class="text-style"
-          v-model="trail.date_last_hiked"
-          required
+        <v-text-field
+          label="Distance"
+          v-model="trail.distance"
         />
-        <label for="url_to_map">URL to Map:</label>
-        <input type="url"
-          class="text-style"
+        <v-text-field
+          label="Click calendar Date"
+          v-model="trail.date_last_hiked"
+          type="date"
+        />
+        <v-text-field
+          label="URL to Trail Map"
           pattern="https://.*"
           v-model="trail.url_to_map"
+          type="url"
         />
-        <label>Notes:</label>
-        <textarea
+        <v-textarea
+          label="Notes"
           v-model="trail.notes"
           rows="3"
           cols="40"
-          class="textarea-style"
         />
         <br/>
         <button class="button" id="link-as-button" type="submit">

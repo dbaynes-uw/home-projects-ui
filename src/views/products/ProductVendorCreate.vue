@@ -24,15 +24,15 @@
     </ul> 
   </v-card>
   <v-card-text>
-    <v-form id="isFormValid" @submit.prevent="onSubmit" >
+    <v-form @submit.prevent="onSubmit" >
       <v-container id="form-container">
-        <br/>
-        <label class="label-for-select">Vendor Location:</label>
-        <select
-          id="select-box"
-          class="text-style"
+
+        <v-select
+          label="Vendor Location"
+          class="select-label"
+          :items="vendorsLocationsGroup.vendorsLocationsGroup"
+          :rules="[requiredLocation]"
           v-model="vendor.location"
-          required
         >
           <option
             v-for="option in vendorsLocationsGroup.vendorsLocationsGroup"
@@ -43,14 +43,14 @@
           >
             {{ option }}
           </option>
-        </select>
-        <br />
-        <label class="label-for-select">Vendor Name:</label>
-        <select
-          id="select-box"
-          class="text-style"
+        </v-select>
+
+        <v-select
+          label="Vendor Name"
+          :items="vendorsGroup.vendorsGroup"
+          :rules="[requiredVendorName]"
+          class="select-label"
           v-model="vendor.vendor_name"
-          required
         >
           <option
             v-for="option in vendorsGroup.vendorsGroup"
@@ -61,45 +61,50 @@
           >
             {{ option }}
           </option>
-        </select>
+        </v-select>
         <br/>
         <span v-if="vendor.vendor_name == 'Other'">
           <v-text-field
-          v-model="vendor.other_vendor_name"
-          label="Other Vendor Name"
+            id="customer-input-field"
+            v-model="vendor.other_vendor_name"
+            class="select-label"
+            label="Other Vendor Name"
           >
             <template v-slot:prepend-inner>
               <v-icon class="icon-css">mdi-magnify</v-icon>
             </template>
           </v-text-field>
         </span>
-        <label class="label-for-select">Product:</label>
-        <select
-          id="select-box"
-          class="text-style"
+        <v-select
+          label="Vendor Product"
+          :items="vendorsProductsGroup.vendorsProductsGroup"
+          :rules="[requiredProductName]"
+          class="select-label"
           v-model="vendor.product_name"
         >
           <option
-            v-for="product in vendorsProductsGroup.vendorsProductsGroup"
-            :value="product"
-            :key="product"
+            v-for="option in vendorsProductsGroup.vendorsProductsGroup"
+            :value="option"
+            :key="option"
             id="select-box"
-            :selected="product === vendor.product_name"
+            :selected="option === vendor.product_name"
           >
-            {{ product }}
+            {{ option }}
           </option>
-        </select>
+        </v-select>
         <span v-if="vendor.product_name == 'Other'">
-          <br/><br/>
           <v-text-field
-          v-model="vendor.other_product_name"
-          label="Other Product Name"
+            v-model="vendor.other_product_name"
+            id="custom-input-field"
+            label="Other Product Name"
+            :rules="[requiredOtherProductName]"
+            class="select-label"
           >
             <template v-slot:prepend-inner>
               <v-icon class="icon-css">mdi-magnify</v-icon>
             </template>
           </v-text-field>
-        </span>
+        </span>   
         <br/>
         <br/>
         <br/>
@@ -142,25 +147,89 @@ export default {
         other_product_name: '',
       },
       isFormValid: false,
+      isLocationValid: false,
       isVendorNameValid: false,
-      isVendorLocationValid: false,
+      isProductNameValid: false,
+      isOtherProductNameValid: false,
       urlMaxLength: 255,
-      num: 1,
     };
   },
   methods: {
     onSubmit() {
-      const vendor = {
-        ...this.vendor,
-        id: uuidv4(),
-        created_by: this.$store.state.user.resource_owner.email,
-      };
-      if (this.$store.dispatch("createVendor", vendor)) {
-        alert("Product " + vendor.product_name + "was added for " + vendor.vendor_name);
+      this.checkValidations();
+      console.log("Is Form Valid? ", this.isFormValid)
+      if (this.isFormValid) {
+        const vendor = {
+          ...this.vendor,
+          id: uuidv4(),
+          created_by: this.$store.state.user.resource_owner.email,
+        };
+        if (this.$store.dispatch("createVendor", vendor)) {
+          alert("Product " + vendor.product_name + "was added for " + vendor.vendor_name);
+        } else {
+          alert("Error adding Vendor " + vendor.vendor_name);
+        }
       } else {
-        alert("Error adding Vendor " + vendor.vendor_name);
+        alert("Please correct required fields and resubmit");
+      }  
+    },
+    requiredLocation: function (value) {
+      if (value) {
+          this.isLocationValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isLocationValid = false
+          return 'Please enter Location';
       }
     },
+    requiredVendorName: function (value) {
+      if (value) {
+          this.isVendorNameValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isVendorNameValid = false
+          return 'Please enter Vendor Name';
+      }
+    },
+    requiredProductName: function (value) {
+      if (value) {
+          this.isProductNameValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isProductNameValid = false
+          return 'Please enter Product Name';
+      }
+    },
+    requiredOtherProductName: function (value) {
+      console.log("Required Other Value: ", value)
+      if (value) {
+        if (this.isProductNameValid == true)
+          this.isOtherProductNameValid = true 
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isOtherProductNameValid = false
+          return 'Please enter Other Product Name';
+      }
+    },
+    checkValidations() {
+      console.log("Loc Validations: ", this.isLocationValid)
+      console.log("Name Validations: ", this.isVendorNameValid)
+      console.log("Prod Validations: ", this.isProductNameValid)
+      console.log("Oth Prod Validations: ", this.isOtherProductNameValid)
+      if (this.isLocationValid &&
+          this.isVendorNameValid &&
+          this.isProductNameValid &&
+          this.isOtherProductNameValid) {
+        this.isFormValid = true
+      } else {
+        this.isFormValid = false
+      }
+    }
+
   },
 }
 </script>

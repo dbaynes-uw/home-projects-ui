@@ -30,7 +30,6 @@ export default {
   },
   methods: {
     splitList(trailData, splitLength) {
-      console.log("SplitList: ", trailData.notes)
       return SplitStringService.splitList(trailData.notes, splitLength) 
     },
     formatYearDate(value) {

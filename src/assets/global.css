@@ -146,6 +146,23 @@
 #select-box-style {
   height: 140%
 }
+#custom-input-field{
+  border-style: solid;
+  border-color: darkgrey;
+  border-width: thin;
+  width: 45%;
+  height: 1.5rem;
+  min-width: 10rem;
+  /*position: relative;
+  left: 10%;
+  */
+}
+.select-label .v-label {
+  font-size: 1rem;
+}
+.custom-input-field::placeholder {
+  text-align: center;
+}
 #p-custom-u {
   text-decoration: underline;
   font-size: 1.25rem;
