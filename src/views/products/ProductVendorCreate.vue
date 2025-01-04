@@ -165,7 +165,11 @@ export default {
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createVendor", vendor)) {
-          alert("Product " + vendor.product_name + "was added for " + vendor.vendor_name);
+          if (vendor.product_name == 'Other') {
+            alert("Product " + vendor.other_product_name + " was added for " + vendor.vendor_name);
+          } else {
+            alert("Product " + vendor.product_name + " was added for " + vendor.vendor_name);
+          }
         } else {
           alert("Error adding Vendor " + vendor.vendor_name);
         }
@@ -195,7 +199,14 @@ export default {
     },
     requiredProductName: function (value) {
       if (value) {
-          this.isProductNameValid = true
+        if (value == 'Other')
+          {
+            this.isProductNameValid = true
+            this.isOtherProductNameValid = false
+          } else {
+            this.isProductNameValid = true
+            this.isOtherProductNameValid = true
+          }
           return true;
       } else {
           this.isFormValid = false
@@ -204,7 +215,6 @@ export default {
       }
     },
     requiredOtherProductName: function (value) {
-      console.log("Required Other Value: ", value)
       if (value) {
         if (this.isProductNameValid == true)
           this.isOtherProductNameValid = true 
@@ -216,10 +226,10 @@ export default {
       }
     },
     checkValidations() {
-      console.log("Loc Validations: ", this.isLocationValid)
-      console.log("Name Validations: ", this.isVendorNameValid)
-      console.log("Prod Validations: ", this.isProductNameValid)
-      console.log("Oth Prod Validations: ", this.isOtherProductNameValid)
+      //console.log("Loc Validations: ", this.isLocationValid)
+      //console.log("Name Validations: ", this.isVendorNameValid)
+      //console.log("Prod Validations: ", this.isProductNameValid)
+      //console.log("Oth Prod Validations: ", this.isOtherProductNameValid)
       if (this.isLocationValid &&
           this.isVendorNameValid &&
           this.isProductNameValid &&
