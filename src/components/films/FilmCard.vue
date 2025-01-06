@@ -12,7 +12,7 @@
         <li class="li-left">Date Released: {{ formatYearDate(film.date_released) }}</li>
         <li class="li-left">Date Watched: {{ formatYearDate(film.date_watched) }}</li>
         <li class="li-left">Film Rating: <b>{{ film.rating }}</b></li>
-        <li class="li-left">URL to Review: <b>{{ film.url_to_review }}</b></li>
+        <li class="li-left">URL to Review: <b> <a :href="film.url_to_review" target="_blank">Review</a></b></li>
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(film, this.splitLength)" :key="idx">{{ notes }}</b>
       </ul>

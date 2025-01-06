@@ -1,11 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <br/>
   <div class="edit">
     <h2>Edit Med</h2>
     <button id="link-as-button">
       <router-link  :to="{ name: 'MedList' }">Back to Med List</router-link>
     </button>
-    <form class="add-form" @submit.prevent="updateMed">
+    <br/>
+    <form class="card-display" @submit.prevent="updateMed">
       <div class="form-container">
         <p id="p-custom-left">Date of Occurrence: {{ formatStandardDateTime(med.date_of_occurrence)}}</p>
         <v-text-field

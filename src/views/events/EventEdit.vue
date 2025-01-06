@@ -1,11 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <br/>
   <div class="eventEdit">
     <h2>Edit Event {{ event.description }}</h2>
     <router-link :to="{ name: 'EventList' }">
       <h3>Back to Event List</h3>
     </router-link>
-    <form class="add-form" @submit.prevent="updateEvent">
+    <br/>
+    <form class="card-display" @submit.prevent="updateEvent">
       <div class="form-container">
         <v-text-field
           label="Event Name or Description"

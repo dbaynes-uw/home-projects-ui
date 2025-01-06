@@ -24,7 +24,7 @@
   </v-card>
   <br/>
   <div class="edit">
-    <form class="add-form" @submit.prevent="updateProduct">
+    <form class="card-display" @submit.prevent="updateProduct">
       <div class="form-container">
         <p id="p-custom-left">Vendor Location: {{ vendor.location }}</p>
         <p id="p-custom-left">Vendor Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ vendor.vendor_name }}</p>

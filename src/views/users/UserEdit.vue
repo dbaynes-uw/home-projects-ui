@@ -1,7 +1,7 @@
 <template>
   <div class="userEdit">
     <h2>Edit User {{ user.name }}</h2>
-    <form class="add-form" @submit.prevent="updateUser">
+    <form class="card-display" @submit.prevent="updateUser">
       <div class="form-container">
         <label>Name:</label>
         <input type="text" class="text-style" v-model="user.name" required />

@@ -24,7 +24,7 @@
   </v-card>
   <br/>
   <div class="edit">
-    <form class="add-form" @submit.prevent="updateVendor">
+    <form class="card-display" @submit.prevent="updateVendor">
       <div class="form-container">
         <v-text-field
           label="Location"

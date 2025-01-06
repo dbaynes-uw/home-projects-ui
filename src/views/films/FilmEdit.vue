@@ -5,7 +5,8 @@
     <router-link :to="{ name: 'FilmList' }">
       <h3>Back to Film List</h3>
     </router-link>
-    <form class="add-form" @submit.prevent="updateFilm">
+    <br/>
+    <form class="card-display" @submit.prevent="updateFilm">
       <div class="form-container">
         <v-text-field
           label="Film Title"

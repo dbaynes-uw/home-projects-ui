@@ -3,12 +3,13 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h3>Edit Golf Round  </h3>
-      <h2>Current User: {{ this.$store.state.user.resource_owner.id}}</h2>
+      <h4>Current User: {{ this.$store.state.user.resource_owner.email}}</h4>
       <router-link :to="{ name: 'GolfList' }">
         <b>Back to Golf Rounds</b>
       </router-link>
     </v-card-title>
-  </v-card>    
+  </v-card>  
+  <br/>  
   <v-form class="form-card-display" @submit.prevent="updateGolf">
     <div class="form-container">
       <v-text-field
@@ -21,188 +22,187 @@
         </template>
       </v-text-field>
       <v-text-field
-          v-model="golf.course_location"
-          :rules="[requiredCourseLocation]"
-          label="Course Location"
+        v-model="golf.course_location"
+        :rules="[requiredCourseLocation]"
+        label="Course Location"
+      >
+        <template v-slot:prepend-inner>
+          <v-icon class="icon-css">mdi-magnify</v-icon>
+        </template>
+      </v-text-field>
+      <v-text-field
+        label="Link to Site"
+        v-model="golf.url_to_course"
+        type="text"
+        :maxlength="urlMaxLength"
+      />
+      <span>
+        {{ urlMaxLength - golf.url_to_course.length }} / {{ urlMaxLength }}
+      </span>
+      <v-text-field
+        label="Date Round Played"
+        v-model="golf.date_played"
+        type="date"
+        :rules="[requiredDatePlayed]"
+      >
+        <template v-slot:prepend-inner>
+          <v-icon class="icon-css">mdi-calendar</v-icon>
+        </template>
+      </v-text-field>
+      <br/>
+      <label>Tees Played: &nbsp;&nbsp;</label>
+      <v-select
+        :items="color_tees_played"
+        v-model="golf.tees_played"
+        :rules="[requiredTeesPlayed]"
         >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-        <label>Reference</label>
-        <v-text-field
-          v-model="golf.url_to_course"
-          type="text"
-          :maxlength="urlMaxLength"
-          class="text-style"
-          placeholder="Link to Site"
-        />
-        <span>
-          {{ urlMaxLength - golf.url_to_course.length }} / {{ urlMaxLength }}
-        </span>
-        <v-text-field label="Date Round Played"
-          v-model="golf.date_played"
-          type="date"
-          :rules="[requiredDatePlayed]"
+        <option
+          v-for="option in color_tees_played"
+          :value="option"
+          :key="option"
+          :selected="option === golf.tees_played"
         >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <br/>
-        <label>Tees Played: &nbsp;&nbsp;</label>
-        <v-select
-          :items="color_tees_played"
-          v-model="golf.tees_played"
-          :rules="[requiredTeesPlayed]"
-          >
-          <option
-            v-for="option in color_tees_played"
-            :value="option"
-            :key="option"
-            :selected="option === golf.tees_played"
-          >
-            {{ option }}
-          </option>
-        </v-select>    
-        <h3>Totals</h3>
-        <h3>Par: {{ calculateTotalPar(golf) }}</h3>
-        <h3>Score: {{ calculateTotalScore(golf) }} </h3>
-        <h3>Putts: {{ calculateTotalPutts(golf) }} </h3>
-        <h3>Penalty: {{ calculateTotalPenalty(golf) }} </h3>
-        <br/>
-        <br/>
-        <h3>Front 9</h3>
-        <div class="g-container">
-          <label class="g-label">1</label>
-          <label class="g-label">2</label>
-          <label class="g-label">3</label>
-          <label class="g-label">4</label>
-          <label class="g-label">5</label>
-          <label class="g-label">6</label>
-          <label class="g-label">7</label>
-          <label class="g-label">8</label>
-          <label class="g-label">9</label>
-        </div>
-        <h3>Par: <!-- {{ calculateFrontPar(golf) }}--></h3>
-        <div class="g-container" @change="calculateFrontPar(golf)">
-          <input type="number" v-model="golf.par_1_hole" id="par_1_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_2_hole" id="par_2_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_3_hole" id="par_3_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_4_hole" id="par_4_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_5_hole" id="par_5_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_6_hole" id="par_6_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_7_hole" id="par_7_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_8_hole" id="par_8_hole" class="width-9"  />
-          <input type="number" v-model="golf.par_9_hole" id="par_9_hole" class="width-9"  />
-        </div>
-        <h3><!--Score: {{ calculateFrontScore(golf) }}--></h3>
-        <div class="g-container" @change="calculateFrontScore(golf)">
-          <input type="number" v-model="golf.score_1_hole" id="par_1_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_2_hole" id="par_2_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_3_hole" id="par_3_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_4_hole" id="par_4_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_5_hole" id="par_5_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_6_hole" id="par_6_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_7_hole" id="par_7_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_8_hole" id="par_8_hole" class="width-9"  />
-          <input type="number" v-model="golf.score_9_hole" id="par_9_hole" class="width-9"  />
-        </div>
-        <h3>Putts <!--{{ calculateFrontPutts(golf) }}--></h3>
-        <div class="g-container" @change="calculateFrontPutts(golf)">
-          <input type="number" v-model="golf.putts_1_hole" id="putts_1_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_2_hole" id="putts_2_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_3_hole" id="putts_3_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_4_hole" id="putts_4_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_5_hole" id="putts_5_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_6_hole" id="putts_6_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_7_hole" id="putts_7_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_8_hole" id="putts_8_hole" class="width-9" />
-          <input type="number" v-model="golf.putts_9_hole" id="putts_9_hole" class="width-9" />
-        </div>
-        <h3>Penalties {{ calculateFrontPenalty(golf) }}</h3>
-        <div class="g-container" @change="calculateFrontPenalty(golf)">
-          <input type="number" v-model="golf.penalty_1_hole" id="penalty_1_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_2_hole" id="penalty_2_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_3_hole" id="penalty_3_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_4_hole" id="penalty_4_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_5_hole" id="penalty_5_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_6_hole" id="penalty_6_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_7_hole" id="penalty_7_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_8_hole" id="penalty_8_hole" class="width-9" />
-          <input type="number" v-model="golf.penalty_9_hole" id="penalty_9_hole" class="width-9" />
-        </div>
-        <h3>Back 9</h3>
-        <div class="g-container">
-          <label class="g-label">10</label>
-          <label class="g-label">11</label>
-          <label class="g-label">12</label>
-          <label class="g-label">13</label>
-          <label class="g-label">14</label>
-          <label class="g-label">15</label>
-          <label class="g-label">16</label>
-          <label class="g-label">17</label>
-          <label class="g-label">18</label>
-        </div>
-        <h3>Par: {{ calculateBackPar(golf)}}</h3>
-        <div class="g-container" @change="calculateBackPar(golf)">
-          <input type="number" v-model="golf.par_10_hole" id="par_10_hole" class="width-9" />
-          <input type="number" v-model="golf.par_11_hole" id="par_11_hole" class="width-9" />
-          <input type="number" v-model="golf.par_12_hole" id="par_12_hole" class="width-9" />
-          <input type="number" v-model="golf.par_13_hole" id="par_13_hole" class="width-9" />
-          <input type="number" v-model="golf.par_14_hole" id="par_14_hole" class="width-9" />
-          <input type="number" v-model="golf.par_15_hole" id="par_15_hole" class="width-9" />
-          <input type="number" v-model="golf.par_16_hole" id="par_16_hole" class="width-9" />
-          <input type="number" v-model="golf.par_17_hole" id="par_17_hole" class="width-9" />
-          <input type="number" v-model="golf.par_18_hole" id="par_18_hole" class="width-9" />
-        </div>
-        <h3>Score: {{ calculateBackScore(golf) }}</h3>
-        <div class="g-container" @change="calculateBackScore(golf)">
-          <input type="number" v-model="golf.score_10_hole" id="score_10_hole" class="width-9" />
-          <input type="number" v-model="golf.score_11_hole" id="score_11_hole" class="width-9" />
-          <input type="number" v-model="golf.score_12_hole" id="score_12_hole" class="width-9" />
-          <input type="number" v-model="golf.score_13_hole" id="score_13_hole" class="width-9" />
-          <input type="number" v-model="golf.score_14_hole" id="score_14_hole" class="width-9" />
-          <input type="number" v-model="golf.score_15_hole" id="score_15_hole" class="width-9" />
-          <input type="number" v-model="golf.score_16_hole" id="score_16_hole" class="width-9" />
-          <input type="number" v-model="golf.score_17_hole" id="score_17_hole" class="width-9" />
-          <input type="number" v-model="golf.score_18_hole" id="score_18_hole" class="width-9" />
-        </div>
-        <h3>Putts: {{ calculateBackPutts(golf) }}</h3>
-        <div class="g-container" @change="calculateBackPutts(golf)">
-          <input type="number"  v-model="golf.putts_10_hole" id="score_10_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_11_hole" id="score_11_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_12_hole" id="score_12_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_13_hole" id="score_13_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_14_hole" id="score_14_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_15_hole" id="score_15_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_16_hole" id="score_16_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_17_hole" id="score_17_hole" class="width-9" />
-          <input type="number"  v-model="golf.putts_18_hole" id="score_18_hole" class="width-9" />
-        </div>
-        <h3>Penalties: {{ calculateBackPenalty(golf) }}</h3>
-        <div class="g-container" @change="calculateBackPenalty(golf)">
-          <input type="number"  v-model="golf.penalty_10_hole" id="penalty_10_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_11_hole" id="penalty_11_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_12_hole" id="penalty_12_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_13_hole" id="penalty_13_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_14_hole" id="penalty_14_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_15_hole" id="penalty_15_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_16_hole" id="penalty_16_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_17_hole" id="penalty_17_hole" class="width-9" />
-          <input type="number"  v-model="golf.penalty_18_hole" id="penalty_18_hole" class="width-9" />
-        </div>        
-        <v-text-field label="Players" v-model="golf.players">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Notes" v-model="golf.notes">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
-          </template>
-        </v-text-field>
-        <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
+          {{ option }}
+        </option>
+      </v-select>    
+      <h3>Totals</h3>
+      <h3>Par: {{ calculateTotalPar(golf) }}</h3>
+      <h3>Score: {{ calculateTotalScore(golf) }} </h3>
+      <h3>Putts: {{ calculateTotalPutts(golf) }} </h3>
+      <h3>Penalty: {{ calculateTotalPenalty(golf) }} </h3>
+      <br/>
+      <br/>
+      <h3>Front 9</h3>
+      <div class="g-container">
+        <label class="g-label">1</label>
+        <label class="g-label">2</label>
+        <label class="g-label">3</label>
+        <label class="g-label">4</label>
+        <label class="g-label">5</label>
+        <label class="g-label">6</label>
+        <label class="g-label">7</label>
+        <label class="g-label">8</label>
+        <label class="g-label">9</label>
+      </div>
+      <h3>Par: <!-- {{ calculateFrontPar(golf) }}--></h3>
+      <div class="g-container" @change="calculateFrontPar(golf)">
+        <input type="number" v-model="golf.par_1_hole" id="par_1_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_2_hole" id="par_2_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_3_hole" id="par_3_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_4_hole" id="par_4_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_5_hole" id="par_5_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_6_hole" id="par_6_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_7_hole" id="par_7_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_8_hole" id="par_8_hole" class="width-9"  />
+        <input type="number" v-model="golf.par_9_hole" id="par_9_hole" class="width-9"  />
+      </div>
+      <h3><!--Score: {{ calculateFrontScore(golf) }}--></h3>
+      <div class="g-container" @change="calculateFrontScore(golf)">
+        <input type="number" v-model="golf.score_1_hole" id="par_1_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_2_hole" id="par_2_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_3_hole" id="par_3_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_4_hole" id="par_4_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_5_hole" id="par_5_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_6_hole" id="par_6_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_7_hole" id="par_7_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_8_hole" id="par_8_hole" class="width-9"  />
+        <input type="number" v-model="golf.score_9_hole" id="par_9_hole" class="width-9"  />
+      </div>
+      <h3>Putts <!--{{ calculateFrontPutts(golf) }}--></h3>
+      <div class="g-container" @change="calculateFrontPutts(golf)">
+        <input type="number" v-model="golf.putts_1_hole" id="putts_1_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_2_hole" id="putts_2_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_3_hole" id="putts_3_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_4_hole" id="putts_4_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_5_hole" id="putts_5_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_6_hole" id="putts_6_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_7_hole" id="putts_7_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_8_hole" id="putts_8_hole" class="width-9" />
+        <input type="number" v-model="golf.putts_9_hole" id="putts_9_hole" class="width-9" />
+      </div>
+      <h3>Penalties {{ calculateFrontPenalty(golf) }}</h3>
+      <div class="g-container" @change="calculateFrontPenalty(golf)">
+        <input type="number" v-model="golf.penalty_1_hole" id="penalty_1_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_2_hole" id="penalty_2_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_3_hole" id="penalty_3_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_4_hole" id="penalty_4_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_5_hole" id="penalty_5_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_6_hole" id="penalty_6_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_7_hole" id="penalty_7_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_8_hole" id="penalty_8_hole" class="width-9" />
+        <input type="number" v-model="golf.penalty_9_hole" id="penalty_9_hole" class="width-9" />
+      </div>
+      <h3>Back 9</h3>
+      <div class="g-container">
+        <label class="g-label">10</label>
+        <label class="g-label">11</label>
+        <label class="g-label">12</label>
+        <label class="g-label">13</label>
+        <label class="g-label">14</label>
+        <label class="g-label">15</label>
+        <label class="g-label">16</label>
+        <label class="g-label">17</label>
+        <label class="g-label">18</label>
+      </div>
+      <h3>Par: {{ calculateBackPar(golf)}}</h3>
+      <div class="g-container" @change="calculateBackPar(golf)">
+        <input type="number" v-model="golf.par_10_hole" id="par_10_hole" class="width-9" />
+        <input type="number" v-model="golf.par_11_hole" id="par_11_hole" class="width-9" />
+        <input type="number" v-model="golf.par_12_hole" id="par_12_hole" class="width-9" />
+        <input type="number" v-model="golf.par_13_hole" id="par_13_hole" class="width-9" />
+        <input type="number" v-model="golf.par_14_hole" id="par_14_hole" class="width-9" />
+        <input type="number" v-model="golf.par_15_hole" id="par_15_hole" class="width-9" />
+        <input type="number" v-model="golf.par_16_hole" id="par_16_hole" class="width-9" />
+        <input type="number" v-model="golf.par_17_hole" id="par_17_hole" class="width-9" />
+        <input type="number" v-model="golf.par_18_hole" id="par_18_hole" class="width-9" />
+      </div>
+      <h3>Score: {{ calculateBackScore(golf) }}</h3>
+      <div class="g-container" @change="calculateBackScore(golf)">
+        <input type="number" v-model="golf.score_10_hole" id="score_10_hole" class="width-9" />
+        <input type="number" v-model="golf.score_11_hole" id="score_11_hole" class="width-9" />
+        <input type="number" v-model="golf.score_12_hole" id="score_12_hole" class="width-9" />
+        <input type="number" v-model="golf.score_13_hole" id="score_13_hole" class="width-9" />
+        <input type="number" v-model="golf.score_14_hole" id="score_14_hole" class="width-9" />
+        <input type="number" v-model="golf.score_15_hole" id="score_15_hole" class="width-9" />
+        <input type="number" v-model="golf.score_16_hole" id="score_16_hole" class="width-9" />
+        <input type="number" v-model="golf.score_17_hole" id="score_17_hole" class="width-9" />
+        <input type="number" v-model="golf.score_18_hole" id="score_18_hole" class="width-9" />
+      </div>
+      <h3>Putts: {{ calculateBackPutts(golf) }}</h3>
+      <div class="g-container" @change="calculateBackPutts(golf)">
+        <input type="number"  v-model="golf.putts_10_hole" id="score_10_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_11_hole" id="score_11_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_12_hole" id="score_12_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_13_hole" id="score_13_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_14_hole" id="score_14_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_15_hole" id="score_15_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_16_hole" id="score_16_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_17_hole" id="score_17_hole" class="width-9" />
+        <input type="number"  v-model="golf.putts_18_hole" id="score_18_hole" class="width-9" />
+      </div>
+      <h3>Penalties: {{ calculateBackPenalty(golf) }}</h3>
+      <div class="g-container" @change="calculateBackPenalty(golf)">
+        <input type="number"  v-model="golf.penalty_10_hole" id="penalty_10_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_11_hole" id="penalty_11_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_12_hole" id="penalty_12_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_13_hole" id="penalty_13_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_14_hole" id="penalty_14_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_15_hole" id="penalty_15_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_16_hole" id="penalty_16_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_17_hole" id="penalty_17_hole" class="width-9" />
+        <input type="number"  v-model="golf.penalty_18_hole" id="penalty_18_hole" class="width-9" />
+      </div>        
+      <v-text-field label="Players" v-model="golf.players">
+        <template v-slot:prepend-inner>
+          <v-icon class="icon-css">mdi-account-circle</v-icon>
+        </template>
+      </v-text-field>
+      <v-text-field label="Notes" v-model="golf.notes">
+        <template v-slot:prepend-inner>
+          <v-icon class="icon-css">mdi-note</v-icon>
+        </template>
+      </v-text-field>
+      <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
     </div>
   </v-form>
 </template>
@@ -435,8 +435,9 @@ export default {
         );
         if (result.status >= 200) {
           alert("Golf has been updated!!");
-          this.$router.push({ name: "GolfList" });
+          //this.$router.push({ name: "GolfList" });
           //this.$router.push({ name: "GolfEdit", params: { id: golf.id } });
+          window.location.reload();
         } else {
           alert("Update Error Code ", result.status);
         }

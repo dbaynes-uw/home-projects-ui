@@ -8,7 +8,7 @@
   <router-link :to="{ name: 'EventList' }">
     <h3>Back to Event List</h3>
   </router-link>
-  <form class="add-form" @submit.prevent="onSubmit">
+  <form class="card-display" @submit.prevent="onSubmit">
     <div class="form-container">
       <v-text-field
         label="Description"

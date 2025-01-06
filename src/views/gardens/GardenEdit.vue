@@ -1,5 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <br/>
   <div class="edit">
     <h2>Edit Garden '{{ garden.garden_name }}'</h2>
     <router-link :to="{ name: 'GardenList' }">

@@ -6,7 +6,8 @@
     <button id="link-as-button">
       <router-link  :to="{ name: 'TrailList' }">Back to Trail List</router-link>
     </button>
-    <form class="add-form" @submit.prevent="updateTrail">
+    <br/>
+    <form class="card-display" @submit.prevent="updateTrail">
       <div class="form-container">
         <v-text-field
           label="Trail Head"

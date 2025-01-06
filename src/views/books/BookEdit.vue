@@ -1,12 +1,14 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h2>Edit Book {{ book.title }}</h2>
   <br/>
+  <h2>Edit Book {{ book.title }}</h2>
   <div class="edit">
     <button id="link-as-button">
       <router-link  :to="{ name: 'BookList' }">Back to Book List</router-link>
     </button>
-    <form class="add-form" @submit.prevent="updateBook">
+    <br/>
+    <br/>
+    <form class="card-display" @submit.prevent="updateBook">
       <div class="form-container">
         <v-text-field
           label="Title"

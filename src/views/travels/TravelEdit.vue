@@ -1,12 +1,14 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="travelEdit">
+    <br/>
     <h2>Edit Travel {{ travel.title }}</h2>
     <br/>
     <button id="link-as-button">
       <router-link  :to="{ name: 'TravelList' }">Back to Travel List</router-link>
     </button>
-    <form class="add-form" @submit.prevent="updateTravel">
+    <br/>
+    <form class="card-display" @submit.prevent="updateTravel">
       <div class="form-container">
         <v-text-field
           label="Title"

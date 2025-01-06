@@ -1,7 +1,7 @@
 <template>
   <h1>Create User</h1>
   <div class="form-container">
-    <form class="add-form" @submit.prevent="onSubmit">
+    <form class="card-display" @submit.prevent="onSubmit">
       <label>Name</label>
       <input v-model="user.name" type="text" class="text-style" required />
       <label>User Name</label>
