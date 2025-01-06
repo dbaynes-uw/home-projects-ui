@@ -13,11 +13,11 @@
         />
         <v-select
           label="Status"
-          :items="statuses"
+          :items="EVENT_STATUSES"
           v-model="event.status"
         >
           <option
-            v-for="option in statuses"
+            v-for="option in EVENT_STATUSES"
             :value="option"
             :key="option"
             id="select-box"
@@ -45,11 +45,11 @@
         />
         <v-select
           label="Whose Turn?"
-          :items="assignees"
+          :items="ASSIGNEES"
           v-model="event.assigned"
         >
           <option
-            v-for="option in assignees"
+            v-for="option in ASSIGNEES"
             :value="option"
             :key="option"
             id="select-box"
@@ -60,11 +60,11 @@
         </v-select>
         <v-select
           label="Frequency in Days"
-          :items="frequency"
+          :items="EVENT_FREQUENCY"
           v-model="event.frequency"
         >
           <option
-            v-for="option in frequency"
+            v-for="option in EVENT_FREQUENCY"
             :value="option"
             :key="option"
             id="select-box"
@@ -93,13 +93,14 @@
     </form>
   </div>
 </template>
-
+<script setup>
+  import {ASSIGNEES, EVENT_FREQUENCY, EVENT_STATUSES} from "@/services/constants.js"
+  import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+  import axios from "axios";
+  import DateFormatService from "@/services/DateFormatService.js";
+</script>
 <script>
 //import EventService from "@/services/EventService.js";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import axios from "axios";
-import DateFormatService from "@/services/DateFormatService.js";
-
 export default {
   props: ["id", "assigned"],
   components: {
@@ -123,9 +124,6 @@ export default {
   },
   data() {
     return {
-      statuses: ["Active", "Inactive"],
-      assignees: ["David", "Jane", "Both", "Up for Grabs"],
-      frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "180", "360"],
       event: {
         id: "",
         description: "",
@@ -213,3 +211,4 @@ select {
   border-color: darkgreen;
 }
 </style>
+@/services/constants.js

@@ -15,7 +15,7 @@
       </li>
       <li>
         <button id="button-as-link" @click="requestIndexDetail">
-          <u>Detail Index View</u>
+          <u>Detail Card or Index View</u>
         </button>
       </li>
     </ul> 
@@ -23,19 +23,19 @@
   </v-card>
   <br/>
   <div style="width: 100%">
-      <div class="auto-search-container">
-        <v-text-field
-          clearable
-          clear-icon="mdi-close"
-          @click:clear="showIndex"
-          type="text"
-          class="np-input-search"
-          v-model="inputSearchText"
-          placeholder="Search"
-          autocomplete="off"
-          v-on:keyup="searchColumns"
-        />
-      </div>
+    <div class="auto-search-container">
+      <v-text-field
+        clearable
+        clear-icon="mdi-close"
+        @click:clear="showIndex"
+        type="text"
+        class="np-input-search"
+        v-model="inputSearchText"
+        placeholder="Search"
+        autocomplete="off"
+        v-on:keyup="searchColumns"
+      />
+    </div>
   </div>
   <div class="book-list">
     <span v-if="filteredResults.length == 0">
@@ -43,7 +43,7 @@
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
-        <span v-if="requestIndexDetailFlag == true">
+        <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">&nbsp;&nbsp;Total: {{ books.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
@@ -197,28 +197,4 @@ export default {
   },
 };
 </script>
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-th:hover {
-  cursor: pointer;
-  background: rgb(229, 255, 211);
-}
-tr:nth-child(even) {
-  background-color: #f3f3f3;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-</style>
+<style></style>

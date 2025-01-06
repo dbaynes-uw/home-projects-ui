@@ -2,41 +2,54 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="filmEdit">
     <h2>Edit Film {{ film.title }}</h2>
+    <router-link :to="{ name: 'FilmList' }">
+      <h3>Back to Film List</h3>
+    </router-link>
     <form class="add-form" @submit.prevent="updateFilm">
       <div class="form-container">
-        <label>Title:</label>
-        <input type="text" class="text-style" v-model="film.title" required />
-        <label>Nationality:</label>
-        <input type="text" class="text-style" v-model="film.nationality" />
-        <label>Director:</label>
-        <input type="text" class="text-style" v-model="film.director" required />
-        <label>Actors:</label>
-        <input type="text" class="text-style" v-model="film.actors"/>
-        <label>Seasons:</label>
-        <input type="text" class="text-style" v-model="film.seasons" />
-        <label>Episodes:</label>
-        <input type="text" class="text-style" v-model="film.episodes" />
-        <label for="date_written">Date Released:</label>
-        <input
-          type="date"
-          class="text-style"
+        <v-text-field
+          label="Film Title"
+          v-model="film.title"
+          required
+        />
+        <v-text-field
+          label="Nationality"
+          v-model="film.nationality"
+        />
+        <v-text-field
+          label="Director"
+          v-model="film.director"
+          required
+        />
+        <v-text-field
+          label="Actors"
+          v-model="film.actors"
+        />
+        <v-text-field
+          label="Seasons"
+          v-model="film.seasons"
+        />
+        <v-text-field
+          label="Episodes"
+          v-model="film.episodes"
+        />
+        <v-text-field
+          label="Date Released"
           v-model="film.date_released"
-        />
-        <label for="date_read">Date Watched:</label>
-        <input
           type="date"
-          class="text-style"
-          v-model="film.date_watched"
         />
-        <label for="rating">Rating</label>
-        &nbsp;
-        <select
-          id="select-box"
-          class="text-style"
+        <v-text-field
+          label="Date Watched"
+          v-model="film.date_watched"
+          type="date"
+        />
+        <v-select
+          label="Rating(1-5)"
+          :items="FILM_RATINGS"
           v-model="film.rating"
         >
           <option
-            v-for="option in ratings"
+            v-for="option in FILM_RATINGS"
             :value="option"
             :key="option"
             id="select-box"
@@ -44,17 +57,18 @@
           >
             {{ option }}
           </option>
-        </select>
-        <br/>
-        <br/>
-        <label for="url_to_review">URL to Review:</label>
-        <input type="text" class="text-style" v-model="film.url_to_review" />
-        <label>Notes:</label>
-        <textarea
+        </v-select> 
+        <v-textarea
+          label="URL to Review"
+          v-model="film.url_to_review"
+          rows="3"
+          cols="40"
+        />
+        <v-textarea
+          label="Notes"
           v-model="film.notes"
           rows="3"
           cols="40"
-          class="textarea-style"
         />
         <button class="button" id="link-as-button" type="submit">
           Submit
@@ -63,9 +77,12 @@
     </form>
   </div>
 </template>
-<script>
+<script setup>
+import { FILM_RATINGS } from "@/services/constants";
 import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+</script>
+<script>
 export default {
   props: ["id"],
   components: {

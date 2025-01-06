@@ -6,7 +6,7 @@
     </router-link>
   <br/>
   <h3>{{ this.statusMessage }}</h3>
-  <div class="card-display">
+   <div class="card-display">
     <BookCard
       :key="book.id"
       :book="book"

@@ -22,11 +22,11 @@
       />
       <v-select
         label="Whose Turn?"
-        :items="assignees"
+        :items="ASSIGNEES"
         v-model="event.assigned"
       >
         <option
-          v-for="option in assignees"
+          v-for="option in ASSIGNEES"
           :value="option"
           :key="option"
           id="select-box"
@@ -37,11 +37,11 @@
       </v-select>
       <v-select
         label="Frequency in Days"
-        :items="frequency"
+        :items="EVENT_FREQUENCY"
         v-model="event.frequency"
       >
         <option
-          v-for="option in frequency"
+          v-for="option in EVENT_FREQUENCY"
           :value="option"
           :key="option"
           id="select-box"
@@ -65,16 +65,17 @@
   <!--Vuex:-->
   <!--div>{{ $store.state.events }}</div-->
 </template>
-<script>
+<script setup>
+import { ASSIGNEES, EVENT_FREQUENCY } from "@/services/constants";
 import { v4 as uuidv4 } from "uuid";
+</script>
+<script>
 //import { mapGetters, mapActions } from "vuex";
 //Vuex
 //import EventService from "@/services/EventService.js";
 export default {
   data() {
     return {
-      assignees: ["David", "Jane", "Both", "Up for Grabs"],
-      frequency: ["7", "10", "14", "21", "30", "60", "90", "120", "180", "360"],
       event: {
         description: "",
         assigned: "",

@@ -9,18 +9,20 @@
     <br/>
     <form class="form-card-display" @submit.prevent="updateGarden">
       <div class="form-container">
-        <label>Garden Name:</label>
-        <input type="text" class="text-style" v-model="garden.garden_name" required />
+        <v-text-field
+          label="Garden Name"
+          v-model="garden.garden_name"
+        />        
         <label>Status:</label>
         <v-select
-          :items="active_statuses"
+          :items="EVENT_STATUSES"
           v-model="garden.active"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-list-status</v-icon>
           </template>
           <option
-            v-for="option in active_statuses"
+            v-for="option in EVENT_STATUSES"
             :value="option"
             :key="option"
             id="select-box"
@@ -29,12 +31,11 @@
             {{ option }}
           </option>
         </v-select> 
-        <label>Notes:</label>
-        <textarea
+        <v-textarea
+          label="Notes"
           v-model="garden.notes"
           rows="3"
           cols="40"
-          class="textarea-style"
         />
         <br/>
         <br/>
@@ -45,9 +46,12 @@
     </form>
   </div>
 </template>
-<script>
+<script setup>
+import { EVENT_STATUSES } from "@/services/constants";
 import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+</script>
+<script>
 export default {
   props: ["id"],
   components: {
@@ -106,7 +110,8 @@ export default {
           }
         );
         if (result.status >= 200) {
-          alert("Garden has been updated for ", this.garden.garden_name);
+          console.log("GARDEN: ", garden)
+          alert("Garden has been updated for " + garden.garden_name);
           this.$router.push({ name: "GardenDetails", params: { id: garden.id } });
         } else {
           alert("Update Error Code ", result.status);

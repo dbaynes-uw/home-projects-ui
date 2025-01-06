@@ -34,12 +34,12 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>  
-        <v-text-field label="seasons" v-model="film.seasons">
+        <v-text-field label="Seasons" v-model="film.seasons">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="episodes" v-model="film.episodes">
+        <v-text-field label="Episodes" v-model="film.episodes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-account-circle</v-icon>
           </template>
@@ -62,11 +62,11 @@
         </v-text-field>
         <v-select
           label="Rating(1-5)"
-          :items="ratings"
+          :items="FILM_RATINGS"
           v-model="film.rating"
         >
           <option
-            v-for="option in ratings"
+            v-for="option in FILM_RATINGS"
             :value="option"
             :key="option"
             id="select-box"
@@ -93,8 +93,12 @@
     </v-form>
   </v-card-text>
 </template>
+<script setup>
+  import { FILM_RATINGS } from "@/services/constants";
+  import { v4 as uuidv4 } from "uuid";
+</script>
+
 <script>
-import { v4 as uuidv4 } from "uuid";
 export default {
   components: {
   },

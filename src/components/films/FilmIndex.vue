@@ -34,7 +34,7 @@
               :to="{ name: 'FilmEdit', params: { id: `${result.id}` } }"
             >
               <i
-                id="long-icon-edit"
+                id="medium-icon-edit"
                 class="fa-solid fa-pen-to-square fa-stack-1x"
               >
               </i>
@@ -43,14 +43,14 @@
               <router-link
                 :to="{ name: 'FilmDetails', params: { id: `${result.id}` } }"
               >
-                <i id="long-icon-eye" class="fa fa-eye"></i>
+              <i id="booklist-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteFilm(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="long-icon-delete"
+                id="booklist-icon-delete"
               >
               </i>
             </span>

@@ -116,7 +116,7 @@ export default {
           }
         );
         if (result){
-          alert("Book has been updated");
+          alert("Book has been updated for " + book.title);
           this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "Book Updated Successfully"} });
         } else {
           console.log("Error")
