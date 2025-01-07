@@ -61,8 +61,6 @@ export default {
     ConfirmDialogue,
   },
   setup() {
-    //const vm = this.app.getCurrentInstance()
-    //console.log("VM: ", vm)
     const route = useRoute()
     return {
       currentUrl: route.fullPath

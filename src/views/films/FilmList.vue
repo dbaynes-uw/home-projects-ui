@@ -98,7 +98,7 @@ export default {
   setup() {},
   data() {
     return {
-      requestIndexDetailFlag: true,
+      requestIndexDetailFlag: false,
       searchResults: null,
       inputSearchText: "",
       filteredResults: [],

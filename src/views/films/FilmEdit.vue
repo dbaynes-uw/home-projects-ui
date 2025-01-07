@@ -1,10 +1,14 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <br/>
   <div class="filmEdit">
     <h2>Edit Film {{ film.title }}</h2>
-    <router-link :to="{ name: 'FilmList' }">
-      <h3>Back to Film List</h3>
-    </router-link>
+    <button id="link-as-button">
+      <router-link  :to="{ name: 'FilmList' }">Back to Film List</router-link>
+    </button>
+    <button id="link-as-button">
+      <router-link  :to="{ name: 'FilmDetails' }">View the Card</router-link>
+    </button>
     <br/>
     <form class="card-display" @submit.prevent="updateFilm">
       <div class="form-container">

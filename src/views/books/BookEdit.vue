@@ -6,6 +6,9 @@
     <button id="link-as-button">
       <router-link  :to="{ name: 'BookList' }">Back to Book List</router-link>
     </button>
+    <button id="link-as-button">
+      <router-link  :to="{ name: 'BookDetails' }">View the Card</router-link>
+    </button>
     <br/>
     <br/>
     <form class="card-display" @submit.prevent="updateBook">
