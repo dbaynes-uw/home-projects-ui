@@ -14,14 +14,19 @@
         <b class="li-left-none" v-for="(notes, idx) in splitList(golf, this.splitLength)" :key="idx">{{ notes }}</b>
       </ul>
       <br/>
-      <span v-if="1==1" class="fa-stack">
-        <router-link :to="{ name: 'GolfDetails', params: { id: `${golf.id}` } }">
-          <i class="fa-solid fa-eye fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span v-if="1==1" class="fa-stack">
+      <span class="fa-stack">
         <router-link :to="{ name: 'GolfEdit', params: { id: `${golf.id}` } }">
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-if="currentUrl.includes('/golfs/')" class="fa-stack">
+        <router-link :to="{ name: 'GolfList' }">
+          <i class="fa-solid fa-backward fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-else>
+        <router-link :to="{ name: 'GolfDetails', params: { id: `${golf.id}` } }">
+          <i class="fa-solid fa-eye fa-stack-1x"></i>
         </router-link>
       </span>
       <span class="fa-stack">
@@ -37,6 +42,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import SplitStringService from "@/services/SplitStringService.js";
 import GolfCalculations from "@/components/golfs/GolfCalculations.js";
+import { useRoute } from 'vue-router'
 export default {
   name: 'GolfCard',
   props: {
@@ -51,6 +57,12 @@ export default {
   },
   components: {
     ConfirmDialogue,
+  },
+  setup() {
+    const route = useRoute()
+    return {
+      currentUrl: route.fullPath
+    }
   },
   data() {
     return {
