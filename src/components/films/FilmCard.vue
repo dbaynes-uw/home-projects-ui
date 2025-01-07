@@ -17,12 +17,19 @@
         <b class="li-left-none" v-for="(notes, idx) in splitList(film, this.splitLength)" :key="idx">{{ notes }}</b>
       </ul>
       <br/>
-      <router-link :to="{ name: 'FilmList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
       <span class="fa-stack">
         <router-link :to="{ name: 'FilmEdit', params: { id: `${film.id}` } }">
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-if="currentUrl.includes('/films/')" class="fa-stack">
+        <router-link :to="{ name: 'FilmList' }">
+          <i class="fa-solid fa-backward fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-else>
+        <router-link :to="{ name: 'FilmDetails', params: { id: `${film.id}` } }">
+          <i class="fa-solid fa-eye fa-stack-1x"></i>
         </router-link>
       </span>
       <span class="fa-stack">
@@ -30,9 +37,6 @@
         </i>
       </span>
       <br />
-      <router-link :to="{ name: 'FilmList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
     </div>
   </div>
 </template>
@@ -40,6 +44,7 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import SplitStringService from "@/services/SplitStringService.js";
+import { useRoute } from 'vue-router'
 export default {
   name: 'FilmCard',
   props: {
@@ -58,6 +63,10 @@ export default {
   setup() {
     //const vm = this.app.getCurrentInstance()
     //console.log("VM: ", vm)
+    const route = useRoute()
+    return {
+      currentUrl: route.fullPath
+    }
   },
   data() {
     return {

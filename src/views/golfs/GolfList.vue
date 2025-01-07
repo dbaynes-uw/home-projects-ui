@@ -1,63 +1,110 @@
 <template>
-  <div class="div-frame">
-    <h2>Golf Rounds Played</h2>
-    <h2>Current User: {{ this.$store.state.user.resource_owner.email }}</h2>
-    <h2 id="status-message">
-      {{ this.statusMessage }}
-    </h2>
-    <b>Internet: {{ this.onlineStatus == true ? 'Online' : 'Offline' }}</b>
-    <h2>
-      <router-link :to="{ name: 'GolfCreate' }">Add Golf Round</router-link>
-    </h2>
-    <br />
-    <div style="width: 100%">
-      <div class="auto-search-container">
-        <v-text-field
-          clearable
-          clear-icon="mdi-close"
-          @click:clear="showIndex"
-          type="text"
-          class="np-input-search"
-          v-model="inputSearchText"
-          placeholder="Search"
-          autocomplete="off"
-          v-on:keyup="searchColumns"
-        />
-      </div>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h2>Golf List</h2>
+      <h2 id="status-message">
+        <u>{{ this.$route.query.success }}</u>
+      </h2>
+    </v-card-title>
+    <ul>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'GolfCreate' }">Add Golf Round Played</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Detail Card or Index View</u>
+        </button>
+      </li>
+    </ul> 
+    <br/>
+  </v-card>
+  <br/>
+  <div style="width: 100%">
+    <div class="auto-search-container">
+      <v-text-field
+        clearable
+        clear-icon="mdi-close"
+        @click:clear="showIndex"
+        type="text"
+        class="np-input-search"
+        v-model="inputSearchText"
+        placeholder="Search"
+        autocomplete="off"
+        v-on:keyup="searchColumns"
+      />
     </div>
-    <div class="form-group" style="display: flex">
-        <label>Enter number of outings to average and then hit enter:&nbsp;&nbsp;</label>
-        <input 
-          type="number"
-          v-model="var_number"
-          class="width-9"
-          @keyup.enter="showVarNumber(var_number)"
-        />
-    </div>
-    <div class="golf-list">
-      <span v-if="filteredResults.length == 0">
-        <GolfIndex :golfs="golfs" />
+  </div>
+
+  <div class="golf-list">
+    <span v-if="filteredResults.length == 0">
+      <span v-if="searchResults == false">
+        <h3 id="h3-left">No Search Results Returned</h3>
       </span>
-      <span v-if="filteredResults.length > 0">
+      <span v-else>
+        <span v-if="requestIndexDetailFlag == false">
+          <h3 id="h3-left">&nbsp;&nbsp;Total: {{ golfs.length }}</h3>
+          <span class="h3-left-total-child">Double click Item Below to Edit</span>
+          <div class="cards">
+            <GolfCard
+              v-for="golf in golfs"
+              :key="golf.id"
+              :golf="golf"
+              class="card"
+              @dblclick="editGolf(golf)"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <GolfIndex :golfs="golfs" />
+        </span>
+      </span>
+    </span>
+    <span v-if="filteredResults.length > 0">
+      <span v-if="requestIndexDetailFlag == true">
+        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+        <span>Double click to Edit</span>
+        <div class="cards">
+          <GolfCard
+            v-for="golf in filteredResults"
+            :key="golf.id"
+            :golf="golf"
+            class="card"
+            @dblclick="editGolf(golf)"
+          />
+          <br />
+        </div>
+      </span>
+      <span v-else>
         <GolfIndex :golfs="filteredResults" />
       </span>
-    </div>
+    </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import GolfIndex from "@/components/golfs/GolfIndex.vue";
+import GolfCard from "@/components/golfs/GolfCard.vue";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+
 //import GolfSearchResults from "@/components/golfs/GolfSearchResults.vue";
 export default {
   name: "GolfList",
   props: ["filteredResults[]"],
   components: {
     GolfIndex,
+    GolfCard,
+    ConfirmDialogue
   //  GolfSearchResults,
   },
   data() {
     return {
       onlineStatus: navigator.onLine,
+      requestIndexDetailFlag: false,
+      searchResults: null,
       inputSearchText: "",
       filteredResults: [],
       columnDetails: null,
@@ -83,8 +130,14 @@ export default {
     },
   },
   methods: {
+    editGolf(golf) {
+      this.$router.push({ name: 'GolfEdit', params: { id: `${golf.id}` } });
+    },
     showIndex() {
       this.filteredResults = [];
+    },
+    requestIndexDetail() {
+      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     showVarNumber(var_num){
       this.filteredResults = [];
@@ -166,71 +219,4 @@ export default {
   },
 };
 </script>
-<!--style scoped>
-.table-index-style {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  background-color: #7ba8bd;
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-tr {
-  line-height: 1.6 !important;
-  border: none;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.eventAssigned {
-  background: #e8f7f0;
-}
-.fa-table-stack {
-  position: relative;
-  left: 2rem;
-}
-i {
-  bottom: 0px;
-  color: gray;
-}
-tr.is-complete {
-  background: #35495e;
-  color: #fff;
-}
-#status-message {
-  text-align: center;
-  color: navy;
-}
-</style-->
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-th:hover {
-  cursor: pointer;
-  background: rgb(229, 255, 211);
-}
-tr:nth-child(even) {
-  background-color: #f3f3f3;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-</style>
+<style></style>

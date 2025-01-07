@@ -88,7 +88,6 @@ import DateFormatService from "@/services/DateFormatService.js";
 import FilmIndex from "@/components/films/FilmIndex.vue";
 import FilmCard from "@/components/films/FilmCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-
 export default {
   name: "FilmList",
   components: {
@@ -96,6 +95,7 @@ export default {
     FilmCard,
     ConfirmDialogue
   },
+  setup() {},
   data() {
     return {
       requestIndexDetailFlag: true,
