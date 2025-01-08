@@ -278,7 +278,4 @@ export default {
 .fa-solid {
   color: gray;
 }
-.td-center {
-  text-align: center;
-}
 </style>

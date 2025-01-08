@@ -87,42 +87,6 @@ export default {
     };
   },
   methods: {
-    searchColumns() {
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.books &&
-          this.books.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.books.forEach((book) => {
-            const searchHasTitle =
-              book.title &&
-              book.title
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasAuthor =
-              book.author &&
-              book.author
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
-              this.filteredResults.push(book);
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
     sortList(sortBy) {
       this.sortedData = this.books;
       if (this.sortedbyASC) {

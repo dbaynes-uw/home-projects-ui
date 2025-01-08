@@ -155,12 +155,16 @@ export default {
               film.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            const searchHasAuthor =
-              film.author &&
-              film.author
+            const searchHasDirector =
+              film.director &&
+              film.director
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
+            const searchHasDateWatched = 
+              film.date_watched
+              .includes(this.inputSearchText)
+            
+            if (searchHasTitle || searchHasDirector || searchHasDateWatched) {
               this.filteredResults.push(film);
             }
             if (this.filteredResults.length > 0) {

@@ -154,13 +154,17 @@ export default {
               book.title &&
               book.title
                 .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
+                .includes(this.inputSearchText.toLowerCase()); 
             const searchHasAuthor =
               book.author &&
               book.author
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasAuthor) {
+            const searchHasDateRead = 
+              book.date_read
+              .includes(this.inputSearchText)
+
+            if (searchHasTitle || searchHasAuthor|| searchHasDateRead ) {
               this.filteredResults.push(book);
             }
             if (this.filteredResults.length > 0) {

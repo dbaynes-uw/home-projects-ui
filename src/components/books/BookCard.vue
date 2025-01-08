@@ -5,8 +5,8 @@
       <p id="p-custom-left-u">{{ book.title}}</p>
       <ul>
         <li class="li-left">Author: <b>{{ book.author }}</b></li>
-        <li class="li-left">Date Written: {{ formatYearDate(book.date_written) }}</li>
-        <li class="li-left">Date Read: {{ formatYearDate(book.date_read) }}</li>
+        <li class="li-left">Date Written:<br/><b>{{ formatFullYearDate(book.date_written) }}</b></li>
+        <li class="li-left">Date Read:<br/><b>{{ formatFullYearDate(book.date_read) }}</b></li>
         <li class="li-left"><a :href="book.url_to_review" target="_blank">Link to Review</a></li>
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(book, this.splitLength)" :key="idx">{{ notes }}</b>
@@ -90,8 +90,8 @@ export default {
     splitList(bookData, splitLength) {
       return SplitStringService.splitList(bookData.notes, splitLength) 
     },
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
+    formatFullYearDate(value) {
+      return DateFormatService.formatFullYearDatejs(value);
     },
   }
 }

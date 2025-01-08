@@ -9,10 +9,10 @@
         <li class="li-left">Director: <b>{{ film.director }}</b></li>
         <li class="li-left">Seasons: <b>{{ film.seasons }}</b></li>
         <li class="li-left">Episodes: <b>{{ film.episodes }}</b></li>
-        <li class="li-left">Date Released: {{ formatYearDate(film.date_released) }}</li>
-        <li class="li-left">Date Watched: {{ formatYearDate(film.date_watched) }}</li>
+        <li class="li-left">Date Released:<br/><b>{{ formatFullYearDate(film.date_released) }}</b></li>
+        <li class="li-left">Date Watched:<br/><b>{{ formatFullYearDate(film.date_watched) }}</b></li>
         <li class="li-left">Film Rating: <b>{{ film.rating }}</b></li>
-        <li class="li-left">URL to Review: <b> <a :href="film.url_to_review" target="_blank">Review</a></b></li>
+        <li class="li-left">URL to Review: <b><a :href="film.url_to_review" target="_blank">Review</a></b></li>
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(film, this.splitLength)" :key="idx">{{ notes }}</b>
       </ul>
@@ -96,8 +96,8 @@ export default {
     splitList(filmData, splitLength) {
       return SplitStringService.splitList(filmData.notes, splitLength) 
     },
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
+    formatFullYearDate(value) {
+      return DateFormatService.formatFullYearDatejs(value);
     },
   }
 }

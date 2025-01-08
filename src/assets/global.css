@@ -247,6 +247,9 @@
 .th-center {
   text-align: center;
 }
+.td-center {
+  text-align: center;
+}
 .td-center-capitalize {
   text-align: center;
   text-transform: capitalize;

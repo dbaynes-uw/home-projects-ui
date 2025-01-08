@@ -1,5 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <h3 id="h3-left">Total: {{ films.length }}</h3>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('title')">Title</th>
@@ -22,7 +23,7 @@
       <td>{{ result.director }}</td>
       <td class="td-center">{{ result.seasons }}/{{ result.episodes }}</td>
       <td class="td-center">{{ formatYearOnly(result.date_released) }}</td>
-      <td class="td-center">{{ formatStandardDate(result.date_watched) }}</td>
+      <td class="td-center">{{ formatFullYearDate(result.date_watched) }}</td>
       <td class="td-center">{{ result.rating }}</td>
       <td class="td-center">
         <a :href="result.url_to_review" target="_blank">Review</a>
@@ -91,42 +92,6 @@ export default {
     };
   },
   methods: {
-    searchColumns() {
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.films &&
-          this.films.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.films.forEach((film) => {
-            const searchHasTitle =
-              film.title &&
-              film.title
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasDirector =
-              film.director &&
-              film.director
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasDirector) {
-              this.filteredResults.push(film);
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
     sortList(sortBy) {
       this.sortedData = this.films;
       if (this.sortedbyASC) {
@@ -159,8 +124,8 @@ export default {
     formatYearOnly(value) {
       return DateFormatService.formatYearOnlyjs(value);
     },
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDatejs(value);
+    formatFullYearDate(value) {
+      return DateFormatService.formatFullYearDatejs(value);
     },
   },
 };
