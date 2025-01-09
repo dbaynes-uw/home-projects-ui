@@ -37,9 +37,6 @@ export default {
     //x  default: () => ({})
     //x},
   },
-  //setup(props) {
-  //  console.log("Props Garden: ", props.garden)
-  //},
   components: {
     ConfirmDialogue,
     PlantCard,
@@ -54,10 +51,6 @@ export default {
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
-    getGardenName(garden_id) {
-      console.log("Get Garden Name: ", garden_id)
-      //const garden_name = this.$store.state.gardens.find((garden) => garden.id === this.plant.garden_id);
-    }
   },
   created() {
     this.$store.dispatch("fetchPlant", this.id);

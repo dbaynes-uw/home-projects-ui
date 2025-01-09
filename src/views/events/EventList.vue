@@ -202,12 +202,8 @@ export default {
   },
   methods: {
     async notifyEventsDue(){
-      console.log("notifyEventsDue@@@@@@@@ - API URL: ", this.api_url + "/notification_events_due")
       alert("Email Notification Sent")
       const result = await axios.put(this.api_url + "notification_events_due");
-      //console.log("Result Status:", result.status)
-      //console.log("Result StatusText:", result.statusText)
-      //console.log("Result Data StatusText:", result.data.statusText)
       if (result.statusText.toLowerCase() == 'ok') {
         alert("Notification emails were successfully sent to assignees")
       } else {
@@ -227,7 +223,6 @@ export default {
         return 'event-inactive'
       }
       //e.status == 'inactive' ? 'event-inactive' : 'event'
-      //console.log("RETURN: ", e.status)
       //return e.status
     },
     inactive(e) {
@@ -317,7 +312,6 @@ export default {
     },
     //Keep for now:
     calculateDue(action_date, frequency) {
-      console.log("EL - Calc Due")
       return DateFormatService.calculateDuejs(action_date, frequency);
     },
     calculateDateDue(action_date, frequency) {

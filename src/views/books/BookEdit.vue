@@ -107,7 +107,6 @@ export default {
           ...this.book,
           updated_by: this.$store.state.created_by,
         };
-        console.log("book.id: ", book.id)
         const result = await axios.put(
             this.api_url + 
             this.$route.params.id,
@@ -124,8 +123,8 @@ export default {
           alert("Book has been updated for " + book.title);
           this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "Book Updated Successfully"} });
         } else {
-          console.log("Error")
-          //this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "ERROR in processing update - change did NOT take place"} });
+          //ERROR:
+          this.$router.push({ name: "BookDetails", params: { id: book.id }, query: {success: "ERROR in processing update - change did NOT take place"} });
         }
       }
     },

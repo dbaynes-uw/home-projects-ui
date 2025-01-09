@@ -68,7 +68,6 @@ export default {
     if (this.$route.query.success) {
       successMessage.value = this.$route.query.success;
       this.statusMessage = successMessage.value
-      console.log("StatusMessage: ", this.statusMessage )
     }
   },
   setup () {
@@ -119,13 +118,10 @@ export default {
             this.$store.commit('SET_ERRORS', "")
             this.$router.push({ name: 'About' })
           })
-          .catch(err => {
-            console.log("Login this.v$.$error: ", this.v$.$error)
-            console.log("Login err: ", err)
+          .catch(err => { 
+            this.error = err.response.data.error     
             this.$router.push({ name: "Login", query: {success: "Invalid Login Credentials - also make sure that API has started."} });
             location.reload()
-            //this.message = err.response.data.error
-            //?this.error = err.response.data.error
           })
         }
     }

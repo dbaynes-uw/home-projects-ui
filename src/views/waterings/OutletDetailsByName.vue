@@ -40,12 +40,8 @@ export default {
   },
   computed: {
     outlet() {
-      console.log("STORE: ", this.$store.state.outlet_details_by_name)
       return this.$store.state.outlet_details_by_name //, this.$route.params.outlet_details_by_name;
     },
-    //origin() {
-    //  return "OutletDetails"
-    //}
   },
   methods: {
     onDoubleClick(outlet) {

@@ -58,7 +58,6 @@ export default {
   },
   methods: {
     handleSubmitForgotPassword() {
-      console.log("Inside handleSubmitForgotPassword!!!")
       this.$store
       .dispatch('forgotPassword', {
         email: this.state.email,
@@ -68,7 +67,6 @@ export default {
         this.$router.push({ name: 'Login' })
       })
       .catch(err => {
-        console.log("Error!!!!!!!!!!!: ", err.response.data.error)
         this.message = err.response.data.error
         this.error = err.response.data.error
       })

@@ -197,7 +197,6 @@ export default {
   },
   methods: {
     showVarNumber(var_num){
-      console.log("SHOW VAR NBR: ", var_num)
       this.filteredResults = [];
       if (
         this.golfs &&

@@ -174,14 +174,12 @@ export default {
       this.checkValidations();
       //this.outlet.watering_name = this.watering.name
       this.outlet.watering_name = this.watering.watering_name
-      console.log("OUTLET: ", this.outlet)
       if (this.isFormValid) {
         const outlet = {
           ...this.outlet,
           id: uuidv4(),
           created_by: this.$store.state.user.resource_owner.email,
         };
-        console.log("Ready to Store: ", outlet)
         if (this.$store.dispatch("createWateringOutlet", outlet)) {
           this.$router.push({ name: "WateringDisplay" });
         } else {
@@ -236,7 +234,6 @@ export default {
       } else {
         this.isFormValid = false
       }
-      console.log("Check Validations Form Valid? ", this.isFormValid)
     }
   },
 };

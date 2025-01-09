@@ -107,7 +107,6 @@ export default {
       }
     },
     checkValidations() {
-      console.log("Checkvalidations: ", this.isDateOccurrenceValid + ' @ ' + this.isDurationValid)
       if (this.isDateOccurrenceValid && this.isDurationValid) {
         this.isFormValid = true
       } else {

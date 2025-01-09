@@ -78,9 +78,6 @@ export default {
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
     },
-    getGardenName(garden_id) {
-      console.log("Get Garden Name: ", garden_id)
-    }
   },
   created() {
     this.$store.dispatch("fetchGarden", this.id);

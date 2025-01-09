@@ -121,10 +121,7 @@ export default {
       return this.$store.state.watering;
     },
   },
-  setup() {
-    //const vm = this.app.getCurrentInstance()
-    //console.log("VM: ", vm)
-  },
+  setup() {},
   methods: {
     async deletePlant(plant) {
       const ok = await this.$refs.confirmDialogue.show({
@@ -153,9 +150,6 @@ export default {
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },
-    getGardenName(garden_id) {
-      console.log("Get Garden Name: ", garden_id)
-    }
   }
 }
 </script>

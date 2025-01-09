@@ -105,7 +105,6 @@ export default {
   },
   computed: {
     garden() {
-      console.log("Garden: ", this.$store.state.garden)
       return this.$store.state.garden;
     },
     outletsGroup() {

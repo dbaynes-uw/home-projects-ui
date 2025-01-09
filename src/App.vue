@@ -100,7 +100,6 @@ export default {
   },
   methods: {
     logout () {
-      console.log("APP.VUE Logout!")
       this.$store.dispatch('logout');
     }
   },

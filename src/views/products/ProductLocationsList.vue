@@ -181,14 +181,12 @@ export default {
       }, 300)
     },
     //toggleVendor(index) {
-    //  console.log("@@ToggleVendor idx: ", index)
     //  this.isVendorToggled = index === this.isVendorToggled? null : index
     //},
     toggleVendor(toggle) {
       this.isVendorToggled = toggle === true? false : true
     },
     doubleClickLocation(location) {
-      console.log("DBLCLICK LOC", `${location}`)
       clearTimeout(time);
       this.$router.push({ name: 'ProductsLocationList', params: { location: `${location}` } });
     },

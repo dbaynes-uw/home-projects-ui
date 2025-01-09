@@ -174,7 +174,6 @@ export default new Vuex.Store({
       state.vendor = vendor;
     },
     DELETE_WATERING(state, watering) {
-      console.log("Delete Watering: ", watering)
       state.watering = watering;
     },
     SET_SHOPPING_LIST(state, shopping_list) {
@@ -215,8 +214,8 @@ export default new Vuex.Store({
       }`
     },
     CLEAR_USER_DATA () {
-      var user = localStorage.getItem('user')
-      console.log("CLEAR USER DATA - ", user)
+      //var user = localStorage.getItem('user')
+      //console.log("CLEAR USER DATA - ", user)
       localStorage.removeItem('user')
       axios.defaults.headers.common['Authorization'] = null
     },
@@ -291,7 +290,7 @@ export default new Vuex.Store({
           } else {
             error = this.message
           }
-          console.log("Message to be sent: ", error)
+          alert("Registration error: ", error.response.request.statusText)
           router.push({name:'home', params: {message: this.message}})
         });
     },
@@ -348,7 +347,6 @@ export default new Vuex.Store({
        });
     },
     async resetPassword ({ commit }, email) {
-      console.log("ForgetPassword user: ", email)
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
@@ -364,7 +362,7 @@ export default new Vuex.Store({
          commit('SET_USER_DATA', data)
        })
        .catch((error) => {
-         alert("Invalid Login Credentials or API problem - Please try again")
+         alert("Invalid Login Credentials or API problem - Please try again for " + email)
          //location.reload()
          //const message = error.response.request.statusText + '!';
          error = error.response.request.statusText + '!';
@@ -379,8 +377,8 @@ export default new Vuex.Store({
           alert("Book was successfully added for " + book.title);
         })
         .catch((error) => {
-          alert("Error in postBook of createBook Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Book Post Error: ", error.response.data )
         });
     },
     async deleteBook({ commit }, book) {
@@ -389,7 +387,8 @@ export default new Vuex.Store({
           commit("SET_BOOKS", response.data);
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Book Delete Error: ", error.response.data )
         });
     },
     async fetchBook({ commit, state }, id) {
@@ -402,7 +401,8 @@ export default new Vuex.Store({
             commit("SET_BOOK", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Book Fetch Error: ", error.response.data )
           });
       }
     },
@@ -413,7 +413,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Books Fetch Error: ", error.response.data )
         });
     },
     async fetchGarden({ commit, state }, id) {
@@ -426,7 +427,8 @@ export default new Vuex.Store({
             commit("SET_GARDEN", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Garden Fetch Error: ", error.response.data )
           });
       }
     },
@@ -442,7 +444,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Gardens Fetch Error: ", error.response.data )
         });
     },
     async createEvent({ commit }, event) {
@@ -452,8 +455,8 @@ export default new Vuex.Store({
           alert("Event was successfully added for " + event.description);
         })
         .catch((error) => {
-          alert("Error in postEvent of createEvent Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Event Post Error: ", error.response.data )
         });
     },
     async fetchEvents({ commit }) {
@@ -471,7 +474,8 @@ export default new Vuex.Store({
         //  router.push({name:'home'})
         //});
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Events Fetch Error: ", error.response.data )
         });
     },
     async deleteEvent({ commit }, event) {
@@ -480,7 +484,8 @@ export default new Vuex.Store({
           commit("DELETE_EVENT", response.data);
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Event Delete Error: ", error.response.data )
         });
     },
     async fetchEvent({ commit, state }, id) {
@@ -493,7 +498,8 @@ export default new Vuex.Store({
             commit("SET_EVENT", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Event Fetch Error: ", error.response.data )
           });
       }
     },
@@ -506,7 +512,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("EventsAssigned Fetch Error: ", error.response.data )
         });
     },
     async eventsDueBy({ commit }, form) {
@@ -523,7 +530,8 @@ export default new Vuex.Store({
           return response.data;
         })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
+        alert("EventsDueBy Get Error: ", error.response.data )
       });
     },
     async eventsLocations({ commit }, form) {
@@ -536,7 +544,8 @@ export default new Vuex.Store({
           return response.data;
           })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
+        alert("EventsLocations Get Error: ", error.response.data )
       });
     },
     async eventsPastDue({ commit }, dueBy) {
@@ -547,7 +556,8 @@ export default new Vuex.Store({
       return response.data;
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
+        alert("EventsPastDue Get Error: ", error.response.data )
       });
     },
     async eventsInactive({ commit }, inactive) {
@@ -558,7 +568,8 @@ export default new Vuex.Store({
       return response.data;
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
+        alert("EventsInactive Get Error: ", error.response.data )
       });
     },
     async fetchEventStatistics({ commit }) {
@@ -570,7 +581,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("EventsStatistics Fetch Error: ", error.response.data )
         });
     },
     async fetchEventStatisticDetail({ commit }, eventStatisticDetail) {
@@ -582,7 +594,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("EventsStatisticsDetail Get Error: ", error.response.data )
         });
     },
     async updateEvent({ commit }, event) {
@@ -593,7 +606,8 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Event Put Error: ", error.response.data )
         });
     },
     async createFilm({ commit }, film) {
@@ -603,8 +617,8 @@ export default new Vuex.Store({
           alert("Film was successfully added for " + film.title);
         })
         .catch((error) => {
-          alert("Error in postFilm of createFilm Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Film Post Error: ", error.response.data )
         });
     },
     async deleteFilm({ commit }, film) {
@@ -614,7 +628,8 @@ export default new Vuex.Store({
           alert("Film " + film.title + " was deleted");
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Film Delete Error: ", error.response.data )
         });
     },
     async fetchFilm({ commit, state }, id) {
@@ -627,7 +642,8 @@ export default new Vuex.Store({
             commit("SET_FILM", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Film Fetch Error: ", error.response.data )
           });
       }
     },
@@ -638,7 +654,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Films Fetch Error: ", error.response.data )
         });
     },
     async createGarden({ commit }, garden) {
@@ -648,42 +665,42 @@ export default new Vuex.Store({
           alert("Garden was successfully added for " + garden.garden_name);
         })
         .catch((error) => {
-          alert("Error in postGarden of createGarden Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Garden Post Error: ", error.response.data )
         });
     },
     async createPlant({ commit }, plant) {
-      console.log("createPlant: ", plant)
       EventService.postPlant(plant)
         .then(() => {
           commit("SET_PLANT", plant);
           alert("Plant was successfully added for " + plant.plant_name);
         })
         .catch((error) => {
-          alert("Error in postPlant of createPlant Action: ", plant.id);
-          console.log(error);
+          //console.log(error);
+          alert("Plant Post Error: ", error.response.data )
         });
     },
 
     async createGolf({ commit }, golf) {
-      console.log("Store createGolf: ", golf)
       EventService.postGolf(golf)
         .then(() => {
           commit("ADD_GOLF", golf);
           alert("Golf was successfully added for date " + DateFormatService.formatDatejs(golf.date_played));
         })
         .catch((error) => {
-          alert("Error in postGolf of createGolf Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Golf Post Error: ", error.response.data )
         });
     },
     async deleteGolf({ commit }, golf) {
       EventService.deleteGolf(golf)
         .then((response) => {
           commit("DELETE_GOLF", response.data);
+          alert("Golf Round at " + golf.course + " on " + golf.date_played + " was deleted.")
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Golf Delete Error: ", error.response.data )
         });
     },
     async fetchGolf({ commit, state }, id) {
@@ -696,7 +713,8 @@ export default new Vuex.Store({
             commit("SET_GOLF", response.data);
           })
           .catch((error) => {
-            console.log(error);
+          //console.log(error);
+          alert("Golf Get Error: ", error.response.data )
           });
       }
     },
@@ -707,7 +725,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Golf Fetch Error: ", error.response.data )
         });
     },
     async createMed({ commit }, med) {
@@ -716,8 +735,8 @@ export default new Vuex.Store({
           commit("SET_MEDS", med);
         })
         .catch((error) => {
-          alert("Error in postMed of createMed Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Med Create Error: ", error.response.data )
         });
     },
 
@@ -727,7 +746,9 @@ export default new Vuex.Store({
           commit("SET_MEDS", response.data);
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Med Delete Error: ", error.response.data )
+
         });
     },
     async fetchMed({ commit, state }, id) {
@@ -740,7 +761,8 @@ export default new Vuex.Store({
             commit("SET_MED", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Med Get Error: ", error.response.data )
           });
       }
     },
@@ -751,7 +773,9 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Med Fetch Error: ", error.response.data )
+
         });
     },
     async updateMed({ commit }, med) {
@@ -761,7 +785,8 @@ export default new Vuex.Store({
           //location.reload();
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Med Put Error: ", error.response.data )
         });
     },
 
@@ -773,7 +798,8 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           alert("Error in postBook of createOutlet Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Med Post Error: ", error.response.data )
         });
     },
     async deleteOutlet({ commit }, outlet) {
@@ -783,33 +809,32 @@ export default new Vuex.Store({
           alert("Outlet " + outlet.outlet_name + " was deleted");
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Outlet Delete Error: ", error.response.data )
         });
     },
     async fetchOutlet({ commit }, id) {
         EventService.getOutlet(id)
           .then((response) => {
-            console.log("Repsonse: ", response.data)
             commit("SET_OUTLET", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Outlet Fetch Error: ", error.response.data )
           });
       //}
     },
     async fetchOutletDetailsByName({ commit }, outlet_name) {
-      console.log("Store FetchOutletDetailsByName name: ", outlet_name)
       EventService.getOutletDetailsByName(outlet_name)
         .then((response) => {
-          console.log("fetchOutletDetailsByName STORE Repsonse: ", response.data)
           commit("SET_OUTLET_DETAILS_BY_NAME", response.data);
           return response.data;
         })
         .catch((error) => {
-          alert("Outlet " + outlet_name + " was not found. Water Line for Plant must be changed."); 
           commit("DELETE_OUTLET_DETAILS_BY_NAME"); 
-          console.log(error);
-          router.push({ name: 'GardenList'});
+          //router.push({ name: 'GardenList'});
+          //console.log(error);
+          alert("Med Fetch Error: ", error.response.data )
         });
     },
     async fetchOutletsGroup({ commit }) {
@@ -819,7 +844,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Outlet Fetch Group Error: ", error.response.data )
         });
     },
     async deletePlant({ commit }, plant) {
@@ -829,7 +855,8 @@ export default new Vuex.Store({
           alert("Plant " + plant.plant_name + " was Successfully Deleted");
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Plant Delete Error: ", error.response.data )
         });
     },
     async fetchPlant({ commit }, plant) {
@@ -839,7 +866,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Plant Fetch Error: ", error.response.data )
         });
     },
 
@@ -847,11 +875,11 @@ export default new Vuex.Store({
       EventService.getPlants(garden)
         .then((response) => {
           commit("SET_PLANTS", response.data);
-          console.log("GARDEN PLANTS: ", response.data)
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Plant Fetch Error: ", error.response.data )
         });
     },
     async deleteProduct({ commit }, product) {
@@ -861,7 +889,8 @@ export default new Vuex.Store({
           alert("Product " + product.product_name + " was deleted");
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Product Delete Error: ", error.response.data )
         });
     },
     async fetchProducts({ commit }) {
@@ -871,8 +900,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
-          alert("Store getProducts Error from ES: " + error.response.data.error);
+          //console.log(error);
+          alert("Product Fetch: ", error.response.data )
         });
     },
     async fetchProductsByLocation({ commit }, products_by_location) {
@@ -884,7 +913,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Products Get by Location Error: ", error.response.data )
         });
     },
     async fetchShoppingList({ commit }) {
@@ -894,13 +924,14 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
-          if (!error.response) {
-            router.push({name:'About'})
-          }else {
-            console.log("Store getShoppingList error.response from ES: " + error.response);
-            router.push({name:'About'})
-          }
+          //if (!error.response) {
+          //  router.push({name:'About'})
+          //}else {
+          //  console.log("Store getShoppingList error.response from ES: " + error.response);
+          //  router.push({name:'About'})
+          //}
+          //console.log(error);
+          alert("Shopping List Fetch Error: ", error.response.data )
         });
     },
     async putProducts({ commit }, products) {
@@ -909,8 +940,8 @@ export default new Vuex.Store({
           commit("SET_PRODUCTS", products);
         })
         .catch((error) => {
-          alert("Error in putProducts");
-          console.log(error);
+          //console.log(error);
+          alert("Products Put Error: ", error.response.data )
         });
     },
     async putProductsVendors({ commit }, products_vendors) {
@@ -919,8 +950,8 @@ export default new Vuex.Store({
           commit("SET_PRODUCTS_VENDORS", products_vendors);
         })
         .catch((error) => {
-          alert("Error in putProductsVendors");
-          console.log(error);
+          //console.log(error);
+          alert("ProductsVendors Put Error: ", error.response.data )
         });
     },
     async createTrail({ commit }, trail) {
@@ -930,8 +961,8 @@ export default new Vuex.Store({
           alert("Trail was successfully added for " + trail.location);
         })
         .catch((error) => {
-          alert("Error in postTrail of createTrail Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Trail Create Error: ", error.response.data )
         });
     },
     async deleteTrail({ commit }, trail) {
@@ -940,7 +971,8 @@ export default new Vuex.Store({
           commit("DELETE_TRAIL", response.data);
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Trail Delete Error: ", error.response.data )
         });
     },
     async fetchTrail({ commit, state }, id) {
@@ -953,7 +985,8 @@ export default new Vuex.Store({
             commit("SET_TRAIL", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Trail Get Error: ", error.response.data )
           });
       }
     },
@@ -970,31 +1003,29 @@ export default new Vuex.Store({
         });
     },
     createTravel({ commit }, travel) {
-      console.log("createTravel from index.js");
       EventService.postTravel(travel)
         .then(() => {
           commit("ADD_TRAVEL", travel);
           alert("Travel was successfully added for " + travel.title);
         })
         .catch((error) => {
-          alert("Error in postTravel of createTravel Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("Travel Post Error: ", error.response.data )       
         });
     },
     async deleteTravel({ commit }, travel) {
-      console.log("Index.js: deleteTravel title: ", travel.title);
       EventService.deleteTravel(travel.id)
         .then((response) => {
           commit("DELETE_TRAVEL", response.data);
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Travel Delete Error: ", error.response.data )
         });
     },
     async fetchTravel({ commit, state }, id) {
       const existingTravel = state.travels.find((travel) => travel.id === id);
       if (existingTravel) {
-        console.log("ExistingTravel: ", existingTravel);
         commit("SET_Travel", existingTravel);
       } else {
         EventService.getTravel(id)
@@ -1002,7 +1033,8 @@ export default new Vuex.Store({
             commit("SET_TRAVEL", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("Travel Fetch Error: ", error.response.data )
           });
       }
     },
@@ -1013,7 +1045,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Travels Fetch Error: ", error.response.data )
         });
     },
     async updateTravel({ commit }, travel) {
@@ -1024,7 +1057,8 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Travel Put Error: ", error.response.data )
         });
     },
     async createUser({ commit }, user) {
@@ -1033,8 +1067,8 @@ export default new Vuex.Store({
           commit("ADD_USER", user);
         })
         .catch((error) => {
-          alert("Error in postUser of createUser Action (index.js)");
-          console.log(error);
+          //console.log(error);
+          alert("User Post Error: ", error.response.data )
         });
     },
     async deleteUser({ commit }, user) {
@@ -1043,7 +1077,8 @@ export default new Vuex.Store({
           commit("DELETE_USER", response.data);
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("User Delete Error: ", error.response.data )
         });
     },
     async fetchUser({ commit, state }, id) {
@@ -1056,7 +1091,8 @@ export default new Vuex.Store({
             commit("SET_USER_DATA", response.data);
           })
           .catch((error) => {
-            console.log(error);
+            //console.log(error);
+            alert("User Fetch Error: ", error.response.data )
           });
       }
     },
@@ -1064,17 +1100,12 @@ export default new Vuex.Store({
     async fetchUsers({ commit }) {
       EventService.getUsers()
         .then((response) => {
-          console.log("ES Users Response: ", response)
           commit("SET_USERS", response.data);
           return response.data;
         })
         .catch((error) => {
-          //!const message = error.response.data.error.replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function(key) { return key.toUpperCase()}) + '!';
-          const message = error.response.request.statusText + '!';
-          commit('SET_ERRORS', message)
-          //Xrouter.push({name:'home', params:{message}})
-          router.push({name:'home'})
-          //router.back()
+          //console.log(error);
+          alert("Users Fetch Error: ", error.response.data )
         });
     },
     async updateUser({ commit }, user) {
@@ -1085,7 +1116,8 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Users Put Error: ", error.response.data )
         });
     },
     async createVendor({ commit }, vendor) {
@@ -1104,7 +1136,7 @@ export default new Vuex.Store({
           //console.log("Error Response Data Errors: ", error.response.data.errors)
           //console.log("Error Message: ", error.message)
           //console.log("Display Error: ", error.response.data.error);
-          alert("Store: " + error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
+          alert("Vendor Create Error: " + error.response.data.error + " for " + vendor.location + " - " + vendor.vendor_name);
         });
     },
     async deleteVendor({ commit }, vendor) {
@@ -1114,7 +1146,8 @@ export default new Vuex.Store({
           alert("Vendor " + vendor.title + " was deleted");
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Vendor Delete Error: ", error.response.data )
         });
     },
 
@@ -1135,9 +1168,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log("Store getVendors Error from ES: " + error);
-          //alert("Store getVendors Error from ES: " + error.response.data.error);
-          //alert("Store getVendors Error: " + error);
+          //console.log(error);
+          alert("Vendors Fetch Error: ", error.response.data )
         });
     },
     async fetchVendorsGroup({ commit }) {
@@ -1147,7 +1179,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("VendorsGroup Fetch Error: ", error.response.data )
         });
     },
     async fetchVendorsLocationsGroup({ commit }) {
@@ -1157,8 +1190,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
-          return;
+          //console.log(error);
+          alert("VendorsLocationsGroup Get Error: ", error.response.data )
         });
     },
     async fetchVendorsProductsGroup({ commit }) {
@@ -1168,8 +1201,8 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log(error);
-          router.push({name:'home'})
+          //console.log(error);
+          alert("VendorsProductsGroup Fetch Error: ", error.response.data )
         });
     },
     async fetchVendorsProducts({ commit }) {
@@ -1179,20 +1212,18 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log("API ERROR Store getVendorsProducts error: ", error);
-          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
+          //console.log(error);
+          alert("VendorsProducts Fetch Error: ", error.response.data )
         });
     },
     async putVendorsProducts({ commit }, vendors_products) {
-      console.log("STORE - update vendors_products: ")
       EventService.putVendorsProducts(vendors_products)
         .then(() => {
-          console.log("STORE - update vendors_products: ")
           commit("SET_VENDORS_PRODUCTS", vendors_products);
         })
         .catch((error) => {
-          alert("Error in putVendorsProducts");
-          console.log(error);
+          //console.log(error);
+          alert("VendorsProducts Put Error: ", error.response.data )
         });
     },
     async createWatering({ commit }, watering) {
@@ -1202,8 +1233,8 @@ export default new Vuex.Store({
           alert("Watering was successfully added for " + watering.watering_name);
         })
         .catch((error) => {
-          alert("Error in postWatering of createWatering Action");
-          console.log(error);
+          //console.log(error);
+          alert("Watering Create Error: ", error.response.data )
         });
     },
     async deleteWatering({ commit }, watering) {
@@ -1213,7 +1244,8 @@ export default new Vuex.Store({
           alert("Watering " + watering.title + " was deleted");
         })
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
+          alert("Watering Delete Error: ", error.response.data )
         });
     },
 
@@ -1224,18 +1256,16 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          console.log("API ERROR Store getWatering error: ", error);
-          //alert("API Error - Store getVendorsProducts Error from ES: ", error);
-        });
+          //console.log(error);
+          alert("Watering Fetch Error: ", error.response.data )        });
     },
   },
   getters: {
     loggedIn (state) {
-      console.log("Getters: loggedIn state: ", state.user)
       return !!state.user
     },
     loggedOut () {
-      console.log("Getters: loggedOut state:")
+      //console.log("Getters: loggedOut state:")
       //return state.user == null
     }
   },

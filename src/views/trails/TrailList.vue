@@ -127,7 +127,6 @@ export default {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     onDoubleClick(trail) {
-      console.log("Trail Edit ")
       this.$router.push({ name: 'TrailEdit', params: { id: `${trail.id}` } });
     },
     showIndex() {

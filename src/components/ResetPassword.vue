@@ -54,7 +54,6 @@ export default {
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/password_resets/";
     }
     this.api_url = work_url
-    console.log("this.api_url: ", this.api_url)
   },
   data () {
     return {
@@ -64,7 +63,8 @@ export default {
       showPasswordConfirmation: false,
       isFormValid: false,
       error: '',
-      notice: ''
+      notice: '',
+      external_response: '',
     }
   },
   created () {
@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     async resetPassword () {
-      console.log("resetPassword!!!!!")
       this.checkValidations(this.password, this.password_confirmation)
       if (this.isFormValid) {
         return axios
@@ -89,15 +88,13 @@ export default {
       }
     },
     resetSuccessful (response) {
-      console.log("Response Successful: ", response)
+      this.external_response = response
       this.notice = "Your password has been reset successfully. Sign in here with new password: "
       this.error = ''
       this.password = ''
       this.password_confirmation = ''
     },
     resetFailed (error) {
-      console.log("error.response.data.error: ", error.response.data.error)
-      console.log("error: ", error)
       this.error = (error.response && error.response.data && error.response.data.error) || 'Something went wrong - Probably database error has occurred - Please Try Again'
       this.notice = ''
 
@@ -113,19 +110,14 @@ export default {
     },
     async checkPasswordToken () {
       try {
-        console.log("checkPasswordToken!!!!!")
         return await axios
           .get(`//localhost:3000/api/v1/password_resets/${this.$route.params.token}`);
       } catch(error) {
-        console.log("ERROR Caught: ", error);
         this.resetFailed(error);
         this.$router.replace('/');
       }
     },
     checkValidations(password, password_confirmation) {
-      console.log("checkValidations - PW: ", password)
-      console.log("checkValidations - PW Conf: ", password_confirmation)
-
       if (password == password_confirmation) {
         this.isFormValid = true
       } else {

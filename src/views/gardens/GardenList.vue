@@ -125,7 +125,6 @@ export default {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     onDoubleClick(garden) {
-      console.log("Garden Plants: ", garden)
       this.$router.push({ name: 'GardenEdit', params: { id: `${garden.id}` } });
     },
     showIndex() {
@@ -142,24 +141,19 @@ export default {
         this.filteredResults = [];
         this.cardDetails = null;
       } else {
-        console.log("this.gardens[0].plants[0].plant_name: ", this.gardens[0].plants[0].plant_name)
         if (
           this.gardens &&
           this.gardens.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
           this.gardens.forEach((garden) => {
-            console.log("garden.plants.length: ", garden.plants.length)
             garden.plants.forEach((plant) => {
-              console.log("ForEach Garden/Plant: ", plant.plant_name)
               const searchHasPlantName =
                 plant.plant_name &&
                 plant.plant_name
                   .toLowerCase()
                   .includes(this.inputSearchText.toLowerCase());
-              console.log("searchHasPlantName: ", searchHasPlantName)
               if (searchHasPlantName) {
-                console.log("Plant to Push: ", plant)
                 this.filteredResults.push(garden);
               }
               if (this.filteredResults.length > 0) {
@@ -176,7 +170,6 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      //console.log("BOOK LIST sortBy: ", sortBy)
       this.sortedData = this.gardens;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));

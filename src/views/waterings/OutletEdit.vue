@@ -146,7 +146,6 @@ export default {
     this.outlet.active = this.outlet.active == 1 ? 'Active' : 'Inactive'
     this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
     this.start_time_display = this.outlet.start_time
-    console.log("Mount this.start_time_display: ", this.start_time_display)
   },
   created() {},
   data() {
@@ -223,11 +222,9 @@ export default {
       }
     },
     startTimeDisplay(showTimePickerFlag) {
-      console.log("startTimeDisplay - showTimePickerFlag: ", showTimePickerFlag)
       return this.showTimePickerFlag = showTimePickerFlag == true ? false : true
     },
     formatTime(value) {
-      console.log("Format Time: ", value)
       return DateFormatService.formatTimejs(value);
     },
   },

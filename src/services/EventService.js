@@ -1,7 +1,6 @@
 import axios from "axios";
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
-var environment = "";
 var api_url = "";
 export default {
   data() {
@@ -13,14 +12,11 @@ export default {
     //}
   },
   init() {
-    console.log("environment: ", environment);
     if (window.location.port == "8080") {
-      environment = "development";
       //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
       api_url = "http://localhost:3000/api/v1/";
       //axios.defaults.baseURL = '//localhost:3000/';
     } else {
-      environment = "production";
       api_url =
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
     }
@@ -201,7 +197,6 @@ export default {
   },
   async getGardenOutlet(garden) {
     this.init();
-    console.log("GET GARDEN OUTLET: ", garden)
     return axios.get(api_url + "gardens/garden_outlet", `${garden}`)
   },
   async getOutletsGroup() {
@@ -305,7 +300,6 @@ export default {
     return axios.get(api_url + "vendors_products")
   },
   async getProductsByLocation(location) {
-    console.log("getProductsByLocation - location: ", location)
     this.init();
     return axios.get(api_url + "products_by_location/" + `?location=${location}`)
   },
@@ -338,7 +332,6 @@ export default {
     return axios.post(api_url + 'waterings', watering);
   },
   async postWateringOutlet(watering_outlet) {
-    console.log("Post Watering Outlet@@@")
     this.init();
     return axios.post(api_url + 'watering_outlet', watering_outlet);
   },
@@ -356,7 +349,6 @@ export default {
     return axios.get(api_url + "outlets/" + id);
   },
   getOutletDetailsByName(name) {
-    console.log("ES getOutlet name: ", name)
     this.init();
     return axios.get(api_url + "outlets/get_plant_watering_outlet/" + `?name=${name}`);
   },

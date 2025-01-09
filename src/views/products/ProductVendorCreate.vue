@@ -157,7 +157,6 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      console.log("Is Form Valid? ", this.isFormValid)
       if (this.isFormValid) {
         const vendor = {
           ...this.vendor,
@@ -226,10 +225,6 @@ export default {
       }
     },
     checkValidations() {
-      //console.log("Loc Validations: ", this.isLocationValid)
-      //console.log("Name Validations: ", this.isVendorNameValid)
-      //console.log("Prod Validations: ", this.isProductNameValid)
-      //console.log("Oth Prod Validations: ", this.isOtherProductNameValid)
       if (this.isLocationValid &&
           this.isVendorNameValid &&
           this.isProductNameValid &&

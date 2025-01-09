@@ -78,7 +78,6 @@ export default {
         "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/";
     }
     this.api_url = work_url
-    console.log("Route Params: ", this.$route.params)
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.watering = result.data;
     this.watering.created_at = this.formatFullYearDate(this.watering.created_at)
