@@ -111,7 +111,6 @@ export default {
           }
         );
         if (result.status >= 200) {
-          console.log("GARDEN: ", garden)
           alert("Garden has been updated for " + garden.garden_name);
           this.$router.push({ name: "GardenDetails", params: { id: garden.id } });
         } else {
