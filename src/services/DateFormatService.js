@@ -3,6 +3,12 @@ moment.tz.setDefault("America/Los_Angeles");
 import dayjs from 'dayjs'
 import customParseFormat from "dayjs/plugin/customParseFormat";
 export default {
+  formatDayOfWeekjs(action_date) {
+    if (action_date) {
+      action_date =  dayjs(action_date).format('dddd')
+      return action_date;
+    } 
+  },
   formatDatejs(action_date) {
     if (action_date) {
       action_date =  dayjs(action_date).format('MM-DD-YY')

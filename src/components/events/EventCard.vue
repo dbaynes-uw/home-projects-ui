@@ -5,6 +5,8 @@
     <span><span class="complete-box"></span> = Complete</span>
   </div-->
   <div class="event-card">
+    <h2><b>{{ formatDayOfWeek(event.action_due_date) }}</b></h2>
+
     <p id="p-custom-u">
       <router-link
         :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
@@ -34,6 +36,9 @@ export default {
     }
   },
   methods: {
+    formatDayOfWeek(value) {
+      return DateFormatService.formatDayOfWeekjs(value);
+    },
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },
