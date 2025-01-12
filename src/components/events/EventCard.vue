@@ -20,6 +20,8 @@
       <li class="li-left">Last Action: {{ formatYearDate(event.action_completed_date) }}</li>
       <li class="li-left">Every {{ event.frequency }} days</li>
       <li class="li-left">Due: <b>{{ formatYearDate(event.action_due_date) }}</b> </li>
+      <li class="li-left">Notes:</li>
+      <b class="li-left-none" v-for="(notes, idx) in joinedNotes(event)" :key="idx">{{ notes }}</b>
 
     </ul>
   </div>
@@ -36,6 +38,9 @@ export default {
     }
   },
   methods: {
+    joinedNotes(e) {
+      return e.notes.split('\n');
+    },
     formatDayOfWeek(value) {
       return DateFormatService.formatDayOfWeekjs(value);
     },
