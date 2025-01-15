@@ -4,7 +4,7 @@
 
     <span v-if="statusMessage">
       <h2 style="color: red">
-        {{ statusMessage }} -- Make sure that API has started.
+        {{ statusMessage }} from the API -- Make sure that API has started and Check the API Logs
       </h2>
     </span>
     <h2>A Site for Home Projects to make a Better World!</h2>

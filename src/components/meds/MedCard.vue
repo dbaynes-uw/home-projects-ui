@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <!--p id="p-custom-left-u">{{ med.id}}</!--p-->
-    <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+    <!--confirm-dialogue ref="confirmDialogue"></!--confirm-dialogue-->
     <ul>
       <li class="li-left">Date: <b>{{ formatStandardDateTime(med.date_of_occurrence) }}</b></li>
       <li class="li-left">Duration: {{ med.duration }}</li>
@@ -31,7 +31,7 @@
   </div>
 </template>
 <script>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+//import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import SplitStringService from "@/services/SplitStringService.js";
 export default {
@@ -43,7 +43,7 @@ export default {
     }
   },
   components: {
-    ConfirmDialogue,
+    //ConfirmDialogue,
   },
   data() {
     return {

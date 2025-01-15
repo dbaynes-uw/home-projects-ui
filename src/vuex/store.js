@@ -455,8 +455,7 @@ export default new Vuex.Store({
           alert("Event was successfully added for " + event.description);
         })
         .catch((error) => {
-          //console.log(error);
-          alert("Event Post Error: ", error.response.data )
+          alert("Event Post Error for " + event.description + ": " + error.response.request.statusText)
         });
     },
     async fetchEvents({ commit }) {
@@ -482,10 +481,10 @@ export default new Vuex.Store({
       EventService.deleteEvent(event.id)
         .then((response) => {
           commit("DELETE_EVENT", response.data);
+          alert("Event was successfully Deleted for " + event.description);
         })
         .catch((error) => {
-          //console.log(error);
-          alert("Event Delete Error: ", error.response.data )
+          alert("Event Delete Error: " + event.description + " " + error.response.request.statusText)
         });
     },
     async fetchEvent({ commit, state }, id) {
@@ -601,13 +600,14 @@ export default new Vuex.Store({
     async updateEvent({ commit }, event) {
       EventService.putEvent(event)
         .then((response) => {
+          console.log("SET_EVENT NOW: ")
           commit("SET_EVENT", response.data);
-          alert("Event was successfully Updated for " + event.description);
-          location.reload();
+          alert("Event successfully updated for: " + event.description)
         })
         .catch((error) => {
           //console.log(error);
-          alert("Event Put Error: ", error.response.data )
+          alert("Event Put Error for " + event.description + ": " + error.response.request.statusText)
+          location.reload();
         });
     },
     async createFilm({ commit }, film) {

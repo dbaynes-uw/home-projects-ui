@@ -124,7 +124,7 @@ export default {
   },
   async putFilm(updatedFilm) {
     this.init();
-    return axios.put(api_url + "books" + `/${updatedFilm.id}`, updatedFilm);
+    return axios.put(api_url + "films" + `/${updatedFilm.id}`, updatedFilm);
   },
   async postFilm(film) {
     this.init();

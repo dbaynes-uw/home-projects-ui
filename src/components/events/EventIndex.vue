@@ -149,17 +149,17 @@ export default {
         title: "Delete Event from List",
         message:
           "Are you sure you want to delete " +
-          event.title +
+          event.description +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
         this.$store.dispatch("deleteEvent", event);
-        this.statusMessage =
-          "Event was Deleted for " +
-          event.title +
-          "! Page will restore in 2 seconds";
+        //this.statusMessage =
+        //  "Event was Deleted for " +
+        //  event.description +
+        //  "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
       }
     },

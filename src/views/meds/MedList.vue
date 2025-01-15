@@ -75,7 +75,6 @@
         <!--No Long In Action???-->
         <div class="cards">
           <!--tr v-for="(result, resultIndex) in films" :key="resultIndex"-->
-
           <MedCard
             v-for="(med, medIndex) in meds"
             :key="medIndex"

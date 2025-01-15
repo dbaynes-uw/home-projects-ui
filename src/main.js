@@ -33,7 +33,8 @@ createApp({
         //router.back(error)
         if (error.code){
           if (!error.message.includes("401")) {
-            this.$router.push({ name: "About", query: {success: error.message} });
+            return Promise.reject(error)
+            //!this.$router.push({ name: "About", query: {success: error.message} });
           }       
         }
       }

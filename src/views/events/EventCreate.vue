@@ -39,6 +39,7 @@
         label="Frequency in Days"
         :items="EVENT_FREQUENCY"
         v-model="event.frequency"
+        required
       >
         <option
           v-for="option in EVENT_FREQUENCY"
@@ -97,10 +98,10 @@ export default {
         status: 'active',
         created_by: this.$store.state.user.resource_owner.email,
       };
-      //Xthis.addEvent(event); in events.js
       //Vuex 2:
-      this.$store.dispatch("createEvent", event);
-      this.$router.push({ name: "EventList" });
+      if (this.$store.dispatch("createEvent", event)) {
+        this.$router.push({ name: "EventList" });
+      } 
     },
   },
   event() {

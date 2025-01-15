@@ -120,9 +120,9 @@ export default {
     this.api_url = work_url
     const result = await axios.get(this.api_url + +this.$route.params.id);
     this.event = result.data;
-    const capitalizedFirst = this.event.status.toUpperCase();
-    const rest = this.event.status.slice(1);
-    this.event.status = capitalizedFirst[0] + rest
+    //const capitalizedFirst = this.event.status.toUpperCase();
+    //const rest = this.event.status.slice(1);
+    //this.event.status = capitalizedFirst[0] + rest
   },
   data() {
     return {
@@ -136,7 +136,7 @@ export default {
         frequency: "",
         completed: "",
         notes: "",
-        updated_by: this.$store.state.user.resource_owner.email,
+        assigned_email: "",
       },
     };
   },
@@ -152,45 +152,32 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        //Needed? const event = {
-        //Needed?   ...this.event,
-        //Needed?   updated_by: this.$store.state.user.resource_owner.email,
-        //Needed? };
-        //console.log("This event to PUT: ", this.event);
-        const result = await axios.put(
-          this.api_url +
-          +this.$route.params.id,
-          {
-            description: this.event.description,
-            status: this.event.status.toLowerCase(),
-            action_completed_date: this.event.action_completed_date,
-            action_due_date: this.event.action_due_date,
-            assigned: this.event.assigned,
-            frequency: this.event.frequency,
-            notes: this.event.notes,
-            updated_by: this.$store.state.user.resource_owner.email,
-          }
-        );
-        if (result.status >= 200) {
-          alert("Event has been updated");
-          this.$router.push({ name: "EventShow", params: { id: result.id } });
-        } else {
-          alert("Update Error Code ", result.status);
+        //const result = await axios.put(
+        //  this.api_url +
+        //  +this.$route.params.id,
+        //  {
+        //    description: this.event.description,
+        //    status: this.event.status.toLowerCase(),
+        //    action_completed_date: this.event.action_completed_date,
+        //    action_due_date: this.event.action_due_date,
+        //    assigned: this.event.assigned,
+        //    frequency: this.event.frequency,
+        //    notes: this.event.notes,
+        //    updated_by: this.$store.state.user.resource_owner.email,
+        //  }
+        //);
+        //if (result.status >= 200) {
+        //  alert("Event was successfully Updated for " + result.data.description);
+        //  this.$router.push({ name: "EventShow", params: { id: result.id } });
+        //}
+        const event = {
+        ...this.event,
+        assigned_email: this.$store.state.user.resource_owner.email,
+        updated_by: this.$store.state.user.resource_owner.email,
         }
-        //Not Yet:console.warn("Edit Event: ", event),
-        //Not Yet:  EventService.putEvent(event)
-        //Not Yet:    //{
-        //Not Yet:    //  description: this.event.description,
-        //Not Yet:    //  notes: this.event.notes,
-        //Not Yet:    //}
-        //Not Yet:    .then(() => {
-        //Not Yet:      //this.$store.commit("ADD_EVENT", event);
-        //Not Yet:      alert("Event was successfully updated");
-        //Not Yet:      this.$router.push({ name: "EventList" });
-        //Not Yet:    })
-        //Not Yet:    .catch((error) => {
-        //Not Yet:      console.log(error);
-        //Not Yet:    });
+        if (this.$store.dispatch("updateEvent", event)) {
+          this.$router.push({ name: "EventShow", params: { id: event.id } });
+        }
       }
     },
     formatStandardDate(value) {
