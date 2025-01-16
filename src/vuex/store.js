@@ -600,9 +600,8 @@ export default new Vuex.Store({
     async updateEvent({ commit }, event) {
       EventService.putEvent(event)
         .then((response) => {
-          console.log("SET_EVENT NOW: ")
           commit("SET_EVENT", response.data);
-          alert("Event successfully updated for: " + event.description)
+          alert("Event " + event.description + " was Successfully Updated.")
         })
         .catch((error) => {
           //console.log(error);
@@ -934,6 +933,19 @@ export default new Vuex.Store({
           alert("Shopping List Fetch Error: ", error.response.data )
         });
     },
+    async updateProduct({ commit }, product) {
+      EventService.putProduct(product)
+        .then((response) => {
+          commit("SET_PRODUCT", response.data);
+          alert("Product " + product.product_name + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Product Put Error for " + product.product_name + ": " + error.response.request.statusText)
+          location.reload();
+        });
+    },
+
     async putProducts({ commit }, products) {
       EventService.putProducts(products)
         .then(() => {
@@ -944,10 +956,11 @@ export default new Vuex.Store({
           alert("Products Put Error: ", error.response.data )
         });
     },
-    async putProductsVendors({ commit }, products_vendors) {
+    async updateProductsVendors({ commit }, products_vendors) {
       EventService.putVendorsProducts(products_vendors)
         .then(() => {
           commit("SET_PRODUCTS_VENDORS", products_vendors);
+          alert("Product " + products_vendors.product_name + " was successfully updated")
         })
         .catch((error) => {
           //console.log(error);
@@ -1124,7 +1137,7 @@ export default new Vuex.Store({
       EventService.postVendor(vendor)
         .then(() => {
           commit("PUT_VENDOR", vendor);
-          router.push({name:'ProductLocationsList'})
+          router.push({name:'ProductsByLocations'})
         })
         .catch((error) => {
           //console.log("Error Response: ", error.response)
@@ -1216,7 +1229,7 @@ export default new Vuex.Store({
           alert("VendorsProducts Fetch Error: ", error.response.data )
         });
     },
-    async putVendorsProducts({ commit }, vendors_products) {
+    async updateVendorsProducts({ commit }, vendors_products) {
       EventService.putVendorsProducts(vendors_products)
         .then(() => {
           commit("SET_VENDORS_PRODUCTS", vendors_products);

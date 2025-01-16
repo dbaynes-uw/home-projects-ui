@@ -6,7 +6,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationsList' }">Shopping List By Location</router-link>
+          <router-link :to="{ name: 'ProductsByLocations' }">Shopping List By Location</router-link>
         </button>
       </li>
       <li>
@@ -76,7 +76,7 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  name: "ProductLocationsList",
+  name: "ProductsByLocations",
   components: {
   },
   data() {
@@ -115,7 +115,7 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       
-      if (this.$store.dispatch("putVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {
+      if (this.$store.dispatch("updateVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {
         alert("Vendors Products List Updated Successfully")
         location.reload();
       } else {

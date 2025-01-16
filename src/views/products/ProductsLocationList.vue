@@ -7,14 +7,14 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationsList'}" >
+          <router-link :to="{ name: 'ProductsByLocations'}" >
             Products By Locations
           </router-link>
         </button>
       </li>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductsVendorList' }">Shopping List By Vendor</router-link>
+          <router-link :to="{ name: 'ProductsByVendors' }">Shopping List By Vendor</router-link>
         </button>
       </li>
     </ul>
@@ -128,7 +128,7 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       
-      if (this.$store.dispatch("putVendorsProducts", sub_products_by_location)) {
+      if (this.$store.dispatch("updateVendorsProducts", sub_products_by_location)) {
         alert("PsLL: Vendors Products List Updated Successfully")
         location.reload();
       } else {

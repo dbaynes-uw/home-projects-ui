@@ -219,6 +219,10 @@ export default {
     this.init();
     return axios.get(api_url + "shopping_list")
   },
+  async putProduct(updatedProduct) {
+    this.init();
+    return axios.put(api_url + "products" + `/${updatedProduct.id}`, updatedProduct);
+  },
   async putProducts(products) {
     this.init();
     return axios.put(api_url + "products/update", products) //, { params: {vendors_products}});

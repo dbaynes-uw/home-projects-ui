@@ -6,14 +6,14 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationsList' }">Product Location List</router-link>
+          <router-link :to="{ name: 'ProductsByLocations' }">Product Location List</router-link>
         </button>
       </li>
     </ul>
     <ul class="py-2">
       <li>
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductsVendorList' }">List By Vendor</router-link>
+          <router-link :to="{ name: 'ProductsByVendors' }">List By Vendor</router-link>
         </button>
       </li>
       <li>

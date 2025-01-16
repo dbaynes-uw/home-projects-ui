@@ -11,7 +11,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'ProductLocationsList' }">Back to Shopping</router-link>
+          <router-link  :to="{ name: 'ProductsByLocations' }">Back to Shopping</router-link>
         </button>
       </li>
       <li>
@@ -101,7 +101,7 @@ export default {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Update Product from List ",
         message:
-          "Are you sure you want to Update this record ",
+          "Are you sure you want to Update Product " + this.product.product_name,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
@@ -110,21 +110,8 @@ export default {
           ...this.product,
           updated_by: this.$store.state.created_by,
         };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            product_name: this.product.product_name,
-            action: this.product.action,
-            date_purchased: this.product.date_purchased,
-            notes: this.product.notes,
-          }
-        );
-        if (result.status >= 200) {
-          this.statusMessage = "Product has been updated for Vendor " + this.vendor.vendor_name + " Product: " + product.product_name
-          //this.$router.push({ name: "ProductLocationsList" });
-        } else {
-          alert("Update Error Code ", result.status);
+        if (this.$store.dispatch("updateProduct", product)) {
+          this.$router.push({ name: "ProductEdit", params: { id: product.id } });
         }
       }
     },
@@ -145,7 +132,7 @@ export default {
           product.product_name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "ProductLocationsList" });
+        this.$router.push({ name: "ProductsByLocations" });
       }
     },
   },

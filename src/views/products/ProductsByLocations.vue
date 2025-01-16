@@ -7,7 +7,7 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductsVendorList' }">Shopping List By Vendor</router-link>
+          <router-link :to="{ name: 'ProductsByVendors' }">Shopping List By Vendor</router-link>
         </button>
       </li>
     </ul>
@@ -89,7 +89,7 @@ import { v4 as uuidv4 } from "uuid";
 //import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "ProductLocationsList",
+  name: "ProductsByLocations",
   //props: {
   //  location: {
   //    type: String,
@@ -160,7 +160,7 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };
       
-      if (this.$store.dispatch("putVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {
+      if (this.$store.dispatch("updateVendorsProducts", sub_vendors_products, {params: { vendors_products: sub_vendors_products }} )) {
         alert("Vendors Products List Updated Successfully")
         location.reload();
       } else {

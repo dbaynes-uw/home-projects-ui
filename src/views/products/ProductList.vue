@@ -6,14 +6,14 @@
     <ul>
       <li class="left">
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductLocationsList'}" >
+          <router-link :to="{ name: 'ProductsByLocations'}" >
             Products By Locations
           </router-link>
         </button>
       </li>
       <li>
         <button id="link-as-button">
-          <router-link :to="{ name: 'ProductsVendorList' }">Product List By Vendor</router-link>
+          <router-link :to="{ name: 'ProductsByVendors' }">Product List By Vendor</router-link>
         </button>
       </li>
       <li>
@@ -128,7 +128,7 @@ export default {
         this.$store.dispatch("fetchShoppingList");
         alert("Products List Updated Successfully - RS: " + this.resultSet[0].product_name + ' - ' + this.resultSet[0].active)
         location.reload();
-        //XXXXthis.$router.push({ name: 'ProductLocationsList'})
+        //XXXXthis.$router.push({ name: 'ProductsByLocations'})
       } else {
         alert("Error adding Products in Products View ");
       }

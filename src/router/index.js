@@ -36,8 +36,8 @@ import ProductEdit from "../views/products/ProductEdit.vue";
 import OutletDetails from "@/views/waterings/OutletDetails.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import ProductsLocationList from "../views/products/ProductsLocationList.vue";
-import ProductLocationsList from "../views/products/ProductLocationsList.vue";
-import ProductsVendorList from "../views/products/ProductsVendorList.vue";
+import ProductsByLocations from "../views/products/ProductsByLocations.vue";
+import ProductsByVendors from "../views/products/ProductsByVendors.vue";
 import ProductList from "../views/products/ProductList.vue";
 import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
 import VendorEdit from "../views/vendors/VendorEdit.vue";
@@ -453,17 +453,17 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/vendors_products",
-    name: "ProductLocationsList",
+    path: "/products_by_locations",
+    name: "ProductsByLocations",
     props: true,
-    component: ProductLocationsList,
+    component: ProductsByLocations,
     meta: { requiresAuth: true}
   },
   {
-    path: "/locations_vendors",
-    name: "ProductsVendorList",
+    path: "/products_by_vendors",
+    name: "ProductsByVendors",
     props: true,
-    component: ProductsVendorList,
+    component: ProductsByVendors,
     meta: { requiresAuth: true}
   },
   {

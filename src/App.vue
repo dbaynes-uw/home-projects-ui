@@ -148,7 +148,7 @@ export default {
         //  title: "location_list",
         //},
         {
-          label: "ProductLocationsList",
+          label: "ProductsByLocations",
           url: "/products",
           title: "Shopping",
         },
