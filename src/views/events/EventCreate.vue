@@ -22,11 +22,11 @@
       />
       <v-select
         label="Whose Turn?"
-        :items="ASSIGNEES"
+        :items="ASSIGNEES_CURRENT"
         v-model="event.assigned"
       >
         <option
-          v-for="option in ASSIGNEES"
+          v-for="option in ASSIGNEES_CURRENT"
           :value="option"
           :key="option"
           id="select-box"
@@ -67,7 +67,7 @@
   <!--div>{{ $store.state.events }}</div-->
 </template>
 <script setup>
-import { ASSIGNEES, EVENT_FREQUENCY } from "@/services/constants";
+import { ASSIGNEES_CURRENT, EVENT_FREQUENCY } from "@/services/constants";
 import { v4 as uuidv4 } from "uuid";
 </script>
 <script>

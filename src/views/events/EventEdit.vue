@@ -16,14 +16,14 @@
         <v-select
           label="Status"
           :items="EVENT_STATUSES"
-          v-model="event.status"
+          v-model="capitalizedStatus"
         >
           <option
             v-for="option in EVENT_STATUSES"
             :value="option"
             :key="option"
             id="select-box"
-            :selected="option === med.duration"
+            :selected="option === event.status"
           >
             {{ option }}
           </option>
@@ -47,11 +47,11 @@
         />
         <v-select
           label="Whose Turn?"
-          :items="ASSIGNEES"
+          :items="ASSIGNEES_CURRENT"
           v-model="event.assigned"
         >
           <option
-            v-for="option in ASSIGNEES"
+            v-for="option in ASSIGNEES_CURRENT"
             :value="option"
             :key="option"
             id="select-box"
@@ -96,51 +96,36 @@
   </div>
 </template>
 <script setup>
-  import {ASSIGNEES, EVENT_FREQUENCY, EVENT_STATUSES} from "@/services/constants.js"
+  import {ASSIGNEES_CURRENT, EVENT_FREQUENCY, EVENT_STATUSES} from "@/services/constants.js"
   import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-  import axios from "axios";
   import DateFormatService from "@/services/DateFormatService.js";
 </script>
 <script>
-//import EventService from "@/services/EventService.js";
 export default {
   props: ["id", "assigned"],
   components: {
     ConfirmDialogue,
   },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macbook-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/events/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
-    }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.event = result.data;
-    //const capitalizedFirst = this.event.status.toUpperCase();
-    //const rest = this.event.status.slice(1);
-    //this.event.status = capitalizedFirst[0] + rest
+  created() {
+    this.$store.dispatch("fetchEvent", this.id);
+  },
+  computed: {
+    event() {
+      return this.$store.state.event;
+    },
+    capitalizedStatus: {
+      get() {
+        return this.event.status.charAt(0).toUpperCase() + this.event.status.slice(1);
+      },
+      set(value){
+        //value is what is returned from get() above in capitalizedStatus
+        this.event.status = value
+      }
+   }
   },
   data() {
-    return {
-      event: {
-        id: "",
-        description: "",
-        status: "",
-        action_completed_date: "",
-        action_due_date: "",
-        assigned: "",
-        frequency: "",
-        completed: "",
-        notes: "",
-        assigned_email: "",
-      },
-    };
+    return {};
   },
-  setup() {},
   methods: {
     async updateEvent() {
       const ok = await this.$refs.confirmDialogue.show({
@@ -152,24 +137,6 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        //const result = await axios.put(
-        //  this.api_url +
-        //  +this.$route.params.id,
-        //  {
-        //    description: this.event.description,
-        //    status: this.event.status.toLowerCase(),
-        //    action_completed_date: this.event.action_completed_date,
-        //    action_due_date: this.event.action_due_date,
-        //    assigned: this.event.assigned,
-        //    frequency: this.event.frequency,
-        //    notes: this.event.notes,
-        //    updated_by: this.$store.state.user.resource_owner.email,
-        //  }
-        //);
-        //if (result.status >= 200) {
-        //  alert("Event was successfully Updated for " + result.data.description);
-        //  this.$router.push({ name: "EventShow", params: { id: result.id } });
-        //}
         const event = {
         ...this.event,
         assigned_email: this.$store.state.user.resource_owner.email,
@@ -200,4 +167,3 @@ select {
   border-color: darkgreen;
 }
 </style>
-@/services/constants.js

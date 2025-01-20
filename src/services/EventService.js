@@ -34,6 +34,14 @@ export default {
     this.init();
     return axios.get(api_url + "books")
   },
+  async postBook(book) {
+    this.init();
+    return axios.post(api_url + 'books', book);
+  },
+  async putBook(updatedBook) {
+    this.init();
+    return axios.put(api_url + "books" + `/${updatedBook.id}`, updatedBook);
+  },
   getGarden(id) {
     this.init();
     return axios.get(api_url + "gardens/" + id);
@@ -41,14 +49,6 @@ export default {
   getGardens() {
     this.init();
     return axios.get(api_url + "gardens")
-  },
-  async putBook(updatedBook) {
-    this.init();
-    return axios.put(api_url + "books" + `/${updatedBook.id}`, updatedBook);
-  },
-  async postBook(book) {
-    this.init();
-    return axios.post(api_url + 'books', book);
   },
   getEvent(id) {
     this.init();

@@ -84,7 +84,6 @@
 </template>
 <script setup>
 import { FILM_RATINGS } from "@/services/constants";
-import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 </script>
 <script>
@@ -93,41 +92,15 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macfilm-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/films/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/films/";
+  created() {
+    this.$store.dispatch("fetchFilm", this.id);
+  },
+  computed: {
+    film() {
+    return this.$store.state.film;
     }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.film = result.data;
   },
-  data() {
-    return {
-      film: {
-        id: "",
-        title: "",
-        nationality: "",
-        director: "",
-        actors: "",
-        seasons: "",
-        episodes: "",
-        date_released: "",
-        date_watched: "",
-        rating: "",
-        url_to_review: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      ratings: ["1-Bad", "2-Less than Ok", "3-Ok", "4-Good", "5-Great"],
-      api_url: ""
-    };
-  },
-  setup() {},
+  data() {},
   methods: {
     async updateFilm() {
       const ok = await this.$refs.confirmDialogue.show({
@@ -143,36 +116,12 @@ export default {
           ...this.film,
           updated_by: this.$store.state.created_by,
         };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            title: this.film.title,
-            nationality: this.film.nationality,
-            director: this.film.director,
-            actors: this.film.actors,
-            date_released: this.film.date_released,
-            seasons: this.film.seasons,
-            episodes: this.film.episodes,
-            rating: this.film.rating,
-            date_watched: this.film.date_watched,
-            url_to_review: this.film.url_to_review,
-            notes: this.film.notes,
-          }
-        );
-        if (result.status >= 200) {
-          alert("Film has been updated");
+        if (this.$store.dispatch("updateFilm", film)) {
           this.$router.push({ name: "FilmDetails", params: { id: film.id } });
-        } else {
-          alert("Update Error Code ", result.status);
         }
       }
     },
   },
 };
 </script>
-<style>
-select {
-  border-color: darkgreen;
-}
-</style>
+<style></style>

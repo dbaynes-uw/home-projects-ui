@@ -12,8 +12,6 @@
 </template>
 <script setup>
 import { mapActions } from "vuex";
-import { defineModel } from 'vue';
-const selectedLocationValue = defineModel('selectedLocationValue');
 </script>
 <script>
 export default {

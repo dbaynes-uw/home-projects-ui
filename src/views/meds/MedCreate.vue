@@ -51,16 +51,13 @@ import { v4 as uuidv4 } from "uuid";
 export default {
   name: "MedCreate",
   components: {},
+  computed: {  
+    med() {
+      return this.$store.state.med;
+    }
+  },
   data() {
     return {
-      med: {
-        id: "",
-        date_of_occurrence: null,
-        duration: "",
-        circumstances: null,
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
       isFormValid: false,
       isDateOccurrenceValid: false,
       isDurationValid: false,
@@ -113,9 +110,6 @@ export default {
         this.isFormValid = false
       }
     }
-  },
-  med() {
-    return this.$store.state.med;
   },
 };
 </script>

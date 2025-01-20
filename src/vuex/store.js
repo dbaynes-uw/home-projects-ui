@@ -30,6 +30,8 @@ export default new Vuex.Store({
     eventsDueBy: [],
     eventsAssigned: [],
     event: {},
+    film: [],
+    films: [],
     med: {},
     meds: [],
     plants: [],
@@ -381,6 +383,19 @@ export default new Vuex.Store({
           alert("Book Post Error: ", error.response.data )
         });
     },
+    async updateBook({ commit }, book) {
+      EventService.putBook(book)
+        .then((response) => {
+          commit("SET_BOOK", response.data);
+          alert("Book " + book.title + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Book Put Error for " + book.title + ": " + error.response.request.statusText)
+          location.reload();
+      });
+    },
+
     async deleteBook({ commit }, book) {
       EventService.deleteBook(book)
         .then((response) => {
@@ -657,6 +672,18 @@ export default new Vuex.Store({
           alert("Films Fetch Error: ", error.response.data )
         });
     },
+    async updateFilm({ commit }, film) {
+      EventService.putFilm(film)
+        .then((response) => {
+          commit("SET_FILM", response.data);
+          alert("Film " + film.title + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Film Put Error for " + film.title + ": " + error.response.request.statusText)
+          location.reload();
+      });
+    },
     async createGarden({ commit }, garden) {
       EventService.postGarden(garden)
         .then(() => {
@@ -781,7 +808,7 @@ export default new Vuex.Store({
       EventService.putMed(med)
         .then((response) => {
           commit("SET_MEDS", response.data);
-          //location.reload();
+          alert("Med " + med.description + " was Successfully Updated.")
         })
         .catch((error) => {
           //console.log(error);

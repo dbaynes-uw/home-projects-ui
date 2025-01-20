@@ -106,11 +106,6 @@ export default {
     },
     editEvent(event) {
       this.$router.push({ name: 'EventEdit', params: { id: `${event.id}` } });
-      //var updatedEvent = event;
-      //console.log("STATUS: ", event.status)
-      //updatedEvent.status = event.status == 'active' ? 'inactive' : 'active';
-      //this.$store.dispatch("updateEvent", updatedEvent);
-
     },
     datePastDue(value) {
       return DateFormatService.datePastDuejs(value);

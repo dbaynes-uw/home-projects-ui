@@ -53,10 +53,13 @@
       />
     </div>
   </div>
-  TimeFrame: {{ timeFrame }} days
-  <br>
+  RMC Flg: {{requestMedChartFlag}}
+  <br/>
+  filteredResults.length: {{ filteredResults.length }}
   <span v-if="requestMedChartFlag == true">
+    RequestMedFlag is TRUE
     <span v-if="filteredResults.length > 0">
+      filteredResults > 0
       <MedChart :meds="filteredResults" :timeFrame=timeFrame :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
     </span>
     <span v-else>
@@ -68,6 +71,7 @@
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
+    </span>
     <span v-else>
       <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ meds.length }}</h3>
@@ -89,8 +93,6 @@
         <MedIndex :meds="meds"/>
       </span>
     </span>
-    </span>
-    
     <span v-if="filteredResults.length > 0">
       <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
