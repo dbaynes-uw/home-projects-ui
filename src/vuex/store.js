@@ -807,7 +807,7 @@ export default new Vuex.Store({
     async updateMed({ commit }, med) {
       EventService.putMed(med)
         .then((response) => {
-          commit("SET_MEDS", response.data);
+          commit("SET_MED", response.data);
           alert("Med " + med.description + " was Successfully Updated.")
         })
         .catch((error) => {

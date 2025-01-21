@@ -10,24 +10,23 @@
       <li class="li-left">&nbsp;&nbsp;Hours: {{ med.interval_hours }} hours</li>
       <li class="li-left">&nbsp;&nbsp;Minutes: {{ med.interval_minutes }} minutes</li>
       <li class="li-left">Notes:</li> <!-- {{med.circumstances}}</li>-->
-      <b class="li-left-none" v-for="(circumstance, idx) in splitList(med, this.splitLength)" :key="idx">{{ circumstance }}</b>
+      <span v-if="med.circumstances != null">
+        <b class="li-left-none" v-for="(circumstance, idx) in splitList(med, this.splitLength)" :key="idx">{{ circumstance }}</b>
+      </span>
     </ul>
+    <span class="fa-stack">
+      <router-link :to="{ name: 'MedEdit', params: { id: `${med.id}` } }">
+        <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+      </router-link>
+    </span>
+    <span class="fa-stack">
+      <i @click="deleteMed(med)" class="fas fa-trash-alt fa-stack-1x">
+      </i>
+    </span>
+    <br />
     <router-link :to="{ name: 'MedList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
-      <span class="fa-stack">
-        <router-link :to="{ name: 'MedEdit', params: { id: `${med.id}` } }">
-          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack">
-        <i @click="deleteMed(med)" class="fas fa-trash-alt fa-stack-1x">
-        </i>
-      </span>
-      <br />
-      <router-link :to="{ name: 'MedList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
+      <i class="fa-solid fa-backward fa-stack-1x"></i>
+    </router-link>
   </div>
 </template>
 <script>

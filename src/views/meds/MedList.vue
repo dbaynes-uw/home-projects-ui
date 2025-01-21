@@ -53,32 +53,27 @@
       />
     </div>
   </div>
-  RMC Flg: {{requestMedChartFlag}}
-  <br/>
-  filteredResults.length: {{ filteredResults.length }}
   <span v-if="requestMedChartFlag == true">
-    RequestMedFlag is TRUE
     <span v-if="filteredResults.length > 0">
-      filteredResults > 0
+      <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
       <MedChart :meds="filteredResults" :timeFrame=timeFrame :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
     </span>
     <span v-else>
       <MedChart :meds="meds" :timeFrame="30" :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
     </span>
   </span>
-  <div class="med-list">
+  <span v-if="requestMedChartFlag == false">
     <span v-if="filteredResults.length == 0" >
-      <span v-if="searchResults == false">
+      <!--span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
-      </span>
-    </span>
-    <span v-else>
+      </span-->
+      <h3 id="h3-left">Total: {{ meds.length }}</h3>
       <span v-if="requestIndexDetailFlag == true">
-        <h3 id="h3-left">Total: {{ meds.length }}</h3>
-        <span class="h3-left-total-child">Double click Item Below to Edit</span>
-        <!--No Long In Action???-->
+        <MedIndex :meds="meds"/>
+      </span>
+      <span v-else>          
+        <h3 class="h3-left-total-child">Double click Item Below to Edit</h3>
         <div class="cards">
-          <!--tr v-for="(result, resultIndex) in films" :key="resultIndex"-->
           <MedCard
             v-for="(med, medIndex) in meds"
             :key="medIndex"
@@ -89,14 +84,14 @@
           <br />
         </div>
       </span>
-      <span v-else>
-        <MedIndex :meds="meds"/>
-      </span>
     </span>
-    <span v-if="filteredResults.length > 0">
+    <!--span v-else-->
+    <span v-if="filteredResults.length > 0" >
       <span v-if="requestIndexDetailFlag == true">
-        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-        <span>Double click to Edit</span>
+        <MedIndex :meds="filteredResults" />
+      </span>
+      <span v-else>
+        <span>Double click to BookEdit</span>
         <div class="cards">
           <MedCard
             v-for="med in filteredResults"
@@ -108,12 +103,9 @@
           <br />
         </div>
       </span>
-      <span v-else>
-        <MedIndex :meds="filteredResults" />
-      </span>
     </span>
-  </div>
-
+    <!--/div-->
+  </span>
 </template>
 <script setup>
 import MedCard from "@/components/meds/MedCard.vue";
@@ -155,7 +147,7 @@ export default {
     return {
       chartLabels: [],
       chartIntervals: [],
-      requestIndexDetailFlag: true,
+      requestIndexDetailFlag: false,
       requestMedChartFlag: false,
       inputSearchText: "",
       searchResults: null,
