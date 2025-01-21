@@ -62,49 +62,42 @@
       <MedChart :meds="meds" :timeFrame="30" :chartLabels="chartLabels" :chartIntervals="chartIntervals"/>
     </span>
   </span>
-  <span v-if="requestMedChartFlag == false">
-    <span v-if="filteredResults.length == 0" >
-      <!--span v-if="searchResults == false">
-        <h3 id="h3-left">No Search Results Returned</h3>
-      </span-->
-      <h3 id="h3-left">Total: {{ meds.length }}</h3>
-      <span v-if="requestIndexDetailFlag == true">
-        <MedIndex :meds="meds"/>
-      </span>
-      <span v-else>          
-        <h3 class="h3-left-total-child">Double click Item Below to Edit</h3>
-        <div class="cards">
-          <MedCard
-            v-for="(med, medIndex) in meds"
-            :key="medIndex"
-            :med="med"
-            class="card"
-            @dblclick="editMed(med)"
-          />
-          <br />
-        </div>
-      </span>
+  <span v-if="filteredResults.length == 0" >
+    <h3 id="h3-left">Total: {{ meds.length }}</h3>
+    <span v-if="requestIndexDetailFlag == true">
+      <MedIndex :meds="meds"/>
     </span>
-    <!--span v-else-->
-    <span v-if="filteredResults.length > 0" >
-      <span v-if="requestIndexDetailFlag == true">
-        <MedIndex :meds="filteredResults" />
-      </span>
-      <span v-else>
-        <span>Double click to BookEdit</span>
-        <div class="cards">
-          <MedCard
-            v-for="med in filteredResults"
-            :key="med.id"
-            :med="med"
-            class="card"
-            @dblclick="editMed(med)"
-          />
-          <br />
-        </div>
-      </span>
+    <span v-else>          
+      <h3 class="h3-left-total-child">Double click Item Below to Edit</h3>
+      <div class="cards">
+        <MedCard
+          v-for="(med, medIndex) in meds"
+          :key="medIndex"
+          :med="med"
+          class="card"
+          @dblclick="editMed(med)"
+        />
+        <br />
+      </div>
     </span>
-    <!--/div-->
+  </span>
+  <span v-if="filteredResults.length > 0" >
+    <span v-if="requestIndexDetailFlag == true">
+      <MedIndex :meds="filteredResults" />
+    </span>
+    <span v-else>
+      <span>Double click to BookEdit</span>
+      <div class="cards">
+        <MedCard
+          v-for="med in filteredResults"
+          :key="med.id"
+          :med="med"
+          class="card"
+          @dblclick="editMed(med)"
+        />
+        <br />
+      </div>
+    </span>
   </span>
 </template>
 <script setup>
