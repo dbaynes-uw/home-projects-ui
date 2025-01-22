@@ -17,11 +17,11 @@
         />
         <v-select
           label="Duration"
-          :items="durations"
+          :items="MED_DURATIONS"
           v-model="med.duration"
         >
           <option
-            v-for="option in durations"
+            v-for="option in MED_DURATIONS"
             :value="option"
             :key="option"
             id="select-box"
@@ -59,9 +59,12 @@
     </form>
   </div>
 </template>
-<script>
+<script setup>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import { MED_DURATIONS } from "@/services/constants";
+</script>
+<script>
 export default {
   props: ["id"],
   components: {
@@ -77,7 +80,7 @@ export default {
   },
   data() {
     return {
-      durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
+      //durations: ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"],
       api_url: ""
     };
   },

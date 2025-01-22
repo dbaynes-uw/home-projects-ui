@@ -18,12 +18,12 @@
         </v-text-field>
         <v-select
           label="Duration"
-          :items="durations"
+          :items="MED_DURATIONS"
           v-model="med.duration"
           :rules="[requiredDuration]"
         >
           <option
-            v-for="option in durations"
+            v-for="option in MED_DURATIONS"
             :value="option"
             :key="option"
             id="select-box"
@@ -46,18 +46,23 @@
     </v-form>
   </v-card-text>
 </template>
-<script>
+<script setup>
 import { v4 as uuidv4 } from "uuid";
+import { MED_DURATIONS } from "@/services/constants";
+</script>
+<script>
 export default {
   name: "MedCreate",
   components: {},
-  computed: {  
-    med() {
-      return this.$store.state.med;
-    }
-  },
+  computed: {},
   data() {
     return {
+      med: {
+        date_of_occurrence: "",
+        duration: "",
+        circumstances: "",
+        created_by: this.$store.state.user.resource_owner.email,
+      },
       isFormValid: false,
       isDateOccurrenceValid: false,
       isDurationValid: false,
