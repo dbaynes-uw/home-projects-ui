@@ -75,6 +75,9 @@ import { v4 as uuidv4 } from "uuid";
 //Vuex
 //import EventService from "@/services/EventService.js";
 export default {
+  event() {
+    return this.$store.state.event;
+  },
   data() {
     return {
       event: {
@@ -104,9 +107,7 @@ export default {
       } 
     },
   },
-  event() {
-    return this.$store.state.event;
-  },
+
 };
 </script>
 <style>

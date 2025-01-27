@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Create a Travel to Track</h3>
+      <h3>Create a Journey</h3>
     </v-card-title>
   </v-card>
   <v-card-text>
@@ -25,33 +25,49 @@
               <v-icon class="icon-css">mdi-note</v-icon>
             </template>
         </v-textarea>
-        <v-text-field label="Start Date"
-          v-model="travel.start_date"
-          type="date"
+        <v-text-field label="Departure Date"
+          v-model="travel.departure_date"
+          type="datetime-local"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="End Date"
-          v-model="travel.end_date"
-          type="date"
+        <v-text-field label="Return Date"
+          v-model="travel.return_date"
+          type="datetime-local"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
           </template>
         </v-text-field>
         <v-text-field
-          v-model="travel.url_reference"
-          label="URL to Review"
-          placeholder="URL to Reference"
+          v-model="travel.transport_type"
+          label="Type Transportation"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field
+          v-model="travel.booking_reference"
+          label="Booking Reference Number"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field
+          v-model="travel.transport_url"
+          label="Departure Booking for Check In"
+          placeholder="Link to Transportation"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-link</v-icon>
           </template>
         </v-text-field>        
         <span>
-          {{ urlMaxLength - travel.url_reference.length }} / {{ urlMaxLength }}
+          {{ urlMaxLength - travel.transport_url.length }} / {{ urlMaxLength }}
         </span>
         <v-textarea
           label="Notes"
@@ -77,10 +93,11 @@ export default {
       travel: {
         title: "",
         description: "",
-        destination: "",
-        start_date: "",
-        end_date: "",
-        url_reference: "",
+        departure_date: "",
+        return_date: "",
+        transport_type: "",
+        transport_url: "",
+        booking_reference: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },

@@ -52,7 +52,13 @@ export default {
   components: {
     //ConfirmDialogue,
   },
+  created() {
+    this.$store.dispatch("fetchGarden", this.garden_id);
+  },
   computed: {
+    //garden() {
+    //  return this.$store.state.garden;
+    //},
     watering() {
     return this.$store.state.watering;
     },

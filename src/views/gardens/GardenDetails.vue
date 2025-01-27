@@ -40,7 +40,7 @@
     />
   </div>
   <br>
-  <span v-if="garden.garden_name.toLowerCase().includes('vegetable')">
+  <span v-if="this.garden.garden_name.toLowerCase().includes('vegetable')">
     <v-img
       :src="require('../../assets/VegetableGardenLayoutSummer2024.png')"
       class="my-3"

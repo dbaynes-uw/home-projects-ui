@@ -1,65 +1,42 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div>
-    <h3>Travel Details</h3>
-    <div class="legend">
-      <span>Double click to mark as complete.</span>
-      <span><span class="incomplete-box"></span> = Incomplete</span>
-      <span><span class="complete-box"></span> = Complete</span>
-    </div>
-    <br />
-    <div v-if="travel" class="event" id="center-align">
-      <h1>
-        <b>{{ travel.title }}</b>
-      </h1>
-      <ul class="ul-left">
-        <li>
-          <b>{{ travel.description }}</b>
-        </li>
-        <li v-if="travel.distance">
-          Distance:
-          <b>{{ travel.distance }}</b>
-        </li>
-        <li v-if="travel.start_date">
-          Travel Start Date:
-          <b>{{ formatStandardDate(travel.start_date) }}</b>
-        </li>
-        <li v-if="travel.start_date">
-          Travel End Date:
-          <b>{{ formatStandardDate(travel.end_date) }}</b>
-        </li>
-        <li v-if="travel.url_reference">
-          URL Reference:
-          <a :href="travel.url_reference" target="_blank">Click</a>
-        </li>
-        <li>
-          Notes:
-          <b>{{ travel.notes }}</b>
-        </li>
-        <li>
-          Date Created:
-          <b>{{ formatStandardDate(travel.created_at) }}</b>
-        </li>
-      </ul>
+  <h1>{{ travel.title }}</h1>
+  <router-link :to="{ name: 'TravelList' }">
+      <b>Back to List of Journies</b>
+    </router-link>
+  <br/>
+  <br/>
+  <h3>{{ this.statusMessage }}</h3>
+  <div class="card-display-single">
+    <span class="h3-left-total-child">Click to Change</span>
+    <div class="cards-1-center">
+        <TravelCard
+          :travel="travel"
+        >      
+        </TravelCard>
       <br />
-      <router-link :to="{ name: 'TravelList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
-      <span class="fa-stack">
-        <router-link
-          :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
-        >
-          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack">
-        <i @click="deleteTravel(travel)" class="fas fa-trash-alt fa-stack-1x" />
-      </span>
-      <br />
-      <router-link :to="{ name: 'TravelList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
     </div>
+  </div>
+  <span class="h3-left-total-child">Double Click Item Below to Change</span>
+  <br/>
+    <!--Travel Events: {{ travel.travel_events }}-->
+    <!--span    
+      v-for="travel_event in travel.travel_events"
+        :key="travel_event.id"
+        :travel_event="travel_event"
+        class="card"
+      >
+      Travel Event Title: {{ travel_event.title }}
+      <br/>
+  </!--span-->
+  <div class="cards">
+    <TravelEventCard
+      v-for="travel_event in travel.travel_events"
+      :key="travel_event.id"
+      :travel_event="travel_event"
+      class="card"
+      @dblclick="editTravelEvent(travel_event)"
+    />
   </div>
 </template>
 
@@ -67,36 +44,22 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import TravelCard from "@/components/travels/TravelCard.vue";
+import TravelEventCard from "@/components/travel_events/TravelEventCard.vue";
+import { ref } from 'vue';
+const successMessage = ref('')
 export default {
+  name: 'TravelDetails',
   props: ["id"],
   components: {
     ConfirmDialogue,
+    TravelCard,
+    TravelEventCard,
   },
-  data() {
-    return {
-      updatedTravel: null,
-    };
-  },
-  methods: {
-    async deleteTravel(travel) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Travel",
-        message:
-          "Are you sure you want to delete " +
-          travel.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteTravel", travel);
-        alert("Travel was Deleted for " + travel.title);
-        this.$router.push({ name: "TravelList" });
-      }
-    },
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDatejs(value);
-    },
+  mounted() {
+    this.sortedData = this.films;      
+    successMessage.value = this.$route.query.success;
+    this.statusMessage = successMessage.value
   },
   created() {
     this.$store.dispatch("fetchTravel", this.id);
@@ -106,13 +69,49 @@ export default {
       return this.$store.state.travel;
     },
   },
+  data() {
+    return {
+      //For TESTING:
+      //travel: {
+      //  title: "TEST 1",
+      //  description: "Test Desc",
+      //  transport: 'Air France',
+      //  booking_reference: 'TCUHEG',
+      //  transport_url: 'https://wwws.airfrance.us/trip/trip-details/87c622c8-2ca6-49fe-939a-e94a77fb1d38',
+      //  departure_date: "2025-10-10 15:32:22",
+      //  return_date: "2025-11-12 12:30:22",
+      //  notes: "Notes here...",
+      //},
+      travel_event: {
+        id: "",
+        travel_id: "",
+        title: "",
+        description: "",
+        start_date: "",
+        end_date: "",
+        transport: "",
+        booking_reference: "",
+        transport_url: "",
+        notes: "",
+        created_by: this.$store.state.user.resource_owner.email,
+      },
+
+      statusMessage: '',
+      updatedTravel: null,
+    };
+  },
+  methods: {
+    editTravel(travel) {
+      console.log("Travel EDIT@@@@: ", travel)
+      this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
+    },
+    editTravelEvent(travel_event) {
+      console.log("Travel Event EDIT@@@@: ", travel_event)
+      this.$router.push({ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } });
+    },
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDatejs(value);
+    },
+  },
 };
 </script>
-<style scoped>
-#align-right {
-  text-align: center;
-}
-.right-align {
-  text-align: right;
-}
-</style>

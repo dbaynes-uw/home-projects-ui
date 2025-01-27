@@ -15,7 +15,7 @@
       </li>
       <li>
         <button id="button-as-link" @click="requestIndexDetail">
-          <u>Detail Index View</u>
+          <u>Detail Index/Card View</u>
         </button>
       </li>
     </ul> 
@@ -43,7 +43,7 @@
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
-        <span v-if="requestIndexDetailFlag == true">
+        <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">Total: {{ trails.length }}</h3>
             <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
@@ -52,7 +52,7 @@
               :key="trail.id"
               :trail="trail"
               class="card"
-              @dblclick="onDoubleClick(trail)"
+              @dblclick="editTrail(trail)"
             />
             <br />
           </div>
@@ -72,7 +72,7 @@
             :key="trail.id"
             :trail="trail"
             class="card"
-            @dblclick="onDoubleClick(trail)"
+            @dblclick="editTrail(trail)"
           />
           <br />
         </div>
@@ -98,7 +98,7 @@ export default {
   },
   data() {
     return {
-      requestIndexDetailFlag: true,
+      requestIndexDetailFlag: false,
       searchResults: null,
       inputSearchText: "",
       filteredResults: [],
@@ -126,7 +126,7 @@ export default {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
-    onDoubleClick(trail) {
+    editTrail(trail) {
       this.$router.push({ name: 'TrailEdit', params: { id: `${trail.id}` } });
     },
     showIndex() {

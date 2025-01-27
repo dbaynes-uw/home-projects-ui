@@ -43,6 +43,7 @@ export default new Vuex.Store({
     trail: {},
     trails: [],
     travels: [],
+    travel_events: [],
     users: [],
     vendor: {},
     vendors: [],
@@ -201,6 +202,9 @@ export default new Vuex.Store({
     },
     SET_TRAVEL(state, travel) {
       state.travel = travel;
+    },
+    SET_TRAVEL_EVENT(state, travel_event) {
+      state.travel_event = travel_event;
     },
     SET_TRAVELS(state, travels) {
       state.travels = travels;
@@ -447,6 +451,18 @@ export default new Vuex.Store({
           });
       }
     },
+    //Like Watering / Outlet:
+    //async fetchGarden({ commit }, garden) {
+    //  EventService.getGarden(garden)
+    //    .then((response) => {
+    //      commit("SET_GARDEN", response.data);
+    //      return response.data;
+    //    })
+    //    .catch((error) => {
+    //      //console.log(error);
+    //      alert("Garden Fetch Error: ", error.response.data )        });
+    //},
+
     async fetchGardens({ commit }) {
       //const gardens = [
       //  {garden_name: 'A1'},
@@ -1053,8 +1069,21 @@ export default new Vuex.Store({
           alert("Travel Post Error: ", error.response.data )       
         });
     },
+    async createTravelEvent({ commit }, travel_event) {
+      EventService.postTravelEvent(travel_event)
+        .then(() => {
+          commit("SET_TRAVEL_EVENT", travel_event);
+          alert("Travel Event was successfully added for " + travel_event.title);
+        })
+        .catch((error) => {
+          alert("Error in postTravelEvent of createTravelEvent Action (index.js)");
+          //console.log(error);
+          alert("Travel Event Post Error: ", error.response.data )
+        });
+    },
+
     async deleteTravel({ commit }, travel) {
-      EventService.deleteTravel(travel.id)
+      EventService.destroyTravel(travel.id)
         .then((response) => {
           commit("DELETE_TRAVEL", response.data);
         })
@@ -1071,6 +1100,21 @@ export default new Vuex.Store({
         EventService.getTravel(id)
           .then((response) => {
             commit("SET_TRAVEL", response.data);
+          })
+          .catch((error) => {
+            //console.log(error);
+            alert("Travel Fetch Error: ", error.response.data )
+          });
+      }
+    },
+    async fetchTravelEvent({ commit, state }, id) {
+      const existingTravelEvent = state.travels.find((travel_event) => travel_event.id === id);
+      if (existingTravelEvent) {
+        commit("SET_TRAVEL_EVENT", existingTravelEvent);
+      } else {
+        EventService.getTravelEvent(id)
+          .then((response) => {
+            commit("SET_TRAVEL_EVENT", response.data);
           })
           .catch((error) => {
             //console.log(error);
@@ -1099,6 +1143,18 @@ export default new Vuex.Store({
         .catch((error) => {
           //console.log(error);
           alert("Travel Put Error: ", error.response.data )
+        });
+    },
+    async updateTravelEvent({ commit }, travel_event) {
+      EventService.putTravelEvent(travel_event)
+        .then((response) => {
+          commit("SET_TRAVEL_EVENT", response.data);
+          alert("Travel Event was successfully Updated for " + travel_event.title);
+          location.reload();
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Travel Event Put Error: ", error.response.data )
         });
     },
     async createUser({ commit }, user) {

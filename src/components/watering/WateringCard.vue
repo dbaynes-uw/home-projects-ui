@@ -29,10 +29,6 @@ export default {
       type: Object,
       default: () => ({})
     },
-    origin: {
-      type: String,
-      default: '',
-    }
   },
   components: {
     //ConfirmDialogue,

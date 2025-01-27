@@ -33,7 +33,7 @@ import PlantCreate from "@/views/plants/PlantCreate.vue";
 import PlantDetails from "@/views/plants/PlantDetails.vue";
 import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
-import OutletDetails from "@/views/waterings/OutletDetails.vue";
+import OutletDetails from "@/views/outlets/OutletDetails.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import ProductsLocationList from "../views/products/ProductsLocationList.vue";
 import ProductsByLocations from "../views/products/ProductsByLocations.vue";
@@ -47,16 +47,19 @@ import TrailEdit from "@/views/trails/TrailEdit.vue";
 import TrailList from "../views/trails/TrailList.vue";
 import TravelCreate from "@/views/travels/TravelCreate.vue";
 import TravelDetails from "@/views/travels/TravelDetails.vue";
-import TravelEdit from "@/views/travels/TravelEdit.vue";
 import TravelList from "../views/travels/TravelList.vue";
+import TravelEdit from "@/views/travels/TravelEdit.vue";
+import TravelEventCreate from "@/views/travel_events/TravelEventCreate.vue";
+import TravelEventEdit from "@/views/travel_events/TravelEventEdit.vue";
+
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
 import WateringCreate from "@/views/waterings/WateringCreate.vue";
-import OutletCreate from "@/views/waterings/OutletCreate.vue";
-import OutletDetailsByName from "@/views/waterings/OutletDetailsByName.vue";
+import OutletCreate from "@/views/outlets/OutletCreate.vue";
+import OutletDetailsByName from "@/views/outlets/OutletDetailsByName.vue";
 import WateringEdit from "@/views/waterings/WateringEdit.vue";
-import OutletEdit from "@/views/waterings/OutletEdit.vue";
+import OutletEdit from "@/views/outlets/OutletEdit.vue";
 import WateringDisplay from "../views/waterings/WateringDisplay.vue";
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
@@ -107,13 +110,6 @@ const routes = [
     name: "About",
     component: About,
     //meta: { requiresAuth: true}
-  },
-  {
-    path: "/book/:id",
-    name: "BookEdit",
-    props: true,
-    component: BookEdit,
-    meta: { requiresAuth: true}
   },
   {
     path: "/book/create",
@@ -400,13 +396,19 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/travel/create_travel_event",
+    name: "TravelEventCreate",
+    component: TravelEventCreate,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/travels",
     name: "TravelList",
     component: TravelList,
     meta: { requiresAuth: true}
   },
   {
-    path: "/travel/:id",
+    path: "/travels/:id",
     name: "TravelDetails",
     props: true,
     component: TravelDetails,
@@ -417,6 +419,13 @@ const routes = [
     name: "TravelEdit",
     props: true,
     component: TravelEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travel_events/:id",
+    name: "TravelEventEdit",
+    props: true,
+    component: TravelEventEdit,
     meta: { requiresAuth: true}
   },
   {
@@ -485,12 +494,12 @@ const routes = [
     component: WateringDisplay,
     meta: { requiresAuth: true}
   },
-  {
-    path: "/watering_only",
-    name: "WateringOnly",
-    component: OutletCreate,
-    meta: { requiresAuth: true}
-  },
+  //{
+  //  path: "/watering_only",
+  //  name: "WateringOnly",
+  //  component: OutletCreate,
+  //  meta: { requiresAuth: true}
+  //},
   {
     path: "/outlet/create",
     name: "OutletCreate",

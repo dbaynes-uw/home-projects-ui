@@ -251,6 +251,10 @@ export default {
     this.init();
     return axios.post(api_url + "travels", travel);
   },
+  async postTravelEvent(travel_event) {
+    this.init();
+    return axios.post(api_url + 'create_travel_event', travel_event);
+  },
   getTravels() {
     this.init();
     return axios.get(api_url + "travels")
@@ -259,11 +263,19 @@ export default {
     this.init();
     return axios.get(api_url + "travels/" + id);
   },
+  getTravelEvent(id) {
+    this.init();
+    return axios.get(api_url + "travel_events/" + id);
+  },
   async putTravel(updatedTravel) {
     this.init();
-    return axios.put(api_url + "travels" + `/${updatedTravel.id}`)
+    return axios.put(api_url + "travels" + `/${updatedTravel.id}`, updatedTravel);
   },
-  deleteTravel(id) {
+  async putTravelEvent(updatedTravelEvent) {
+    this.init();
+    return axios.put(api_url + "travel_events" + `/${updatedTravelEvent.id}`, updatedTravelEvent);
+  },
+  destroyTravel(id) {
     this.init();
     return axios.delete(api_url + "travels" + `/${id}`);
   },

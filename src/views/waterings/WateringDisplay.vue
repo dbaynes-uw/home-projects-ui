@@ -46,7 +46,7 @@
         :key="outlet.id"
         :outlet="outlet"
         class="card"
-        @dblclick="onDoubleClick(outlet)"
+        @dblclick="editOutlet(outlet)"
       />
     </div>
   </span>
@@ -124,7 +124,7 @@ export default {
     }
   },
   methods: {
-    onDoubleClick(outlet) {
+    editOutlet(outlet) {
       this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
     },
   },

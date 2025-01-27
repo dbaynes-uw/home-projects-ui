@@ -2,52 +2,44 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="travelEdit">
     <br/>
-    <h2>Edit Travel {{ travel.title }}</h2>
+    <h2>Edit Travel Event {{ travel_event.title }}</h2>
     <br/>
     <button id="link-as-button">
       <router-link  :to="{ name: 'TravelList' }">Back to Travel List</router-link>
     </button>
     <br/>
-    <form class="card-display" @submit.prevent="updateTravel">
+    <form class="card-display" @submit.prevent="updateTravelEvent">
       <div class="form-container">
         <v-text-field
           label="Title"
-          v-model="travel.title"
+          v-model="travel_event.title"
           required
         />
         <v-textarea
           label="Description"
-          v-model="travel.description"
+          v-model="travel_event.description"
           rows="3"
           cols="40"
         />
-        <v-text-field
-          label="Transport Type"
-          v-model="travel.transport_type"
-        />
-        <v-text-field
-          label="Confirmation ID"
-          v-model="travel.booking_reference"
-        />
-        <p id="p-custom-left">Departure: {{ formatStandardDateTime(travel.departure_date)}}</p>
+        <p id="p-custom-left">Start Date Saved As: {{ formatStandardDate(travel_event.start_date)}}</p>
         <v-text-field
           label="Click calendar at right to change Date Read"
-          v-model="travel.departure_date"
-          type="datetime-local"
+          v-model="travel_event.start_date"
+          type="date"
         />
-        <p id="p-custom-left">Return: {{ formatStandardDateTime(travel.return_date)}}</p>
+        <p id="p-custom-left">Start Date Saved As: {{ formatStandardDate(travel_event.end_date)}}</p>
         <v-text-field
           label="Click calendar at right to change Date Read"
-          v-model="travel.return_date"
-          type="datetime-local"
+          v-model="travel_event.end_date"
+          type="date"
         />
-        <v-text-field
+        <!--v-text-field
           label="URL to Review"
-          v-model="travel.transport_url"
-        />        
+          v-model="travel_event.url_reference"
+        /-->        
         <v-textarea
           label="Notes"
-          v-model="travel.notes"
+          v-model="travel_event.notes"
           rows="3"
           cols="40"
         />
@@ -70,11 +62,11 @@ export default {
   },
   async mounted() {},
   created() {
-    this.$store.dispatch("fetchTravel", this.id);
+    this.$store.dispatch("fetchTravelEvent", this.id);
   },
   computed: {
-    travel() {
-      return this.$store.state.travel;
+    travel_event() {
+      return this.$store.state.travel_event;
     },
   },
   data() {
@@ -82,31 +74,28 @@ export default {
   },
   setup() {},
   methods: {
-    async updateTravel() {
+    async updateTravelEvent() {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Travel from List ",
+        title: "Update Travel Event ",
         message:
           "Are you sure you want to update " + 
-          this.travel.title,
+          this.travel_event.title,
         okButton: "Update",
       });
       if (ok) {
-        const travel = {
-          ...this.travel,
+        const travel_event = {
+          ...this.travel_event,
           updated_by: this.$store.state.created_by,
         };
-        if (this.$store.dispatch("updateTravel", travel)) {
-          this.$router.push({ name: "TravelDetails", params: { id: travel.id } });
+        if (this.$store.dispatch("updateTravelEvent", travel_event)) {
+          this.$router.push({ name: "TravelList" });
         }
       } else {
-       alert("ERROR in Update Travel")
+        alert("Travel Event Update Error Code ");
       }
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
-    },
-    formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTimejs(value);
     },
   },
 };

@@ -1,53 +1,102 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div>
-    <h2>Travel List</h2>
-    <h2 id="status-message">
-      <u>{{ this.statusMessage }}</u>
-    </h2>
-    <h2>
-      <router-link :to="{ name: 'TravelCreate' }">Add Travel</router-link>
-    </h2>
-    <br />
-    <div style="width: 100%">
-      <div class="auto-search-container">
-        <v-text-field
-          clearable
-          clear-icon="mdi-close"
-          @click:clear="showIndex"
-          type="text"
-          class="np-input-search"
-          v-model="inputSearchText"
-          placeholder="Search"
-          autocomplete="off"
-          v-on:keyup="searchColumns"
-        />
-      </div>
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h2>Travels</h2>
+      <h2 id="status-message">
+        <u>{{ this.statusMessage }}</u>
+      </h2>
+    </v-card-title>
+    <ul>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'TravelCreate'}">Add Trip</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Detail Index/Card View</u>
+        </button>
+      </li>
+    </ul> 
+    <br/>
+  </v-card>
+  <br/>
+  <div style="width: 100%">
+    <div class="auto-search-container">
+      <v-text-field
+        clearable
+        clear-icon="mdi-close"
+        @click:clear="showIndex"
+        type="text"
+        class="np-input-search"
+        v-model="inputSearchText"
+        placeholder="Search"
+        autocomplete="off"
+        v-on:keyup="searchColumns"
+      />
     </div>
-    <div class="travel-list">
-      <span v-if="filteredResults.length == 0">
-        <TravelIndex :travels="travels" />
+  </div>
+  <div class="travel-list">
+    <span v-if="filteredResults.length == 0">
+      <span v-if="searchResults == false">
+        <h3 id="h3-left">No Search Results Returned</h3>
       </span>
-      <span v-if="filteredResults.length > 0">
+      <span v-else>
+        <span v-if="requestIndexDetailFlag == false">
+          <h3 id="h3-left">Total: {{ travels.length }}</h3>
+            <!--span class="h3-left-total-child">Double click Item Below to Edit</!--span-->
+          <div class="cards">
+            <TravelCard
+              v-for="travel in travels"
+              :key="travel.id"
+              :travel="travel"
+              class="card"
+            />
+            <br />
+          </div>
+        </span>
+        <span v-else>
+          <TravelIndex :travels="travels" />
+        </span>
+      </span>
+    </span>
+    <span v-if="filteredResults.length > 0">
+      <span v-if="requestIndexDetailFlag == true">
+        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
+        <span>Double click to Edit</span>
+        <div class="cards">
+          <TravelCard
+            v-for="travel in filteredResults"
+            :key="travel.id"
+            :travel="travel"
+            class="card"
+          />
+          <br />
+        </div>
+      </span>
+      <span v-else>
         <TravelIndex :travels="filteredResults" />
       </span>
-    </div>
-  </div>       
+    </span>
+  </div> 
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import TravelIndex from "@/components/travels/TravelIndex.vue";
-
+import TravelCard from "@/components/travels/TravelCard.vue";
 export default {
   name: "TravelList",
-  props: ["filteredResults[]"],
   components: {
     ConfirmDialogue,
     TravelIndex,
+    TravelCard,
   },
   data() {
     return {
+      requestIndexDetailFlag: false,
+      searchResults: null,
       inputSearchText: "",
       filteredResults: [],
       columnDetails: null,
@@ -72,10 +121,20 @@ export default {
     },
   },
   methods: {
+    requestIndexDetail() {
+      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    },
+    //editTravel(travel) {
+    //  this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
+    //},
+    //editTravelIndex(travel) {
+    //  this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
+    //},
     showIndex() {
       this.filteredResults = [];
     },
     searchColumns() {
+      this.searchResults = true;
       this.filteredResults = [];
       this.columnDetails = null;
       if (
@@ -96,13 +155,13 @@ export default {
               travel.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            const searchHasDescription =
-              travel.description &&
-              travel.description
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasDescription) {
+            if (searchHasTitle) {
               this.filteredResults.push(travel);
+            }
+            if (this.filteredResults.length > 0) {
+              this.searchResults = true;
+            } else {
+              this.searchResults = false;
             }
           });
         }
@@ -119,26 +178,6 @@ export default {
       } else {
         this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
         this.sortedbyASC = true;
-      }
-    },
-
-    async deleteTravel(travel) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Travel from List",
-        message:
-          "Are you sure you want to delete " +
-          travel.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteTravel", travel);
-        this.statusMessage =
-          "Travel was Deleted for " +
-          travel.title +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
       }
     },
     formatStandardDate(value) {
