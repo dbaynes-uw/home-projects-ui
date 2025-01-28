@@ -396,7 +396,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/travel/create_travel_event",
+    path: "/travels/create_travel_event/:id",
     name: "TravelEventCreate",
     component: TravelEventCreate,
     meta: { requiresAuth: true}

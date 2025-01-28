@@ -133,14 +133,15 @@ export default {
       //this.outlet.watering_name = this.watering.name
       //this.traveling_event. = this.watering.watering_name
       if (this.isFormValid) {
-        
+        console.log("CARD Travel ID: ", this.travel.id)
         const travel_event = {
           ...this.travel_event,
           id: uuidv4(),
-          //travel_id: this.travel.id,
+          travel_id: this.travel.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
-        if (this.$store.dispatch("createTravelEvent", travel_event)) {
+        console.log("TRAVEL EVENT TO BE CREATED: ", travel_event)
+        if (this.$store.dispatch("createTravelEvent", travel_event )) {
           this.$router.push({ name: "TravelDetails" });
         } else {
           alert("Error adding Travel Event System " + travel_event.title);

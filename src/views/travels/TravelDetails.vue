@@ -7,28 +7,18 @@
   <br/>
   <br/>
   <h3>{{ this.statusMessage }}</h3>
-  <div class="card-display-single">
-    <span class="h3-left-total-child">Click to Change</span>
-    <div class="cards-1-center">
-        <TravelCard
-          :travel="travel"
-        >      
-        </TravelCard>
-      <br />
-    </div>
+  <span class="h3-left-total-child">Click to Change</span>
+  <div class="cards-1-center">
+    <TravelCard
+      :key="travel.id"
+      :travel="travel"
+      class="card"
+      @dblclick="editTravel(travel)"
+      />
+    <br />
   </div>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
-    <!--Travel Events: {{ travel.travel_events }}-->
-    <!--span    
-      v-for="travel_event in travel.travel_events"
-        :key="travel_event.id"
-        :travel_event="travel_event"
-        class="card"
-      >
-      Travel Event Title: {{ travel_event.title }}
-      <br/>
-  </!--span-->
   <div class="cards">
     <TravelEventCard
       v-for="travel_event in travel.travel_events"
@@ -102,11 +92,9 @@ export default {
   },
   methods: {
     editTravel(travel) {
-      console.log("Travel EDIT@@@@: ", travel)
       this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
     },
     editTravelEvent(travel_event) {
-      console.log("Travel Event EDIT@@@@: ", travel_event)
       this.$router.push({ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } });
     },
     formatStandardDate(value) {

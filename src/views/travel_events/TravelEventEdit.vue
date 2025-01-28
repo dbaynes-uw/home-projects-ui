@@ -21,17 +21,17 @@
           rows="3"
           cols="40"
         />
-        <p id="p-custom-left">Start Date Saved As: {{ formatStandardDate(travel_event.start_date)}}</p>
+        <p id="p-custom-left">Start Date Saved As: {{ formatStandardDateTime(travel_event.start_date)}}</p>
         <v-text-field
           label="Click calendar at right to change Date Read"
           v-model="travel_event.start_date"
-          type="date"
+          type="datetime-local"
         />
-        <p id="p-custom-left">Start Date Saved As: {{ formatStandardDate(travel_event.end_date)}}</p>
+        <p id="p-custom-left">End Date Saved As: {{ formatStandardDateTime(travel_event.end_date)}}</p>
         <v-text-field
           label="Click calendar at right to change Date Read"
           v-model="travel_event.end_date"
-          type="date"
+          type="datetime-local"
         />
         <!--v-text-field
           label="URL to Review"
@@ -96,6 +96,9 @@ export default {
     },
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
+    },
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTimejs(value);
     },
   },
 };

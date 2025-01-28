@@ -69,7 +69,6 @@
           <TravelCard
             v-for="travel in filteredResults"
             :key="travel.id"
-            :travel="travel"
             class="card"
           />
           <br />
