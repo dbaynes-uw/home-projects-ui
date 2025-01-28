@@ -3,7 +3,7 @@
     <p id="p-custom-left-u">{{ travel_event.title}}</p>
     <ul>
       <li class="li-left">Description: {{ travel_event.description }}</li>
-      <li class="li-left">Transportation: {{ travel_event.transport_type }}</li>
+      <li class="li-left">Transportation: {{ travel_event.transport }}</li>
       <li class="li-left">Booking Reference: <b><a :href="travel_event.transport_url" target="_blank">{{ travel_event.booking_reference }}</a></b></li>
 
       <li class="li-left">Depart: {{ formatStandardDateTime(travel_event.start_date) }}</li>

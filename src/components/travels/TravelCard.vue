@@ -11,7 +11,7 @@
      </!--p-->
     <ul>
       <li class="li-left">Description: {{ travel.description }}</li>
-      <li class="li-left">Transportation: {{ travel.transport_type }}</li>
+      <li class="li-left">Transportation: {{ travel.transport}}</li>
       <li class="li-left">Booking Reference: <b><a :href="travel.transport_url" target="_blank">{{ travel.booking_reference }}</a></b></li>
 
       <li class="li-left">Depart: {{ formatStandardDateTime(travel.departure_date) }}</li>
