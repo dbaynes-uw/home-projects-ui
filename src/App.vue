@@ -22,43 +22,43 @@
     <!-- Good stuff Starts Here -->
     <v-app v-else>
       <div class="header-base">
-      <div style="width: 8rem; height: 3.1rem;"> <!--style="background-color: #41b88352; height: 10%;"-->
-        <!--v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y -->
-        <v-menu :link="links" offset-y >          
-          <template v-slot:activator="{ props }">
-            <!-- style="font-weight: bold; color: #000; font-family: sans-serif"-->
-            <v-select
-              v-model="menu"
-              :items="links"
-              v-bind="props"
-              style="font-weight: bold; color: #000; font-family: system-ui"
-            >                
-            </v-select>
-          </template>  
-          <v-list>
-            <v-card
-              flat
-              width="10rem"
-              height="10rem"
-              :style="{
-                backgroundColor: 'transparent',
-                position: 'absolute', top: '0px',
-              }"
-             /> 
-            <v-list-item
-              v-for="(link) in links"
-              :key="`${link.label}-header-link`"
-            >
-              <v-list-item-title>
-                <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
-                {{ link.title }}
-              </router-link>
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
-        <h1>&nbsp;
+        <div style="width: 8rem; height: 3.1rem;"> <!--style="background-color: #41b88352; height: 10%;"-->
+          <!--v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y -->
+          <v-menu :link="links" offset-y >          
+            <template v-slot:activator="{ props }">
+              <!-- style="font-weight: bold; color: #000; font-family: sans-serif"-->
+              <v-select
+                v-model="menu"
+                :items="links"
+                v-bind="props"
+                style="font-weight: bold; color: #000; font-family: system-ui"
+              >                
+              </v-select>
+            </template>  
+            <v-list>
+              <v-card
+                flat
+                width="10rem"
+                height="10rem"
+                :style="{
+                  backgroundColor: 'transparent',
+                  position: 'absolute', top: '0px',
+                }"
+               /> 
+              <v-list-item
+                v-for="(link) in links"
+                :key="`${link.label}-header-link`"
+              >
+                <v-list-item-title>
+                  <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
+                  {{ link.title }}
+                </router-link>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+        <h1 class="heading-aligned">&nbsp;
           <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
         </h1>
       </div>
