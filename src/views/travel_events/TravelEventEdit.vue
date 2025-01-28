@@ -93,7 +93,7 @@ export default {
           updated_by: this.$store.state.created_by,
         };
         if (this.$store.dispatch("updateTravelEvent", travel_event)) {
-          this.$router.push({ name: "TravelList" });
+          this.$router.push({ name: "TravelDetails", params: { id: travel_event.travel_id } });
         }
       } else {
         alert("Travel Event Update Error Code ");
