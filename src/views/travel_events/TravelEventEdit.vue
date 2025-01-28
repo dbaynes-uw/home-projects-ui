@@ -24,7 +24,6 @@
         <v-text-field
           label="Transportation"
           v-model="travel_event.transport"
-          required
         />
         <p id="p-custom-left">Start Date Saved As: {{ formatStandardDateTime(travel_event.start_date)}}</p>
         <v-text-field
