@@ -29,7 +29,7 @@
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Transportation Type" v-model="travel_event.transport_type">
+        <v-text-field label="Transportation Type" v-model="travel_event.transport">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
@@ -68,7 +68,7 @@
         </v-text-field>        
         <v-textarea
           label="Notes"
-          v-model="travel.notes"
+          v-model="travel_event.notes"
           clearable
         >
           <template v-slot:prepend-inner>
