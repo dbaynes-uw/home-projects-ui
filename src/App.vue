@@ -31,7 +31,7 @@
                 v-model="menu"
                 :items="links"
                 v-bind="props"
-                style="font-weight: bold; color: #000; font-family: system-ui"
+                style="font-weight: bold; color: #000; font-family: system-ui; width: 73%"
               >                
               </v-select>
             </template>  

@@ -127,7 +127,6 @@ export default {
 
   methods: {
     onSubmit() {
-      console.log("@@@@ON SUBMIT@@@@ LOOKOUT!")
       //HARD SET TO TRUE
       this.checkValidations();
       //this.outlet.watering_name = this.watering.name
