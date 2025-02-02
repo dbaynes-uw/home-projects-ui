@@ -22,6 +22,7 @@
         </v-text-field>
         <v-text-field label="Plant Name"
           v-model="plant.plant_name"
+          :rules="[requiredPlantName]"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
@@ -47,6 +48,7 @@
           label="Outlet Name:"
           :items="outletsGroup.outletsGroup"
           v-model="plant.outlet_id"
+          :rules="[requiredOutletName]"
         >
           <option
             v-for="option in outletsGroup.outletsGroup"
@@ -74,7 +76,7 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>  
-\        <v-text-field label="Date Planted"
+        <v-text-field label="Date Planted"
           v-model="plant.date_planted"
           type="date"
         >
@@ -116,10 +118,11 @@ export default {
   data() {
     return {
       plant: {
-        id: "",
+        //id: "",
         garden_id: "",
         outlet_id: "",
         plant_name: "",
+        outlett_name: "",
         yard_location: "",
         description: "",
         water_outlet: "",
@@ -133,11 +136,13 @@ export default {
       yard_locations: ["North", "South"],
 
       ifFormValid: false,
+      isPlantNameValid: false,
+      isOutletNameValid: false,
       isYardLocationValid: false,
     };
   },
   created() {
-    this.$store.dispatch("fetchGarden", this.id );
+    //this.$store.dispatch("fetchGarden", this.garden_id );
     this.$store.dispatch("fetchOutletsGroup");
   },
   computed: {
@@ -151,19 +156,41 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      this.plant.garden_id = this.garden.id
+      console.log("GARDEN Before Submit: ", this.garden)
       if (this.isFormValid) {
         const plant = {
           ...this.plant,
           id: uuidv4(),
+          garden_id: this.garden.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
+        console.log("Garden after Before Dispatch: ", this.garden)
         if (this.$store.dispatch("createPlant", plant)) {
           this.$router.push({ name: 'GardenDetails', params: { id: this.garden.id}})
         } else {
           alert("Error adding Plant " + this.plant.plant_name);
         } 
       } 
+    },
+    requiredPlantName: function (value) {
+      if (value) {
+          this.isPlantNameValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isPlantNameValid = false
+          return 'Please enter Plant Name';
+      }
+    },
+    requiredOutletName: function (value) {
+      if (value) {
+          this.isOutletNameValid = true
+          return true;
+      } else {
+          this.isFormValid = false
+          this.isOutletNameValid = false
+          return 'Please enter Outlet tName';
+      }
     },
     requiredYardLocation: function (value) {
       if (value) {
@@ -176,7 +203,7 @@ export default {
       }
     },
     checkValidations() {
-      if (this.isYardLocationValid) {
+      if (this.isPlantNameValid && this.isOutletNameValid && this.isYardLocationValid) {
         this.isFormValid = true
       } else {
         this.isFormValid = false

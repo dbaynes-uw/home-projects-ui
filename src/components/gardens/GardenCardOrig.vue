@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <span v-if="garden.active == true">
     <div class="card">
       <p id="p-custom-u">

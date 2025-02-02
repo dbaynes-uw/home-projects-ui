@@ -1,17 +1,16 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="card">
-    <p id="p-custom-link">{{ travel.title}}</p>
-    <!--p id="p-custom-link">
-       <router-link
-         :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
-       >
-         {{ travel.title }}
-       </router-link>
-     </!--p-->
-     <router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
-          Travel Details: {{ travel.id  }}
+    <p id="p-custom-link">
+      <router-link
+        :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
+      >
+        {{ travel.title }}
       </router-link>
+    </p>
+    <!--router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
+      Travel Details: {{ travel.id  }}
+    </!--router-link-->
     <ul>
       <li class="li-left">Description: {{ travel.description }}</li>
       <li class="li-left">Transportation: {{ travel.transport}}</li>
@@ -24,32 +23,32 @@
       <b class="li-left-none" v-for="(notes, idx) in splitList(travel, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>
     <p id="p-custom-link">
-       <router-link
-         :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
-       >
-         Add a Travel Event for {{ travel.title }}
-       </router-link>
-     </p>
-     <br/>
-      <span class="fa-stack">
-        <router-link :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }">
-          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span v-if="currentUrl.includes('/travels/')" class="fa-stack">
-        <router-link :to="{ name: 'TravelList' }">
-          <i class="fa-solid fa-backward fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span v-else>
-        <router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
-          <i class="fa-solid fa-eye fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack">
-        <i @click="deleteTravel(travel)" class="fas fa-trash-alt fa-stack-1x">
-        </i>
-      </span>
+      <router-link
+        :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
+      >
+        Add a Travel Event for {{ travel.title }}
+      </router-link>
+    </p>
+    <br/>
+    <span class="fa-stack">
+      <router-link :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }">
+        <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+      </router-link>
+    </span>
+    <span v-if="currentUrl.includes('/travels/')" class="fa-stack">
+      <router-link :to="{ name: 'TravelList' }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
+      </router-link>
+    </span>
+    <span v-else>
+      <router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
+        <i class="fa-solid fa-eye fa-stack-1x"></i>
+      </router-link>
+    </span>
+    <span class="fa-stack">
+      <i @click="deleteTravel(travel)" class="fas fa-trash-alt fa-stack-1x">
+      </i>
+    </span>
   </div>
 </template>
 <script>

@@ -85,13 +85,6 @@
 import { v4 as uuidv4 } from "uuid";
 export default {
   components: {},
-
-  //travel() {
-  //  return this.$store.state.travel_event;
-  //},
-  //travel_event() {
-  //  return this.$store.state.travel_event;
-  //},
   data() {
     return {
       travel_event: {
