@@ -23,7 +23,16 @@
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
       </ul>
-       <span v-if="garden.plants.length > 0">
+      <span v-if="currentUrl.includes('/gardens/')">
+        <p id="p-custom-link">
+          <router-link
+            :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
+          >
+            Add a Plant to {{ garden.garden_name }}
+          </router-link>
+        </p>
+      </span>
+      <span v-if="garden.plants.length > 0">
         <p id="p-custom-left">Plants:</p>
         <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex">
           <ul class="ul-left">
@@ -38,26 +47,26 @@
         </span>
       </span>
       <br/>
-       <br/>
-        <span class="fa-stack">
-          <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
-            <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span v-if="currentUrl.includes('/gardens/')" class="fa-stack">
-          <router-link :to="{ name: 'GardenList' }">
-            <i class="fa-solid fa-backward fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span v-else>
-          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-            <i class="fa-solid fa-eye fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span class="fa-stack">
-          <i @click="deleteGarden(garden)" class="fas fa-trash-alt fa-stack-1x">
-          </i>
-        </span>
+      <br/>
+      <span class="fa-stack">
+        <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
+          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-if="currentUrl.includes('/gardens/')" class="fa-stack">
+        <router-link :to="{ name: 'GardenList' }">
+          <i class="fa-solid fa-backward fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-else>
+        <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+          <i class="fa-solid fa-eye fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span class="fa-stack">
+        <i @click="deleteGarden(garden)" class="fas fa-trash-alt fa-stack-1x">
+        </i>
+      </span>
     </div>
   </span>
 </template>
