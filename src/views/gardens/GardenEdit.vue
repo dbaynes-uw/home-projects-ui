@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <br/>
   <div class="edit">
-    <h2>Edit Garden '{{ garden.garden_name }}'</h2>
+    <h2>Edit Garden {{ garden.garden_name }}</h2>
     <router-link :to="{ name: 'GardenList' }">
       <b>Back to Garden List</b>
     </router-link>
@@ -49,7 +49,6 @@
 </template>
 <script setup>
 import { EVENT_STATUSES } from "@/services/constants";
-import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 </script>
 <script>
@@ -59,29 +58,38 @@ export default {
     ConfirmDialogue,
   },
   async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macplant-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/gardens/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/gardens/";
-    }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.garden = result.data;
-    this.garden.active = this.garden.active == 1 ? 'Active' : 'Inactive'
-
+    //var work_url = ""
+    //if (window.location.port == "8080") {
+    //  // or: "http://davids-macplant-pro.local:3000/api/v1/";
+    //  work_url = "http://localhost:3000/api/v1/gardens/";
+    //} else {
+    //  work_url =
+    //    "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/gardens/";
+    //}
+    //this.api_url = work_url
+    //const result = await axios.get(this.api_url + +this.$route.params.id);
+    //this.garden = result.data;
+    //this.garden.active = this.garden.active == 1 ? 'Active' : 'Inactive'
+//
   },
+  created() {
+    this.$store.dispatch("fetchGarden", this.id);
+  },
+  computed: {
+    garden() {
+      return this.$store.state.garden;
+    },
+  },
+
   data() {
     return {
-      garden: {
-        garden_name: "",
-        active: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      api_url: "",
+      //garden: {
+      //  garden_name: "",
+      //  active: "",
+      //  notes: "",
+      //  created_by: this.$store.state.user.resource_owner.email,
+      //},
+      //api_url: "",
       active_statuses: ["Active", "Inactive"],
     };
   },
@@ -101,20 +109,8 @@ export default {
           ...this.garden,
           updated_by: this.$store.state.created_by,
         };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            garden_name: this.garden.garden_name,
-            active: this.garden.active,
-            notes: this.garden.notes,
-          }
-        );
-        if (result.status >= 200) {
-          alert("Garden has been updated for " + garden.garden_name);
+        if (this.$store.dispatch("updateGarden", garden)) {
           this.$router.push({ name: "GardenDetails", params: { id: garden.id } });
-        } else {
-          alert("Update Error Code ", result.status);
         }
       }
     },

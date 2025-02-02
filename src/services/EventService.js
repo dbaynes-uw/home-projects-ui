@@ -155,6 +155,14 @@ export default {
     this.init();
     return axios.post(api_url + 'gardens', garden);
   },
+  async putGarden(updatedGarden) {
+    this.init();
+    return axios.put(api_url + "gardens" + `/${updatedGarden.id}`, updatedGarden);
+  },
+  async putPlant(updatedPlant) {
+    this.init();
+    return axios.put(api_url + "plants" + `/${updatedPlant.id}`, updatedPlant);
+  },
   deleteMed(med) {
     this.init();
        // For Testing: setTimeout(5000);

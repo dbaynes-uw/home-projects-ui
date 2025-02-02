@@ -137,7 +137,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchGarden");
+    this.$store.dispatch("fetchGarden", this.id );
     this.$store.dispatch("fetchOutletsGroup");
   },
   computed: {

@@ -22,7 +22,7 @@
     <!-- Good stuff Starts Here -->
     <v-app v-else>
       <div class="header-base">
-        <div style="width: 8rem; height: 3.1rem;"> <!--style="background-color: #41b88352; height: 10%;"-->
+        <div class="menu-base"><!--style="width: 8rem; height: 3.1rem;"--> <!--style="background-color: #41b88352; height: 10%;"-->
           <!--v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y -->
           <v-menu :link="links" offset-y >          
             <template v-slot:activator="{ props }">
@@ -31,9 +31,12 @@
                 v-model="menu"
                 :items="links"
                 v-bind="props"
-                style="font-weight: bold; color: #000; font-family: system-ui; width: 73%"
-              >                
+                class="menu-dropdown"
+              >  
+
               </v-select>
+              <!-- style="font-weight: bold; color: #000; font-family: system-ui; width: 73%"
+-->
             </template>  
             <v-list>
               <v-card

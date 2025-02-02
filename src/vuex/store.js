@@ -423,7 +423,7 @@ export default new Vuex.Store({
           })
           .catch((error) => {
             //console.log(error);
-            alert("Book Fetch Error: ", error.response.data )
+            alert("Book Fetch Error: ",error.response.request.statusText )
           });
       }
     },
@@ -449,7 +449,7 @@ export default new Vuex.Store({
           })
           .catch((error) => {
             //console.log(error);
-            alert("Garden Fetch Error: ", error.response.data )
+            alert("Garden Fetch Error", error.data)
           });
       }
     },
@@ -713,6 +713,19 @@ export default new Vuex.Store({
           alert("Garden Post Error: ", error.response.data )
         });
     },
+    async updateGarden({ commit }, garden) {
+      EventService.putGarden(garden)
+        .then((response) => {
+          commit("SET_GARDEN", response.data);
+          alert("Garden " + garden.garden_name + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Garden Put Error for " + garden.garden_name + ": " + error.response.request.statusText)
+          location.reload();
+      });
+    },
+
     async createPlant({ commit }, plant) {
       EventService.postPlant(plant)
         .then(() => {

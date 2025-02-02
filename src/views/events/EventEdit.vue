@@ -15,11 +15,11 @@
         />
         <v-select
           label="Status"
-          :items="EVENT_STATUSES"
+          :items="ACTIVE_STATUSES"
           v-model="capitalizedStatus"
         >
           <option
-            v-for="option in EVENT_STATUSES"
+            v-for="option in ACTIVE_STATUSES"
             :value="option"
             :key="option"
             id="select-box"
@@ -96,7 +96,7 @@
   </div>
 </template>
 <script setup>
-  import {ASSIGNEES_CURRENT, EVENT_FREQUENCY, EVENT_STATUSES} from "@/services/constants.js"
+  import {ASSIGNEES_CURRENT, EVENT_FREQUENCY, ACTIVE_STATUSES} from "@/services/constants.js"
   import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
   import DateFormatService from "@/services/DateFormatService.js";
 </script>

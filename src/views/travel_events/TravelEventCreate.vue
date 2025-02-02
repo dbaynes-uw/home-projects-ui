@@ -124,79 +124,22 @@ export default {
     },
 
   },
-
   methods: {
     onSubmit() {
-      //HARD SET TO TRUE
-      this.checkValidations();
-      //this.outlet.watering_name = this.watering.name
-      //this.traveling_event. = this.watering.watering_name
-      if (this.isFormValid) {
-        console.log("CARD Travel ID: ", this.travel.id)
-        const travel_event = {
-          ...this.travel_event,
-          id: uuidv4(),
-          travel_id: this.travel.id,
-          created_by: this.$store.state.user.resource_owner.email,
-        };
-        console.log("TRAVEL EVENT TO BE CREATED: ", travel_event)
-        if (this.$store.dispatch("createTravelEvent", travel_event )) {
-          this.$router.push({ name: "TravelDetails" });
-        } else {
-          alert("Error adding Travel Event System " + travel_event.title);
-        } 
+      const travel_event = {
+        ...this.travel_event,
+        id: uuidv4(),
+        travel_id: this.travel.id,
+        created_by: this.$store.state.user.resource_owner.email,
+      };
+      if (this.$store.dispatch("createTravelEvent", travel_event )) {
+        setTimeout(() => {
+          this.$router.push({ name: "TravelDetails" })
+        }, 2500) 
+      } else {
+        alert("Error adding Travel Event System " + travel_event.title);
       } 
     },
-    requiredYardLocation: function (value) {
-      if (value) {
-          this.isYardLocationValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isYardLocationValid = false
-          return 'Please enter Yard Location';
-      }
-    },
-    requiredFaucetLocation: function (value) {
-      if (value) {
-          this.isFaucetLocationValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isFaucetLocationValid = false
-          return 'Please enter Faucet Location';
-      }
-    },
-    requiredLineNumber: function (value) {
-      if (value) {
-          this.isLineNumberValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isLineNumberValid = false
-          return 'Please enter Line Number';
-      }
-    },
-    checkValidations() {
-
-      if (this.isYardLocationValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-      if (this.isFaucetLocationValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-      if (this.isLineNumberValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-      // HARD CODE!!!
-      this.isFormValid = true
-    }
   },
 };
 </script>

@@ -1,6 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h1>{{ travel.title }}</h1>
+  <br/>
+  <h1>{{ travel.title }} Details</h1>
   <router-link :to="{ name: 'TravelList' }">
       <b>Back to List of Journies</b>
     </router-link>
@@ -85,9 +86,7 @@ export default {
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
-
       statusMessage: '',
-      updatedTravel: null,
     };
   },
   methods: {

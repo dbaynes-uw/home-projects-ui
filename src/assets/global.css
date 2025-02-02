@@ -7,10 +7,21 @@
   border-left-color: #d3d3d338;
   border-right-color: #d3d3d338;
   border-bottom-color: #d3d3d338;
+  width: 100%;
 }
 .heading-aligned {
-  width: 69%;
+  width: 78%;
   text-align: center;
+}
+.menu-base {
+  width: 10%;
+  height: 3.1rem;
+  font-weight: bold;
+}
+.menu-dropdown {
+  font-weight: bold;
+  color: #000;
+  font-family: system-ui;
 }
 .cards {
   display: grid;

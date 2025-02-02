@@ -295,6 +295,15 @@ const routes = [
     component: GardenStart,
     meta: { requiresAuth: true}
   },
+  /*
+  {
+    path: "/books/:id",
+    name: "BookDetails",
+    props: true,
+    component: BookDetails,
+    meta: { requiresAuth: true}
+  },
+  */
   {
     path: "/gardens/:id",
     name: "GardenDetails",
@@ -330,8 +339,16 @@ const routes = [
     component: PlantEdit,
     meta: { requiresAuth: true}
   },
+  /*
   {
-    path: "/plant/create",
+    path: "/travels/create_travel_event/:id",
+    name: "TravelEventCreate",
+    component: TravelEventCreate,
+    meta: { requiresAuth: true}
+  },
+  */
+  {
+    path: "/gardens/create_plant/:id",
     name: "PlantCreate",
     component: PlantCreate,
     meta: { requiresAuth: true}

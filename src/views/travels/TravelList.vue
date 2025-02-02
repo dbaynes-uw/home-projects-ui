@@ -123,12 +123,6 @@ export default {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
-    //editTravel(travel) {
-    //  this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
-    //},
-    //editTravelIndex(travel) {
-    //  this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
-    //},
     showIndex() {
       this.filteredResults = [];
     },
@@ -154,7 +148,13 @@ export default {
               travel.title
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle) {
+            const searchHasDescription =
+              travel.description &&
+              travel.description
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            
+            if (searchHasTitle|| searchHasDescription) {
               this.filteredResults.push(travel);
             }
             if (this.filteredResults.length > 0) {

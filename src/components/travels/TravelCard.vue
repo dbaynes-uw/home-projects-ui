@@ -9,6 +9,9 @@
          {{ travel.title }}
        </router-link>
      </!--p-->
+     <router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
+          Travel Details: {{ travel.id  }}
+      </router-link>
     <ul>
       <li class="li-left">Description: {{ travel.description }}</li>
       <li class="li-left">Transportation: {{ travel.transport}}</li>

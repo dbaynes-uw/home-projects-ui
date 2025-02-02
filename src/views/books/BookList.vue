@@ -164,7 +164,7 @@ export default {
               book.date_read
               .includes(this.inputSearchText)
 
-            if (searchHasTitle || searchHasAuthor|| searchHasDateRead ) {
+            if (searchHasTitle || searchHasAuthor || searchHasDateRead ) {
               this.filteredResults.push(book);
             }
             if (this.filteredResults.length > 0) {
