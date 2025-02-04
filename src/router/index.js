@@ -28,7 +28,6 @@ import MedList from "../views/meds/MedList.vue";
 import GardenCreate from "@/views/gardens/GardenCreate.vue";
 import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
-import GardenStart from "../views/gardens/GardenStart.vue";
 import PlantCreate from "@/views/plants/PlantCreate.vue";
 import PlantDetails from "@/views/plants/PlantDetails.vue";
 import PlantEdit from "@/views/plants/PlantEdit.vue";
@@ -290,21 +289,6 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/gardens/start",
-    name: "GardenStart",
-    component: GardenStart,
-    meta: { requiresAuth: true}
-  },
-  /*
-  {
-    path: "/books/:id",
-    name: "BookDetails",
-    props: true,
-    component: BookDetails,
-    meta: { requiresAuth: true}
-  },
-  */
-  {
     path: "/gardens/:id",
     name: "GardenDetails",
     props: true,
@@ -339,14 +323,6 @@ const routes = [
     component: PlantEdit,
     meta: { requiresAuth: true}
   },
-  /*
-  {
-    path: "/travels/create_travel_event/:id",
-    name: "TravelEventCreate",
-    component: TravelEventCreate,
-    meta: { requiresAuth: true}
-  },
-  */
   {
     path: "/gardens/create_plant/:id",
     name: "PlantCreate",
@@ -493,6 +469,12 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/waterings",
+    name: "WateringDisplay",
+    component: WateringDisplay,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/watering/:id",
     name: "WateringEdit",
     props: true,
@@ -500,7 +482,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/watering/create",
+    path: "/gardens/create_watering/:id",
     name: "WateringCreate",
     component: WateringCreate,
     meta: { requiresAuth: true}

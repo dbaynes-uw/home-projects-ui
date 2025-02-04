@@ -131,7 +131,7 @@ export default {
           title: "Films",
         },
         {
-          label: "GardenStart",
+          label: "GardenList",
           url: "/gardens",
           title: "Gardens",
         },

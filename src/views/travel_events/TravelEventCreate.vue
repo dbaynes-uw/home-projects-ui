@@ -109,7 +109,6 @@ export default {
   },
   created() {
     //this.$store.dispatch("fetchTravel", this.travel_id);
-
   },
   computed: {
     travel() {

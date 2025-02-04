@@ -20,8 +20,11 @@
       </span>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
+          <!--router-link  :to="{ name: 'GardenList' }">Gardens</!--router-link-->
+            <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">Back to Garden</router-link>
         </button>
+        <p>
+        </p>
       </li>
     </ul> 
     <br/>
@@ -53,7 +56,7 @@
 </template>
 <script>
 import axios from "axios";
-import WateringCard from "@/components/watering/WateringCard.vue";
+import WateringCard from "@/components/waterings/WateringCard.vue";
 import OutletCard from "@/components/outlets/OutletCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {

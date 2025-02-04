@@ -318,7 +318,7 @@ export default {
   methods: {                     
     onSubmit() {
       this.checkValidations();
-      //this.isFormValid = true
+      //For testing: this.isFormValid = true
       if (this.isFormValid) {
         const golf = {
           ...this.golf,

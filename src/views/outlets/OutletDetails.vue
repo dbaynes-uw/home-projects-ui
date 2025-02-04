@@ -5,8 +5,8 @@
   <ul>
     <li class="left">
       <button id="button-as-link">
-        <router-link  :to="{ name: 'GardenDetails', params: { id: `${outlet.garden_id}` } }">
-          Back to the Garden
+        <router-link  :to="{ name: 'WateringDisplay', params: { id: `${outlet.watering_id}` } }">
+          Back to the Watering: {{ outlet.watering_id }}
         </router-link>
       </button>
     </li>

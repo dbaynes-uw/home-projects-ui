@@ -118,11 +118,10 @@ export default {
   data() {
     return {
       plant: {
-        //id: "",
         garden_id: "",
         outlet_id: "",
         plant_name: "",
-        outlett_name: "",
+        outlet_name: "",
         yard_location: "",
         description: "",
         water_outlet: "",

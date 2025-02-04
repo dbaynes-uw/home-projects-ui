@@ -1,8 +1,15 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Watering System</h3>
+      <h3>Add Watering System for {{ garden.garden_name }}</h3>
     </v-card-title>
+    <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+      <b>Back to Garden</b>
+    </router-link>
+    <br/>
+    <router-link :to="{ name: 'GardenList' }">
+      <b>Back to Garden List</b>
+    </router-link>
   </v-card>
   <v-card-text>
     <v-form @submit.prevent="onSubmit">
@@ -35,6 +42,7 @@ export default {
   data() {
     return {
       watering: {
+        garden_id: null,
         watering_name: null,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
@@ -43,6 +51,15 @@ export default {
       isWateringNameValid: false,
     };
   },
+  created() {},
+  computed: {
+    garden() {
+      return this.$store.state.garden;
+    },
+    //watering() {
+    //  return this.$store.state.watering;
+    //},
+  },
   methods: {
     onSubmit() {
       this.checkValidations();
@@ -50,10 +67,11 @@ export default {
         const watering = {
           ...this.watering,
           id: uuidv4(),
+          garden_id: this.garden.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createWatering", watering)) {
-          this.$router.push({ name: "WateringDisplay" });
+          //this.$router.push({ name: "WateringDisplay" });
         } else {
           alert("Error adding Watering System " + watering.watering_name);
         } 
@@ -77,9 +95,6 @@ export default {
         this.isFormValid = false
       }
     }
-  },
-  watering() {
-    return this.$store.state.watering;
   },
 };
 </script>

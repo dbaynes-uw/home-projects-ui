@@ -16,14 +16,14 @@
         />        
         <label>Status:</label>
         <v-select
-          :items="EVENT_STATUSES"
+          :items="ACTIVE_STATUSES"
           v-model="garden.active"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-list-status</v-icon>
           </template>
           <option
-            v-for="option in EVENT_STATUSES"
+            v-for="option in ACTIVE_STATUSES"
             :value="option"
             :key="option"
             id="select-box"
@@ -48,7 +48,7 @@
   </div>
 </template>
 <script setup>
-import { EVENT_STATUSES } from "@/services/constants";
+import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 </script>
 <script>
