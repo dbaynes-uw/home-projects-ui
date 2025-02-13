@@ -113,12 +113,23 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
   components: {
+  },
+  mounted() {
+    //console.log("Props: ", this.id)
+    //console.log("ROUTE: ", this.$route.name)
+    //console.log("Params: ", this.$route.params.id)
   },
   data() {
     return {
       plant: {
-        garden_id: "",
+        //garden_id: "",
         outlet_id: "",
         plant_name: "",
         outlet_name: "",
@@ -141,11 +152,12 @@ export default {
     };
   },
   created() {
-    //this.$store.dispatch("fetchGarden", this.garden_id );
-    this.$store.dispatch("fetchOutletsGroup");
+    this.$store.dispatch("fetchGarden", this.$route.params.id);
+    this.$store.dispatch("fetchOutletsDisplayGroup");
   },
   computed: {
     garden() {
+      console.log("Computed Garden: ", this.$store.state.garden)
       return this.$store.state.garden;
     },
     outletsGroup() {
@@ -155,7 +167,6 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      console.log("GARDEN Before Submit: ", this.garden)
       if (this.isFormValid) {
         const plant = {
           ...this.plant,
@@ -163,9 +174,10 @@ export default {
           garden_id: this.garden.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
-        console.log("Garden after Before Dispatch: ", this.garden)
         if (this.$store.dispatch("createPlant", plant)) {
-          this.$router.push({ name: 'GardenDetails', params: { id: this.garden.id}})
+          setTimeout(() => {
+            this.$router.push({ name: 'GardenDetails', params: { id: this.garden.id}})
+          }, 2500) 
         } else {
           alert("Error adding Plant " + this.plant.plant_name);
         } 

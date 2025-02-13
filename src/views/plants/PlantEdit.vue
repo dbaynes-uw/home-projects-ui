@@ -7,12 +7,19 @@
     </router-link>
     <br/>
     <br/>
-    <form class="form-card-display" @submit.prevent="updateGardenPlant">
+    <form class="form-card-display" @submit.prevent="updatePlant">
       <div class="form-container">
-        <label>Plant Name:</label>
-        <input type="text" class="text-style" v-model="plant.plant_name" required />
-        <label>Description:</label>
-        <input type="text" class="text-style" v-model="plant.description" />
+        <v-text-field
+          label="Plant Name"
+          v-model="plant.plant_name"
+          required
+        />
+        <v-textarea
+          label="Description"
+          v-model="plant.description"
+          rows="3"
+          cols="40"
+        />        
         <v-select
           label="Status"
           :items="active_statuses"
@@ -31,45 +38,44 @@
             {{ option }}
           </option>
         </v-select>        
-        <label>Location:</label>
-        <input type="text" class="text-style" v-model="plant.yard_location"/>
+        <v-text-field
+          label="Yard Location"
+          v-model="plant.yard_location"
+        />
+        <h3 id="p-custom-left">Outlet Name: {{ showOutletName }}</h3>
         <v-select
-          label="Outlet Name:"
-          :items="outletsGroup.outletsGroup"
-          v-model="plant.outlet_name"
-        >
-          <option
-            v-for="option in outletsGroup"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === plant.outlet_name"
-          >
-            {{ option }}
-          </option>
-        </v-select>
-        <label>Duration:</label>
-        <input type="text" class="text-style" v-model="plant.duration" />
-        <label for="date_written">Date Planted:</label>
-        <input
-          type="date"
-          class="text-style"
+          v-model="outlet_id"
+          :items="outletsDisplayGroup.outletsDisplayGroup"
+          name="id"
+          item-title="outlet_name"
+          label="Select Item to Change"
+          :hide-details='true'
+        />
+        <br/>
+        <v-text-field
+          label="Duration"
+          v-model="plant.duration"
+        />
+        <v-text-field
+          label="Click calendar at right to change Date Planted"
           v-model="plant.date_planted"
-        />
-        <label for="date_read">Date Harvested (if applicable):</label>
-        <input
           type="date"
-          class="text-style"
-          v-model="plant.date_harvested"
         />
-        <label for="url_to_review">Online Link:</label>
-        <input type="text" class="text-style" v-model="plant.online_link" />
+        <v-text-field
+          label="Click calendar at right to change Date Harvested (if applicable)"
+          v-model="plant.date_harvested"
+          type="date"
+        />
+        <v-text-field
+          label="Reference"
+          v-model="plant.online_link"
+        />           
         <label>Notes:</label>
-        <textarea
+        <v-textarea
+          label="Notes"
           v-model="plant.notes"
           rows="3"
           cols="40"
-          class="textarea-style"
         />
         <button class="button" id="link-as-button" type="submit">
           Submit
@@ -79,62 +85,62 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { ref } from 'vue';
 export default {
+  setup() {
+    const outlet_id = ref('');
+    return { outlet_id };
+  },
   props: ["id"],
   components: {
     ConfirmDialogue,
   },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macplant-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/plants/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/plants/";
-    }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.plant = result.data;
-    this.plant.active = this.plant.active == 1 ? 'Active' : 'Inactive'
-  },
+  async mounted() {},
   created() {
-    this.$store.dispatch("fetchOutletsGroup");
+    this.$store.dispatch("fetchPlant", this.id);
+    this.$store.dispatch("fetchOutletsDisplayGroup");
+    this.$store.dispatch("fetchOutletsHash");
+
   },
   computed: {
+    showOutletName:{
+      get(){
+       console.log("ShowOutletName - plant.outlet_id: ", this.plant.outlet_id)
+       console.log("ShowOutletsHash: ", this.outletsHash.outletsHash[0])
+       console.log("ShowOutletsHashLength: ", this.outletsHash.outletsHash.length)
+       var outletName = ""
+       for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
+        console.log("Name: ", this.outletsHash.outletsHash[i].outlet_name)
+         if (this.plant.outlet_id == this.outletsHash.outletsHash[i].id) {
+           outletName = this.outletsHash.outletsHash[i].outlet_name
+           i = 99
+         }
+       }
+       return outletName
+      },
+    },
+    plant() {
+      return this.$store.state.plant;
+    },
     garden() {
       return this.$store.state.garden;
     },
-    outletsGroup() {
-      return this.$store.state.outlets_group;
+    outletsDisplayGroup() {
+      return this.$store.state.outlets_display_group;
+    },
+    outletsHash() {
+      return this.$store.state.outlets_hash;
     },
   },
   data() {
     return {
-      plant: {
-        garden_id: "",
-        outlet_id: "",
-        plant_name: "",
-        yard_location: "",
-        description: "",
-        water_outlet: "",
-        online_link: "",
-        date_planted: "",
-        date_harvested: "",
-        duration: "",
-        active: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      api_url: "",
+      selectedItem: '',
       active_statuses: ["Active", "Inactive"],
     };
   },
-  setup() {},
   methods: {
-    async updateGardenPlant() {
+    async updatePlant() {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Update Garden Plant from List ",
         message:
@@ -144,37 +150,32 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        //const plant = {
-        //  ...this.plant,
-        //  updated_by: this.$store.state.created_by,
-        //};
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            garden_id:  this.garden.id,
-            plant_name: this.plant.plant_name,
-            outlet_id:  this.plant.outlet_id,
-            outlet_name:  this.plant.outlet_name,
-            yard_location: this.plant.yard_location,
-            description: this.plant.description,
-            online_link: this.plant.online_link,
-            date_planted: this.plant.date_planted,
-            date_harvested: this.plant.date_harvested,
-            duration: this.plant.duration,
-            active: this.plant.active,
-            notes: this.plant.notes,
-            updated_by: this.$store.state.user.resource_owner.email,
-          }
-        );
-        if (result.status >= 200) {
-          alert("Garden Plant has been updated for: " + this.plant.plant_name);
-          this.$router.push({ name: "GardenDetails", params: { id: this.garden.id } });
-        } else {
-          alert("Update Error Code ", result.status);
+        console.log("IN outlet_id: ",this.outlet_id)
+        this.plant.outlet_id = this.getOutletId(this.outlet_id)
+        console.log("Return from getOutletId: ",this.plant.outlet_id)
+        const plant = {
+          ...this.plant,
+          updated_by: this.$store.state.created_by,
+        };
+        console.log("PLant at UPDATE: ", plant)
+        if (this.$store.dispatch("updatePlant", plant)) {
+          this.$router.push({ name: "GardenDetails", params: { id: plant.garden_id } });
         }
+      } else {
+        alert("Plant Update Error Code ");
       }
     },
+    getOutletId(name_to_id) {
+      var outletId = ""
+      for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
+        console.log("if name; ", this.outletsHash.outletsHash[i].outlet_name)
+        if (name_to_id == this.outletsHash.outletsHash[i].outlet_name) {
+          outletId = this.outletsHash.outletsHash[i].id
+          i = 99
+        }
+      }
+      return outletId
+    }
   },
 };
 </script>

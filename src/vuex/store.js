@@ -32,11 +32,16 @@ export default new Vuex.Store({
     event: {},
     film: [],
     films: [],
+    garden: [],
+    gardens: [],
+    watering: [],
+    waterings: [],
     med: {},
     meds: [],
+    plant: {},
     plants: [],
     location: {},
-    outlets_group: [],
+    outlets_display_group: [],
     products: [],
     products_by_location: [],
     shopping_list: [],
@@ -151,8 +156,11 @@ export default new Vuex.Store({
     DELETE_OUTLET(state, outlet) {
       state.outlet = outlet;
     },
-    SET_OUTLETS_GROUP(state, outlets_group) {
-      state.outlets_group = outlets_group;
+    SET_OUTLETS_DISPLAY_GROUP(state, outlets_display_group) {
+      state.outlets_display_group = outlets_display_group;
+    },
+    SET_OUTLETS_HASH(state, outlets_hash) {
+      state.outlets_hash = outlets_hash;
     },
     DELETE_PLANT(state, plant) {
       state.plant = plant;
@@ -256,6 +264,9 @@ export default new Vuex.Store({
     },
     SET_WATERING(state, watering) {
       state.watering = watering;
+    },
+    SET_WATERINGS(state, waterings) {
+      state.waterings = waterings;
     },
     ADD_OUTLET(state, outlet) {
       state.outlets.push(outlet);
@@ -737,6 +748,18 @@ export default new Vuex.Store({
           alert("Plant Post Error: ", error.response.data )
         });
     },
+    async updatePlant({ commit }, plant) {
+      EventService.putPlant(plant)
+        .then((response) => {
+          commit("SET_PLANT", response.data);
+          alert("Plant was successfully Updated for " + plant.plant_name);
+          location.reload();
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Plant Put Error: ", error.response.data )
+        });
+    },
 
     async createGolf({ commit }, golf) {
       EventService.postGolf(golf)
@@ -894,15 +917,27 @@ export default new Vuex.Store({
           alert("Med Fetch Error: ", error.response.data )
         });
     },
-    async fetchOutletsGroup({ commit }) {
-      EventService.getOutletsGroup()
+    async fetchOutletsDisplayGroup({ commit }) {
+      EventService.getOutletsDisplayGroup()
         .then((response) => {
-          commit("SET_OUTLETS_GROUP", response.data);
+          commit("SET_OUTLETS_DISPLAY_GROUP", response.data);
           return response.data;
         })
         .catch((error) => {
           //console.log(error);
           alert("Outlet Fetch Group Error: ", error.response.data )
+        });
+    },
+    async fetchOutletsHash({ commit }) {
+      EventService.getOutletsHash()
+        .then((response) => {
+          commit("SET_OUTLETS_HASH", response.data);
+          console.log("fetchHash response: ", response.data)
+          return response.data;
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Outlet Fetch Hash Error: ", error.response.data )
         });
     },
     async deletePlant({ commit }, plant) {
@@ -927,7 +962,7 @@ export default new Vuex.Store({
           alert("Plant Fetch Error: ", error.response.data )
         });
     },
-
+    //????Below Still Needed b/c associations?
     async fetchPlants({ commit }, garden) {
       EventService.getPlants(garden)
         .then((response) => {
@@ -1360,16 +1395,36 @@ export default new Vuex.Store({
         });
     },
 
-    async fetchWatering({ commit }, watering) {
-      EventService.getWatering(watering)
+    async fetchWatering({ commit, state }, id) {
+      console.log("Store fetchWatering id: ", id)
+      const existingWatering = state.gardens.find((watering) => watering.id === id);
+      if (existingWatering) {
+        commit("SET_GARDEN", existingWatering);
+      } else {
+        EventService.getWatering(id)
+          .then((response) => {
+            commit("SET_WATERING", response.data);
+          })
+          .catch((error) => {
+            //console.log(error);
+            alert("Watering Fetch Error", error.data)
+          });
+      }
+    },
+
+    async fetchWaterings({ commit }) {
+      EventService.getWaterings()
         .then((response) => {
-          commit("SET_WATERING", response.data);
+          commit("SET_WATERINGS", response.data);
+          
           return response.data;
         })
         .catch((error) => {
           //console.log(error);
-          alert("Watering Fetch Error: ", error.response.data )        });
+          alert("Waterings Fetch Error: ", error.response.data )
+        });
     },
+
   },
   getters: {
     loggedIn (state) {

@@ -3,7 +3,7 @@
     <v-card-title class="pb-0">
       <h3>Add Outlet to {{ watering.watering_name }} System</h3>
     </v-card-title>
-    <router-link :to="{ name: 'WateringDisplay' }">
+    <router-link :to="{ name: 'WateringDetails' }">
       <b>Back to Watering List</b>
     </router-link>
     <br/><br/>
@@ -181,7 +181,7 @@ export default {
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createWateringOutlet", outlet)) {
-          this.$router.push({ name: "WateringDisplay" });
+          this.$router.push({ name: "WateringDetails" });
         } else {
           alert("Error adding Outlet System " + outlet.yard_location);
         } 

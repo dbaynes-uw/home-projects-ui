@@ -1,11 +1,11 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <br/>
-  GD Garden: {{ garden.waterings }}
   <h1>{{ garden.garden_name }} Details</h1>
+  <br/>
   <router-link :to="{ name: 'GardenList' }">
-      <b>Back to List of Gardens</b>
-    </router-link>
+    <b>Back to List of Gardens</b>
+  </router-link>
     <!--span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex">
     <span v-if="garden.garden_name == outlet.target">
       <router-link
@@ -28,6 +28,10 @@
   </div>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
+  <span v-for="(p, p_index) in garden.plants" :key="p_index">
+    {{ p.name }}
+    <br/>
+  </span>
   <div class="cards">
     <PlantCard
       v-for="plant in garden.plants"
@@ -37,14 +41,14 @@
     />
   </div>
   <br/>
-  <div class="cards">
+  <!--div class="cards">
     <WateringCard
       v-for="watering in garden.waterings"
       :key="watering.id"
       :watering="watering"
       class="card"
     />
-  </div>
+  </!--div-->
 </template>
 
 <script>
@@ -53,7 +57,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import PlantCard from "@/components/plants/PlantCard.vue";
-import WateringCard from "@/components/waterings/WateringCard.vue";
+//import WateringCard from "@/components/waterings/WateringCard.vue";
 import { ref } from 'vue';
 const successMessage = ref('')
 export default {
@@ -63,7 +67,7 @@ export default {
     ConfirmDialogue,
     GardenCard,
     PlantCard,
-    WateringCard,
+    //WateringCard,
   },
   mounted() {
     this.sortedData = this.films;      
@@ -71,9 +75,12 @@ export default {
     this.statusMessage = successMessage.value
   },
   created() {
+    //console.log("Created G ID: ", this.garden.id)
+    //console.log("Created Watering: ", this.$store.dispatch('fetchWatering', this.garden.id))
     this.$store.dispatch("fetchGarden", this.id);
-    this.$store.dispatch('resetModule', 'fetchOutletDetailsByName')
-    this.sortedData = this.$store.dispatch("fetchGardens");
+    //this.$store.dispatch("fetchWatering", this.garden.id);
+    //?this.$store.dispatch('resetModule', 'fetchOutletDetailsByName')
+    //?this.sortedData = this.$store.dispatch("fetchGardens");
 
   },
   computed: {
@@ -101,8 +108,7 @@ export default {
         id: "",
         garden_id: "",
         outlet_id: "",
-        plant_name: "",
-        outlet_name: "",
+        name: "",
         yard_location: "",
         description: "",
         online_link: "",
@@ -112,12 +118,15 @@ export default {
         active: "",
         notes: "",
       },
-      watering: {
-        id: "",
-        garden_id: "",
-        watering_name: "",
-        notes: "",
+      outlet: {
+        outlet_name: "",
       },
+      //watering: {
+      //  id: "",
+      //  garden_id: "",
+      //  watering_name: "",
+      //  notes: "",
+      //},
       statusMessage: '',
     };
   },

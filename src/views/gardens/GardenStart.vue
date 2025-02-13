@@ -9,7 +9,7 @@
       <span v-if="watering">
         <li class="left">
           <button id="button-as-link">
-            <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
+            <router-link  :to="{ name: 'WateringDetails' }">Watering Layout</router-link>
           </button>
         </li>
       </span>

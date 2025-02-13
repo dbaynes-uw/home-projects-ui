@@ -2,20 +2,16 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Garden List</h2>
+      <h2>Watering List</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
     </v-card-title>
     <ul>
       <li class="left">
+        Watering Create
         <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
-        </button>
-      </li>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'GardenCreate' }">Add Garden</router-link>
+          <router-link  :to="{ name: 'WateringCreate' }">Add Watering</router-link>
         </button>
       </li>
     </ul> 
@@ -37,22 +33,22 @@
         />
       </div>
   </div>
-  <div class="garden-list">
+  <div class="watering-list">
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
         <span v-if="requestIndexDetailFlag == true">
-          <h3 id="h3-left">Total: {{ gardens.length }}</h3>
+          <h3 id="h3-left">Total: {{ waterings.length }}</h3>
           <span class="h3-left-total-child">*Double click Item Below to Edit</span>
           <div class="cards">
-            <GardenCard
-              v-for="garden in gardens"
-              :key="garden.id"
-              :garden="garden"
+            <WateringCard
+              v-for="watering in waterings"
+              :key="watering.id"
+              :watering="watering"
               class="card"
-              @dblclick="editGarden(garden)"
+              @dblclick="editWatering(watering)"
             />
             <br />
           </div>
@@ -67,10 +63,10 @@
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit</span>
         <div class="cards">
-          <GardenCard
-            v-for="garden in filteredResults"
-            :key="garden.id"
-            :garden="garden"
+          <WateringCard
+            v-for="watering in filteredResults"
+            :key="watering.id"
+            :watering="watering"
             class="card"
           />
           <br />
@@ -81,14 +77,14 @@
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import GardenCard from "@/components/gardens/GardenCard.vue";
+import WateringCard from "@/components/waterings/WateringCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
-  name: "GardenList",
+  name: "WateringList",
   props: ["filteredResults[]"],
   components: {
-    GardenCard,
+    WateringCard,
     ConfirmDialogue
   },
   data() {
@@ -107,27 +103,27 @@ export default {
     };
   },
   mounted() {
-    this.sortedData = this.gardens;
+    this.sortedData = this.waterings;
   },
   created() {
-    this.$store.dispatch("fetchGardens");
-    this.sortedData = this.$store.dispatch("fetchGardens");
+    this.$store.dispatch("fetchWaterings");
+    this.sortedData = this.$store.dispatch("fetchWaterings");
   },
   computed: {
-    gardens() {
-      return this.$store.state.gardens;
+    waterings() {
+      return this.$store.state.waterings;
     },
     //origin() {
-    //  return "GardenList"
+    //  return "WateringList"
     //}
   },
   methods: {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
-    editGarden(garden) {
-      console.log("Edit Garden: ", garden)
-      this.$router.push({ name: 'GardenEdit', params: { id: `${garden.id}` } });
+    editWatering(watering) {
+      console.log("Edit Watering: ", watering)
+      this.$router.push({ name: 'WateringEdit', params: { id: `${watering.id}` } });
     },
     showIndex() {
       this.filteredResults = [];
@@ -144,19 +140,19 @@ export default {
         this.cardDetails = null;
       } else {
         if (
-          this.gardens &&
-          this.gardens.length > 0 &&
+          this.waterings &&
+          this.waterings.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.gardens.forEach((garden) => {
-            garden.plants.forEach((plant) => {
+          this.waterings.forEach((watering) => {
+            watering.plants.forEach((plant) => {
               const searchHasPlantName =
                 plant.plant_name &&
                 plant.plant_name
                   .toLowerCase()
                   .includes(this.inputSearchText.toLowerCase());
               if (searchHasPlantName) {
-                this.filteredResults.push(garden);
+                this.filteredResults.push(watering);
               }
               if (this.filteredResults.length > 0) {
                 this.searchResults = true;
@@ -172,7 +168,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.gardens;
+      this.sortedData = this.waterings;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;

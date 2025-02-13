@@ -90,7 +90,7 @@ export default {
       //  created_by: this.$store.state.user.resource_owner.email,
       //},
       //api_url: "",
-      active_statuses: ["Active", "Inactive"],
+      //active_statuses: ["Active", "Inactive"],
     };
   },
   setup() {},

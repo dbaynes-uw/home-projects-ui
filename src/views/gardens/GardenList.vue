@@ -46,8 +46,6 @@
               v-for="garden in gardens"
               :key="garden.id"
               :garden="garden"
-              class="card"
-              @dblclick="editGarden(garden)"
             />
             <br />
           </div>

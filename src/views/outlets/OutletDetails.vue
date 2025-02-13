@@ -5,18 +5,25 @@
   <ul>
     <li class="left">
       <button id="button-as-link">
-        <router-link  :to="{ name: 'WateringDisplay', params: { id: `${outlet.watering_id}` } }">
+        <router-link  :to="{ name: 'WateringDetails', params: { id: `${outlet.watering_id}` } }">
           Back to the Watering: {{ outlet.watering_id }}
         </router-link>
       </button>
     </li>
+    <li class="left">
+      <button id="button-as-link">
+        <router-link  :to="{ name: 'PlantDetails', params: { id: `${plant.outlet_id}` } }">
+          Back to the Plant: {{ plant.plant_name }}
+        </router-link>
+      </button>
+    </li>
+    Plant: {{ plant.outlet_id }}
   </ul>
   <br/>
   <div class="card-display">
     <OutletCard
       :key="outlet.id"
       :outlet="outlet"
-      :origin="origin"
       class="card"
       @dblclick="onDoubleClick(outlet)"
       />
@@ -42,10 +49,14 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchOutlet", this.id);
+    //this.$store.dispatch("fetchPlant", this.outlet_id);
   },
   computed: {
     outlet() {
       return this.$store.state.outlet;
+    },
+    plant() {
+      return this.$store.state.plant;
     },
     //origin() {
     //  return "OutletDetails"

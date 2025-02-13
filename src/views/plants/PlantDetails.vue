@@ -41,7 +41,6 @@ export default {
     ConfirmDialogue,
     PlantCard,
   },
-
   data() {
     return {
       updatedPlant: null,
@@ -53,7 +52,7 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchPlant", this.id);
+    //this.$store.dispatch("fetchPlant", this.id);
   },
   computed: {
     plant() {

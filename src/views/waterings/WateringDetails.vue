@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Watering System</h2>
+      <h2>Watering System Details</h2>
     </v-card-title>
     <v-img
           :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
@@ -20,8 +20,8 @@
       </span>
       <li class="left">
         <button id="button-as-link">
-          <!--router-link  :to="{ name: 'GardenList' }">Gardens</!--router-link-->
-            <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">Back to Garden</router-link>
+          <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
+            <!--router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">Back to Garden</router-link-->
         </button>
         <p>
         </p>
@@ -30,8 +30,8 @@
     <br/>
   </v-card>
   <br/>
-  <span v-if="watering.active == true">
-    <div class="watering-display">
+  <!--span v-if="watering.active == true">
+    <div-- class="watering-display">
       <span class="h3-left-total-child">Click to Change</span>
       <div class="cards-1-center">
         <WateringCard
@@ -40,10 +40,10 @@
         </WateringCard>
       <br />
       </div>
-    </div>
-    <!--h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</!--h3-->
-    <span class="h3-left-total-child">Double Click Item to Change</span>
-    <div class="cards">
+    </div-->
+    <!--h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</h3-->
+    <!--span class="h3-left-total-child">Double Click Item to Change</!--span-->
+    <!--div class="cards">
       <OutletCard
         v-for="outlet in watering.outlets"
         :key="outlet.id"
@@ -51,20 +51,20 @@
         class="card"
         @dblclick="editOutlet(outlet)"
       />
-    </div>
-  </span>
+    </!--div-->
+  <!--/span-->
 </template>
 <script>
 import axios from "axios";
-import WateringCard from "@/components/waterings/WateringCard.vue";
-import OutletCard from "@/components/outlets/OutletCard.vue";
+//import WateringCard from "@/components/waterings/WateringCard.vue";
+//import OutletCard from "@/components/outlets/OutletCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "WateringDisplay",
-  props: [],
+  name: "WateringDetails",
+  //?props: [garden],
   components: {
-    WateringCard,
-    OutletCard,
+    //WateringCard,
+    //OutletCard,
     ConfirmDialogue,
   },
   data() {
@@ -123,7 +123,7 @@ export default {
     },
    */
     origin() {
-      return "WateringDisplay"
+      return "WateringDetails"
     }
   },
   methods: {

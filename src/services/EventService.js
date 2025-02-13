@@ -207,9 +207,13 @@ export default {
     this.init();
     return axios.get(api_url + "gardens/garden_outlet", `${garden}`)
   },
-  async getOutletsGroup() {
+  async getOutletsDisplayGroup() {
     this.init();
-    return axios.get(api_url + "outlets_group")
+    return axios.get(api_url + "outlets_display_group")
+  },
+  async getOutletsHash() {
+    this.init();
+    return axios.get(api_url + "outlets_hash")
   },
   async postPlant(plant) {
     this.init();
@@ -360,8 +364,13 @@ export default {
     return axios.post(api_url + 'watering_outlet', watering_outlet);
   },
   async getWatering(id) {
+    console.log("ES GET Watering ID: ", id)
     this.init();
     return axios.get(api_url + "waterings/" + id)
+  },
+  async getWaterings() {
+    this.init();
+    return axios.get(api_url + "waterings")
   },
   deleteWatering() {
     this.init();

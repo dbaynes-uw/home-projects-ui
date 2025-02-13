@@ -1,35 +1,42 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Watering {{ watering.name }}</h2>
-    <router-link :to="{ name: 'WateringDisplay' }">
+    <h2>Edit Watering {{ watering.watering_name }}</h2>
+    <router-link :to="{ name: 'WateringList' }">
       <b>Back to Watering List</b>
     </router-link>
     <br/><br/>
-    <ul>
+    <!--ul>
       <li class="center">
         <button id="button-as-link">
           <router-link  :to="{ name: 'OutletCreate' }">Add Outlet</router-link>
         </button>
       </li>
-    </ul> 
-    <br/>
+    </!--ul> 
+    <br/-->
     <form class="form-card-display" @submit.prevent="updateWatering">
       <div class="form-container">
-        <label>Watering Name:</label>
-        <input type="text" class="text-style" v-model="watering.watering_name" required />
-        <label>Active:</label>
-        <select class="select-status" v-model="watering.active" required>
+        <v-text-field
+          label="Watering Name"
+          v-model="watering.watering_name"
+        />
+        <v-select
+          :items="ACTIVE_STATUSES"
+          v-model="watering.active"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-list-status</v-icon>
+          </template>
           <option
-            v-for="option in active_statuses"
+            v-for="option in ACTIVE_STATUSES"
             :value="option"
             :key="option"
+            id="select-box"
             :selected="option === watering.active"
           >
-            &nbsp;&nbsp;
             {{ option }}
           </option>
-        </select>
+        </v-select> 
         <br/><br/>
         <!--label for="created_at">Date Created:</!--label>
         <input
@@ -59,10 +66,13 @@
     </form>
   </div>
 </template>
-<script>
+<script setup>
 import axios from "axios";
+import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+</script>
+<script>
 export default {
   props: ["id"],
   components: {
@@ -98,7 +108,7 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
         updated_by: this.$store.state.user.resource_owner.email,
       },
-      active_statuses: ["Active", "Inactive"],
+      //active_statuses: ["Active", "Inactive"],
       api_url: ""
     };
   },

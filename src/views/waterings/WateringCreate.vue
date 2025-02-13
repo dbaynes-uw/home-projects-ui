@@ -71,7 +71,7 @@ export default {
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createWatering", watering)) {
-          //this.$router.push({ name: "WateringDisplay" });
+          //this.$router.push({ name: "WateringDetails" });
         } else {
           alert("Error adding Watering System " + watering.watering_name);
         } 

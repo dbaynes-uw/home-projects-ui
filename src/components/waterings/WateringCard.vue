@@ -1,6 +1,7 @@
 <template>
   <span v-if="watering.active == true">
     <div class="card">
+      Garden? <!--{{ watering.garden.garden_name }}-->
      <p id="p-custom-u">
        <router-link
          :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
@@ -55,7 +56,7 @@ export default {
           watering.title +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "WateringDisplay" });
+        this.$router.push({ name: "WateringDetails" });
       }
     },
     formatStandardDate(value) {

@@ -16,7 +16,7 @@
       <span v-if="watering.id">
         <li class="left">
           <button id="button-as-link">
-            <router-link  :to="{ name: 'WateringDisplay' }">Watering Layout</router-link>
+            <router-link  :to="{ name: 'WateringDetails' }">Watering Layout</router-link>
           </button>
         </li>
       </span>
@@ -128,8 +128,10 @@ export default {
     this.sortedData = this.plants;
   },
   created() {
+    this.$store.dispatch("fetchWatering", this.garden_id);
     this.$store.dispatch("fetchPlants", this.garden_id);
     console.log("PlantList Created - Garden: ", this.garden_id)
+
     this.sortedData = this.plants;
   },
   computed: {
@@ -140,7 +142,7 @@ export default {
       return this.$store.state.plants;
       //return [
       //  { id: 1,
-      //    plant_name: 'Avacodes',
+      //    name: 'Avacodes',
       //    description: 'Desc 1',
       //    location: '1-A-1',
       //    water_outlet: 'East Back',
@@ -152,7 +154,7 @@ export default {
       //    notes: 'Bed-Section-Position - Bed: North to South: 1,2,3 | Section East to West: A,B,C; Rows North to South 1,2,3 ex: 1-A-1 = Bed 1, Section A, Row 1 / OR Bed 1 Row 1 = B1 R1, etc.'
       //  },
       //  { id: 2,
-      //    plant_name: 'Broccoli',
+      //    name: 'Broccoli',
       //    description: 'Desc 2',
       //    location: '2-A-1',
       //    water_outlet: 'West Back',
@@ -164,7 +166,7 @@ export default {
       //    notes: 'Bed-Section-Position - E/W Row ex: 2-A-1, 2-B-1, 2-C-1 N/S ex: 2-A-1, 2-A-2 ',
       //  },
       //  { id: 3,
-      //    plant_name: 'Carrots',
+      //    name: 'Carrots',
       //    description: 'Desc 3',
       //    location: '3-A-1',
       //    water_outlet: 'West Front (Hydrangeas)',

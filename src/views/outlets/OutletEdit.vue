@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
     <h2>Edit Outlet {{ outlet.yard_location }} {{ outlet.faucet_location }}</h2>
-    <router-link :to="{ name: 'WateringDisplay' }">
+    <router-link :to="{ name: 'WateringDetails' }">
       <b>Back to Watering List</b>
     </router-link>
     <br/><br/>
@@ -215,7 +215,7 @@ export default {
         );
         if (result.status >= 200) {
           alert("Watering has been updated for Outlet " + this.outlet.outlet_name);
-          this.$router.push({ name: "WateringDisplay" });
+          this.$router.push({ name: "WateringDetails" });
         } else {
           alert("Update Error Code ", result.status);
         }

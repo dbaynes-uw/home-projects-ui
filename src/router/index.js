@@ -25,6 +25,10 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
+import OutletCreate from "@/views/outlets/OutletCreate.vue";
+import OutletDetailsByName from "@/views/outlets/OutletDetailsByName.vue";
+import OutletEdit from "@/views/outlets/OutletEdit.vue";
+import OutletDetails from "@/views/outlets/OutletDetails.vue";
 import GardenCreate from "@/views/gardens/GardenCreate.vue";
 import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
@@ -32,7 +36,6 @@ import PlantCreate from "@/views/plants/PlantCreate.vue";
 import PlantDetails from "@/views/plants/PlantDetails.vue";
 import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
-import OutletDetails from "@/views/outlets/OutletDetails.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import ProductsLocationList from "../views/products/ProductsLocationList.vue";
 import ProductsByLocations from "../views/products/ProductsByLocations.vue";
@@ -55,11 +58,9 @@ import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
 import WateringCreate from "@/views/waterings/WateringCreate.vue";
-import OutletCreate from "@/views/outlets/OutletCreate.vue";
-import OutletDetailsByName from "@/views/outlets/OutletDetailsByName.vue";
+import WateringList from "../views/waterings/WateringList.vue";
 import WateringEdit from "@/views/waterings/WateringEdit.vue";
-import OutletEdit from "@/views/outlets/OutletEdit.vue";
-import WateringDisplay from "../views/waterings/WateringDisplay.vue";
+import WateringDetails from "../views/waterings/WateringDetails.vue";
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
@@ -276,16 +277,9 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/gardens",
+    path: "/gardens/",
     name: "GardenList",
-    props: true,
     component: GardenList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/garden/create",
-    name: "GardenCreate",
-    component: GardenCreate,
     meta: { requiresAuth: true}
   },
   {
@@ -293,6 +287,12 @@ const routes = [
     name: "GardenDetails",
     props: true,
     component: GardenDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/garden/create",
+    name: "GardenCreate",
+    component: GardenCreate,
     meta: { requiresAuth: true}
   },
   {
@@ -317,7 +317,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/plant/edit/:id",
+    path: "/plant/:id",
     name: "PlantEdit",
     props: true,
     component: PlantEdit,
@@ -470,8 +470,8 @@ const routes = [
   },
   {
     path: "/waterings",
-    name: "WateringDisplay",
-    component: WateringDisplay,
+    name: "WateringDetails",
+    component: WateringDetails,
     meta: { requiresAuth: true}
   },
   {
@@ -482,15 +482,36 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/waterings/:id",
+    name: "WateringDetails",
+    props: true,
+    component: WateringDetails,
+    meta: { requiresAuth: true}
+  },
+  /*
+  {
     path: "/gardens/create_watering/:id",
     name: "WateringCreate",
     component: WateringCreate,
     meta: { requiresAuth: true}
   },
+  */
   {
-    path: "/watering",
-    name: "WateringDisplay",
-    component: WateringDisplay,
+    path: "/waterings/create",
+    name: "WateringCreate",
+    component: WateringCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings/",
+    name: "WateringList",
+    component: WateringList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/watering/:id",
+    name: "WateringDetails",
+    component: WateringDetails,
     meta: { requiresAuth: true}
   },
   //{

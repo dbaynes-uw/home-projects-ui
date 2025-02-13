@@ -19,7 +19,10 @@
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
-        <v-text-field label="Event Title" v-model="travel_event.title">
+        <v-text-field label="Event Title"
+          v-model="travel_event.title"
+          :rules="[requiredTitle]"
+          >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
@@ -53,6 +56,7 @@
         <v-text-field label="Start Date"
           v-model="travel_event.start_date"
           type="datetime-local"
+          :rules="[requiredStartDate]"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-calendar</v-icon>
@@ -84,11 +88,18 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
+  props: ["id"],
+  //Xprops: {
+  //X  id: {
+  //X    type: String,
+  //X    required: true
+  //X  }
+  //X},
   components: {},
   data() {
     return {
       travel_event: {
-        //id: "",
+        id: "",
         travel_id: "",
         title: "",
         description: "",
@@ -101,14 +112,16 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       },
       urlMaxLength: 255,
-      ifFormValid: false,
+      isTitleValid: false,
+      isStartDateValid: false,
+      isFormValid: false,
       isYardLocationValid: false,
       isFaucetLocationValid: false,
       isLineNumberValid: false,
     };
   },
   created() {
-    //this.$store.dispatch("fetchTravel", this.travel_id);
+    this.$store.dispatch("fetchTravel", this.$route.params.id);
   },
   computed: {
     travel() {
@@ -118,19 +131,64 @@ export default {
   },
   methods: {
     onSubmit() {
-      const travel_event = {
-        ...this.travel_event,
-        id: uuidv4(),
-        travel_id: this.travel.id,
-        created_by: this.$store.state.user.resource_owner.email,
-      };
-      if (this.$store.dispatch("createTravelEvent", travel_event )) {
-        setTimeout(() => {
-          this.$router.push({ name: "TravelDetails" })
-        }, 2500) 
+      this.checkValidations();
+      if (this.isFormValid) {
+        const travel_event = {
+          ...this.travel_event,
+          id: uuidv4(),
+          travel_id: this.travel.id,
+          created_by: this.$store.state.user.resource_owner.email,
+        };
+        if (this.$store.dispatch("createTravelEvent", travel_event )) {
+          setTimeout(() => {
+            this.$router.push({ name: "TravelDetails" })
+          }, 2500) 
+        } else {
+          alert("Error adding Travel Event System " + travel_event.title);
+        }
       } else {
-        alert("Error adding Travel Event System " + travel_event.title);
-      } 
+        alert("Please correct required fields and resubmit");
+      }
+    },
+    requiredCourse: function (value) {
+      if (value) {
+        this.isCourseValid = true
+        return true;
+      } else {
+          this.isFormValid = false
+          this.isCourseValid = false
+          return 'Please enter Course';
+      }
+    },
+    requiredTitle: function (value) {
+      if (value) {
+        this.isTitleValid = true
+        return true;
+      } else {
+          this.isFormValid = false
+          this.isTitleValid = false
+          return 'Please enter Event Title';
+      }
+    },
+    requiredStartDate: function (value) {
+      if (value) {
+        this.isStartDateValid = true
+        return true;
+      } else {
+          this.isFormValid = false
+          this.isStartDateValid = false
+          return 'Please enter Start Date';
+      }
+    },
+    checkValidations() {
+      if (this.isTitleValid &&
+          this.isStartDateValid 
+        ) 
+      {
+        this.isFormValid = true
+      } else {
+        this.isFormValid = false
+      }
     },
   },
 };

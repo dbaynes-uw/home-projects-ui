@@ -82,7 +82,7 @@ export default {
           outlet.outlet_name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "WateringDisplay" });
+        this.$router.push({ name: "WateringDetails" });
       }
     },
 

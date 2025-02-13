@@ -6,8 +6,8 @@
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
       <li class="li-left">Booking Reference: <b><a :href="travel_event.transport_url" target="_blank">{{ travel_event.booking_reference }}</a></b></li>
 
-      <li class="li-left">Depart: {{ formatStandardDateTime(travel_event.start_date) }}</li>
-      <li class="li-left">Return: {{ formatStandardDateTime(travel_event.end_date) }}</li>
+      <li class="li-left">Start: {{ formatStandardDateTime(travel_event.start_date) }}</li>
+      <li class="li-left">End: {{ formatStandardDateTime(travel_event.end_date) }}</li>
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in splitList(travel_event, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>

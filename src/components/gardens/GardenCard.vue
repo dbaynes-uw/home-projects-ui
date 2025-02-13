@@ -1,29 +1,52 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <span v-if="garden.active == true">
+  <!--span v-if="garden.active == true"-->
     <div class="card">
-      <span v-if="currentUrl.includes('/gardens/')">
-        <p id="p-custom-link">
+      <!--Route: {{ this.$route.name }}-->
+      <span v-if="this.$route.name == 'GardenList'">
+        <!--As opposed to: span v-if="currentUrl.includes('/gardens/')"-->
+        <h4>
+          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+            {{ garden.garden_name }}
+            </router-link>
+        </h4>
+        <ul>
+          <li class="li-left">Notes:</li>
+          <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
+        </ul>
+        <h4 id="p-custom-link">
          <router-link
-           :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
+         :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }"
          >
-          {{ garden.garden_name }}
+          Add Watering System
          </router-link>
-        </p>
+        </h4>    
       </span>
       <span v-else>
         <h4 id="p-custom-link">
           <router-link
-            :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-              {{ garden.garden_name }}
+            :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
+          >
+            Edit {{ garden.garden_name }}
           </router-link>
         </h4>
+        <h4 id="p-custom-link">
+         <router-link
+         :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }"
+         >
+          Add Watering System
+         </router-link>
+        </h4>
+        <p id="p-custom-link">
+          <router-link
+            :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
+          >
+            Add Plant to {{ garden.garden_name }}
+          </router-link>
+        </p> 
       </span>
-      <ul>
-        <li class="li-left">Notes:</li>
-        <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
-      </ul>
-      <span v-if="currentUrl.includes('/gardens/')">
+      <span v-if="this.$route.name == 'GardenList'">
+      <!--span v-if="currentUrl.includes('/gardens/')"-->
         <br/>
         <li id="p-custom-link">
           <router-link
@@ -32,32 +55,14 @@
             <b>Add Plant</b>
           </router-link>
         </li>
-        <br/>
-        G: {{ garden.waterings}}
-        <!--span v-if="garden.waterings.length > 0">
-          <li class="li-left">Watering System: 
-            <br>
-            <b>{{ garden.waterings[0].watering_name }}</b>
-          </li>
-        </span>
-        <span-- v-else>
-          <br/>
-          <p id="p-custom-link">
-            <router-link
-              :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }"
-            >
-              Add Watering System
-            </router-link>
-          </p>
-        </span-->
       </span>
-      <span v-if="garden.plants.length > 0">
+      <span v-if="garden.plants && garden.plants.length > 0">
         <p id="p-custom-left">Plants:</p>
-        <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex">
+        <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
           <ul class="ul-left">
             <li>
               <router-link
-                :to="{ name: 'PlantDetails', params: { id: `${plant.id}`}, props: { garden: `${garden}` } }"
+                :to="{ name: 'PlantDetails', params: { id: `${plant.id}`} }"
               >
               <b>{{plant.plant_name}}</b>
               </router-link>
@@ -73,7 +78,8 @@
             <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
           </router-link>
         </span>
-        <span v-if="currentUrl.includes('/gardens/')" class="fa-stack">
+        <span v-if="this.$route.name == 'GardenList'">
+        <!--span v-if="currentUrl.includes('/gardens/')" class="fa-stack"-->
           <router-link :to="{ name: 'GardenList' }">
             <i class="fa-solid fa-backward fa-stack-1x"></i>
           </router-link>
@@ -89,13 +95,13 @@
         </span>
       </div>
     </div>
-  </span>
+  <!--/span-->
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import SplitStringService from "@/services/SplitStringService.js";
-import { useRoute } from 'vue-router'
+//import { useRoute } from 'vue-router'
 export default {
   name: 'GardenCard',
   props: {
@@ -107,16 +113,20 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  setup() {
-    const route = useRoute()
-    return {
-      currentUrl: route.fullPath
-    }
-  },
+  setup() {},
   data() {
     return {
       splitLength: 30,
     };
+  },
+  computed: {
+    //watering() {
+    //  return this.$store.state.watering;
+    //},
+  },
+  created() {
+    //console.log("Created Watering by Garden ID: ", this.garden.id)
+    //this.$store.dispatch("fetchWatering", this.garden.id);
   },
   methods: {
     async deleteGarden(garden) {
