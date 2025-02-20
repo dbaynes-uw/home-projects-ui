@@ -268,6 +268,9 @@ export default new Vuex.Store({
     SET_WATERINGS(state, waterings) {
       state.waterings = waterings;
     },
+    ADD_WATERING(state, watering) {
+      state.waterings.push(watering);
+    },
     ADD_OUTLET(state, outlet) {
       state.outlets.push(outlet);
     },
@@ -879,9 +882,22 @@ export default new Vuex.Store({
         .catch((error) => {
           alert("Error in postBook of createOutlet Action (index.js)");
           //console.log(error);
-          alert("Med Post Error: ", error.response.data )
+          alert("Watering Outlet Post Error: ", error.response.data )
         });
     },
+    async updateOutlet({ commit }, outlet) {
+      EventService.putOutlet(outlet)
+        .then((response) => {
+          commit("SET_OUTLET", response.data);
+          alert("Outlet was successfully Updated for " + outlet.outlet_name);
+          location.reload();
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Outlet Put Error: ", error.response.data )
+        });
+    },
+
     async deleteOutlet({ commit }, outlet) {
       EventService.deleteOutlet(outlet)
         .then((response) => {
@@ -1396,10 +1412,9 @@ export default new Vuex.Store({
     },
 
     async fetchWatering({ commit, state }, id) {
-      console.log("Store fetchWatering id: ", id)
-      const existingWatering = state.gardens.find((watering) => watering.id === id);
+      const existingWatering = state.waterings.find((watering) => watering.id === id);
       if (existingWatering) {
-        commit("SET_GARDEN", existingWatering);
+        commit("SET_WATERING", existingWatering);
       } else {
         EventService.getWatering(id)
           .then((response) => {

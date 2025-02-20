@@ -101,7 +101,6 @@ export default {
     this.$store.dispatch("fetchPlant", this.id);
     this.$store.dispatch("fetchOutletsDisplayGroup");
     this.$store.dispatch("fetchOutletsHash");
-
   },
   computed: {
     showOutletName:{

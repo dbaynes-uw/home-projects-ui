@@ -11,39 +11,43 @@
           height="500"
       />
     <ul>
-      <span v-if="!watering">
-        <li class="left">
-          <button id="button-as-link">
-           <router-link  :to="{ name: 'WateringCreate' }">Create Watering</router-link>
-          </button>
-        </li>
-      </span>
       <li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
             <!--router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">Back to Garden</router-link-->
         </button>
-        <p>
-        </p>
+      </li>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringList' }">Waterings</router-link>
+            <!--router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">Back to Garden</router-link-->
+        </button>
       </li>
     </ul> 
     <br/>
   </v-card>
   <br/>
-  <!--span v-if="watering.active == true">
-    <div-- class="watering-display">
-      <span class="h3-left-total-child">Click to Change</span>
-      <div class="cards-1-center">
-        <WateringCard
-          :watering="watering"
-        >      
-        </WateringCard>
-      <br />
-      </div>
-    </div-->
-    <!--h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</h3-->
-    <!--span class="h3-left-total-child">Double Click Item to Change</!--span-->
-    <!--div class="cards">
+  <span v-if="watering.active == true">
+      <div class="watering-display">
+        <span class="h3-left-total-child">Click to Change</span>
+        <div class="cards-1-center">
+          <WateringCard
+            :watering="watering"
+          >      
+          </WateringCard>
+          <br />
+        </div>
+          <!--div class="cards"-->
+      <!--WateringCard
+        v-for="watering in watering"
+        :key="watering.id"
+        :watering="watering"
+        class="card"
+      /-->
+    </div>
+    <h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</h3>
+    <span class="h3-left-total-child">Double Click Item to Change</span>
+    <div class="cards">
       <OutletCard
         v-for="outlet in watering.outlets"
         :key="outlet.id"
@@ -51,25 +55,46 @@
         class="card"
         @dblclick="editOutlet(outlet)"
       />
-    </!--div-->
-  <!--/span-->
+    </div>
+    <p id="p-custom-link">
+      <router-link
+        :to="{ name: 'OutletCreate', params: { id: `${watering.id}` } }"
+      >
+        <b>Add Outlet</b>
+      </router-link>
+    </p>
+  </span>
 </template>
 <script>
-import axios from "axios";
-//import WateringCard from "@/components/waterings/WateringCard.vue";
-//import OutletCard from "@/components/outlets/OutletCard.vue";
+import WateringCard from "@/components/waterings/WateringCard.vue";
+import OutletCard from "@/components/outlets/OutletCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { ref } from 'vue';
+const successMessage = ref('')
 export default {
   name: "WateringDetails",
-  //?props: [garden],
+  props: ["id"],
   components: {
-    //WateringCard,
-    //OutletCard,
+    WateringCard,
+    OutletCard,
     ConfirmDialogue,
+  },
+  mounted() {
+    this.sortedData = this.films;      
+    successMessage.value = this.$route.query.success;
+    this.statusMessage = successMessage.value
+  },
+  created() {
+    this.$store.dispatch("fetchWatering", this.$route.params.id);
+  },
+  computed: {
+    watering() {
+      return this.$store.state.watering;
+    },
   },
   data() {
     return {
-      outlets: {
+      outlet: {
         id: null,
         watering_id: null,
         yard_location: null,
@@ -88,43 +113,6 @@ export default {
       },
       statusMessage: "",
     };
-  },
-  mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macwatering-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/waterings/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/";
-    }
-    this.api_url = work_url
-    this.watering = axios.get(this.api_url);
-  },
-  created() {
-    this.$store.dispatch("fetchWatering");
-  },
-  computed: {
-    watering() {
-      return this.$store.state.watering;
-    },
-      /* For local testing: Outlet
-    watering() {
-      return [
-      { yard_location: 'South',
-        faucet_location: 'East',
-        line_number: '1',
-        target: 'Vegetable Garden',
-        frequency: 'Everyday',
-        start_time: '06:40',
-        duration: '20mins',
-        notes: 'Note or two',
-      },
-    },
-   */
-    origin() {
-      return "WateringDetails"
-    }
   },
   methods: {
     editOutlet(outlet) {

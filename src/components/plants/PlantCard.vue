@@ -102,13 +102,8 @@ export default {
   },
   mounted() {
     //console.log("Mounted this.outlet: ", this.$store.dispatch("fetchOutlet", this.plant.outlet_id ))
-
   },
-  data() {
-    return {
-      //outlet: null,
-    }
-  },
+  setup() {},
   created() {
     this.$store.dispatch("fetchWaterings")
   },
@@ -129,7 +124,11 @@ export default {
       return this.$store.state.waterings;
     },
   },
-  setup() {},
+  data() {
+    return {
+      //outlet: null,
+    }
+  },
   methods: {
     async deletePlant(plant) {
       const ok = await this.$refs.confirmDialogue.show({

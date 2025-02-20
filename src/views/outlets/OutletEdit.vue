@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
     <h2>Edit Outlet {{ outlet.yard_location }} {{ outlet.faucet_location }}</h2>
-    <router-link :to="{ name: 'WateringDetails' }">
+    <router-link :to="{ name: 'WateringDetails', params: { id: `${outlet.watering_id}` } }">
       <b>Back to Watering List</b>
     </router-link>
     <br/><br/>
@@ -68,24 +68,29 @@
             {{ option }}
           </option>
         </v-select>   
-
-        <label>Target:</label>
-        <input type="text" class="text-style" v-model="outlet.target" />
-        <label>Frequency:</label>
-        <input type="text" class="text-style" v-model="outlet.frequency" />
+        <v-text-field
+          label="Target"
+          v-model="outlet.target"
+        />
+        <v-text-field
+          label="Frequency"
+          v-model="outlet.frequency"
+        />        
         <br/>
+        <h3 style="text-align: left">Current time set to {{ formatTime(outlet.start_time) }} - Click to Edit.</h3>
         <h3 style="text-align: left" @click='startTimeDisplay(this.showTimePickerFlag)'>{{ this.start_time_display }} Start Time - Click to Edit.</h3>
-        <span v-if="this.showTimePickerFlag == true">
-          <input type="time"
-            class="text-style"
-            label="Start Time"
+        <!--span v-if="this.showTimePickerFlag == true"-->
+          <v-text-field 
+            type="time"
+            label="Click to Edit Start Time"
             v-model="outlet.start_time"
           />
-        </span> 
+        <!--span--> 
         <br/>   
-        <label>Duration:</label>
-        <input type="text" class="text-style" v-model="outlet.duration"  />
-        <label>Status:</label>
+        <v-text-field
+          label="Duration"
+          v-model="outlet.duration"
+        />    
         <v-select
           label="Status"
           :items="active_statuses"
@@ -107,13 +112,13 @@
 
         <br/><br/>
 
-        <label>Notes:</label>
-        <textarea
+        <v-textarea
+          label="Notes"
           v-model="outlet.notes"
           rows="3"
           cols="40"
-          class="textarea-style"
         />
+        <br/>
         <button class="button" id="link-as-button" type="submit">
           Submit
         </button>
@@ -122,52 +127,77 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import { ref } from 'vue';
 export default {
   props: ["id"],
   components: {
     ConfirmDialogue,
   },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macwatering-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/outlets/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/outlets/";
-    }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.outlet = result.data;
-    
-    this.outlet.active = this.outlet.active == 1 ? 'Active' : 'Inactive'
-    this.outlet.start_time = DateFormatService.formatTimejs(this.outlet.start_time)
-    this.start_time_display = this.outlet.start_time
+  async mounted() {},
+  setup() {
+    const outlet_id = ref('');
+    return { outlet_id };
   },
-  created() {},
+  created() {
+    this.$store.dispatch("fetchOutlet", this.id);
+    this.$store.dispatch("fetchOutletsDisplayGroup");
+    this.$store.dispatch("fetchOutletsHash");
+  },
+  computed: {
+    showOutletName:{
+      get(){
+       console.log("ShowOutletName - plant.outlet_id: ", this.plant.outlet_id)
+       console.log("ShowOutletsHash: ", this.outletsHash.outletsHash[0])
+       console.log("ShowOutletsHashLength: ", this.outletsHash.outletsHash.length)
+       var outletName = ""
+       for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
+        console.log("Name: ", this.outletsHash.outletsHash[i].outlet_name)
+         if (this.plant.outlet_id == this.outletsHash.outletsHash[i].id) {
+           outletName = this.outletsHash.outletsHash[i].outlet_name
+           i = 99
+         }
+       }
+       return outletName
+      },
+    },
+    outlet() {
+      return this.$store.state.outlet;
+    },
+    plant() {
+      return this.$store.state.plant;
+    },
+    garden() {
+      return this.$store.state.garden;
+    },
+    outletsDisplayGroup() {
+      return this.$store.state.outlets_display_group;
+    },
+    outletsHash() {
+      return this.$store.state.outlets_hash;
+    },
+  },
   data() {
     return {
-      outlet: {
-        id: null,
-        outlet_name: null,
-        watering_id: null,
-        yard_location: null,
-        faucet_location: null,
-        line_number: null,
-        target: null,
-        frequency: null,
-        start_time: null,
-        duration: null,
-        active: null,
-        notes: null,
-        created_at: null,
-        updated_at: null,
-        created_by: this.$store.state.user.resource_owner.email,
-        updated_by: this.$store.state.user.resource_owner.email,
-      },
+      //outlet: {
+      //  id: null,
+      //  outlet_name: null,
+      //  watering_id: null,
+      //  yard_location: null,
+      //  faucet_location: null,
+      //  line_number: null,
+      //  target: null,
+      //  frequency: null,
+      //  start_time: null,
+      //  duration: null,
+      //  active: null,
+      //  notes: null,
+      //  created_at: null,
+      //  updated_at: null,
+      //  created_by: this.$store.state.user.resource_owner.email,
+      //  updated_by: this.$store.state.user.resource_owner.email,
+      //},
       //watering: {
       //  //name: "",
       //},
@@ -180,7 +210,6 @@ export default {
       showTimePickerFlag: false,
     };
   },
-  setup() {},
   methods: {
     async updateOutlet() {
       const ok = await this.$refs.confirmDialogue.show({
@@ -192,34 +221,31 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        //const watering = {
-        //  ...this.watering,
-        //  updated_by: this.$store.state.created_by,
-        //};
-        const result = await axios.put(
-            this.api_url + 
-            this.outlet.id,
-          {
-            outlet_name: this.outlet.outlet_name,
-            yard_location: this.outlet.yard_location,
-            faucet_location: this.outlet.faucet_location,
-            line_number: this.outlet.line_number,
-            target: this.outlet.target,
-            frequency: this.outlet.frequency,
-            start_time: this.outlet.start_time,
-            duration: this.outlet.duration,
-            active: this.outlet.active,
-            notes: this.outlet.notes,
-            updated_by: this.$store.state.user.resource_owner.email
-          }
-        );
-        if (result.status >= 200) {
-          alert("Watering has been updated for Outlet " + this.outlet.outlet_name);
-          this.$router.push({ name: "WateringDetails" });
-        } else {
-          alert("Update Error Code ", result.status);
+        console.log("IN outlet_id: ",this.outlet_id)
+        this.outlet_id = this.getOutletId(this.outlet_id)
+        console.log("Return from getOutletId: ",this.outlet_id)
+        const outlet = {
+          ...this.outlet,
+          updated_by: this.$store.state.created_by,
+        };
+        console.log("Outlet at UPDATE: ", outlet)
+        if (this.$store.dispatch("updateOutlet", outlet)) {
+          this.$router.push({ name: "WateringDetails", params: { id: outlet.watering_id } });
+        }
+      } else {
+        alert("Outlet Update Error Code ");
+      }
+    },
+    getOutletId(name_to_id) {
+      var outletId = ""
+      for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
+        console.log("if name; ", this.outletsHash.outletsHash[i].outlet_name)
+        if (name_to_id == this.outletsHash.outletsHash[i].outlet_name) {
+          outletId = this.outletsHash.outletsHash[i].id
+          i = 99
         }
       }
+      return outletId
     },
     startTimeDisplay(showTimePickerFlag) {
       return this.showTimePickerFlag = showTimePickerFlag == true ? false : true
@@ -230,8 +256,4 @@ export default {
   },
 };
 </script>
-<style>
-select {
-  border-color: darkgreen;
-}
-</style>
+<style></style>

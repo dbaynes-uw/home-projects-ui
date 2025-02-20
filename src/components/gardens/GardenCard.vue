@@ -13,14 +13,27 @@
         <ul>
           <li class="li-left">Notes:</li>
           <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
-        </ul>
-        <h4 id="p-custom-link">
-         <router-link
-         :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }"
-         >
-          Add Watering System
-         </router-link>
-        </h4>    
+        </ul>   
+        <h3 id="h3-left"> Waterings:</h3>
+          <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
+            <ul>
+            <li class="li-left-bold">
+              <router-link
+              :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+              >
+                {{watering.watering_name}}
+              </router-link>
+            </li>
+            </ul>
+          </span>
+          <p id="p-custom-link-left">
+        <router-link
+        :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }"
+        >
+         Add Watering
+        </router-link>
+      </p>
+      <br/>
       </span>
       <span v-else>
         <h4 id="p-custom-link">
@@ -30,31 +43,20 @@
             Edit {{ garden.garden_name }}
           </router-link>
         </h4>
-        <h4 id="p-custom-link">
-         <router-link
-         :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }"
-         >
-          Add Watering System
-         </router-link>
-        </h4>
-        <p id="p-custom-link">
-          <router-link
-            :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
-          >
-            Add Plant to {{ garden.garden_name }}
-          </router-link>
-        </p> 
       </span>
-      <span v-if="this.$route.name == 'GardenList'">
-      <!--span v-if="currentUrl.includes('/gardens/')"-->
-        <br/>
-        <li id="p-custom-link">
-          <router-link
-            :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
-          >
-            <b>Add Plant</b>
-          </router-link>
-        </li>
+      <span v-if="garden.waterings && garden.waterings.length > 0">
+        <p id="p-custom-left">Watering:</p>
+        <span v-for="(watering, wateringIndex) in garden.waterings" :key="wateringIndex ">
+          <ul class="ul-left">
+            <li>
+              <router-link
+                :to="{ name: 'WateringDetails', params: { id: `${watering.id}`} }"
+              >
+              <b>{{watering.watering_name}}</b>
+              </router-link>
+            </li>
+          </ul>          
+        </span>
       </span>
       <span v-if="garden.plants && garden.plants.length > 0">
         <p id="p-custom-left">Plants:</p>
@@ -71,6 +73,28 @@
         </span>
       </span>
       <br/>
+      <p id="p-custom-link-left">
+        <router-link
+          :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
+        >
+          Add Plant
+        </router-link>
+      </p>
+      <br/>
+      <!--span v-if="garden.waterings && garden.waterings.length > 0">
+        <p id="p-custom-left">Waterings:</p>
+        <span v-for="(watering, wateringIndex) in garden.waterings" :key="wateringIndex ">
+          <ul class="ul-left">
+            <li>
+              <router-link
+                :to="{ name:g 'WateringDetails', params: { id: `${watering.id}`} }"
+              >
+              <b>{{watering.watering_name}}</b>
+              </router-link>
+            </li>
+          </ul>          
+        </span>
+      </!--span-->
       <br/>
       <div id="spread">
         <span class="fa-stack">
@@ -161,23 +185,5 @@ export default {
   }
 }
 </script>
+<style scoped></style>
 
-<style scoped>
-.garden-card {
-  width: 100%;
-  margin: 1em auto 1em auto;
-  padding: 1em;
-  border: solid 1px #2c3e50;
-  cursor: pointer;
-  transition: all 0.2s linear;
-}
-.garden-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
-}
-.garden-card h4 {
-  font-size: 1.4em;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
-}
-</style>

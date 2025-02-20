@@ -119,13 +119,8 @@ export default {
       required: true
     }
   },
-  components: {
-  },
-  mounted() {
-    //console.log("Props: ", this.id)
-    //console.log("ROUTE: ", this.$route.name)
-    //console.log("Params: ", this.$route.params.id)
-  },
+  components: {},
+  mounted() {},
   data() {
     return {
       plant: {
@@ -157,7 +152,6 @@ export default {
   },
   computed: {
     garden() {
-      console.log("Computed Garden: ", this.$store.state.garden)
       return this.$store.state.garden;
     },
     outletsGroup() {

@@ -56,14 +56,38 @@ export default {
       type: Object,
       default: () => ({})
     },
-    garden: {
-      type: Object,
-      default: () => ({})
-    }
+    //garden: {
+    //  type: Object,
+    //  default: () => ({})
+    //}
   },
   components: {
     ConfirmDialogue,
   },
+  mounted() {
+    //console.log("Mounted this.outlet: ", this.$store.dispatch("fetchOutlet", this.plant.outlet_id ))
+  },
+  created() {
+    //this.$store.dispatch("fetchWaterings")
+  },
+  computed: {
+    //outlet() {
+    //  return this.$store.state.outlet;
+    //},
+    outletsDisplayGroup() {
+      return this.$store.state.outlets_group;
+    },
+    outletsHash() {
+      return this.$store.state.outlets_hash;
+    },
+    //plant() {
+    //  return this.$store.state.plant;
+    //},
+    waterings() {
+      return this.$store.state.waterings;
+    },
+  },
+
   methods: {
     async deleteOutlet(outlet) {
       const ok = await this.$refs.confirmDialogue.show({

@@ -25,7 +25,7 @@
       :key="outlet.id"
       :outlet="outlet"
       class="card"
-      @dblclick="onDoubleClick(outlet)"
+      @dblclick="editOutlet(outlet)"
       />
   </div>
 </template>
@@ -42,11 +42,6 @@ export default {
     ConfirmDialogue,
     OutletCard,
   },
-  data() {
-    return {
-      updatedOutlet: null,
-    };
-  },
   created() {
     this.$store.dispatch("fetchOutlet", this.id);
     //this.$store.dispatch("fetchPlant", this.outlet_id);
@@ -58,12 +53,14 @@ export default {
     plant() {
       return this.$store.state.plant;
     },
-    //origin() {
-    //  return "OutletDetails"
-    //}
+  },
+  data() {
+    return {
+      updatedOutlet: null,
+    };
   },
   methods: {
-    onDoubleClick(outlet) {
+    editOutlet(outlet) {
       this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
     },
     formatStandardDate(value) {

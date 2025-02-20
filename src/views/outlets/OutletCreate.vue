@@ -14,6 +14,7 @@
         <v-text-field
           v-model="watering.watering_name"
           label="Watering System Name"
+          :readonly="true"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-magnify</v-icon>
@@ -133,12 +134,15 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  components: {
+  props: {
+    id: {
+      type: String,
+    }
   },
+  components: {},
   data() {
     return {
       outlet: {
-        watering_name: "",
         outlet_name: "",
         yard_location: "",
         faucet_location: "",
@@ -162,7 +166,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchWatering");
+    this.$store.dispatch("fetchWatering", this.$route.params.id);
   },
   computed: {
     watering() {
@@ -178,12 +182,13 @@ export default {
         const outlet = {
           ...this.outlet,
           id: uuidv4(),
+          watering_id: this.watering.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createWateringOutlet", outlet)) {
-          this.$router.push({ name: "WateringDetails" });
+          this.$router.push({ name: "WateringDetails", params: { id: this.watering.id}})
         } else {
-          alert("Error adding Outlet System " + outlet.yard_location);
+          alert("Error adding Outlet System " + outlet.outlet_name);
         } 
       } 
     },

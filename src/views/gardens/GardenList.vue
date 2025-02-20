@@ -13,6 +13,11 @@
           <router-link  :to="{ name: 'GardenCreate' }">Add Garden</router-link>
         </button>
       </li>
+      <!--li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringList', params: { id: `${waterings[0].garden_id}` } }">View Waterings</router-link>
+        </button>
+      </!--li-->
     </ul> 
     <br/>
   </v-card>
@@ -84,6 +89,18 @@ export default {
     GardenCard,
     ConfirmDialogue
   },
+  mounted() {
+    this.sortedData = this.gardens;
+  },
+  created() {
+    this.$store.dispatch("fetchGardens");
+    this.sortedData = this.$store.dispatch("fetchGardens");
+  },
+  computed: {
+    gardens() {
+      return this.$store.state.gardens;
+    },
+  },
   data() {
     return {
       requestIndexDetailFlag: true,
@@ -98,21 +115,6 @@ export default {
       completed: 0,
       statusMessage: "",
     };
-  },
-  mounted() {
-    this.sortedData = this.gardens;
-  },
-  created() {
-    this.$store.dispatch("fetchGardens");
-    this.sortedData = this.$store.dispatch("fetchGardens");
-  },
-  computed: {
-    gardens() {
-      return this.$store.state.gardens;
-    },
-    //origin() {
-    //  return "GardenList"
-    //}
   },
   methods: {
     requestIndexDetail() {

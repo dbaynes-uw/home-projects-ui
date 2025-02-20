@@ -27,7 +27,6 @@
     <br />
   </div>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
-  <br/>
   <span v-for="(p, p_index) in garden.plants" :key="p_index">
     {{ p.name }}
     <br/>
@@ -75,13 +74,7 @@ export default {
     this.statusMessage = successMessage.value
   },
   created() {
-    //console.log("Created G ID: ", this.garden.id)
-    //console.log("Created Watering: ", this.$store.dispatch('fetchWatering', this.garden.id))
-    this.$store.dispatch("fetchGarden", this.id);
-    //this.$store.dispatch("fetchWatering", this.garden.id);
-    //?this.$store.dispatch('resetModule', 'fetchOutletDetailsByName')
-    //?this.sortedData = this.$store.dispatch("fetchGardens");
-
+    this.$store.dispatch("fetchGarden", this.$route.params.id);
   },
   computed: {
     garden() {

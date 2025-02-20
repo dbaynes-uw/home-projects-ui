@@ -199,13 +199,19 @@
   font-size: 1.25rem;
   font-weight: bold;
 }
+#p-custom-link-left {
+  text-decoration: underline;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: left;
+}
 #p-left {
   text-align: left;
   font-size: 1rem;
 }
 #p-custom-left {
   text-align: left;
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: bold;
 }
 #p-custom-left-u {
@@ -319,6 +325,7 @@
   list-style-type: disclosure-closed;
 }
 .li-left-bold {
+  font-size: 1.1rem;
   text-align: left;
   font-weight: bold;
   display: list-item;

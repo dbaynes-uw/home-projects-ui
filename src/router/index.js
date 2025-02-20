@@ -32,11 +32,11 @@ import OutletDetails from "@/views/outlets/OutletDetails.vue";
 import GardenCreate from "@/views/gardens/GardenCreate.vue";
 import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
+import GardenList from "../views/gardens/GardenList.vue";
 import PlantCreate from "@/views/plants/PlantCreate.vue";
 import PlantDetails from "@/views/plants/PlantDetails.vue";
 import PlantEdit from "@/views/plants/PlantEdit.vue";
 import ProductEdit from "../views/products/ProductEdit.vue";
-import GardenList from "../views/gardens/GardenList.vue";
 import ProductsLocationList from "../views/products/ProductsLocationList.vue";
 import ProductsByLocations from "../views/products/ProductsByLocations.vue";
 import ProductsByVendors from "../views/products/ProductsByVendors.vue";
@@ -53,14 +53,14 @@ import TravelList from "../views/travels/TravelList.vue";
 import TravelEdit from "@/views/travels/TravelEdit.vue";
 import TravelEventCreate from "@/views/travel_events/TravelEventCreate.vue";
 import TravelEventEdit from "@/views/travel_events/TravelEventEdit.vue";
-
+import TravelEventDetails from "@/views/travel_events/TravelEventDetails.vue";
 import UserCreate from "@/views/users/UserCreate.vue";
 import UserEdit from "@/views/users/UserEdit.vue";
 import UserList from "../views/users/UserList.vue";
 import WateringCreate from "@/views/waterings/WateringCreate.vue";
 import WateringList from "../views/waterings/WateringList.vue";
 import WateringEdit from "@/views/waterings/WateringEdit.vue";
-import WateringDetails from "../views/waterings/WateringDetails.vue";
+import WateringDetails from "@/views/waterings/WateringDetails.vue";
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
@@ -310,6 +310,20 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
+    path: "/waterings/create_outlet/:id",
+    name: "OutletCreate",
+    component: OutletCreate,
+    props: true,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/outlet/:id",
+    name: "OutletEdit",
+    component: OutletEdit,
+    props: true,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/plants/:id",
     name: "PlantDetails",
     props: true,
@@ -415,10 +429,17 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/travel_events/:id",
+    path: "/travel_event/:id",
     name: "TravelEventEdit",
     props: true,
     component: TravelEventEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travel_events/:id",
+    name: "TravelEventDetails",
+    props: true,
+    component: TravelEventDetails,
     meta: { requiresAuth: true}
   },
   {
@@ -469,16 +490,16 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/waterings",
-    name: "WateringDetails",
-    component: WateringDetails,
-    meta: { requiresAuth: true}
-  },
-  {
     path: "/watering/:id",
     name: "WateringEdit",
     props: true,
     component: WateringEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings",
+    name: "WateringList",
+    component: WateringList,
     meta: { requiresAuth: true}
   },
   {
@@ -488,52 +509,14 @@ const routes = [
     component: WateringDetails,
     meta: { requiresAuth: true}
   },
-  /*
   {
-    path: "/gardens/create_watering/:id",
+    path: "/watering/create/:id",
     name: "WateringCreate",
     component: WateringCreate,
-    meta: { requiresAuth: true}
-  },
-  */
-  {
-    path: "/waterings/create",
-    name: "WateringCreate",
-    component: WateringCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/waterings/",
-    name: "WateringList",
-    component: WateringList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/watering/:id",
-    name: "WateringDetails",
-    component: WateringDetails,
-    meta: { requiresAuth: true}
-  },
-  //{
-  //  path: "/watering_only",
-  //  name: "WateringOnly",
-  //  component: OutletCreate,
-  //  meta: { requiresAuth: true}
-  //},
-  {
-    path: "/outlet/create",
-    name: "OutletCreate",
-    component: OutletCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/outlets/:id",
-    name: "OutletEdit",
-    component: OutletEdit,
+    props: true,
     meta: { requiresAuth: true}
   },
 ];
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,

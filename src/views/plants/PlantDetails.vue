@@ -14,9 +14,8 @@
     <PlantCard
       :key="plant.id"
       :plant="plant"
-      :origin="origin"
       class="card"
-      @dblclick="onDoubleClick(plant)"
+      @dblclick="editPlant(plant)"
       />
   </div>
 </template>
@@ -32,28 +31,12 @@ export default {
       type: String,
       default: '',
     },
-    //xgarden: {
-    //x  type: Object,
-    //x  default: () => ({})
-    //x},
   },
   components: {
     ConfirmDialogue,
     PlantCard,
   },
-  data() {
-    return {
-      updatedPlant: null,
-    };
-  },
-  methods: {
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDatejs(value);
-    },
-  },
-  created() {
-    //this.$store.dispatch("fetchPlant", this.id);
-  },
+  created() {},
   computed: {
     plant() {
       return this.$store.state.plant;
@@ -61,9 +44,19 @@ export default {
     garden() {
       return this.$store.state.gardens.find((garden) => garden.id === this.plant.garden_id)
      },
-    origin() {
-      return "PlantDetails"
-    }
+  },
+  data() {
+    return {
+      updatedPlant: null,
+    };
+  },
+  methods: {
+    editPlant(plant) {
+      this.$router.push({ name: 'PlantEdit', params: { id: `${plant.id}` } });
+    },
+    formatStandardDate(value) {
+      return DateFormatService.formatStandardDatejs(value);
+    },
   },
 };
 </script>

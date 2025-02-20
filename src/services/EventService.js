@@ -361,10 +361,9 @@ export default {
   },
   async postWateringOutlet(watering_outlet) {
     this.init();
-    return axios.post(api_url + 'watering_outlet', watering_outlet);
+    return axios.post(api_url + 'outlets', watering_outlet);
   },
   async getWatering(id) {
-    console.log("ES GET Watering ID: ", id)
     this.init();
     return axios.get(api_url + "waterings/" + id)
   },
@@ -380,6 +379,10 @@ export default {
   getOutlet(id) {
     this.init();
     return axios.get(api_url + "outlets/" + id);
+  },
+  async putOutlet(updatedOutlet) {
+    this.init();
+    return axios.put(api_url + "outlets" + `/${updatedOutlet.id}`, updatedOutlet);
   },
   getOutletDetailsByName(name) {
     this.init();

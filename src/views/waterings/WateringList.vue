@@ -9,9 +9,8 @@
     </v-card-title>
     <ul>
       <li class="left">
-        Watering Create
         <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringCreate' }">Add Watering</router-link>
+          <router-link  :to="{ name: 'WateringCreate', params: { id: `${waterings[0].garden_id}` } }">Add Watering</router-link>
         </button>
       </li>
     </ul> 
@@ -67,7 +66,6 @@
             v-for="watering in filteredResults"
             :key="watering.id"
             :watering="watering"
-            class="card"
           />
           <br />
         </div>
@@ -79,13 +77,24 @@
 import DateFormatService from "@/services/DateFormatService.js";
 import WateringCard from "@/components/waterings/WateringCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-
 export default {
   name: "WateringList",
   props: ["filteredResults[]"],
   components: {
     WateringCard,
     ConfirmDialogue
+  },
+  mounted() {
+    this.sortedData = this.waterings;
+  },
+  created() {
+    this.$store.dispatch("fetchWaterings");
+    this.sortedData = this.$store.dispatch("fetchWaterings");
+  },
+  computed: {
+    waterings() {
+      return this.$store.state.waterings;
+    },
   },
   data() {
     return {
@@ -101,21 +110,6 @@ export default {
       completed: 0,
       statusMessage: "",
     };
-  },
-  mounted() {
-    this.sortedData = this.waterings;
-  },
-  created() {
-    this.$store.dispatch("fetchWaterings");
-    this.sortedData = this.$store.dispatch("fetchWaterings");
-  },
-  computed: {
-    waterings() {
-      return this.$store.state.waterings;
-    },
-    //origin() {
-    //  return "WateringList"
-    //}
   },
   methods: {
     requestIndexDetail() {

@@ -3,6 +3,7 @@
     <p id="p-custom-left-u">{{ travel_event.title}}</p>
     <ul>
       <li class="li-left">Description: {{ travel_event.description }}</li>
+      <li class="li-left">Event Information: <b><a :href="travel_event.travel_event_url" target="_blank">Link to Event</a></b></li>
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
       <li class="li-left">Booking Reference: <b><a :href="travel_event.transport_url" target="_blank">{{ travel_event.booking_reference }}</a></b></li>
 
@@ -46,21 +47,4 @@ export default {
 </script>
 
 <style scoped>
-.travel-card {
-  width: 100%;
-  margin: 1em auto 1em auto;
-  padding: 1em;
-  border: solid 1px #2c3e50;
-  cursor: pointer;
-  transition: all 0.2s linear;
-}
-.travel-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
-}
-.travel-card h4 {
-  font-size: 1.4em;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
-}
 </style>

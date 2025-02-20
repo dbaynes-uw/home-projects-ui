@@ -22,8 +22,13 @@
           cols="40"
         />
         <v-text-field
+          label="Event Information (URL)"
+          v-model="travel_event.travel_event_url"
+        />     
+        <v-text-field
           label="Transportation"
           v-model="travel_event.transport"
+          required
         />
         <p id="p-custom-left">Start Date Saved As: {{ formatStandardDateTime(travel_event.start_date)}}</p>
         <v-text-field
@@ -71,6 +76,9 @@ export default {
   computed: {
     travel_event() {
       return this.$store.state.travel_event;
+    },
+    travel() {
+      return this.$store.state.travel;
     },
   },
   data() {

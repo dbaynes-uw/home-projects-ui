@@ -11,11 +11,25 @@
     <!--router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
       Travel Details: {{ travel.id  }}
     </!--router-link-->
+    <span v-if="travel.travel_events && travel.travel_events.length > 0">
+        <p id="p-custom-left">Events:</p>
+        <span v-for="(travel_event, travelEventIndex) in travel.travel_events" :key="travelEventIndex ">
+          <ul class="ul-left">
+            <li>
+              <router-link
+                :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
+              >
+              <b>{{travel_event.title}}</b>
+              </router-link>
+            </li>
+          </ul>          
+        </span>
+      </span>
+
     <ul>
       <li class="li-left">Description: {{ travel.description }}</li>
       <li class="li-left">Transportation: {{ travel.transport}}</li>
       <li class="li-left">Booking Reference: <b><a :href="travel.transport_url" target="_blank">{{ travel.booking_reference }}</a></b></li>
-
       <li class="li-left">Depart: {{ formatStandardDateTime(travel.departure_date) }}</li>
       <li class="li-left">Return: {{ formatStandardDateTime(travel.return_date) }}</li>
 
@@ -113,21 +127,4 @@ export default {
 </script>
 
 <style scoped>
-.travel-card {
-  width: 100%;
-  margin: 1em auto 1em auto;
-  padding: 1em;
-  border: solid 1px #2c3e50;
-  cursor: pointer;
-  transition: all 0.2s linear;
-}
-.travel-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
-}
-.travel-card h4 {
-  font-size: 1.4em;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
-}
 </style>

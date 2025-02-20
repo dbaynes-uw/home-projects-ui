@@ -32,6 +32,17 @@
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
         </v-text-field>
+        <v-text-field
+          v-model="travel_event.travel_event_url"
+          label="Event Information (URL)"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-link</v-icon>
+          </template>
+        </v-text-field>  
+        <span>
+          {{ urlMaxLength - travel_event.travel_event_url.length }} / {{ urlMaxLength }}
+        </span>
         <v-text-field label="Transportation Type" v-model="travel_event.transport">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
@@ -103,6 +114,7 @@ export default {
         travel_id: "",
         title: "",
         description: "",
+        travel_event_url: "",
         start_date: "",
         end_date: "",
         transport: "",
