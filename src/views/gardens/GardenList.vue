@@ -10,14 +10,19 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringList' }">Waterings</router-link>
+        </button>
+      </li>
+      <li class="left">
+        <button id="button-as-link">
           <router-link  :to="{ name: 'GardenCreate' }">Add Garden</router-link>
         </button>
       </li>
-      <!--li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringList', params: { id: `${waterings[0].garden_id}` } }">View Waterings</router-link>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Card or Index View</u>
         </button>
-      </!--li-->
+      </li>
     </ul> 
     <br/>
   </v-card>
@@ -43,9 +48,9 @@
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
-        <span v-if="requestIndexDetailFlag == true">
+        <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">Total: {{ gardens.length }}</h3>
-          <span class="h3-left-total-child">*Double click Item Below to Edit</span>
+          <span class="h3-left-total-child">*Click Icons Below to Edit, Details or Delete</span>
           <div class="cards">
             <GardenCard
               v-for="garden in gardens"
@@ -56,36 +61,39 @@
           </div>
         </span>
         <span v-else>
-          V-ELSE@@@@@@!!!!!!!!!
+          <GardenIndex :gardens="gardens" />
         </span>
       </span>
     </span>
     <span v-if="filteredResults.length > 0">
-      <span v-i="requestIndexDetailFlag == true">
+      <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-        <span>Double click to Edit</span>
+        <span>*Click Icons Below to Edit, Details or Delete</span>
         <div class="cards">
           <GardenCard
             v-for="garden in filteredResults"
             :key="garden.id"
             :garden="garden"
-            class="card"
           />
           <br />
         </div>
+      </span>
+      <span v-else>
+        <GardenIndex :gardens="filteredResults" />
       </span>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
+import GardenIndex from "@/components/gardens/GardenIndex.vue";
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 export default {
   name: "GardenList",
-  props: ["filteredResults[]"],
   components: {
+    GardenIndex,
     GardenCard,
     ConfirmDialogue
   },
@@ -103,7 +111,7 @@ export default {
   },
   data() {
     return {
-      requestIndexDetailFlag: true,
+      requestIndexDetailFlag: false,
       searchResults: null,
       inputSearchText: "",
       filteredResults: [],
@@ -118,6 +126,7 @@ export default {
   },
   methods: {
     requestIndexDetail() {
+      console.log("RequestIndexDetail: ",this.requestIndexDetailFlag)
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     editGarden(garden) {
@@ -188,27 +197,4 @@ export default {
   },
 };
 </script>
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-th:hover {
-  cursor: pointer;
-  background: rgb(229, 255, 211);
-}
-tr:nth-child(even) {
-  background-color: #f3f3f3;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-</style>
+<style></style>

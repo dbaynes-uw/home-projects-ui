@@ -1,31 +1,20 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <h3 id="h3-left">Total: {{ gardens.length }}</h3>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('title')">Title</th>
-      <th id="background-blue" @click="sortList('description')">Description</th>
-      <th id="background-blue" @click="sortList('start_date')">
-        Start Date
-      </th>
-      <th id="background-blue" @click="sortList('end_date')">End Date</th>
-      <th id="background-blue">Reference</th>
+      <th id="background-blue" @click="sortList('garden_name')">Garden Name</th>
       <th id="background-blue">Notes</th>
-      <th id="background-blue" style="text-align: right">Actions</th>
+      <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="travel in travels" :key="travel.id" travel="travel">
-      <td>{{ travel.title }}</td>
-      <td>{{ travel.description }}</td>
-      <td>{{ formatFullYearDate(travel.start_date) }}</td>
-      <td>{{ formatFullYearDate(travel.end_date) }}</td>
-      <td>
-        <a :href="travel.url_reference" target="_blank">Review</a>
-      </td>
-      <td>{{ travel.notes }}</td>
+    <tr v-for="garden in gardens" :key="garden.id" garden="garden">
+      <td>{{ garden.garden_name }}</td>
+      <td>{{ garden.notes }}</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
+              :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
             >
               <i
                 id="travel-icon-edit"
@@ -35,14 +24,14 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }"
+                :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }"
               >
                 <i class="fa fa-eye" id="action-eye-icon"></i>
               </router-link>
             </span>
             <span class="fa-table-stack" id="action-delete-icon">
               <i
-                @click="deleteTravel(travel)"
+                @click="deleteGarden(garden)"
                 class="fas fa-trash-alt fa-stack-1x"
                 id="travel-icon-delete"
               >
@@ -59,8 +48,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "TravelIndex",
-  props: ["travels"],
+  name: "GardenIndex",
+  props: ["gardens"],
   components: {
     ConfirmDialogue,
   },
@@ -82,23 +71,23 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.travels &&
-          this.travels.length > 0 &&
+          this.gardens &&
+          this.gardens.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.travels.forEach((travel) => {
-            const searchHasTitle =
-              travel.title &&
-              travel.title
+          this.travels.forEach((garden) => {
+            const searchHasGardenName =
+              garden.garden_name &&
+              garden.garden_name
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            const searchHasDescription =
-              travel.description &&
-              travel.description
+            const searchHasNotes =
+              garden.notes &&
+              garden.notes
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasDescription) {
-              this.filteredResults.push(travel);
+            if (searchHasGardenName || searchHasNotes) {
+              this.filteredResults.push(garden);
             }
           });
         }

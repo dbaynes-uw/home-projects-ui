@@ -15,7 +15,7 @@
       </li>
       <li>
         <button id="button-as-link" @click="requestIndexDetail">
-          <u>Detail Card or Index View</u>
+          <u>Card or Index View</u>
         </button>
       </li>
     </ul> 
@@ -71,7 +71,6 @@
             v-for="book in filteredResults"
             :key="book.id"
             :book="book"
-            class="card"
             @dblclick="editBook(book)"
           />
           <br />

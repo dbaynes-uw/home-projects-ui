@@ -10,6 +10,11 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
+          <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
+        </button>
+      </li>
+      <li class="left">
+        <button id="button-as-link">
           <router-link  :to="{ name: 'WateringCreate', params: { id: `${waterings[0].garden_id}` } }">Add Watering</router-link>
         </button>
       </li>

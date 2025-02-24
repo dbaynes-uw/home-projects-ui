@@ -22,7 +22,6 @@
     <GardenCard
       :key="garden.id"
       :garden="garden"
-      class="card"
       />
     <br />
   </div>
@@ -36,7 +35,6 @@
       v-for="plant in garden.plants"
       :key="plant.id"
       :plant="plant"
-      class="card"
     />
   </div>
   <br/>

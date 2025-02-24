@@ -81,20 +81,6 @@
         </router-link>
       </p>
       <br/>
-      <!--span v-if="garden.waterings && garden.waterings.length > 0">
-        <p id="p-custom-left">Waterings:</p>
-        <span v-for="(watering, wateringIndex) in garden.waterings" :key="wateringIndex ">
-          <ul class="ul-left">
-            <li>
-              <router-link
-                :to="{ name:g 'WateringDetails', params: { id: `${watering.id}`} }"
-              >
-              <b>{{watering.watering_name}}</b>
-              </router-link>
-            </li>
-          </ul>          
-        </span>
-      </!--span-->
       <br/>
       <div id="spread">
         <span class="fa-stack">
@@ -104,12 +90,12 @@
         </span>
         <span v-if="this.$route.name == 'GardenList'">
         <!--span v-if="currentUrl.includes('/gardens/')" class="fa-stack"-->
-          <router-link :to="{ name: 'GardenList' }">
+          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
             <i class="fa-solid fa-backward fa-stack-1x"></i>
           </router-link>
         </span>
         <span v-else>
-          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+          <router-link :to="{ name: 'GardenList' }">
             <i class="fa-solid fa-eye fa-stack-1x"></i>
           </router-link>
         </span>
