@@ -13,25 +13,14 @@
         <v-text-field
           label="Garden Name"
           v-model="garden.garden_name"
-        />        
-        <label>Status:</label>
+        /> 
+        <h3 id="p-custom-left">Current Status: {{ showGardenActive }}</h3>
         <v-select
+          v-model="active"
           :items="ACTIVE_STATUSES"
-          v-model="garden.active"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-list-status</v-icon>
-          </template>
-          <option
-            v-for="option in ACTIVE_STATUSES"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === garden.active"
-          >
-            {{ option }}
-          </option>
-        </v-select> 
+          label="Select Status to Change"
+        />
+        <br/>
         <v-textarea
           label="Notes"
           v-model="garden.notes"
@@ -49,37 +38,42 @@
 </template>
 <script setup>
 import { ACTIVE_STATUSES } from "@/services/constants";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 </script>
 <script>
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { ref } from 'vue';
 export default {
+  name: "GardenEdit",
   props: ["id"],
   components: {
     ConfirmDialogue,
   },
-  async mounted() {},
   created() {
-    this.$store.dispatch("fetchGarden", this.id);
+    //console.log("1 - Created@@")
+    const garden_active_boolean = ref('');
+    return { garden_active_boolean };
   },
   computed: {
+    showGardenActive:{
+      get(){
+       var garden_active_string = ""
+       garden_active_string = this.garden.active == true ? "Active" : "Inactive"
+       return garden_active_string
+      }
+    },
     garden() {
-      return this.$store.state.garden;
+      //console.log("2 - computed@@")
+      return this.$store.state.garden
     },
   },
-
+  async mounted() {
+    //console.log("3 - Mounted@@")
+  },
   data() {
     return {
-      //garden: {
-      //  garden_name: "",
-      //  active: "",
-      //  notes: "",
-      //  created_by: this.$store.state.user.resource_owner.email,
-      //},
-      //api_url: "",
-      //active_statuses: ["Active", "Inactive"],
+      active: ""
     };
   },
-  setup() {},
   methods: {
     async updateGarden() {
       const ok = await this.$refs.confirmDialogue.show({
@@ -91,20 +85,24 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
+        this.garden.active = this.getGardenActive(this.active)
         const garden = {
           ...this.garden,
           updated_by: this.$store.state.created_by,
         };
         if (this.$store.dispatch("updateGarden", garden)) {
           this.$router.push({ name: "GardenDetails", params: { id: garden.id } });
+        } else {
+          alert("Error in Garden Update");
         }
       }
     },
+    getGardenActive(boolean_to_string) {
+      var gardenActiveString = ""
+      gardenActiveString = boolean_to_string == 'Active' ? true : false
+      return gardenActiveString
+    }
   },
 };
 </script>
-<style>
-select {
-  border-color: darkgreen;
-}
-</style>
+<style></style>

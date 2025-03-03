@@ -1,0 +1,186 @@
+<template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <h3 id="h3-left">Total: {{ waterings.length }}</h3>
+  <v-table density="compact">
+    <tr>
+      <th id="background-blue" @click="sortList('watering_name')">Watering Name</th>
+      <th id="background-blue">Notes</th>
+      <th class="th-center" id="background-blue">Actions</th>
+    </tr>
+    <tr v-for="watering in waterings" :key="watering.id" watering="watering">
+      <td>{{ watering.watering_name }}</td>
+      <td>{{ watering.notes }}</td>
+      <td style="padding-left: 0">
+        <!--span v-if="this.onlineStatus"-->
+          <span class="fa-stack">
+            <router-link
+              :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+            >
+              <i
+                id="travel-icon-edit"
+                class="fa-solid fa-pen-to-square fa-stack-1x"
+              >
+              </i>
+            </router-link>
+            <span class="fa-stack fa-table-stack">
+              <router-link
+                :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+              >
+                <i class="fa fa-eye" id="action-eye-icon"></i>
+              </router-link>
+            </span>
+            <span class="fa-table-stack" id="action-delete-icon">
+              <i
+                @click="deleteWatering(watering)"
+                class="fas fa-trash-alt fa-stack-1x"
+                id="travel-icon-delete"
+              >
+              </i>
+            </span>
+          </span>
+      </td>
+    </tr>
+  </v-table>
+  <br />
+  <b>Online Status: {{ this.onlineStatus }}</b>
+</template>
+<script>
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import DateFormatService from "@/services/DateFormatService.js";
+export default {
+  name: "WateringIndex",
+  props: ["waterings"],
+  components: {
+    ConfirmDialogue,
+  },
+  data() {
+    return {
+      inputSearchText: "",
+      onlineStatus: navigator.onLine,
+    };
+  },
+  methods: {
+    searchColumns() {
+      this.filteredResults = [];
+      this.columnDetails = null;
+      if (
+        this.inputSearchText == null ||
+        (this.inputSearchText != null && this.inputSearchText.length === 0)
+      ) {
+        this.filteredResults = [];
+        this.columnDetails = null;
+      } else {
+        if (
+          this.waterings &&
+          this.waterings.length > 0 &&
+          this.inputSearchText.length >= 2
+        ) {
+          this.travels.forEach((watering) => {
+            const searchHasWateringName =
+              watering.watering_name &&
+              watering.watering_name
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            const searchHasNotes =
+              watering.notes &&
+              watering.notes
+                .toLowerCase()
+                .includes(this.inputSearchText.toLowerCase());
+            if (searchHasWateringName || searchHasNotes) {
+              this.filteredResults.push(watering);
+            }
+          });
+        }
+      }
+    },
+    showCharacterDetails(result) {
+      this.characterDetails = result;
+    },
+    sortList(sortBy) {
+      this.sortedData = this.travels;
+      if (this.sortedbyASC) {
+        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+        this.sortedbyASC = false;
+      } else {
+        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+        this.sortedbyASC = true;
+      }
+    },
+    //async deleteTravel(travel) {
+    //  const ok = await this.$refs.confirmDialogue.show({
+    //    title: "Delete Travel from List",
+    //    message:
+    //      "Are you sure you want to delete " +
+    //      travel.title +
+    //      "? It cannot be undone.",
+    //    okButton: "Delete",
+    //  });
+    //  // If you throw an error, the method will terminate here unless you surround it wil try/catch
+    //  if (ok) {
+    //    this.$store.dispatch("deleteTravel", travel);
+    //    this.statusMessage =
+    //      "Travel was Deleted for " +
+    //      travel.title +
+    //      "! Page will restore in 2 seconds";
+    //    setTimeout(() => location.reload(), 2500);
+    //  }
+    //},
+    formatFullYearDate(value) {
+      return DateFormatService.formatFullYearDatejs(value);
+    },
+  },
+};
+</script>
+<style scoped>
+#action-eye-icon {
+  top: 0.4rem;
+  font-size: 18px;
+}
+#action-delete-icon {
+  position: relative;
+  top: 0.5rem;
+  left: 2.3rem;
+}
+.table-index-style {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  background-color: #7ba8bd;
+  text-align: left;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+tr {
+  line-height: 1.6 !important;
+  border: none;
+}
+tr:nth-child(odd) {
+  background-color: #41b88352;
+  border: none !important;
+}
+td {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.eventAssigned {
+  background: #e8f7f0;
+}
+.fa-table-stack {
+  position: relative;
+  left: 2rem;
+}
+i {
+  bottom: 0px;
+  color: gray;
+}
+tr.is-complete {
+  background: #35495e;
+  color: #fff;
+}
+#status-message {
+  text-align: center;
+  color: navy;
+}
+</style>
+

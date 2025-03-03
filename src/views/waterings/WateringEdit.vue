@@ -6,38 +6,20 @@
       <b>Back to Watering List</b>
     </router-link>
     <br/><br/>
-    <!--ul>
-      <li class="center">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'OutletCreate' }">Add Outlet</router-link>
-        </button>
-      </li>
-    </!--ul> 
-    <br/-->
     <form class="form-card-display" @submit.prevent="updateWatering">
       <div class="form-container">
         <v-text-field
           label="Watering Name"
           v-model="watering.watering_name"
         />
+        <h3 id="p-custom-left">Last Updated: {{ formatStandardDateTime(watering.updated_at) }}</h3>
+        <h3 id="p-custom-left">Current Status: {{ showWateringActive }}</h3>
         <v-select
+          v-model="active"
           :items="ACTIVE_STATUSES"
-          v-model="watering.active"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-list-status</v-icon>
-          </template>
-          <option
-            v-for="option in ACTIVE_STATUSES"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === watering.active"
-          >
-            {{ option }}
-          </option>
-        </v-select> 
-        <br/><br/>
+          label="Select Status to Change"
+        />
+        <br/>
         <!--label for="created_at">Date Created:</!--label>
         <input
           readonly
@@ -67,10 +49,10 @@
   </div>
 </template>
 <script setup>
-import axios from "axios";
 import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+import { ref } from 'vue';
 </script>
 <script>
 export default {
@@ -78,41 +60,32 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macwatering-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/waterings/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/waterings/";
-    }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.watering = result.data;
-    this.watering.created_at = this.formatFullYearDate(this.watering.created_at)
-    this.watering.updated_at = this.formatFullYearDate(this.watering.updated_at)
-    this.watering.active = this.watering.active == 1 ? 'Active' : 'Inactive'
+  created() {
+    //console.log("1 - Created@@")
+    var date = new Date();
+    console.log(date.toLocaleString());
+    const watering_active_boolean = ref('');
+    return { watering_active_boolean };
   },
+  computed: {
+    showWateringActive:{
+      get(){
+       var watering_active_string = ""
+       watering_active_string = this.watering.active == true ? "Active" : "Inactive"
+       return watering_active_string
+      }
+    },
+    watering() {
+      //console.log("2 - computed@@")
+      return this.$store.state.watering
+    },
+  },
+
   data() {
     return {
-      watering: {
-        id: null,
-        garden_id: null,
-        watering_name: null,
-        name: null,
-        active: null,
-        notes: null,
-        created_at: null,
-        updated_at: null,
-        created_by: this.$store.state.user.resource_owner.email,
-        updated_by: this.$store.state.user.resource_owner.email,
-      },
-      //active_statuses: ["Active", "Inactive"],
-      api_url: ""
+      active: ""
     };
   },
-  setup() {},
   methods: {
     async updateWatering() {
       const ok = await this.$refs.confirmDialogue.show({
@@ -124,27 +97,26 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
+        this.watering.active = this.getWateringActive(this.active)
         const watering = {
           ...this.watering,
+          updated_at: this.$store.state.created_by,
           updated_by: this.$store.state.created_by,
         };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            watering_name: this.watering.watering_name,
-            active: this.watering.active,
-            notes: this.watering.notes,
-            updated_by: this.$store.state.user.resource_owner.email,
-          }
-        );
-        if (result.status >= 200) {
-          alert("Watering has been updated");
-          this.$router.push({ name: "WateringEdit", params: { id: watering.id } });
+        if (this.$store.dispatch("updateWatering", watering)) {
+          this.$router.push({ name: "WateringDetails", params: { id: watering.id } });
         } else {
-          alert("Update Error Code ", result.status);
+          alert("Error in Watering Update");
         }
       }
+    },
+    getWateringActive(boolean_to_string) {
+      var wateringActiveString = ""
+      wateringActiveString = boolean_to_string == 'Active' ? true : false
+      return wateringActiveString
+    },
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTimejs(value);
     },
     formatFullYearDate(value) {
       return DateFormatService.formatFullYearDatejs(value);
@@ -152,8 +124,4 @@ export default {
   },
 };
 </script>
-<style>
-select {
-  border-color: darkgreen;
-}
-</style>
+<style></style>

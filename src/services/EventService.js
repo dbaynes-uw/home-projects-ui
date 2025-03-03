@@ -163,6 +163,11 @@ export default {
     this.init();
     return axios.put(api_url + "plants" + `/${updatedPlant.id}`, updatedPlant);
   },
+  async putWatering(updatedWatering) {
+    this.init();
+    return axios.put(api_url + "waterings" + `/${updatedWatering.id}`, updatedWatering);
+  },
+
   deleteMed(med) {
     this.init();
        // For Testing: setTimeout(5000);

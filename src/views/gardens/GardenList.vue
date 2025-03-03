@@ -126,7 +126,6 @@ export default {
   },
   methods: {
     requestIndexDetail() {
-      console.log("RequestIndexDetail: ",this.requestIndexDetailFlag)
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     editGarden(garden) {

@@ -763,7 +763,18 @@ export default new Vuex.Store({
           alert("Plant Put Error: ", error.response.data )
         });
     },
-
+    async updateWatering({ commit }, watering) {
+      EventService.putWatering(watering)
+        .then((response) => {
+          commit("SET_WATERING", response.data);
+          alert("Watering " + watering.watering_name + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Watering Put Error for " + watering.watering_name + ": " + error.response.request.statusText)
+          location.reload();
+      });
+    },
     async createGolf({ commit }, golf) {
       EventService.postGolf(golf)
         .then(() => {

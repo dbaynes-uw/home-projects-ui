@@ -90,6 +90,7 @@ import { ref } from 'vue';
 export default {
   setup() {
     const outlet_id = ref('');
+    console.log("SetUp outlet_id: ", outlet_id)
     return { outlet_id };
   },
   props: ["id"],
@@ -105,12 +106,8 @@ export default {
   computed: {
     showOutletName:{
       get(){
-       console.log("ShowOutletName - plant.outlet_id: ", this.plant.outlet_id)
-       console.log("ShowOutletsHash: ", this.outletsHash.outletsHash[0])
-       console.log("ShowOutletsHashLength: ", this.outletsHash.outletsHash.length)
        var outletName = ""
        for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
-        console.log("Name: ", this.outletsHash.outletsHash[i].outlet_name)
          if (this.plant.outlet_id == this.outletsHash.outletsHash[i].id) {
            outletName = this.outletsHash.outletsHash[i].outlet_name
            i = 99
@@ -149,9 +146,8 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        console.log("IN outlet_id: ",this.outlet_id)
+        console.log("IN outlet_id: ", this.outlet_id)
         this.plant.outlet_id = this.getOutletId(this.outlet_id)
-        console.log("Return from getOutletId: ",this.plant.outlet_id)
         const plant = {
           ...this.plant,
           updated_by: this.$store.state.created_by,

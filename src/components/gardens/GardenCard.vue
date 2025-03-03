@@ -1,111 +1,95 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <!--span v-if="garden.active == true"-->
-    <div class="card">
-      <!--Route: {{ this.$route.name }}-->
-      <span v-if="this.$route.name == 'GardenList'">
-        <!--As opposed to: span v-if="currentUrl.includes('/gardens/')"-->
-        <h4>
-          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-            {{ garden.garden_name }}
+  <div class="card">
+    <!--Route: {{ this.$route.name }}-->
+    <span v-if="this.$route.name == 'GardenList'">
+      <!--As opposed to: span v-if="currentUrl.includes('/gardens/')"-->
+      <h4>
+        <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+          {{ garden.garden_name }}
+          </router-link>
+      </h4>
+      <ul>
+        <li class="li-left">Notes:</li>
+        <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
+      </ul>   
+      <p id="p-custom-left">Waterings:</p>
+      <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
+          <ul>
+          <li class="li-left-bold">
+            <router-link
+            :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+            >
+              {{watering.watering_name}}
             </router-link>
-        </h4>
-        <ul>
-          <li class="li-left">Notes:</li>
-          <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
-        </ul>   
-        <h3 id="h3-left"> Waterings:</h3>
-          <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
-            <ul>
-            <li class="li-left-bold">
-              <router-link
-              :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
-              >
-                {{watering.watering_name}}
-              </router-link>
-            </li>
-            </ul>
-          </span>
-          <p id="p-custom-link-left">
+          </li>
+          </ul>
+      </span>
+      <p id="p-custom-link">
         <router-link
         :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }"
         >
-         Add Watering
+          Add Watering
+      </router-link>
+    </p>
+    </span>
+    <span v-else>
+      <h4 id="p-custom-link">
+        <router-link
+          :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
+        >
+          Edit {{ garden.garden_name }}
         </router-link>
-      </p>
-      <br/>
+      </h4>
+    </span>
+    <span v-if="garden.plants && garden.plants.length > 0">
+      <p id="p-custom-left">Plants:</p>
+      <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
+        <ul class="ul-left">
+          <li>
+            <router-link
+              :to="{ name: 'PlantDetails', params: { id: `${plant.id}`} }"
+            >
+            <b>{{plant.plant_name}}</b>
+            </router-link>
+          </li>
+        </ul>          
+      </span>
+    </span>
+    <br/>
+    <p id="p-custom-link">
+      <router-link
+        :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
+      >
+        Add Plant
+      </router-link>
+    </p>
+    <br/>
+    <br/>
+    <div id="spread">
+      <span class="fa-stack">
+        <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
+          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-if="this.$route.name == 'GardenList'">
+      <!--span v-if="currentUrl.includes('/gardens/')" class="fa-stack"-->
+        <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+          <i class="fa-solid fa-backward fa-stack-1x"></i>
+        </router-link>
       </span>
       <span v-else>
-        <h4 id="p-custom-link">
-          <router-link
-            :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
-          >
-            Edit {{ garden.garden_name }}
-          </router-link>
-        </h4>
-      </span>
-      <span v-if="garden.waterings && garden.waterings.length > 0">
-        <p id="p-custom-left">Watering:</p>
-        <span v-for="(watering, wateringIndex) in garden.waterings" :key="wateringIndex ">
-          <ul class="ul-left">
-            <li>
-              <router-link
-                :to="{ name: 'WateringDetails', params: { id: `${watering.id}`} }"
-              >
-              <b>{{watering.watering_name}}</b>
-              </router-link>
-            </li>
-          </ul>          
-        </span>
-      </span>
-      <span v-if="garden.plants && garden.plants.length > 0">
-        <p id="p-custom-left">Plants:</p>
-        <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
-          <ul class="ul-left">
-            <li>
-              <router-link
-                :to="{ name: 'PlantDetails', params: { id: `${plant.id}`} }"
-              >
-              <b>{{plant.plant_name}}</b>
-              </router-link>
-            </li>
-          </ul>          
-        </span>
-      </span>
-      <br/>
-      <p id="p-custom-link-left">
-        <router-link
-          :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
-        >
-          Add Plant
+        <router-link :to="{ name: 'GardenList' }">
+          <i class="fa-solid fa-eye fa-stack-1x"></i>
         </router-link>
-      </p>
-      <br/>
-      <br/>
-      <div id="spread">
-        <span class="fa-stack">
-          <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
-            <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span v-if="this.$route.name == 'GardenList'">
-        <!--span v-if="currentUrl.includes('/gardens/')" class="fa-stack"-->
-          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-            <i class="fa-solid fa-backward fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span v-else>
-          <router-link :to="{ name: 'GardenList' }">
-            <i class="fa-solid fa-eye fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span class="fa-stack">
-          <i @click="deleteGarden(garden)" class="fas fa-trash-alt fa-stack-1x">
-          </i>
-        </span>
-      </div>
+      </span>
+      <span class="fa-stack">
+        <i @click="deleteGarden(garden)" class="fas fa-trash-alt fa-stack-1x">
+        </i>
+      </span>
     </div>
-  <!--/span-->
+  </div>
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";

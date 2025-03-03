@@ -210,6 +210,7 @@
   font-size: 1rem;
 }
 #p-custom-left {
+  margin-left: -.75rem;
   text-align: left;
   font-size: 1.25rem;
   font-weight: bold;

@@ -18,6 +18,11 @@
           <router-link  :to="{ name: 'WateringCreate', params: { id: `${waterings[0].garden_id}` } }">Add Watering</router-link>
         </button>
       </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Card or Index View</u>
+        </button>
+      </li>
     </ul> 
     <br/>
   </v-card>
@@ -43,29 +48,27 @@
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
-        <span v-if="requestIndexDetailFlag == true">
+        <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">Total: {{ waterings.length }}</h3>
-          <span class="h3-left-total-child">*Double click Item Below to Edit</span>
+          <span class="h3-left-total-child">*Click Item Below to Edit, Details or Delete</span>
           <div class="cards">
             <WateringCard
               v-for="watering in waterings"
               :key="watering.id"
               :watering="watering"
-              class="card"
-              @dblclick="editWatering(watering)"
             />
             <br />
           </div>
         </span>
         <span v-else>
-          V-ELSE@@@@@@!!!!!!!!!
+          <WateringIndex :waterings="waterings" />
         </span>
       </span>
     </span>
     <span v-if="filteredResults.length > 0">
-      <span v-i="requestIndexDetailFlag == true">
+      <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-        <span>Double click to Edit</span>
+        <span>*Click Icons Below to Edit, Details or Delete</span>
         <div class="cards">
           <WateringCard
             v-for="watering in filteredResults"
@@ -75,18 +78,22 @@
           <br />
         </div>
       </span>
+      <span v-else>
+        <WateringIndex :waterings="filteredResults" />
+      </span>
     </span>
   </div>
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
+import WateringIndex from "@/components/waterings/WateringIndex.vue";
 import WateringCard from "@/components/waterings/WateringCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
   name: "WateringList",
-  props: ["filteredResults[]"],
   components: {
     WateringCard,
+    WateringIndex,
     ConfirmDialogue
   },
   mounted() {
@@ -103,7 +110,7 @@ export default {
   },
   data() {
     return {
-      requestIndexDetailFlag: true,
+      requestIndexDetailFlag: false,
       searchResults: null,
       inputSearchText: "",
       filteredResults: [],
@@ -118,6 +125,7 @@ export default {
   },
   methods: {
     requestIndexDetail() {
+      console.log("RequestIndexDetail: ",this.requestIndexDetailFlag)
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     editWatering(watering) {

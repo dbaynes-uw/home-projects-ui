@@ -1,94 +1,92 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <!--span v-if="watering.active == true"-->
-    <div class="card">
-      <!--Route: {{ this.$route.name }}-->
-      <span v-if="this.$route.name == 'WateringList'">
-        <!--As opposed to: span v-if="currentUrl.includes('/waterings/')"-->
-        <h4>
-          <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
-            {{ watering.watering_name }}
+  <div class="card">
+    <!--Route: {{ this.$route.name }}-->
+    <span v-if="this.$route.name == 'WateringList'">
+      <!--As opposed to: span v-if="currentUrl.includes('/waterings/')"-->
+      <h4>
+        <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
+          {{ watering.watering_name }}
+          </router-link>
+      </h4>
+      <ul>
+        <li class="li-left">Notes:</li>
+        <b class="li-left-none" v-for="(notes, idx) in splitList(watering, this.splitLength)" :key="idx">{{ notes }}</b>
+      </ul>   
+    </span>
+    <span v-else>
+      <h4 id="p-custom-link">
+        <router-link
+          :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+        >
+          Edit {{ watering.watering_name }}
+        </router-link>
+      </h4>
+    </span>
+    <br/>
+    <span v-if="watering.outlets && watering.outlets.length > 0">
+      <p id="p-custom-left">Outlets:</p>
+      <span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex ">
+        <ul class="ul-left">
+          <li class="li-left-bold">
+            <router-link
+              :to="{ name: 'OutletDetails', params: { id: `${outlet.id}`} }"
+            >
+              <b>{{outlet.outlet_name}}</b>
             </router-link>
-        </h4>
-        <ul>
-          <li class="li-left">Notes:</li>
-          <b class="li-left-none" v-for="(notes, idx) in splitList(watering, this.splitLength)" :key="idx">{{ notes }}</b>
-        </ul>   
+          </li>
+        </ul>          
+      </span>
+    </span>
+    <br/>
+    Gardens:
+    <span v-if="watering.gardens && watering.gardens.length > 0">
+      <p id="p-custom-left">Outlets:</p>
+      <span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex ">
+        <ul class="ul-left">
+          <li class="li-left-bold">
+            <router-link
+              :to="{ name: 'OutletDetails', params: { id: `${outlet.id}`} }"
+            >
+              <b>{{outlet.outlet_name}}</b>
+            </router-link>
+          </li>
+        </ul>          
+      </span>
+    </span>
+    <br/>
+    <p id="p-custom-link">
+      <router-link
+        :to="{ name: 'OutletCreate', params: { id: `${watering.id}` } }"
+      >
+        Add Outlet
+      </router-link>
+    </p> 
+    <br/>
+    <div id="spread">
+      <span class="fa-stack">
+        <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
+          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span v-if="this.$route.name == 'WateringList'">
+      <!--span v-if="currentUrl.includes('/waterings/')" class="fa-stack"-->
+        <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
+          <i class="fa-solid fa-backward fa-stack-1x"></i>
+        </router-link>
       </span>
       <span v-else>
-        <h4 id="p-custom-link">
-          <router-link
-            :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
-          >
-            Edit {{ watering.watering_name }}
-          </router-link>
-        </h4>
-      </span>
-      <br/>
-      <span v-if="watering.outlets && watering.outlets.length > 0">
-        <p id="p-custom-left">Outlets:</p>
-        <span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex ">
-          <ul class="ul-left">
-            <li>
-              <router-link
-                :to="{ name: 'OutletDetails', params: { id: `${outlet.id}`} }"
-              >
-                <b>{{outlet.outlet_name}}</b>
-              </router-link>
-            </li>
-          </ul>          
-        </span>
-      </span>
-      <br/>
-      Gardens:
-      <span v-if="watering.gardens && watering.gardens.length > 0">
-        <p id="p-custom-left">Outlets:</p>
-        <span v-for="(outlet, outletIndex) in watering.outlets" :key="outletIndex ">
-          <ul class="ul-left">
-            <li>
-              <router-link
-                :to="{ name: 'OutletDetails', params: { id: `${outlet.id}`} }"
-              >
-                <b>{{outlet.outlet_name}}</b>
-              </router-link>
-            </li>
-          </ul>          
-        </span>
-      </span>
-      <br/>
-
-      <p id="p-custom-link-left">
-        <router-link
-          :to="{ name: 'OutletCreate', params: { id: `${watering.id}` } }"
-        >
-          Add Outlet
+        <router-link :to="{ name: 'WateringList' }">
+          <i class="fa-solid fa-eye fa-stack-1x"></i>
         </router-link>
-      </p> 
-      <br/>
-      <div id="spread">
-        <span class="fa-stack">
-          <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
-            <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span v-if="this.$route.name == 'WateringList'">
-        <!--span v-if="currentUrl.includes('/waterings/')" class="fa-stack"-->
-          <router-link :to="{ name: 'WateringList' }">
-            <i class="fa-solid fa-backward fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span v-else>
-          <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
-            <i class="fa-solid fa-eye fa-stack-1x"></i>
-          </router-link>
-        </span>
-        <span class="fa-stack">
-          <i @click="deleteWatering(watering)" class="fas fa-trash-alt fa-stack-1x">
-          </i>
-        </span>
-      </div>
+      </span>
+      <span class="fa-stack">
+        <i @click="deleteWatering(watering)" class="fas fa-trash-alt fa-stack-1x">
+        </i>
+      </span>
     </div>
-  <!--/span-->
+  </div>
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";

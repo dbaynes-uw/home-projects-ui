@@ -53,7 +53,6 @@
         :key="outlet.id"
         :outlet="outlet"
         class="card"
-        @dblclick="editOutlet(outlet)"
       />
     </div>
     <p id="p-custom-link">
