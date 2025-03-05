@@ -1,6 +1,7 @@
 <template>
   <div class="card">
     <p id="p-custom-left-u">{{ travel_event.title}}</p>
+    Trave Event URL: {{ travel_event.transport_url }}
     <ul>
       <li class="li-left">Description: {{ travel_event.description }}</li>
       <li class="li-left">Event Information: <b><a :href="travel_event.travel_event_url" target="_blank">Link to Event</a></b></li>
