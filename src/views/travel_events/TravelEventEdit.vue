@@ -30,6 +30,10 @@
           v-model="travel_event.transport"
           required
         />
+        <v-text-field
+          label="Transportation Information (URL)"
+          v-model="travel_event.transport_url"
+        />     
         <p id="p-custom-left">Start Date Saved As: {{ formatStandardDateTime(travel_event.start_date)}}</p>
         <v-text-field
           label="Click calendar at right to change Date Read"

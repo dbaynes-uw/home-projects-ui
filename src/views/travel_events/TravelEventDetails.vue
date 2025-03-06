@@ -36,7 +36,9 @@ export default {
     ConfirmDialogue,
     TravelEventCard,
   },
-  created() {},
+  created() {
+    this.$store.dispatch("fetchTravelEvent", this.id)
+  },
   computed: {
     travel_event() {
       return this.$store.state.travel_event;

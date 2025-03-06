@@ -99,6 +99,7 @@ export default {
   },
   async mounted() {},
   created() {
+    console.log("Plant Created ID: ", this.id)
     this.$store.dispatch("fetchPlant", this.id);
     this.$store.dispatch("fetchOutletsDisplayGroup");
     this.$store.dispatch("fetchOutletsHash");

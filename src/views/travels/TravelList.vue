@@ -51,7 +51,6 @@
               v-for="travel in travels"
               :key="travel.id"
               :travel="travel"
-              class="card"
             />
             <br />
           </div>
@@ -69,7 +68,7 @@
           <TravelCard
             v-for="travel in filteredResults"
             :key="travel.id"
-            class="card"
+            :travel="travel"
           />
           <br />
         </div>
@@ -92,6 +91,19 @@ export default {
     TravelIndex,
     TravelCard,
   },
+  mounted() {
+    this.sortedData = this.travels;
+  },
+  created() {
+    this.$store.dispatch("fetchTravels");
+    //?this.sortedData = this.travels;
+    this.sortedData = this.$store.dispatch("fetchTravels");
+  },
+  computed: {
+    travels() {
+      return this.$store.state.travels;
+    },
+  },
   data() {
     return {
       requestIndexDetailFlag: false,
@@ -107,21 +119,13 @@ export default {
       statusMessage: "",
     };
   },
-  mounted() {
-    this.sortedData = this.travels;
-  },
-  created() {
-    this.$store.dispatch("fetchTravels");
-    this.sortedData = this.travels;
-  },
-  computed: {
-    travels() {
-      return this.$store.state.travels;
-    },
-  },
   methods: {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    },
+    editTravel(travel) {
+      console.log("Edit Travel: ", travel)
+      this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
     },
     showIndex() {
       this.filteredResults = [];

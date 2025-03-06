@@ -11,10 +11,7 @@
   <span class="h3-left-total-child">Click to Change</span>
   <div class="cards-1-center">
     <TravelCard
-      :key="travel.id"
       :travel="travel"
-      class="card"
-      @dblclick="editTravel(travel)"
       />
     <br />
   </div>
@@ -26,9 +23,15 @@
       :key="travel_event.id"
       :travel_event="travel_event"
       class="card"
-      @dblclick="editTravelEvent(travel_event)"
     />
   </div>
+  <p id="p-custom-link">
+      <router-link
+        :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
+      >
+        <b>Add Travel Event</b>
+      </router-link>
+    </p>
 </template>
 
 <script>
@@ -53,7 +56,7 @@ export default {
     this.statusMessage = successMessage.value
   },
   created() {
-    this.$store.dispatch("fetchTravel", this.id);
+    this.$store.dispatch("fetchTravel", this.$route.params.id);
   },
   computed: {
     travel() {
