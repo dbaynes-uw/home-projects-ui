@@ -1,12 +1,5 @@
 <template>
   <div class="card">
-    <p style="text-align: left">Travel Event ID: {{ travel_event.id }}</p>
-    <br/>
-    <p style="text-align: left">travel_event.travel_event_url: {{ travel_event.travel_evnet_url }}</p>
-    <br/>
-    <p style="text-align: left">travel_event.transport_url: {{ travel_event.transport_url }}</p>
-    <br/>
-    <p id="p-custom-left-u">{{ travel_event.title}}</p>
     <ul>
       <li class="li-left">Description: {{ travel_event.description }}</li>
       <span v-if="travel_event.travel_event_url">
@@ -17,7 +10,7 @@
       </span>
       
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
-      <li class="li-left">Transportaion URL: <b><a :href="travel_event.transport_url" target="_blank">{{ travel_event.booking_reference }}</a></b></li>
+      <li class="li-left">Transportaion URL: <b><a :href="travel_event.transport_url" target="_blank">Link to Transportation</a></b></li>
 
       <li class="li-left">Start: {{ formatStandardDateTime(travel_event.start_date) }}</li>
       <li class="li-left">End: {{ formatStandardDateTime(travel_event.end_date) }}</li>

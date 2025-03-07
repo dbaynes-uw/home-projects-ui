@@ -36,7 +36,9 @@ export default {
     ConfirmDialogue,
     PlantCard,
   },
-  created() {},
+  created() {
+    this.$store.dispatch("fetchPlant", this.id)
+  },
   computed: {
     plant() {
       return this.$store.state.plant;
