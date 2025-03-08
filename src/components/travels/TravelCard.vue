@@ -19,7 +19,7 @@
               <router-link
                 :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
               >
-              <b>{{travel_event.title}}</b>
+              <b><span style="margin-left: -1rem">&#8226;&nbsp;</span>{{travel_event.title}}</b>
               </router-link>
             </li>
           </ul>          

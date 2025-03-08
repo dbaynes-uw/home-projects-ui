@@ -8,10 +8,13 @@
       <span v-else>
         <li class="li-left">Event Information: <b>No Url Available</b></li>
       </span>
-      
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
-      <li class="li-left">Transportaion URL: <b><a :href="travel_event.transport_url" target="_blank">Link to Transportation</a></b></li>
-
+      <span v-if="travel_event.transport_url">
+        <li class="li-left">Transportaion URL: <b><a :href="travel_event.transport_url" target="_blank">Link to Transportation</a></b></li>
+      </span>
+      <span v-else>
+        <li class="li-left">Transportation URL: <b>No Url Available</b></li>
+      </span>
       <li class="li-left">Start: {{ formatStandardDateTime(travel_event.start_date) }}</li>
       <li class="li-left">End: {{ formatStandardDateTime(travel_event.end_date) }}</li>
       <li class="li-left">Notes:</li>

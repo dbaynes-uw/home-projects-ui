@@ -297,18 +297,13 @@
 .ul-left {
   text-align: left;
 }
-.ul-dash {
-  list-style-type: "-- ";
-}
+
 .ul-indented-left-dash {
   padding-left: .5rem;
   list-style-type: disc;
   text-align: left;
 }
-.ul-left-dash {
-  list-style-type: circle !important;
-  text-align: left;
-}
+
 .li-left {
   text-align: left;
   display: list-item;
