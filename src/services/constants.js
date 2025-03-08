@@ -1,4 +1,4 @@
-export const ASSIGNEES_CURRENT = ["David", "Jane", "Both", "Up for Grabs"]
+export const ASSIGNEES_CURRENT = ["David", "Jane", "Both", "Madeleine"]
 export const EVENT_FREQUENCY = ["7", "10", "14", "21", "30", "60", "90", "120", "180", "360"]
 export const ACTIVE_STATUSES = ["Active", "Inactive"]
 export const MED_DURATIONS = ["Long: > 2mins", "Medium: 1 to 2mins", "Short: < 1min"]
