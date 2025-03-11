@@ -1,6 +1,13 @@
 <template>
   <div class="card">
     <ul>
+      <li class="li-left">
+        <router-link
+          :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
+        >
+        <b><span style="margin-left: -1rem">&#8226;&nbsp;</span>{{travel_event.title}}</b>
+        </router-link>
+      </li>
       <li class="li-left">Description: {{ travel_event.description }}</li>
       <span v-if="travel_event.travel_event_url">
         <li class="li-left">Event Information: <b><a :href="travel_event.travel_event_url" target="_blank">Link to Event</a></b></li>
@@ -10,10 +17,10 @@
       </span>
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
       <span v-if="travel_event.transport_url">
-        <li class="li-left">Transportaion URL: <b><a :href="travel_event.transport_url" target="_blank">Link to Transportation</a></b></li>
+        <li class="li-left"><b><a :href="travel_event.transport_url" target="_blank">Transport Reference</a></b></li>
       </span>
       <span v-else>
-        <li class="li-left">Transportation URL: <b>No Url Available</b></li>
+        <li class="li-left">Transport Reference: <b>No URL Available</b></li>
       </span>
       <li class="li-left">Start: {{ formatStandardDateTime(travel_event.start_date) }}</li>
       <li class="li-left">End: {{ formatStandardDateTime(travel_event.end_date) }}</li>
