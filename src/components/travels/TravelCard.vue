@@ -8,6 +8,25 @@
         {{ travel.title }}
       </router-link>
     </p>
+    <ul>
+      <span v-if="travel.description">
+        <li class="li-left">Description: {{ travel.description }}</li>
+      </span>
+      <span v-if="travel.booking_reference">
+        <li class="li-left">Booking Code: <b>{{ travel.booking_reference }}</b></li>
+      </span>
+      <span v-if="travel.transport_url">
+        <li class="li-left">Transportation: <b><a :href="travel.transport_url" target="_blank">{{travel.transport}}</a></b></li>
+        <!--li class="li-left"><b><a :href="travel.transport_url" target="_blank">{{travel.transport}}</a></b></!--li-->
+      </span>
+      <span v-else>
+        <li class="li-left">Transportation: <b>{{travel.transport}}</b></li>
+      </span>
+      <li class="li-left">Depart: <b>{{ formatStandardDateTime(travel.departure_date) }}</b></li>
+      <li class="li-left">Return: <b>{{ formatStandardDateTime(travel.return_date) }}</b></li>
+      <li class="li-left">Notes:</li>
+      <b class="li-left-none" v-for="(notes, idx) in splitList(travel, this.splitLength)" :key="idx">{{ notes }}</b>
+    </ul>
     <span v-if="travel.travel_events && travel.travel_events.length > 0">
       <p id="p-custom-left">Events:</p>
       <span v-for="(travel_event, travelEventIndex) in travel.travel_events" :key="travelEventIndex ">
@@ -22,16 +41,7 @@
         </ul>          
       </span>
     </span>
-    <ul>
-      <li class="li-left">Description: {{ travel.description }}</li>
-      <li class="li-left">Transportation: {{ travel.transport}}</li>
-      <li class="li-left"><b><a :href="travel.transport_url" target="_blank">Transport Reference</a></b></li>
-      <li class="li-left">Depart: {{ formatStandardDateTime(travel.departure_date) }}</li>
-      <li class="li-left">Return: {{ formatStandardDateTime(travel.return_date) }}</li>
-      <li class="li-left">Notes:</li>
-      <b class="li-left-none" v-for="(notes, idx) in splitList(travel, this.splitLength)" :key="idx">{{ notes }}</b>
-    </ul>
-    <p id="p-custom-link">
+    <p id="p-custom-link-1rem">
       <router-link
         :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
       >
