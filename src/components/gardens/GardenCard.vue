@@ -93,7 +93,6 @@
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
 import SplitStringService from "@/services/SplitStringService.js";
 //import { useRoute } from 'vue-router'
 export default {
@@ -145,12 +144,6 @@ export default {
     },
     splitList(gardenData, splitLength) {
       return SplitStringService.splitList(gardenData.notes, splitLength) 
-    },
-    formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTimejs(value);
-    },
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
     },
   }
 }

@@ -22,7 +22,7 @@
       v-for="travel_event in travel.travel_events"
       :key="travel_event.id"
       :travel_event="travel_event"
-      class="card"
+      :class="hasEventPassed(travel_event)"
     />
   </div>
   <p id="p-custom-link">
@@ -99,9 +99,18 @@ export default {
     editTravelEvent(travel_event) {
       this.$router.push({ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } });
     },
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDatejs(value);
+    hasEventPassed(te) {
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
+      if (DateFormatService.formatYearDatejs(te.end_date) < formatDateToday) {
+        return 'event-has-passed'
+      } else {
+        return 'card'
+        }
+      }
     },
-  },
-};
+    formatYearDate(value) {
+      return DateFormatService.formatYearDatejs(value);
+    },
+  };
 </script>

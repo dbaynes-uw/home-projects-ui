@@ -153,6 +153,16 @@
 .icon-css {
   color: #0D2336;
 }
+.event-has-passed{
+  border: 1px solid #ccc;
+  background: #7ba8bd;
+  padding: 1rem;
+  padding-top: 0em;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
 #background-blue {
   background-color: #7ba8bd;
   text-align: center;

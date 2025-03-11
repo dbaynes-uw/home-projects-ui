@@ -1,38 +1,33 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="card">
+  <div :class="{ 'event-has-passed': hasEventPassed(travel), 'card': isEventCurrent}">
     <p id="p-custom-link">
       <router-link
-        :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }"
+        :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }"
       >
         {{ travel.title }}
       </router-link>
     </p>
-    <!--router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
-      Travel Details: {{ travel.id  }}
-    </!--router-link-->
     <span v-if="travel.travel_events && travel.travel_events.length > 0">
-        <p id="p-custom-left">Events:</p>
-        <span v-for="(travel_event, travelEventIndex) in travel.travel_events" :key="travelEventIndex ">
-          <ul class="ul-left">
-            <li>
-              <router-link
-                :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
-              >
-              <b><span style="margin-left: -1rem">&#8226;&nbsp;</span>{{travel_event.title}}</b>
-              </router-link>
-            </li>
-          </ul>          
-        </span>
+      <p id="p-custom-left">Events:</p>
+      <span v-for="(travel_event, travelEventIndex) in travel.travel_events" :key="travelEventIndex ">
+        <ul class="ul-left">
+          <li>
+            <router-link
+              :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
+            >
+            <b><span style="margin-left: -1rem">&#8226;&nbsp;</span>{{travel_event.title}}</b>
+            </router-link>
+          </li>
+        </ul>          
       </span>
-
+    </span>
     <ul>
       <li class="li-left">Description: {{ travel.description }}</li>
       <li class="li-left">Transportation: {{ travel.transport}}</li>
       <li class="li-left">Booking Reference: <b><a :href="travel.transport_url" target="_blank">{{ travel.booking_reference }}</a></b></li>
       <li class="li-left">Depart: {{ formatStandardDateTime(travel.departure_date) }}</li>
       <li class="li-left">Return: {{ formatStandardDateTime(travel.return_date) }}</li>
-
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in splitList(travel, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>
@@ -49,12 +44,7 @@
         <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
       </router-link>
     </span>
-    <span v-if="currentUrl.includes('/travels/')" class="fa-stack">
-      <router-link :to="{ name: 'TravelList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
-    </span>
-    <span v-else>
+    <span>
       <router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
         <i class="fa-solid fa-eye fa-stack-1x"></i>
       </router-link>
@@ -69,7 +59,6 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import SplitStringService from "@/services/SplitStringService.js";
-import { useRoute } from 'vue-router'
 export default {
   name: 'TravelCard',
   props: {
@@ -78,14 +67,9 @@ export default {
       default: () => ({})
     }
   },
+  setup() {},
   components: {
     ConfirmDialogue,
-  },
-  setup() {
-    const route = useRoute()
-    return {
-      currentUrl: route.fullPath
-    }
   },
   data() {
     return {
@@ -122,9 +106,25 @@ export default {
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },
+    hasEventPassed(t) {
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
+      if (DateFormatService.formatYearDatejs(t.return_date) < formatDateToday) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isEventCurrent(t) {
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
+      if (DateFormatService.formatYearDatejs(t.return_date) < formatDateToday) {
+        return true
+      } else {
+        return false
+      }
+    }
   }
 }
 </script>
-
-<style scoped>
-</style>
+<style scoped></style>
