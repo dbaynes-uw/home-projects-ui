@@ -22,11 +22,15 @@
           cols="40"
         />
         <v-text-field
-          label="Transport Type"
-          v-model="travel.transport_type"
+          label="Transportation"
+          v-model="travel.transport"
         />
         <v-text-field
-          label="Confirmation ID"
+          label="Transport URL"
+          v-model="travel.transport_url"
+        />     
+        <v-text-field
+          label="Booking Reference"
           v-model="travel.booking_reference"
         />
         <p id="p-custom-left">Departure: {{ formatStandardDateTime(travel.departure_date)}}</p>
@@ -40,11 +44,7 @@
           label="Click calendar at right to change Date Read"
           v-model="travel.return_date"
           type="datetime-local"
-        />
-        <v-text-field
-          label="URL to Review"
-          v-model="travel.transport_url"
-        />        
+        />   
         <v-textarea
           label="Notes"
           v-model="travel.notes"
