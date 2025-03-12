@@ -15,12 +15,9 @@
       <span v-if="travel.booking_reference">
         <li class="li-left">Booking Code: <b>{{ travel.booking_reference }}</b></li>
       </span>
-      <span v-if="travel.transport_url">
-        <li class="li-left">Transportation: <b><a :href="travel.transport_url" target="_blank">{{travel.transport}}</a></b></li>
-        <!--li class="li-left"><b><a :href="travel.transport_url" target="_blank">{{travel.transport}}</a></b></!--li-->
-      </span>
-      <span v-else>
-        <li class="li-left">Transportation: <b>{{travel.transport}}</b></li>
+      <li class="li-left">Transportation: <b>{{ travel.transport }}</b></li>
+      <span v-if="travel.transport">
+        <li class="li-left">Transportation URL: <b><a :href="travel.transport_url" target="_blank">{{travel.transport}}</a></b></li>
       </span>
       <li class="li-left">Depart: <b>{{ formatStandardDateTime(travel.departure_date) }}</b></li>
       <li class="li-left">Return: <b>{{ formatStandardDateTime(travel.return_date) }}</b></li>

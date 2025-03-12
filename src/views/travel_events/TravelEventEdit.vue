@@ -31,6 +31,11 @@
           required
         />
         <v-text-field
+          label="Booking Reference"
+          v-model="travel_event.booking_reference"
+          required
+        />
+        <v-text-field
           label="Transportation Information (URL)"
           v-model="travel_event.transport_url"
         />     

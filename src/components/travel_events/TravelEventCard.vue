@@ -8,22 +8,28 @@
         <b><span style="margin-left: -1rem">&#8226;&nbsp;</span>{{travel_event.title}}</b>
         </router-link>
       </li>
-      <li class="li-left">Description: {{ travel_event.description }}</li>
+      <li class="li-left">Description: <b>{{ travel_event.description }}</b></li>
       <span v-if="travel_event.travel_event_url">
         <li class="li-left">Event Information: <b><a :href="travel_event.travel_event_url" target="_blank">Link to Event</a></b></li>
       </span>
       <span v-else>
         <li class="li-left">Event Information: <b>No Url Available</b></li>
       </span>
-      <li class="li-left">Transportation: {{ travel_event.transport }}</li>
+      <span v-if="travel_event.booking_reference">
+        <li class="li-left">Booking Reference: <b>{{ travel_event.booking_reference }}</b></li>
+      </span>
+      <span v-else>
+        <li class="li-left">Booking Reference: <b>No URL Available</b></li>
+      </span>
+      <li class="li-left">Transportation: <b>{{ travel_event.transport }}</b></li>
       <span v-if="travel_event.transport_url">
         <li class="li-left"><b><a :href="travel_event.transport_url" target="_blank">Transport Reference</a></b></li>
       </span>
       <span v-else>
         <li class="li-left">Transport Reference: <b>No URL Available</b></li>
       </span>
-      <li class="li-left">Start: {{ formatStandardDateTime(travel_event.start_date) }}</li>
-      <li class="li-left">End: {{ formatStandardDateTime(travel_event.end_date) }}</li>
+      <li class="li-left">Start: <b>{{ formatStandardDateTime(travel_event.start_date) }}</b></li>
+      <li class="li-left">End: <b>{{ formatStandardDateTime(travel_event.end_date) }}</b></li>
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in splitList(travel_event, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>
