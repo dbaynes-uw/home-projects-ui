@@ -210,6 +210,9 @@ export default new Vuex.Store({
     DELETE_TRAVEL(state, travel) {
       state.travel = travel;
     },
+    DELETE_TRAVEL_EVENT(state, travel_event) {
+      state.travel_event = travel_event;
+    },
     SET_TRAVEL(state, travel) {
       state.travel = travel;
     },
@@ -1169,6 +1172,17 @@ export default new Vuex.Store({
           alert("Travel Delete Error: ", error.response.data )
         });
     },
+    async deleteTravelEvent({ commit }, travel_event) {
+      EventService.destroyTravelEvent(travel_event.id)
+        .then((response) => {
+          commit("DELETE_TRAVEL_EVENT", response.data);
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Travel Event Delete Error: ", error.response.data )
+        });
+    },
+
     async fetchTravel({ commit, state }, id) {
       const existingTravel = state.travels.find((travel) => travel.id === id);
       if (existingTravel) {

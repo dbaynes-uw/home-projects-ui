@@ -296,6 +296,10 @@ export default {
     this.init();
     return axios.delete(api_url + "travels" + `/${id}`);
   },
+  destroyTravelEvent(id) {
+    this.init();
+    return axios.delete(api_url + "travel_events" + `/${id}`);
+  },
   async postUser(user) {
     this.init();
     return axios.get(api_url + "users", user);

@@ -1,4 +1,5 @@
 <template>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="card">
     <ul>
       <li class="li-left">
@@ -33,13 +34,16 @@
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in splitList(travel_event, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>
+    <span class="fa-stack">
+      <i @click="deleteTravelEvent(travel_event)" class="fas fa-trash-alt fa-stack-1x">
+      </i>
+    </span>
   </div>
 </template>
 <script>
-
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import SplitStringService from "@/services/SplitStringService.js";
-
 export default {
   name: 'TravelEventCard',
   props: {
@@ -48,12 +52,35 @@ export default {
       default: () => ({})
     }
   },
+  components: {
+    ConfirmDialogue,
+  },
   data() {
     return {
       splitLength: 30,
     };
   },
   methods: {
+    async deleteTravelEvent(travel_event) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Travel Event from List",
+        message:
+          "Are you sure you want to delete " +
+          travel_event.title +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteTravelEvent", travel_event);
+        this.statusMessage =
+          "Travel Event was Deleted for " +
+          travel_event.title +
+          "! Page will restore in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
+        this.$router.push({ name: "TravelList" });
+      }
+    },
     splitList(travelData, splitLength) {
       return SplitStringService.splitList(travelData.notes, splitLength) 
     },

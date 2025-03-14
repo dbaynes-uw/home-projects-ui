@@ -10,7 +10,7 @@
     </p>
     <ul>
       <span v-if="travel.description">
-        <li class="li-left">Description: {{ travel.description }}</li>
+        <li class="li-left">Description: <b>{{ travel.description }}</b></li>
       </span>
       <span v-if="travel.booking_reference">
         <li class="li-left">Booking Code: <b>{{ travel.booking_reference }}</b></li>
