@@ -11,7 +11,7 @@
       </li>
       <li>
         <button id="button-as-link" @click="requestIndexDetail">
-          <u>Detail Index/Card View</u>
+          <u>Index or Card View</u>
         </button>
       </li>
       <li>

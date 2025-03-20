@@ -28,6 +28,7 @@
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
   padding-left: 1rem;
+  padding-right: 1rem;
 }
 .cards-1-center {
   position: relative;
