@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="card">
+  <div :class="{ 'event-has-passed': hasTravelEventPassed(travel_event), 'card': isEventCurrent}">
     <ul>
       <li class="li-left">
         <router-link
@@ -81,8 +81,27 @@ export default {
         this.$router.push({ name: "TravelList" });
       }
     },
-    splitList(travelData, splitLength) {
-      return SplitStringService.splitList(travelData.notes, splitLength) 
+    hasTravelEventPassed(te) {
+      console.log("hasEventPassed @@@")
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
+      if (DateFormatService.formatYearDatejs(te.end_date) < formatDateToday) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isEventCurrent(te) {
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
+      if (DateFormatService.formatYearDatejs(te.end_date) < formatDateToday) {
+        return true
+      } else {
+        return false
+      }
+    },
+    splitList(travelEventData, splitLength) {
+      return SplitStringService.splitList(travelEventData.notes, splitLength) 
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);

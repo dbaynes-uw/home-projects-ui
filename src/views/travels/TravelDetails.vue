@@ -23,7 +23,6 @@
         v-for="travel_event in travel.travel_events"
         :key="travel_event.id"
         :travel_event="travel_event"
-        :class="hasEventPassed(travel_event)"
       />
     </div>
     <p id="p-custom-link">
@@ -116,3 +115,8 @@ export default {
     },
   };
 </script>
+<style scoped>
+.travel-list {
+  width: 80%;
+}
+</style>
