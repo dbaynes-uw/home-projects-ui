@@ -9,12 +9,12 @@
   <br/>
   <h3>{{ this.statusMessage }}</h3>
   <span class="h3-left-total-child">Click to Change</span>
-  <div class="cards-1-center">
+  <!--div class="cards-1-center">
     <TravelCard
       :travel="travel"
       />
     <br />
-  </div>
+  </!--div-->
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
   <div class="travel-list">
@@ -39,7 +39,7 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import TravelCard from "@/components/travels/TravelCard.vue";
+//import TravelCard from "@/components/travels/TravelCard.vue";
 import TravelEventCard from "@/components/travel_events/TravelEventCard.vue";
 import { ref } from 'vue';
 const successMessage = ref('')
@@ -48,7 +48,7 @@ export default {
   props: ["id"],
   components: {
     ConfirmDialogue,
-    TravelCard,
+    //TravelCard,
     TravelEventCard,
   },
   mounted() {
@@ -117,6 +117,6 @@ export default {
 </script>
 <style scoped>
 .travel-list {
-  width: 80%;
+  width:auto
 }
 </style>
