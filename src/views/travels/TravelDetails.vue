@@ -17,31 +17,23 @@
   </div>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
-  <div class="cards">
-    <TravelEventCard
-      v-for="travel_event in travel.travel_events"
-      :key="travel_event.id"
-      :travel_event="travel_event"
-      :class="hasEventPassed(travel_event)"
-    />
+  <div class="travel-list">
     <div class="cards">
-            <!--EventCard
-              v-for="event in events"
-              :key="event.id"
-              :event="event"
-              :class="inactive(event)"
-              @dblclick="editEvent(event)"
-            /-->
-        <br />
-      </div>
+      <TravelEventCard
+        v-for="travel_event in travel.travel_events"
+        :key="travel_event.id"
+        :travel_event="travel_event"
+        :class="hasEventPassed(travel_event)"
+      />
+    </div>
+    <p id="p-custom-link">
+      <router-link
+        :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
+      >
+        <b>Add Travel Event</b>
+      </router-link>
+    </p>
   </div>
-  <p id="p-custom-link">
-    <router-link
-      :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
-    >
-      <b>Add Travel Event</b>
-    </router-link>
-  </p>
 </template>
 
 <script>
