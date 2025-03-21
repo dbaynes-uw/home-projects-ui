@@ -1,20 +1,48 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <br/>
-  <h1>{{ travel.title }} Details</h1>
-  <router-link :to="{ name: 'TravelList' }">
-      <b>Back to List of Journies</b>
-    </router-link>
-  <br/>
-  <br/>
-  <h3>{{ this.statusMessage }}</h3>
+  <v-card class="mx-auto mt-5">
+    <v-card-title class="pb-0">
+      <h2>Travels</h2>
+      <h2 id="status-message">
+        <u>{{ this.statusMessage }}</u>
+      </h2>
+    </v-card-title>
+    <ul>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'TravelCreate'}">Add Trip</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <u>Index/Card View</u>
+        </button>
+      </li>
+    </ul> 
+    <br/>
+  </v-card>
+  <div style="width: 100%">
+    <div class="auto-search-container">
+      <v-text-field
+        clearable
+        clear-icon="mdi-close"
+        @click:clear="showIndex"
+        type="text"
+        class="np-input-search"
+        v-model="inputSearchText"
+        placeholder="Search"
+        autocomplete="off"
+        v-on:keyup="searchColumns"
+      />
+    </div>
+  </div>
   <span class="h3-left-total-child">Click to Change</span>
-  <!--div class="cards-1-center">
+  <div class="cards-1-center">
     <TravelCard
       :travel="travel"
       />
     <br />
-  </!--div-->
+  </div>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
   <div class="travel-list">
@@ -39,7 +67,7 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-//import TravelCard from "@/components/travels/TravelCard.vue";
+import TravelCard from "@/components/travels/TravelCard.vue";
 import TravelEventCard from "@/components/travel_events/TravelEventCard.vue";
 import { ref } from 'vue';
 const successMessage = ref('')
@@ -48,7 +76,7 @@ export default {
   props: ["id"],
   components: {
     ConfirmDialogue,
-    //TravelCard,
+    TravelCard,
     TravelEventCard,
   },
   mounted() {
