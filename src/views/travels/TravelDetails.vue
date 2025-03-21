@@ -24,14 +24,24 @@
       :travel_event="travel_event"
       :class="hasEventPassed(travel_event)"
     />
+    <div class="cards">
+            <!--EventCard
+              v-for="event in events"
+              :key="event.id"
+              :event="event"
+              :class="inactive(event)"
+              @dblclick="editEvent(event)"
+            /-->
+        <br />
+      </div>
   </div>
   <p id="p-custom-link">
-      <router-link
-        :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
-      >
-        <b>Add Travel Event</b>
-      </router-link>
-    </p>
+    <router-link
+      :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
+    >
+      <b>Add Travel Event</b>
+    </router-link>
+  </p>
 </template>
 
 <script>
