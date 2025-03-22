@@ -1,41 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h2>Travels</h2>
-      <h2 id="status-message">
-        <u>{{ this.statusMessage }}</u>
-      </h2>
-    </v-card-title>
-    <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'TravelCreate'}">Add Trip</router-link>
-        </button>
-      </li>
-      <li>
-        <button id="button-as-link" @click="requestIndexDetail">
-          <u>Index/Card View</u>
-        </button>
-      </li>
-    </ul> 
-    <br/>
-  </v-card>
-  <div style="width: 100%">
-    <div class="auto-search-container">
-      <v-text-field
-        clearable
-        clear-icon="mdi-close"
-        @click:clear="showIndex"
-        type="text"
-        class="np-input-search"
-        v-model="inputSearchText"
-        placeholder="Search"
-        autocomplete="off"
-        v-on:keyup="searchColumns"
-      />
-    </div>
-  </div>
+  <br/>
+  <h1>{{ travel.title }} Details</h1>
+  <router-link :to="{ name: 'TravelList' }">
+      <b>Back to List of Journies</b>
+    </router-link>
+  <br/>
+  <br/>
+  <h3>{{ this.statusMessage }}</h3>
   <span class="h3-left-total-child">Click to Change</span>
   <div class="cards-1-center">
     <TravelCard
@@ -45,22 +17,21 @@
   </div>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
-  <div class="travel-list">
-    <div class="cards">
-      <TravelEventCard
-        v-for="travel_event in travel.travel_events"
-        :key="travel_event.id"
-        :travel_event="travel_event"
-      />
-    </div>
-    <p id="p-custom-link">
-      <router-link
-        :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
-      >
-        <b>Add Travel Event</b>
-      </router-link>
-    </p>
+  <div class="cards">
+    <TravelEventCard
+      v-for="travel_event in travel.travel_events"
+      :key="travel_event.id"
+      :travel_event="travel_event"
+      :class="hasEventPassed(travel_event)"
+    />
   </div>
+  <p id="p-custom-link">
+    <router-link
+      :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
+    >
+      <b>Add Travel Event</b>
+    </router-link>
+  </p>
 </template>
 
 <script>
@@ -143,8 +114,3 @@ export default {
     },
   };
 </script>
-<style scoped>
-.travel-list {
-  width:auto
-}
-</style>
