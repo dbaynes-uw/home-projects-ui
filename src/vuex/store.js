@@ -1186,7 +1186,7 @@ export default new Vuex.Store({
     async fetchTravel({ commit, state }, id) {
       const existingTravel = state.travels.find((travel) => travel.id === id);
       if (existingTravel) {
-        commit("SET_Travel", existingTravel);
+        commit("SET_TRAVEL", existingTravel);
       } else {
         EventService.getTravel(id)
           .then((response) => {

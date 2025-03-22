@@ -22,7 +22,6 @@
       v-for="travel_event in travel.travel_events"
       :key="travel_event.id"
       :travel_event="travel_event"
-      :class="hasEventPassed(travel_event)"
     />
   </div>
   <p id="p-custom-link">
@@ -86,6 +85,7 @@ export default {
         transport: "",
         booking_reference: "",
         transport_url: "",
+        travel_event_url: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },

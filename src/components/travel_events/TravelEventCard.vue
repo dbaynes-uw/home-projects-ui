@@ -82,7 +82,6 @@ export default {
       }
     },
     hasTravelEventPassed(te) {
-      console.log("hasEventPassed @@@")
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
       if (DateFormatService.formatYearDatejs(te.end_date) < formatDateToday) {

@@ -14,8 +14,6 @@
     <TravelEventCard
       :key="travel_event.id"
       :travel_event="travel_event"
-      class="card"
-      @dblclick="editTravelEvent(travel_event)"
       />
   </div>
 </template>
