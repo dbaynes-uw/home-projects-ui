@@ -9,18 +9,18 @@
       </router-link>
     </p>
     <ul>
-      <!--span v-if="travel_event.travel_event_url">
+      <span v-if="travel_event.travel_event_url">
         <li class="li-left"><b><a :href="travel_event.travel_event_url" target="_blank">Event Information</a></b></li>
       </span>
-      <span-- v-else>
+      <span v-if="!travel_event.travel_event_url">
         <li class="li-left">Event Information: <b>URL Not Available</b></li>
-      </span-->
-      <!--span v-if="travel_event.booking_reference">
+      </span>
+      <span v-if="travel_event.booking_reference">
         <li class="li-left">Booking Reference: <b>{{ travel_event.booking_reference }}</b></li>
       </span>
-      <span-- v-else>
+      <span v-if="!travel_event.booking_reference">
         <li class="li-left">Booking Reference: <b>Not Available</b></li>
-      </span-->
+      </span>
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
       <span v-if="travel_event.transport_url">
         <li class="li-left"><b><a :href="travel_event.transport_url" target="_blank">Transport Reference</a></b></li>
