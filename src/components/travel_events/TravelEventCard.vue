@@ -1,42 +1,18 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div :class="{ 'event-has-passed': hasEventPassed(travel), 'card': isEventCurrent}">
+  <div :class="{ 'event-has-passed': hasEventPassed(travel_event), 'card': isEventCurrent}">
     <p id="p-custom-link">
       <router-link
-        :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }"
+        :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}` } }"
       >
-        {{ travel.description }}
+        {{ travel_event.description }}
       </router-link>
     </p>
     <ul>
-      <span v-if="travel.description">
-        <li class="li-left">Title: <b>{{ travel.description }}</b></li>
-      </span>
+      <li class="li-left">Transportation: {{ travel_event.transport }}</li>
       <li class="li-left">Notes:</li>
-      <b class="li-left-none" v-for="(notes, idx) in splitList(travel, this.splitLength)" :key="idx">{{ notes }}</b>
+      <b class="li-left-none" v-for="(notes, idx) in splitList(travel_event, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>
-    <p id="p-custom-link-1rem">
-      <router-link
-        :to="{ name: 'TravelEventCreate', params: { id: `${travel.id}` } }"
-      >
-        Add a Travel Event for {{ travel.title }}
-      </router-link>
-    </p>
-    <br/>
-    <span class="fa-stack">
-      <router-link :to="{ name: 'TravelEdit', params: { id: `${travel.id}` } }">
-        <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-      </router-link>
-    </span>
-    <span>
-      <router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
-        <i class="fa-solid fa-eye fa-stack-1x"></i>
-      </router-link>
-    </span>
-    <span class="fa-stack">
-      <i @click="deleteTravel(travel)" class="fas fa-trash-alt fa-stack-1x">
-      </i>
-    </span>
   </div>
 </template>
 <script>
@@ -46,7 +22,7 @@ import SplitStringService from "@/services/SplitStringService.js";
 export default {
   name: 'TravelEventCard',
   props: {
-    travel: {
+    travel_event: {
       type: Object,
       default: () => ({})
     }
@@ -90,10 +66,10 @@ export default {
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },
-    hasEventPassed(t) {
+    hasEventPassed(event) {
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
-      if (DateFormatService.formatYearDatejs(t.return_date) < formatDateToday) {
+      if (DateFormatService.formatYearDatejs(event.end_date) < formatDateToday) {
         return true
       } else {
         return false
