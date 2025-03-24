@@ -9,12 +9,6 @@
   <br/>
   <h3>{{ this.statusMessage }}</h3>
   <span class="h3-left-total-child">Click to Change</span>
-  <div class="cards-1-center">
-    <TravelCard
-      :travel="travel"
-      />
-    <br />
-  </div>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
   <div class="cards">

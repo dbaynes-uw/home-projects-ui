@@ -1,14 +1,14 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div :class="{ 'event-has-passed': hasTravelEventPassed(travel_event), 'card': isEventCurrent}">
+    <p id="p-custom-link">
+      <router-link
+         :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
+      >
+        {{ travel.title }}
+      </router-link>
+    </p>
     <ul>
-      <li class="li-left">
-        <router-link
-          :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
-        >
-        <b><span style="margin-left: -1rem">&#8226;&nbsp;</span>{{travel_event.title}}</b>
-        </router-link>
-      </li>
       <li class="li-left">Description: <b>{{ travel_event.description }}</b></li>
       <span v-if="travel_event.travel_event_url">
         <li class="li-left">Event Information: <b><a :href="travel_event.travel_event_url" target="_blank">Link to Event</a></b></li>
@@ -34,10 +34,6 @@
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in splitList(travel_event, this.splitLength)" :key="idx">{{ notes }}</b>
     </ul>
-    <span class="fa-stack">
-      <i @click="deleteTravelEvent(travel_event)" class="fas fa-trash-alt fa-stack-1x">
-      </i>
-    </span>
   </div>
 </template>
 <script>
