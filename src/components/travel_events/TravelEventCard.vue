@@ -5,7 +5,7 @@
       <router-link
          :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}`} }"
       >
-        {{ travel.title }}
+        {{ }}
       </router-link>
     </p>
     <ul>

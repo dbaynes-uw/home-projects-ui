@@ -52,7 +52,12 @@
               :key="travel.id"
               :travel="travel"
             />
-            <br />
+            <TravelEventCard
+              v-for="travel_event in travels[2].travel_events"
+              :key="travel_event.id"
+              :travel_event="travel_event"
+            />
+            
           </div>
         </span>
         <span v-else>
@@ -84,12 +89,15 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import TravelIndex from "@/components/travels/TravelIndex.vue";
 import TravelCard from "@/components/travels/TravelCard.vue";
+import TravelEventCard from "@/components/travel_events/TravelEventCard.vue";
+
 export default {
   name: "TravelList",
   components: {
     ConfirmDialogue,
     TravelIndex,
     TravelCard,
+    TravelEventCard,
   },
   mounted() {
     this.sortedData = this.travels;
