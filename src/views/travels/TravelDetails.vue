@@ -31,7 +31,7 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import TravelCard from "@/components/travels/TravelCard.vue";
+//import TravelCard from "@/components/travels/TravelCard.vue";
 import TravelEventCard from "@/components/travel_events/TravelEventCard.vue";
 import { ref } from 'vue';
 const successMessage = ref('')
@@ -40,7 +40,7 @@ export default {
   props: ["id"],
   components: {
     ConfirmDialogue,
-    TravelCard,
+    //TravelCard,
     TravelEventCard,
   },
   mounted() {
