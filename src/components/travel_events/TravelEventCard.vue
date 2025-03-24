@@ -15,11 +15,14 @@
       <span v-if="!travel_event.travel_event_url">
         <li class="li-left">Event Information: <b>URL Not Available</b></li>
       </span>
-      <span v-if="travel_event.booking_reference">
+      <span v-if="startsWithHtml(travel_event.booking_reference)">
+        <li class="li-left">Booking Reference: <b><a :href="travel_event.booking_reference" target="_blank">Link</a></b></li>
+      </span>
+      <span v-if="travel_event.booking_reference && !startsWithHtml(travel_event.booking_reference)">
         <li class="li-left">Booking Reference: <b>{{ travel_event.booking_reference }}</b></li>
       </span>
       <span v-if="!travel_event.booking_reference">
-        <li class="li-left">Booking Reference: <b>Not Available</b></li>
+        <li class="li-left">Booking Reference: <b>N/A</b></li>
       </span>
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
       <span v-if="travel_event.transport_url">
@@ -75,6 +78,13 @@ export default {
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
         this.$router.push({ name: "TravelList" });
+      }
+    },
+    startsWithHtml(event) {
+      if (event.startsWith('https')) {
+        return true
+      } else {
+        return false
       }
     },
     splitList(travelData, splitLength) {
