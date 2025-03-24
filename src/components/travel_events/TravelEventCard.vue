@@ -22,12 +22,12 @@
         <li class="li-left">Booking Reference: <b>Not Available</b></li>
       </span-->
       <li class="li-left">Transportation: {{ travel_event.transport }}</li>
-      <!--span v-if="travel_event.transport_url">
+      <span v-if="travel_event.transport_url">
         <li class="li-left"><b><a :href="travel_event.transport_url" target="_blank">Transport Reference</a></b></li>
       </span>
-      <span-- v-else>
+      <span v-if="!travel_event.transport_url">
         <li class="li-left">Transport Reference: <b>URL Not Available</b></li>
-      </span-->
+      </span>
       <li class="li-left">Start: <b>{{ formatStandardDateTime(travel_event.start_date) }}</b></li>
       <li class="li-left">End: <b>{{ formatStandardDateTime(travel_event.end_date) }}</b></li>
       <li class="li-left">Notes:</li>
