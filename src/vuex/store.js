@@ -222,6 +222,9 @@ export default new Vuex.Store({
     SET_TRAVELS(state, travels) {
       state.travels = travels;
     },
+    SET_TRAVEL_EVENTS(state, travel_events) {
+      state.travel_events = travel_events;
+    },
     ADD_USER(state, user) {
       state.users.push(user);
     },
@@ -1224,6 +1227,18 @@ export default new Vuex.Store({
           alert("Travels Fetch Error: ", error.response.data )
         });
     },
+    async fetchTravelEvents({ commit }) {
+      EventService.getTravelEvents()
+        .then((response) => {
+          commit("SET_TRAVEL_EVENTS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          //console.log(error);
+          alert("Travel Events Fetch Error: ", error.response.data )
+        });
+    },
+
     async updateTravel({ commit }, travel) {
       EventService.putTravel(travel)
         .then((response) => {

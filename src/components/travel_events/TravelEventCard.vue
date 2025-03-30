@@ -3,15 +3,12 @@
   <div :class="{ 'event-has-passed': hasEventPassed(travel_event), 'card': isEventCurrent}">
     <p id="p-custom-link">
       <router-link
-        :to="{ name: 'TravelEventDetails', params: { id: `${travel_event.id}` } }"
+        :to="{ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } }"
       >
         {{ travel_event.description }}
       </router-link>
     </p>
     <ul>
-      <span v-if="travel_event.travel_event_url">
-        <li class="li-left"><b><a :href="travel_event.travel_event_url" target="_blank">Event Information</a></b></li>
-      </span>
       <span v-if="!travel_event.travel_event_url">
         <li class="li-left">Event Information: <b>URL Not Available</b></li>
       </span>

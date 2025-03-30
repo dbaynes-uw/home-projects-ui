@@ -51,11 +51,6 @@
         <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
       </router-link>
     </span>
-    <span>
-      <router-link :to="{ name: 'TravelDetails', params: { id: `${travel.id}` } }">
-        <i class="fa-solid fa-eye fa-stack-1x"></i>
-      </router-link>
-    </span>
     <span class="fa-stack">
       <i @click="deleteTravel(travel)" class="fas fa-trash-alt fa-stack-1x">
       </i>

@@ -276,6 +276,10 @@ export default {
     this.init();
     return axios.get(api_url + "travels")
   },
+  getTravelEvents() {
+    this.init();
+    return axios.get(api_url + "travel_events")
+  },
   getTravel(id) {
     this.init();
     return axios.get(api_url + "travels/" + id);
