@@ -61,7 +61,7 @@
           </div>
         </span>
         <span v-else>
-          <TravelEventIndex :travel_events="travel_events" />
+          <TravelEventIndex :travel_events="travel.travel_events" />
         </span>
       </span>
     </span>

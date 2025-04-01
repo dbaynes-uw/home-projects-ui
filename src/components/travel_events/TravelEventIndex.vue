@@ -12,7 +12,11 @@
       <th id="background-blue">Notes</th>
       <th id="background-blue" style="text-align: right">Actions</th>
     </tr>
-    <tr v-for="travel_event in travel_events" :key="travel_event.id" travel_event="travel_event">
+    <tr v-for="travel_event in travel_events"
+              :key="travel_event.id"
+              travel_event="travel_event"
+              :id="eventPassed(travel_event)"
+      >
       <td>{{ travel_event.title }}</td>
       <td>{{ travel_event.description }}</td>
       <td>{{ formatFullYearDate(travel_event.start_date) }}</td>
@@ -71,6 +75,18 @@ export default {
     };
   },
   methods: {
+    eventPassed(e) {
+      var dayjs = require('dayjs')
+      let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
+      console.log("formatDateToday: ", formatDateToday)
+      if (e.end_date < formatDateToday ){
+        console.log("Event Passed: ", e.end_date)
+        return 'event-passed'
+      } else {
+        console.log("Event Current: ", e.end_date)
+        return 'event-current'
+      }
+    },
     searchColumns() {
       this.filteredResults = [];
       this.columnDetails = null;
@@ -143,6 +159,13 @@ export default {
 };
 </script>
 <style scoped>
+#event-passed {
+  color: #706e6e;
+  font-weight: bold;
+}
+#event-current {
+  font-weight: bold;
+}
 #action-eye-icon {
   top: 0.4rem;
   font-size: 18px;
@@ -152,31 +175,8 @@ export default {
   top: 0.5rem;
   left: 2.3rem;
 }
-.table-index-style {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  background-color: #7ba8bd;
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-tr {
-  line-height: 1.6 !important;
-  border: none;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.eventAssigned {
-  background: #e8f7f0;
-}
+
+
 .fa-table-stack {
   position: relative;
   left: 2rem;
@@ -184,14 +184,6 @@ td {
 i {
   bottom: 0px;
   color: gray;
-}
-tr.is-complete {
-  background: #35495e;
-  color: #fff;
-}
-#status-message {
-  text-align: center;
-  color: navy;
 }
 </style>
 

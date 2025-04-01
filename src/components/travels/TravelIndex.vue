@@ -152,31 +152,6 @@ export default {
   top: 0.5rem;
   left: 2.3rem;
 }
-.table-index-style {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  background-color: #7ba8bd;
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-tr {
-  line-height: 1.6 !important;
-  border: none;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-td {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.eventAssigned {
-  background: #e8f7f0;
-}
 .fa-table-stack {
   position: relative;
   left: 2rem;
