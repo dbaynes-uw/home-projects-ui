@@ -1720,6 +1720,13 @@
   dependencies:
     "@vue/devtools-kit" "^7.5.3"
 
+"@vue/devtools-api@^7.7.2":
+  version "7.7.2"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-7.7.2.tgz#49837eae6f61fc43a09f5d6c2d3210f9f73a0d09"
+  integrity sha512-1syn558KhyN+chO5SjlZIwJ8bV/bQ1nOVTG66t2RbG66ZGekyiYNmRO7X9BJCXQqPsFHlnksqvPhce2qpzxFnA==
+  dependencies:
+    "@vue/devtools-kit" "^7.7.2"
+
 "@vue/devtools-kit@^7.5.3":
   version "7.5.3"
   resolved "https://registry.yarnpkg.com/@vue/devtools-kit/-/devtools-kit-7.5.3.tgz#c103e2b9026edb3289c90c887dddd2e837e8727b"
@@ -1733,10 +1740,30 @@
     speakingurl "^14.0.1"
     superjson "^2.2.1"
 
+"@vue/devtools-kit@^7.7.2":
+  version "7.7.2"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-kit/-/devtools-kit-7.7.2.tgz#3315bd5b144f98c7b84c2f44270b445644ec8f10"
+  integrity sha512-CY0I1JH3Z8PECbn6k3TqM1Bk9ASWxeMtTCvZr7vb+CHi+X/QwQm5F1/fPagraamKMAHVfuuCbdcnNg1A4CYVWQ==
+  dependencies:
+    "@vue/devtools-shared" "^7.7.2"
+    birpc "^0.2.19"
+    hookable "^5.5.3"
+    mitt "^3.0.1"
+    perfect-debounce "^1.0.0"
+    speakingurl "^14.0.1"
+    superjson "^2.2.1"
+
 "@vue/devtools-shared@^7.5.3":
   version "7.5.3"
   resolved "https://registry.yarnpkg.com/@vue/devtools-shared/-/devtools-shared-7.5.3.tgz#c7561b925e49b36d3f2058c23068a0f5509d9f4d"
   integrity sha512-i2tCUtAEQ0S8AmTuy6FSOmVKCB5ajmMaVrrw0ypX75koLSo1mssQ8zezds5IoUZHRiXBsgoGHbJGuGwyrSGhqQ==
+  dependencies:
+    rfdc "^1.4.1"
+
+"@vue/devtools-shared@^7.7.2":
+  version "7.7.2"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-shared/-/devtools-shared-7.7.2.tgz#b11b143820130a32d8ce5737e264d06ab6d62f40"
+  integrity sha512-uBFxnp8gwW2vD6FrJB8JZLUzVb6PNRG0B0jBnHsOH8uKyva2qINY8PTF5Te4QlTbMDqU5K6qtJDr6cNsKWhbOA==
   dependencies:
     rfdc "^1.4.1"
 
@@ -6062,6 +6089,13 @@ picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
+
+pinia@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/pinia/-/pinia-3.0.2.tgz#0616c2e1b39915f253c7626db3c81b7cdad695da"
+  integrity sha512-sH2JK3wNY809JOeiiURUR0wehJ9/gd9qFN2Y828jCbxEzKEmEt0pzCXwqiSTfuRsK9vQsOflSdnbdBOGrhtn+g==
+  dependencies:
+    "@vue/devtools-api" "^7.7.2"
 
 pkg-dir@^4.1.0:
   version "4.2.0"

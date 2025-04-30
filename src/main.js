@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import axios from "axios";
 import App from "./App.vue";
+import { createPinia } from 'pinia'
 import "./assets/global.css";
 import router from "./router";
 import store from "./vuex/store.js";
@@ -42,6 +43,7 @@ createApp({
   }
 }).use(router)
   .use(store)
+  .use(createPinia())
   .use(vuetify)
   .use("v-select", vSelect)
   .mount("#app")

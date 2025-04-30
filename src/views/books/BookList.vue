@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Book List</h2>
+      <h2>Book List for {{ userStore.firstName }} - {{ bookStore.numberOfBooks }} Books Read</h2>
       <h2 id="status-message">
         <u>{{ this.$route.query.success }}</u>
       </h2>
@@ -37,6 +37,10 @@
       />
     </div>
   </div>
+  <br>
+  filteredResults.length {{ filteredResults.length }}
+  <br>
+  searchResults: {{ searchResults }}
   <div class="book-list">
     <span v-if="filteredResults.length == 0">
       <span v-if="searchResults == false">
@@ -44,11 +48,11 @@
       </span>
       <span v-else>
         <span v-if="requestIndexDetailFlag == false">
-          <h3 id="h3-left">&nbsp;&nbsp;Total: {{ books.length }}</h3>
+          <h3 id="h3-left">&nbsp;&nbsp;Total: {{ bookStore.books.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
             <BookCard
-              v-for="book in books"
+              v-for="book in bookStore.books"
               :key="book.id"
               :book="book"
               class="card"
@@ -58,7 +62,7 @@
           </div>
         </span>
         <span v-else>
-          <BookIndex :books="books" />
+          <BookIndex :books="bookStore.books" />
         </span>
       </span>
     </span>
@@ -83,13 +87,22 @@
   </div>
 </template>
 <script>
+import { useUserStore } from '@/stores/UserStore'
+import { useBookStore } from '@/stores/BookStore.js'
 import DateFormatService from "@/services/DateFormatService.js";
 import BookIndex from "@/components/books/BookIndex.vue";
 import BookCard from "@/components/books/BookCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-
 export default {
   name: "BookList",
+  setup() {
+    const userStore = useUserStore()
+    const bookStore = useBookStore()
+    return {
+      userStore,
+      bookStore
+    }
+  },
   components: {
     BookIndex,
     BookCard,
@@ -111,16 +124,12 @@ export default {
     };
   },
   mounted() {
-    this.sortedData = this.books;
+    this.sortedData = this.bookStore.fetchBooks()
   },
   created() {
-    this.$store.dispatch("fetchBooks");
-    this.sortedData = this.books;
-  },
-  computed: {
-    books() {
-      return this.$store.state.books;
-    },
+    //this.$store.dispatch("fetchBooks");
+    this.bookStore.fetchBooks()
+    this.sortedData = this.bookStore.fetchBooks()
   },
   methods: {
     requestIndexDetail() {
@@ -144,11 +153,11 @@ export default {
         this.columnDetails = null;
       } else {
         if (
-          this.books &&
-          this.books.length > 0 &&
+          this.bookStore.books &&
+          this.bookStore.books.length > 0 &&
           this.inputSearchText.length >= 2
         ) {
-          this.books.forEach((book) => {
+          this.bookStore.books.forEach((book) => {
             const searchHasTitle =
               book.title &&
               book.title
@@ -159,11 +168,11 @@ export default {
               book.author
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
-            const searchHasDateRead = 
-              book.date_read
-              .includes(this.inputSearchText)
+            //const searchHasDateRead = 
+            //  book.date_read
+            //  .includes(this.inputSearchText)
 
-            if (searchHasTitle || searchHasAuthor || searchHasDateRead ) {
+            if (searchHasTitle || searchHasAuthor ) {
               this.filteredResults.push(book);
             }
             if (this.filteredResults.length > 0) {
@@ -179,7 +188,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.books;
+      this.sortedData = this.bookstore.books;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;

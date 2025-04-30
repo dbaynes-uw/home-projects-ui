@@ -447,17 +447,6 @@ export default new Vuex.Store({
           });
       }
     },
-    async fetchBooks({ commit }) {
-      EventService.getBooks()
-        .then((response) => {
-          commit("SET_BOOKS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          //console.log(error);
-          alert("Books Fetch Error: ", error.response.data )
-        });
-    },
     async fetchGarden({ commit, state }, id) {
       const existingGarden = state.gardens.find((garden) => garden.id === id);
       if (existingGarden) {
@@ -1482,6 +1471,9 @@ export default new Vuex.Store({
 
   },
   getters: {
+    numberOfBooks(state) {
+      return state.books.length
+    },
     loggedIn (state) {
       return !!state.user
     },

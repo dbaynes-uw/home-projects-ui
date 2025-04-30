@@ -4,13 +4,12 @@
     <v-card-title class="pb-0">
       <h2>Watering System Details</h2>
     </v-card-title>
-    <v-img
-          :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
-          class="my-3"
-          contain
-          height="500"
-      />
-    <ul>
+<v-img
+      :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
+      class="my-3"
+      height="500"
+      contain
+    />    <ul>
       <li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
