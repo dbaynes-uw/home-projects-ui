@@ -47,6 +47,7 @@
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>
+        requestIndexDetailFlag: {{ requestIndexDetailFlag }}
         <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">&nbsp;&nbsp;Total: {{ bookStore.books.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
@@ -93,14 +94,21 @@ import DateFormatService from "@/services/DateFormatService.js";
 import BookIndex from "@/components/books/BookIndex.vue";
 import BookCard from "@/components/books/BookCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { ref } from 'vue';
 export default {
   name: "BookList",
   setup() {
     const userStore = useUserStore()
     const bookStore = useBookStore()
+    const requestIndexDetailFlag = ref(false)
+    function requestIndexDetail() {
+      requestIndexDetailFlag.value = !requestIndexDetailFlag.value;
+    }
     return {
       userStore,
-      bookStore
+      bookStore,
+      requestIndexDetail,
+      requestIndexDetailFlag
     }
   },
   components: {
@@ -110,7 +118,6 @@ export default {
   },
   data() {
     return {
-      requestIndexDetailFlag: false,
       searchResults: null,
       inputSearchText: "",
       filteredResults: [],
@@ -132,9 +139,9 @@ export default {
     this.sortedData = this.bookStore.fetchBooks()
   },
   methods: {
-    requestIndexDetail() {
-      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
-    },
+    //requestIndexDetail() {
+    //  this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    //},
     editBook(book) {
       this.$router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
     },
