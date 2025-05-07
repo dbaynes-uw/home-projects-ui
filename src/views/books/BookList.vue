@@ -94,21 +94,39 @@ import DateFormatService from "@/services/DateFormatService.js";
 import BookIndex from "@/components/books/BookIndex.vue";
 import BookCard from "@/components/books/BookCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+//Composition API Imports:
 import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router'
+//
 export default {
   name: "BookList",
   setup() {
     const userStore = useUserStore()
     const bookStore = useBookStore()
     const requestIndexDetailFlag = ref(false)
+    //?const filteredResults = ref([])
+    const route = useRoute()
+    const router = useRouter()
+
     function requestIndexDetail() {
       requestIndexDetailFlag.value = !requestIndexDetailFlag.value;
+    }
+    //?function showIndex() {
+    //?  filteredResults.value = [];
+    //?}
+    function editBook(book) {
+      console.log("ROUTE: ", route)
+      console.log("ROUTE FULLPATH: ", route.fullPath)
+      console.log("ROUTE Name: ", route.name)
+      console.log("ROUTE PATH: ", route.path)
+      router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
     }
     return {
       userStore,
       bookStore,
       requestIndexDetail,
-      requestIndexDetailFlag
+      requestIndexDetailFlag,
+      editBook
     }
   },
   components: {
@@ -124,9 +142,6 @@ export default {
       columnDetails: null,
       sortedData: [],
       sortedbyASC: false,
-      description: null,
-      frequency: null,
-      completed: 0,
       statusMessage: "",
     };
   },
@@ -139,12 +154,12 @@ export default {
     this.sortedData = this.bookStore.fetchBooks()
   },
   methods: {
-    //requestIndexDetail() {
-    //  this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
-    //},
-    editBook(book) {
-      this.$router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
-    },
+    //CrequestIndexDetail() {
+    //C  this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
+    //C},
+    //CeditBook(book) {
+    //C  this.$router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
+    //C},
     showIndex() {
       this.filteredResults = [];
     },
