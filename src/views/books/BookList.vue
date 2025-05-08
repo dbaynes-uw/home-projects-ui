@@ -79,7 +79,7 @@
         </div>
       </span>
       <span v-else>
-        <BookIndex :books="filteredResults.value" />
+        <BookIndex :books="filteredResults" />
       </span>
     </span>
   </div>
