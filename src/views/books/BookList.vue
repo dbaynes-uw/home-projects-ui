@@ -4,7 +4,7 @@
     <v-card-title class="pb-0">
       <h2>Book List for {{ userStore.firstName }} - {{ bookStore.numberOfBooks }} Books Read</h2>
       <h2 id="status-message">
-        <u>{{ this.$route.query.success }}</u>
+        <u>{{ $route.query.success }}</u>
       </h2>
     </v-card-title>
     <ul>
@@ -84,122 +84,113 @@
     </span>
   </div>
 </template>
-<script>
-import { useUserStore } from '@/stores/UserStore'
-import { useBookStore } from '@/stores/BookStore.js'
-import BookIndex from "@/components/books/BookIndex.vue";
-import BookCard from "@/components/books/BookCard.vue";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-//Composition API Imports:
-import { ref, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router'
-//
-export default {
-  name: "BookList",
-  setup() {
-    const userStore = useUserStore()
-    const bookStore = useBookStore()
-    const requestIndexDetailFlag = ref(false)
-    /*    */
-    const searchResults = ref(null)
-    const inputSearchText = ref('')
-    const filteredResults = ref([])
-    const isEmptyResultsArray = computed(() => filteredResults.value.length === 0);
-    const columnDetails =  ref(null)
+<script setup>
+  import { useUserStore } from '@/stores/UserStore'
+  import { useBookStore } from '@/stores/BookStore.js'
+  import BookIndex from "@/components/books/BookIndex.vue";
+  import BookCard from "@/components/books/BookCard.vue";
+  import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+  //Composition API Imports:
+  import { ref, computed, onMounted } from 'vue';
+  import { useRoute, useRouter } from 'vue-router'
+  onMounted(() => {
+    console.log('Do stuff related to App Title')
+    bookStore.fetchBooks()
+  })
+  //
 
-    const route = useRoute()
-    const router = useRouter()
-
-    function requestIndexDetail() {
-      requestIndexDetailFlag.value = !requestIndexDetailFlag.value;
-    }
-    function editBook(book) {
-      console.log("ROUTE: ", route)
-      console.log("ROUTE FULLPATH: ", route.fullPath)
-      console.log("ROUTE Name: ", route.name)
-      console.log("ROUTE PATH: ", route.path)
-      router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
-    }
-    /**/
-    function showIndex() {
-      filteredResults.value = [];
-    }
-    function searchColumns() {
-      searchResults.value = true;
+  const userStore = useUserStore()
+  const bookStore = useBookStore()
+  const requestIndexDetailFlag = ref(false)
+  /*    */
+  const searchResults = ref(null)
+  const inputSearchText = ref('')
+  const filteredResults = ref([])
+  const isEmptyResultsArray = computed(() => filteredResults.value.length === 0);
+  const columnDetails =  ref(null)
+  const route = useRoute()
+  const router = useRouter()
+  function requestIndexDetail() {
+    requestIndexDetailFlag.value = !requestIndexDetailFlag.value;
+  }
+  function editBook(book) {
+    console.log("ROUTE: ", route)
+    console.log("ROUTE FULLPATH: ", route.fullPath)
+    console.log("ROUTE Name: ", route.name)
+    console.log("ROUTE PATH: ", route.path)
+    router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
+  }
+  /**/
+  function showIndex() {
+    filteredResults.value = [];
+  }
+  function searchColumns() {
+    searchResults.value = true;
+    filteredResults.value = [];
+    columnDetails.value = null;
+    if (
+      inputSearchText.value == null ||
+      (inputSearchText.value != null && inputSearchText.value.length === 0)
+    ) {
       filteredResults.value = [];
       columnDetails.value = null;
+    } else {
       if (
-        inputSearchText.value == null ||
-        (inputSearchText.value != null && inputSearchText.value.length === 0)
+        bookStore.books &&
+        bookStore.books.length > 0 &&
+        inputSearchText.value.length >= 2
       ) {
-        filteredResults.value = [];
-        columnDetails.value = null;
-      } else {
-        if (
-          bookStore.books &&
-          bookStore.books.length > 0 &&
-          inputSearchText.value.length >= 2
-        ) {
-          bookStore.books.forEach((book) => {
-            const searchHasTitle =
-              book.title &&
-              book.title
-                .toLowerCase()
-                .includes(inputSearchText.value.toLowerCase()); 
-            const searchHasAuthor =
-              book.author &&
-              book.author
-                .toLowerCase()
-                .includes(inputSearchText.value.toLowerCase());
-            //const searchHasDateRead = 
-            //  book.date_read
-            //  .includes(inputSearchText.value)
-            
-            if (searchHasTitle || searchHasAuthor ) {
-              filteredResults.value.push(book);
-            }
-            if (filteredResults.value.length > 0) {
-              searchResults.value = true;
-              return filteredResults.value
-            } else {
-              searchResults.value = false;
-            }
-          });
-        }
+        bookStore.books.forEach((book) => {
+          const searchHasTitle =
+            book.title &&
+            book.title
+              .toLowerCase()
+              .includes(inputSearchText.value.toLowerCase()); 
+          const searchHasAuthor =
+            book.author &&
+            book.author
+              .toLowerCase()
+              .includes(inputSearchText.value.toLowerCase());
+          //const searchHasDateRead = 
+          //  book.date_read
+          //  .includes(inputSearchText.value)
+          
+          if (searchHasTitle || searchHasAuthor ) {
+            filteredResults.value.push(book);
+          }
+          if (filteredResults.value.length > 0) {
+            searchResults.value = true;
+            return filteredResults.value
+          } else {
+            searchResults.value = false;
+          }
+        });
       }
     }
-    /**/
-    return {
-      userStore,
-      bookStore,
-      requestIndexDetail,
-      requestIndexDetailFlag,
-      editBook,
-      showIndex,
-      searchColumns,
-      searchResults,
-      inputSearchText,
-      filteredResults,
-      isEmptyResultsArray,
-      columnDetails: null,
-    }
-  },
-  components: {
-    BookIndex,
-    BookCard,
-    ConfirmDialogue
-  },
-  data() {
-    return {};
-  },
-  mounted() {
-    this.sortedData = this.bookStore.fetchBooks()
-  },
-  created() {
-    this.bookStore.fetchBooks()
-    this.sortedData = this.bookStore.fetchBooks()
-  },
-  methods: {},
-};
+  }
+
+  /**/
+  //return {
+  //  userStore,
+  //  bookStore,
+  //  requestIndexDetail,
+  //  requestIndexDetailFlag,
+  //  editBook,
+  //  showIndex,
+  //  searchColumns,
+  //  searchResults,
+  //  inputSearchText,
+  //  filteredResults,
+  //  isEmptyResultsArray,
+  //  columnDetails: null,
+  //}
+  //components: {
+  //  BookIndex,
+  //  BookCard,
+  //  ConfirmDialogue
+  //}
+  //created() {
+  //  this.bookStore.fetchBooks()
+  //}
 </script>
 <style></style>
