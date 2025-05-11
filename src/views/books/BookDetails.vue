@@ -2,10 +2,10 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Book Card</h1>
   <router-link :to="{ name: 'BookList' }">
-      <b>Back to Book List</b>
-    </router-link>
+    <b>Back to Book List</b>
+  </router-link>
   <br/>
-  <h3>{{ this.statusMessage }}</h3>
+  <br/>
    <div class="card-display">
     <BookCard
       :key="book.id"
