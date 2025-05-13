@@ -1,0 +1,93 @@
+<!--script setup>
+//const props = defineProps()
+  const props = defineProps({
+    message: {
+      type: String,
+      default: 'Message Default'
+      },
+    test: {
+      type: String,
+      default: 'Default!'
+      }
+    }
+  )
+</script-->
+<script setup>
+  import { useBookStore } from '@/stores/BookStore';
+  import { ref, defineEmits  } from 'vue';
+  const emit = defineEmits(['searchArrayReturned'])
+  const filteredResults = ref([])
+
+  const inputSearchText = ref('')
+  const searchResults = ref(null)
+  const columnDetails =  ref(Object)
+  const bookStore = useBookStore()
+  function showIndex() {
+    filteredResults.value = [];
+    emit('searchArrayReturned', filteredResults.value)
+    return
+  }
+  function searchColumns() {
+    searchResults.value = true;
+    filteredResults.value = [];
+    columnDetails.value = null;
+    if (
+      inputSearchText.value == null ||
+      (inputSearchText.value != null && inputSearchText.value.length === 0)
+    ) {
+      filteredResults.value = [];
+      columnDetails.value = null;
+    } else {
+      if (
+        bookStore.books &&
+        bookStore.books.length > 0 &&
+        inputSearchText.value.length >= 2
+      ) {
+        bookStore.books.forEach((book) => {
+          const searchHasTitle =
+            book.title &&
+            book.title
+              .toLowerCase()
+              .includes(inputSearchText.value.toLowerCase()); 
+          const searchHasAuthor =
+            book.author &&
+            book.author
+              .toLowerCase()
+              .includes(inputSearchText.value.toLowerCase());
+          if (searchHasTitle || searchHasAuthor ) {
+            filteredResults.value.push(book);
+          }
+          if (filteredResults.value.length > 0) {
+            searchResults.value = true;
+            emit('searchArrayReturned', filteredResults.value)
+          } else {
+            searchResults.value = false;
+          }
+        });
+      }
+    }
+  }
+</script>
+
+<template>
+  <!--div style="width: 100%">
+    <p>Props: {{ props.message }}</p>
+    <p>Test Props: {{ test }}</p>
+  </div-->
+
+<div style="width: 100%">
+    <div class="auto-search-container">
+      <v-text-field
+        clearable
+        clear-icon="mdi-close"
+        @click:clear="showIndex"
+        type="text"
+        class="np-input-search"
+        v-model="inputSearchText"
+        placeholder="Search"
+        autocomplete="off"
+        v-on:keyup="searchColumns"
+      />
+    </div>
+  </div>
+</template>
