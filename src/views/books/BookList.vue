@@ -4,10 +4,9 @@
   import BookIndex from "@/components/books/BookIndex.vue";
   import BookCard from "@/components/books/BookCard.vue";
   import BookSearch from "@/components/books/BookSearch.vue";
-  //import ChildComponent from "@/components/books/ChildComponent.vue";
   import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
   import { ref, computed, onMounted } from 'vue';
-  import { useRoute, useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router'
   onMounted(() => {
     bookStore.fetchBooks()
   })
@@ -16,33 +15,16 @@
   const requestIndexDetailFlag = ref(false)
   const searchResults = ref(null)
   const inputSearchText = ref('')
-  //const receivedArray = ref([]);
   const filteredResults = ref([])
-  /*
-  const handleReturnArray = (array) => {
-    receivedArray.value = array;
-  }
-  */
-  //?defineExpose({searchColumns, returnArray})
-  //const emit = defineEmits(['update:modelValue'])
-  //const props = defineProps({
-  //  modelValue: {
-  //    type: Boolean,
-  //    default: false
-  //  }
-  //})
   const handleReturnArray = (array) => {
     filteredResults.value = array;
   }
-
   const isEmptyResultsArray = computed(() => filteredResults.value.length === 0);
-  const route = useRoute()
   const router = useRouter()
   function requestIndexDetail() {
     requestIndexDetailFlag.value = !requestIndexDetailFlag.value;
   }
   function editBook(book) {
-    console.log("ROUTE: ", route)
     router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
   }
 </script>
@@ -71,13 +53,6 @@
   </v-card>
   <br/>
   <div style="width: 100%">
-    <!--BookSearch :message="bookListMessage" :test="test"></BookSearch-->
-    <!--ChildComponent
-      ref="childRef"
-      @array-returned="handleReturnArray" 
-    /-->  
-    <!--ChildComponent ref="childRef" @array-returned="handleArrayReturned" /-->  
-    <br/>
     <BookSearch
       ref="childRef"
       @search-array-returned="handleReturnArray"
@@ -85,23 +60,8 @@
       :bookStore="bookStore"
       >
     </BookSearch>
-    <!--div class="auto-search-container">
-      <v-text-field
-        clearable
-        clear-icon="mdi-close"
-        @click:clear="showIndex"
-        type="text"
-        class="np-input-search"
-        v-model="inputSearchText"
-        placeholder="Search"
-        autocomplete="off"
-        v-on:keyup="searchColumns"
-      />
-    </div-->
   </div>
-  filteredResults from Search: {{ filteredResults }}
   <br/>
-  isEmptyResultsArray: {{ isEmptyResultsArray }}
   <div class="book-list">
     <span v-if="isEmptyResultsArray">
       <span v-if="searchResults == false">
@@ -128,10 +88,6 @@
       </span>
     </span>
     <span v-if="!isEmptyResultsArray">
-      <br/>
-      not isEmptyResultsArray
-      <br/>
-      requestIndexDetailFlag: {{ requestIndexDetailFlag }}
       <span v-if="requestIndexDetailFlag == false">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
         <span>Double click to Edit!</span>

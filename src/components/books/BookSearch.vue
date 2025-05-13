@@ -1,17 +1,3 @@
-<!--script setup>
-//const props = defineProps()
-  const props = defineProps({
-    message: {
-      type: String,
-      default: 'Message Default'
-      },
-    test: {
-      type: String,
-      default: 'Default!'
-      }
-    }
-  )
-</script-->
 <script setup>
   import { useBookStore } from '@/stores/BookStore';
   import { ref, defineEmits  } from 'vue';
@@ -70,12 +56,7 @@
 </script>
 
 <template>
-  <!--div style="width: 100%">
-    <p>Props: {{ props.message }}</p>
-    <p>Test Props: {{ test }}</p>
-  </div-->
-
-<div style="width: 100%">
+  <div style="width: 100%">
     <div class="auto-search-container">
       <v-text-field
         clearable
