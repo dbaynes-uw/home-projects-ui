@@ -1,14 +1,15 @@
 <script setup>
   import { useBookStore } from '@/stores/BookStore';
   import { ref, defineEmits  } from 'vue';
+  /* const */
   const emit = defineEmits(['searchArrayReturned'])
   const filteredResults = ref([])
-
   const inputSearchText = ref('')
   const searchResults = ref(null)
   const columnDetails =  ref(Object)
   const bookStore = useBookStore()
-  function showIndex() {
+   /* functions */
+  function resetSearch() {
     filteredResults.value = [];
     emit('searchArrayReturned', filteredResults.value)
     return
@@ -54,14 +55,13 @@
     }
   }
 </script>
-
 <template>
   <div style="width: 100%">
     <div class="auto-search-container">
       <v-text-field
         clearable
         clear-icon="mdi-close"
-        @click:clear="showIndex"
+        @click:clear="resetSearch"
         type="text"
         class="np-input-search"
         v-model="inputSearchText"
