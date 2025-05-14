@@ -124,9 +124,9 @@ export default {
         created_by: this.$store.state.user.resource_owner.email,
       };   
       if (this.$store.dispatch("putProducts", sub_products, {params: { products: sub_products }} )) {
-        //FETCH SHOPPING LIST???
         this.$store.dispatch("fetchShoppingList");
-        alert("Products List Updated Successfully - RS: " + this.resultSet[0].product_name + ' - ' + this.resultSet[0].active)
+        //alert("Products List Updated Successfully - RS: " + this.resultSet[0].product_name + ' - ' + this.resultSet[0].active)
+        alert("Products List Updated Successfully")        
         location.reload();
         //XXXXthis.$router.push({ name: 'ProductsByLocations'})
       } else {
