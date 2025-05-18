@@ -104,7 +104,7 @@ export default {
           updated_by: this.$store.state.created_by,
         };
         if (this.$store.dispatch("updateWatering", watering)) {
-          this.$router.push({ name: "WateringDetails", params: { id: watering.id } });
+          this.$router.push({ name: "WateringList" });
         } else {
           alert("Error in Watering Update");
         }

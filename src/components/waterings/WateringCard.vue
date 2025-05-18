@@ -6,7 +6,7 @@
     <span v-if="this.$route.name == 'WateringList'">
       <!--As opposed to: span v-if="currentUrl.includes('/waterings/')"-->
       <h4>
-        <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
+        <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
           {{ watering.watering_name }}
           </router-link>
       </h4>
@@ -14,6 +14,10 @@
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(watering, this.splitLength)" :key="idx">{{ notes }}</b>
       </ul>   
+      <ul>
+        <li class="li-left">Notes 2:</li>
+        <b class="li-left-none" v-for="(notes, idx) in joinedNotes(watering)" :key="idx">{{ notes }}</b>
+      </ul> 
     </span>
     <span v-else>
       <h4 id="p-custom-link">
@@ -142,6 +146,9 @@ export default {
     },
     splitList(wateringData, splitLength) {
       return SplitStringService.splitList(wateringData.notes, splitLength) 
+    },
+    joinedNotes(e) {
+      return e.notes.split('\n');
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);

@@ -503,7 +503,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/waterings/:id",
+    path: "/watering/:id",
     name: "WateringDetails",
     props: true,
     component: WateringDetails,

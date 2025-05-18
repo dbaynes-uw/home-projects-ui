@@ -384,10 +384,10 @@ export default {
     this.init();
     return axios.get(api_url + "waterings")
   },
-  deleteWatering() {
+  deleteWatering(watering) {
     this.init();
     // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "watering/");
+    return axios.delete(api_url + "waterings/" + `${watering.id}`);
   },
   getOutlet(id) {
     this.init();
