@@ -1448,6 +1448,7 @@ export default new Vuex.Store({
         EventService.getWatering(id)
           .then((response) => {
             commit("SET_WATERING", response.data);
+            return response.data;
           })
           .catch((error) => {
             //console.log(error);

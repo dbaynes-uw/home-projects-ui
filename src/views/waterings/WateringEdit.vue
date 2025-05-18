@@ -52,7 +52,7 @@
 import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import { ref } from 'vue';
+//import { ref } from 'vue';
 </script>
 <script>
 export default {
@@ -60,25 +60,33 @@ export default {
   components: {
     ConfirmDialogue,
   },
+  //created() {
+    //var date = new Date();
+    //console.log(date.toLocaleString());
+    //const watering_active_boolean = ref('');
+    //return { watering_active_boolean };
+  //},
+  //computed: {
+    //showWateringActive:{
+    //  get(){
+    //   var watering_active_string = ""
+    //   watering_active_string = this.watering.active == true ? "Active" : "Inactive"
+    //   return watering_active_string
+    //  }
+    //},
+    //watering() {
+    //  //console.log("2 - computed@@")
+    //  return this.$store.state.watering
+    //},
+    
+  //},
   created() {
-    //console.log("1 - Created@@")
-    var date = new Date();
-    console.log(date.toLocaleString());
-    const watering_active_boolean = ref('');
-    return { watering_active_boolean };
+    this.$store.dispatch("fetchWatering", this.id);
   },
   computed: {
-    showWateringActive:{
-      get(){
-       var watering_active_string = ""
-       watering_active_string = this.watering.active == true ? "Active" : "Inactive"
-       return watering_active_string
-      }
-    },
     watering() {
-      //console.log("2 - computed@@")
-      return this.$store.state.watering
-    },
+    return this.$store.state.watering;
+    }
   },
 
   data() {
