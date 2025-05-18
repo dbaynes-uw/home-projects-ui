@@ -12,7 +12,7 @@
           </router-link>
       </h4> 
       <ul>
-        <li class="li-left">Notes 2:</li>
+        <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in joinedNotes(watering)" :key="idx">{{ notes }}</b>
       </ul> 
     </span>
