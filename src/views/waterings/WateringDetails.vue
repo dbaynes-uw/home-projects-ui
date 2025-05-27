@@ -2,70 +2,56 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Watering System Details</h2>
+      <h2>Watering Details for {{ watering.name }}</h2>
     </v-card-title>
-<v-img
-      :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
-      class="my-3"
-      height="500"
-      contain
-    />    <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
-            <!--router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">Back to Garden</router-link-->
-        </button>
-      </li>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringList' }">Waterings</router-link>
-            <!--router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">Back to Garden</router-link-->
-        </button>
-      </li>
-    </ul> 
-    <br/>
+    <ul>
+    <li class="left">
+      <button id="button-as-link">
+        <router-link :to="{ name: 'GardenList' }">
+          <b>Back to Garden List</b>
+        </router-link>
+      </button>
+    </li>
+    <li>
+      <button id="button-as-link">
+        <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden.id}` } }">
+          Garden Details for {{ watering.name }}
+        </router-link>
+      </button>
+    </li>
+    <li>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'WateringList' }">
+          <b>Back to Watering List</b>
+        </router-link>
+      </button>
+    </li>
+  </ul> 
+  <br/>
   </v-card>
   <br/>
-  <span v-if="watering.active == true">
-      <div class="watering-display">
-        <span class="h3-left-total-child">Click to Change</span>
-        <div class="cards-1-center">
-          <WateringCard
-            :watering="watering"
-          >      
-          </WateringCard>
-          <br />
-        </div>
-          <!--div class="cards"-->
-      <!--WateringCard
-        v-for="watering in watering"
-        :key="watering.id"
-        :watering="watering"
-        class="card"
-      /-->
+  <span v-if="watering.status == 'Active'">
+    <div class="watering-display">
+      <span class="h3-left-total-child">Click to Change</span>
+      <div class="cards-1-center">
+        <WateringCard
+          :key="watering.id"
+          :watering="watering"
+        />      
+        <br />
+      </div>
     </div>
-    <h3 id="h3-left">Total Outlets: {{ watering.outlets.length }}</h3>
-    <span class="h3-left-total-child">Double Click Item to Change</span>
-    <div class="cards">
-      <OutletCard
-        v-for="outlet in watering.outlets"
-        :key="outlet.id"
-        :outlet="outlet"
-        class="card"
-      />
-    </div>
-    <p id="p-custom-link">
-      <router-link
-        :to="{ name: 'OutletCreate', params: { id: `${watering.id}` } }"
-      >
-        <b>Add Outlet</b>
-      </router-link>
-    </p>
   </span>
+  <br/>
+    <v-img
+    :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
+    class="my-3"
+    height="500"
+    contain
+  />    
 </template>
 <script>
 import WateringCard from "@/components/waterings/WateringCard.vue";
-import OutletCard from "@/components/outlets/OutletCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import { ref } from 'vue';
 const successMessage = ref('')
@@ -74,7 +60,6 @@ export default {
   props: ["id"],
   components: {
     WateringCard,
-    OutletCard,
     ConfirmDialogue,
   },
   mounted() {
@@ -92,31 +77,10 @@ export default {
   },
   data() {
     return {
-      outlet: {
-        id: null,
-        watering_id: null,
-        yard_location: null,
-        faucet_location: null,
-        line_number: null,
-        target: null,
-        frequency: null,
-        start_time: null,
-        duration: null,
-        active: null,
-        notes: null,
-        created_at: null,
-        updated_at: null,
-        created_by: this.$store.state.user.resource_owner.email,
-        updated_by: this.$store.state.user.resource_owner.email,
-      },
       statusMessage: "",
     };
   },
-  methods: {
-    editOutlet(outlet) {
-      this.$router.push({ name: 'OutletEdit', params: { id: `${outlet.id}`} });
-    },
-  },
+  methods: {},
 };
 </script>
 <style>

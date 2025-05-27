@@ -181,7 +181,7 @@ export default {
       for (let i=0; i < this.waterings.length; i++) {
 
         if (this.plant.garden_id == this.waterings[i].garden_id) {
-          wateringName = this.waterings[i].watering_name
+          wateringName = this.waterings[i].name
           i = 99
         }
       }

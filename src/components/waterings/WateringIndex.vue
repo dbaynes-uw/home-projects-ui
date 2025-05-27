@@ -3,12 +3,12 @@
   <h3 id="h3-left">Total: {{ waterings.length }}</h3>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('watering_name')">Watering Name</th>
+      <th id="background-blue" @click="sortList('name')">Watering Name</th>
       <th id="background-blue">Notes</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
     <tr v-for="watering in waterings" :key="watering.id" watering="watering">
-      <td>{{ watering.watering_name }}</td>
+      <td>{{ watering.name }}</td>
       <td>{{ watering.notes }}</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
@@ -77,8 +77,8 @@ export default {
         ) {
           this.travels.forEach((watering) => {
             const searchHasWateringName =
-              watering.watering_name &&
-              watering.watering_name
+              watering.name &&
+              watering.name
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchHasNotes =

@@ -87,6 +87,26 @@ export default {
         return 'event-current'
       }
     },
+    async deleteTravelEvent(travel_event) {
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete TravelEvent from List",
+        message:
+          "Are you sure you want to delete " +
+          travel_event.title +
+          "? It cannot be undone.",
+        okButton: "Delete",
+      });
+      // If you throw an error, the method will terminate here unless you surround it wil try/catch
+      if (ok) {
+        this.$store.dispatch("deleteTravelEvent", travel_event);
+        this.statusMessage =
+          "TravelEvent was Deleted for " +
+          travel_event.title +
+          "! Page will refresh in 2 seconds";
+        setTimeout(() => location.reload(), 2500);
+      }
+    },
+
     searchColumns() {
       this.filteredResults = [];
       this.columnDetails = null;
@@ -173,7 +193,7 @@ export default {
 #action-delete-icon {
   position: relative;
   top: 0.5rem;
-  left: 2.3rem;
+  left: 1.75rem;
 }
 
 

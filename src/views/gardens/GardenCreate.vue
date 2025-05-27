@@ -8,7 +8,7 @@
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="garden.garden_name"
+          v-model="garden.name"
           :rules="[requiredGardenName]"
           label="Garden Name"
         >
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       garden: {
-        garden_name: null,
+        name: null,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -54,7 +54,7 @@ export default {
         if (this.$store.dispatch("createGarden", garden)) {
           this.$router.push({ name: "GardenList" });
         } else {
-          alert("Error adding Garden Name" + garden.garden_name);
+          alert("Error adding Garden Name" + garden.name);
         } 
       } else {
         alert("Please correct required fields and resubmit");

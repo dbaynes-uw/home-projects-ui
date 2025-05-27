@@ -3,12 +3,12 @@
   <h3 id="h3-left">Total: {{ gardens.length }}</h3>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('garden_name')">Garden Name</th>
+      <th id="background-blue" @click="sortList('name')">Garden Name</th>
       <th id="background-blue">Notes</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
     <tr v-for="garden in gardens" :key="garden.id" garden="garden">
-      <td>{{ garden.garden_name }}</td>
+      <td>{{ garden.name }}</td>
       <td>{{ garden.notes }}</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
@@ -77,8 +77,8 @@ export default {
         ) {
           this.travels.forEach((garden) => {
             const searchHasGardenName =
-              garden.garden_name &&
-              garden.garden_name
+              garden.name &&
+              garden.name
                 .toLowerCase()
                 .includes(this.inputSearchText.toLowerCase());
             const searchHasNotes =

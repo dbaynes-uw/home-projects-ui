@@ -9,8 +9,8 @@
       </router-link>
     </p>
     <ul>
-      <span v-if="!travel_event.travel_event_url">
-        <li class="li-left">Event Information: <b>URL Not Available</b></li>
+      <span v-if="startsWithHtml(travel_event.travel_event_url)">
+        <li class="li-left">Event Information: <b><a :href="travel_event.event_url" target="_blank">{{travel_event.event_url}}</a></b></li>
       </span>
       <span v-if="startsWithHtml(travel_event.booking_reference)">
         <li class="li-left">Booking Reference: <b><a :href="travel_event.booking_reference" target="_blank">Link</a></b></li>

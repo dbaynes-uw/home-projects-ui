@@ -25,10 +25,10 @@ import MedCreate from "@/views/meds/MedCreate.vue";
 import MedDetails from "@/views/meds/MedDetails.vue";
 import MedEdit from "@/views/meds/MedEdit.vue";
 import MedList from "../views/meds/MedList.vue";
-import OutletCreate from "@/views/outlets/OutletCreate.vue";
-import OutletDetailsByName from "@/views/outlets/OutletDetailsByName.vue";
-import OutletEdit from "@/views/outlets/OutletEdit.vue";
-import OutletDetails from "@/views/outlets/OutletDetails.vue";
+//import OutletCreate from "@/views/outlets/OutletCreate.vue";
+//import OutletDetailsByName from "@/views/outlets/OutletDetailsByName.vue";
+//import OutletEdit from "@/views/outlets/OutletEdit.vue";
+//import OutletDetails from "@/views/outlets/OutletDetails.vue";
 import GardenCreate from "@/views/gardens/GardenCreate.vue";
 import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
@@ -296,31 +296,9 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/outlets/:id",
-    name: "OutletDetails",
-    props: true,
-    component: OutletDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/outlets/:outlet_name",
-    name: "OutletDetailsByName",
-    props: true,
-    component: OutletDetailsByName,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/waterings/create_outlet/:id",
-    name: "OutletCreate",
-    component: OutletCreate,
-    props: true,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/outlet/:id",
-    name: "OutletEdit",
-    component: OutletEdit,
-    props: true,
+    path: "/gardens/create_watering/:garden_id",
+    name: "WateringCreate",
+    component: WateringCreate,
     meta: { requiresAuth: true}
   },
   {
@@ -350,6 +328,7 @@ const routes = [
     name: "ProductsLocationList",
     meta: { requiresAuth: true}
   },
+  /*
   {
     path: "/get_plant_watering_outlet/:outlet_details_by_name",
     name: "OutletDetailsByName",
@@ -357,6 +336,7 @@ const routes = [
     component: OutletDetailsByName,
     meta: { requiresAuth: true}
   },
+  */
   {
     path: "/products",
     name: "ProductList",
@@ -490,13 +470,6 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/watering/:id",
-    name: "WateringEdit",
-    props: true,
-    component: WateringEdit,
-    meta: { requiresAuth: true}
-  },
-  {
     path: "/waterings",
     name: "WateringList",
     component: WateringList,
@@ -504,13 +477,20 @@ const routes = [
   },
   {
     path: "/watering/:id",
+    name: "WateringEdit",
+    props: true,
+    component: WateringEdit,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings/:id",
     name: "WateringDetails",
     props: true,
     component: WateringDetails,
     meta: { requiresAuth: true}
   },
   {
-    path: "/watering/create/:id",
+    path: "/watering/create/:garden_id",
     name: "WateringCreate",
     component: WateringCreate,
     props: true,

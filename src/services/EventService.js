@@ -377,7 +377,6 @@ export default {
     return axios.post(api_url + 'outlets', watering_outlet);
   },
   async getWatering(id) {
-    console.log("ES Get Watering id: ", id)
     this.init();
     return axios.get(api_url + "waterings/" + id)
   },

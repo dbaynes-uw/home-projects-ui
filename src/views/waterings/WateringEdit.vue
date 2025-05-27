@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
-    <h2>Edit Watering {{ watering.watering_name }}</h2>
+    <h2>Edit Watering {{ watering.name }}</h2>
     <router-link :to="{ name: 'WateringList' }">
       <b>Back to Watering List</b>
     </router-link>
@@ -10,15 +10,25 @@
       <div class="form-container">
         <v-text-field
           label="Watering Name"
-          v-model="watering.watering_name"
+          v-model="watering.name"
         />
         <h3 id="p-custom-left">Last Updated: {{ formatStandardDateTime(watering.updated_at) }}</h3>
-        <h3 id="p-custom-left">Current Status: {{ showWateringActive }}</h3>
+        <h3 id="p-custom-left">Current Status: {{ watering.status }}</h3>
         <v-select
-          v-model="active"
-          :items="ACTIVE_STATUSES"
           label="Select Status to Change"
-        />
+          :items="ACTIVE_STATUSES"
+          v-model="watering.status"
+        >
+          <option
+            v-for="option in ACTIVE_STATUSES"
+            :value="option"
+            :key="option"
+            id="select-box"
+            :selected="option === watering.status"
+          >
+            {{ option }}
+          </option>
+        </v-select>
         <br/>
         <!--label for="created_at">Date Created:</!--label>
         <input
@@ -70,7 +80,7 @@ export default {
     //showWateringActive:{
     //  get(){
     //   var watering_active_string = ""
-    //   watering_active_string = this.watering.active == true ? "Active" : "Inactive"
+    //   watering_active_string = this.watering.status == true ? "Active" : "Inactive"
     //   return watering_active_string
     //  }
     //},
@@ -91,7 +101,7 @@ export default {
 
   data() {
     return {
-      active: ""
+      status: ""
     };
   },
   methods: {
@@ -100,28 +110,24 @@ export default {
         title: "Update Watering ",
         message:
           "Are you sure you want to update " + 
-          this.watering.watering_name,
+          this.watering.name,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.watering.active = this.getWateringActive(this.active)
         const watering = {
           ...this.watering,
+          status: this.watering.status,
           updated_at: this.$store.state.created_by,
           updated_by: this.$store.state.created_by,
         };
+        console.log("Dispatch Status: ", this.watering.status)
         if (this.$store.dispatch("updateWatering", watering)) {
           this.$router.push({ name: "WateringList" });
         } else {
           alert("Error in Watering Update");
         }
       }
-    },
-    getWateringActive(boolean_to_string) {
-      var wateringActiveString = ""
-      wateringActiveString = boolean_to_string == 'Active' ? true : false
-      return wateringActiveString
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);

@@ -7,7 +7,7 @@
     <router-link
       :to="{ name: 'GardenDetails', params: { id: this.plant.garden_id} }"
     >
-      <h2>Back to {{ garden.garden_name }}</h2>
+      <h2>Back to {{ garden.name }}</h2>
     </router-link>
   <br/>
   <div class="card-display">

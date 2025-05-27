@@ -8,11 +8,11 @@
       </h2>
     </v-card-title>
     <ul>
-      <li class="left">
+      <!--li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'WateringList' }">Waterings</router-link>
         </button>
-      </li>
+      </!--li-->
       <li class="left">
         <button id="button-as-link">
           <router-link  :to="{ name: 'GardenCreate' }">Add Garden</router-link>

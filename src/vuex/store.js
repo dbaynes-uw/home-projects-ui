@@ -457,7 +457,7 @@ export default new Vuex.Store({
             commit("SET_GARDEN", response.data);
           })
           .catch((error) => {
-            //console.log(error);
+            console.log(error);
             alert("Garden Fetch Error", error.data)
           });
       }
@@ -476,8 +476,8 @@ export default new Vuex.Store({
 
     async fetchGardens({ commit }) {
       //const gardens = [
-      //  {garden_name: 'A1'},
-      //  {garden_name: 'A2'}
+      //  {name: 'A1'},
+      //  {name: 'A2'}
       //]
       EventService.getGardens()
         .then((response) => {
@@ -715,7 +715,7 @@ export default new Vuex.Store({
       EventService.postGarden(garden)
         .then(() => {
           commit("ADD_GARDEN", garden);
-          alert("Garden was successfully added for " + garden.garden_name);
+          alert("Garden was successfully added for " + garden.name);
         })
         .catch((error) => {
           //console.log(error);
@@ -726,11 +726,11 @@ export default new Vuex.Store({
       EventService.putGarden(garden)
         .then((response) => {
           commit("SET_GARDEN", response.data);
-          alert("Garden " + garden.garden_name + " was Successfully Updated.")
+          alert("Garden " + garden.name + " was Successfully Updated.")
         })
         .catch((error) => {
           //console.log(error);
-          alert("Garden Put Error for " + garden.garden_name + ": " + error.response.request.statusText)
+          alert("Garden Put Error for " + garden.name + ": " + error.response.request.statusText)
           location.reload();
       });
     },
@@ -762,11 +762,11 @@ export default new Vuex.Store({
       EventService.putWatering(watering)
         .then((response) => {
           commit("SET_WATERING", response.data);
-          alert("Watering " + watering.watering_name + " was Successfully Updated.")
+          alert("Watering " + watering.name + " was Successfully Updated.")
         })
         .catch((error) => {
           //console.log(error);
-          alert("Watering Put Error for " + watering.watering_name + ": " + error.response.request.statusText)
+          alert("Watering Put Error for " + watering.name + ": " + error.response.request.statusText)
           location.reload();
       });
     },
@@ -1421,7 +1421,7 @@ export default new Vuex.Store({
       EventService.postWatering(watering)
         .then(() => {
           commit("SET_WATERING", watering);
-          alert("Watering was successfully added for " + watering.watering_name);
+          alert("Watering was successfully added for " + watering.name);
         })
         .catch((error) => {
           //console.log(error);

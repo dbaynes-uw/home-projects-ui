@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Watering System for {{ garden.garden_name }}</h3>
+      <h3>Add Watering System for {{ garden.name }}</h3>
     </v-card-title>
     <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
       <b>Back to Garden</b>
@@ -15,7 +15,7 @@
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="watering.watering_name"
+          v-model="watering.name"
           :rules="[requiredWateringName]"
           label="Watering Name"
         >
@@ -37,13 +37,15 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
+  props: ["garden_id"],
   components: {
   },
   data() {
     return {
       watering: {
-        garden_id: null,
-        watering_name: null,
+        id: null,
+        //garden_id: null,
+        name: null,
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -67,13 +69,13 @@ export default {
         const watering = {
           ...this.watering,
           id: uuidv4(),
-          garden_id: this.garden.id,
+          //garden_id: this.garden.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
         if (this.$store.dispatch("createWatering", watering)) {
           //this.$router.push({ name: "WateringDetails" });
         } else {
-          alert("Error adding Watering System " + watering.watering_name);
+          alert("Error adding Watering System " + watering.name);
         } 
       } 
     },

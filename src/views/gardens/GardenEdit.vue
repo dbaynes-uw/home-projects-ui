@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <br/>
   <div class="edit">
-    <h2>Edit Garden {{ garden.garden_name }}</h2>
+    <h2>Edit Garden {{ garden.name }}</h2>
     <router-link :to="{ name: 'GardenList' }">
       <b>Back to Garden List</b>
     </router-link>
@@ -12,7 +12,7 @@
       <div class="form-container">
         <v-text-field
           label="Garden Name"
-          v-model="garden.garden_name"
+          v-model="garden.name"
         /> 
         <h3 id="p-custom-left">Current Status: {{ showGardenActive }}</h3>
         <v-select
@@ -80,7 +80,7 @@ export default {
         title: "Update Garden",
         message:
           "Are you sure you want to update " + 
-          this.garden.garden_name,
+          this.garden.name,
         okButton: "Update",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch

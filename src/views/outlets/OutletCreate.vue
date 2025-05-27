@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Outlet to {{ watering.watering_name }} System</h3>
+      <h3>Add Outlet to {{ watering.name }} System</h3>
     </v-card-title>
     <router-link :to="{ name: 'WateringDetails' }">
       <b>Back to Watering List</b>
@@ -12,7 +12,7 @@
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="watering.watering_name"
+          v-model="watering.name"
           label="Watering System Name"
           :readonly="true"
         >
@@ -176,8 +176,8 @@ export default {
   methods: {
     onSubmit() {
       this.checkValidations();
-      //this.outlet.watering_name = this.watering.name
-      this.outlet.watering_name = this.watering.watering_name
+      //this.outlet.name = this.watering.name
+      this.outlet.name = this.watering.name
       if (this.isFormValid) {
         const outlet = {
           ...this.outlet,

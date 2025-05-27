@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Add Plant to {{ garden.garden_name }} System</h3>
+      <h3>Add Plant to {{ garden.name }} System</h3>
     </v-card-title>
     <router-link :to="{ name: 'GardenList' }">
       <b>Back to Gardens</b>
@@ -12,7 +12,7 @@
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">
         <v-text-field
-          v-model="garden.garden_name"
+          v-model="garden.name"
           label="Garden"
           :readonly="true"
         >
@@ -36,15 +36,8 @@
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
         </v-text-field> 
-        <!--v-text-field label="Water Line"
-          v-model="plant.water_outlet"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-target</v-icon>
-          </template>
-        </v-text-field-->
         <br />
-        <v-select
+        <!--v-select
           label="Outlet Name:"
           :items="outletsGroup.outletsGroup"
           v-model="plant.outlet_id"
@@ -59,15 +52,15 @@
           >
             {{ option }}
           </option>
-        </v-select>
-        <v-text-field
+        </!--v-select>
+        <v-text-field--
           v-model="plant.online_link"
           label="Online Link"
         >
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-link</v-icon>
           </template>
-        </v-text-field>
+        </v-text-field-->
         <v-text-field
           v-model="plant.description"
           label="Description"
@@ -125,9 +118,9 @@ export default {
     return {
       plant: {
         //garden_id: "",
-        outlet_id: "",
+        //outlet_id: "",
         plant_name: "",
-        outlet_name: "",
+        //outlet_name: "",
         yard_location: "",
         description: "",
         water_outlet: "",
@@ -148,19 +141,19 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchGarden", this.$route.params.id);
-    this.$store.dispatch("fetchOutletsDisplayGroup");
+    //this.$store.dispatch("fetchOutletsDisplayGroup");
   },
   computed: {
     garden() {
       return this.$store.state.garden;
     },
-    outletsGroup() {
-      return this.$store.state.outlets_group;
-    },
+    //outletsGroup() {
+    //  return this.$store.state.outlets_group;
+    //},
   },
   methods: {
     onSubmit() {
-      this.checkValidations();
+      //this.checkValidations();
       if (this.isFormValid) {
         const plant = {
           ...this.plant,
@@ -187,16 +180,16 @@ export default {
           return 'Please enter Plant Name';
       }
     },
-    requiredOutletName: function (value) {
-      if (value) {
-          this.isOutletNameValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isOutletNameValid = false
-          return 'Please enter Outlet tName';
-      }
-    },
+    //requiredOutletName: function (value) {
+    //  if (value) {
+    //      this.isOutletNameValid = true
+    //      return true;
+    //  } else {
+    //      this.isFormValid = false
+    //      this.isOutletNameValid = false
+    //      return 'Please enter Outlet tName';
+    //  }
+    //},
     requiredYardLocation: function (value) {
       if (value) {
           this.isYardLocationValid = true

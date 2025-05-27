@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Watering List</h2>
+      <h2>Waterings List</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -15,7 +15,7 @@
       </li>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'WateringCreate', params: { id: `${waterings[0].garden_id}` } }">Add Watering</router-link>
+          <!--router-link  :to="{ name: 'WateringCreate', params: { id: `${garden.id}` } }">Add Watering</!--router-link-->
         </button>
       </li>
       <li>
@@ -91,6 +91,7 @@ import WateringCard from "@/components/waterings/WateringCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
   name: "WateringList",
+  props: ["id"],
   components: {
     WateringCard,
     WateringIndex,
