@@ -2,6 +2,14 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="edit">
     <h2>Edit Watering {{ watering.name }}</h2>
+    <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
+      <b>Garden Details</b>
+    </router-link>
+    <br/>
+    <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
+      <b>Watering Details</b>
+    </router-link>
+    <br/>
     <router-link :to="{ name: 'WateringList' }">
       <b>Back to Watering List</b>
     </router-link>

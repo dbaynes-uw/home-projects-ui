@@ -23,6 +23,59 @@
             <v-icon class="icon-css">mdi-magnify</v-icon>
           </template>
         </v-text-field>
+
+        <v-text-field
+          v-model="watering.location"
+          label="Location"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+        
+        <v-text-field
+          v-model="watering.line"
+          label="Line"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+
+        <v-text-field
+          v-model="watering.target"
+          label="Target"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+
+        <v-text-field label="Start Time"
+          v-model="watering.start_time"
+          type="time">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
+
+        <v-text-field label="End Time"
+          v-model="watering.end_time"
+          type="time">
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
+
+        <v-text-field
+          v-model="watering.days"
+          label="Days"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+
         <v-text-field label="Notes" v-model="watering.notes">
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
@@ -37,15 +90,23 @@
 <script>
 import { v4 as uuidv4 } from "uuid";
 export default {
-  props: ["garden_id"],
+  props: ["id","garden_id"],
   components: {
   },
   data() {
     return {
       watering: {
         id: null,
-        //garden_id: null,
-        name: null,
+        garden_id: null,
+        name: "",
+        location: "",
+        target: "",
+        line: "",
+        start_time: "",
+        end_time: "",
+        duration: "",
+        days: "",
+        status: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -69,11 +130,12 @@ export default {
         const watering = {
           ...this.watering,
           id: uuidv4(),
-          //garden_id: this.garden.id,
+          garden_id: this.garden.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
+        console.log("const watering: ", watering)
         if (this.$store.dispatch("createWatering", watering)) {
-          //this.$router.push({ name: "WateringDetails" });
+          this.$router.push({ name: "GardenDetails", params: {id: `${watering.garden_id}` }});
         } else {
           alert("Error adding Watering System " + watering.name);
         } 

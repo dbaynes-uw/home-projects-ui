@@ -14,7 +14,7 @@
     </li>
     <li>
       <button id="button-as-link">
-        <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden.id}` } }">
+        <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
           Garden Details for {{ watering.name }}
         </router-link>
       </button>
@@ -30,7 +30,7 @@
   <br/>
   </v-card>
   <br/>
-  <span v-if="watering.status == 'Active'">
+  <!--span v-if="watering.status == 'Active'"-->
     <div class="watering-display">
       <span class="h3-left-total-child">Click to Change</span>
       <div class="cards-1-center">
@@ -41,7 +41,7 @@
         <br />
       </div>
     </div>
-  </span>
+  <!--span-->
   <br/>
     <v-img
     :src="require('../../assets/WateringSystemLayoutSummer2024.png')"

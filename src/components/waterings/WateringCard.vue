@@ -8,19 +8,19 @@
     </h4>
     <ul>
       <span v-if="this.$route.name != 'GardenDetails'">
-        <li class="li-left">Garden: <b>{{ watering.garden.name }}</b></li>
+        <li class="li-left">
+          <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
+            Garden: <b>{{ watering.garden_id}}</b>
+          </router-link>
+        </li>
       </span>
-      <li class="li-left">Status: <b>{{ watering.status }}</b></li>
-    </ul>
-    <span v-if="watering.notes">
-      <ul>
+      <li class="li-left">Name: <b>{{ watering.name}}</b></li>
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in 
           joinedNotes(watering)"
           :key="idx">{{ notes }}
         </b>
-      </ul> 
-    </span>
+    </ul>
     <br/>
     <br/>
     <br/>
@@ -39,7 +39,7 @@
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import SplitStringService from "@/services/SplitStringService.js";
+//import SplitStringService from "@/services/SplitStringService.js";
 //import { useRoute } from 'vue-router'
 export default {
   name: 'WateringCard',
@@ -81,11 +81,15 @@ export default {
         this.$router.push({ name: "WateringList" });
       }
     },
-    splitList(wateringData, splitLength) {
-      return SplitStringService.splitList(wateringData.notes, splitLength) 
-    },
+    //splitList(wateringData, splitLength) {
+    //  if (wateringData != null){ 
+    //    return SplitStringService.splitList(wateringData.notes, splitLength) 
+    //  }
+    //},
     joinedNotes(e) {
-      return e.notes.split('\n');
+      if (e.notes != null){ 
+        return e.notes.split('\n')
+      }
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);

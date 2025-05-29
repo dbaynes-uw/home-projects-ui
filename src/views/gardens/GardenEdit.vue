@@ -3,6 +3,10 @@
   <br/>
   <div class="edit">
     <h2>Edit Garden {{ garden.name }}</h2>
+    <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+      <b>Garden Details</b>
+    </router-link>
+    <br/>
     <router-link :to="{ name: 'GardenList' }">
       <b>Back to Garden List</b>
     </router-link>

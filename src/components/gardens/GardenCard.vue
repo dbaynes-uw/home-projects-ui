@@ -1,10 +1,9 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="card">
-    <ul>
-      <li class="li-left">Notes:</li>
-      <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
-    </ul>   
+    <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
+      <h4><b>{{garden.name}}</b></h4>
+    </router-link>
     <p id="p-custom-left">Waterings:</p>
     <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
         <ul>
@@ -21,9 +20,10 @@
       <router-link
         :to="{ name: 'WateringCreate', params: { garden_id: `${garden.id}` } }"
         >
-          Add Watering using Garden ID: {{ garden.id }}
+          Add Watering for Garden: {{ garden.name }}
       </router-link>
     </p>
+    <br/>
     <span v-if="garden.plants && garden.plants.length > 0">
       <p id="p-custom-left">Plants:</p>
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
@@ -38,7 +38,6 @@
         </ul>          
       </span>
     </span>
-    <br/>
     <p id="p-custom-link">
       <router-link
         :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
@@ -47,6 +46,9 @@
       </router-link>
     </p>
     <br/>
+      <p id="p-custom-left">Notes:</p>
+      <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
+
     <br/>
     <div id="spread">
       <span class="fa-stack">
