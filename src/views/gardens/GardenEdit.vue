@@ -18,9 +18,9 @@
           label="Garden Name"
           v-model="garden.name"
         /> 
-        <h3 id="p-custom-left">Current Status: {{ showGardenActive }}</h3>
+        <h3 id="p-custom-left">Current Status: {{ garden.status }}</h3>
         <v-select
-          v-model="active"
+          v-model="status"
           :items="ACTIVE_STATUSES"
           label="Select Status to Change"
         />
@@ -42,10 +42,11 @@
 </template>
 <script setup>
 import { ACTIVE_STATUSES } from "@/services/constants";
+import DateFormatService from "@/services/DateFormatService.js";
 </script>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import { ref } from 'vue';
+//import { ref } from 'vue';
 export default {
   name: "GardenEdit",
   props: ["id"],
@@ -53,30 +54,17 @@ export default {
     ConfirmDialogue,
   },
   created() {
-    //console.log("1 - Created@@")
-    const garden_active_boolean = ref('');
-    return { garden_active_boolean };
+    this.$store.dispatch("fetchGarden", this.id);
   },
   computed: {
-    showGardenActive:{
-      get(){
-       var garden_active_string = ""
-       garden_active_string = this.garden.active == true ? "Active" : "Inactive"
-       return garden_active_string
-      }
-    },
     garden() {
-      //console.log("2 - computed@@")
       return this.$store.state.garden
     },
   },
   async mounted() {
-    //console.log("3 - Mounted@@")
   },
   data() {
-    return {
-      active: ""
-    };
+    return {};
   },
   methods: {
     async updateGarden() {
@@ -89,7 +77,7 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.garden.active = this.getGardenActive(this.active)
+        this.garden.status = 'Active'
         const garden = {
           ...this.garden,
           updated_by: this.$store.state.created_by,
@@ -101,11 +89,9 @@ export default {
         }
       }
     },
-    getGardenActive(boolean_to_string) {
-      var gardenActiveString = ""
-      gardenActiveString = boolean_to_string == 'Active' ? true : false
-      return gardenActiveString
-    }
+    formatTime(value) {
+      return DateFormatService.formatTimejs(value);
+    },
   },
 };
 </script>

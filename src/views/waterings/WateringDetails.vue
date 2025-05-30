@@ -22,7 +22,7 @@
     <li>
       <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'WateringList' }">
-          <b>Back to Watering List</b>
+          <b>All Watering List</b>
         </router-link>
       </button>
     </li>

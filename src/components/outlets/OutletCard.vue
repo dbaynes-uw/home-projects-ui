@@ -109,7 +109,6 @@ export default {
         this.$router.push({ name: "WateringDetails" });
       }
     },
-
     formatTime(value) {
       return DateFormatService.formatTimejs(value);
     },

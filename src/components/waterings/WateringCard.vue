@@ -15,7 +15,14 @@
         </li>
       </span>
       <li class="li-left">Name: <b>{{ watering.name}}</b></li>
-        <li class="li-left">Notes:</li>
+      <li class="li-left">Location: <b>{{ watering.location}}</b></li>
+      <li class="li-left">Line: <b>{{ watering.line}}</b></li>
+      <li class="li-left">Target: <b>{{ watering.target}}</b></li>
+      <li class="li-left">Days: <b>{{ watering.days}}</b></li>
+      <li class="li-left">Start: <b>{{ formatTime(watering.start_time) }}</b></li>
+      <li class="li-left">End: <b>{{ formatTime(watering.end_time) }}</b></li>
+      <li class="li-left">Duration: <b>{{ watering.duration}}</b></li>
+      <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in 
           joinedNotes(watering)"
           :key="idx">{{ notes }}
@@ -90,6 +97,9 @@ export default {
       if (e.notes != null){ 
         return e.notes.split('\n')
       }
+    },
+    formatTime(value) {
+      return DateFormatService.formatTimejs(value);
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);

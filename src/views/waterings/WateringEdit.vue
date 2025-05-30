@@ -20,6 +20,39 @@
           label="Watering Name"
           v-model="watering.name"
         />
+        <v-text-field
+          label="Location"
+          v-model="watering.location"
+        />
+        <v-text-field
+          label="Line"
+          v-model="watering.line"
+        />
+        <v-text-field
+          label="Target"
+          v-model="watering.target"
+        />
+        <v-text-field
+          label="Days"
+          v-model="watering.days"
+        />
+        <v-text-field
+          label="Duration"
+          v-model="watering.duration"
+          style="font-weight: bold"
+        />
+        <h3 id="p-custom-left">Current Start Time: {{ formatStandardTime(watering.start_time) }}</h3>
+        <v-text-field 
+            type="time"
+            label="Click to Edit Start Time"
+            v-model="watering.start_time"
+          />
+          <h3 id="p-custom-left">Current End Time: {{ formatStandardTime(watering.end_time) }}</h3>
+          <v-text-field 
+            type="time"
+            label="Click to Edit End Time"
+            v-model="watering.end_time"
+          />
         <h3 id="p-custom-left">Last Updated: {{ formatStandardDateTime(watering.updated_at) }}</h3>
         <h3 id="p-custom-left">Current Status: {{ watering.status }}</h3>
         <v-select
@@ -136,6 +169,9 @@ export default {
           alert("Error in Watering Update");
         }
       }
+    },
+    formatStandardTime(value) {
+      return DateFormatService.formatTimejs(value);
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);

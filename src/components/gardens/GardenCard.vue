@@ -4,6 +4,9 @@
     <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
       <h4><b>{{garden.name}}</b></h4>
     </router-link>
+    <p id="p-custom-left">Notes:</p>
+    <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
+    <br/>
     <p id="p-custom-left">Waterings:</p>
     <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
         <ul>
@@ -45,11 +48,7 @@
         Add Plant
       </router-link>
     </p>
-    <br/>
-      <p id="p-custom-left">Notes:</p>
-      <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
 
-    <br/>
     <div id="spread">
       <span class="fa-stack">
         <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">

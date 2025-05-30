@@ -4,6 +4,9 @@
       <h3>Add Garden</h3>
     </v-card-title>
   </v-card>
+  <router-link :to="{ name: 'GardenList' }">
+      <b>Back to Garden List</b>
+    </router-link>
   <v-card-text>
     <v-form @submit.prevent="onSubmit">
       <v-container id="form-container">

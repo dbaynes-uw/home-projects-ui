@@ -91,8 +91,7 @@
 import { v4 as uuidv4 } from "uuid";
 export default {
   props: ["id","garden_id"],
-  components: {
-  },
+  components: {},
   data() {
     return {
       watering: {
@@ -106,7 +105,6 @@ export default {
         end_time: "",
         duration: "",
         days: "",
-        status: "",
         notes: "",
         created_by: this.$store.state.user.resource_owner.email,
       },
@@ -152,7 +150,6 @@ export default {
       }
     },
     checkValidations() {
-
       if (this.isWateringNameValid) {
         this.isFormValid = true
       } else {
