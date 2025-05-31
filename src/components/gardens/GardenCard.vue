@@ -23,7 +23,7 @@
       <router-link
         :to="{ name: 'WateringCreate', params: { garden_id: `${garden.id}` } }"
         >
-          Add Watering for Garden: {{ garden.name }}
+          Add Watering for {{ garden.name }}
       </router-link>
     </p>
     <br/>

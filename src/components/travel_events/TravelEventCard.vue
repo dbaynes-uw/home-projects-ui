@@ -1,6 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div :class="{ 'event-has-passed': hasEventPassed(travel_event), 'card': isEventCurrent}">
+    <h2>{{ travel_event.title }}</h2>
     <p id="p-custom-link">
       <router-link
         :to="{ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } }"

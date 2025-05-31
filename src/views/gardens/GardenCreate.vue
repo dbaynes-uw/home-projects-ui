@@ -35,13 +35,21 @@ import { v4 as uuidv4 } from "uuid";
 export default {
   components: {
   },
+  created() {
+    this.$store.dispatch("fetchGarden", this.id);
+  },
+  computed: {
+    garden() {
+      return this.$store.state.garden
+    },
+  },
   data() {
     return {
-      garden: {
-        name: null,
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
+      //garden: {
+      //  name: null,
+      //  notes: "",
+      //  created_by: this.$store.state.user.resource_owner.email,
+      //},
       isGardenNameValid: false,
     };
   },
@@ -81,9 +89,6 @@ export default {
         this.isFormValid = false
       }
     }
-  },
-  garden() {
-    return this.$store.state.garden;
   },
 };
 </script>

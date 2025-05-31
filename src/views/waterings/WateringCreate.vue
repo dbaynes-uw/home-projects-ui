@@ -131,7 +131,6 @@ export default {
           garden_id: this.garden.id,
           created_by: this.$store.state.user.resource_owner.email,
         };
-        console.log("const watering: ", watering)
         if (this.$store.dispatch("createWatering", watering)) {
           this.$router.push({ name: "GardenDetails", params: {id: `${watering.garden_id}` }});
         } else {

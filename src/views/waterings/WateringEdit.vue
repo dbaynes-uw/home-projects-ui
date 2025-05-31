@@ -139,12 +139,7 @@ export default {
     return this.$store.state.watering;
     }
   },
-
-  data() {
-    return {
-      status: ""
-    };
-  },
+  data() {},
   methods: {
     async updateWatering() {
       const ok = await this.$refs.confirmDialogue.show({
@@ -162,7 +157,6 @@ export default {
           updated_at: this.$store.state.created_by,
           updated_by: this.$store.state.created_by,
         };
-        console.log("Dispatch Status: ", this.watering.status)
         if (this.$store.dispatch("updateWatering", watering)) {
           this.$router.push({ name: "WateringList" });
         } else {
