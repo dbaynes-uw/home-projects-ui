@@ -15,8 +15,7 @@
         <li class="li-left"><b>Biological Name: {{ plant.biological_name }}</b></li>
         <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
         <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
-        <!--li class="li-left"><a :href="plant.online_link" target="_blank">Water Line</a></!--li-->
-        <li class="li-left" @click="showOutlet(plant, outlet)"><b><u>Water Outlet: {{ showOutletName()}}</u></b></li>    
+        <li class="li-left" @click="showOutlet()"><b><u>Water Outlet: {{ showOutletName()}}</u></b></li>    
         <li class="li-left" @click="showWatering(outlet)"><b><u>Water Line: {{ showWateringName() }} </u></b></li>    
         <span v-if="plant.date_harvest">
           <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
@@ -100,9 +99,7 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  mounted() {
-    //console.log("Mounted this.outlet: ", this.$store.dispatch("fetchOutlet", this.plant.outlet_id ))
-  },
+  mounted() {},
   setup() {},
   created() {
     this.$store.dispatch("fetchWaterings")
@@ -150,15 +147,11 @@ export default {
         this.$router.push({ name: "GardenDetails", params: { id: plant.garden.id } });
       }
     },
-    showOutlet(plant,outlet) {
+    showOutlet() {
       clearTimeout(time);
-      console.log("Outlet ID: ", outlet.id)
-      console.log("Plant Outlet ID: ", this.plant.outlet_id)
       this.$router.push({ name: 'OutletDetails', params: { id: `${this.plant.outlet_id}` } });
     },
     showWatering(outlet) {
-      console.log("ShowWatering Outlet: ", outlet)
-      console.log("Outlet Watering ID: ", outlet.watering_id)
       clearTimeout(time);
       this.$router.push({ name: 'WateringDetails', params: { id: `${outlet.watering_id}` } });
     },
@@ -176,7 +169,6 @@ export default {
       return outletName
     },
     showWateringName(){
-      //console.log("ShowWateringName - waterings: ", this.waterings)
       var wateringName = ""
       for (let i=0; i < this.waterings.length; i++) {
 

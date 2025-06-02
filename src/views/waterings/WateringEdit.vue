@@ -41,7 +41,7 @@
           v-model="watering.duration"
           style="font-weight: bold"
         />
-        <h3 id="p-custom-left">Current Start Time: {{ formatStandardTime(watering.start_time) }}</h3>
+        <h3 id="p-custom-left">Current Start Time: {{ displayStartTime }}</h3>
         <v-text-field 
             type="time"
             label="Click to Edit Start Time"
@@ -71,20 +71,6 @@
           </option>
         </v-select>
         <br/>
-        <!--label for="created_at">Date Created:</!--label>
-        <input
-          readonly
-          type="text"
-          class="text-style"
-          v-model="watering.created_at"
-        />
-        <label for="updated_at">Date Updated:</label>
-        <input
-          readonly
-          type="text"
-          class="text-style"
-          v-model="watering.updated_at"
-        /-->
         <label>Notes:</label>
         <textarea
           v-model="watering.notes"
@@ -103,7 +89,6 @@
 import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-//import { ref } from 'vue';
 </script>
 <script>
 export default {
@@ -111,35 +96,20 @@ export default {
   components: {
     ConfirmDialogue,
   },
-  //created() {
-    //var date = new Date();
-    //console.log(date.toLocaleString());
-    //const watering_active_boolean = ref('');
-    //return { watering_active_boolean };
-  //},
-  //computed: {
-    //showWateringActive:{
-    //  get(){
-    //   var watering_active_string = ""
-    //   watering_active_string = this.watering.status == true ? "Active" : "Inactive"
-    //   return watering_active_string
-    //  }
-    //},
-    //watering() {
-    //  //console.log("2 - computed@@")
-    //  return this.$store.state.watering
-    //},
-    
-  //},
   created() {
     this.$store.dispatch("fetchWatering", this.id);
+    this.displayStartTime = this.formatStandardTime(this.watering.start_time)
   },
   computed: {
     watering() {
-    return this.$store.state.watering;
+      return this.$store.state.watering;
+    } 
+  },
+  data() {
+    return {
+      displayStartTime: ''
     }
   },
-  data() {},
   methods: {
     async updateWatering() {
       const ok = await this.$refs.confirmDialogue.show({

@@ -78,12 +78,9 @@ export default {
     eventPassed(e) {
       var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
-      console.log("formatDateToday: ", formatDateToday)
       if (e.end_date < formatDateToday ){
-        console.log("Event Passed: ", e.end_date)
         return 'event-passed'
       } else {
-        console.log("Event Current: ", e.end_date)
         return 'event-current'
       }
     },

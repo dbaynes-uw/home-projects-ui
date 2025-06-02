@@ -121,11 +121,9 @@ export default {
   },
   methods: {
     requestIndexDetail() {
-      console.log("RequestIndexDetail: ",this.requestIndexDetailFlag)
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     editWatering(watering) {
-      console.log("Edit Watering: ", watering)
       this.$router.push({ name: 'WateringEdit', params: { id: `${watering.id}` } });
     },
     showIndex() {

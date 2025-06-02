@@ -1,5 +1,6 @@
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
+//moment.tz.setDefault("Central European Summer Time");
 import dayjs from 'dayjs'
 import customParseFormat from "dayjs/plugin/customParseFormat";
 export default {
@@ -26,6 +27,15 @@ export default {
     if (date_time) {
       date_time = dayjs(date_time).format("M/DD/YY H:mma");
       return date_time;
+    }
+  },
+  formatTimejs(action_time) {
+    dayjs.extend(customParseFormat)
+    console.log("ActionTimeIn: ", action_time)
+    if (action_time) {
+      action_time =  dayjs(action_time).format('HH:mm')
+      console.log("formatTimejs: ", dayjs(action_time).format('HH:mm'))
+      return action_time;
     }
   },
   formatYearDatejs(action_date) {
@@ -74,13 +84,6 @@ export default {
       action_date = dayjs(action_date).format("YYYY");
       return action_date;
     }
-  },
-  formatTimejs(action_time) {
-    dayjs.extend(customParseFormat)
-    if (action_time) {
-      action_time =  dayjs(action_time).format('h:mma')
-      return action_time;
-    } 
   },
   calculateDuejs(action_date, frequency) {
     let returnMessage = "";

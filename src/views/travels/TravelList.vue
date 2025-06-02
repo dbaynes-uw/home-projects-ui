@@ -124,7 +124,6 @@ export default {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     editTravel(travel) {
-      console.log("Edit Travel: ", travel)
       this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
     },
     showIndex() {

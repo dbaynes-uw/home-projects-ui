@@ -237,7 +237,6 @@ export default new Vuex.Store({
     },
     CLEAR_USER_DATA () {
       //var user = localStorage.getItem('user')
-      //console.log("CLEAR USER DATA - ", user)
       localStorage.removeItem('user')
       axios.defaults.headers.common['Authorization'] = null
     },
@@ -405,7 +404,6 @@ export default new Vuex.Store({
           alert("Book was successfully added for " + book.title);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Book Post Error: ", error.response.data )
         });
     },
@@ -416,7 +414,6 @@ export default new Vuex.Store({
           alert("Book " + book.title + " was Successfully Updated.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Book Put Error for " + book.title + ": " + error.response.request.statusText)
           location.reload();
       });
@@ -428,7 +425,6 @@ export default new Vuex.Store({
           commit("SET_BOOKS", response.data);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Book Delete Error: ", error.response.data )
         });
     },
@@ -442,7 +438,6 @@ export default new Vuex.Store({
             commit("SET_BOOK", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Book Fetch Error: ",error.response.request.statusText )
           });
       }
@@ -457,7 +452,6 @@ export default new Vuex.Store({
             commit("SET_GARDEN", response.data);
           })
           .catch((error) => {
-            console.log(error);
             alert("Garden Fetch Error", error.data)
           });
       }
@@ -470,7 +464,6 @@ export default new Vuex.Store({
     //      return response.data;
     //    })
     //    .catch((error) => {
-    //      //console.log(error);
     //      alert("Garden Fetch Error: ", error.response.data )        });
     //},
 
@@ -486,7 +479,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Gardens Fetch Error: ", error.response.data )
         });
     },
@@ -515,7 +507,6 @@ export default new Vuex.Store({
         //  router.push({name:'home'})
         //});
         .catch((error) => {
-          //console.log(error);
           alert("Events Fetch Error: ", error.response.data )
         });
     },
@@ -539,7 +530,6 @@ export default new Vuex.Store({
             commit("SET_EVENT", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Event Fetch Error: ", error.response.data )
           });
       }
@@ -553,7 +543,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("EventsAssigned Fetch Error: ", error.response.data )
         });
     },
@@ -561,7 +550,6 @@ export default new Vuex.Store({
       EventService.getEventsDueBy(form)
         .then((response) => {
           //const dueBy = response.config.url.split('?')
-          //console.log("Response dueBY: ", dueBy[1])
           commit("SET_EVENTS_REQUEST", 'DueBy');
           commit("SET_EVENTS", response.data);
           //const q = response.config.url.split('=')
@@ -571,7 +559,6 @@ export default new Vuex.Store({
           return response.data;
         })
       .catch((error) => {
-        //console.log(error);
         alert("EventsDueBy Get Error: ", error.response.data )
       });
     },
@@ -579,13 +566,11 @@ export default new Vuex.Store({
       EventService.getEventsLocations(form)
         .then((response) => {
           //const location = response.config.url.split('?')
-          //console.log("Response Location: ", location[1])
           commit("SET_EVENTS_REQUEST", 'Location');
           commit("SET_EVENTS", response.data);
           return response.data;
           })
       .catch((error) => {
-        //console.log(error);
         alert("EventsLocations Get Error: ", error.response.data )
       });
     },
@@ -597,7 +582,6 @@ export default new Vuex.Store({
       return response.data;
       })
       .catch((error) => {
-        //console.log(error);
         alert("EventsPastDue Get Error: ", error.response.data )
       });
     },
@@ -609,7 +593,6 @@ export default new Vuex.Store({
       return response.data;
       })
       .catch((error) => {
-        //console.log(error);
         alert("EventsInactive Get Error: ", error.response.data )
       });
     },
@@ -622,7 +605,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("EventsStatistics Fetch Error: ", error.response.data )
         });
     },
@@ -635,7 +617,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("EventsStatisticsDetail Get Error: ", error.response.data )
         });
     },
@@ -646,7 +627,6 @@ export default new Vuex.Store({
           alert("Event " + event.description + " was Successfully Updated.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Event Put Error for " + event.description + ": " + error.response.request.statusText)
           location.reload();
         });
@@ -658,7 +638,6 @@ export default new Vuex.Store({
           alert("Film was successfully added for " + film.title);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Film Post Error: ", error.response.data )
         });
     },
@@ -669,7 +648,6 @@ export default new Vuex.Store({
           alert("Film " + film.title + " was deleted");
         })
         .catch((error) => {
-          //console.log(error);
           alert("Film Delete Error: ", error.response.data )
         });
     },
@@ -683,7 +661,6 @@ export default new Vuex.Store({
             commit("SET_FILM", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Film Fetch Error: ", error.response.data )
           });
       }
@@ -695,7 +672,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Films Fetch Error: ", error.response.data )
         });
     },
@@ -706,7 +682,6 @@ export default new Vuex.Store({
           alert("Film " + film.title + " was Successfully Updated.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Film Put Error for " + film.title + ": " + error.response.request.statusText)
           location.reload();
       });
@@ -718,7 +693,6 @@ export default new Vuex.Store({
           alert("Garden was successfully added for " + garden.name);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Garden Post Error: ", error.response.data )
         });
     },
@@ -729,7 +703,6 @@ export default new Vuex.Store({
           alert("Garden " + garden.name + " was Successfully Updated.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Garden Put Error for " + garden.name + ": " + error.response.request.statusText)
           location.reload();
       });
@@ -742,7 +715,6 @@ export default new Vuex.Store({
           alert("Plant was successfully added for " + plant.plant_name);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Plant Post Error: ", error.response.data )
         });
     },
@@ -754,7 +726,6 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          //console.log(error);
           alert("Plant Put Error: ", error.response.data )
         });
     },
@@ -765,7 +736,6 @@ export default new Vuex.Store({
           alert("Watering " + watering.name + " was Successfully Updated.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Watering Put Error for " + watering.name + ": " + error.response.request.statusText)
           location.reload();
       });
@@ -777,7 +747,6 @@ export default new Vuex.Store({
           alert("Golf was successfully added for date " + DateFormatService.formatDatejs(golf.date_played));
         })
         .catch((error) => {
-          //console.log(error);
           alert("Golf Post Error: ", error.response.data )
         });
     },
@@ -788,7 +757,6 @@ export default new Vuex.Store({
           alert("Golf Round at " + golf.course + " on " + golf.date_played + " was deleted.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Golf Delete Error: ", error.response.data )
         });
     },
@@ -802,7 +770,6 @@ export default new Vuex.Store({
             commit("SET_GOLF", response.data);
           })
           .catch((error) => {
-          //console.log(error);
           alert("Golf Get Error: ", error.response.data )
           });
       }
@@ -814,7 +781,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Golf Fetch Error: ", error.response.data )
         });
     },
@@ -824,7 +790,6 @@ export default new Vuex.Store({
           commit("SET_MEDS", med);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Med Create Error: ", error.response.data )
         });
     },
@@ -835,7 +800,6 @@ export default new Vuex.Store({
           commit("SET_MEDS", response.data);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Med Delete Error: ", error.response.data )
 
         });
@@ -850,7 +814,6 @@ export default new Vuex.Store({
             commit("SET_MED", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Med Get Error: ", error.response.data )
           });
       }
@@ -862,7 +825,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Med Fetch Error: ", error.response.data )
 
         });
@@ -874,7 +836,6 @@ export default new Vuex.Store({
           alert("Med " + med.description + " was Successfully Updated.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Med Put Error: ", error.response.data )
         });
     },
@@ -887,7 +848,6 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           alert("Error in postBook of createOutlet Action (index.js)");
-          //console.log(error);
           alert("Watering Outlet Post Error: ", error.response.data )
         });
     },
@@ -899,7 +859,6 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          //console.log(error);
           alert("Outlet Put Error: ", error.response.data )
         });
     },
@@ -911,7 +870,6 @@ export default new Vuex.Store({
           alert("Outlet " + outlet.outlet_name + " was deleted");
         })
         .catch((error) => {
-          //console.log(error);
           alert("Outlet Delete Error: ", error.response.data )
         });
     },
@@ -921,7 +879,6 @@ export default new Vuex.Store({
             commit("SET_OUTLET", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Outlet Fetch Error: ", error.response.data )
           });
       //}
@@ -935,7 +892,6 @@ export default new Vuex.Store({
         .catch((error) => {
           commit("DELETE_OUTLET_DETAILS_BY_NAME"); 
           //router.push({ name: 'GardenList'});
-          //console.log(error);
           alert("Med Fetch Error: ", error.response.data )
         });
     },
@@ -946,7 +902,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Outlet Fetch Group Error: ", error.response.data )
         });
     },
@@ -954,11 +909,9 @@ export default new Vuex.Store({
       EventService.getOutletsHash()
         .then((response) => {
           commit("SET_OUTLETS_HASH", response.data);
-          console.log("fetchHash response: ", response.data)
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Outlet Fetch Hash Error: ", error.response.data )
         });
     },
@@ -969,7 +922,6 @@ export default new Vuex.Store({
           alert("Plant " + plant.plant_name + " was Successfully Deleted");
         })
         .catch((error) => {
-          //console.log(error);
           alert("Plant Delete Error: ", error.response.data )
         });
     },
@@ -980,7 +932,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Plant Fetch Error: ", error.response.data )
         });
     },
@@ -992,7 +943,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Plant Fetch Error: ", error.response.data )
         });
     },
@@ -1003,7 +953,6 @@ export default new Vuex.Store({
           alert("Product " + product.product_name + " was deleted");
         })
         .catch((error) => {
-          //console.log(error);
           alert("Product Delete Error: ", error.response.data )
         });
     },
@@ -1014,7 +963,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Product Fetch: ", error.response.data )
         });
     },
@@ -1027,7 +975,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Products Get by Location Error: ", error.response.data )
         });
     },
@@ -1041,10 +988,8 @@ export default new Vuex.Store({
           //if (!error.response) {
           //  router.push({name:'About'})
           //}else {
-          //  console.log("Store getShoppingList error.response from ES: " + error.response);
           //  router.push({name:'About'})
           //}
-          //console.log(error);
           alert("Shopping List Fetch Error: ", error.response.data )
         });
     },
@@ -1055,7 +1000,6 @@ export default new Vuex.Store({
           alert("Product " + product.product_name + " was Successfully Updated.")
         })
         .catch((error) => {
-          //console.log(error);
           alert("Product Put Error for " + product.product_name + ": " + error.response.request.statusText)
           location.reload();
         });
@@ -1067,7 +1011,6 @@ export default new Vuex.Store({
           commit("SET_PRODUCTS", products);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Products Put Error: ", error.response.data )
         });
     },
@@ -1078,7 +1021,6 @@ export default new Vuex.Store({
           alert("Product " + products_vendors.product_name + " was successfully updated")
         })
         .catch((error) => {
-          //console.log(error);
           alert("ProductsVendors Put Error: ", error.response.data )
         });
     },
@@ -1089,7 +1031,6 @@ export default new Vuex.Store({
           alert("Trail was successfully added for " + trail.location);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Trail Create Error: ", error.response.data )
         });
     },
@@ -1099,7 +1040,6 @@ export default new Vuex.Store({
           commit("DELETE_TRAIL", response.data);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Trail Delete Error: ", error.response.data )
         });
     },
@@ -1113,7 +1053,6 @@ export default new Vuex.Store({
             commit("SET_TRAIL", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Trail Get Error: ", error.response.data )
           });
       }
@@ -1137,7 +1076,6 @@ export default new Vuex.Store({
           alert("Travel was successfully added for " + travel.title);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Travel Post Error: ", error.response.data )       
         });
     },
@@ -1149,7 +1087,6 @@ export default new Vuex.Store({
         })
         .catch((error) => {
           alert("Error in postTravelEvent of createTravelEvent Action (index.js)");
-          //console.log(error);
           alert("Travel Event Post Error: ", error.response.data )
         });
     },
@@ -1160,7 +1097,6 @@ export default new Vuex.Store({
           commit("DELETE_TRAVEL", response.data);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Travel Delete Error: ", error.response.data )
         });
     },
@@ -1170,7 +1106,6 @@ export default new Vuex.Store({
           commit("DELETE_TRAVEL_EVENT", response.data);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Travel Event Delete Error: ", error.response.data )
         });
     },
@@ -1185,7 +1120,6 @@ export default new Vuex.Store({
             commit("SET_TRAVEL", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Travel Fetch Error: ", error.response.data )
           });
       }
@@ -1200,7 +1134,6 @@ export default new Vuex.Store({
             commit("SET_TRAVEL_EVENT", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("Travel Fetch Error: ", error.response.data )
           });
       }
@@ -1212,7 +1145,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Travels Fetch Error: ", error.response.data )
         });
     },
@@ -1223,7 +1155,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Travel Events Fetch Error: ", error.response.data )
         });
     },
@@ -1236,7 +1167,6 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          //console.log(error);
           alert("Travel Put Error: ", error.response.data )
         });
     },
@@ -1248,7 +1178,6 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          //console.log(error);
           alert("Travel Event Put Error: ", error.response.data )
         });
     },
@@ -1258,7 +1187,6 @@ export default new Vuex.Store({
           commit("ADD_USER", user);
         })
         .catch((error) => {
-          //console.log(error);
           alert("User Post Error: ", error.response.data )
         });
     },
@@ -1268,7 +1196,6 @@ export default new Vuex.Store({
           commit("DELETE_USER", response.data);
         })
         .catch((error) => {
-          //console.log(error);
           alert("User Delete Error: ", error.response.data )
         });
     },
@@ -1282,7 +1209,6 @@ export default new Vuex.Store({
             commit("SET_USER_DATA", response.data);
           })
           .catch((error) => {
-            //console.log(error);
             alert("User Fetch Error: ", error.response.data )
           });
       }
@@ -1295,7 +1221,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Users Fetch Error: ", error.response.data )
         });
     },
@@ -1307,7 +1232,7 @@ export default new Vuex.Store({
           location.reload();
         })
         .catch((error) => {
-          //console.log(error);
+          //.log(error);
           alert("Users Put Error: ", error.response.data )
         });
     },
@@ -1337,7 +1262,6 @@ export default new Vuex.Store({
           alert("Vendor " + vendor.title + " was deleted");
         })
         .catch((error) => {
-          //console.log(error);
           alert("Vendor Delete Error: ", error.response.data )
         });
     },
@@ -1359,7 +1283,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Vendors Fetch Error: ", error.response.data )
         });
     },
@@ -1370,7 +1293,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("VendorsGroup Fetch Error: ", error.response.data )
         });
     },
@@ -1381,7 +1303,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("VendorsLocationsGroup Get Error: ", error.response.data )
         });
     },
@@ -1392,7 +1313,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("VendorsProductsGroup Fetch Error: ", error.response.data )
         });
     },
@@ -1403,7 +1323,7 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
+          //.log(error);
           alert("VendorsProducts Fetch Error: ", error.response.data )
         });
     },
@@ -1413,7 +1333,7 @@ export default new Vuex.Store({
           commit("SET_VENDORS_PRODUCTS", vendors_products);
         })
         .catch((error) => {
-          //console.log(error);
+          //.log(error);
           alert("VendorsProducts Put Error: ", error.response.data )
         });
     },
@@ -1424,7 +1344,6 @@ export default new Vuex.Store({
           alert("Watering was successfully added for " + watering.name);
         })
         .catch((error) => {
-          //console.log(error);
           alert("Watering Create Error: ", error.response.data )
         });
     },
@@ -1435,7 +1354,6 @@ export default new Vuex.Store({
           alert("Watering " + watering.title + " was deleted");
         })
         .catch((error) => {
-          //console.log(error);
           alert("Watering Delete Error: ", error.response.data )
         });
     },
@@ -1451,7 +1369,6 @@ export default new Vuex.Store({
             return response.data;
           })
           .catch((error) => {
-            //console.log(error);
             alert("Watering Fetch Error", error.data)
           });
       }
@@ -1465,7 +1382,6 @@ export default new Vuex.Store({
           return response.data;
         })
         .catch((error) => {
-          //console.log(error);
           alert("Waterings Fetch Error: ", error.response.data )
         });
     },
@@ -1479,7 +1395,6 @@ export default new Vuex.Store({
       return !!state.user
     },
     loggedOut () {
-      //console.log("Getters: loggedOut state:")
       //return state.user == null
     }
   },

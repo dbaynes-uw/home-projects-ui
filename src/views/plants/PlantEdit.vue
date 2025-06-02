@@ -90,7 +90,6 @@ import { ref } from 'vue';
 export default {
   setup() {
     const outlet_id = ref('');
-    console.log("SetUp outlet_id: ", outlet_id)
     return { outlet_id };
   },
   props: ["id"],
@@ -99,7 +98,6 @@ export default {
   },
   async mounted() {},
   created() {
-    console.log("Plant Created ID: ", this.id)
     this.$store.dispatch("fetchPlant", this.id);
     this.$store.dispatch("fetchOutletsDisplayGroup");
     this.$store.dispatch("fetchOutletsHash");
@@ -147,13 +145,11 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        console.log("IN outlet_id: ", this.outlet_id)
         this.plant.outlet_id = this.getOutletId(this.outlet_id)
         const plant = {
           ...this.plant,
           updated_by: this.$store.state.created_by,
         };
-        console.log("PLant at UPDATE: ", plant)
         if (this.$store.dispatch("updatePlant", plant)) {
           this.$router.push({ name: "GardenDetails", params: { id: plant.garden_id } });
         }
@@ -164,7 +160,6 @@ export default {
     getOutletId(name_to_id) {
       var outletId = ""
       for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
-        console.log("if name; ", this.outletsHash.outletsHash[i].outlet_name)
         if (name_to_id == this.outletsHash.outletsHash[i].outlet_name) {
           outletId = this.outletsHash.outletsHash[i].id
           i = 99

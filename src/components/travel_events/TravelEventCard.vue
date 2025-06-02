@@ -2,11 +2,11 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div :class="{ 'event-has-passed': hasEventPassed(travel_event), 'card': isEventCurrent}">
     <h2>{{ travel_event.title }}</h2>
-    <p id="p-custom-link">
+    <p id="p-custom-link-left">
       <router-link
         :to="{ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } }"
       >
-        {{ travel_event.description }}
+        Ref: {{ travel_event.description }}
       </router-link>
     </p>
     <ul>

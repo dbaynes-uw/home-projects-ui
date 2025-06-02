@@ -129,7 +129,6 @@ export default {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
     editGarden(garden) {
-      console.log("Edit Garden: ", garden)
       this.$router.push({ name: 'GardenEdit', params: { id: `${garden.id}` } });
     },
     showIndex() {

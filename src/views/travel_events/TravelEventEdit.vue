@@ -40,13 +40,13 @@
         />     
         <p id="p-custom-left">Start Date Saved As: {{ formatStandardDateTime(travel_event.start_date)}}</p>
         <v-text-field
-          label="Click calendar at right to change Date Read"
+          label="Click calendar at right to change Start Date"
           v-model="travel_event.start_date"
           type="datetime-local"
         />
         <p id="p-custom-left">End Date Saved As: {{ formatStandardDateTime(travel_event.end_date)}}</p>
         <v-text-field
-          label="Click calendar at right to change Date Read"
+          label="Click calendar at right to change End Date"
           v-model="travel_event.end_date"
           type="datetime-local"
         />
