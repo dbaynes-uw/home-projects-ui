@@ -27,14 +27,9 @@ export default {
   formatStandardDateTimejs(date_time) {
     if (date_time) {
       var utc = require("dayjs/plugin/utc");
-      console.log("formatStandardDateTime date_time IN: ", date_time)
       dayjs().utcOffset()
       dayjs.extend(utc)
       date_time = dayjs.utc(date_time).utcOffset(-7).format("M/DD/YY H:mma") 
-      //date_time = dayjs(date_time).format("M/DD/YY H:mma");
-
-      console.log("formatStandardDateTime date_time OUT: ", date_time)
-
       return date_time;
     }
   },

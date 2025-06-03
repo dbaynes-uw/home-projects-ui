@@ -32,14 +32,16 @@
       <li class="li-left">Start: <b>{{ formatStandardDateTime(travel_event.start_date) }}</b></li>
       <li class="li-left">End: <b>{{ formatStandardDateTime(travel_event.end_date) }}</b></li>
       <li class="li-left">Notes:</li>
-      <b class="li-left-none" v-for="(notes, idx) in splitList(travel_event, this.splitLength)" :key="idx">{{ notes }}</b>
+      <b class="li-left-none" v-for="(notes, idx) in 
+          joinedNotes(travel_event)"
+          :key="idx">{{ notes }}
+        </b>
     </ul>
   </div>
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import SplitStringService from "@/services/SplitStringService.js";
 export default {
   name: 'TravelEventCard',
   props: {
@@ -85,8 +87,10 @@ export default {
         return false
       }
     },
-    splitList(travelData, splitLength) {
-      return SplitStringService.splitList(travelData.notes, splitLength) 
+    joinedNotes(e) {
+      if (e.notes != null){ 
+        return e.notes.split('\n')
+      }
     },
     formatStandardDateTime(value) {
       return DateFormatService.formatStandardDateTimejs(value);
