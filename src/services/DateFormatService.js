@@ -1,6 +1,7 @@
 import moment from "moment-timezone";
-moment.tz.setDefault("America/Los_Angeles");
-//moment.tz.setDefault("Central European Summer Time");
+//moment.tz.setDefault("America/Los_Angeles");
+moment.tz.setDefault("Central European Summer Time");
+//moment.tz.setDefault("UTC");
 import dayjs from 'dayjs'
 import customParseFormat from "dayjs/plugin/customParseFormat";
 export default {
@@ -25,16 +26,24 @@ export default {
   },
   formatStandardDateTimejs(date_time) {
     if (date_time) {
-      date_time = dayjs(date_time).format("M/DD/YY H:mma");
+      var utc = require("dayjs/plugin/utc");
+      console.log("formatStandardDateTime date_time IN: ", date_time)
+      dayjs().utcOffset()
+      dayjs.extend(utc)
+      date_time = dayjs.utc(date_time).utcOffset(-7).format("M/DD/YY H:mma") 
+      //date_time = dayjs(date_time).format("M/DD/YY H:mma");
+
+      console.log("formatStandardDateTime date_time OUT: ", date_time)
+
       return date_time;
     }
   },
   formatTimejs(action_time) {
     dayjs.extend(customParseFormat)
-    console.log("ActionTimeIn: ", action_time)
     if (action_time) {
+      //const newYorkTime = moment.tz("2025-01-22T17:00:00", "America/New_York")
+      //console.log(newYorkTime.format(action_time)) // "2025-01-22 17:00:00"
       action_time =  dayjs(action_time).format('HH:mm')
-      console.log("formatTimejs: ", dayjs(action_time).format('HH:mm'))
       return action_time;
     }
   },
