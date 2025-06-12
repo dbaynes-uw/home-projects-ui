@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Watering Details for {{ watering.name }}</h2>
+      <h2>{{ watering.name }} Details</h2>
     </v-card-title>
     <ul>
     <li class="left">
@@ -15,14 +15,14 @@
     <li>
       <button id="button-as-link">
         <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-          Garden Details for {{ watering.name }}
+          {{ watering.name }} Details
         </router-link>
       </button>
     </li>
     <li>
       <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'WateringList' }">
-          <b>All Watering List</b>
+          <b>All Waterings</b>
         </router-link>
       </button>
     </li>
@@ -30,25 +30,15 @@
   <br/>
   </v-card>
   <br/>
-  <!--span v-if="watering.status == 'Active'"-->
-    <div class="watering-display">
-      <span class="h3-left-total-child">Click to Change</span>
-      <div class="cards-1-center">
-        <WateringCard
-          :key="watering.id"
-          :watering="watering"
-        />      
-        <br />
-      </div>
+  <div class="watering-display">
+    <div class="cards-1-center">
+      <WateringCard
+        :key="watering.id"
+        :watering="watering"
+      />      
+      <br />
     </div>
-  <!--span-->
-  <br/>
-    <v-img
-    :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
-    class="my-3"
-    height="500"
-    contain
-  />    
+  </div>
 </template>
 <script>
 import WateringCard from "@/components/waterings/WateringCard.vue";

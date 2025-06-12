@@ -98,10 +98,13 @@ export default {
     formatYearDate(value) {
       return DateFormatService.formatYearDatejs(value);
     },
+    //formatStandardDateTime(value) {
+    //  return DateFormatService.formatStandardDateTimejs(value);
+    //},
     hasEventPassed(event) {
       var dayjs = require('dayjs')
-      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
-      if (DateFormatService.formatYearDatejs(event.end_date) < formatDateToday) {
+      let formatDateTime = dayjs(new Date()).format("MM-DD-YY H:mma");
+      if (DateFormatService.formatDateTimejs(event.end_date) < formatDateTime) {
         return true
       } else {
         return false

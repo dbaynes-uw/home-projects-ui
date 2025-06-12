@@ -24,6 +24,16 @@ export default {
       return action_date;
     }
   },
+  formatDateTimejs(date_time) {
+    if (date_time) {
+      var utc = require("dayjs/plugin/utc");
+      dayjs().utcOffset()
+      dayjs.extend(utc)
+      date_time = dayjs.utc(date_time).utcOffset(-7).format("MM-DD-YY H:mma")
+      //06-12-25 20:49pm
+      return date_time;
+    }
+  },
   formatStandardDateTimejs(date_time) {
     if (date_time) {
       var utc = require("dayjs/plugin/utc");

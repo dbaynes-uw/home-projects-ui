@@ -45,7 +45,6 @@
       <span v-else>
         <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">Total: {{ waterings.length }}</h3>
-          <span class="h3-left-total-child">*Click Item Below to Edit, Details or Delete</span>
           <div class="cards">
             <WateringCard
               v-for="watering in waterings"
@@ -63,7 +62,6 @@
     <span v-if="filteredResults.length > 0">
       <span v-if="requestIndexDetailFlag == true">
         <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-        <span>*Click Icons Below to Edit, Details or Delete</span>
         <div class="cards">
           <WateringCard
             v-for="watering in filteredResults"
@@ -77,6 +75,14 @@
         <WateringIndex :waterings="filteredResults" />
       </span>
     </span>
+    <br/>
+    <h3>Need Specific Watering Details Here instead of Generic</h3>
+    <v-img
+      :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
+      class="my-3"
+      height="500"
+      contain
+    />    
   </div>
 </template>
 <script>

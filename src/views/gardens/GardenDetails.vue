@@ -20,7 +20,6 @@
   </ul> 
   <br/>
   <h3>{{ this.statusMessage }}</h3>
-  <span class="h3-left-total-child">Click to Change</span>
   <div class="cards-1-center">
     <GardenCard
       :key="garden.id"
@@ -28,16 +27,15 @@
       />
     <br />
   </div>
-  <span class="h3-left-total-child">Double Click Item Below to Change</span>
-    <div class="cards">
-      <WateringCard
-        v-for="watering in garden.waterings"
-        :key="watering.id"
-        :watering="watering"
-      />
-      <br />
-    </div>
-  <span class="h3-left-total-child">Double Click Item Below to Change</span>
+  <div class="cards">
+    <WateringCard
+      v-for="watering in garden.waterings"
+      :key="watering.id"
+      :watering="watering"
+    />
+    <br />
+  </div>
+  <span v-if="garden.plants" class="h3-left-total-child">Double Click Item Below to Change</span>
   <span v-for="(p, p_index) in garden.plants" :key="p_index">
     {{ p.name }}
     <br/>
@@ -50,6 +48,13 @@
     />
   </div>
   <br/>
+  <h3>Need Specific Watering Details Here instead of Generic</h3>
+  <v-img
+    :src="require('../../assets/WateringSystemLayoutSummer2024.png')"
+    class="my-3"
+    height="500"
+    contain
+  />    
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
