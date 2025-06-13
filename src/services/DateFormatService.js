@@ -1,7 +1,8 @@
 import moment from "moment-timezone";
-//moment.tz.setDefault("America/Los_Angeles");
-moment.tz.setDefault("Central European Summer Time");
-//moment.tz.setDefault("UTC");
+moment.tz.setDefault("America/Los_Angeles");
+//moment.tz.setDefault("Central European Summer Time");
+//UTC OFFSET:
+  //moment.tz.setDefault("UTC");
 import dayjs from 'dayjs'
 import customParseFormat from "dayjs/plugin/customParseFormat";
 export default {
@@ -26,20 +27,24 @@ export default {
   },
   formatDateTimejs(date_time) {
     if (date_time) {
-      var utc = require("dayjs/plugin/utc");
-      dayjs().utcOffset()
-      dayjs.extend(utc)
-      date_time = dayjs.utc(date_time).utcOffset(-7).format("MM-DD-YY H:mma")
+      //UTC OFFSET:
+        //var utc = require("dayjs/plugin/utc");
+        //dayjs().utcOffset()
+        //dayjs.extend(utc)
+        //date_time = dayjs.utc(date_time).utcOffset(-7).format("MM-DD-YY H:mma")
+        date_time = dayjs(date_time).format("MM-DD-YY H:mma")
       //06-12-25 20:49pm
       return date_time;
     }
   },
   formatStandardDateTimejs(date_time) {
     if (date_time) {
-      var utc = require("dayjs/plugin/utc");
-      dayjs().utcOffset()
-      dayjs.extend(utc)
-      date_time = dayjs.utc(date_time).utcOffset(-7).format("M/DD/YY H:mma") 
+      //UTC OFFSET:
+        //var utc = require("dayjs/plugin/utc");
+        //dayjs().utcOffset()
+        //dayjs.extend(utc)
+        //date_time = dayjs.utc(date_time).utcOffset(-7).format("M/DD/YY H:mma") 
+      date_time = dayjs(date_time).format("MM/DD/YY H:mm");
       return date_time;
     }
   },
