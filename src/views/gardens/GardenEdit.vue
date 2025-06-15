@@ -18,7 +18,9 @@
           label="Garden Name"
           v-model="garden.name"
         /> 
-        <h3 id="p-custom-left">Current Status: {{ garden.status }}</h3>
+        <span v-if="garden.status">
+          <h3 id="p-custom-left">Current Status: {{ garden.status }}</h3>
+        </span>
         <v-select
           v-model="status"
           :items="ACTIVE_STATUSES"
@@ -61,10 +63,11 @@ export default {
       return this.$store.state.garden
     },
   },
-  async mounted() {
-  },
+  async mounted() {},
   data() {
-    return {};
+    return {
+      status: null
+    };
   },
   methods: {
     async updateGarden() {
