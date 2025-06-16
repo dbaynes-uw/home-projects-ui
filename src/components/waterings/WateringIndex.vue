@@ -4,11 +4,20 @@
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('name')">Watering Name</th>
+      <th id="background-blue" @click="sortList('start_time')">Start</th>
+      <th id="background-blue" @click="sortList('end_time')">End</th>
+      <th id="background-blue" @click="sortList('location')">Location</th>
+      <th id="background-blue" @click="sortList('days')">Days</th>
+
       <th id="background-blue">Notes</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
     <tr v-for="watering in waterings" :key="watering.id" watering="watering">
       <td>{{ watering.name }}</td>
+      <td>{{ formatTime(watering.start_time) }}</td>
+      <td>{{ formatTime(watering.end_time) }}</td>
+      <td>{{ watering.location }}</td>
+      <td>{{ watering.days }}</td>
       <td>{{ watering.notes }}</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
@@ -97,7 +106,7 @@ export default {
       this.characterDetails = result;
     },
     sortList(sortBy) {
-      this.sortedData = this.travels;
+      this.sortedData = this.waterings;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;
@@ -125,6 +134,9 @@ export default {
     //    setTimeout(() => location.reload(), 2500);
     //  }
     //},
+    formatTime(value) {
+      return DateFormatService.formatTimejs(value);
+    },
     formatFullYearDate(value) {
       return DateFormatService.formatFullYearDatejs(value);
     },
