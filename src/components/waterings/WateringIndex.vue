@@ -3,7 +3,8 @@
   <h3 id="h3-left">Total: {{ waterings.length }}</h3>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('name')">Watering Name</th>
+      <th id="background-blue" @click="sortList('name')">Name</th>
+      <th id="background-blue" @click="sortList('name')">Target</th>
       <th id="background-blue" @click="sortList('start_time')">Start</th>
       <th id="background-blue" @click="sortList('end_time')">End</th>
       <th id="background-blue" @click="sortList('location')">Location</th>
@@ -14,6 +15,7 @@
     </tr>
     <tr v-for="watering in waterings" :key="watering.id" watering="watering">
       <td>{{ watering.name }}</td>
+      <td>{{ watering.target }}</td>
       <td>{{ formatTime(watering.start_time) }}</td>
       <td>{{ formatTime(watering.end_time) }}</td>
       <td>{{ watering.location }}</td>
