@@ -1,9 +1,16 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="card">
-    <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
-      <h4><b>{{garden.name}}</b></h4>
-    </router-link>
+    <span v-if="this.$route.name == 'GardenList'">
+      <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+        <h4><b>{{garden.name}}</b></h4>
+      </router-link>
+    </span>
+    <span v-else>
+      <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
+        <h4><b>{{garden.name}}</b></h4>
+      </router-link>
+    </span>
     <p id="p-custom-left">Notes:</p>
     <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
     <br/>
@@ -92,7 +99,7 @@ export default {
       splitLength: 30,
     };
   },
-  computed: { },
+  computed: {},
   created() {},
   methods: {
     async deleteGarden(garden) {
@@ -109,7 +116,7 @@ export default {
         this.$store.dispatch("deleteGarden", garden);
         this.statusMessage =
           "Garden was Deleted for " +
-          garden.title +
+          garden.name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
         this.$router.push({ name: "GardenList" });

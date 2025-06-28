@@ -96,7 +96,6 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchTravels");
-    //?this.sortedData = this.travels;
     this.sortedData = this.$store.dispatch("fetchTravels");
   },
   computed: {

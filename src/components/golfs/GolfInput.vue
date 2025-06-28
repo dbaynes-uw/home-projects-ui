@@ -205,7 +205,6 @@
   </v-card-text>
 </template>
 <script>
-//?import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";

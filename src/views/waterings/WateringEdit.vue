@@ -41,13 +41,13 @@
           v-model="watering.duration"
           style="font-weight: bold"
         />
-        <h3 id="p-custom-left">Current Start Time: {{ displayStartTime }}</h3>
+        <h3 id="p-custom-left">Current Start Time: {{ formatTime(watering.start_time)  }}</h3>
         <v-text-field 
             type="time"
             label="Click to Edit Start Time"
             v-model="watering.start_time"
           />
-          <h3 id="p-custom-left">Current End Time: {{ formatStandardTime(watering.end_time) }}</h3>
+          <h3 id="p-custom-left">Current End Time: {{ formatTime(watering.end_time) }}</h3>
           <v-text-field 
             type="time"
             label="Click to Edit End Time"
@@ -98,7 +98,6 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchWatering", this.id);
-    this.displayStartTime = this.formatStandardTime(this.watering.start_time)
   },
   computed: {
     watering() {
@@ -128,13 +127,13 @@ export default {
           updated_by: this.$store.state.created_by,
         };
         if (this.$store.dispatch("updateWatering", watering)) {
-          this.$router.push({ name: "WateringList" });
+          this.$router.push({ name: "GardenWaterings", params: {id: `${watering.garden_id}` }});
         } else {
           alert("Error in Watering Update");
         }
       }
     },
-    formatStandardTime(value) {
+    formatTime(value) {
       return DateFormatService.formatTimejs(value);
     },
     formatStandardDateTime(value) {

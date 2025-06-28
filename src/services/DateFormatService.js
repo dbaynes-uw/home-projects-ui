@@ -1,9 +1,10 @@
 import moment from "moment-timezone";
 moment.tz.setDefault("America/Los_Angeles");
 //moment.tz.setDefault("Central European Summer Time");
-//moment.tz.setDefault("UTC");
+//UTC OFFSET:
+  //moment.tz.setDefault("UTC");
 import dayjs from 'dayjs'
-import customParseFormat from "dayjs/plugin/customParseFormat";
+//import customParseFormat from "dayjs/plugin/customParseFormat";
 export default {
   formatDayOfWeekjs(action_date) {
     if (action_date) {
@@ -26,29 +27,34 @@ export default {
   },
   formatDateTimejs(date_time) {
     if (date_time) {
-      var utc = require("dayjs/plugin/utc");
-      dayjs().utcOffset()
-      dayjs.extend(utc)
-      date_time = dayjs.utc(date_time).utcOffset(-7).format("MM-DD-YY H:mma")
+      //UTC OFFSET:
+        //var utc = require("dayjs/plugin/utc");
+        //dayjs().utcOffset()
+        //dayjs.extend(utc)
+        //date_time = dayjs.utc(date_time).utcOffset(-7).format("MM-DD-YY H:mma")
+        date_time = dayjs(date_time).format("MM-DD-YY H:mma")
       //06-12-25 20:49pm
       return date_time;
     }
   },
   formatStandardDateTimejs(date_time) {
     if (date_time) {
-      var utc = require("dayjs/plugin/utc");
-      dayjs().utcOffset()
-      dayjs.extend(utc)
-      date_time = dayjs.utc(date_time).utcOffset(-7).format("M/DD/YY H:mma") 
+      //UTC OFFSET:
+        //var utc = require("dayjs/plugin/utc");
+        //dayjs().utcOffset()
+        //dayjs.extend(utc)
+        //date_time = dayjs.utc(date_time).utcOffset(-7).format("M/DD/YY H:mma") 
+      date_time = dayjs(date_time).format("MM/DD/YY hh:mma");
       return date_time;
     }
   },
   formatTimejs(action_time) {
-    dayjs.extend(customParseFormat)
     if (action_time) {
-      //const newYorkTime = moment.tz("2025-01-22T17:00:00", "America/New_York")
-      //console.log(newYorkTime.format(action_time)) // "2025-01-22 17:00:00"
-      action_time =  dayjs(action_time).format('HH:mm')
+      //dayjs.extend(customParseFormat)
+      if (action_time.length < 8) {
+        action_time = "2000-01-01T" + action_time
+      }
+      action_time =  dayjs(action_time).format('hh:mma')
       return action_time;
     }
   },

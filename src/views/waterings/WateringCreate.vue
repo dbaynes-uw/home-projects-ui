@@ -112,14 +112,13 @@ export default {
       isWateringNameValid: false,
     };
   },
-  created() {},
+  created() {
+    this.$store.dispatch("fetchGarden", this.garden_id);
+  },
   computed: {
     garden() {
       return this.$store.state.garden;
     },
-    //watering() {
-    //  return this.$store.state.watering;
-    //},
   },
   methods: {
     onSubmit() {
@@ -149,6 +148,7 @@ export default {
       }
     },
     checkValidations() {
+      console.log("this.garden.id: ", this.garden.id)
       if (this.isWateringNameValid) {
         this.isFormValid = true
       } else {

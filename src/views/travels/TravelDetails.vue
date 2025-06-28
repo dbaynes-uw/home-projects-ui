@@ -4,6 +4,7 @@
     <v-card-title class="pb-0">
       <h2>{{ travel.title }} Details</h2>
       Date: {{ Date() }}
+      <br/>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>

@@ -935,7 +935,6 @@ export default new Vuex.Store({
           alert("Plant Fetch Error: ", error.response.data )
         });
     },
-    //????Below Still Needed b/c associations?
     async fetchPlants({ commit }, garden) {
       EventService.getPlants(garden)
         .then((response) => {
@@ -1351,7 +1350,7 @@ export default new Vuex.Store({
       EventService.deleteWatering(watering)
         .then((response) => {
           commit("DELETE_WATERING", response.data);
-          alert("Watering " + watering.title + " was deleted");
+          alert("Watering " + watering.name + " was deleted");
         })
         .catch((error) => {
           alert("Watering Delete Error: ", error.response.data )

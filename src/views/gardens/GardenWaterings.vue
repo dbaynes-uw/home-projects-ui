@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Waterings List</h2>
+      <h2>Waterings List for Garden {{ garden.name }}</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -44,10 +44,10 @@
       </span>
       <span v-else>
         <span v-if="requestIndexDetailFlag == false">
-          <h3 id="h3-left">Total: {{ waterings.length }}</h3>
+          <h3 id="h3-left">Total: {{ garden.waterings.length }}</h3>
           <div class="cards">
             <WateringCard
-              v-for="watering in waterings"
+              v-for="watering in garden.waterings"
               :key="watering.id"
               :watering="watering"
             />
@@ -55,7 +55,7 @@
           </div>
         </span>
         <span v-else>
-          <WateringIndex :waterings="waterings" />
+          <WateringIndex :waterings="garden.waterings" />
         </span>
       </span>
     </span>
@@ -99,15 +99,19 @@ export default {
     ConfirmDialogue
   },
   mounted() {
-    this.sortedData = this.waterings;
+    //?this.sortedData = this.waterings;
   },
   created() {
-    this.$store.dispatch("fetchWaterings");
-    this.sortedData = this.$store.dispatch("fetchWaterings");
+    this.$store.dispatch("fetchGarden", this.$route.params.id);
+    //?this.$store.dispatch("fetchWaterings");
+    //?this.sortedData = this.$store.dispatch("fetchWaterings");
   },
   computed: {
-    waterings() {
-      return this.$store.state.waterings;
+    //?waterings() {
+    //?  return this.$store.state.waterings;
+    //?},
+    garden() {
+      return this.$store.state.garden;
     },
   },
   data() {
@@ -196,27 +200,4 @@ export default {
   },
 };
 </script>
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-th:hover {
-  cursor: pointer;
-  background: rgb(229, 255, 211);
-}
-tr:nth-child(even) {
-  background-color: #f3f3f3;
-}
-tr:nth-child(odd) {
-  background-color: #41b88352;
-  border: none !important;
-}
-</style>
+<style></style>

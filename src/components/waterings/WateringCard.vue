@@ -37,9 +37,13 @@
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
         </router-link>
       </span>
-        <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
-          <i class="fa-solid fa-backward fa-stack-1x"></i>
-        </router-link>
+      <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
+      </router-link>
+      <span class="fa-stack">
+        <i @click="deleteWatering(watering)" class="fas fa-trash-alt fa-stack-1x">
+        </i>
+      </span>
     </div>
   </div>
 </template>

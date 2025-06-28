@@ -17,6 +17,11 @@ import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
 import ForgotPassword from "../components/ForgotPassword.vue";
 import ResetPassword from "../components/ResetPassword.vue";
+import GardenCreate from "@/views/gardens/GardenCreate.vue";
+import GardenDetails from "@/views/gardens/GardenDetails.vue";
+import GardenEdit from "@/views/gardens/GardenEdit.vue";
+import GardenList from "../views/gardens/GardenList.vue";
+import GardenWaterings from "../views/gardens/GardenWaterings.vue";
 import GolfCreate from "../views/golfs/GolfCreate.vue";
 import GolfDetails from "@/views/golfs/GolfDetails.vue";
 import GolfEdit from "@/views/golfs/GolfEdit.vue"
@@ -29,10 +34,6 @@ import MedList from "../views/meds/MedList.vue";
 //import OutletDetailsByName from "@/views/outlets/OutletDetailsByName.vue";
 //import OutletEdit from "@/views/outlets/OutletEdit.vue";
 //import OutletDetails from "@/views/outlets/OutletDetails.vue";
-import GardenCreate from "@/views/gardens/GardenCreate.vue";
-import GardenDetails from "@/views/gardens/GardenDetails.vue";
-import GardenEdit from "@/views/gardens/GardenEdit.vue";
-import GardenList from "../views/gardens/GardenList.vue";
 import PlantCreate from "@/views/plants/PlantCreate.vue";
 import PlantDetails from "@/views/plants/PlantDetails.vue";
 import PlantEdit from "@/views/plants/PlantEdit.vue";
@@ -72,7 +73,6 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
-    //?props: true,
   },
   {
     path: '/dashboard',
@@ -296,9 +296,9 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/gardens/create_watering/:garden_id",
-    name: "WateringCreate",
-    component: WateringCreate,
+    path: "/garden/waterings/:id",
+    name: "GardenWaterings",
+    component: GardenWaterings,
     meta: { requiresAuth: true}
   },
   {
