@@ -66,7 +66,7 @@ import { ref } from 'vue';
 const successMessage = ref('')
 export default {
   name: 'GardenDetails',
-  props: ["id"],
+  props: ["id","garden_id"],
   components: {
     ConfirmDialogue,
     GardenCard,
