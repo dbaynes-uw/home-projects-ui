@@ -17,6 +17,13 @@
         </router-link>
       </button>
     </li>
+    <li>
+      <button id="button-as-link">
+        <router-link :to="{ name: 'WateringList' }">
+          <b>Waterings</b>
+        </router-link>
+      </button>
+    </li>
   </ul> 
   <br/>
   <h3>{{ this.statusMessage }}</h3>
