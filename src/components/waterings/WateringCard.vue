@@ -10,7 +10,7 @@
       <span v-if="this.$route.name != 'GardenDetails'">
         <li class="li-left">
           <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-            Garden: <b>{{ watering.garden_id}}</b>
+            Garden: <b>{{ watering.garden.name }}</b>
           </router-link>
         </li>
       </span>
@@ -58,7 +58,7 @@ export default {
     watering: {
       type: Object,
       default: () => ({})
-    }
+    },
   },
   components: {
     ConfirmDialogue,
@@ -69,8 +69,8 @@ export default {
       splitLength: 30,
     };
   },
-  computed: {},
   created() {},
+  computed: {},
   methods: {
     async deleteWatering(watering) {
       const ok = await this.$refs.confirmDialogue.show({
