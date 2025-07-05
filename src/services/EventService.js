@@ -384,6 +384,10 @@ export default {
     this.init();
     return axios.get(api_url + "waterings")
   },
+  async getGardenWaterings(garden_id) {
+    this.init();
+    return axios.get(api_url + "waterings/garden_waterings/" + `${garden_id}`)
+  },
   deleteWatering(watering) {
     this.init();
     // For Testing: setTimeout(5000);

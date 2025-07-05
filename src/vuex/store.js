@@ -273,6 +273,9 @@ export default new Vuex.Store({
     SET_WATERINGS(state, waterings) {
       state.waterings = waterings;
     },
+    SET_GARDEN_WATERINGS(state, garden_waterings) {
+      state.garden_waterings = garden_waterings;
+    },
     ADD_WATERING(state, watering) {
       state.waterings.push(watering);
     },
@@ -1377,15 +1380,23 @@ export default new Vuex.Store({
       EventService.getWaterings()
         .then((response) => {
           commit("SET_WATERINGS", response.data);
-          
           return response.data;
         })
         .catch((error) => {
           alert("Waterings Fetch Error: ", error.response.data )
         });
     },
-
-  },
+    async fetchGardenWaterings({ commit }, garden_id) {
+      EventService.getGardenWaterings(garden_id)
+        .then((response) => {
+          commit("SET_GARDEN_WATERINGS", response.data); 
+          return response.data;
+        })
+        .catch((error) => {
+          alert("Garden Waterings Fetch Error: ", error.response.data )
+        });
+      }
+    },
   getters: {
     numberOfBooks(state) {
       return state.books.length

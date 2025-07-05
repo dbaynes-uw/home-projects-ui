@@ -295,12 +295,7 @@ const routes = [
     component: GardenCreate,
     meta: { requiresAuth: true}
   },
-  {
-    path: "/garden/waterings/:id",
-    name: "GardenWaterings",
-    component: GardenWaterings,
-    meta: { requiresAuth: true}
-  },
+
   {
     path: "/plants/:id",
     name: "PlantDetails",
@@ -487,6 +482,12 @@ const routes = [
     name: "WateringDetails",
     props: true,
     component: WateringDetails,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings/garden_waterings/:id",
+    name: "GardenWaterings",
+    component: GardenWaterings,
     meta: { requiresAuth: true}
   },
   {

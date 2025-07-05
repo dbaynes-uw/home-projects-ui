@@ -11,7 +11,7 @@
       </button>
     </li>
     <li>
-      <button id="button-as-link" @click="requestIndexDetail">
+      <button id="button-as-link">
         <router-link :to="{ name: 'GardenWaterings' }">
           <b>Waterings for {{ garden.name }}</b>
         </router-link>
@@ -84,9 +84,9 @@ export default {
     successMessage.value = this.$route.query.success;
     this.statusMessage = successMessage.value
   },
-  created() {
-    this.$store.dispatch("fetchGarden", this.$route.params.id);
-  },
+  //created() {
+  //  this.$store.dispatch("fetchGarden", this.$route.params.id);
+  //},
   computed: {
     garden() {
       return this.$store.state.garden;

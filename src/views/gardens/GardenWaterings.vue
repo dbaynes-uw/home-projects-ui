@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Waterings List for Garden {{ garden.name }}</h2>
+      <h2>Garden Waterings for {{ garden.name }}</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
@@ -22,6 +22,11 @@
     <br/>
   </v-card>
   <br/>
+  GW ROUTE: {{ this.$route.name }} - {{ this.$route.name.includes("Watering")  }}
+  <br>
+  Garden: {{ garden.name }}
+  <br>
+  requestIndexDetailFlag: {{ requestIndexDetailFlag }}
   <div style="width: 100%">
       <div class="auto-search-container">
         <v-text-field
@@ -44,10 +49,10 @@
       </span>
       <span v-else>
         <span v-if="requestIndexDetailFlag == false">
-          <h3 id="h3-left">Total: {{ garden.waterings.length }}</h3>
+          <h3 id="h3-left">Total: {{ garden_waterings.length }}</h3>
           <div class="cards">
             <WateringCard
-              v-for="watering in garden.waterings"
+              v-for="watering in garden_waterings"
               :key="watering.id"
               :watering="watering"
             />
@@ -91,7 +96,7 @@ import WateringIndex from "@/components/waterings/WateringIndex.vue";
 import WateringCard from "@/components/waterings/WateringCard.vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 export default {
-  name: "WateringList",
+  name: "GardenWaterings",
   props: ["id"],
   components: {
     WateringCard,
@@ -102,14 +107,14 @@ export default {
     //?this.sortedData = this.waterings;
   },
   created() {
-    this.$store.dispatch("fetchGarden", this.$route.params.id);
+    this.$store.dispatch("fetchGardenWaterings", this.$route.params.id);
     //?this.$store.dispatch("fetchWaterings");
-    //?this.sortedData = this.$store.dispatch("fetchWaterings");
+    this.sortedData = this.$store.dispatch("fetchGardenWaterings", this.$route.params.id);
   },
   computed: {
-    //?waterings() {
-    //?  return this.$store.state.waterings;
-    //?},
+    garden_waterings() {
+      return this.$store.state.garden_waterings;
+    },
     garden() {
       return this.$store.state.garden;
     },

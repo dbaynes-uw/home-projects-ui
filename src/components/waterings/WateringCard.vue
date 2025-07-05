@@ -7,13 +7,12 @@
         </router-link>
     </h4>
     <ul>
-      <span v-if="this.$route.name != 'GardenDetails'">
-        <li class="li-left">
-          <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-            Garden: <b>{{ watering.garden.name }}</b>
+      ROUTE: {{ this.$route.name }}
+        <li class="li-left">>
+          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+           <b>{{ garden.name}}</b>
           </router-link>
         </li>
-      </span>
       <li class="li-left">Name: <b>{{ watering.name}}</b></li>
       <li class="li-left">Location: <b>{{ watering.location}}</b></li>
       <li class="li-left">Line: <b>{{ watering.line}}</b></li>
@@ -69,8 +68,14 @@ export default {
       splitLength: 30,
     };
   },
-  created() {},
-  computed: {},
+  created() {
+    this.$store.dispatch("fetchGarden", this.$route.params.id);
+  },
+  computed: {
+    garden() {
+      return this.$store.state.garden;
+    },
+  },
   methods: {
     async deleteWatering(watering) {
       const ok = await this.$refs.confirmDialogue.show({
