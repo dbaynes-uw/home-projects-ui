@@ -485,8 +485,9 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/waterings/garden_waterings/:id",
+    path: "/waterings/garden/:id",
     name: "GardenWaterings",
+    props: true,
     component: GardenWaterings,
     meta: { requiresAuth: true}
   },

@@ -9,8 +9,8 @@
     <ul>
       ROUTE: {{ this.$route.name }}
         <li class="li-left">>
-          <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-           <b>{{ garden.name}}</b>
+          <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
+           <b>{{ watering.garden_id}}</b>
           </router-link>
         </li>
       <li class="li-left">Name: <b>{{ watering.name}}</b></li>
@@ -69,12 +69,12 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchGarden", this.$route.params.id);
+    //this.$store.dispatch("fetchGarden", this.$route.params.id);
   },
   computed: {
-    garden() {
-      return this.$store.state.garden;
-    },
+    //garden() {
+    //  return this.$store.state.garden;
+    //},
   },
   methods: {
     async deleteWatering(watering) {
