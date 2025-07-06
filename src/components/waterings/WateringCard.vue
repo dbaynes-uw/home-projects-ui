@@ -3,15 +3,24 @@
   <div class="card">
     <h4>
       <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
-        {{ watering.name }}
+        {{ watering.name }} 
         </router-link>
     </h4>
     <ul>
-      ROUTE: {{ this.$route.name }}
-        <li class="li-left">>
-          <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-           <b>{{ watering.garden_id}}</b>
-          </router-link>
+        <li class="li-left">
+          <span v-if="this.$route.name == 'GardenDetails'">
+            <b>{{ garden.name}}</b>
+          </span>
+          <span v-if="this.$route.name == 'GardenWaterings'">
+            <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
+            <b>{{ watering.garden.name}}</b>
+            </router-link>
+          </span>
+          <span v-if="this.$route.name == 'WateringList'">
+            <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
+              <b>{{ watering.garden.name}}</b>
+            </router-link>  
+          </span>
         </li>
       <li class="li-left">Name: <b>{{ watering.name}}</b></li>
       <li class="li-left">Location: <b>{{ watering.location}}</b></li>
@@ -68,13 +77,11 @@ export default {
       splitLength: 30,
     };
   },
-  created() {
-    //this.$store.dispatch("fetchGarden", this.$route.params.id);
-  },
+  created() {},
   computed: {
-    //garden() {
-    //  return this.$store.state.garden;
-    //},
+    garden() {
+      return this.$store.state.garden;
+    },
   },
   methods: {
     async deleteWatering(watering) {

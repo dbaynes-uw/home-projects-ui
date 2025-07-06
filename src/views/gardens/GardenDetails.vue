@@ -84,9 +84,9 @@ export default {
     successMessage.value = this.$route.query.success;
     this.statusMessage = successMessage.value
   },
-  //created() {
-  //  this.$store.dispatch("fetchGarden", this.$route.params.id);
-  //},
+  created() {
+    this.$store.dispatch("fetchGarden", this.$route.params.id);
+  },
   computed: {
     garden() {
       return this.$store.state.garden;

@@ -370,7 +370,7 @@ export default {
   },
   async postWatering(watering) {
     this.init();
-    return axios.post(api_url + 'create_watering', watering);
+    return axios.post(api_url + 'waterings', watering);
   },
   async postWateringOutlet(watering_outlet) {
     this.init();
