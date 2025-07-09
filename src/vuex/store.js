@@ -775,10 +775,10 @@ export default new Vuex.Store({
           commit("ADD_GLUCOSE_READING", glucose_reading);
     
           // Log the entire object and the specific field
-          //console.log("Glucose Reading Object: ", glucose_reading);
+          console.log("Glucose Reading Object: ", glucose_reading);
           //Xconsole.log("Glucose Reading Field (reading): ", glucose_reading.reading);
     
-          alert("Glucose Reading was successfully added for " + glucose_reading.glucose_reading.reading);
+          alert("Glucose Reading was successfully added for " + glucose_reading.reading);
         })
         .catch((error) => {
           console.error("Glucose Reading Post Error: ", error.response.data);
