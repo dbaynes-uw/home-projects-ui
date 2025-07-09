@@ -22,6 +22,10 @@ import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import GardenWaterings from "../views/gardens/GardenWaterings.vue";
+import GlucoseReadingList from "@/views/glucose_readings/GlucoseReadingList.vue";
+import GlucoseReadingDetails from "@/views/glucose_readings/GlucoseReadingDetails.vue";
+import GlucoseReadingCreate from "@/views/glucose_readings/GlucoseReadingCreate.vue";
+import GlucoseReadingEdit from "@/views/glucose_readings/GlucoseReadingEdit.vue";
 import GolfCreate from "../views/golfs/GolfCreate.vue";
 import GolfDetails from "@/views/golfs/GolfDetails.vue";
 import GolfEdit from "@/views/golfs/GolfEdit.vue"
@@ -216,7 +220,32 @@ const routes = [
     component: FilmEdit,
     meta: { requiresAuth: true}
   },
-
+  {
+    path: "/glucose_readings",
+    name: "GlucoseReadingList",
+    component: GlucoseReadingList,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/glucose_readings/:id",
+    name: "GlucoseReadingDetails",
+    props: true,
+    component: GlucoseReadingDetails,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/glucose_reading/create",
+    name: "GlucoseReadingCreate",
+    component: GlucoseReadingCreate,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/glucose_reading/:id",
+    name: "GlucoseReadingEdit",
+    props: true,
+    component: GlucoseReadingEdit,
+    meta: { requiresAuth: true },
+  },
   {
     path: "/golf/create",
     name: "GolfCreate",

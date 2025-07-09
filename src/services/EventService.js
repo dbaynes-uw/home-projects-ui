@@ -151,6 +151,7 @@ export default {
     this.init();
     return axios.post(api_url + 'golfs', golf);
   },
+
   async postGarden(garden) {
     this.init();
     return axios.post(api_url + 'gardens', garden);
@@ -163,11 +164,24 @@ export default {
     this.init();
     return axios.put(api_url + "plants" + `/${updatedPlant.id}`, updatedPlant);
   },
-  async putWatering(updatedWatering) {
+  getGlucoseReadings() {
     this.init();
-    return axios.put(api_url + "waterings" + `/${updatedWatering.id}`, updatedWatering);
+    return axios.get(api_url + "glucose_readings")
   },
-
+  async postGlucoseReading(glucose_reading) {
+    this.init();
+    console.log("ES: postGlucoseReading", glucose_reading);
+    // For Testing: setTimeout(5000);
+    //*if (glucose_reading.glucose_reading === null || glucose_reading.glucose_reading === undefined) {
+    //*  console.error("ES: postGlucoseReading - glucose_reading is null or undefined");
+    //*  throw new Error("Glucose reading is required");
+    //*}
+    //*if (glucose_reading.meal === null || glucose_reading.meal === undefined) {
+    //*  console.error("ES: postGlucoseReading - meal is null or undefined");
+    //*  throw new Error("Meal is required");
+    //*}
+    return axios.post(api_url + 'glucose_readings', glucose_reading);
+  },
   deleteMed(med) {
     this.init();
        // For Testing: setTimeout(5000);
@@ -371,6 +385,10 @@ export default {
   async postWatering(watering) {
     this.init();
     return axios.post(api_url + 'waterings', watering);
+  },
+  async putWatering(updatedWatering) {
+    this.init();
+    return axios.put(api_url + "waterings" + `/${updatedWatering.id}`, updatedWatering);
   },
   async postWateringOutlet(watering_outlet) {
     this.init();

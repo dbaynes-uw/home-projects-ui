@@ -34,6 +34,8 @@ export default new Vuex.Store({
     films: [],
     garden: [],
     gardens: [],
+    glucoseReadings: [],
+    glucoseReading: null,
     watering: [],
     waterings: [],
     med: {},
@@ -128,6 +130,15 @@ export default new Vuex.Store({
     //},
     ADD_GARDEN(state, garden) {
       state.gardens.push(garden);
+    },
+    ADD_GLUCOSE_READING(state, result) {
+      state.glucoseResult = result;
+    },
+    SET_GLUCOSE_READINGS(state, results) {
+      state.glucoseResults = results;
+    },
+    SET_GLUCOSE_READING(state, result) {
+      state.glucoseResult = result;
     },
     ADD_GOLF(state, golf) {
       state.golfs.push(golf);
@@ -478,7 +489,6 @@ export default new Vuex.Store({
       EventService.getGardens()
         .then((response) => {
           commit("SET_GARDENS", response.data);
-          
           return response.data;
         })
         .catch((error) => {
@@ -743,6 +753,46 @@ export default new Vuex.Store({
           location.reload();
       });
     },
+    async fetchGlucoseReadings({ commit }) {
+      EventService.getGlucoseReadings()
+        .then((response) => {
+          commit("SET_GLUCOSE_READINGS", response.data);
+          console.log("Glucose Readings: ", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          alert("Glucose Readings Fetch Error: ", error.response.data )
+        });
+    },
+
+    async fetchGlucoseReading({ commit }, id) {
+      // Replace with API call
+      const result = { id, name: "Result 1", value: 120 };
+      commit("SET_GLUCOSE_READING", result);
+    },
+    async createGlucoseReading({ commit }, glucose_reading) {
+      EventService.postGlucoseReading(glucose_reading)
+        .then(() => {
+          commit("ADD_GLUCOSE_READING", glucose_reading);
+          alert("Glucose Result was successfully added for " + glucose_reading.reading);
+        })
+        .catch((error) => {
+          alert("Glucose Result Post Error: ", error.response.data )
+        });
+    },
+
+    async updateGlucoseReading({ commit }, glucose_reading) {
+      EventService.putGlucoseReading(glucose_reading)
+        .then((response) => {
+          commit("SET_GLUCOSE_READING", response.data);
+          alert("GlucoseReading " + glucose_reading.reading + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          alert("GlucoseReading Put Error for " + glucose_reading.reading + ": " + error.response.request.statusText)
+          location.reload();
+      });
+    },
+
     async createGolf({ commit }, golf) {
       EventService.postGolf(golf)
         .then(() => {
@@ -1398,6 +1448,9 @@ export default new Vuex.Store({
       }
     },
   getters: {
+    glucoseReadings(state) {
+      return state.glucoseResults || []; // Ensure it always returns an array
+    },
     numberOfBooks(state) {
       return state.books.length
     },
