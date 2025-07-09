@@ -5,7 +5,7 @@
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="date"
+            v-model="reading_date"
             label="Date"
             type="datetime-local"
             outlined
@@ -43,18 +43,21 @@ export default {
     const store = useStore();
     const router = useRouter();
 
-    const date = ref('');
+    const reading_date = ref('');
     const reading = ref('');
 
     const createReading = async () => {
-      // Structure the data to match Rails' expected params
+      const glucose_reading = {
+        reading: reading.value, // Define the reading field here
+        reading_date: reading_date.value,
+      };
       const glucose_reading_params = {
         glucose_reading: {
-          date: date.value,
+          reading_date: reading_date.value,
           reading: reading.value,
         },
       };
-
+      console.log("CreateReading: ", glucose_reading);
       console.log("Sending data to API: ", glucose_reading_params);
 
       // Dispatch the action with the structured params
@@ -64,7 +67,7 @@ export default {
       router.push({ name: 'GlucoseReadingList' });
     };
 
-    return { date, reading, createReading };
+    return { reading_date, reading, createReading };
   },
 };
 </script>

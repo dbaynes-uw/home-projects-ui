@@ -6,6 +6,11 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
+          <router-link  :to="{ name: 'GlucoseReadingList' }">Glucose Readings</router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link">
           <router-link  :to="{ name: 'MedCreate' }">Add Med</router-link>
         </button>
       </li>

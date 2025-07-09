@@ -170,7 +170,6 @@ export default {
   },
   async postGlucoseReading(glucose_reading) {
     this.init();
-    console.log("ES: postGlucoseReading", glucose_reading);
     // For Testing: setTimeout(5000);
     //*if (glucose_reading.glucose_reading === null || glucose_reading.glucose_reading === undefined) {
     //*  console.error("ES: postGlucoseReading - glucose_reading is null or undefined");

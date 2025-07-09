@@ -1,32 +1,24 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total: {{ books.length }}</h3>
+  <h3 id="h3-left">Total: {{ glucose_readings.length }}</h3>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('title')">Title</th>
-      <th id="background-blue" @click="sortList('author')">Author</th>
-      <th id="background-blue" @click="sortList('date_written')">
-        Date Written
-      </th>
-      <th id="background-blue" @click="sortList('date_read')">
-        Date Read
-      </th>
-      <th id="background-blue">URL to Review</th>
+      <th id="background-blue" @click="sortList('reading_date')">Date</th>
+      <th id="background-blue" @click="sortList('reading')">Reading</th>
+      <th id="background-blue" @click="sortList('reading_type')">Reading Type</th>
+      <th id="background-blue" @click="sortList('status')">Result</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="(result, resultIndex) in books" :key="resultIndex">
-      <td>{{ result.title }}</td>
-      <td>{{ result.author }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_written) }}</td>
-      <td class="td-center">{{ formatFullYearDate(result.date_read) }}</td>
-      <td class="td-center">
-        <a :href="result.url_to_review" target="_blank">Review</a>
-      </td>
+    <tr v-for="(result, resultIndex) in glucose_readings" :key="resultIndex">
+      <td class="td-center">{{ formatStandardDateTime(result.reading_date) }}</td>
+      <td>{{ result.reading }}</td>
+      <td>{{ result.reading_type }}</td>
+      <td>{{ result.status }}</td>
        <td class="td-center" >
         <span v-if="this.onlineStatus">
           <span class="fa-stack" style="text-align: center">
             <router-link
-              :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
+              :to="{ name: 'GlucoseReadingEdit', params: { id: `${result.id}` } }"
             >
               <i
                 id="medium-icon-edit"
@@ -36,16 +28,16 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
+                :to="{ name: 'GlucoseReadingDetails', params: { id: `${result.id}` } }"
               >
-                <i id="booklist-icon-eye" class="fa fa-eye"></i>
+                <i id="GlucoseReadinglist-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
-                @click="deleteBook(result)"
+                @click="deleteGlucoseReading(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="booklist-icon-delete"
+                id="GlucoseReadinglist-icon-delete"
               >
               </i>
             </span>
@@ -53,16 +45,16 @@
         </span>
         <span v-else>
           <router-link
-            :to="{ name: 'BookDetails', params: { id: `${result.id}` } }"
+            :to="{ name: 'GlucoseReadingDetails', params: { id: `${result.id}` } }"
           >
             View |
           </router-link>
           <router-link
-            :to="{ name: 'BookEdit', params: { id: `${result.id}` } }"
+            :to="{ name: 'GlucoseReadingEdit', params: { id: `${result.id}` } }"
           >
             Edit |
           </router-link>
-          <span class="ok-btn" @click="deleteBook(result)"><u>Delete</u></span>
+          <span class="ok-btn" @click="deleteGlucoseReading(result)"><u>Delete</u></span>
         </span>
       </td>
     </tr>
@@ -74,8 +66,8 @@
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 export default {
-  name: "BookIndex",
-  props: ["books"],
+  name: "GlucoseReadingIndex",
+  props: ["glucose_readings"],
   components: {
     ConfirmDialogue,
   },
@@ -88,7 +80,7 @@ export default {
   },
   methods: {
     sortList(sortBy) {
-      this.sortedData = this.books;
+      this.sortedData = this.glucose_readings;
       if (this.sortedbyASC) {
         this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
         this.sortedbyASC = false;
@@ -97,27 +89,27 @@ export default {
         this.sortedbyASC = true;
       }
     },
-    async deleteBook(book) {
+    async deleteGlucoseReading(glucose_reading) {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Book from List",
+        title: "Delete GlucoseReading from List",
         message:
-          "Are you sure you want to delete " +
-          book.title +
+          "Are you sure you want to delete readint at " +
+          glucose_reading.reading_date +
           "? It cannot be undone.",
         okButton: "Delete",
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteBook", book);
+        this.$store.dispatch("deleteGlucoseReading", glucose_reading);
         this.statusMessage =
-          "Book was Deleted for " +
-          book.title +
+          "GlucoseReading was Deleted for " +
+          glucose_reading.reading_date +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2000);
       }
     },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
+    formatStandardDateTime(value) {
+      return DateFormatService.formatStandardDateTimejs(value);
     },
   },
 };
