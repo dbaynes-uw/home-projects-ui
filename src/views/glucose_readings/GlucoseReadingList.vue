@@ -22,10 +22,22 @@
           <GlucoseReadingIndex :glucose_readings="glucose_readings" />
         </template>
         <template v-else>
-          <span class="h3-left-total-child"><p>Total Glucose Readings: {{ glucose_readings.length }}</p></span>
+          <span class="h3-left-total-child"><p id="p-bold">Total Glucose Readings: {{ glucose_readings.length }}</p></span>
           <span class="h3-left-total-child">
-            <p>Average Glucose Reading: {{ averageReading }}</p>
-          </span>          
+            <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
+          </span>
+          <div class="h3-left-total-child">
+            <p id="p-bold">Average Readings by Type:</p>
+            <ul>
+              <li
+                v-for="(average, type) in averageReadingsByType"
+                :key="type"
+                :style="{color: isWithinRange(type, average) ? 'green' : 'red' }"
+              >
+                <span><p id="p-bold-indent">- {{ type }}: {{ average }} mg/dl</p></span>
+              </li>
+            </ul>
+          </div> 
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
             <GlucoseReadingCard
@@ -59,11 +71,44 @@ export default {
     const glucose_readings = computed(() => store.state.glucoseReadings); // Use Vuex state directly
     const isLoading = ref(true); // Add loading state
     const requestIndexDetailFlag = ref(true); // Reactive flag for toggling views
+    
     const averageReading = computed(() => {
      if (glucose_readings.value.length === 0) return 0; // Handle empty list
       const total = glucose_readings.value.reduce((sum, reading) => sum + reading.reading, 0);
       return (total / glucose_readings.value.length).toFixed(2); // Calculate average and format to 2 decimal places
-    });    
+    }); 
+    
+    const averageReadingsByType = computed(() => {
+      if (glucose_readings.value.length === 0) return {}; // Handle empty list
+
+      const groupedReadings = glucose_readings.value.reduce((acc, reading) => {
+        const type = reading.reading_type;
+        if (!acc[type]) {
+          acc[type] = { total: 0, count: 0 };
+        }
+        acc[type].total += reading.reading;
+        acc[type].count += 1;
+        return acc;
+      }, {});
+
+      // Calculate averages for each type
+      const averages = {};
+      for (const type in groupedReadings) {
+        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
+      }
+      return averages;
+    });
+    // Helper method to determine if the average is within range
+    const isWithinRange = (type, average) => {
+      const avg = parseFloat(average); // Convert average to a number
+      if (type === "Fasting") {
+        return avg >= 70 && avg <= 99; // Normal fasting range
+      } else if (type === "Post-Meal") {
+        return avg >= 100 && avg <= 125; // Normal post-meal range
+      } else {
+        return false; // Default to false for unknown types
+      }
+    };
     const editGlucoseReading = (glucose_reading) => {
       store.$router.push({ name: 'GlucoseReadingEdit', params: { id: glucose_reading.id } });
     };
@@ -82,7 +127,16 @@ export default {
       }
     });
 
-    return { glucose_readings, isLoading, requestIndexDetailFlag, averageReading, editGlucoseReading, requestIndexDetail };
+    return {
+      glucose_readings,
+      isLoading,
+      requestIndexDetailFlag,
+      averageReading,
+      averageReadingsByType,
+      isWithinRange, // Return the helper method
+      editGlucoseReading,
+      requestIndexDetail,
+    };
   },
 };
 </script>
@@ -104,5 +158,12 @@ export default {
   text-align: left;
   font-size: 1.2rem;
   margin-bottom: 16px;
+}
+#p-bold{
+  font-weight: bold;
+}
+#p-bold-indent{
+  font-weight: bold;
+  margin-left: 20px;
 }
 </style>

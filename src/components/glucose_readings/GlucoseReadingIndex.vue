@@ -4,6 +4,19 @@
   <span>
     <h3 id="h3-left"><p>Average Glucose Reading: {{ averageReading() }}</p></h3>
   </span> 
+  <div>
+    <h3 id="h3-left">Average Readings by Type:</h3>
+    <ul>
+      <li
+        v-for="(average, type) in averageReadingsByType()"
+        :key="type"
+        :style="{ color: isWithinRange(type, average) ? 'green' : 'red' }"
+      >
+      <h3 id="h3-left-indent">- {{ type }}: {{ average }} mg/dl</h3>
+      </li>
+    </ul>
+  </div>
+
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('reading_date')">Date</th>
@@ -93,6 +106,36 @@ export default {
       );
       return (total / this.glucose_readings.length).toFixed(2); // Calculate average and format to 2 decimal places
     },
+    averageReadingsByType() {
+      if (this.glucose_readings.length === 0) return {}; // Handle empty list
+
+      const groupedReadings = this.glucose_readings.reduce((acc, reading) => {
+        const type = reading.reading_type;
+        if (!acc[type]) {
+          acc[type] = { total: 0, count: 0 };
+        }
+        acc[type].total += reading.reading;
+        acc[type].count += 1;
+        return acc;
+      }, {});
+
+      // Calculate averages for each type
+      const averages = {};
+      for (const type in groupedReadings) {
+        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
+      }
+      return averages;
+    },
+    isWithinRange(type, average) {
+      const avg = parseFloat(average); // Convert average to a number
+      if (type === "Fasting") {
+        return avg >= 70 && avg <= 99; // Normal fasting range
+      } else if (type === "Post-Meal") {
+        return avg >= 100 && avg <= 125; // Normal post-meal range
+      } else {
+        return false; // Default to false for unknown types
+      }
+    },
     sortList(sortBy) {
       this.sortedData = this.glucose_readings;
       if (this.sortedbyASC) {
@@ -128,3 +171,12 @@ export default {
   },
 };
 </script>
+<style scoped>
+#p-bold{
+  font-weight: bold;
+}
+#h3-left-indent{
+  text-align: left;
+  margin-left: 20px;
+}
+</style>
