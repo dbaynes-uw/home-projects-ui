@@ -128,7 +128,7 @@ export default {
     },
     isWithinRange(type, average) {
       const avg = parseFloat(average); // Convert average to a number
-      if (type === "Fasting") {
+      if (type === "AM-Fasting") {
         return avg >= 70 && avg <= 99; // Normal fasting range
       } else if (type === "Post-Meal") {
         return avg >= 100 && avg <= 125; // Normal post-meal range
