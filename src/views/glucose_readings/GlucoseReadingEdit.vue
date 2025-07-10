@@ -50,7 +50,7 @@
             aria-label="Enter the reading type of the glucose reading"
           ></v-text-field>
         </v-col>      
-        <!-- Status or Diagnosis Bullet Points -->
+        <!-- Status or Diagnosis Bullet Points
         <v-col cols="12" md="6" id="bullet-style">
           <v-list dense>
             <v-list-item>
@@ -70,9 +70,9 @@
             </v-list-item>
           </v-list>
         </v-col>
-      
-        <!-- Status Input -->
-        <v-col cols="12" md="6">
+        -->
+        <!-- Status Input Calculated Below -->
+        <!--v-col cols="12" md="6">
           <v-select
             v-model="status"
             :items="statusOptions"
@@ -80,7 +80,7 @@
             outlined
             aria-label="Select the status of the glucose reading"
           ></v-select>
-        </v-col>
+        </v-col-->
         <!-- Notes Input -->
         <v-col cols="12">
           <v-textarea
@@ -125,15 +125,14 @@ export default {
     const reading_type = ref('');
     const status = ref('');
     const notes = ref('');
-        // Dropdown options for the status field
-    const statusOptions = ref([
-      'Good - 70-99 mg/dl',
-      'Prediabetes - 100-125 mg/dl',
-      'Diabetes - 126+ mg/dl',
-    ]);
+    // Dropdown options for the status field
+    //const statusOptions = ref([
+    //  'Good - 70-99 mg/dl',
+    //  'Prediabetes - 100-125 mg/dl',
+    //  'Diabetes - 126+ mg/dl',
+    //]);
 
     onMounted(async () => {
-      console.log('Fetching glucose reading with ID:', route.params.id);
       await store.dispatch('fetchGlucoseReading', route.params.id);
       const result = store.state.glucoseReading;
   
@@ -148,15 +147,24 @@ export default {
       reading_type.value = result.reading_type;
       status.value = result.status;
       notes.value = result.notes;
-      statusOptions.value = [
-        'Good - 70-99 mg/dl',
-        'Prediabetes - 100-125 mg/dl',
-        'Diabetes - 126+ mg/dl',
-
-      ];
-    });
+      //statusOptions.value = [
+      //  'Good - 70-99 mg/dl',
+      //  'Prediabetes - 100-125 mg/dl',
+      //  'Diabetes - 126+ mg/dl',
+      //];
+    })//;
 
     const updateReading = async () => {
+      //Determine the status based on the reading value
+      if (reading.value >= 70 && reading.value <= 99) {
+        status.value = 'Good - 70-99 mg/dl';
+      } else if (reading.value >= 100 && reading.value <= 125) {
+        status.value = 'Prediabetes - 100-125 mg/dl';
+      } else if (reading.value >= 126) {
+        status.value = 'Diabetes - 126+ mg/dl';
+      } else {
+        status.value = 'Invalid reading'; // Handle edge cases
+      }
       const updatedReading = {
         id: route.params.id,
         reading_date: reading_date.value,
@@ -176,7 +184,7 @@ export default {
             reading_type,
             status,
             notes,
-            statusOptions,
+            //statusOptions,
             updateReading };
   },
 };

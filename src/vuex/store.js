@@ -766,7 +766,6 @@ export default new Vuex.Store({
     async fetchGlucoseReading({ commit }, id) {
       try {
         const response = await EventService.getGlucoseReading(id); // Call the API
-        console.log("Fetched Glucose Reading:", response.data); // Debugging
         commit("SET_GLUCOSE_READING", response.data); // Commit the data to the state
       } catch (error) {
         console.error("Error fetching glucose reading: ");

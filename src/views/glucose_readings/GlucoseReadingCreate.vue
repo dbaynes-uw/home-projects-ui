@@ -47,7 +47,7 @@
           ></v-text-field>
         </v-col>
 
-        <!-- Status or Diagnosis Bullet Points -->
+        <!-- Status or Diagnosis Bullet Points 
         <v-col cols="12" md="6" id="bullet-style">
           <v-list dense>
             <v-list-item>
@@ -67,17 +67,9 @@
             </v-list-item>
           </v-list>
         </v-col>
-      
-        <!-- Status Input -->
-        <v-col cols="12" md="6">
-          <v-select
-            v-model="status"
-            :items="statusOptions"
-            label="Status"
-            outlined
-            aria-label="Select the status of the glucose reading"
-          ></v-select>
-        </v-col>
+        -->
+        <!-- Status Input Calculated below -->
+
         <!-- Notes Input -->
         <v-col cols="12" md="6">
           <v-textarea
@@ -123,14 +115,24 @@ export default {
     const status = ref(''); // Optional status field, can be used for additional information
     const notes = ref(''); // Optional notes field  
     // Dropdown options for the status field
-    const statusOptions = ref([
-      'Good - 70-99 mg/dl',
-      'Prediabetes - 100-125 mg/dl',
-      'Diabetes - 126+ mg/dl',
-    ]);
+    //const statusOptions = ref([
+    //  'Good - 70-99 mg/dl',
+    //  'Prediabetes - 100-125 mg/dl',
+    //  'Diabetes - 126+ mg/dl',
+    //]);
     // Method to handle form submission
     const createReading = async () => {
     try {
+      //Determine the status based on the reading value
+      if (reading.value >= 70 && reading.value <= 99) {
+        status.value = 'Good - 70-99 mg/dl';
+      } else if (reading.value >= 100 && reading.value <= 125) {
+        status.value = 'Prediabetes - 100-125 mg/dl';
+      } else if (reading.value >= 126) {
+        status.value = 'Diabetes - 126+ mg/dl';
+      } else {
+        status.value = 'Invalid reading'; // Handle edge cases
+      }
       // Flatten the object
       const glucose_reading = {
         reading_date: reading_date.value,
@@ -159,7 +161,7 @@ export default {
              reading_type,
              status,
              notes,
-             statusOptions,
+             //statusOptions,
              createReading };
   },
 };
