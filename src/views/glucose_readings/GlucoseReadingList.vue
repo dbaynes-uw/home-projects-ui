@@ -6,9 +6,6 @@
         <router-link :to="{ name: 'GlucoseReadingCreate' }">Create New Glucose Reading</router-link>
       </v-card-title>
       <v-card-actions>
-        <!--v-btn color="primary" @click="requestIndexDetail">
-          Toggle Index or Card View
-        </v-btn-->
         <v-btn color="primary" @click="requestIndexDetail" aria-label="Toggle Index or Card View">
           Toggle Index or Card View
         </v-btn>
@@ -25,6 +22,10 @@
           <GlucoseReadingIndex :glucose_readings="glucose_readings" />
         </template>
         <template v-else>
+          <span class="h3-left-total-child"><p>Total Glucose Readings: {{ glucose_readings.length }}</p></span>
+          <span class="h3-left-total-child">
+            <p>Average Glucose Reading: {{ averageReading }}</p>
+          </span>          
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
             <GlucoseReadingCard
@@ -58,7 +59,11 @@ export default {
     const glucose_readings = computed(() => store.state.glucoseReadings); // Use Vuex state directly
     const isLoading = ref(true); // Add loading state
     const requestIndexDetailFlag = ref(true); // Reactive flag for toggling views
-
+    const averageReading = computed(() => {
+     if (glucose_readings.value.length === 0) return 0; // Handle empty list
+      const total = glucose_readings.value.reduce((sum, reading) => sum + reading.reading, 0);
+      return (total / glucose_readings.value.length).toFixed(2); // Calculate average and format to 2 decimal places
+    });    
     const editGlucoseReading = (glucose_reading) => {
       store.$router.push({ name: 'GlucoseReadingEdit', params: { id: glucose_reading.id } });
     };
@@ -77,7 +82,7 @@ export default {
       }
     });
 
-    return { glucose_readings, isLoading, requestIndexDetailFlag, editGlucoseReading, requestIndexDetail };
+    return { glucose_readings, isLoading, requestIndexDetailFlag, averageReading, editGlucoseReading, requestIndexDetail };
   },
 };
 </script>
@@ -96,6 +101,7 @@ export default {
   max-width: calc(33.333% - 16px);
 }
 .h3-left-total-child {
+  text-align: left;
   font-size: 1.2rem;
   margin-bottom: 16px;
 }

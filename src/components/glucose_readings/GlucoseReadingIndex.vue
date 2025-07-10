@@ -1,6 +1,9 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total: {{ glucose_readings.length }}</h3>
+  <h3 id="h3-left">Total Readings: {{ glucose_readings.length }}</h3>
+  <span>
+    <h3 id="h3-left"><p>Average Glucose Reading: {{ averageReading() }}</p></h3>
+  </span> 
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('reading_date')">Date</th>
@@ -82,6 +85,14 @@ export default {
     };
   },
   methods: {
+    averageReading() {
+      if (this.glucose_readings.length === 0) return 0; // Handle empty list
+      const total = this.glucose_readings.reduce(
+        (sum, reading) => sum + reading.reading,
+        0
+      );
+      return (total / this.glucose_readings.length).toFixed(2); // Calculate average and format to 2 decimal places
+    },
     sortList(sortBy) {
       this.sortedData = this.glucose_readings;
       if (this.sortedbyASC) {

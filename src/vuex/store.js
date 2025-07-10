@@ -774,12 +774,9 @@ export default new Vuex.Store({
     },
     async createGlucoseReading({ commit, dispatch }, glucose_reading) {
       try {
-        const response = await EventService.postGlucoseReading(glucose_reading);
-        console.log("Created Glucose Reading:", response.data);
-    
+        const response = await EventService.postGlucoseReading(glucose_reading);    
         // Commit the new reading to Vuex state
         commit("ADD_GLUCOSE_READING", response.data);
-    
         // Optionally fetch the updated list of readings
         await dispatch("fetchGlucoseReadings");
       } catch (error) {
@@ -799,12 +796,9 @@ export default new Vuex.Store({
     },
     async updateGlucoseReading({ commit, dispatch }, glucose_reading) {
       try {
-        const response = await EventService.putGlucoseReading(glucose_reading);
-        console.log("Updated Glucose Reading:", response.data);
-    
+        const response = await EventService.putGlucoseReading(glucose_reading);   
         // Commit the new reading to Vuex state
         commit("SET_GLUCOSE_READING", response.data);
-    
         // Optionally fetch the updated list of readings
         await dispatch("fetchGlucoseReadings");
       } catch (error) {

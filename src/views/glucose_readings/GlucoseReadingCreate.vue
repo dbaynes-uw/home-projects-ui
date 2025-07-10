@@ -143,11 +143,9 @@ export default {
         notes: notes.value,
       };
 
-      console.log("Sending flattened data to Vuex: ", glucose_reading);
-
       // Dispatch the Vuex action with the flattened object
       await store.dispatch('createGlucoseReading', glucose_reading);
-
+      
       // Redirect to the list view after successful creation
       router.push({ name: 'GlucoseReadingList' });
     } catch (error) {
