@@ -164,9 +164,17 @@ export default {
     this.init();
     return axios.put(api_url + "plants" + `/${updatedPlant.id}`, updatedPlant);
   },
+  getGlucoseReading(id) {
+    this.init();
+    return axios.get(api_url + "glucose_readings/" + id);
+  },
   getGlucoseReadings() {
     this.init();
     return axios.get(api_url + "glucose_readings")
+  },
+  async putGlucoseReading(updatedGlucoseReading) {
+    this.init();
+    return axios.put(api_url + "glucose_readings" + `/${updatedGlucoseReading.id}`, updatedGlucoseReading);
   },
   async postGlucoseReading(glucose_reading) {
     this.init();

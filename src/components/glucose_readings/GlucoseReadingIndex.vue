@@ -7,13 +7,16 @@
       <th id="background-blue" @click="sortList('reading')">Reading</th>
       <th id="background-blue" @click="sortList('reading_type')">Reading Type</th>
       <th id="background-blue" @click="sortList('status')">Result</th>
+      <th id="background-blue">Notes</th>
+
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
     <tr v-for="(result, resultIndex) in glucose_readings" :key="resultIndex">
       <td class="td-center">{{ formatStandardDateTime(result.reading_date) }}</td>
-      <td>{{ result.reading }}</td>
+      <td>{{ result.reading }} mg/dl</td>
       <td>{{ result.reading_type }}</td>
       <td>{{ result.status }}</td>
+      <td>{{ result.notes }}</td>
        <td class="td-center" >
         <span v-if="this.onlineStatus">
           <span class="fa-stack" style="text-align: center">
@@ -30,14 +33,14 @@
               <router-link
                 :to="{ name: 'GlucoseReadingDetails', params: { id: `${result.id}` } }"
               >
-                <i id="GlucoseReadinglist-icon-eye" class="fa fa-eye"></i>
+                <i id="booklist-icon-eye" class="fa fa-eye"></i>
               </router-link>
             </span>
             <span class="fa-table-stack">
               <i
                 @click="deleteGlucoseReading(result)"
                 class="fas fa-trash-alt fa-stack-1x"
-                id="GlucoseReadinglist-icon-delete"
+                id="booklist-icon-delete"
               >
               </i>
             </span>

@@ -57,7 +57,7 @@ export default {
     const store = useStore();
     const glucose_readings = computed(() => store.state.glucoseReadings); // Use Vuex state directly
     const isLoading = ref(true); // Add loading state
-    const requestIndexDetailFlag = ref(false); // Reactive flag for toggling views
+    const requestIndexDetailFlag = ref(true); // Reactive flag for toggling views
 
     const editGlucoseReading = (glucose_reading) => {
       store.$router.push({ name: 'GlucoseReadingEdit', params: { id: glucose_reading.id } });

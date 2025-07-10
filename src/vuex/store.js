@@ -763,28 +763,31 @@ export default new Vuex.Store({
         console.error("Error fetching glucose readings:", error);
       }
     },
-
     async fetchGlucoseReading({ commit }, id) {
-      // Replace with API call
-      const result = { id, name: "Result 1", value: 120 };
-      commit("SET_GLUCOSE_READING", result);
+      try {
+        const response = await EventService.getGlucoseReading(id); // Call the API
+        console.log("Fetched Glucose Reading:", response.data); // Debugging
+        commit("SET_GLUCOSE_READING", response.data); // Commit the data to the state
+      } catch (error) {
+        console.error("Error fetching glucose reading: ");
+        alert("Failed to fetch glucose reading. Please try again.");
+      }
     },
-    async createGlucoseReading({ commit }, glucose_reading) {
-      EventService.postGlucoseReading(glucose_reading)
-        .then(() => {
-          commit("ADD_GLUCOSE_READING", glucose_reading);
+    async createGlucoseReading({ commit, dispatch }, glucose_reading) {
+      try {
+        const response = await EventService.postGlucoseReading(glucose_reading);
+        console.log("Created Glucose Reading:", response.data);
     
-          // Log the entire object and the specific field
-          console.log("Glucose Reading Object: ", glucose_reading);
-          //Xconsole.log("Glucose Reading Field (reading): ", glucose_reading.reading);
+        // Commit the new reading to Vuex state
+        commit("ADD_GLUCOSE_READING", response.data);
     
-          alert("Glucose Reading was successfully added for " + glucose_reading.reading);
-        })
-        .catch((error) => {
-          console.error("Glucose Reading Post Error: ", error.response.data);
-          alert("Glucose Reading Post Error: " + error.response.data);
-        });
-    },
+        // Optionally fetch the updated list of readings
+        await dispatch("fetchGlucoseReadings");
+      } catch (error) {
+        console.error("Error creating glucose reading:", error.response.data);
+        alert("Failed to create glucose reading. Please try again.");
+      }
+    },    
     async deleteGlucoseReading({ commit }, glucose_reading) {
       EventService.deleteGlucoseReading(glucose_reading)
         .then((response) => {
