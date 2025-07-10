@@ -797,16 +797,20 @@ export default new Vuex.Store({
           alert("GlucoseReading Delete Error: ", error.response.data )
         });
     },
-    async updateGlucoseReading({ commit }, glucose_reading) {
-      EventService.putGlucoseReading(glucose_reading)
-        .then((response) => {
-          commit("SET_GLUCOSE_READING", response.data);
-          alert("GlucoseReading " + glucose_reading.reading + " was Successfully Updated.")
-        })
-        .catch((error) => {
-          alert("GlucoseReading Put Error for " + glucose_reading.reading + ": " + error.response.request.statusText)
-          location.reload();
-      });
+    async updateGlucoseReading({ commit, dispatch }, glucose_reading) {
+      try {
+        const response = await EventService.putGlucoseReading(glucose_reading);
+        console.log("Updated Glucose Reading:", response.data);
+    
+        // Commit the new reading to Vuex state
+        commit("SET_GLUCOSE_READING", response.data);
+    
+        // Optionally fetch the updated list of readings
+        await dispatch("fetchGlucoseReadings");
+      } catch (error) {
+        console.error("Error creating glucose reading:", error.response.data);
+        alert("Failed to create glucose reading. Please try again.");
+      }
     },
 
     async createGolf({ commit }, golf) {

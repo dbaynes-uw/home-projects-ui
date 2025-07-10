@@ -4,7 +4,7 @@
       <li class="li-left">Date: <b>{{ formatStandardDateTime(glucose_reading.reading_date) }}</b></li>
       <li class="li-left">Reading: {{ glucose_reading.reading }} {{ glucose_reading.unit }}</li>
       <li class="li-left">Fasting Type: {{ glucose_reading.reading_type }}</li>
-      <li class="li-left">Result: {{ glucose_reading.status }} hours</li>
+      <li class="li-left">Result: {{ glucose_reading.status }}</li>
       <li class="li-left">Notes: {{glucose_reading.notes}}</li>
     </ul>
     <span class="fa-stack">
