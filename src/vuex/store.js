@@ -434,7 +434,6 @@ export default new Vuex.Store({
           location.reload();
       });
     },
-
     async deleteBook({ commit }, book) {
       EventService.deleteBook(book)
         .then((response) => {

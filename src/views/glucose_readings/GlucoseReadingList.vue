@@ -109,7 +109,6 @@ export default {
     // Helper method to determine if the average is within range
     const isWithinRange = (type, average) => {
       const avg = parseFloat(average); // Convert average to a number
-      console.log(`Checking range for type: ${type}, average: ${avg}`);
       if (type === "AM-Fasting") {
         if (avg >= 70 && avg <= 99) {
           return "green"; // Normal fasting range

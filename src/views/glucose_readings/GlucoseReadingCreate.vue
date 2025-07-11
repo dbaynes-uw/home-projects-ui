@@ -186,7 +186,7 @@ export default {
              reading_type,
              status,
              notes,
-             //statusOptions,
+             readingTypeOptions,
              createReading };
   },
 };

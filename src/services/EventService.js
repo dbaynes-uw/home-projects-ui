@@ -164,6 +164,11 @@ export default {
     this.init();
     return axios.put(api_url + "plants" + `/${updatedPlant.id}`, updatedPlant);
   },
+  deleteGlucoseReading(glucose_reading) {
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "glucose_readings/" + `${glucose_reading.id}`);
+  },
   getGlucoseReading(id) {
     this.init();
     return axios.get(api_url + "glucose_readings/" + id);
