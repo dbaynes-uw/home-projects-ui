@@ -15,14 +15,14 @@
                 <span class="text-red">Red = Type 2 Diabetes</span>
             </p>
             <p id="p-bold">Averages by Fastinging Type:</p>
-            <ul>
-              <li
+            <ul
                 v-for="(average, type) in averageReadingsByType()"
                 :key="type"
                 :style="{ color: isWithinRange(type, average) }"
               >
-                <span><p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p></span>
-              </li>
+                <li>
+                  <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
+                </li>
             </ul>
           </div> 
 
@@ -200,6 +200,7 @@ export default {
   margin-left: 20px;
 }
 #p-bold-indent{
+  font-size: 1.2rem;
   text-align: left;
   font-weight: bold;
   margin-left: 20px;
