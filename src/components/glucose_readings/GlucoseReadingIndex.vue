@@ -143,13 +143,15 @@ export default {
         } else if (avg >= 100 && avg <= 125) {
           return "blue"; // Elevated fasting range
         } else {
-          return "red"; // Out of range
+          return "red"; // Fasting 126+ Type 2 Diabetes
         }
       } else if (type === "Post-Meal") {
-        if (avg >= 100 && avg <= 125) {
+        if (avg >= 80 && avg <= 139) {
           return "green"; // Normal post-meal range
+        } else if (avg >= 140 && avg <= 200) {
+          return "blue"; // Elevated fasting range          
         } else {
-          return "red"; // Out of range
+          return "red"; // Nonfasting 200+ Type 2 Diabetes
         }
       } else {
         return "black"; // Default for unknown types

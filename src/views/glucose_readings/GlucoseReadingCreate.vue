@@ -49,27 +49,41 @@
             allow-new
           ></v-autocomplete>
         </v-col>
-        <!-- Status or Diagnosis Bullet Points 
+        <!-- Status or Diagnosis Bullet Points -->
         <v-col cols="12" md="6" id="bullet-style">
           <v-list dense>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>Good 70-99 mg/dl</v-list-item-title>
+                <v-list-item-title><span class="text-green">Fasting: Good 70-99 mg/dl</span></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>Prediabetes 100-125 mg/dl</v-list-item-title>
+                <v-list-item-title><span class="text-blue">Fasting: Prediabetes 100-125 mg/dl</span></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>Type 2 Diabetes 126+ mg/dl</v-list-item-title>
+                <v-list-item-title><span class="text-red">Fasting: Type 2 Diabetes 126+ mg/dl</span></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title><span class="text-green">NonFasting: Good 80-140 mg/dl</span></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>              
+              <v-list-item-content>
+               <v-list-item-title><span class="text-blue">NonFasting: Prediabetes 140-200 mg/dl</span></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>              
+              <v-list-item-content>
+               <v-list-item-title><span class="text-red">NonFasting: Type 2 Diabetes 200+ mg/dl</span></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-col>
-        -->
         <!-- Status Input Calculated below -->
         <!-- Notes Input -->
         <v-col cols="12" md="6">
@@ -203,4 +217,19 @@ h1 {
   margin-top: -25px;
   text-align: left;
 }
+.text-green {
+  color: #0a5a36 !important;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.text-blue {
+  color: #0000ff !important;
+  font-size: 1rem;
+}
+.text-red {
+  color: #e31b1b !important;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
 </style>
