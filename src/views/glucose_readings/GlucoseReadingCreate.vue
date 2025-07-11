@@ -38,14 +38,17 @@
         </v-col>
         <!-- Reading Type Input -->
         <v-col cols="12" md="6">
-          <v-text-field
-            v-model="reading_type"
-            label="Type"
-            type="text"
-            outlined
-            aria-label="Enter the glucose reading value"
-          ></v-text-field>
-        </v-col>
+  <v-autocomplete
+    v-model="reading_type"
+    :items="readingTypeOptions"
+    label="Type"
+    outlined
+    required
+    aria-label="Select or enter the type of the glucose reading"
+    hide-no-data
+    allow-new
+  ></v-autocomplete>
+</v-col>
 
         <!-- Status or Diagnosis Bullet Points 
         <v-col cols="12" md="6" id="bullet-style">
@@ -97,7 +100,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
@@ -114,6 +117,30 @@ export default {
     const reading_type = ref('AM-Fasting'); // Default reading type, can be changed if needed
     const status = ref(''); // Optional status field, can be used for additional information
     const notes = ref(''); // Optional notes field  
+    //SELECT>>>
+
+    // Dropdown options for the reading_type field
+    const readingTypeOptions = ref([]);
+
+    // Fetch unique reading_types from Vuex store or API
+    const fetchReadingTypeOptions = async () => {
+      try {
+        // Assuming glucose readings are stored in Vuex state
+        const glucoseReadings = store.state.glucoseReadings;
+
+        // Extract unique reading_types
+        const uniqueReadingTypes = [...new Set(glucoseReadings.map(reading => reading.reading_type))];
+        readingTypeOptions.value = uniqueReadingTypes;
+      } catch (error) {
+        console.error('Error fetching reading type options:', error);
+      }
+    };
+
+    // Fetch reading_type options on component mount
+    onMounted(fetchReadingTypeOptions);
+
+    //END SELECT
+
     // Dropdown options for the status field
     //const statusOptions = ref([
     //  'Good - 70-99 mg/dl',
