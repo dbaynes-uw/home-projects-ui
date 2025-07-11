@@ -30,7 +30,7 @@
         <v-col cols="12" md="6">
           <v-text-field
             v-model="unit"
-            label="Type"
+            label="Unit"
             type="text"
             outlined
             aria-label="Enter the glucose reading value"
