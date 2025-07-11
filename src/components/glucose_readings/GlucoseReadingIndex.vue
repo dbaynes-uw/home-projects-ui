@@ -1,21 +1,30 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h3 id="h3-left">Total Readings: {{ glucose_readings.length }}</h3>
-  <span>
-    <h3 id="h3-left"><p>Average Glucose Reading: {{ averageReading() }}</p></h3>
-  </span> 
-  <div>
-    <h3 id="h3-left">Average Readings by Type:</h3>
-    <ul>
-      <li
-        v-for="(average, type) in averageReadingsByType()"
-        :key="type"
-        :style="{ color: isWithinRange(type, average) ? 'green' : 'red' }"
-      >
-      <h3 id="h3-left-indent">- {{ type }}: {{ average }} mg/dl</h3>
-      </li>
-    </ul>
-  </div>
+  <span class="h3-left-total-child"><p id="p-bold">Total Glucose Readings: {{ glucose_readings.length }}</p></span>
+          <!--span class="h3-left-total-child">
+            <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
+          </!--span-->
+          <div class="h3-left-total-child">
+            <p id="p-bold">Readings Color Code:
+              <br/>
+                <span class="text-green">Green = Good</span>; 
+              <br/>
+                <span class="text-blue">Blue = Prediabetes</span>; 
+              <br/>
+                <span class="text-red">Red = Type 2 Diabetes</span>
+            </p>
+            <p id="p-bold">Averages by Fastinging Type:</p>
+            <ul>
+              <li
+                v-for="(average, type) in averageReadingsByType()"
+                :key="type"
+                :style="{ color: isWithinRange(type, average) }"
+              >
+                <span><p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p></span>
+              </li>
+            </ul>
+          </div> 
 
   <v-table density="compact">
     <tr>
@@ -128,12 +137,23 @@ export default {
     },
     isWithinRange(type, average) {
       const avg = parseFloat(average); // Convert average to a number
+      console.log(`Checking range for type: ${type}, average: ${avg}`);
       if (type === "AM-Fasting") {
-        return avg >= 70 && avg <= 99; // Normal fasting range
+        if (avg >= 70 && avg <= 99) {
+          return "green"; // Normal fasting range
+        } else if (avg >= 100 && avg <= 125) {
+          return "blue"; // Elevated fasting range
+        } else {
+          return "red"; // Out of range
+        }
       } else if (type === "Post-Meal") {
-        return avg >= 100 && avg <= 125; // Normal post-meal range
+        if (avg >= 100 && avg <= 125) {
+          return "green"; // Normal post-meal range
+        } else {
+          return "red"; // Out of range
+        }
       } else {
-        return false; // Default to false for unknown types
+        return "black"; // Default for unknown types
       }
     },
     sortList(sortBy) {
@@ -173,10 +193,30 @@ export default {
 </script>
 <style scoped>
 #p-bold{
+  text-align: left;
   font-weight: bold;
 }
 #h3-left-indent{
   text-align: left;
   margin-left: 20px;
+}
+#p-bold-indent{
+  text-align: left;
+  font-weight: bold;
+  margin-left: 20px;
+}
+.text-green {
+  color: #0a5a36 !important;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.text-blue {
+  color: #0000ff !important;
+  font-size: 1rem;
+}
+.text-red {
+  color: #e31b1b !important;
+  font-weight: bold;
+  font-size: 1rem;
 }
 </style>

@@ -23,18 +23,26 @@
         </template>
         <template v-else>
           <span class="h3-left-total-child"><p id="p-bold">Total Glucose Readings: {{ glucose_readings.length }}</p></span>
-          <span class="h3-left-total-child">
+          <!--span class="h3-left-total-child">
             <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
-          </span>
+          </!--span-->
           <div class="h3-left-total-child">
-            <p id="p-bold">Average Readings by Type:</p>
+            <p id="p-bold">Readings Color Code:
+              <br/>
+                <span class="text-green">Green = Good</span>; 
+              <br/>
+                <span class="text-blue">Blue = Prediabetes</span>; 
+              <br/>
+                <span class="text-red">Red = Type 2 Diabetes</span>
+            </p>
+            <p id="p-bold">Averages by Fastinging Type:</p>
             <ul>
               <li
                 v-for="(average, type) in averageReadingsByType"
                 :key="type"
-                :style="{color: isWithinRange(type, average) ? 'green' : 'red' }"
+                :style="{ color: isWithinRange(type, average) }"
               >
-                <span><p id="p-bold-indent">- {{ type }}: {{ average }} mg/dl</p></span>
+                <span><p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p></span>
               </li>
             </ul>
           </div> 
@@ -103,11 +111,21 @@ export default {
       const avg = parseFloat(average); // Convert average to a number
       console.log(`Checking range for type: ${type}, average: ${avg}`);
       if (type === "AM-Fasting") {
-        return avg >= 70 && avg <= 199; // Normal fasting range
+        if (avg >= 70 && avg <= 99) {
+          return "green"; // Normal fasting range
+        } else if (avg >= 100 && avg <= 125) {
+          return "blue"; // Elevated fasting range
+        } else {
+          return "red"; // Out of range
+        }
       } else if (type === "Post-Meal") {
-        return avg >= 100 && avg <= 125; // Normal post-meal range
+        if (avg >= 100 && avg <= 125) {
+          return "green"; // Normal post-meal range
+        } else {
+          return "red"; // Out of range
+        }
       } else {
-        return false; // Default to false for unknown types
+        return "black"; // Default for unknown types
       }
     };
     const editGlucoseReading = (glucose_reading) => {
@@ -166,5 +184,19 @@ export default {
 #p-bold-indent{
   font-weight: bold;
   margin-left: 20px;
+}
+.text-green {
+  color: #0a5a36 !important;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.text-blue {
+  color: #0000ff !important;
+  font-size: 1rem;
+}
+.text-red {
+  color: #e31b1b !important;
+  font-weight: bold;
+  font-size: 1rem;
 }
 </style>
