@@ -26,15 +26,23 @@
           <!--span class="h3-left-total-child">
             <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
           </!--span-->
+          <br/>
           <div class="h3-left-total-child">
             <p id="p-bold">Readings Color Code:
               <br/>
-                <span class="text-green">Green = Good</span>; 
+                <span class="text-green">Fasting: Green Good 70-99 mg/dl</span>; 
               <br/>
-                <span class="text-blue">Blue = Prediabetes</span>; 
+                <span class="text-blue">Fasting: Blue Prediabetes 100-125 mg/dl</span>; 
               <br/>
-                <span class="text-red">Red = Type 2 Diabetes</span>
-            </p>
+                <span class="text-red">Fasting: Red Type 2 Diabetes</span>
+                <br/>
+                <br/>
+                  <span class="text-green">Post-Meal: Green Good 80-140 mg/dl</span>; 
+                <br/>
+                  <span class="text-blue">Post-Meal: Post-Meal: Blue Prediabetes 140-200 mg/dl</span>; 
+                <br/>
+                  <span class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</span>
+              </p>
             <p id="p-bold">Averages by Fastinging Type:</p>
             <ul
                 v-for="(average, type) in averageReadingsByType"
@@ -185,5 +193,16 @@ export default {
 #p-bold-indent{
   font-weight: bold;
   margin-left: 20px;
+}
+.text-green {
+  color: #0a5a36 !important;
+  font-weight: bold;
+}
+.text-blue {
+  color: #0000ff !important;
+}
+.text-red {
+  color: #e31b1b !important;
+  font-weight: bold;
 }
 </style>

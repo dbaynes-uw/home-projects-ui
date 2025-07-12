@@ -1,31 +1,32 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total Readings: {{ glucose_readings.length }}</h3>
-  <span class="h3-left-total-child"><p id="p-bold">Total Glucose Readings: {{ glucose_readings.length }}</p></span>
-          <!--span class="h3-left-total-child">
-            <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
-          </!--span-->
-          <div class="h3-left-total-child">
-            <p id="p-bold">Readings Color Code:
-              <br/>
-                <span class="text-green">Green = Good</span>; 
-              <br/>
-                <span class="text-blue">Blue = Prediabetes</span>; 
-              <br/>
-                <span class="text-red">Red = Type 2 Diabetes</span>
-            </p>
-            <p id="p-bold">Averages by Fastinging Type:</p>
-            <ul
-                v-for="(average, type) in averageReadingsByType()"
-                :key="type"
-                :style="{ color: isWithinRange(type, average) }"
-              >
-                <li>
-                  <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
-                </li>
-            </ul>
-          </div> 
-
+  <h3 id="h3-left"><p id="p-bold">Total Glucose Readings: {{ glucose_readings.length }}</p></h3>
+  <!--span class="h3-left-total-child">
+    <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
+  </!--span-->
+  <br/>
+  <div class="h3-left-total-child">
+    <h3 id="h3-left">Readings Color Code:</h3>
+    <h3 id="h3-left" class="text-green">Fasting: Green Good 70-99 mg/dl</h3> 
+    <h3 id="h3-left" class="text-blue">Fasting: Blue Prediabetes 100-125 mg/dl</h3>
+    <h3 id="h3-left" class="text-red">Fasting: Red Type 2 Diabetes</h3>
+    <br/>
+    <h3 id="h3-left" class="text-green">Post-Meal: Green Good 80-140 mg/dl</h3> 
+    <h3 id="h3-left" class="text-blue">Post-Meal: Blue Prediabetes 140-200 mg/dl</h3>
+     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
+    
+    <h3 id="h3-left">Averages by Fastinging Type:</h3>
+    <ul
+        v-for="(average, type) in averageReadingsByType()"
+        :key="type"
+        :style="{ color: isWithinRange(type, average) }"
+      >
+        <li>
+          <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
+        </li>
+    </ul>
+  </div> 
+  <br/><br/>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('reading_date')">Date</th>
@@ -133,7 +134,15 @@ export default {
       for (const type in groupedReadings) {
         averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
       }
-      return averages;
+        // Sort the keys alphabetically and return a sorted object
+      const sortedAverages = Object.keys(averages)
+        .sort() // Sort keys alphabetically
+        .reduce((sortedObj, key) => {
+          sortedObj[key] = averages[key];
+          return sortedObj;
+      }, {});
+      // Return the sorted averages object
+      return sortedAverages;
     },
     isWithinRange(type, average) {
       const avg = parseFloat(average); // Convert average to a number
@@ -210,15 +219,12 @@ export default {
 .text-green {
   color: #0a5a36 !important;
   font-weight: bold;
-  font-size: 1rem;
 }
 .text-blue {
   color: #0000ff !important;
-  font-size: 1rem;
 }
 .text-red {
   color: #e31b1b !important;
   font-weight: bold;
-  font-size: 1rem;
 }
 </style>
