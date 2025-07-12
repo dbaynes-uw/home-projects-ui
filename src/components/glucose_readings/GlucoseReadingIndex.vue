@@ -25,6 +25,28 @@
           <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
         </li>
     </ul>
+    <br/>
+    <h3 id="h3-left">Averages Last 30 Days by Fastinging Type:</h3>
+    <ul
+        v-for="(average, type) in averageReadingsLast30daysByType()"
+        :key="type"
+        :style="{ color: isWithinRange(type, average) }"
+      >
+        <li>
+          <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
+        </li>
+    </ul>
+    <br/>
+    <h3 id="h3-left">Averages Last 90 Days by Fastinging Type:</h3>
+    <ul
+        v-for="(average, type) in averageReadingsLast90daysByType()"
+        :key="type"
+        :style="{ color: isWithinRange(type, average) }"
+      >
+        <li>
+          <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
+        </li>
+    </ul>
   </div> 
   <br/><br/>
   <v-table density="compact">
@@ -116,6 +138,88 @@ export default {
       );
       return (total / this.glucose_readings.length).toFixed(2); // Calculate average and format to 2 decimal places
     },
+    averageReadingsLast90daysByType() {
+      if (this.glucose_readings.length === 0) return {}; // Handle empty list
+        
+      // Get the date 90 days ago
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        
+      // Filter readings from the last 90 days
+      const recentReadings = this.glucose_readings.filter(reading => {
+        const readingDate = new Date(reading.reading_date);
+        return readingDate >= ninetyDaysAgo;
+      });
+    
+      // Group readings by type
+      const groupedReadings = recentReadings.reduce((acc, reading) => {
+        const type = reading.reading_type;
+        if (!acc[type]) {
+          acc[type] = { total: 0, count: 0 };
+        }
+        acc[type].total += reading.reading;
+        acc[type].count += 1;
+        return acc;
+      }, {});
+    
+      // Calculate averages for each type
+      const averages = {};
+      for (const type in groupedReadings) {
+        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
+      }
+    
+      // Sort the keys alphabetically and return a sorted object
+      const sortedAverages = Object.keys(averages)
+        .sort() // Sort keys alphabetically
+        .reduce((sortedObj, key) => {
+          sortedObj[key] = averages[key];
+          return sortedObj;
+        }, {});
+      
+      return sortedAverages;
+    },
+    averageReadingsLast30daysByType() {
+      if (this.glucose_readings.length === 0) return {}; // Handle empty list
+        
+      // Get the date 30 days ago
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
+      // Filter readings from the last 30 days
+      const recentReadings = this.glucose_readings.filter(reading => {
+        const readingDate = new Date(reading.reading_date);
+        return readingDate >= thirtyDaysAgo;
+      });
+    
+      // Group readings by type
+      const groupedReadings = recentReadings.reduce((acc, reading) => {
+        const type = reading.reading_type;
+        if (!acc[type]) {
+          acc[type] = { total: 0, count: 0 };
+        }
+        acc[type].total += reading.reading;
+        acc[type].count += 1;
+        return acc;
+      }, {});
+    
+      // Calculate averages for each type
+      const averages = {};
+      for (const type in groupedReadings) {
+        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
+      }
+    
+      // Sort the keys alphabetically and return a sorted object
+      const sortedAverages = Object.keys(averages)
+        .sort() // Sort keys alphabetically
+        .reduce((sortedObj, key) => {
+          sortedObj[key] = averages[key];
+          return sortedObj;
+        }, {});
+      
+      return sortedAverages;
+    },
+    // Calculate averages by reading type
+
     averageReadingsByType() {
       if (this.glucose_readings.length === 0) return {}; // Handle empty list
 
