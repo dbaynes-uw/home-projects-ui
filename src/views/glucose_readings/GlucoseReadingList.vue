@@ -42,7 +42,8 @@
                   <span class="text-blue">Post-Meal: Post-Meal: Blue Prediabetes 140-200 mg/dl</span>; 
                 <br/>
                   <span class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</span>
-              </p>
+            </p>
+            <br/>
             <p id="p-bold">Averages by Fastinging Type:</p>
             <ul
                 v-for="(average, type) in averageReadingsByType"

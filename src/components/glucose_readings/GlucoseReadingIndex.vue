@@ -13,8 +13,8 @@
     <br/>
     <h3 id="h3-left" class="text-green">Post-Meal: Green Good 80-140 mg/dl</h3> 
     <h3 id="h3-left" class="text-blue">Post-Meal: Blue Prediabetes 140-200 mg/dl</h3>
-     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
-    
+    <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
+    <br/>
     <h3 id="h3-left">Averages by Fastinging Type:</h3>
     <ul
         v-for="(average, type) in averageReadingsByType()"
