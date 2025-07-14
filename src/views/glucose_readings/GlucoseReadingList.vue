@@ -22,60 +22,7 @@
           <GlucoseReadingIndex :glucose_readings="glucose_readings" />
         </template>
         <template v-else>
-          <span class="h3-left-total-child"><p id="p-bold">Total Glucose Readings: {{ glucose_readings.length }}</p></span>
-          <!--span class="h3-left-total-child">
-            <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
-          </!--span-->
-          <br/>
-          <div class="h3-left-total-child">
-            <p id="p-bold">Readings Color Code:
-              <br/>
-                <span class="text-green">Fasting: Green Good 70-99 mg/dl</span>; 
-              <br/>
-                <span class="text-blue">Fasting: Blue Prediabetes 100-125 mg/dl</span>; 
-              <br/>
-                <span class="text-red">Fasting: Red Type 2 Diabetes</span>
-                <br/>
-                <br/>
-                  <span class="text-green">Post-Meal: Green Good 80-140 mg/dl</span>; 
-                <br/>
-                  <span class="text-blue">Post-Meal: Post-Meal: Blue Prediabetes 140-200 mg/dl</span>; 
-                <br/>
-                  <span class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</span>
-            </p>
-            <br/>
-            <p id="p-bold">Averages by Fastinging Type:</p>
-            <ul
-                v-for="(average, type) in averageReadingsByType"
-                :key="type"
-                :style="{ color: isWithinRange(type, average) }"
-              >
-              <li>
-                <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
-              </li>
-            </ul>
-            <h3 id="h3-left">Averages Last 30 Days by Fastinging Type:</h3>
-            <ul
-                v-for="(average, type) in averageReadingsLast30daysByType"
-                :key="type"
-                :style="{ color: isWithinRange(type, average) }"
-              >
-                <li>
-                  <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
-                </li>
-            </ul>
-            <h3 id="h3-left">Averages Last 90 Days by Fastinging Type:</h3>
-            <ul
-                v-for="(average, type) in averageReadingsLast90daysByType"
-                :key="type"
-                :style="{ color: isWithinRange(type, average) }"
-              >
-                <li>
-                  <p id="p-bold-indent">- {{ type }} Average: {{ average }} mg/dl</p>
-                </li>
-            </ul>
-            <br/>
-          </div> 
+          <GlucoseReadingList :glucose_readings="glucose_readings" />
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
             <GlucoseReadingCard
