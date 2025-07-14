@@ -17,7 +17,7 @@
     <br/>
     <h3 id="h3-left">Averages by Fastinging Type:</h3>
     <ul
-        v-for="(average, type) in averageReadingsByType()"
+        v-for="(average, type) in averageReadingsByType"
         :key="type"
         :style="{ color: isWithinRange(type, average) }"
       >
@@ -28,7 +28,7 @@
     <br/>
     <h3 id="h3-left">Averages Last 30 Days by Fastinging Type:</h3>
     <ul
-        v-for="(average, type) in averageReadingsLast30daysByType()"
+        v-for="(average, type) in averageReadingsLast30daysByType"
         :key="type"
         :style="{ color: isWithinRange(type, average) }"
       >
@@ -39,7 +39,7 @@
     <br/>
     <h3 id="h3-left">Averages Last 90 Days by Fastinging Type:</h3>
     <ul
-        v-for="(average, type) in averageReadingsLast90daysByType()"
+        v-for="(average, type) in averageReadingsLast90daysByType"
         :key="type"
         :style="{ color: isWithinRange(type, average) }"
       >
@@ -114,44 +114,45 @@
   <!--b>Online Status: {{ this.onlineStatus }}</b!-->
 </template>
 <script>
+import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+
 export default {
   name: "GlucoseReadingIndex",
   props: ["glucose_readings"],
   components: {
     ConfirmDialogue,
   },
-  data() {
-    return {
-      inputSearchText: "",
-      onlineStatus: navigator.onLine,
-      filteredResults: [],
-    };
-  },
-  methods: {
-    averageReading() {
-      if (this.glucose_readings.length === 0) return 0; // Handle empty list
-      const total = this.glucose_readings.reduce(
+  setup(props) {
+    const inputSearchText = ref("");
+    const onlineStatus = ref(navigator.onLine);
+    const sortedData = ref([]);
+    const sortedbyASC = ref(true);
+    const statusMessage = ref("");
+
+    // Average reading for all readings
+    const averageReading = computed(() => {
+      if (props.glucose_readings.length === 0) return 0; // Handle empty list
+      const total = props.glucose_readings.reduce(
         (sum, reading) => sum + reading.reading,
         0
       );
-      return (total / this.glucose_readings.length).toFixed(2); // Calculate average and format to 2 decimal places
-    },
-    averageReadingsLast90daysByType() {
-      if (this.glucose_readings.length === 0) return {}; // Handle empty list
-        
-      // Get the date 90 days ago
-      const ninetyDaysAgo = new Date();
-      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-        
-      // Filter readings from the last 90 days
-      const recentReadings = this.glucose_readings.filter(reading => {
+      return (total / props.glucose_readings.length).toFixed(2); // Calculate average and format to 2 decimal places
+    });
+
+    // Helper function to calculate averages by days
+    const averageReadingsByDays = (days) => {
+      if (props.glucose_readings.length === 0) return {}; // Handle empty list
+
+      const daysAgo = new Date();
+      daysAgo.setDate(daysAgo.getDate() - days);
+
+      const recentReadings = props.glucose_readings.filter((reading) => {
         const readingDate = new Date(reading.reading_date);
-        return readingDate >= ninetyDaysAgo;
+        return readingDate >= daysAgo;
       });
-    
-      // Group readings by type
+
       const groupedReadings = recentReadings.reduce((acc, reading) => {
         const type = reading.reading_type;
         if (!acc[type]) {
@@ -161,94 +162,35 @@ export default {
         acc[type].count += 1;
         return acc;
       }, {});
-    
-      // Calculate averages for each type
+
       const averages = {};
       for (const type in groupedReadings) {
-        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
+        averages[type] = (
+          groupedReadings[type].total / groupedReadings[type].count
+        ).toFixed(2);
       }
-    
-      // Sort the keys alphabetically and return a sorted object
+
       const sortedAverages = Object.keys(averages)
-        .sort() // Sort keys alphabetically
+        .sort()
         .reduce((sortedObj, key) => {
           sortedObj[key] = averages[key];
           return sortedObj;
         }, {});
-      
-      return sortedAverages;
-    },
-    averageReadingsLast30daysByType() {
-      if (this.glucose_readings.length === 0) return {}; // Handle empty list
-        
-      // Get the date 30 days ago
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        
-      // Filter readings from the last 30 days
-      const recentReadings = this.glucose_readings.filter(reading => {
-        const readingDate = new Date(reading.reading_date);
-        return readingDate >= thirtyDaysAgo;
-      });
-    
-      // Group readings by type
-      const groupedReadings = recentReadings.reduce((acc, reading) => {
-        const type = reading.reading_type;
-        if (!acc[type]) {
-          acc[type] = { total: 0, count: 0 };
-        }
-        acc[type].total += reading.reading;
-        acc[type].count += 1;
-        return acc;
-      }, {});
-    
-      // Calculate averages for each type
-      const averages = {};
-      for (const type in groupedReadings) {
-        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
-      }
-    
-      // Sort the keys alphabetically and return a sorted object
-      const sortedAverages = Object.keys(averages)
-        .sort() // Sort keys alphabetically
-        .reduce((sortedObj, key) => {
-          sortedObj[key] = averages[key];
-          return sortedObj;
-        }, {});
-      
-      return sortedAverages;
-    },
-    // Calculate averages by reading type
 
-    averageReadingsByType() {
-      if (this.glucose_readings.length === 0) return {}; // Handle empty list
-
-      const groupedReadings = this.glucose_readings.reduce((acc, reading) => {
-        const type = reading.reading_type;
-        if (!acc[type]) {
-          acc[type] = { total: 0, count: 0 };
-        }
-        acc[type].total += reading.reading;
-        acc[type].count += 1;
-        return acc;
-      }, {});
-
-      // Calculate averages for each type
-      const averages = {};
-      for (const type in groupedReadings) {
-        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
-      }
-        // Sort the keys alphabetically and return a sorted object
-      const sortedAverages = Object.keys(averages)
-        .sort() // Sort keys alphabetically
-        .reduce((sortedObj, key) => {
-          sortedObj[key] = averages[key];
-          return sortedObj;
-      }, {});
-      // Return the sorted averages object
       return sortedAverages;
-    },
-    isWithinRange(type, average) {
+    };
+
+    // Computed properties for averages
+    const averageReadingsLast30daysByType = computed(() =>
+      averageReadingsByDays(30)
+    );
+    const averageReadingsLast90daysByType = computed(() =>
+      averageReadingsByDays(90)
+    );
+    const averageReadingsByType = computed(() => averageReadingsByDays(0)); // All readings
+
+    // Helper method to determine if the average is within range
+    const isWithinRange = (type, average) => {
       const avg = parseFloat(average); // Convert average to a number
       if (type === "AM-Fasting") {
         if (avg >= 70 && avg <= 99) {
@@ -262,46 +204,66 @@ export default {
         if (avg >= 80 && avg <= 139) {
           return "green"; // Normal post-meal range
         } else if (avg >= 140 && avg <= 200) {
-          return "blue"; // Elevated fasting range          
+          return "blue"; // Elevated fasting range
         } else {
           return "red"; // Nonfasting 200+ Type 2 Diabetes
         }
       } else {
         return "black"; // Default for unknown types
       }
-    },
-    sortList(sortBy) {
-      this.sortedData = this.glucose_readings;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
+    };
+
+    // Sort list by column
+    const sortList = (sortBy) => {
+      sortedData.value = props.glucose_readings;
+      if (sortedbyASC.value) {
+        sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+        sortedbyASC.value = false;
       } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
+        sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+        sortedbyASC.value = true;
       }
-    },
-    async deleteGlucoseReading(glucose_reading) {
-      const ok = await this.$refs.confirmDialogue.show({
+    };
+
+    // Delete glucose reading
+    const deleteGlucoseReading = async (glucose_reading) => {
+      const ok = await confirmDialogue.value.show({
         title: "Delete GlucoseReading from List",
         message:
-          "Are you sure you want to delete readint at " +
+          "Are you sure you want to delete reading at " +
           glucose_reading.reading_date +
           "? It cannot be undone.",
         okButton: "Delete",
       });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.$store.dispatch("deleteGlucoseReading", glucose_reading);
-        this.statusMessage =
+        props.$store.dispatch("deleteGlucoseReading", glucose_reading);
+        statusMessage.value =
           "GlucoseReading was Deleted for " +
           glucose_reading.reading_date +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2000);
       }
-    },
-    formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTimejs(value);
-    },
+    };
+
+    // Format date
+    const formatStandardDateTime = (value) =>
+      DateFormatService.formatStandardDateTimejs(value);
+
+    return {
+      inputSearchText,
+      onlineStatus,
+      sortedData,
+      sortedbyASC,
+      statusMessage,
+      averageReading,
+      averageReadingsLast30daysByType,
+      averageReadingsLast90daysByType,
+      averageReadingsByType,
+      isWithinRange,
+      sortList,
+      deleteGlucoseReading,
+      formatStandardDateTime,
+    };
   },
 };
 </script>

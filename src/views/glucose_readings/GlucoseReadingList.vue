@@ -109,7 +109,8 @@ export default {
     const glucose_readings = computed(() => store.state.glucoseReadings); // Use Vuex state directly
     const isLoading = ref(true); // Add loading state
     const requestIndexDetailFlag = ref(true); // Reactive flag for toggling views
-    
+    const averageReadingsLast30daysByType = computed(() => averageReadingsByDays(30));
+    const averageReadingsLast90daysByType = computed(() => averageReadingsByDays(90));
     const averageReading = computed(() => {
      if (glucose_readings.value.length === 0) return 0; // Handle empty list
       const total = glucose_readings.value.reduce((sum, reading) => sum + reading.reading, 0);
@@ -136,90 +137,46 @@ export default {
       }
       return averages;
     });
-    // Averages By Type for the last 30 days
-    const averageReadingsLast30daysByType = computed(() => {
-      if (glucose_readings.value.length === 0) return {}; // Handle empty list
+    const averageReadingsByDays = (days) => {
+  if (glucose_readings.value.length === 0) return {}; // Handle empty list
 
-      // Get the date 30 days ago
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  // Get the date `days` ago
+  const daysAgo = new Date();
+  daysAgo.setDate(daysAgo.getDate() - days);
 
-      // Filter readings from the last 30 days
-      const recentReadings = glucose_readings.value.filter(reading => {
-        const readingDate = new Date(reading.reading_date);
-        return readingDate >= thirtyDaysAgo;
-      });
-    
-      // Group readings by type
-      const groupedReadings = recentReadings.reduce((acc, reading) => {
-        const type = reading.reading_type;
-        if (!acc[type]) {
-          acc[type] = { total: 0, count: 0 };
-        }
-        acc[type].total += reading.reading;
-        acc[type].count += 1;
-        return acc;
-      }, {});
-    
-      // Calculate averages for each type
-      const averages = {};
-      for (const type in groupedReadings) {
-        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
-      }
-    
-      // Sort the keys alphabetically and return a sorted object
-      const sortedAverages = Object.keys(averages)
-        .sort() // Sort keys alphabetically
-        .reduce((sortedObj, key) => {
-          sortedObj[key] = averages[key];
-          return sortedObj;
-        }, {});
-      
-      return sortedAverages;
-    });
-    //@@
-        // Averages By Type for the last 30 days
-    const averageReadingsLast90daysByType = computed(() => {
-      if (glucose_readings.value.length === 0) return {}; // Handle empty list
+  // Filter readings from the last `days` days
+  const recentReadings = glucose_readings.value.filter(reading => {
+    const readingDate = new Date(reading.reading_date);
+    return readingDate >= daysAgo;
+  });
 
-      // Get the date 30 days ago
-      const ninetyDaysAgo = new Date();
-      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  // Group readings by type
+  const groupedReadings = recentReadings.reduce((acc, reading) => {
+    const type = reading.reading_type;
+    if (!acc[type]) {
+      acc[type] = { total: 0, count: 0 };
+    }
+    acc[type].total += reading.reading;
+    acc[type].count += 1;
+    return acc;
+  }, {});
 
-      // Filter readings from the last 30 days
-      const recentReadings = glucose_readings.value.filter(reading => {
-        const readingDate = new Date(reading.reading_date);
-        return readingDate >= ninetyDaysAgo;
-      });
-    
-      // Group readings by type
-      const groupedReadings = recentReadings.reduce((acc, reading) => {
-        const type = reading.reading_type;
-        if (!acc[type]) {
-          acc[type] = { total: 0, count: 0 };
-        }
-        acc[type].total += reading.reading;
-        acc[type].count += 1;
-        return acc;
-      }, {});
-    
-      // Calculate averages for each type
-      const averages = {};
-      for (const type in groupedReadings) {
-        averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
-      }
-    
-      // Sort the keys alphabetically and return a sorted object
-      const sortedAverages = Object.keys(averages)
-        .sort() // Sort keys alphabetically
-        .reduce((sortedObj, key) => {
-          sortedObj[key] = averages[key];
-          return sortedObj;
-        }, {});
-      
-      return sortedAverages;
-    });
+  // Calculate averages for each type
+  const averages = {};
+  for (const type in groupedReadings) {
+    averages[type] = (groupedReadings[type].total / groupedReadings[type].count).toFixed(2);
+  }
 
+  // Sort the keys alphabetically and return a sorted object
+  const sortedAverages = Object.keys(averages)
+    .sort() // Sort keys alphabetically
+    .reduce((sortedObj, key) => {
+      sortedObj[key] = averages[key];
+      return sortedObj;
+    }, {});
+
+  return sortedAverages;
+};
     // Helper method to determine if the average is within range
     const isWithinRange = (type, average) => {
       const avg = parseFloat(average); // Convert average to a number
