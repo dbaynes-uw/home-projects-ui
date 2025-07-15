@@ -2,7 +2,7 @@
   <div>
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <div class="cards">
-      <GlucoseReadingCard
+      <GlucoseReadingCard 
         v-for="glucose_reading in glucose_readings"
         :key="glucose_reading.id"
         :glucose_reading="glucose_reading"
@@ -13,13 +13,10 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import GlucoseReadingCard from "@/components/glucose_readings/GlucoseReadingCard.vue";
-export default {
-  name: 'GlucoseReadingList',
-  components: { GlucoseReadingCard },
-  props: {
-    glucose_readings: { type: Array, required: true }
-  }
-};
+
+defineProps({
+  glucose_readings: { type: Array, required: true }
+});
 </script>

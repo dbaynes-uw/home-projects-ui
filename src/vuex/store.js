@@ -136,6 +136,9 @@ export default new Vuex.Store({
       // Optionally update the glucoseResult if needed
       state.glucoseResult = reading;
     },
+    DELETE_GLUCOSE_READING(state, reading) {
+      state.glucoseReadings = state.glucoseReadings.filter(r => r.id !== reading.id);
+    },
     SET_GLUCOSE_READINGS(state, readings) {
       state.glucoseReadings = readings; // Ensure state is updated correctly
     },
@@ -784,14 +787,14 @@ export default new Vuex.Store({
       }
     },    
     async deleteGlucoseReading({ commit }, glucose_reading) {
-      EventService.deleteGlucoseReading(glucose_reading)
-        .then((response) => {
-          commit("SET_GLUCOSE_READINGS", response.data);
-          alert("Glucose Reading " + glucose_reading.reading + " was deleted.");
-        })
-        .catch((error) => {
-          alert("GlucoseReading Delete Error: ", error.response.data )
-        });
+      console.log("Deleting glucose reading with ID:", glucose_reading.id);
+      try {
+        await EventService.deleteGlucoseReading(glucose_reading);
+        commit("DELETE_GLUCOSE_READING", glucose_reading); // <-- Pass the original reading!
+        alert("Glucose Reading " + glucose_reading.reading + " was deleted.");
+      } catch (error) {
+        alert("GlucoseReading Delete Error: " + (error.response?.data || error.message));
+      }
     },
     async updateGlucoseReading({ commit, dispatch }, glucose_reading) {
       try {

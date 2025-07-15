@@ -6,7 +6,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'GlucoseReadingList' }">Glucose Readings</router-link>
+          <router-link  :to="{ name: 'GlucoseReadings' }">Glucose Readings</router-link>
         </button>
       </li>
       <li>

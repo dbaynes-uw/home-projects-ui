@@ -98,7 +98,7 @@
           <v-btn color="primary" type="submit" aria-label="Update the glucose reading">
             Update
           </v-btn>
-          <v-btn color="secondary" :to="{ name: 'GlucoseReadingList' }" aria-label="Go back to the glucose reading list">
+          <v-btn color="secondary" :to="{ name: 'GlucoseReadings' }" aria-label="Go back to the glucose reading list">
             Back to List
           </v-btn>
         </v-col>
@@ -107,87 +107,62 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 
-export default {
-  name: 'GlucoseReadingEdit',
-  setup() {
-    const store = useStore();
-    const route = useRoute();
-    const router = useRouter();
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
 
-    const reading_date = ref('');
-    const reading = ref('');
-    const unit = ref('');
-    const reading_type = ref('');
-    const status = ref('');
-    const notes = ref('');
-    // Dropdown options for the status field
-    //const statusOptions = ref([
-    //  'Good - 70-99 mg/dl',
-    //  'Prediabetes - 100-125 mg/dl',
-    //  'Diabetes - 126+ mg/dl',
-    //]);
+const reading_date = ref('');
+const reading = ref('');
+const unit = ref('');
+const reading_type = ref('');
+const status = ref('');
+const notes = ref('');
 
-    onMounted(async () => {
-      await store.dispatch('fetchGlucoseReading', route.params.id);
-      const result = store.state.glucoseReading;
-  
-      // Convert the reading_date to local timezone and format for datetime-local input
-      const isoDate = new Date(result.reading_date);
-      const localDate = new Date(isoDate.getTime() - isoDate.getTimezoneOffset() * 60000); // Adjust for timezone offset
-      const formattedDate = localDate.toISOString().slice(0, 16); // Extract YYYY-MM-DDTHH:mm
+onMounted(async () => {
+  await store.dispatch('fetchGlucoseReading', route.params.id);
+  const result = store.state.glucoseReading;
 
-      reading_date.value = formattedDate; // Assign formatted date
-      reading.value = result.reading;
-      unit.value = result.unit;
-      reading_type.value = result.reading_type;
-      status.value = result.status;
-      notes.value = result.notes;
-      //statusOptions.value = [
-      //  'Good - 70-99 mg/dl',
-      //  'Prediabetes - 100-125 mg/dl',
-      //  'Diabetes - 126+ mg/dl',
-      //];
-    })//;
+  // Convert the reading_date to local timezone and format for datetime-local input
+  const isoDate = new Date(result.reading_date);
+  const localDate = new Date(isoDate.getTime() - isoDate.getTimezoneOffset() * 60000);
+  const formattedDate = localDate.toISOString().slice(0, 16);
 
-    const updateReading = async () => {
-      //Determine the status based on the reading value
-      if (reading.value >= 70 && reading.value <= 99) {
-        status.value = 'Good - 70-99 mg/dl';
-      } else if (reading.value >= 100 && reading.value <= 125) {
-        status.value = 'Prediabetes - 100-125 mg/dl';
-      } else if (reading.value >= 126) {
-        status.value = 'Diabetes - 126+ mg/dl';
-      } else {
-        status.value = 'Invalid reading'; // Handle edge cases
-      }
-      const updatedReading = {
-        id: route.params.id,
-        reading_date: reading_date.value,
-        reading: reading.value,
-        unit: unit.value,
-        reading_type: reading_type.value,
-        status: status.value,
-        notes: notes.value,
-        
-      };
-      await store.dispatch('updateGlucoseReading', updatedReading);
-      router.push({ name: 'GlucoseReadingList' });
-    };
-    return {reading_date,
-            reading,
-            unit,
-            reading_type,
-            status,
-            notes,
-            //statusOptions,
-            updateReading };
-  },
-};
+  reading_date.value = formattedDate;
+  reading.value = result.reading;
+  unit.value = result.unit;
+  reading_type.value = result.reading_type;
+  status.value = result.status;
+  notes.value = result.notes;
+});
+
+async function updateReading() {
+  // Determine the status based on the reading value
+  if (reading.value >= 70 && reading.value <= 99) {
+    status.value = 'Good - 70-99 mg/dl';
+  } else if (reading.value >= 100 && reading.value <= 125) {
+    status.value = 'Prediabetes - 100-125 mg/dl';
+  } else if (reading.value >= 126) {
+    status.value = 'Diabetes - 126+ mg/dl';
+  } else {
+    status.value = 'Invalid reading';
+  }
+  const updatedReading = {
+    id: route.params.id,
+    reading_date: reading_date.value,
+    reading: reading.value,
+    unit: unit.value,
+    reading_type: reading_type.value,
+    status: status.value,
+    notes: notes.value,
+  };
+  await store.dispatch('updateGlucoseReading', updatedReading);
+  router.push({ name: 'GlucoseReadings' });
+}
 </script>
 
 <style scoped>

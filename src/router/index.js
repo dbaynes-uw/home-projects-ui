@@ -22,6 +22,7 @@ import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import GardenWaterings from "../views/gardens/GardenWaterings.vue";
+import GlucoseReadings from "@/views/glucose_readings/GlucoseReadings.vue";
 import GlucoseReadingList from "@/views/glucose_readings/GlucoseReadingList.vue";
 import GlucoseReadingDetails from "@/views/glucose_readings/GlucoseReadingDetails.vue";
 import GlucoseReadingCreate from "@/views/glucose_readings/GlucoseReadingCreate.vue";
@@ -73,6 +74,11 @@ import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
 
 const routes = [
+  {
+  path: '/glucose-readings',
+  name: 'GlucoseReadings',
+  component: () => import('@/views/glucose_readings/GlucoseReadings.vue')
+},
   {
     path: '/',
     name: 'home',
@@ -220,6 +226,13 @@ const routes = [
     component: FilmEdit,
     meta: { requiresAuth: true}
   },
+    {
+    path: "/glucose-readings",
+    name: "GlucoseReadings",
+    component: GlucoseReadings,
+    meta: { requiresAuth: true },
+  },
+
   {
     path: "/glucose_readings",
     name: "GlucoseReadingList",

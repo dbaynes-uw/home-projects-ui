@@ -166,6 +166,7 @@ export default {
   },
   deleteGlucoseReading(glucose_reading) {
     this.init();
+    console.log("Deleting glucose reading with ID:", glucose_reading.id);
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "glucose_readings/" + `${glucose_reading.id}`);
   },

@@ -102,7 +102,7 @@
           <v-btn color="primary" type="submit" aria-label="Submit the glucose reading">
             Create
           </v-btn>
-          <v-btn color="secondary" :to="{ name: 'GlucoseReadingList' }" aria-label="Go back to the glucose reading list">
+          <v-btn color="secondary" :to="{ name: 'GlucoseReadings' }" aria-label="Go back to the glucose reading list">
             Back to List
           </v-btn>
         </v-col>
@@ -111,93 +111,78 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
-export default {
-  name: 'GlucoseReadingCreate',
-  setup() {
-    const store = useStore();
-    const router = useRouter();
-
-    // Reactive variables for form inputs
-    const reading_date = ref('');
-    const reading = ref('');
-    const unit = ref('mg/dl'); // Default unit, can be changed if needed
-    const reading_type = ref('AM-Fasting'); // Default reading type, can be changed if needed
-    const status = ref(''); // Optional status field, can be used for additional information
-    const notes = ref(''); // Optional notes field  
-
-    // Dropdown options for the reading_type field
-    const readingTypeOptions = ref([]);
-    // Fetch unique reading_types from Vuex store or API
-    const fetchReadingTypeOptions = async () => {
-      try {
-        // Assuming glucose readings are stored in Vuex state
-        const glucoseReadings = store.state.glucoseReadings;
-        // Extract unique reading_types
-        const uniqueReadingTypes = [...new Set(glucoseReadings.map(reading => reading.reading_type))];
-        readingTypeOptions.value = uniqueReadingTypes;
-      } catch (error) {
-        console.error('Error fetching reading type options:', error);
-      }
-    };
-    // Fetch reading_type options on component mount
-    onMounted(fetchReadingTypeOptions);
-    //
-
-    // Dropdown options for the status field
-    //const statusOptions = ref([
-    //  'Good - 70-99 mg/dl',
-    //  'Prediabetes - 100-125 mg/dl',
-    //  'Diabetes - 126+ mg/dl',
-    //]);
-    // Method to handle form submission
-    const createReading = async () => {
+  const store = useStore();
+  const router = useRouter();
+  // Reactive variables for form inputs
+  const reading_date = ref('');
+  const reading = ref('');
+  const unit = ref('mg/dl'); // Default unit, can be changed if needed
+  const reading_type = ref('AM-Fasting'); // Default reading type, can be changed if needed
+  const status = ref(''); // Optional status field, can be used for additional information
+  const notes = ref(''); // Optional notes field  
+  // Dropdown options for the reading_type field
+  const readingTypeOptions = ref([]);
+  // Fetch unique reading_types from Vuex store or API
+  const fetchReadingTypeOptions = async () => {
     try {
-      //Determine the status based on the reading value
-      if (reading.value >= 70 && reading.value <= 99) {
-        status.value = 'Good - 70-99 mg/dl';
-      } else if (reading.value >= 100 && reading.value <= 125) {
-        status.value = 'Prediabetes - 100-125 mg/dl';
-      } else if (reading.value >= 126) {
-        status.value = 'Diabetes - 126+ mg/dl';
-      } else {
-        status.value = 'Invalid reading'; // Handle edge cases
-      }
-      // Flatten the object
-      const glucose_reading = {
-        reading_date: reading_date.value,
-        reading: reading.value,
-        unit: unit.value,
-        reading_type: reading_type.value,
-        status: status.value,
-        notes: notes.value,
-      };
-
-      // Dispatch the Vuex action with the flattened object
-      await store.dispatch('createGlucoseReading', glucose_reading);     
-      // Redirect to the list view after successful creation
-      router.push({ name: 'GlucoseReadingList' });
+      // Assuming glucose readings are stored in Vuex state
+      const glucoseReadings = store.state.glucoseReadings;
+      
+      // Extract unique reading_types
+      const uniqueReadingTypes = [...new Set(glucoseReadings.map(reading => reading.reading_type))];
+      readingTypeOptions.value = uniqueReadingTypes;
     } catch (error) {
-      console.error("Error creating glucose reading:", error);
-      alert("Failed to create glucose reading. Please try again.");
+      console.error('Error fetching reading type options:', error);
     }
   };
-    return { reading_date,
-             reading,
-             unit,
-             reading_type,
-             status,
-             notes,
-             readingTypeOptions,
-             createReading };
-  },
+  // Fetch reading_type options on component mount
+  onMounted(fetchReadingTypeOptions);
+  //
+  // Dropdown options for the status field
+  //const statusOptions = ref([
+  //  'Good - 70-99 mg/dl',
+  //  'Prediabetes - 100-125 mg/dl',
+  //  'Diabetes - 126+ mg/dl',
+  //]);
+  // Method to handle form submission
+  const createReading = async () => {
+  try {
+    //Determine the status based on the reading value
+    if (reading.value >= 70 && reading.value <= 99) {
+      status.value = 'Good - 70-99 mg/dl';
+    } else if (reading.value >= 100 && reading.value <= 125) {
+      status.value = 'Prediabetes - 100-125 mg/dl';
+    } else if (reading.value >= 126) {
+      status.value = 'Diabetes - 126+ mg/dl';
+    } else {
+      status.value = 'Invalid reading'; // Handle edge cases
+    }
+    // Flatten the object
+    const glucose_reading = {
+      reading_date: reading_date.value,
+      reading: reading.value,
+      unit: unit.value,
+      reading_type: reading_type.value,
+      status: status.value,
+      notes: notes.value,
+    };
+    // Dispatch the Vuex action with the flattened object
+    await store.dispatch('createGlucoseReading', glucose_reading);     
+    // Redirect to the list view after successful creation
+    router.push({ name: 'GlucoseReadingList' });
+  } catch (error) {
+    console.error("Error creating glucose reading:", error);
+    alert("Failed to create glucose reading. Please try again.");
+  }
 };
+  // If you want to emit events to parent, uncomment below
+  // const emit = defineEmits(['delete']);
 </script>
-
 <style scoped>
 /* Add spacing and alignment for the form */
 .v-container {
