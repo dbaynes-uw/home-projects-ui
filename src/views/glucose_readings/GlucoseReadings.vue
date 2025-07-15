@@ -18,6 +18,9 @@
         <p>Loading glucose readings...</p>
       </template>
       <template v-else>
+        <!-- Add the summary here -->
+        <GlucoseReadingSummary :glucose_readings="glucose_readings" />
+
         <GlucoseReadingIndex :glucose_readings="glucose_readings"
           v-if="showIndex"
           @edit="editGlucoseReading"
@@ -40,6 +43,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import GlucoseReadingIndex from '@/components/glucose_readings/GlucoseReadingIndex.vue';
 import GlucoseReadingList from '@/components/glucose_readings/GlucoseReadingList.vue';
+import GlucoseReadingSummary from '@/components/glucose_readings/GlucoseReadingSummary.vue'; // <-- Import it
 
 const store = useStore();
 const router = useRouter();
