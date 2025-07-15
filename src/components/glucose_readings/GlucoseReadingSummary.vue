@@ -17,14 +17,14 @@
     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
     <br/>
 
-    <h3 id="h3-left">Averages by Fasting Type:</h3>
+    <h3 id="h3-left">Averages by Fasting Type: (Total: {{ totalReadings }})</h3>
     <ul
       v-for="(averageObj, type) in averageReadingsByType"
       :key="type"
       :style="{ color: isWithinRange(type, averageObj.average) }"
     >
       <li>
-        <p id="p-bold-indent">- {{ type }} Average: {{ averageObj.average }} mg/dl</p>
+        <p id="p-bold-indent">- {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})</p>
       </li>
     </ul>
     <br />
@@ -36,29 +36,12 @@
    >
       <li>
         <p id="p-bold-indent">
-          - {{ type }} Average: {{ averageObj.average }} mg/dl (n={{ averageObj.count }})
+          - {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
         </p>
       </li>
     </ul>
     <br/>
-    <h3 id="h3-left">
-      Readings by Type Between 30 and 60 Days Ago:
-    </h3>
-    <!--template v-if="Object.keys(readingsByType30to60Days).length">
-      <ul
-        v-for="(obj, type) in readingsByType30to60Days"
-        :key="type"
-        :style="{ color: isWithinRange(type, obj.average) }"
-      >
-        <li>
-          <p id="p-bold-indent">
-            - {{ type }}: {{ obj.count }} readings, average {{ obj.average }} mg/dl
-          </p>
-        </li>
-      </ul>
-    </!--template>
-    <p-- v-else>No readings found between 30 and 60 days ago.</p-->
-    <h3 id="h3-left">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
+    <h3 id="h3-left">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})</h3>
     <ul
       v-for="(averageObj, type) in averageReadingsLast60daysByType"
       :key="type"
@@ -66,7 +49,7 @@
    >
       <li>
         <p id="p-bold-indent">
-          - {{ type }} Average: {{ averageObj.average }} mg/dl (n={{ averageObj.count }})
+          - {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
         </p>
       </li>
     </ul>
@@ -145,39 +128,6 @@ export default {
       
       return sortedAverages;
     };
-    const readingsByType30to60Days = computed(() => {
-      if (props.glucose_readings.length === 0) return {};
-      const now = new Date();
-      const daysAgo30 = new Date();
-      daysAgo30.setDate(now.getDate() - 30);
-      const daysAgo60 = new Date();
-      daysAgo60.setDate(now.getDate() - 60);
-  
-      // Filter readings between 30 and 60 days ago
-      const filtered = props.glucose_readings.filter((reading) => {
-        const readingDate = new Date(reading.reading_date);
-        return readingDate >= daysAgo60 && readingDate < daysAgo30;
-      });
-    
-      // Group by type and count/average
-      const grouped = filtered.reduce((acc, reading) => {
-        const type = reading.reading_type;
-        if (!acc[type]) {
-          acc[type] = { total: 0, count: 0 };
-        }
-        acc[type].total += reading.reading;
-        acc[type].count += 1;
-        return acc;
-      }, {});
-      // Calculate averages if needed
-      for (const type in grouped) {
-        grouped[type].average = grouped[type].count > 0
-          ? (grouped[type].total / grouped[type].count).toFixed(2)
-          : 'N/A';
-     }
-      console.log("Readings by type between 30 and 60 days ago:", grouped);
-    return grouped;
-  });
     const averageReadingsByType = computed(() => averageReadingsByDays(365)); // All readings
     const averageReadingsLast30daysByType = computed(() =>
       averageReadingsByDays(30)
@@ -217,7 +167,6 @@ export default {
       averageReadingsLast30daysByType,
       averageReadingsLast60daysByType,
       averageReadingsLast90daysByType,
-      readingsByType30to60Days,
       totalReadingsLast30days,
       totalReadingsLast60days,
       totalReadingsLast90days,
