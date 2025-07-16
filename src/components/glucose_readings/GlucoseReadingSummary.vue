@@ -6,6 +6,8 @@
     <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
   </!--span-->
   </div>
+  averageReadingsLast30daysByType['AM-Fasting']: {{ 
+  averageReadingsLast30daysByType['AM-Fasting'] }}
   <div id="stats" class="h3-left-total-child">
     <h3 id="h3-left-subheading">Readings Color Code:</h3>
     <h3 id="h3-left" class="text-green">Fasting: Green Good 70-99 mg/dl</h3> 
@@ -17,10 +19,13 @@
     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
     <br/>
     <h3 id="h3-left-subheading">
-      Averages by Fasting Type:<br>
+      Averages by Fasting Type:
+      <br/>
+      <br/>
       Total Readings {{ totalReadings }} from 
       <span v-if="startDateAll && endDateAll">({{ startDateAll }} to {{ endDateAll }})</span>
     </h3>
+
     <ul
       v-for="(averageObj, type) in averageReadingsByType"
       :key="type"
@@ -30,6 +35,9 @@
         <p id="p-bold-indent">- {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})</p>
       </li>
     </ul>
+    <h3 id="h3-left-subheading-green">* AM-Fasting Normal: {{ amFastingNormal }}</h3>
+    <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
+    <h3 id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3>
     <br />
     <h3 id="h3-left-subheading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
     <ul
@@ -43,6 +51,9 @@
         </p>
       </li>
     </ul>
+    <h3 id="h3-left-subheading-blue">* AM-Fasting Normal: {{ amFastingNormal }}</h3>
+    <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
+    <h3 id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3>
     <br/>
     <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})</h3>
     <ul
@@ -186,6 +197,21 @@ export default {
         .reduce((max, d) => d > max ? d : max, new Date(props.glucose_readings[0].reading_date));
       return formatDateMMDDYYYY(maxDate);
     });
+    const amFastingNormal = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'AM-Fasting' && r.reading > 70 && r.reading < 100
+      ).length
+    );
+    const amFastingPrediabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'AM-Fasting' && r.reading > 99 && r.reading < 126
+      ).length
+    );
+    const amFastingDiabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'AM-Fasting' && r.reading >= 126
+      ).length
+    );
     return {
       totalReadings,
       startDateAll,
@@ -197,6 +223,9 @@ export default {
       totalReadingsLast30days,
       totalReadingsLast60days,
       totalReadingsLast90days,
+      amFastingNormal,
+      amFastingPrediabetes,
+      amFastingDiabetes,
       isWithinRange,
     };
   },
@@ -226,6 +255,24 @@ export default {
   font-weight: bold;
 }
 #h3-left-subheading {
+  font-size: 1.35rem;
+  text-align: left;
+  font-weight: bold;
+}
+#h3-left-subheading-green {
+  color: #0a5a36 !important;
+  font-size: 1.35rem;
+  text-align: left;
+  font-weight: bold;
+}
+#h3-left-subheading-blue {
+  color: #0000ff !important;
+  font-size: 1.35rem;
+  text-align: left;
+  font-weight: bold;
+}
+#h3-left-subheading-red {
+  color: #e31b1b !important;
   font-size: 1.35rem;
   text-align: left;
   font-weight: bold;
