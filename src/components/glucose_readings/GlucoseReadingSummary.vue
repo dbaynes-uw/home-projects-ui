@@ -175,8 +175,8 @@ export default {
     //const amFastingPrediabetes365 = computed(() => countAMFastingInRange(99, 126, 90));
     //const amFastingDiabetes365 = computed(() => countAMFastingInRange(125, Infinity, 90));    
     const postMealNormal30 = computed(() => countPostMealInRange(70, 100, 30));
-    const postMealPrediabetes30 = computed(() => countPostMealInRange(99, 126, 30));
-    const postMealDiabetes30 = computed(() => countPostMealInRange(125, Infinity, 30));
+    const postMealPrediabetes30 = computed(() => countPostMealInRange(100, 125, 30));
+    const postMealDiabetes30 = computed(() => countPostMealInRange(126, Infinity, 30));
 
     const averageReadingsByType = computed(() => averageReadingsByDays(365)); // All readings
     const averageReadingsLast30daysByType = computed(() =>
@@ -191,17 +191,17 @@ export default {
     const isWithinRange = (type, average) => {
       const avg = parseFloat(average); // Convert average to a number
       if (type === "AM-Fasting") {
-        if (avg >= 70 && avg <= 99) {
+        if (avg >= 70 && avg <= 100) {
           return "green"; // Normal fasting range
-        } else if (avg >= 100 && avg <= 125) {
+        } else if (avg > 100 && avg <= 125) {
           return "blue"; // Elevated fasting range
         } else {
           return "red"; // Fasting 126+ Type 2 Diabetes
         }
       } else if (type === "Post-Meal") {
-        if (avg >= 80 && avg <= 139) {
+        if (avg >= 80 && avg <= 140) {
           return "green"; // Normal post-meal range
-        } else if (avg >= 140 && avg <= 200) {
+        } else if (avg > 140 && avg <= 200) {
           return "blue"; // Elevated fasting range
         } else {
           return "red"; // Nonfasting 200+ Type 2 Diabetes
@@ -210,7 +210,37 @@ export default {
         return "black"; // Default for unknown types
       }
     };
-        const startDateAll = computed(() => {
+    const amFastingNormal = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'AM-Fasting' && r.reading >= 70 && r.reading <= 100
+      ).length
+    );
+    const amFastingPrediabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'AM-Fasting' && r.reading > 100 && r.reading <= 125
+      ).length
+    );
+    const amFastingDiabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'AM-Fasting' && r.reading > 125
+      ).length
+    );
+    const postMealNormal = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'Post-Meal' && r.reading >= 80 && r.reading <= 140
+      ).length
+    );
+    const postMealPrediabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'Post-Meal' && r.reading > 140 && r.reading <= 200
+      ).length
+    );
+    const postMealDiabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'Post-Meal' && r.reading > 200
+      ).length
+    );
+    const startDateAll = computed(() => {
       if (!props.glucose_readings.length) return '';
       const minDate = props.glucose_readings
         .map(r => new Date(r.reading_date))
@@ -225,37 +255,6 @@ export default {
         .reduce((max, d) => d > max ? d : max, new Date(props.glucose_readings[0].reading_date));
       return formatDateMMDDYYYY(maxDate);
     });
-    const amFastingNormal = computed(() =>
-      props.glucose_readings.filter(
-        r => r.reading_type === 'AM-Fasting' && r.reading > 70 && r.reading < 100
-      ).length
-    );
-    const amFastingPrediabetes = computed(() =>
-      props.glucose_readings.filter(
-        r => r.reading_type === 'AM-Fasting' && r.reading > 99 && r.reading < 126
-      ).length
-    );
-    const amFastingDiabetes = computed(() =>
-      props.glucose_readings.filter(
-        r => r.reading_type === 'AM-Fasting' && r.reading > 125
-      ).length
-    );
-    const postMealNormal = computed(() =>
-      props.glucose_readings.filter(
-        r => r.reading_type === 'Post-Meal' && r.reading > 80 && r.reading < 140
-      ).length
-    );
-    const postMealPrediabetes = computed(() =>
-      props.glucose_readings.filter(
-        r => r.reading_type === 'Post-Meal' && r.reading > 139 && r.reading < 201
-      ).length
-    );
-    const postMealDiabetes = computed(() =>
-      props.glucose_readings.filter(
-        r => r.reading_type === 'Post-Meal' && r.reading > 200
-      ).length
-    );
-
     function formatDateMMDDYYYY(date) {
       const d = new Date(date);
       const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -280,8 +279,8 @@ export default {
       daysAgo.setDate(now.getDate() - days);
       return props.glucose_readings.filter(r =>
         r.reading_type === 'Post-Meal' &&
-        r.reading > min &&
-        r.reading < max &&
+        r.reading >= min &&
+        r.reading <= max &&
         new Date(r.reading_date) >= daysAgo
       ).length;
     }
