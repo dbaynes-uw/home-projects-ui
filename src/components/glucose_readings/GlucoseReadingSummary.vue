@@ -1,13 +1,8 @@
 <template>
   <div id="stats" class="h3-left-total-child">
-    <h3 id="h3-left"><p id="p-bold">Total Glucose Readings: {{ totalReadings }}</p></h3>
+    <h3 id="h3-left-heading"><p id="p-bold">Total Glucose Readings: {{ totalReadings }}</p></h3>
     <br />
-  <!--span class="h3-left-total-child">
-    <p id="p-bold">Average Glucose Reading: {{ averageReading }}</p>
-  </!--span-->
   </div>
-  averageReadingsLast30daysByType['AM-Fasting']: {{ 
-  averageReadingsLast30daysByType['AM-Fasting'] }}
   <div id="stats" class="h3-left-total-child">
     <h3 id="h3-left-subheading">Readings Color Code:</h3>
     <h3 id="h3-left" class="text-green">Fasting: Green Good 70-99 mg/dl</h3> 
@@ -18,23 +13,22 @@
     <h3 id="h3-left" class="text-blue">Post-Meal: Blue Prediabetes 140-200 mg/dl</h3>
     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
     <br/>
-    <h3 id="h3-left-subheading">
+    <h3 id="h3-left-heading">
       Averages by Fasting Type:
-      <br/>
       <br/>
       Total Readings {{ totalReadings }} from 
       <span v-if="startDateAll && endDateAll">({{ startDateAll }} to {{ endDateAll }})</span>
     </h3>
-
     <ul
       v-for="(averageObj, type) in averageReadingsByType"
       :key="type"
       :style="{ color: isWithinRange(type, averageObj.average) }"
     >
       <li>
-        <p id="p-bold-indent">- {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})</p>
+        <p id="h3-left-subheading">* {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})</p>
       </li>
     </ul>
+    <br />
     <h3 id="h3-left-subheading-green">* AM-Fasting Normal: {{ amFastingNormal }}</h3>
     <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
     <h3 id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3>
@@ -43,21 +37,38 @@
     <h3 id="h3-left-subheading-blue">* Post-Meal Prediabetes: {{ postMealPrediabetes }}</h3>
     <h3 id="h3-left-subheading-red">* Post-Meal Diabetes: {{ postMealDiabetes }}</h3>
     <br />
-    <h3 id="h3-left-subheading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
+    <h3 id="h3-left-heading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
     <ul
       v-for="(averageObj, type) in averageReadingsLast30daysByType"
       :key="type"
       :style="{ color: isWithinRange(type, averageObj.average) }"
    >
       <li>
-        <p id="p-bold-indent">
-          - {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
+        <p id="h3-left-subheading">
+          * {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
         </p>
       </li>
     </ul>
-    <!--h3 id="h3-left-subheading-blue">* AM-Fasting Normal: {{ amFastingNormal }}</!--h3>
-    <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
-    <h3-- id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3-->
+    <br /> 
+    <h3 id="h3-left-subheading-green">
+      * AM-Fasting Normal (Last 30d): {{ amFastingNormal30 }}
+    </h3>
+    <h3 id="h3-left-subheading-blue">
+      * AM-Fasting Prediabetes (Last 30d): {{ amFastingPrediabetes30 }}
+    </h3>
+    <h3 id="h3-left-subheading-red">
+      * AM-Fasting Diabetes (Last 30d): {{ amFastingDiabetes30 }}
+    </h3>
+    <br />
+    <h3 id="h3-left-subheading-green">
+      * Post-Meal Normal (Last 30d): {{ postMealNormal30 }}
+    </h3>
+    <h3 id="h3-left-subheading-blue">
+      * Post-Meal Prediabetes (Last 30d): {{ postMealPrediabetes30 }}
+    </h3>
+    <h3 id="h3-left-subheading-red">
+      * Post-Meal Diabetes (Last 30d): {{ postMealDiabetes30 }}
+    </h3>
     <br/>
     <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})</h3>
     <ul
@@ -118,7 +129,6 @@ export default {
         const readingDate = new Date(reading.reading_date);
         return readingDate >= daysAgo;
       });
-    
       const groupedReadings = recentReadings.reduce((acc, reading) => {
         const type = reading.reading_type;
         if (!acc[type]) {
@@ -146,6 +156,28 @@ export default {
       
       return sortedAverages;
     };
+        // Last 30 days
+    const amFastingNormal30 = computed(() => countAMFastingInRange(70, 100, 30));
+    const amFastingPrediabetes30 = computed(() => countAMFastingInRange(99, 126, 30));
+    const amFastingDiabetes30 = computed(() => countAMFastingInRange(125, Infinity, 30));
+    // Last 60 days
+    //const amFastingNormal60 = computed(() => countAMFastingInRange(70, 100, 60));
+    //const amFastingPrediabetes60 = computed(() => countAMFastingInRange(99, 126, 60));
+    //const amFastingDiabetes60 = computed(() => countAMFastingInRange(125, Infinity, 60));
+
+    //// Last 90 days
+    //const amFastingNormal90 = computed(() => countAMFastingInRange(70, 100, 90));
+    //const amFastingPrediabetes90 = computed(() => countAMFastingInRange(99, 126, 90));
+    //const amFastingDiabetes90 = computed(() => countAMFastingInRange(125, Infinity, 90));    
+    //
+    //// Last 365 days
+    //const amFastingNormal365 = computed(() => countAMFastingInRange(70, 100, 90));
+    //const amFastingPrediabetes365 = computed(() => countAMFastingInRange(99, 126, 90));
+    //const amFastingDiabetes365 = computed(() => countAMFastingInRange(125, Infinity, 90));    
+    const postMealNormal30 = computed(() => countPostMealInRange(70, 100, 30));
+    const postMealPrediabetes30 = computed(() => countPostMealInRange(99, 126, 30));
+    const postMealDiabetes30 = computed(() => countPostMealInRange(125, Infinity, 30));
+
     const averageReadingsByType = computed(() => averageReadingsByDays(365)); // All readings
     const averageReadingsLast30daysByType = computed(() =>
       averageReadingsByDays(30)
@@ -178,15 +210,7 @@ export default {
         return "black"; // Default for unknown types
       }
     };
-    function formatDateMMDDYYYY(date) {
-      const d = new Date(date);
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      const dd = String(d.getDate()).padStart(2, '0');
-      const yyyy = d.getFullYear();
-      return `${mm}-${dd}-${yyyy}`;
-    }
-
-    const startDateAll = computed(() => {
+        const startDateAll = computed(() => {
       if (!props.glucose_readings.length) return '';
       const minDate = props.glucose_readings
         .map(r => new Date(r.reading_date))
@@ -231,6 +255,36 @@ export default {
         r => r.reading_type === 'Post-Meal' && r.reading > 200
       ).length
     );
+
+    function formatDateMMDDYYYY(date) {
+      const d = new Date(date);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${mm}-${dd}-${yyyy}`;
+    }
+    function countAMFastingInRange(min, max, days) {
+      const now = new Date();
+      const daysAgo = new Date();
+      daysAgo.setDate(now.getDate() - days);
+      return props.glucose_readings.filter(r =>
+        r.reading_type === 'AM-Fasting' &&
+        r.reading > min &&
+        r.reading < max &&
+        new Date(r.reading_date) >= daysAgo
+      ).length;
+    }
+    function countPostMealInRange(min, max, days) {
+      const now = new Date();
+      const daysAgo = new Date();
+      daysAgo.setDate(now.getDate() - days);
+      return props.glucose_readings.filter(r =>
+        r.reading_type === 'Post-Meal' &&
+        r.reading > min &&
+        r.reading < max &&
+        new Date(r.reading_date) >= daysAgo
+      ).length;
+    }
     return {
       totalReadings,
       startDateAll,
@@ -248,6 +302,15 @@ export default {
       postMealNormal,
       postMealPrediabetes,
       postMealDiabetes,
+      amFastingNormal30,
+      amFastingPrediabetes30,
+      amFastingDiabetes30,
+      //amFastingNormal60, amFastingPrediabetes60, amFastingDiabetes60,
+      //amFastingNormal90, amFastingPrediabetes90, amFastingDiabetes90,
+      //amFastingNormal365, amFastingPrediabetes365, amFastingDiabetes365,
+      postMealNormal30,
+      postMealPrediabetes30,
+      postMealDiabetes30,
       isWithinRange,
     };
   },
@@ -260,7 +323,7 @@ export default {
   font-weight: bold;
 }
 #p-bold-indent {
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   text-align: left;
   font-weight: bold;
   margin-left: 20px;
@@ -274,6 +337,11 @@ export default {
 }
 .text-red {
   color: #e31b1b !important;
+  font-weight: bold;
+}
+#h3-left-heading {
+  font-size: 1.5rem;
+  text-align: left;
   font-weight: bold;
 }
 #h3-left-subheading {
