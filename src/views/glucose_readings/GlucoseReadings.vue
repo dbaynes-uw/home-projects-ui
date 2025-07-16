@@ -26,12 +26,12 @@
           @edit="editGlucoseReading"
           @delete="handleDeleteReading"
         />
-        <GlucoseReadingList :glucose_readings="glucose_readings" />
+        <GlucoseReadingList :glucose_readings="glucose_readings" 
           v-else
-          :glucose_readings="glucose_readings"
           @edit="editGlucoseReading"
-          @delete="handleDeleteReading
+          @delete="handleDeleteReading"
         />
+        
       </template>
     </div>
   </v-container>

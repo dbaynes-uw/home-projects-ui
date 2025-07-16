@@ -7,7 +7,7 @@
   </!--span-->
   </div>
   <div id="stats" class="h3-left-total-child">
-    <h3 id="h3-left">Readings Color Code:</h3>
+    <h3 id="h3-left-subheading">Readings Color Code:</h3>
     <h3 id="h3-left" class="text-green">Fasting: Green Good 70-99 mg/dl</h3> 
     <h3 id="h3-left" class="text-blue">Fasting: Blue Prediabetes 100-125 mg/dl</h3>
     <h3 id="h3-left" class="text-red">Fasting: Red Type 2 Diabetes</h3>
@@ -17,7 +17,7 @@
     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
     <br/>
 
-    <h3 id="h3-left">Averages by Fasting Type: (Total: {{ totalReadings }})</h3>
+    <h3 id="h3-left-subheading">Averages by Fasting Type: (Total: {{ totalReadings }})</h3>
     <ul
       v-for="(averageObj, type) in averageReadingsByType"
       :key="type"
@@ -28,7 +28,7 @@
       </li>
     </ul>
     <br />
-    <h3 id="h3-left">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
+    <h3 id="h3-left-subheading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
     <ul
       v-for="(averageObj, type) in averageReadingsLast30daysByType"
       :key="type"
@@ -41,7 +41,7 @@
       </li>
     </ul>
     <br/>
-    <h3 id="h3-left">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})</h3>
+    <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})</h3>
     <ul
       v-for="(averageObj, type) in averageReadingsLast60daysByType"
       :key="type"
@@ -54,7 +54,7 @@
       </li>
     </ul>
     <br />
-    <h3 id="h3-left">
+    <h3 id="h3-left-subheading">
       Averages Last 90 Days by Fasting Type (Total: {{ totalReadingsLast90days }})
     </h3>
     <ul
@@ -64,7 +64,7 @@
     >
       <li>
         <p id="p-bold-indent">
-          - {{ type }} Average: {{ averageObj.average }} mg/dl (n={{ averageObj.count }})
+          - {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
         </p>
       </li>
     </ul>
@@ -197,5 +197,11 @@ export default {
 .text-red {
   color: #e31b1b !important;
   font-weight: bold;
+}
+#h3-left-subheading {
+  font-size: 1.25rem;
+  text-align: left;
+  font-weight: bold;
+  margin-left: 20px;
 }
 </style>
