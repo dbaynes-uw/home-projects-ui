@@ -16,8 +16,11 @@
     <h3 id="h3-left" class="text-blue">Post-Meal: Blue Prediabetes 140-200 mg/dl</h3>
     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
     <br/>
-
-    <h3 id="h3-left-subheading">Averages by Fasting Type: (Total: {{ totalReadings }})</h3>
+    <h3 id="h3-left-subheading">
+      Averages by Fasting Type:<br>
+      Total Readings {{ totalReadings }} from 
+      <span v-if="startDateAll && endDateAll">({{ startDateAll }} to {{ endDateAll }})</span>
+    </h3>
     <ul
       v-for="(averageObj, type) in averageReadingsByType"
       :key="type"
@@ -160,9 +163,33 @@ export default {
         return "black"; // Default for unknown types
       }
     };
+    function formatDateMMDDYYYY(date) {
+      const d = new Date(date);
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${mm}-${dd}-${yyyy}`;
+    }
 
+    const startDateAll = computed(() => {
+      if (!props.glucose_readings.length) return '';
+      const minDate = props.glucose_readings
+        .map(r => new Date(r.reading_date))
+        .reduce((min, d) => d < min ? d : min, new Date(props.glucose_readings[0].reading_date));
+      return formatDateMMDDYYYY(minDate);
+    });
+
+    const endDateAll = computed(() => {
+      if (!props.glucose_readings.length) return '';
+      const maxDate = props.glucose_readings
+        .map(r => new Date(r.reading_date))
+        .reduce((max, d) => d > max ? d : max, new Date(props.glucose_readings[0].reading_date));
+      return formatDateMMDDYYYY(maxDate);
+    });
     return {
       totalReadings,
+      startDateAll,
+      endDateAll,
       averageReadingsByType,
       averageReadingsLast30daysByType,
       averageReadingsLast60daysByType,
@@ -199,9 +226,8 @@ export default {
   font-weight: bold;
 }
 #h3-left-subheading {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   text-align: left;
   font-weight: bold;
-  margin-left: 20px;
 }
 </style>
