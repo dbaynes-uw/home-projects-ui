@@ -39,6 +39,10 @@
     <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
     <h3 id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3>
     <br />
+    <h3 id="h3-left-subheading-green">* Post-Meal Normal: {{ postMealNormal }}</h3>
+    <h3 id="h3-left-subheading-blue">* Post-Meal Prediabetes: {{ postMealPrediabetes }}</h3>
+    <h3 id="h3-left-subheading-red">* Post-Meal Diabetes: {{ postMealDiabetes }}</h3>
+    <br />
     <h3 id="h3-left-subheading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
     <ul
       v-for="(averageObj, type) in averageReadingsLast30daysByType"
@@ -51,9 +55,9 @@
         </p>
       </li>
     </ul>
-    <h3 id="h3-left-subheading-blue">* AM-Fasting Normal: {{ amFastingNormal }}</h3>
+    <!--h3 id="h3-left-subheading-blue">* AM-Fasting Normal: {{ amFastingNormal }}</!--h3>
     <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
-    <h3 id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3>
+    <h3-- id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3-->
     <br/>
     <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})</h3>
     <ul
@@ -209,7 +213,22 @@ export default {
     );
     const amFastingDiabetes = computed(() =>
       props.glucose_readings.filter(
-        r => r.reading_type === 'AM-Fasting' && r.reading >= 126
+        r => r.reading_type === 'AM-Fasting' && r.reading > 125
+      ).length
+    );
+    const postMealNormal = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'Post-Meal' && r.reading > 80 && r.reading < 140
+      ).length
+    );
+    const postMealPrediabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'Post-Meal' && r.reading > 139 && r.reading < 201
+      ).length
+    );
+    const postMealDiabetes = computed(() =>
+      props.glucose_readings.filter(
+        r => r.reading_type === 'Post-Meal' && r.reading > 200
       ).length
     );
     return {
@@ -226,6 +245,9 @@ export default {
       amFastingNormal,
       amFastingPrediabetes,
       amFastingDiabetes,
+      postMealNormal,
+      postMealPrediabetes,
+      postMealDiabetes,
       isWithinRange,
     };
   },
