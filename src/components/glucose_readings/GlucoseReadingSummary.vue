@@ -343,8 +343,8 @@ export default {
       daysAgo.setDate(now.getDate() - days);
       return props.glucose_readings.filter(r =>
         r.reading_type === 'AM-Fasting' &&
-        r.reading > min &&
-        r.reading < max &&
+        r.reading >= min &&
+        r.reading <= max &&
         new Date(r.reading_date) >= daysAgo
       ).length;
     }
