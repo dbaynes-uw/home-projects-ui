@@ -14,10 +14,11 @@
     <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
     <br/>
     <h3 id="h3-left-heading">
-      Averages by Fasting Type:
+      Averages/Counts by Fasting Type:
       <br/>
-      Total Readings {{ totalReadings }} from 
-      <span v-if="startDateAll && endDateAll">({{ startDateAll }} to {{ endDateAll }})</span>
+      Average  (Total: {{ totalReadings }})
+      <br/>
+      <span v-if="startDateAll && endDateAll">({{ startDateAll }} to {{ endDateAll }}):</span>
     </h3>
     <ul
       v-for="(averageObj, type) in averageReadingsByType"
@@ -28,7 +29,7 @@
         <p id="h3-left-subheading">* {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})</p>
       </li>
     </ul>
-    <br />
+    <p id="h3-left-subheading">Counts:</p>
     <h3 id="h3-left-subheading-green">* AM-Fasting Normal: {{ amFastingNormal }}</h3>
     <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
     <h3 id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3>
@@ -37,7 +38,10 @@
     <h3 id="h3-left-subheading-blue">* Post-Meal Prediabetes: {{ postMealPrediabetes }}</h3>
     <h3 id="h3-left-subheading-red">* Post-Meal Diabetes: {{ postMealDiabetes }}</h3>
     <br />
-    <h3 id="h3-left-heading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})</h3>
+    <h3 id="h3-left-heading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})
+      <br/>
+      ({{ dateRange30.start }} to {{ dateRange30.end }}):
+    </h3>
     <ul
       v-for="(averageObj, type) in averageReadingsLast30daysByType"
       :key="type"
@@ -49,7 +53,7 @@
         </p>
       </li>
     </ul>
-    <br /> 
+    <p id="h3-left-subheading">Counts:</p>
     <h3 id="h3-left-subheading-green">
       * AM-Fasting Normal (Last 30d): {{ amFastingNormal30 }}
     </h3>
@@ -70,7 +74,10 @@
       * Post-Meal Diabetes (Last 30d): {{ postMealDiabetes30 }}
     </h3>
     <br/>
-    <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})</h3>
+    <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})
+    <br/>
+    ({{ dateRange60.start }} to {{ dateRange60.end }}):
+    </h3>
     <ul
       v-for="(averageObj, type) in averageReadingsLast60daysByType"
       :key="type"
@@ -82,7 +89,7 @@
         </p>
       </li>
     </ul>
-    <br />
+    <p id="h3-left-subheading">Counts:</p>
     <h3 id="h3-left-subheading-green">
       * AM-Fasting Normal (Last 60d): {{ amFastingNormal60 }}
     </h3>
@@ -104,7 +111,9 @@
     </h3>
     <br>
     <h3 id="h3-left-subheading">
-      Averages Last 90 Days by Fasting Type (Total: {{ totalReadingsLast90days }})
+      Averages Last 90 Days by Fasting Type  (Total: {{ totalReadingsLast90days }})
+    <br>
+    ({{ dateRange90.start }} to {{ dateRange90.end }}):
     </h3>
 
     <ul
@@ -118,6 +127,7 @@
         </p>
       </li>
     </ul>
+    <p id="h3-left-subheading">Counts:</p>
     <h3 id="h3-left-subheading-green">
       * AM-Fasting Normal (Last 90d): {{ amFastingNormal90 }}
     </h3>
@@ -307,6 +317,19 @@ export default {
         .reduce((max, d) => d > max ? d : max, new Date(props.glucose_readings[0].reading_date));
       return formatDateMMDDYYYY(maxDate);
     });
+
+    const dateRange30 = getDateRange(30);
+    const dateRange60 = getDateRange(60);
+    const dateRange90 = getDateRange(90);
+    
+    function getDateRange(days) {
+      const today = new Date();
+      const end = formatDateMMDDYYYY(today);
+      const start = new Date(today);
+      start.setDate(today.getDate() - (days - 1));
+      const startStr = formatDateMMDDYYYY(start);
+      return { start: startStr, end };
+    }
     function formatDateMMDDYYYY(date) {
       const d = new Date(date);
       const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -353,6 +376,9 @@ export default {
       postMealNormal,
       postMealPrediabetes,
       postMealDiabetes,
+      dateRange30,
+      dateRange60,
+      dateRange90,
       amFastingNormal30, amFastingPrediabetes30, amFastingDiabetes30,
       amFastingNormal60, amFastingPrediabetes60, amFastingDiabetes60,
       amFastingNormal90, amFastingPrediabetes90, amFastingDiabetes90,

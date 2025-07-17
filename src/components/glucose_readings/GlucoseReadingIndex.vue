@@ -58,7 +58,7 @@ const emit = defineEmits(['delete']);
 // State
 const onlineStatus = ref(navigator.onLine);
 const sortKey = ref('reading_date');
-const sortAsc = ref(true);
+const sortAsc = ref(false);
 
 // Computed sorted readings
 const sortedReadings = computed(() => {
@@ -77,7 +77,6 @@ function formatStandardDateTime(date) {
 }
 
 function deleteGlucoseReading(reading) {
-  console.log("Deleting glucose reading:", reading);
   emit('delete', reading);
 }
 
