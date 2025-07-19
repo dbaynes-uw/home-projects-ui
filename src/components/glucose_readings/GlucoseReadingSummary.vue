@@ -16,7 +16,7 @@
     <h3 id="h3-left-heading">
       Averages/Counts by Fasting Type:
       <br/>
-      Average  (Total: {{ totalReadings }})
+      Averages for Total: {{ totalReadings }}
       <br/>
       <span v-if="startDateAll && endDateAll">({{ startDateAll }} to {{ endDateAll }}):</span>
     </h3>
@@ -29,15 +29,15 @@
         <p id="h3-left-subheading">* {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})</p>
       </li>
     </ul>
-    <p id="h3-left-subheading">Counts:</p>
-    <h3 id="h3-left-subheading-green">* AM-Fasting Normal: {{ amFastingNormal }}</h3>
-    <h3 id="h3-left-subheading-blue">* AM-Fasting Prediabetes: {{ amFastingPrediabetes }}</h3>
-    <h3 id="h3-left-subheading-red">* AM-Fasting Diabetes: {{ amFastingDiabetes }}</h3>
-    <br />
-    <h3 id="h3-left-subheading-green">* Post-Meal Normal: {{ postMealNormal }}</h3>
-    <h3 id="h3-left-subheading-blue">* Post-Meal Prediabetes: {{ postMealPrediabetes }}</h3>
-    <h3 id="h3-left-subheading-red">* Post-Meal Diabetes: {{ postMealDiabetes }}</h3>
-    <br />
+<CountsByType
+  label="Counts for Total:"
+  :amFastingNormal="amFastingNormal"
+  :amFastingPrediabetes="amFastingPrediabetes"
+  :amFastingDiabetes="amFastingDiabetes"
+  :postMealNormal="postMealNormal"
+  :postMealPrediabetes="postMealPrediabetes"
+  :postMealDiabetes="postMealDiabetes"
+/>    <br />
     <h3 id="h3-left-heading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})
       <br/>
       ({{ dateRange30.start }} to {{ dateRange30.end }}):
@@ -53,26 +53,16 @@
         </p>
       </li>
     </ul>
-    <p id="h3-left-subheading">Counts:</p>
-    <h3 id="h3-left-subheading-green">
-      * AM-Fasting Normal (Last 30d): {{ amFastingNormal30 }}
-    </h3>
-    <h3 id="h3-left-subheading-blue">
-      * AM-Fasting Prediabetes (Last 30d): {{ amFastingPrediabetes30 }}
-    </h3>
-    <h3 id="h3-left-subheading-red">
-      * AM-Fasting Diabetes (Last 30d): {{ amFastingDiabetes30 }}
-    </h3>
-    <br />
-    <h3 id="h3-left-subheading-green">
-      * Post-Meal Normal (Last 30d): {{ postMealNormal30 }}
-    </h3>
-    <h3 id="h3-left-subheading-blue">
-      * Post-Meal Prediabetes (Last 30d): {{ postMealPrediabetes30 }}
-    </h3>
-    <h3 id="h3-left-subheading-red">
-      * Post-Meal Diabetes (Last 30d): {{ postMealDiabetes30 }}
-    </h3>
+    <CountsByType
+      label="Counts for Last 30 Days:"
+      periodLabel="Last 30d"
+      :amFastingNormal="amFastingNormal30"
+      :amFastingPrediabetes="amFastingPrediabetes30"
+      :amFastingDiabetes="amFastingDiabetes30"
+      :postMealNormal="postMealNormal30"
+      :postMealPrediabetes="postMealPrediabetes30"
+      :postMealDiabetes="postMealDiabetes30"
+    />
     <br/>
     <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})
     <br/>
@@ -89,27 +79,16 @@
         </p>
       </li>
     </ul>
-    <p id="h3-left-subheading">Counts:</p>
-    <h3 id="h3-left-subheading-green">
-      * AM-Fasting Normal (Last 60d): {{ amFastingNormal60 }}
-    </h3>
-    <h3 id="h3-left-subheading-blue">
-      * AM-Fasting Prediabetes (Last 60d): {{ amFastingPrediabetes60 }}
-    </h3>
-    <h3 id="h3-left-subheading-red">
-      * AM-Fasting Diabetes (Last 60d): {{ amFastingDiabetes60 }}
-    </h3>
-    <br />
-    <h3 id="h3-left-subheading-green">
-      * Post-Meal Normal (Last 60d): {{ postMealNormal60 }}
-    </h3>
-    <h3 id="h3-left-subheading-blue">
-      * Post-Meal Prediabetes (Last 60d): {{ postMealPrediabetes60 }}
-    </h3>
-    <h3 id="h3-left-subheading-red">
-      * Post-Meal Diabetes (Last 60d): {{ postMealDiabetes60 }}
-    </h3>
-    <br>
+<CountsByType
+  label="Counts (Last 60d):"
+  periodLabel="Last 60d"
+  :amFastingNormal="amFastingNormal60"
+  :amFastingPrediabetes="amFastingPrediabetes60"
+  :amFastingDiabetes="amFastingDiabetes60"
+  :postMealNormal="postMealNormal60"
+  :postMealPrediabetes="postMealPrediabetes60"
+  :postMealDiabetes="postMealDiabetes60"
+/>    <br>
     <h3 id="h3-left-subheading">
       Averages Last 90 Days by Fasting Type  (Total: {{ totalReadingsLast90days }})
     <br>
@@ -127,32 +106,21 @@
         </p>
       </li>
     </ul>
-    <p id="h3-left-subheading">Counts:</p>
-    <h3 id="h3-left-subheading-green">
-      * AM-Fasting Normal (Last 90d): {{ amFastingNormal90 }}
-    </h3>
-    <h3 id="h3-left-subheading-blue">
-      * AM-Fasting Prediabetes (Last 90d): {{ amFastingPrediabetes90 }}
-    </h3>
-    <h3 id="h3-left-subheading-red">
-      * AM-Fasting Diabetes (Last 90d): {{ amFastingDiabetes90 }}
-    </h3>
-    <br />
-    <h3 id="h3-left-subheading-green">
-      * Post-Meal Normal (Last 90d): {{ postMealNormal90 }}
-    </h3>
-    <h3 id="h3-left-subheading-blue">
-      * Post-Meal Prediabetes (Last 90d): {{ postMealPrediabetes90 }}
-    </h3>
-    <h3 id="h3-left-subheading-red">
-      * Post-Meal Diabetes (Last 90d): {{ postMealDiabetes90 }}
-    </h3>
-  </div>
+<CountsByType
+  label="Counts (Last 90d):"
+  periodLabel="Last 90d"
+  :amFastingNormal="amFastingNormal90"
+  :amFastingPrediabetes="amFastingPrediabetes90"
+  :amFastingDiabetes="amFastingDiabetes90"
+  :postMealNormal="postMealNormal90"
+  :postMealPrediabetes="postMealPrediabetes90"
+  :postMealDiabetes="postMealDiabetes90"
+/>  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-
+import CountsByType from './CountsByType.vue';
 const props = defineProps({
   glucose_readings: {
     type: Array,
@@ -364,7 +332,7 @@ function isWithinRange(type, average) {
 }
 </script>
 
-<style scoped>
+<style>
 #p-bold {
   text-align: left;
   font-weight: bold;
