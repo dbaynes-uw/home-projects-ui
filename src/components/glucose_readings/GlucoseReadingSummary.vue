@@ -4,55 +4,39 @@
     <br />
   </div>
   <div id="stats" class="h3-left-total-child">
-    <h3 id="h3-left-subheading">Readings Color Code:</h3>
-    <h3 id="h3-left" class="text-green">Fasting: Green Good 70-99 mg/dl</h3> 
-    <h3 id="h3-left" class="text-blue">Fasting: Blue Prediabetes 100-125 mg/dl</h3>
-    <h3 id="h3-left" class="text-red">Fasting: Red Type 2 Diabetes</h3>
-    <br/>
-    <h3 id="h3-left" class="text-green">Post-Meal: Green Good 80-140 mg/dl</h3> 
-    <h3 id="h3-left" class="text-blue">Post-Meal: Blue Prediabetes 140-200 mg/dl</h3>
-    <h3 id="h3-left" class="text-red">Post-Meal: Red Type 2 Diabetes 200+ mg/dl</h3>
-    <br/>
+    <ColorLegend />
     <h3 id="h3-left-heading">
       Averages/Counts by Fasting Type:
       <br/>
       Averages for Total: {{ totalReadings }}
       <br/>
-      <span v-if="startDateAll && endDateAll">({{ startDateAll }} to {{ endDateAll }}):</span>
     </h3>
-    <ul
-      v-for="(averageObj, type) in averageReadingsByType"
-      :key="type"
-      :style="{ color: isWithinRange(type, averageObj.average) }"
-    >
-      <li>
-        <p id="h3-left-subheading">* {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})</p>
-      </li>
-    </ul>
-<CountsByType
-  label="Counts for Total:"
-  :amFastingNormal="amFastingNormal"
-  :amFastingPrediabetes="amFastingPrediabetes"
-  :amFastingDiabetes="amFastingDiabetes"
-  :postMealNormal="postMealNormal"
-  :postMealPrediabetes="postMealPrediabetes"
-  :postMealDiabetes="postMealDiabetes"
-/>    <br />
-    <h3 id="h3-left-heading">Averages Last 30 Days by Fasting Type (Total: {{ totalReadingsLast30days }})
-      <br/>
-      ({{ dateRange30.start }} to {{ dateRange30.end }}):
-    </h3>
-    <ul
-      v-for="(averageObj, type) in averageReadingsLast30daysByType"
-      :key="type"
-      :style="{ color: isWithinRange(type, averageObj.average) }"
-   >
-      <li>
-        <p id="h3-left-subheading">
-          * {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
-        </p>
-      </li>
-    </ul>
+    <AveragesByTypeList
+      title="Total Averages by Fasting Type"
+      :averages="averageReadingsByType"
+      :total="totalReadings"
+      :dateRange="dateRange360"
+      :isWithinRange="isWithinRange"
+    />
+    <br />
+    <CountsByType
+      label="Counts for Total:"
+      :amFastingNormal="amFastingNormal"
+      :amFastingPrediabetes="amFastingPrediabetes"
+      :amFastingDiabetes="amFastingDiabetes"
+      :postMealNormal="postMealNormal"
+      :postMealPrediabetes="postMealPrediabetes"
+      :postMealDiabetes="postMealDiabetes"
+    />    
+    <hr>
+    <AveragesByTypeList
+      title="Averages Last 30 Days by Fasting Type"
+      :averages="averageReadingsLast30daysByType"
+      :total="totalReadingsLast30days"
+      :dateRange="dateRange30"
+      :isWithinRange="isWithinRange"
+    />
+    <br />
     <CountsByType
       label="Counts for Last 30 Days:"
       periodLabel="Last 30d"
@@ -63,64 +47,51 @@
       :postMealPrediabetes="postMealPrediabetes30"
       :postMealDiabetes="postMealDiabetes30"
     />
-    <br/>
-    <h3 id="h3-left-subheading">Averages Last 60 Days by Fasting Type (Total: {{ totalReadingsLast60days }})
-    <br/>
-    ({{ dateRange60.start }} to {{ dateRange60.end }}):
-    </h3>
-    <ul
-      v-for="(averageObj, type) in averageReadingsLast60daysByType"
-      :key="type"
-      :style="{ color: isWithinRange(type, averageObj.average) }"
-   >
-      <li>
-        <p id="h3-left-subheading">
-          * {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
-        </p>
-      </li>
-    </ul>
-<CountsByType
-  label="Counts (Last 60d):"
-  periodLabel="Last 60d"
-  :amFastingNormal="amFastingNormal60"
-  :amFastingPrediabetes="amFastingPrediabetes60"
-  :amFastingDiabetes="amFastingDiabetes60"
-  :postMealNormal="postMealNormal60"
-  :postMealPrediabetes="postMealPrediabetes60"
-  :postMealDiabetes="postMealDiabetes60"
-/>    <br>
-    <h3 id="h3-left-subheading">
-      Averages Last 90 Days by Fasting Type  (Total: {{ totalReadingsLast90days }})
-    <br>
-    ({{ dateRange90.start }} to {{ dateRange90.end }}):
-    </h3>
-
-    <ul
-      v-for="(averageObj, type) in averageReadingsLast90daysByType"
-      :key="type"
-      :style="{ color: isWithinRange(type, averageObj.average) }"
-    >
-      <li>
-        <p id="h3-left-subheading">
-          * {{ type }} Average: {{ averageObj.average }} mg/dl ({{ averageObj.count }})
-        </p>
-      </li>
-    </ul>
-<CountsByType
-  label="Counts (Last 90d):"
-  periodLabel="Last 90d"
-  :amFastingNormal="amFastingNormal90"
-  :amFastingPrediabetes="amFastingPrediabetes90"
-  :amFastingDiabetes="amFastingDiabetes90"
-  :postMealNormal="postMealNormal90"
-  :postMealPrediabetes="postMealPrediabetes90"
-  :postMealDiabetes="postMealDiabetes90"
-/>  </div>
+    <hr>
+    <AveragesByTypeList
+      title="Averages Last 60 Days by Fasting Type"
+      :averages="averageReadingsLast60daysByType"
+      :total="totalReadingsLast60days"
+      :dateRange="dateRange60"
+      :isWithinRange="isWithinRange"
+    />
+    <br />
+    <CountsByType
+      label="Counts (Last 60d):"
+      periodLabel="Last 60d"
+      :amFastingNormal="amFastingNormal60"
+      :amFastingPrediabetes="amFastingPrediabetes60"
+      :amFastingDiabetes="amFastingDiabetes60"
+      :postMealNormal="postMealNormal60"
+      :postMealPrediabetes="postMealPrediabetes60"
+      :postMealDiabetes="postMealDiabetes60"
+    />
+    <hr>
+    <AveragesByTypeList
+      title="Averages Last 90 Days by Fasting Type"
+      :averages="averageReadingsLast90daysByType"
+      :total="totalReadingsLast90days"
+      :dateRange="dateRange90"
+      :isWithinRange="isWithinRange"
+    />
+    <CountsByType
+      label="Counts (Last 90d):"
+      periodLabel="Last 90d"
+      :amFastingNormal="amFastingNormal90"
+      :amFastingPrediabetes="amFastingPrediabetes90"
+      :amFastingDiabetes="amFastingDiabetes90"
+      :postMealNormal="postMealNormal90"
+      :postMealPrediabetes="postMealPrediabetes90"
+      :postMealDiabetes="postMealDiabetes90"
+    />
+  </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import ColorLegend from './ColorLegend.vue';
 import CountsByType from './CountsByType.vue';
+import AveragesByTypeList from './AveragesByTypeList.vue';
 const props = defineProps({
   glucose_readings: {
     type: Array,
@@ -144,13 +115,6 @@ function getDateRange(days) {
   const startStr = formatDateMMDDYYYY(start);
   return { start: startStr, end };
 }
-//// Last 30 days
-//const amFastingNormal30 = computed(() => countAMFastingInRange(70, 100, 30));
-//const amFastingPrediabetes30 = computed(() => countAMFastingInRange(101, 125, 30));
-//const amFastingDiabetes30 = computed(() => countAMFastingInRange(126, Infinity, 30));
-//const postMealNormal30 = computed(() => countPostMealInRange(80, 140, 30));
-//const postMealPrediabetes30 = computed(() => countPostMealInRange(141, 200, 30));
-//const postMealDiabetes30 = computed(() => countPostMealInRange(201, Infinity, 30));
 function countAMFastingInRange(min, max, days) {
   const now = new Date();
   const daysAgo = new Date();
@@ -196,6 +160,7 @@ const endDateAll = computed(() => {
 const dateRange30 = getDateRange(30);
 const dateRange60 = getDateRange(60);
 const dateRange90 = getDateRange(90);
+const dateRange360 = getDateRange(360);
 
 const averageReadingsByDays = (days) => {
   if (props.glucose_readings.length === 0) return {};

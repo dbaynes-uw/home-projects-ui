@@ -2,7 +2,7 @@
   <div>
     <h3 :id="headingId">{{ label }}</h3>
     <h3 id="h3-left-subheading-green">
-      * COMP: AM-Fasting Normal{{ periodLabel ? ` (${periodLabel})` : '' }}: {{ amFastingNormal }}
+      * AM-Fasting Normal{{ periodLabel ? ` (${periodLabel})` : '' }}: {{ amFastingNormal }}
     </h3>
     <h3 id="h3-left-subheading-blue">
       * AM-Fasting Prediabetes{{ periodLabel ? ` (${periodLabel})` : '' }}: {{ amFastingPrediabetes }}
