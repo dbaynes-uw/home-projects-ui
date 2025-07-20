@@ -6,7 +6,7 @@
   <div id="stats" class="h3-left-total-child">
     <ColorLegend />
     <h3 id="h3-left-heading">
-      Averages/Counts by Fasting Type:
+      Averages/Counts by Fasting Type
       <br/>
       Averages for Total: {{ totalReadings }}
       <br/>

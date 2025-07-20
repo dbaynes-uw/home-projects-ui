@@ -2,7 +2,7 @@
   <div>
     <h3 id="h3-left-heading">
       {{ title }} (Total: {{ total }})<br/>
-      ({{ dateRange.start }} to {{ dateRange.end }}):
+      <span id="date-range-display"><u>({{ dateRange.start }} to {{ dateRange.end }})</u>:</span>
     </h3>
     <ul
       v-for="(averageObj, type) in averages"
@@ -27,3 +27,9 @@ defineProps({
   isWithinRange: Function
 });
 </script>
+<style>
+#date-range-display {
+  font-size: 1.25rem;
+  font-weight: bolder;
+}
+</style>
