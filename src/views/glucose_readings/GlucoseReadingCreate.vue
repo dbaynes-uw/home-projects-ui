@@ -174,7 +174,7 @@ import { useRouter } from 'vue-router';
     // Dispatch the Vuex action with the flattened object
     await store.dispatch('createGlucoseReading', glucose_reading);     
     // Redirect to the list view after successful creation
-    router.push({ name: 'GlucoseReadingList' });
+    router.push({ name: 'GlucoseReadings' });
   } catch (error) {
     console.error("Error creating glucose reading:", error);
     alert("Failed to create glucose reading. Please try again.");
