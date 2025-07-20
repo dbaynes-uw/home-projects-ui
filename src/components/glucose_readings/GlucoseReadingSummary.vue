@@ -138,25 +138,7 @@ function countPostMealInRange(min, max, days) {
     new Date(r.reading_date) >= daysAgo
   ).length;
 }
-
 const totalReadings = computed(() => props.glucose_readings.length);
-
-const startDateAll = computed(() => {
-  if (!props.glucose_readings.length) return '';
-  const minDate = props.glucose_readings
-    .map(r => new Date(r.reading_date))
-    .reduce((min, d) => d < min ? d : min, new Date(props.glucose_readings[0].reading_date));
-  return formatDateMMDDYYYY(minDate);
-});
-
-const endDateAll = computed(() => {
-  if (!props.glucose_readings.length) return '';
-  const maxDate = props.glucose_readings
-    .map(r => new Date(r.reading_date))
-    .reduce((max, d) => d > max ? d : max, new Date(props.glucose_readings[0].reading_date));
-  return formatDateMMDDYYYY(maxDate);
-});
-
 const dateRange30 = getDateRange(30);
 const dateRange60 = getDateRange(60);
 const dateRange90 = getDateRange(90);
