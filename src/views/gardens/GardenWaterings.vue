@@ -22,11 +22,6 @@
     <br/>
   </v-card>
   <br/>
-  GW ROUTE: {{ this.$route.name }} - {{ this.$route.name.includes("Watering")  }}
-  <br>
-  Garden: {{ garden.name }}
-  <br>
-  requestIndexDetailFlag: {{ requestIndexDetailFlag }}
   <div style="width: 100%">
       <div class="auto-search-container">
         <v-text-field
@@ -81,13 +76,15 @@
       </span>
     </span>
     <br/>
+    <!--
     <h3>Need Specific Watering Details Here instead of Generic</h3>
     <v-img
       :src="require('../../assets/WateringSystemLayoutSummer2025.png')"
       class="my-3"
       height="500"
       contain
-    />    
+    />   
+    -->
   </div>
 </template>
 <script>

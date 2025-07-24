@@ -21,7 +21,7 @@
           <router-link
           :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
           >
-            {{watering.name}}
+            {{watering.name}} - {{ formatTime(watering.start_time) }} to {{ formatTime(watering.end_time) }}
           </router-link>
         </li>
         </ul>
@@ -82,6 +82,7 @@
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import SplitStringService from "@/services/SplitStringService.js";
+import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'GardenCard',
   props: {
@@ -125,7 +126,14 @@ export default {
     splitList(gardenData, splitLength) {
       return SplitStringService.splitList(gardenData.notes, splitLength) 
     },
-  }
+    formatTime(value) {
+      console.log("formatTime called with value:", value);
+      if (!value) {
+        return '';
+      }
+      return DateFormatService.formatTimejs(value);
+    },
+  },
 }
 </script>
 <style scoped></style>

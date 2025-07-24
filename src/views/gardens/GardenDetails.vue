@@ -55,13 +55,15 @@
     />
   </div>
   <br/>
+  <!--
   <h3>Need Specific Watering Details Here instead of Generic</h3>
   <v-img
     :src="require('../../assets/WateringSystemLayoutSummer2025.png')"
     class="my-3"
     height="500"
     contain
-  />    
+  />   
+  --> 
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
