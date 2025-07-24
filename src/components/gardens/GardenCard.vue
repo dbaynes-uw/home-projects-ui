@@ -127,7 +127,6 @@ export default {
       return SplitStringService.splitList(gardenData.notes, splitLength) 
     },
     formatTime(value) {
-      console.log("formatTime called with value:", value);
       if (!value) {
         return '';
       }

@@ -30,6 +30,7 @@
       <li class="li-left">Start: <b>{{ formatTime(watering.start_time) }}</b></li>
       <li class="li-left">End: <b>{{ formatTime(watering.end_time) }}</b></li>
       <li class="li-left">Duration: <b>{{ watering.duration}}</b></li>
+      <li class="li-left">Status: <b>{{ watering.status}}</b></li>
       <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in 
           joinedNotes(watering)"
