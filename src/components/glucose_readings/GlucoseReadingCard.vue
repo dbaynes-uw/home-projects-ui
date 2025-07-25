@@ -28,7 +28,6 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import DateFormatService from "@/services/DateFormatService.js";
 //import SplitStringService from "@/services/SplitStringService.js";
-
 // Props
 defineProps({
   glucose_reading: {

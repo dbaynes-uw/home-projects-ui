@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="card">
-    <span v-if="this.$route.name == 'GardenList'">
+    <span v-if="$route.name == 'GardenList'">
       <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
         <h4><b>{{garden.name}}</b></h4>
       </router-link>
@@ -12,19 +12,24 @@
       </router-link>
     </span>
     <p id="p-custom-left">Notes:</p>
-    <b class="li-left-none" v-for="(notes, idx) in splitList(garden, this.splitLength)" :key="idx">{{ notes }}</b>
+    <b class="li-left-none">{{ garden.notes }}</b>
     <br/>
     <p id="p-custom-left">Waterings:</p>
     <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
-        <ul>
+      <ul>
         <li class="li-left-bold">
-          <router-link
-          :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
-          >
-            {{watering.name}} - {{ formatTime(watering.start_time) }} to {{ formatTime(watering.end_time) }}
-          </router-link>
+          <span v-if="watering.start_time && watering.end_time">
+            <router-link
+              :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+            >
+              {{watering.name}} - {{ formatTime(watering.start_time) }} to {{ formatTime(watering.end_time) }}
+            </router-link>
+          </span>
+          <span v-else>
+            {{ watering.name }} - As Needed
+          </span>
         </li>
-        </ul>
+      </ul>
     </span>
     <p id="p-custom-link">
       <router-link
@@ -62,7 +67,7 @@
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
         </router-link>
       </span>
-      <span v-if="this.$route.name == 'GardenList'">
+      <span v-if="$route.name == 'GardenList'">
         <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
           <i class="fa-solid fa-backward fa-stack-1x"></i>
         </router-link>
@@ -79,60 +84,30 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import SplitStringService from "@/services/SplitStringService.js";
 import DateFormatService from "@/services/DateFormatService.js";
-export default {
-  name: 'GardenCard',
-  props: {
-    garden: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  components: {
-    ConfirmDialogue,
-  },
-  setup() {},
-  data() {
-    return {
-      splitLength: 30,
-    };
-  },
-  computed: {},
-  created() {},
-  methods: {
-    async deleteGarden(garden) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Garden from List",
-        message:
-          "Are you sure you want to delete " +
-          garden.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteGarden", garden);
-        this.statusMessage =
-          "Garden was Deleted for " +
-          garden.name +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "GardenList" });
-      }
-    },
-    splitList(gardenData, splitLength) {
-      return SplitStringService.splitList(gardenData.notes, splitLength) 
-    },
-    formatTime(value) {
-      if (!value) {
-        return '';
-      }
-      return DateFormatService.formatTimejs(value);
-    },
-  },
+defineProps({  garden: {
+    type: Object,
+    default: () => ({})
+  }
+});
+const store = useStore();
+const router = useRouter();
+
+async function deleteGarden(garden) {
+  if (confirm(`Are you sure you want to delete ${garden.name}? It cannot be undone.`)) {
+    await store.dispatch("deleteGarden", garden);
+    router.push({ name: "GlucoseReadings" });
+  }
+}  
+function formatTime(value) {
+  if (!value) {
+    return '';
+  }
+  return DateFormatService.formatTimejs(value);
 }
 </script>
 <style scoped></style>

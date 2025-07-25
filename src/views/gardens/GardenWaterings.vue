@@ -13,6 +13,11 @@
           <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
         </button>
       </li>
+      <li class="left">
+        <button id="button-as-link">
+          <router-link  :to="{ name: 'WateringList' }">Waterings</router-link>
+        </button>
+      </li>
       <li>
         <button id="button-as-link" @click="requestIndexDetail">
           <u>Card or Index View</u>
