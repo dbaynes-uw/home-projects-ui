@@ -15,8 +15,13 @@
         <li class="li-left"><b>Biological Name: {{ plant.biological_name }}</b></li>
         <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
         <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
-        <li class="li-left" @click="showOutlet()"><b><u>Water Outlet: {{ showOutletName()}}</u></b></li>    
-        <li class="li-left" @click="showWatering(outlet)"><b><u>Water Line: {{ showWateringName() }} </u></b></li>    
+        <li class="li-left"><b><u>Water Line: 
+          <router-link
+            :to="{ name: 'WateringDetails', params: { id: `${plant.watering_id}` } }"
+          >
+            {{ showWateringName() }}
+          </router-link>
+           </u></b></li>    
         <span v-if="plant.date_harvest">
           <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
         </span>
@@ -146,10 +151,6 @@ export default {
         setTimeout(() => location.reload(), 2500);
         this.$router.push({ name: "GardenDetails", params: { id: plant.garden.id } });
       }
-    },
-    showOutlet() {
-      clearTimeout(time);
-      this.$router.push({ name: 'OutletDetails', params: { id: `${this.plant.outlet_id}` } });
     },
     showWatering(outlet) {
       clearTimeout(time);

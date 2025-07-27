@@ -89,14 +89,14 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-defineProps({  garden: {
+defineProps({
+  garden: {
     type: Object,
     default: () => ({})
   }
 });
 const store = useStore();
 const router = useRouter();
-
 async function deleteGarden(garden) {
   if (confirm(`Are you sure you want to delete ${garden.name}? It cannot be undone.`)) {
     await store.dispatch("deleteGarden", garden);

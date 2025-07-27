@@ -42,15 +42,18 @@
           label="Yard Location"
           v-model="plant.yard_location"
         />
-        <h3 id="p-custom-left">Outlet Name: {{ showOutletName }}</h3>
-        <v-select
-          v-model="outlet_id"
-          :items="outletsDisplayGroup.outletsDisplayGroup"
-          name="id"
-          item-title="outlet_name"
-          label="Select Item to Change"
-          :hide-details='true'
-        />
+      <v-select
+        v-model="plant.watering_id"
+        :items="garden.waterings || []"
+        item-value="id"
+        item-title="name"
+        label="Select Watering"
+        clearable
+      >
+  <template v-slot:prepend-inner>
+    <v-icon class="icon-css">mdi-water</v-icon>
+  </template>
+</v-select>
         <br/>
         <v-text-field
           label="Duration"
@@ -86,11 +89,8 @@
 </template>
 <script>
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import { ref } from 'vue';
 export default {
   setup() {
-    const outlet_id = ref('');
-    return { outlet_id };
   },
   props: ["id"],
   components: {
@@ -99,8 +99,9 @@ export default {
   async mounted() {},
   created() {
     this.$store.dispatch("fetchPlant", this.id);
-    this.$store.dispatch("fetchOutletsDisplayGroup");
-    this.$store.dispatch("fetchOutletsHash");
+    //this.$store.dispatch("fetchGarden", this.id);
+    //this.$store.dispatch("fetchOutletsDisplayGroup");
+    //this.$store.dispatch("fetchOutletsHash");
   },
   computed: {
     showOutletName:{
@@ -120,12 +121,6 @@ export default {
     },
     garden() {
       return this.$store.state.garden;
-    },
-    outletsDisplayGroup() {
-      return this.$store.state.outlets_display_group;
-    },
-    outletsHash() {
-      return this.$store.state.outlets_hash;
     },
   },
   data() {

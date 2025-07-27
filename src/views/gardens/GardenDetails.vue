@@ -34,6 +34,7 @@
       />
     <br />
   </div>
+  <h2>{{garden.name }} Waterings:</h2>
   <div class="cards">
     <WateringCard
       v-for="watering in garden.waterings"
@@ -47,6 +48,7 @@
     {{ p.name }}
     <br/>
   </span>
+    <h2>{{garden.name }} Plants:</h2>
   <div class="cards">
     <PlantCard
       v-for="plant in garden.plants"
