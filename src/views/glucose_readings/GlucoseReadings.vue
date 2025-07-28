@@ -6,7 +6,7 @@
         <router-link :to="{ name: 'GlucoseReadingCreate' }">Create New Glucose Reading</router-link>
       </v-card-title>
     </v-card>
-    <div class="glucose-reading-list">
+    <div class="glucose-reading-de">tails
       <template v-if="isLoading">
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
         <p>Loading glucose readings...</p>
@@ -32,7 +32,7 @@
           @edit="editGlucoseReading"
           @delete="handleDeleteReading"
         />
-        <GlucoseReadingList :glucose_readings="glucose_readings" 
+        <GlucoseReadingDetails :glucose_readings="glucose_readings" 
           v-else
           @edit="editGlucoseReading"
           @delete="handleDeleteReading"
@@ -48,7 +48,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import GlucoseReadingIndex from '@/components/glucose_readings/GlucoseReadingIndex.vue';
-import GlucoseReadingList from '@/components/glucose_readings/GlucoseReadingList.vue';
+import GlucoseReadingDetails from '@/components/glucose_readings/GlucoseReadingDetails.vue';
 import GlucoseReadingSummary from '@/components/glucose_readings/GlucoseReadingSummary.vue'; // <-- Import it
 
 const store = useStore();

@@ -20,7 +20,6 @@
   </div>
 </template>
 <script>
-
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import PlantCard from "@/components/plants/PlantCard.vue";

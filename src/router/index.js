@@ -24,7 +24,6 @@ import GardenList from "../views/gardens/GardenList.vue";
 import GardenWaterings from "../views/gardens/GardenWaterings.vue";
 import GlucoseReadings from "@/views/glucose_readings/GlucoseReadings.vue";
 import GlucoseReadingList from "@/views/glucose_readings/GlucoseReadingList.vue";
-import GlucoseReadingDetails from "@/views/glucose_readings/GlucoseReadingDetails.vue";
 import GlucoseReadingCreate from "@/views/glucose_readings/GlucoseReadingCreate.vue";
 import GlucoseReadingEdit from "@/views/glucose_readings/GlucoseReadingEdit.vue";
 import GolfCreate from "../views/golfs/GolfCreate.vue";
@@ -243,7 +242,7 @@ const routes = [
     path: "/glucose_readings/:id",
     name: "GlucoseReadingDetails",
     props: true,
-    component: GlucoseReadingDetails,
+    component: () => import('@/components/glucose_readings/GlucoseReadingDetails.vue'),
     meta: { requiresAuth: true },
   },
   {
