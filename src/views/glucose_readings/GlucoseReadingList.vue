@@ -12,14 +12,13 @@
     </div>
   </div>
 </template>
-
-<script>
+<script setup>
 import GlucoseReadingCard from "@/components/glucose_readings/GlucoseReadingCard.vue";
-export default {
-  name: 'GlucoseReadingList',
-  components: { GlucoseReadingCard },
-  props: {
-    glucose_readings: { type: Array, required: true }
+import { defineProps } from 'vue';
+defineProps({
+  glucose_readings: {
+    type: Array,
+    default: () => ([])
   }
-};
+});
 </script>

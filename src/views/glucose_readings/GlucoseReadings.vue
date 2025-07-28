@@ -5,22 +5,28 @@
         <h2>Glucose Readings</h2>
         <router-link :to="{ name: 'GlucoseReadingCreate' }">Create New Glucose Reading</router-link>
       </v-card-title>
-      <v-card-actions>
-        <v-btn id="indent-button" color="primary" @click="toggleView">
-          {{ showIndex ? 'Show Card View' : 'Show Index View' }}
-        </v-btn>
-      </v-card-actions>
     </v-card>
-
     <div class="glucose-reading-list">
       <template v-if="isLoading">
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
         <p>Loading glucose readings...</p>
       </template>
       <template v-else>
+        <v-card-actions>
+          <v-btn id="indent-button" color="primary" @click="showSummary = !showSummary">
+            {{ showSummary ? 'Hide Summary/Averages' : 'Show Summary and Averages' }}
+          </v-btn>
+        </v-card-actions>
         <!-- Add the summary here -->
-        <GlucoseReadingSummary :glucose_readings="glucose_readings" />
-
+        <GlucoseReadingSummary
+          v-if="showSummary"
+          :glucose_readings="glucose_readings"
+        />
+        <v-card-actions>
+          <v-btn id="indent-button" color="secondary" @click="toggleView">
+            {{ showIndex ? 'Show Card View' : 'Show Index View' }}
+          </v-btn>
+        </v-card-actions>
         <GlucoseReadingIndex :glucose_readings="glucose_readings"
           v-if="showIndex"
           @edit="editGlucoseReading"
@@ -49,7 +55,9 @@ const store = useStore();
 const router = useRouter();
 const glucose_readings = computed(() => store.state.glucoseReadings);
 const isLoading = ref(true);
+const showSummary = ref(false);
 const showIndex = ref(true);
+
 
 function toggleView() {
   showIndex.value = !showIndex.value;
