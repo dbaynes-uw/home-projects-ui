@@ -17,9 +17,9 @@
         class="filter-select"
         density="compact"
       />
-      <v-btn @click="sortByDate('asc')" color="primary" small class="sort-btn">Sort ↑</v-btn>
-      <v-btn @click="sortByDate('desc')" color="primary" small class="sort-btn">Sort ↓</v-btn>
-    </div>    
+      <v-btn @click="toggleSortOrder" color="primary" small class="sort-btn">
+        Sort by Date {{ sortOrder === 'asc' ? '↑' : '↓' }}
+      </v-btn>    </div>    
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <!--
@@ -43,8 +43,7 @@
         @dblclick="$emit('edit', glucose_reading)"
       />
     </div>
-    <router-link v-if="glucose_readings && !Array.isArray(glucose_readings)" :to="{ name: 'GlucoseReadingEdit', params: { id: glucose_readings.id } }">Edit</router-link>
-    <router-link :to="{ name: 'GlucoseReadings' }">Back to List</router-link>
+    <router-link v-if="isSingle" :to="{ name: 'GlucoseReadings' }">Back to List</router-link>
   </div>
 </template>
 
@@ -67,7 +66,7 @@ const filterStatus = ref(null);
 const sortOrder = ref('desc');
 
 const readingTypes = ['AM-Fasting', 'Post-Meal']; // Add your types
-const readingStatuses = ['Normal', 'Prediabetes', 'Diabetes']; // Add your statuses
+const readingStatuses = ['Good - 70-99 mg/dl', 'Prediabetes - 100-125 mg/dl', 'Diabetes - 126+ mg/dl']; // Add your statuses
 
 const filteredSortedReadings = computed(() => {
   let readings = Array.isArray(glucose_readings.value)
@@ -88,8 +87,8 @@ const filteredSortedReadings = computed(() => {
   return readings;
 });
 
-function sortByDate(order) {
-  sortOrder.value = order;
+function toggleSortOrder() {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
 }
 async function fetchReadingDetails() {
   await store.dispatch("fetchGlucoseReadings");
@@ -131,7 +130,8 @@ onMounted(() => {
   max-width: 220px;
 }
 .sort-btn {
-  min-width: 90px;
+  top: -.6rem;
+  min-width: 10rem;
 }
 @media (max-width: 600px) {
   .controls-bar {
