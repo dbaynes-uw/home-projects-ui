@@ -6,7 +6,7 @@
         <router-link :to="{ name: 'GlucoseReadingCreate' }">Create New Glucose Reading</router-link>
       </v-card-title>
     </v-card>
-    <div class="glucose-reading-de">tails
+    <div class="glucose-reading-details">
       <template v-if="isLoading">
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
         <p>Loading glucose readings...</p>

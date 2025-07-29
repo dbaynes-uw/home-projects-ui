@@ -1,5 +1,25 @@
 <template>
   <div>
+    <div class="controls-bar">
+      <v-select
+        v-model="filterType"
+        :items="readingTypes"
+        label="Type"
+        clearable
+        class="filter-select"
+        density="compact"
+      />
+      <v-select
+        v-model="filterStatus"
+        :items="readingStatuses"
+        label="Status"
+        clearable
+        class="filter-select"
+        density="compact"
+      />
+      <v-btn @click="sortByDate('asc')" color="primary" small class="sort-btn">Sort ↑</v-btn>
+      <v-btn @click="sortByDate('desc')" color="primary" small class="sort-btn">Sort ↓</v-btn>
+    </div>    
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <!--
@@ -7,9 +27,16 @@
           If glucose_readings is an array, loop through it.
           If glucose_readings is a single object (not an array), wrap it in an array and loop through that.
           If glucose_readings is null or undefined, loop through an empty array (so nothing is rendered).
-        -->
+        
       <GlucoseReadingCard 
         v-for="glucose_reading in Array.isArray(glucose_readings) ? glucose_readings : (glucose_readings ? [glucose_readings] : [])"
+        :key="glucose_reading.id"
+        :glucose_reading="glucose_reading"
+        class="card"
+        @dblclick="$emit('edit', glucose_reading)"
+      /-->
+      <GlucoseReadingCard 
+        v-for="glucose_reading in filteredSortedReadings"
         :key="glucose_reading.id"
         :glucose_reading="glucose_reading"
         class="card"
@@ -35,7 +62,35 @@ const isLoading = ref(true);
 const isSingle = computed(() => {
   return Array.isArray(glucose_readings.value) && glucose_readings.value.length === 1;
 });
+const filterType = ref(null);
+const filterStatus = ref(null);
+const sortOrder = ref('desc');
 
+const readingTypes = ['AM-Fasting', 'Post-Meal']; // Add your types
+const readingStatuses = ['Normal', 'Prediabetes', 'Diabetes']; // Add your statuses
+
+const filteredSortedReadings = computed(() => {
+  let readings = Array.isArray(glucose_readings.value)
+    ? glucose_readings.value.slice()
+    : (glucose_readings.value ? [glucose_readings.value] : []);
+
+  if (filterType.value) {
+    readings = readings.filter(r => r.reading_type === filterType.value);
+  }
+  if (filterStatus.value) {
+    readings = readings.filter(r => r.status === filterStatus.value);
+  }
+  readings.sort((a, b) => {
+    const dateA = new Date(a.reading_date);
+    const dateB = new Date(b.reading_date);
+    return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+  return readings;
+});
+
+function sortByDate(order) {
+  sortOrder.value = order;
+}
 async function fetchReadingDetails() {
   await store.dispatch("fetchGlucoseReadings");
   glucose_readings.value = store.getters.glucoseReadings;
@@ -63,5 +118,31 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   min-height: 60vh; /* Adjust as needed */
+}
+.controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.filter-select {
+  min-width: 180px;
+  max-width: 220px;
+}
+.sort-btn {
+  min-width: 90px;
+}
+@media (max-width: 600px) {
+  .controls-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  .filter-select, .sort-btn {
+    width: 100%;
+    min-width: unset;
+    max-width: unset;
+  }
 }
 </style>
