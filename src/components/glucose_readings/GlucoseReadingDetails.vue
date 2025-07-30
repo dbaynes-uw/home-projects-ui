@@ -19,7 +19,11 @@
       />
       <v-btn @click="toggleSortOrder" color="primary" small class="sort-btn">
         Sort by Date {{ sortOrder === 'asc' ? '↑' : '↓' }}
-      </v-btn>    </div>    
+      </v-btn>
+      <span id="count-display" class="filtered-count">
+        Showing {{ filteredSortedReadings.length }} Glucose Reading{{ filteredSortedReadings.length === 1 ? '' : 's' }}
+      </span>
+    </div>
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <!--
@@ -132,6 +136,10 @@ onMounted(() => {
 .sort-btn {
   top: -.6rem;
   min-width: 10rem;
+}
+#count-display {
+  font-weight: bold;
+  font-size: 1.25rem;
 }
 @media (max-width: 600px) {
   .controls-bar {

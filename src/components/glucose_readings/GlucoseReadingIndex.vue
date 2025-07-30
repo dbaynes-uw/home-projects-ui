@@ -1,4 +1,10 @@
 <template>
+  <div id="index-count-display">
+    <span class="filtered-count">
+      Showing {{ sortedReadings.length }} Glucose Reading{{ sortedReadings.length === 1 ? '' : 's' }}
+    </span>
+    <br/>
+  </div>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('reading_date')">Date</th>
@@ -89,3 +95,9 @@ function sortList(key) {
   }
 }
 </script>
+<style scoped>
+#index-count-display {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+</style>

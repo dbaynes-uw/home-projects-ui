@@ -13,7 +13,7 @@
       </template>
       <template v-else>
         <v-card-actions>
-          <v-btn id="indent-button" color="primary" @click="showSummary = !showSummary">
+          <v-btn id="indent-primary-button" color="primary" @click="showSummary = !showSummary">
             {{ showSummary ? 'Hide Summary/Averages' : 'Show Summary and Averages' }}
           </v-btn>
         </v-card-actions>
@@ -23,10 +23,11 @@
           :glucose_readings="glucose_readings"
         />
         <v-card-actions>
-          <v-btn id="indent-button" color="secondary" @click="toggleView">
+          <v-btn id="indent-secondary-button" color="secondary" @click="toggleView">
             {{ showIndex ? 'Show Card View' : 'Show Index View' }}
           </v-btn>
         </v-card-actions>
+        
         <GlucoseReadingIndex :glucose_readings="glucose_readings"
           v-if="showIndex"
           @edit="editGlucoseReading"
@@ -85,7 +86,10 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-#indent-button {
+#indent-primary-button {
+  margin-left: 5.8rem;
+}
+#indent-secondary-button {
   margin-left: 2rem;
 }
 </style>
