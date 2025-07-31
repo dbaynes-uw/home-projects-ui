@@ -20,6 +20,7 @@
       <v-btn @click="toggleSortOrder" color="primary" small class="sort-btn">
         Sort by Date {{ sortOrder === 'asc' ? '↑' : '↓' }}
       </v-btn>
+      <br/>
       <span id="count-display" class="filtered-count">
         Showing {{ filteredSortedReadings.length }} Glucose Reading{{ filteredSortedReadings.length === 1 ? '' : 's' }}
       </span>

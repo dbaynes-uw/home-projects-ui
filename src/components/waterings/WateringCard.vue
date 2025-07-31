@@ -30,7 +30,12 @@
       <li class="li-left">Start: <b>{{ formatTime(watering.start_time) }}</b></li>
       <li class="li-left">End: <b>{{ formatTime(watering.end_time) }}</b></li>
       <li class="li-left">Duration: <b>{{ watering.duration}}</b></li>
-      <li class="li-left">Status: <b>{{ watering.status}}</b></li>
+      <li class="li-left">
+        Status:
+        <b :class="{ 'status-red': watering.status && watering.status.toLowerCase() !== 'active' }">
+          {{ watering.status }}
+        </b>
+      </li>
       <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in 
           joinedNotes(watering)"
@@ -145,5 +150,8 @@ export default {
   font-size: 1.4em;
   margin-top: 0.5em;
   margin-bottom: 0.3em;
+}
+.status-red {
+  color: red;
 }
 </style>
