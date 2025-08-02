@@ -1,13 +1,18 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total: {{ gardens.length }}</h3>
+  <div id="index-count-display">
+    <span class="filtered-count">
+      Showing {{ sortedGardens.length }} Garden{{ sortedGardens.length === 1 ? '' : 's' }}
+    </span>
+    <br/>
+  </div>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('name')">Garden Name</th>
       <th id="background-blue">Notes</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="garden in gardens" :key="garden.id" garden="garden">
+    <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
       <td>{{ garden.name }}</td>
       <td>{{ garden.notes }}</td>
       <td style="padding-left: 0">
@@ -42,94 +47,31 @@
     </tr>
   </v-table>
   <br />
-  <b>Online Status: {{ this.onlineStatus }}</b>
+  <b>Online Status: {{ onlineStatus }}</b>
 </template>
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-export default {
-  name: "GardenIndex",
-  props: ["gardens"],
-  components: {
-    ConfirmDialogue,
-  },
-  data() {
-    return {
-      inputSearchText: "",
-      onlineStatus: navigator.onLine,
-    };
-  },
-  methods: {
-    searchColumns() {
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.gardens &&
-          this.gardens.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.travels.forEach((garden) => {
-            const searchHasGardenName =
-              garden.name &&
-              garden.name
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasNotes =
-              garden.notes &&
-              garden.notes
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasGardenName || searchHasNotes) {
-              this.filteredResults.push(garden);
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    sortList(sortBy) {
-      this.sortedData = this.travels;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
-      } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
-      }
-    },
-    //async deleteTravel(travel) {
-    //  const ok = await this.$refs.confirmDialogue.show({
-    //    title: "Delete Travel from List",
-    //    message:
-    //      "Are you sure you want to delete " +
-    //      travel.title +
-    //      "? It cannot be undone.",
-    //    okButton: "Delete",
-    //  });
-    //  // If you throw an error, the method will terminate here unless you surround it wil try/catch
-    //  if (ok) {
-    //    this.$store.dispatch("deleteTravel", travel);
-    //    this.statusMessage =
-    //      "Travel was Deleted for " +
-    //      travel.title +
-    //      "! Page will restore in 2 seconds";
-    //    setTimeout(() => location.reload(), 2500);
-    //  }
-    //},
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
-    },
-  },
-};
+//import DateFormatService from "@/services/DateFormatService.js";
+// Props
+const props = defineProps({
+  gardens: { type: Array, required: true }
+});
+// Emits
+const emit = defineEmits(['edit','delete']);
+const onlineStatus = ref(navigator.onLine);
+//const sortKey = ref('reading_date');
+//const sortAsc = ref(false);
+const inputSearchText = ref("");
+const sortedGardens = computed(() => {
+  return props.gardens.filter(garden => {
+    return garden.name.toLowerCase().includes(inputSearchText.value.toLowerCase()) ||
+           (garden.notes && garden.notes.toLowerCase().includes(inputSearchText.value.toLowerCase()));
+  });
+});
+function deleteGarden(garden) {
+  emit('delete', garden);
+}
 </script>
 <style scoped>
 #action-eye-icon {

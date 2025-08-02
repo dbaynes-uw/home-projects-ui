@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="card">
-    <span v-if="$route.name == 'GardenList'">
+  <div class="card" @dblclick="emit('dblclick', garden)">
+    <span v-if="$route.name == 'Gardens'">
       <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
         <h4><b>{{garden.name}}</b></h4>
       </router-link>
@@ -97,6 +97,7 @@ defineProps({
 });
 const store = useStore();
 const router = useRouter();
+const emit = defineEmits(['dblclick']);
 async function deleteGarden(garden) {
   if (confirm(`Are you sure you want to delete ${garden.name}? It cannot be undone.`)) {
     await store.dispatch("deleteGarden", garden);

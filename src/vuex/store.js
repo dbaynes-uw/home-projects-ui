@@ -486,19 +486,23 @@ export default new Vuex.Store({
     //},
 
     async fetchGardens({ commit }) {
-      //const gardens = [
-      //  {name: 'A1'},
-      //  {name: 'A2'}
-      //]
-      EventService.getGardens()
-        .then((response) => {
-          commit("SET_GARDENS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Gardens Fetch Error: ", error.response.data )
-        });
+      try {
+        const response = await EventService.getGardens();
+        commit("SET_GARDENS", response.data);
+      } catch (error) {
+        console.error("Error fetching gardens`:", error);
+      }
     },
+    /*
+    async fetchGlucoseReadings({ commit }) {
+      try {
+        const response = await EventService.getGlucoseReadings();
+        commit("SET_GLUCOSE_READINGS", response.data);
+      } catch (error) {
+        console.error("Error fetching glucose readings:", error);
+      }
+    },
+    */
     async createEvent({ commit }, event) {
       EventService.postEvent(event)
         .then(() => {
@@ -1464,6 +1468,9 @@ export default new Vuex.Store({
       }
     },
   getters: {
+    gardens(state) {
+      return state.gardens || []; // Ensure it always returns an array
+    },
     glucoseReadings(state) {
       return state.glucoseReadings || []; // Ensure it always returns an array
     },

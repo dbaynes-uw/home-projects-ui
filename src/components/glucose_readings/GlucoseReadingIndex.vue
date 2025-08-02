@@ -59,7 +59,7 @@ const props = defineProps({
 });
 
 // Emits
-const emit = defineEmits(['delete']);
+const emit = defineEmits(['edit','delete']);
 
 // State
 const onlineStatus = ref(navigator.onLine);

@@ -17,13 +17,12 @@ import EventStatistics from "@/views/events/EventStatistics.vue";
 import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
 import ForgotPassword from "../components/ForgotPassword.vue";
 import ResetPassword from "../components/ResetPassword.vue";
+import Gardens from "../views/gardens/Gardens.vue";
 import GardenCreate from "@/views/gardens/GardenCreate.vue";
-import GardenDetails from "@/views/gardens/GardenDetails.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
 import GardenList from "../views/gardens/GardenList.vue";
 import GardenWaterings from "../views/gardens/GardenWaterings.vue";
 import GlucoseReadings from "@/views/glucose_readings/GlucoseReadings.vue";
-import GlucoseReadingList from "@/views/glucose_readings/GlucoseReadingList.vue";
 import GlucoseReadingCreate from "@/views/glucose_readings/GlucoseReadingCreate.vue";
 import GlucoseReadingEdit from "@/views/glucose_readings/GlucoseReadingEdit.vue";
 import GolfCreate from "../views/golfs/GolfCreate.vue";
@@ -226,16 +225,41 @@ const routes = [
     meta: { requiresAuth: true}
   },
     {
+    path: "/garden/:id",
+    name: "GardenEdit",
+    props: true,
+    component: GardenEdit,
+    meta: { requiresAuth: true}
+  },
+    {
+    path: "/gardens/",
+    name: "Gardens",
+    component: Gardens,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/gardens-listXXX/",
+    name: "GardenList",
+    component: GardenList,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/gardens/:id",
+    name: "GardenDetails",
+    props: true,
+    component: () => import('@/components/gardens/GardenDetails.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/garden/create",
+    name: "GardenCreate",
+    component: GardenCreate,
+    meta: { requiresAuth: true}
+  },
+  {
     path: "/glucose-readings",
     name: "GlucoseReadings",
     component: GlucoseReadings,
-    meta: { requiresAuth: true },
-  },
-
-  {
-    path: "/glucose_readings",
-    name: "GlucoseReadingList",
-    component: GlucoseReadingList,
     meta: { requiresAuth: true },
   },
   {
@@ -310,33 +334,6 @@ const routes = [
     component: MedEdit,
     meta: { requiresAuth: true}
   },
-  {
-    path: "/garden/:id",
-    name: "GardenEdit",
-    props: true,
-    component: GardenEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/gardens/",
-    name: "GardenList",
-    component: GardenList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/gardens/:id",
-    name: "GardenDetails",
-    props: true,
-    component: GardenDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/garden/create",
-    name: "GardenCreate",
-    component: GardenCreate,
-    meta: { requiresAuth: true}
-  },
-
   {
     path: "/plants/:id",
     name: "PlantDetails",
