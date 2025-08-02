@@ -10,7 +10,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'GardenList' }">Gardens</router-link>
+          <router-link  :to="{ name: 'Gardens' }">Gardens</router-link>
         </button>
       </li>
       <li class="left">

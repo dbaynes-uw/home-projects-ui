@@ -67,13 +67,13 @@
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
         </router-link>
       </span>
-      <span v-if="$route.name == 'GardenList'">
+      <span v-if="$route.name == 'Gardens'">
         <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
           <i class="fa-solid fa-backward fa-stack-1x"></i>
         </router-link>
       </span>
       <span v-else>
-        <router-link :to="{ name: 'GardenList' }">
+        <router-link :to="{ name: 'Gardens' }">
           <i class="fa-solid fa-eye fa-stack-1x"></i>
         </router-link>
       </span>

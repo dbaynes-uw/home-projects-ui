@@ -4,7 +4,7 @@
       <h3>Add Plant to {{ garden.name }} System</h3>
       Garden Waterings: {{ garden.plants.length }}
     </v-card-title>
-    <router-link :to="{ name: 'GardenList' }">
+    <router-link :to="{ name: 'Gardens' }">
       <b>Back to Gardens</b>
     </router-link>
     <br/><br/>

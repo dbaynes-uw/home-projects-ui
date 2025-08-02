@@ -20,7 +20,6 @@ import ResetPassword from "../components/ResetPassword.vue";
 import Gardens from "../views/gardens/Gardens.vue";
 import GardenCreate from "@/views/gardens/GardenCreate.vue";
 import GardenEdit from "@/views/gardens/GardenEdit.vue";
-import GardenList from "../views/gardens/GardenList.vue";
 import GardenWaterings from "../views/gardens/GardenWaterings.vue";
 import GlucoseReadings from "@/views/glucose_readings/GlucoseReadings.vue";
 import GlucoseReadingCreate from "@/views/glucose_readings/GlucoseReadingCreate.vue";
@@ -235,12 +234,6 @@ const routes = [
     path: "/gardens/",
     name: "Gardens",
     component: Gardens,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/gardens-listXXX/",
-    name: "GardenList",
-    component: GardenList,
     meta: { requiresAuth: true}
   },
   {

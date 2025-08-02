@@ -7,8 +7,8 @@
       <b>Garden Details</b>
     </router-link>
     <br/>
-    <router-link :to="{ name: 'GardenList' }">
-      <b>Back to Garden List</b>
+    <router-link :to="{ name: 'Gardens' }">
+      <b>Back to Gardens</b>
     </router-link>
     <br/>
     <br/>

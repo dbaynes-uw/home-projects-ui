@@ -7,8 +7,8 @@
     <ul>
     <li class="left">
       <button id="button-as-link">
-        <router-link :to="{ name: 'GardenList' }">
-          <b>Back to Garden List</b>
+        <router-link :to="{ name: 'Gardens' }">
+          <b>Back to Gardens</b>
         </router-link>
       </button>
     </li>

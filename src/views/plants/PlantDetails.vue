@@ -1,8 +1,8 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>Plant Card</h1>
-  <router-link :to="{ name: 'GardenList' }">
-      <h2>Back to Garden List</h2>
+  <router-link :to="{ name: 'Gardens' }">
+      <h2>Back to Gardens</h2>
     </router-link>
     <router-link
       :to="{ name: 'GardenDetails', params: { id: this.plant.garden_id} }"
