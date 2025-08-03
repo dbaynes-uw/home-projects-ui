@@ -30,7 +30,7 @@
 
 <script setup>
 import GardenCard from "@/components/gardens/GardenCard.vue";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted,watch } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
@@ -38,6 +38,7 @@ const route = useRoute();
 const store = useStore();
 
 const gardens = ref(null);
+
 const isLoading = ref(true);
 const isSingle = computed(() => {
   return Array.isArray(gardens.value) && gardens.value.length === 1;
@@ -67,6 +68,7 @@ async function fetchGardens() {
 }
 async function fetchGarden() {
   isLoading.value = true;
+  
   await store.dispatch("fetchGarden", route.params.id);
   // If the store returns a single object, wrap it in an array for the card view
   const garden = store.state.garden;
@@ -81,6 +83,10 @@ onMounted(() => {
     fetchGardens();
   }
 });
+// Optional: If you can navigate to GardenDetails with a different id without remounting
+watch(() => route.params.id, (newId) => {
+  store.dispatch("fetchGarden", newId)
+})
 </script>
 <style scoped>
 .center-single {

@@ -2,7 +2,6 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h3>Add Plant to {{ garden.name }} System</h3>
-      Garden Waterings: {{ garden.plants.length }}
     </v-card-title>
     <router-link :to="{ name: 'Gardens' }">
       <b>Back to Gardens</b>
@@ -57,7 +56,6 @@
           v-model="plant.yard_location"
           :items="yard_locations"
           label="Location (North, South, Other like 1-A-1 for Vegetable Garden)"
-          :rules="[requiredYardLocation]"
           clearable
         >
           <template v-slot:prepend-inner>
@@ -94,6 +92,7 @@
           item-title="name"
           label="Select Waterings for this Plant"
           clearable
+          :rules="[requiredWatering]"
         >
   <template v-slot:prepend-inner>
     <v-icon class="icon-css">mdi-water</v-icon>
@@ -142,7 +141,7 @@ const yard_locations = ref(["North", "South"])
 
 const isFormValid = ref(false)
 const isPlantNameValid = ref(false)
-const isYardLocationValid = ref(false)
+const isWateringValid = ref(false)
 
 const garden = computed(() => store.state.garden)
 
@@ -161,41 +160,40 @@ function requiredPlantName(value) {
   }
 }
 
-function requiredYardLocation(value) {
-  if (value) {
-    isYardLocationValid.value = true
+function requiredWatering(value) {
+  if (value >= 0) {
+    isWateringValid.value = true
     return true
   } else {
     isFormValid.value = false
-    isYardLocationValid.value = false
-    return 'Please enter Yard Location'
+    isWateringValid.value = false
+    return 'Please Select Watering Line'
   }
 }
 
 function checkValidations() {
-  if (isPlantNameValid.value && isYardLocationValid.value) {
+  console.log("Checking validations ", isPlantNameValid.value, isWateringValid.value)
+  if (isPlantNameValid.value && isWateringValid.value) {
     isFormValid.value = true
   } else {
     isFormValid.value = false
   }
 }
 
-function onSubmit() {
+async function onSubmit() {
   checkValidations()
-  if (isFormValid.value) {
-    const newPlant = {
-      ...plant,
-      id: uuidv4(),
-      garden_id: garden.value.id,
-      created_by: store.state.user.resource_owner.email,
-    }
-    store.dispatch("createPlant", newPlant).then(() => {
-      setTimeout(() => {
-        router.push({ name: 'GardenDetails', params: { id: garden.value.id } })
-      }, 2500)
-    }).catch(() => {
-      alert("Error adding Plant " + plant.plant_name)
-    })
+  if (!isFormValid.value) {
+        alert("Please fill in all required fields.");
+    return;
   }
+  const newPlant = {
+    ...plant,
+    id: uuidv4(),
+    garden_id: garden.value.id,
+    created_by: store.state.user.resource_owner.email,
+  }
+  await store.dispatch("createPlant", newPlant) //.then(() => {
+  await store.dispatch("fetchGarden", garden.value.id);
+  router.push({ name: 'GardenDetails', params: { id: garden.value.id } });
 }
 </script>

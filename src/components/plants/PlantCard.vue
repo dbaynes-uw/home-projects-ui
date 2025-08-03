@@ -2,6 +2,7 @@
   <div id="required-to-prevent-vue-warning">
     <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
     <div class="card">
+      <!--Garden Name: <b>{{ garden.name }}</b>-->
       <br/>
       <h4 id="p-custom-link">
         <router-link
@@ -80,10 +81,6 @@ import DateFormatService from "@/services/DateFormatService.js";
 export default {
   name: 'PlantCard',
   props: {
-    //garden: {
-    //  type: Object,
-    //  default: () => ({})
-    //},
     plant: {
       type: Object,
       default: () => ({})
@@ -149,7 +146,9 @@ export default {
           plant.plant_name +
           "! Page will restore in 2 seconds";
         setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "GardenDetails", params: { id: plant.garden.id } });
+        //this.$router.push({ name: "GardenDetails", params: { id: plant.garden.id } });
+        this.$router.push({ name: "Gardens" });
+
       }
     },
     showWatering(outlet) {

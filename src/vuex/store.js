@@ -43,7 +43,6 @@ export default new Vuex.Store({
     plant: {},
     plants: [],
     location: {},
-    outlets_display_group: [],
     products: [],
     products_by_location: [],
     shopping_list: [],
@@ -125,9 +124,9 @@ export default new Vuex.Store({
     SET_GARDENS(state, gardens) {
       state.gardens = gardens;
     },
-    //SET_GARDEN_PLANTS(state, garden_plants) {
-    //  state.garden_plants = garden_plants
-    //},
+    SET_GARDEN_PLANTS(state, garden_plants) {
+      state.garden_plants = garden_plants
+    },
     ADD_GARDEN(state, garden) {
       state.gardens.push(garden);
     },
@@ -168,15 +167,6 @@ export default new Vuex.Store({
     },
     SET_MEDS(state, meds) {
       state.meds = meds;
-    },
-    DELETE_OUTLET(state, outlet) {
-      state.outlet = outlet;
-    },
-    SET_OUTLETS_DISPLAY_GROUP(state, outlets_display_group) {
-      state.outlets_display_group = outlets_display_group;
-    },
-    SET_OUTLETS_HASH(state, outlets_hash) {
-      state.outlets_hash = outlets_hash;
     },
     DELETE_PLANT(state, plant) {
       state.plant = plant;
@@ -294,18 +284,6 @@ export default new Vuex.Store({
     },
     ADD_WATERING(state, watering) {
       state.waterings.push(watering);
-    },
-    ADD_OUTLET(state, outlet) {
-      state.outlets.push(outlet);
-    },
-    SET_OUTLET(state, outlet) {
-      state.outlet = outlet;
-    },
-    SET_OUTLET_DETAILS_BY_NAME(state, outlet_details_by_name) {
-      state.outlet_details_by_name = outlet_details_by_name;
-    },
-    DELETE_OUTLET_DETAILS_BY_NAME(state, outlet_details_by_name) {
-      state.outlet_details_by_name = outlet_details_by_name;
     },
   },
   actions: {
@@ -460,31 +438,19 @@ export default new Vuex.Store({
           });
       }
     },
-    async fetchGarden({ commit, state }, id) {
-      const existingGarden = state.gardens.find((garden) => garden.id === id);
-      if (existingGarden) {
-        commit("SET_GARDEN", existingGarden);
-      } else {
-        EventService.getGarden(id)
-          .then((response) => {
-            commit("SET_GARDEN", response.data);
-          })
-          .catch((error) => {
+    async fetchGarden({ commit }, id) {
+      //const existingGarden = state.gardens.find((garden) => garden.id === id);
+      //if (existingGarden) {
+      //  commit("SET_GARDEN", existingGarden);
+      //} else {
+        try {
+          const response = await EventService.getGarden(id);
+          commit("SET_GARDEN", response.data);
+        } catch (error) {
             alert("Garden Fetch Error", error.data)
-          });
-      }
+          }
+      //}
     },
-    //Like Watering / Outlet:
-    //async fetchGarden({ commit }, garden) {
-    //  EventService.getGarden(garden)
-    //    .then((response) => {
-    //      commit("SET_GARDEN", response.data);
-    //      return response.data;
-    //    })
-    //    .catch((error) => {
-    //      alert("Garden Fetch Error: ", error.response.data )        });
-    //},
-
     async fetchGardens({ commit }) {
       try {
         const response = await EventService.getGardens();
@@ -493,16 +459,6 @@ export default new Vuex.Store({
         console.error("Error fetching gardens`:", error);
       }
     },
-    /*
-    async fetchGlucoseReadings({ commit }) {
-      try {
-        const response = await EventService.getGlucoseReadings();
-        commit("SET_GLUCOSE_READINGS", response.data);
-      } catch (error) {
-        console.error("Error fetching glucose readings:", error);
-      }
-    },
-    */
     async createEvent({ commit }, event) {
       EventService.postEvent(event)
         .then(() => {
@@ -913,81 +869,6 @@ export default new Vuex.Store({
         });
     },
 
-    async createWateringOutlet({ commit }, outlet) {
-      EventService.postWateringOutlet(outlet)
-        .then(() => {
-          commit("SET_OUTLET", outlet);
-          alert("Outlet was successfully added for " + outlet.outlet_name);
-        })
-        .catch((error) => {
-          alert("Error in postBook of createOutlet Action (index.js)");
-          alert("Watering Outlet Post Error: ", error.response.data )
-        });
-    },
-    async updateOutlet({ commit }, outlet) {
-      EventService.putOutlet(outlet)
-        .then((response) => {
-          commit("SET_OUTLET", response.data);
-          alert("Outlet was successfully Updated for " + outlet.outlet_name);
-          location.reload();
-        })
-        .catch((error) => {
-          alert("Outlet Put Error: ", error.response.data )
-        });
-    },
-
-    async deleteOutlet({ commit }, outlet) {
-      EventService.deleteOutlet(outlet)
-        .then((response) => {
-          commit("DELETE_OUTLET", response.data);
-          alert("Outlet " + outlet.outlet_name + " was deleted");
-        })
-        .catch((error) => {
-          alert("Outlet Delete Error: ", error.response.data )
-        });
-    },
-    async fetchOutlet({ commit }, id) {
-        EventService.getOutlet(id)
-          .then((response) => {
-            commit("SET_OUTLET", response.data);
-          })
-          .catch((error) => {
-            alert("Outlet Fetch Error: ", error.response.data )
-          });
-      //}
-    },
-    async fetchOutletDetailsByName({ commit }, outlet_name) {
-      EventService.getOutletDetailsByName(outlet_name)
-        .then((response) => {
-          commit("SET_OUTLET_DETAILS_BY_NAME", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          commit("DELETE_OUTLET_DETAILS_BY_NAME"); 
-          //router.push({ name: 'GardenList'});
-          alert("Med Fetch Error: ", error.response.data )
-        });
-    },
-    async fetchOutletsDisplayGroup({ commit }) {
-      EventService.getOutletsDisplayGroup()
-        .then((response) => {
-          commit("SET_OUTLETS_DISPLAY_GROUP", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Outlet Fetch Group Error: ", error.response.data )
-        });
-    },
-    async fetchOutletsHash({ commit }) {
-      EventService.getOutletsHash()
-        .then((response) => {
-          commit("SET_OUTLETS_HASH", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Outlet Fetch Hash Error: ", error.response.data )
-        });
-    },
     async deletePlant({ commit }, plant) {
       EventService.deletePlant(plant)
         .then((response) => {
@@ -1409,10 +1290,11 @@ export default new Vuex.Store({
           alert("VendorsProducts Put Error: ", error.response.data )
         });
     },
-    async createWatering({ commit }, watering) {
+    async createWatering({ commit, dispatch }, watering) {
       EventService.postWatering(watering)
-        .then(() => {
+        .then(async () => {
           commit("SET_WATERING", watering);
+          await dispatch("fetchGarden", watering.garden_id);
           alert("Watering was successfully added for " + watering.name);
         })
         .catch((error) => {

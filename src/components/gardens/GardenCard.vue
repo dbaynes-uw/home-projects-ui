@@ -39,6 +39,7 @@
       </router-link>
     </p>
     <br/>
+    GARDEN Plants: {{ garden.plants ? garden.plants.length : 0 }}
     <span v-if="garden.plants && garden.plants.length > 0">
       <p id="p-custom-left">Plants:</p>
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">

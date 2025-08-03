@@ -121,21 +121,24 @@ export default {
     },
   },
   methods: {
-    onSubmit() {
+    async onSubmit() {
       this.checkValidations();
-      if (this.isFormValid) {
-        const watering = {
-          ...this.watering,
-          id: uuidv4(),
-          garden_id: this.garden.id,
-          created_by: this.$store.state.user.resource_owner.email,
-        };
-        if (this.$store.dispatch("createWatering", watering)) {
-          this.$router.push({ name: "GardenDetails", params: {id: `${watering.garden_id}` }});
-        } else {
-          alert("Error adding Watering System " + watering.name);
-        } 
-      } 
+      if (!this.isFormValid) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+      const watering = {
+        ...this.watering,
+        id: uuidv4(),
+        garden_id: this.garden.id,
+        created_by: this.$store.state.user.resource_owner.email,
+      };
+      await this.$store.dispatch("createWatering", watering)
+      // wait 3 seconds before redirecting
+      //setTimeout(() => {
+        this.$store.dispatch("fetchGarden", this.garden.id);
+        this.$router.push({ name: 'GardenDetails', params: { id: this.garden.id } });
+      //}, 5000);
     },
     requiredWateringName: function (value) {
       if (value) {
