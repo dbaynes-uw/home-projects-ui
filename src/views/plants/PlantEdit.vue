@@ -140,7 +140,7 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        this.plant.outlet_id = this.getOutletId(this.outlet_id)
+        //this.plant.outlet_id = this.getOutletId(this.outlet_id)
         const plant = {
           ...this.plant,
           updated_by: this.$store.state.created_by,

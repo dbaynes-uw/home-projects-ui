@@ -28,19 +28,15 @@
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-target</v-icon>
           </template>
-        </v-text-field> 
-        <v-select
-          v-model="plant.yard_location"
-          :items="yard_locations"
-          label="Location (North, South, Other like 1-A-1 for Vegetable Garden)"
-          :rules="[requiredYardLocation]"
-          clearable
+        </v-text-field>
+        <v-text-field
+          label="Biological Name"
+          v-model="plant.biological_name"
         >
-  <template v-slot:prepend-inner>
-    <v-icon class="icon-css">mdi-target</v-icon>
-  </template>
-</v-select>
-        <br />
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template>
+        </v-text-field> 
         <v-text-field
           v-model="plant.description"
           label="Description"
@@ -48,7 +44,28 @@
           <template v-slot:prepend-inner>
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
-        </v-text-field>  
+        </v-text-field>
+        <v-text-field
+          v-model="plant.online_link"
+          label="URL to Research"
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-link</v-icon>
+          </template>
+        </v-text-field>
+        <v-select
+          v-model="plant.yard_location"
+          :items="yard_locations"
+          label="Location (North, South, Other like 1-A-1 for Vegetable Garden)"
+          :rules="[requiredYardLocation]"
+          clearable
+        >
+          <template v-slot:prepend-inner>
+            <v-icon class="icon-css">mdi-target</v-icon>
+          </template>
+        </v-select>
+        <br />
+
         <v-text-field label="Date Planted"
           v-model="plant.date_planted"
           type="date"
