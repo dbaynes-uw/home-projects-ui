@@ -172,7 +172,6 @@ function requiredWatering(value) {
 }
 
 function checkValidations() {
-  console.log("Checking validations ", isPlantNameValid.value, isWateringValid.value)
   if (isPlantNameValid.value && isWateringValid.value) {
     isFormValid.value = true
   } else {

@@ -39,7 +39,6 @@
       </router-link>
     </p>
     <br/>
-    GARDEN Plants: {{ garden.plants ? garden.plants.length : 0 }}
     <span v-if="garden.plants && garden.plants.length > 0">
       <p id="p-custom-left">Plants:</p>
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
@@ -61,8 +60,8 @@
         Add Plant
       </router-link>
     </p>
-
-    <div id="spread">
+    <br/>
+      <div id="spread">
       <span class="fa-stack">
         <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
@@ -83,6 +82,7 @@
         </i>
       </span>
     </div>
+
   </div>
 </template>
 <script setup>
