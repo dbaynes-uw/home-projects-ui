@@ -30,12 +30,12 @@
                 v-model="menu"
                 :items="links"
                 v-bind="props"
-                style="background-color: white; border-bottom: none !important;box-shadow: none !important;"
+                variant="plain"
                 class="menu-dropdown"
               >
                 <template v-slot:prepend-inner>
                   <v-icon v-if="isMobile">mdi-menu</v-icon>
-                  <span v-else>Menu</span>
+                  <span v-else>&nbsp;Menu</span>
                 </template>
               </v-select>
             </template>
@@ -46,7 +46,8 @@
                 height="10rem"
                 :style="{
                   backgroundColor: 'transparent',
-                  position: 'absolute', top: '0px',
+                  position: 'absolute',
+                  top: '0px',
                 }"
                /> 
               <v-list-item
@@ -172,7 +173,7 @@ export default {
           title: "SignOut",
         },
       ],
-      menu: "@Menu",
+      menu: "Menu",
     };
   },
 }
@@ -195,24 +196,6 @@ export default {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   }
-}
-.menu-dropdown .v-field__outline,
-.menu-dropdown .v-field__line,
-.menu-dropdown .v-field__overlay,
-.menu-dropdown .v-field__field,
-.menu-dropdown .v-input__control,
-.menu-dropdown .v-field__input,
-.menu-dropdown input {
-  border-bottom: none !important;
-  box-shadow: none !important;
-}
-
-.menu-dropdown .v-field__outline__start,
-.menu-dropdown .v-field__outline__end,
-.menu-dropdown .v-field__outline__notch,
-.menu-dropdown .v-field__line {
-  border: none !important;
-  box-shadow: none !important;
 }
 #tool-bar-title {
   flex: .7;
