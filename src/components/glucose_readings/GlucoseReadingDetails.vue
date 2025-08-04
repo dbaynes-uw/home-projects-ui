@@ -1,30 +1,33 @@
 <template>
   <div>
-    <div class="controls-bar">
-      <v-select
-        v-model="filterType"
-        :items="readingTypes"
-        label="Type"
-        clearable
-        class="filter-select"
-        density="compact"
-      />
-      <v-select
-        v-model="filterStatus"
-        :items="readingStatuses"
-        label="Status"
-        clearable
-        class="filter-select"
-        density="compact"
-      />
-      <v-btn @click="toggleSortOrder" color="primary" small class="sort-btn">
-        Sort by Date {{ sortOrder === 'asc' ? '↑' : '↓' }}
-      </v-btn>
-      <br/>
-      <span id="count-display" class="filtered-count">
-        Showing {{ filteredSortedReadings.length }} Glucose Reading{{ filteredSortedReadings.length === 1 ? '' : 's' }}
-      </span>
-    </div>
+    <br/>
+    <span v-if="!isSingle">
+      <div class="controls-bar">
+        <v-select
+          v-model="filterType"
+          :items="readingTypes"
+          label="Type"
+          clearable
+          class="filter-select"
+          density="compact"
+        />
+        <v-select
+          v-model="filterStatus"
+          :items="readingStatuses"
+          label="Status"
+          clearable
+          class="filter-select"
+          density="compact"
+        />
+        <v-btn @click="toggleSortOrder" color="primary" small class="sort-btn">
+          Sort by Date {{ sortOrder === 'asc' ? '↑' : '↓' }}
+        </v-btn>
+        <br/>
+        <span id="count-display" class="filtered-count">
+          Showing {{ filteredSortedReadings.length }} Glucose Reading{{ filteredSortedReadings.length === 1 ? '' : 's' }}
+        </span>
+      </div>
+    </span>
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <!--

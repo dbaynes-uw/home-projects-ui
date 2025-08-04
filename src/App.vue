@@ -26,18 +26,19 @@
           <!--v-menu open-on-hover id="menu-dropdown-div" :link="links" offset-y -->
           <v-menu :link="links" offset-y >          
             <template v-slot:activator="{ props }">
-              <!-- style="font-weight: bold; color: #000; font-family: sans-serif"-->
               <v-select
                 v-model="menu"
                 :items="links"
                 v-bind="props"
+                style="background-color: white; border-bottom: none !important;box-shadow: none !important;"
                 class="menu-dropdown"
-              >  
-
+              >
+                <template v-slot:prepend-inner>
+                  <v-icon v-if="isMobile">mdi-menu</v-icon>
+                  <span v-else>Menu</span>
+                </template>
               </v-select>
-              <!-- style="font-weight: bold; color: #000; font-family: system-ui; width: 73%"
--->
-            </template>  
+            </template>
             <v-list>
               <v-card
                 flat
@@ -171,12 +172,48 @@ export default {
           title: "SignOut",
         },
       ],
-      menu: "Menu",
+      menu: "@Menu",
     };
   },
 }
 </script>
 <style scoped>
+.menu-dropdown {
+  font-size: 1.1rem;
+  font-weight: bold;
+  min-width: 120px;
+  padding: 0.5rem 1rem;
+}
+
+@media (max-width: 600px) {
+  .menu-dropdown {
+    font-size: 1.3rem;
+    min-width: 160px;
+    padding: 0.75rem 1.25rem;
+    background: #fff;
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+}
+.menu-dropdown .v-field__outline,
+.menu-dropdown .v-field__line,
+.menu-dropdown .v-field__overlay,
+.menu-dropdown .v-field__field,
+.menu-dropdown .v-input__control,
+.menu-dropdown .v-field__input,
+.menu-dropdown input {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+.menu-dropdown .v-field__outline__start,
+.menu-dropdown .v-field__outline__end,
+.menu-dropdown .v-field__outline__notch,
+.menu-dropdown .v-field__line {
+  border: none !important;
+  box-shadow: none !important;
+}
 #tool-bar-title {
   flex: .7;
   margin-inline-start: 2px;

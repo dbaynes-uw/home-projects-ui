@@ -82,7 +82,6 @@ const sortedReadings = computed(() => {
 });
 // Methods
 function readingColorClass(readingValue) {
-  if (readingValue < 70) return 'reading-low';
   if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
   if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
   if (readingValue >= 126) return 'reading-diabetes';

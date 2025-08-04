@@ -2,7 +2,7 @@
   <div class="card">
     <ul>
       <li class="li-left">Date: <b>{{ formatStandardDateTime(glucose_reading.reading_date) }}</b></li>
-      <li class="li-left">Reading: {{ glucose_reading.reading }} {{ glucose_reading.unit }}</li>
+      <li class="li-left" :id="readingColorId(glucose_reading.reading)">Reading: {{ glucose_reading.reading }} {{ glucose_reading.unit }}</li>
       <li class="li-left">Fasting Type: {{ glucose_reading.reading_type }}</li>
       <li class="li-left">Result: {{ glucose_reading.status }}</li>
       <li class="li-left">Notes: {{ glucose_reading.notes }}</li>
@@ -45,7 +45,13 @@ const router = useRouter();
 
 // If you use a confirm dialog, set up a ref for it
 // const confirmDialogue = ref(null);
-
+// Methods
+function readingColorId(readingValue) {
+  if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
+  if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
+  if (readingValue >= 126) return 'reading-diabetes';
+  return '';
+}
 async function deleteGlucoseReading(glucose_reading) {
   // If you use a confirm dialog, uncomment and use:
   // const ok = await confirmDialogue.value.show({
@@ -72,3 +78,18 @@ function formatStandardDateTime(value) {
   return DateFormatService.formatStandardDateTimejs(value);
 }
 </script>
+<style>
+#reading-normal {
+  font-weight: bold;
+  color: darkgreen
+}
+#reading-prediabetes {
+  font-weight: bold;
+  color: #00f
+}
+#reading-diabetes {
+  font-weight: bold;
+  color: #e31b1b;
+}
+
+</style>
