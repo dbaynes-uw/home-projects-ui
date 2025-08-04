@@ -85,18 +85,6 @@ export default {
       type: Object,
       default: () => ({})
     },
-    //outlet: {
-    //  type: Object,
-    //  default: () => ({})
-    //},
-    //origin: {
-    //  type: String,
-    //  default: '',
-    //},
-    //watering: {
-    //  type: Object,
-    //  default: () => ({})
-    //}
   },
   components: {
     ConfirmDialogue,

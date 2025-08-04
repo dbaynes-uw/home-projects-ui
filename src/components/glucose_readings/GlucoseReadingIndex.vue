@@ -14,9 +14,13 @@
       <th id="background-blue">Notes</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="reading in sortedReadings" :key="reading.id">
+    <tr v-for="reading in sortedReadings"
+      :key="reading.id"
+    >
       <td class="td-center">{{ formatStandardDateTime(reading.reading_date) }}</td>
-      <td>{{ reading.reading }} mg/dl</td>
+      <td :class="readingColorClass(reading.reading)">
+        {{ reading.reading }} mg/dl
+      </td>
       <td>{{ reading.reading_type }}</td>
       <td>{{ reading.status }}</td>
       <td>{{ reading.notes }}</td>
@@ -76,8 +80,14 @@ const sortedReadings = computed(() => {
   });
   return arr;
 });
-
 // Methods
+function readingColorClass(readingValue) {
+  if (readingValue < 70) return 'reading-low';
+  if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
+  if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
+  if (readingValue >= 126) return 'reading-diabetes';
+  return '';
+}
 function formatStandardDateTime(date) {
   return new Date(date).toLocaleString();
 }
@@ -99,5 +109,24 @@ function sortList(key) {
 #index-count-display {
   font-weight: bold;
   font-size: 1.25rem;
+}
+.reading-normal {
+  /* background-color: #e0ffe0; 
+  color: #388e3c;
+  */
+  font-weight: bold;
+  color: darkgreen
+}
+.reading-prediabetes {
+  /*background-color: #fffbe0;
+  color: #fbc02d;
+  */
+  font-weight: bold;
+  color: #00f
+}
+.reading-diabetes {
+  font-weight: bold;
+  /*background-color: #ffe0ff;*/
+  color: #e31b1b;
 }
 </style>

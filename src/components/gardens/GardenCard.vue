@@ -31,6 +31,7 @@
         </li>
       </ul>
     </span>
+    <br/>
     <p id="p-custom-link">
       <router-link
         :to="{ name: 'WateringCreate', params: { garden_id: `${garden.id}` } }"
