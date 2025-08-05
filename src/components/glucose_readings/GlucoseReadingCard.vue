@@ -2,7 +2,7 @@
   <div class="card">
     <ul>
       <li class="li-left">Date: <b>{{ formatStandardDateTime(glucose_reading.reading_date) }}</b></li>
-      <li class="li-left" :id="readingColorId(glucose_reading.reading)">Reading: {{ glucose_reading.reading }} {{ glucose_reading.unit }}</li>
+      <li class="li-left" :id="readingColorId(glucose_reading.reading, glucose_reading.reading_type)">Reading: {{ glucose_reading.reading }} {{ glucose_reading.unit }}</li>
       <li class="li-left">Fasting Type: {{ glucose_reading.reading_type }}</li>
       <li class="li-left">Result: {{ glucose_reading.status }}</li>
       <li class="li-left">Notes: {{ glucose_reading.notes }}</li>
@@ -44,10 +44,17 @@ const router = useRouter();
 // If you use a confirm dialog, set up a ref for it
 // const confirmDialogue = ref(null);
 // Methods
-function readingColorId(readingValue) {
-  if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
-  if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
-  if (readingValue >= 126) return 'reading-diabetes';
+function readingColorId(readingValue, readingType) {
+  if (!readingValue) return '';
+  if (readingType === 'AM-Fasting') {
+    if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
+    if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
+    if (readingValue >= 126) return 'reading-diabetes';
+  } else if (readingType === 'Post-Meal') {
+    if (readingValue >= 80 && readingValue <= 140) return 'reading-normal';
+    if (readingValue >= 141 && readingValue <= 200) return 'reading-prediabetes';
+    if (readingValue >= 200) return 'reading-diabetes';
+  }
   return '';
 }
 async function deleteGlucoseReading(glucose_reading) {

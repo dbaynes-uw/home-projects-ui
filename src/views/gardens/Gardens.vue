@@ -45,7 +45,7 @@ const store = useStore();
 const router = useRouter();
 const gardens = computed(() => store.state.gardens);
 const isLoading = ref(true);
-const showIndex = ref(true);
+const showIndex = ref(false);
 
 function toggleView() {
   showIndex.value = !showIndex.value;

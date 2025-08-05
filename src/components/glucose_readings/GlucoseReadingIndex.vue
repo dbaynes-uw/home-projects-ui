@@ -18,7 +18,8 @@
       :key="reading.id"
     >
       <td class="td-center">{{ formatStandardDateTime(reading.reading_date) }}</td>
-      <td :class="readingColorClass(reading.reading)">
+      <td :class="readingColorClass(reading.reading, reading.reading_type)">
+        {{ reading.reading }} {{ reading.unit }}
         {{ reading.reading }} mg/dl
       </td>
       <td>{{ reading.reading_type }}</td>
@@ -81,12 +82,19 @@ const sortedReadings = computed(() => {
   return arr;
 });
 // Methods
-function readingColorClass(readingValue) {
-  if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
-  if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
-  if (readingValue >= 126) return 'reading-diabetes';
+function readingColorClass(readingValue, readingType) {
+  if (readingType === 'AM-Fasting') {
+    if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
+    if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
+    if (readingValue >= 126) return 'reading-diabetes';
+  } else if (readingType === 'Post-Meal') {
+    if (readingValue >= 80 && readingValue <= 140) return 'reading-normal';
+    if (readingValue >= 141 && readingValue <= 200) return 'reading-prediabetes';
+    if (readingValue >= 201) return 'reading-diabetes';
+  }
   return '';
 }
+
 function formatStandardDateTime(date) {
   return new Date(date).toLocaleString();
 }

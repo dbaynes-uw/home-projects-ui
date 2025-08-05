@@ -41,15 +41,17 @@
 
         <!-- Reading Type Input -->
         <v-col cols="12" md="6">
-          <v-text-field
+          <v-autocomplete
             v-model="reading_type"
-            label="Reading Type"
-            type="text"
+            :items="readingTypeOptions"
+            label="Type"
             outlined
             required
-            aria-label="Enter the reading type of the glucose reading"
-          ></v-text-field>
-        </v-col>      
+            aria-label="Select or enter the type of the glucose reading"
+            hide-no-data
+            allow-new
+          ></v-autocomplete>
+        </v-col>
         <!-- Status or Diagnosis Bullet Points
         <v-col cols="12" md="6" id="bullet-style">
           <v-list dense>
@@ -122,11 +124,27 @@ const unit = ref('');
 const reading_type = ref('');
 const status = ref('');
 const notes = ref('');
+  // Dropdown options for the reading_type field
+  const readingTypeOptions = ref([]);
+  // Fetch unique reading_types from Vuex store or API
+  const fetchReadingTypeOptions = async () => {
+    try {
+      // Assuming glucose readings are stored in Vuex state
+      const glucoseReadings = store.state.glucoseReadings;
+      
+      // Extract unique reading_types
+      const uniqueReadingTypes = [...new Set(glucoseReadings.map(reading => reading.reading_type))];
+      readingTypeOptions.value = uniqueReadingTypes;
+    } catch (error) {
+      console.error('Error fetching reading type options:', error);
+    }
+  };
+  // Fetch reading_type options on component mount
 
 onMounted(async () => {
   await store.dispatch('fetchGlucoseReading', route.params.id);
   const result = store.state.glucoseReading;
-
+  fetchReadingTypeOptions();
   // Convert the reading_date to local timezone and format for datetime-local input
   const isoDate = new Date(result.reading_date);
   const localDate = new Date(isoDate.getTime() - isoDate.getTimezoneOffset() * 60000);
