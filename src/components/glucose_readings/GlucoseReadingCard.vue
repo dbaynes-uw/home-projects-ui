@@ -23,11 +23,9 @@
 </template>
 
 <script setup>
-//import { ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import DateFormatService from "@/services/DateFormatService.js";
-//import SplitStringService from "@/services/SplitStringService.js";
 // Props
 defineProps({
   glucose_reading: {
@@ -69,10 +67,6 @@ async function deleteGlucoseReading(glucose_reading) {
     router.push({ name: "GlucoseReadings" });
   }
 }
-
-//function splitList(glucose_readingData, splitLength) {
-//  return SplitStringService.splitList(glucose_readingData.circumstances, splitLength);
-//}
 
 function formatStandardDateTime(value) {
   return DateFormatService.formatStandardDateTimejs(value);

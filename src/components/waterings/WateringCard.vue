@@ -1,5 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <div class="card" @dblclick="emit('dblclick', watering)"></div>
   <div class="card">
     <h4>
       <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
@@ -61,75 +62,33 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 //import SplitStringService from "@/services/SplitStringService.js";
 //import { useRoute } from 'vue-router'
-export default {
-  name: 'WateringCard',
-  props: {
-    watering: {
-      type: Object,
-      default: () => ({})
-    },
-  },
-  components: {
-    ConfirmDialogue,
-  },
-  setup() {},
-  data() {
-    return {
-      splitLength: 30,
-    };
-  },
-  created() {},
-  computed: {
-    garden() {
-      return this.$store.state.garden;
-    },
-  },
-  methods: {
-    async deleteWatering(watering) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Watering from List",
-        message:
-          "Are you sure you want to delete " +
-          watering.name +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteWatering", watering);
-        this.statusMessage =
-          "Watering was Deleted for " +
-          watering.name +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "WateringList" });
-      }
-    },
-    //splitList(wateringData, splitLength) {
-    //  if (wateringData != null){ 
-    //    return SplitStringService.splitList(wateringData.notes, splitLength) 
-    //  }
-    //},
-    joinedNotes(e) {
-      if (e.notes != null){ 
-        return e.notes.split('\n')
-      }
-    },
-    formatTime(value) {
-      return DateFormatService.formatTimejs(value);
-    },
-    formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTimejs(value);
-    },
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
-    },
+defineProps({
+  watering: {
+    type: Object,
+    default: () => ({})
   }
+});
+const store = useStore();
+const router = useRouter();
+const emit = defineEmits(['dblclick']);
+async function deleteWatering(watering) {
+  if (confirm(`Are you sure you want to delete ${watering.name}? It cannot be undone.`)) {
+    await store.dispatch("deleteWatering", watering);
+    router.push({ name: "WateringList" });
+  }
+}
+function formatTime(value) {
+  if (!value) {
+    return '';
+  }
+  return DateFormatService.formatTimejs(value);
 }
 </script>
 

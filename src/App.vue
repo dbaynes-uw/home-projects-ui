@@ -23,44 +23,23 @@
     <v-app v-else>
       <div class="header-base">
         <div class="menu-base">
-          <v-menu :link="links" offset-y >          
+          <v-menu offset-y>
             <template v-slot:activator="{ props }">
-              <v-select
-                v-model="menu"
-                :items="links"
-                v-bind="props"
-                variant="plain"
-                class="menu-dropdown"
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon v-if="isMobile">mdi-menu</v-icon>
-                  <span v-else>&nbsp;Menu</span>
-                </template>
-              </v-select>
+              <v-btn v-bind="props" class="menu-dropdown" variant="plain">
+                <v-icon v-if="isMobile">mdi-menu</v-icon>
+                <span v-else>&nbsp;Menu</span>
+              </v-btn>
             </template>
             <v-list>
-              <v-card
-                flat
-                width="10rem"
-                height="10rem"
-                :style="{
-                  backgroundColor: 'transparent',
-                  position: 'absolute',
-                  top: '0px',
-                }"
-               /> 
               <v-list-item
-                v-for="(link) in links"
+                v-for="link in links"
                 :key="`${link.label}-header-link`"
+                @click="$router.push({ name: link.label })"
               >
-                <v-list-item-title>
-                  <router-link class="menu-visited-color" :to="{ name: `${link.label}` }">
-                  {{ link.title }}
-                </router-link>
-                </v-list-item-title>
+                <v-list-item-title>{{ link.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
-          </v-menu>
+          </v-menu>        
         </div>
         <h1 class="heading-aligned">&nbsp;
           <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
@@ -92,6 +71,7 @@
     </v-app>
   </div>
 </template>
+
 <script>
 import { authComputed } from './vuex/helpers.js'
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
@@ -100,7 +80,10 @@ export default {
     ConfirmDialogue,
   },
   computed: {
-    ...authComputed
+    ...authComputed,
+    isMobile() {
+      return window.innerWidth <= 600;
+    },
   },
   methods: {
     logout () {
@@ -172,25 +155,35 @@ export default {
           title: "SignOut",
         },
       ],
-      menu: "Menu",
+      menu: "@Menu",
     };
   },
 }
 </script>
 <style scoped>
 .menu-dropdown {
+  background-color: #d3d3d3 !important; /* solid light grey */
+  /* If you want a more visible grey, try #bdbdbd or #e0e0e0 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   font-size: 1.1rem;
   font-weight: bold;
   min-width: 120px;
   padding: 0.5rem 1rem;
+  color: #333 !important;
+  border-radius: 8px;
+  border: none !important;
 }
-
+/* Remove overlay/underlay background */
+.menu-dropdown .v-btn__overlay,
+.menu-dropdown .v-btn__underlay {
+  background: transparent !important;
+}
 @media (max-width: 600px) {
   .menu-dropdown {
+    background-color: #bdbdbd !important; /* solid light grey */
     font-size: 1.3rem;
     min-width: 160px;
     padding: 0.75rem 1.25rem;
-    background: #fff;
     color: #333;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
