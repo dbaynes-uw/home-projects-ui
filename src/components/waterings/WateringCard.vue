@@ -1,7 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="card" @dblclick="emit('dblclick', watering)"></div>
-  <div class="card">
+  <div class="card" @dblclick="emit('dblclick', watering)">
     <h4>
       <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
         {{ watering.name }} 
@@ -9,15 +8,15 @@
     </h4>
     <ul>
         <li class="li-left">
-          <span v-if="this.$route.name == 'GardenDetails'">
+          <span v-if="$route.name == 'GardenDetails'">
             <b>{{ garden.name}}</b>
           </span>
-          <span v-if="this.$route.name == 'GardenWaterings'">
+          <span v-if="$route.name == 'GardenWaterings'">
             <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
             <b>{{ watering.garden.name}}</b>
             </router-link>
           </span>
-          <span v-if="this.$route.name == 'WateringList'">
+          <span v-if="$route.name == 'WateringList'">
             <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
               <b>{{ watering.garden.name}}</b>
             </router-link>  
@@ -38,10 +37,8 @@
         </b>
       </li>
       <li class="li-left">Notes:</li>
-        <b class="li-left-none" v-for="(notes, idx) in 
-          joinedNotes(watering)"
-          :key="idx">{{ notes }}
-        </b>
+        <p class="li-left-none"><b>{{ watering.notes }}</b>
+        </p>
     </ul>
     <br/>
     <br/>

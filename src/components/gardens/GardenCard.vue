@@ -26,7 +26,11 @@
             </router-link>
           </span>
           <span v-else>
-            {{ watering.name }} - As Needed
+            <router-link
+              :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+            >
+              {{ watering.name }} - As Needed
+            </router-link>
           </span>
         </li>
       </ul>
