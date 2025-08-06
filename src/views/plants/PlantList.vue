@@ -60,7 +60,7 @@
               :plant="plant"
               :origin="origin"
               class="card"
-              @dblclick="onDoubleClick(plant)"
+              @dblclick="editPlant(plant)"
             />
             <br />
           </div>
@@ -81,7 +81,7 @@
             :plant="plant"
             class="card"
             :origin="origin"
-            @dblclick="onDoubleClick(plant)"
+            @dblclick="editPlant(plant)"
           />
           <br />
         </div>
@@ -187,9 +187,8 @@ export default {
     requestIndexDetail() {
       this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
     },
-    onDoubleClick(plant) {
-      console.log("plant Edit ")
-      this.$router.push({ name: 'GardenEdit', params: { id: `${plant.id}` } });
+    editPlant(plant) {
+      this.$router.push({ name: 'PlantEdit', params: { id: `${plant.id}` } });
     },
     showIndex() {
       this.filteredResults = [];

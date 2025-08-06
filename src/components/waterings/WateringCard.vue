@@ -1,6 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="card" @dblclick="emit('dblclick', watering)">
+  <span class="h3-left-total-child">Double click Item Below to Edit</span>
+  <div class="card" v-bind="$attrs" @dblclick="emit('dblclick', watering)">
     <h4>
       <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
         {{ watering.name }} 
@@ -12,7 +13,6 @@
           <b>{{ garden.name }}</b>
         </router-link>
       </li>
-      <li class="li-left">Watering Name: <b>{{ watering.name}}</b></li>
       <li class="li-left">Location: <b>{{ watering.location}}</b></li>
       <li class="li-left">Line: <b>{{ watering.line}}</b></li>
       <li class="li-left">Target: <b>{{ watering.target}}</b></li>

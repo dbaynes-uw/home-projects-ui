@@ -24,7 +24,7 @@
         v-for="garden in filteredSortedGardens"
         :key="garden.id"
         :garden="garden"
-        @dblclick="$emit('edit', garden)"
+        @dblclick="editGarden"
       />
     </div>
     <router-link v-if="isSingle" :to="{ name: 'Gardens' }">Back to List</router-link>
@@ -33,6 +33,7 @@
 
 <script setup>
 import GardenCard from "@/components/gardens/GardenCard.vue";
+import router from "@/router";
 import { ref, computed, onMounted,watch } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -78,7 +79,9 @@ async function fetchGarden() {
   gardens.value = Array.isArray(garden) ? garden : (garden ? [garden] : []);
   isLoading.value = false;
 }
-
+function editGarden(garden) {
+  router.push({ name: 'GardenEdit', params: { id: garden.id } });
+}
 onMounted(() => {
   if (route.params.id && route.params.id !== '') {
     fetchGarden();

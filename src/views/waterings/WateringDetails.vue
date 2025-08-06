@@ -35,6 +35,7 @@
       <WateringCard
         :key="watering.id"
         :watering="watering"
+        @dblclick="editWatering"
       />      
       <br />
     </div>
@@ -78,7 +79,11 @@ export default {
       statusMessage: "",
     };
   },
-  methods: {},
+  methods: {
+    editWatering(watering) {
+      this.$router.push({ name: 'WateringEdit', params: { id: watering.id } });
+    }
+  },
 };
 </script>
 <style>
