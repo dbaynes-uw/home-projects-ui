@@ -7,22 +7,11 @@
         </router-link>
     </h4>
     <ul>
-        <li class="li-left">
-          <span v-if="$route.name == 'GardenDetails'">
-            <b>{{ watering.garden.name}}</b>
-          </span>
-          <span v-if="$route.name == 'GardenWaterings'">
-            <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-            <b>{{ garden.name}}</b>
-            </router-link>
-          </span>
-          <span v-if="$route.name == 'WateringList'">
-            <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-              <b>{{ garden.name }}</b>
-            </router-link>  
-          </span>
-        </li>
-      <li class="li-left">Garden: <b>{{ garden.name}}</b></li>
+      <li class="li-left">Garden: 
+        <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
+          <b>{{ garden.name }}</b>
+        </router-link>
+      </li>
       <li class="li-left">Watering Name: <b>{{ watering.name}}</b></li>
       <li class="li-left">Location: <b>{{ watering.location}}</b></li>
       <li class="li-left">Line: <b>{{ watering.line}}</b></li>
