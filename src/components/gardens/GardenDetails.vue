@@ -1,20 +1,23 @@
 <template>
   <div>
     <h1>Garden Details</h1>
-    <div class="controls-bar">
-      <v-select
-        v-model="filterStatus"
-        :items="gardenStatuses"
-        label="Status"
-        clearable
-        class="filter-select"
-        density="compact"
-      />
-      <br/>
-      <span id="count-display" class="filtered-count">
-        Showing {{ filteredSortedGardens.length }} Garden{{ filteredSortedGardens.length === 1 ? '' : 's' }}
-      </span>
-    </div>
+    <br/>
+    <span v-if="!isSingle">
+      <div class="controls-bar">
+        <v-select
+          v-model="filterStatus"
+          :items="gardenStatuses"
+          label="Status"
+          clearable
+          class="filter-select"
+          density="compact"
+        />
+        <br/>
+        <span id="count-display" class="filtered-count">
+          Showing {{ filteredSortedGardens.length }} Garden{{ filteredSortedGardens.length === 1 ? '' : 's' }}
+        </span>
+      </div>
+    </span>
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <GardenCard 

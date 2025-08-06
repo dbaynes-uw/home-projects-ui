@@ -59,10 +59,18 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchWatering", this.$route.params.id);
+    
   },
   computed: {
     watering() {
       return this.$store.state.watering;
+    },
+    garden() {
+      return this.$store.state.garden.find((garden) => garden.id === this.watering.garden_id);
+    },
+    plant()
+    {
+      return this.$store.state.plants.find((plant) => plant.id === this.watering.plant_id);
     },
   },
   data() {

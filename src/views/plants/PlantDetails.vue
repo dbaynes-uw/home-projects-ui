@@ -14,6 +14,7 @@
     <PlantCard
       :key="plant.id"
       :plant="plant"
+      :watering="watering"
       class="card"
       @dblclick="editPlant(plant)"
       />
@@ -45,6 +46,9 @@ export default {
     garden() {
       return this.$store.state.gardens.find((garden) => garden.id === this.plant.garden_id)
      },
+    watering() {
+      return this.$store.state.waterings.find((watering) => watering.id === this.plant.watering_id);
+    },
   },
   data() {
     return {

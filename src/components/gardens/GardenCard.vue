@@ -35,15 +35,13 @@
         </li>
       </ul>
     </span>
-    <br/>
     <p id="p-custom-link">
       <router-link
         :to="{ name: 'WateringCreate', params: { garden_id: `${garden.id}` } }"
         >
-          Add Watering for {{ garden.name }}
+          Add Watering
       </router-link>
     </p>
-    <br/>
     <span v-if="garden.plants && garden.plants.length > 0">
       <p id="p-custom-left">Plants:</p>
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">

@@ -9,20 +9,21 @@
     <ul>
         <li class="li-left">
           <span v-if="$route.name == 'GardenDetails'">
-            <b>{{ garden.name}}</b>
+            <b>{{ watering.garden.name}}</b>
           </span>
           <span v-if="$route.name == 'GardenWaterings'">
             <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-            <b>{{ watering.garden.name}}</b>
+            <b>{{ garden.name}}</b>
             </router-link>
           </span>
           <span v-if="$route.name == 'WateringList'">
             <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-              <b>{{ watering.garden.name}}</b>
+              <b>{{ garden.name }}</b>
             </router-link>  
           </span>
         </li>
-      <li class="li-left">Name: <b>{{ watering.name}}</b></li>
+      <li class="li-left">Garden: <b>{{ garden.name}}</b></li>
+      <li class="li-left">Watering Name: <b>{{ watering.name}}</b></li>
       <li class="li-left">Location: <b>{{ watering.location}}</b></li>
       <li class="li-left">Line: <b>{{ watering.line}}</b></li>
       <li class="li-left">Target: <b>{{ watering.target}}</b></li>
@@ -41,8 +42,29 @@
         </p>
     </ul>
     <br/>
+    <span v-if="watering.plants && watering.plants.length > 0">
+      <p id="p-custom-left">Plants:</p>
+      <span v-for="(plant, plantIndex) in watering.plants" :key="plantIndex ">
+        <ul class="ul-left">
+          <li>
+            <router-link
+              :to="{ name: 'PlantDetails', params: { id: `${plant.id}`} }"
+            >
+            <b>{{plant.plant_name}}</b>
+            </router-link>
+          </li>
+        </ul>          
+      </span>
+    </span>
+    <p id="p-custom-link">
+      <router-link
+        :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
+      >
+        Add Plant
+      </router-link>
+    </p>
     <br/>
-    <br/>
+
     <div id="spread">
       <span class="fa-stack">
         <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
@@ -62,17 +84,20 @@
 <script setup>
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 //import SplitStringService from "@/services/SplitStringService.js";
 //import { useRoute } from 'vue-router'
-defineProps({
+const props = defineProps({
   watering: {
     type: Object,
     default: () => ({})
-  }
+  },
 });
 const store = useStore();
+const garden = computed(() => store.state.gardens.find(g => g.id === props.watering.garden_id));
+//const plants = computed(() => store.state.plants.filter(p => p.watering_id === props.watering.id));
 const router = useRouter();
 const emit = defineEmits(['dblclick']);
 async function deleteWatering(watering) {
