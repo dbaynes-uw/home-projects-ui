@@ -2,7 +2,7 @@
   <div>
     <h1>Garden Details</h1>
     <br/>
-    <span v-if="!isSingle">
+    <!--span v-if="!isSingle">
       <div class="controls-bar">
         <v-select
           v-model="filterStatus"
@@ -17,7 +17,7 @@
           Showing {{ filteredSortedGardens.length }} Garden{{ filteredSortedGardens.length === 1 ? '' : 's' }}
         </span>
       </div>
-    </span>
+    </!--span-->
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <GardenCard 
@@ -48,7 +48,7 @@ const isSingle = computed(() => {
   return Array.isArray(gardens.value) && gardens.value.length === 1;
 });
 const filterStatus = ref(null);
-const gardenStatuses = ['Active', 'Inactive']; // Add your statuses
+//const gardenStatuses = ['Active', 'Inactive']; // Add your statuses
 
 const sortOrder = ref('desc');
 //const gardenTypes = ['Vegetable', 'Flower', 'Herb']; // Add your types

@@ -16,20 +16,20 @@
     <br/>
     <p id="p-custom-left">Waterings:</p>
     <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
-      <ul>
-        <li class="li-left-bold">
+      <ul class="ul-left">
+        <li>
           <span v-if="watering.start_time && watering.end_time">
             <router-link
               :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
             >
-              {{watering.name}} - {{ formatTime(watering.start_time) }} to {{ formatTime(watering.end_time) }}
+              <b>{{watering.name}} - {{ formatTime(watering.start_time) }} to {{ formatTime(watering.end_time) }}</b>
             </router-link>
           </span>
           <span v-else>
             <router-link
               :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
             >
-              {{ watering.name }} - As Needed
+              <b>{{ watering.name }} - As Needed</b>
             </router-link>
           </span>
         </li>
