@@ -11,8 +11,8 @@
     </h4>
     <ul>
       <li class="li-left"><b>Biological Name: {{ plant.biological_name }}</b></li>
-      <li class="li-left">Date Planted: {{ formatYearDate(plant.date_planted) }}</li>
-      <li class="li-left">Location: <b>{{plant.yard_location }}</b></li>
+      <li class="li-left"><b>Date Planted: {{ formatYearDate(plant.date_planted) }}</b></li>
+      <li class="li-left"><b>Location: {{plant.yard_location }}</b></li>
       <li class="li-left"><b><u>Water Line: 
         <router-link
           :to="{ name: 'WateringDetails', params: { id: `${plant.watering_id}` } }"
@@ -21,14 +21,14 @@
         </router-link>
          </u></b></li>    
       <span v-if="plant.date_harvest">
-        <li class="li-left">Date Harvest: {{ formatYearDate(plant.date_harvest) }}</li>
+        <li class="li-left"><b>Date Harvest: {{ formatYearDate(plant.date_harvest) }}</b></li>
       </span>
       <span v-if="plant.actual_harvest">
-        <li class="li-left">Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</li>
+        <li class="li-left"><b>Actual Harvest: {{ formatYearDate(plant.date_actual_harvest) }}</b></li>
       </span>
-      <li class="li-left"><a :href="plant.online_link" target="_blank">Link to Review</a></li>
+      <li class="li-left"><b><a :href="plant.online_link" target="_blank">Link to Review</a></b></li>
       <span v-if="plant.notes">
-        <li class="li-left">Notes: <b>{{ plant.notes }}</b> </li>
+        <li class="li-left"><b>Notes: {{ plant.notes }}</b> </li>
       </span>
     </ul>
     <br/>

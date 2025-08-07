@@ -26,7 +26,7 @@
           {{ watering.status }}
         </b>
       </li>
-      <li class="li-left">Notes:</li>
+      <li class="li-left"><b>Notes:</b></li>
         <p class="li-left-none"><b>{{ watering.notes }}</b>
         </p>
     </ul>

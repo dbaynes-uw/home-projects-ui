@@ -15,7 +15,7 @@
     <li>
       <button id="button-as-link">
         <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-          {{ watering.name }} Details
+          <b>Garden Details</b>
         </router-link>
       </button>
     </li>
