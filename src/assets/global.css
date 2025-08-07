@@ -344,8 +344,9 @@ td {
 
 .li-left {
   text-align: left;
+  margin-left: 1rem;
   display: list-item;
-  list-style-type: disclosure-closed;
+  list-style-type: square;
 }
 .li-left-none {
   text-align: left;

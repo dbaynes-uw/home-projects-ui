@@ -1,7 +1,13 @@
 <template>
   <div>
-    <h1>Garden Details</h1>
-    <br/>
+    <span v-if="isSingle">
+      <h1>Garden Details</h1>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Gardens' }">
+          <b>All Gardens</b>
+        </router-link>
+      </button>
+    </span>
     <!--span v-if="!isSingle">
       <div class="controls-bar">
         <v-select
@@ -18,7 +24,8 @@
         </span>
       </div>
     </!--span-->
-    <span class="h3-left-total-child">Double click Item Below to Edit</span>
+    <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
+    <br/>
     <div :class="['cards', { 'center-single': isSingle }]">
       <GardenCard 
         v-for="garden in filteredSortedGardens"

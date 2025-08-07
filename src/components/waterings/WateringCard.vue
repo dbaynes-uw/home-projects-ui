@@ -8,20 +8,20 @@
         </router-link>
     </h4>
     <ul>
-      <li class="li-left">Garden: 
+      <li class="li-left"><b>Garden: </b> 
         <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
           <b>{{ garden.name }}</b>
         </router-link>
       </li>
-      <li class="li-left">Location: <b>{{ watering.location}}</b></li>
-      <li class="li-left">Line: <b>{{ watering.line}}</b></li>
-      <li class="li-left">Target: <b>{{ watering.target}}</b></li>
-      <li class="li-left">Days: <b>{{ watering.days}}</b></li>
-      <li class="li-left">Start: <b>{{ formatTime(watering.start_time) }}</b></li>
-      <li class="li-left">End: <b>{{ formatTime(watering.end_time) }}</b></li>
-      <li class="li-left">Duration: <b>{{ watering.duration}}</b></li>
+      <li class="li-left"><b>Location: {{ watering.location}}</b></li>
+      <li class="li-left"><b>Line: {{ watering.line}}</b></li>
+      <li class="li-left"><b>Target: {{ watering.target}}</b></li>
+      <li class="li-left"><b>Days: {{ watering.days}}</b></li>
+      <li class="li-left"><b>Start: {{ formatTime(watering.start_time) }}</b></li>
+      <li class="li-left"><b>End: {{ formatTime(watering.end_time) }}</b></li>
+      <li class="li-left"><b>Duration: {{ watering.duration}}</b></li>
       <li class="li-left">
-        Status:
+        <b>Status: </b>
         <b :class="{ 'status-red': watering.status && watering.status.toLowerCase() !== 'active' }">
           {{ watering.status }}
         </b>
@@ -34,8 +34,8 @@
     <span v-if="watering.plants && watering.plants.length > 0">
       <p id="p-custom-left">Plants:</p>
       <span v-for="(plant, plantIndex) in watering.plants" :key="plantIndex ">
-        <ul class="ul-left">
-          <li>
+        <ul>
+          <li class="li-left">
             <router-link
               :to="{ name: 'PlantDetails', params: { id: `${plant.id}`} }"
             >

@@ -16,8 +16,8 @@
     <br/>
     <p id="p-custom-left">Waterings:</p>
     <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
-      <ul class="ul-left">
-        <li>
+      <ul>
+        <li class="li-left">
           <span v-if="watering.start_time && watering.end_time">
             <router-link
               :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
@@ -45,8 +45,8 @@
     <span v-if="garden.plants && garden.plants.length > 0">
       <p id="p-custom-left">Plants:</p>
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
-        <ul class="ul-left">
-          <li>
+        <ul>
+          <li class="li-left">
             <router-link
               :to="{ name: 'PlantDetails', params: { id: `${plant.id}`} }"
             >
@@ -64,29 +64,27 @@
       </router-link>
     </p>
     <br/>
-      <div id="spread">
+    <div id="spread" class="icon-actions">
       <span class="fa-stack">
         <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
           <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
         </router-link>
       </span>
-      <span v-if="$route.name == 'Gardens'">
+      <span class="fa-stack" v-if="$route.name == 'Gardens'">
         <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
           <i class="fa-solid fa-backward fa-stack-1x"></i>
         </router-link>
       </span>
-      <span v-else>
+      <span class="fa-stack" v-else>
         <router-link :to="{ name: 'Gardens' }">
           <i class="fa-solid fa-eye fa-stack-1x"></i>
         </router-link>
       </span>
       <span class="fa-stack">
-        <i @click="deleteGarden(garden)" class="fas fa-trash-alt fa-stack-1x">
-        </i>
+        <i @click="deleteGarden(garden)" class="fas fa-trash-alt fa-stack-1x"></i>
       </span>
     </div>
-
-  </div>
+</div>
 </template>
 <script setup>
 import { useStore } from 'vuex';
