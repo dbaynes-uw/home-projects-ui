@@ -2,24 +2,24 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div id="index-count-display">
     <span class="filtered-count">
-      Showing {{ sortedGardens.length }} Garden{{ sortedGardens.length === 1 ? '' : 's' }}
+      Showing {{ sortedPlants.length }} Plant{{ sortedPlants.length === 1 ? '' : 's' }}
     </span>
     <br/>
   </div>
   <v-table density="compact">
     <tr>
-      <th id="background-blue" @click="sortList('name')">Garden Name</th>
+      <th id="background-blue" @click="sortList('plant_name')">Plant Name</th>
       <th id="background-blue">Notes</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
-      <td>{{ garden.name }}</td>
-      <td>{{ garden.notes }}</td>
+    <tr v-for="plant in sortedPlants" :key="plant.id">
+      <td>{{ plant.plant_name }}</td>
+      <td>{{ plant.notes }}</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">
             <router-link
-              :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
+              :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
             >
               <i
                 id="travel-icon-edit"
@@ -29,14 +29,14 @@
             </router-link>
             <span class="fa-stack fa-table-stack">
               <router-link
-                :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }"
+                :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }"
               >
                 <i class="fa fa-eye" id="action-eye-icon"></i>
               </router-link>
             </span>
             <span class="fa-table-stack" id="action-delete-icon">
               <i
-                @click="deleteGarden(garden)"
+                @click="deletePlant(plant)"
                 class="fas fa-trash-alt fa-stack-1x"
                 id="travel-icon-delete"
               >
@@ -55,22 +55,34 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 //import DateFormatService from "@/services/DateFormatService.js";
 // Props
 const props = defineProps({
-  gardens: { type: Array, required: true }
+  plants: { type: Array, required: true }
 });
 // Emits
 const emit = defineEmits(['edit','delete']);
 const onlineStatus = ref(navigator.onLine);
-//const sortKey = ref('reading_date');
-//const sortAsc = ref(false);
+const sortKey = ref('plant_name');
+const sortAsc = ref(false);
 const inputSearchText = ref("");
-const sortedGardens = computed(() => {
-  return props.gardens.filter(garden => {
-    return garden.name.toLowerCase().includes(inputSearchText.value.toLowerCase()) ||
-           (garden.notes && garden.notes.toLowerCase().includes(inputSearchText.value.toLowerCase()));
+// Computed sorted plants
+const sortedPlants = computed(() => {
+  const arr = [...props.plants];
+  arr.sort((a, b) => {
+    if (a[sortKey.value] < b[sortKey.value]) return sortAsc.value ? -1 : 1;
+    if (a[sortKey.value] > b[sortKey.value]) return sortAsc.value ? 1 : -1;
+    return 0;
   });
+  return arr;
 });
-function deleteGarden(garden) {
-  emit('delete', garden);
+function sortList(key) {
+  if (sortKey.value === key) {
+    sortAsc.value = !sortAsc.value;
+  } else {
+    sortKey.value = key;
+    sortAsc.value = true;
+  }
+}
+function deletePlant(plant) {
+  emit('delete', plant);
 }
 </script>
 <style scoped>

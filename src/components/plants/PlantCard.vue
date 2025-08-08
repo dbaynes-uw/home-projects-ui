@@ -1,6 +1,5 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <span class="h3-left-total-child">Double click Item Below to Edit</span>
   <div class="card" v-bind="$attrs" @dblclick="emit('dblclick', plant)">
     <h4 id="p-custom-link">
       <router-link
@@ -13,7 +12,7 @@
       <li class="li-left"><b>Biological Name: {{ plant.biological_name }}</b></li>
       <li class="li-left"><b>Date Planted: {{ formatYearDate(plant.date_planted) }}</b></li>
       <li class="li-left"><b>Location: {{plant.yard_location }}</b></li>
-      <li class="li-left"><b><u>Water Line: 
+      <li class="li-left"><b><u>Watering: 
         <router-link
           :to="{ name: 'WateringDetails', params: { id: `${plant.watering_id}` } }"
         >
@@ -73,15 +72,12 @@
 <script setup>
 //let time = null;
 import { useStore } from 'vuex';
+import { computed } from "vue";
 import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-defineProps({
+const props = defineProps({
   plant: {
-    type: Object,
-    default: () => ({})
-  },
-  watering: {
     type: Object,
     default: () => ({})
   }
@@ -89,6 +85,7 @@ defineProps({
 const store = useStore();
 const router = useRouter();
 const emit = defineEmits(['dblclick']);
+const watering = computed(() => store.state.waterings.find(w => w.id === props.plant.watering_id));
 
 async function deletePlant(plant) {
   if (confirm(`Are you sure you want to delete ${plant.plant_name}? It cannot be undone.`)) {

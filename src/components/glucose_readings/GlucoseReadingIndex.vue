@@ -105,7 +105,6 @@ function deleteGlucoseReading(reading) {
 }
 
 function sortList(key) {
-  console.log("Sortlist Key: ", key)
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;
   } else {

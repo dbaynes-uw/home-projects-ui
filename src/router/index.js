@@ -324,7 +324,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/gardens/create_plant/:id",
+    path: "/gardens/create_plant",
     name: "PlantCreate",
     component: PlantCreate,
     meta: { requiresAuth: true}

@@ -174,6 +174,9 @@ export default new Vuex.Store({
     SET_PLANT(state, plant) {
       state.plant = plant;
     },
+    SET_PLANTS(state, plants) {
+      state.plants = plants;
+    },
     DELETE_PRODUCT(state, product) {
       state.product = product;
     },    
@@ -1342,6 +1345,9 @@ export default new Vuex.Store({
     },
     glucoseReadings(state) {
       return state.glucoseReadings || []; // Ensure it always returns an array
+    },
+    plants(state) {
+      return state.plants || []; // Ensure it always returns an array
     },
     waterings(state) {
       return state.waterings || []; // Ensure it always returns an array
