@@ -1343,6 +1343,9 @@ export default new Vuex.Store({
     glucoseReadings(state) {
       return state.glucoseReadings || []; // Ensure it always returns an array
     },
+    waterings(state) {
+      return state.waterings || []; // Ensure it always returns an array
+    },
     numberOfBooks(state) {
       return state.books.length
     },

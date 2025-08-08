@@ -1,29 +1,29 @@
 <template>
   <div>
     <span v-if="isSingle">
-      <h1>Garden Details</h1>
+      <h1>Watering Details</h1>
       <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Gardens' }">
-          <b>All Gardens</b>
+        <router-link :to="{ name: 'Waterings' }">
+          <b>All Waterings</b>
         </router-link>
       </button>
     </span>
     <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
     <br/>
     <div :class="['cards', { 'center-single': isSingle }]">
-      <GardenCard 
-        v-for="garden in filteredSortedGardens"
-        :key="garden.id"
-        :garden="garden"
-        @dblclick="editGarden"
+      <WateringCard 
+        v-for="watering in filteredSortedWaterings"
+        :key="watering.id"
+        :watering="watering"
+        @dblclick="editWatering"
       />
     </div>
-    <router-link v-if="isSingle" :to="{ name: 'Gardens' }">Back to List</router-link>
+    <router-link v-if="isSingle" :to="{ name: 'Waterings' }">Back to List</router-link>
   </div>
 </template>
 
 <script setup>
-import GardenCard from "@/components/gardens/GardenCard.vue";
+import WateringCard from "@/components/waterings/WateringCard.vue";
 import router from "@/router";
 import { ref, computed, onMounted,watch } from "vue";
 import { useRoute } from "vue-router";
@@ -32,57 +32,57 @@ import { useStore } from "vuex";
 const route = useRoute();
 const store = useStore();
 
-const gardens = ref(null);
+const waterings = ref(null);
 
 const isLoading = ref(true);
 const isSingle = computed(() => {
-  return Array.isArray(gardens.value) && gardens.value.length === 1;
+  return Array.isArray(waterings.value) && waterings.value.length === 1;
 });
 const filterStatus = ref(null);
-//const gardenStatuses = ['Active', 'Inactive']; // Add your statuses
+//const wateringStatuses = ['Active', 'Inactive']; // Add your statuses
 
 const sortOrder = ref('desc');
-//const gardenTypes = ['Vegetable', 'Flower', 'Herb']; // Add your types
-const filteredSortedGardens = computed(() => {
-  let gardenList = Array.isArray(gardens.value)
-    ? gardens.value.slice()
-    : (gardens.value ? [gardens.value] : []);
+//const wateringTypes = ['Vegetable', 'Flower', 'Herb']; // Add your types
+const filteredSortedWaterings = computed(() => {
+  let wateringList = Array.isArray(waterings.value)
+    ? waterings.value.slice()
+    : (waterings.value ? [waterings.value] : []);
   if (filterStatus.value) {
-    gardenList = gardenList.filter(garden => garden.status === filterStatus.value);
+    wateringList = wateringList.filter(watering => watering.status === filterStatus.value);
   }
-  gardenList.sort((a, b) => {
+  wateringList.sort((a, b) => {
     const dateA = new Date(a.start_time);
     const dateB = new Date(b.start_time);
     return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
   });
-  return gardenList;
+  return wateringList;
 });
-async function fetchGardens() {
-  await store.dispatch("fetchGardens");
-  gardens.value = store.getters.gardens;
+async function fetchWaterings() {
+  await store.dispatch("fetchWaterings");
+  waterings.value = store.getters.waterings;
 }
-async function fetchGarden() {
+async function fetchWatering() {
   isLoading.value = true;
   
-  await store.dispatch("fetchGarden", route.params.id);
+  await store.dispatch("fetchWatering", route.params.id);
   // If the store returns a single object, wrap it in an array for the card view
-  const garden = store.state.garden;
-  gardens.value = Array.isArray(garden) ? garden : (garden ? [garden] : []);
+  const watering = store.state.watering;
+  waterings.value = Array.isArray(watering) ? watering : (watering ? [watering] : []);
   isLoading.value = false;
 }
-function editGarden(garden) {
-  router.push({ name: 'GardenEdit', params: { id: garden.id } });
+function editWatering(watering) {
+  router.push({ name: 'WateringEdit', params: { id: watering.id } });
 }
 onMounted(() => {
   if (route.params.id && route.params.id !== '') {
-    fetchGarden();
+    fetchWatering();
   } else {
-    fetchGardens();
+    fetchWaterings();
   }
 });
-// Optional: If you can navigate to GardenDetails with a different id without remounting
+// Optional: If you can navigate to WateringDetails with a different id without remounting
 watch(() => route.params.id, (newId) => {
-  store.dispatch("fetchGarden", newId)
+  store.dispatch("fetchWatering", newId)
 })
 </script>
 <style scoped>

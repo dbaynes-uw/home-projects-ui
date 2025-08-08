@@ -1,29 +1,45 @@
 <template>
   <div>
     <span v-if="isSingle">
-      <h1>Garden Details</h1>
+      <h1>Plant Details</h1>
       <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Gardens' }">
-          <b>All Gardens</b>
+        <router-link :to="{ name: 'Plants' }">
+          <b>All Plants</b>
         </router-link>
       </button>
     </span>
+    <!--span v-if="!isSingle">
+      <div class="controls-bar">
+        <v-select
+          v-model="filterStatus"
+          :items="gardenStatuses"
+          label="Status"
+          clearable
+          class="filter-select"
+          density="compact"
+        />
+        <br/>
+        <span id="count-display" class="filtered-count">
+          Showing {{ filteredSortedGardens.length }} Garden{{ filteredSortedGardens.length === 1 ? '' : 's' }}
+        </span>
+      </div>
+    </!--span-->
     <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
     <br/>
     <div :class="['cards', { 'center-single': isSingle }]">
-      <GardenCard 
-        v-for="garden in filteredSortedGardens"
-        :key="garden.id"
-        :garden="garden"
-        @dblclick="editGarden"
+      <PlantCard 
+        v-for="plant in filteredSortedPlants"
+        :key="plant.id"
+        :plant="plant"
+        @dblclick="editPlant"
       />
     </div>
-    <router-link v-if="isSingle" :to="{ name: 'Gardens' }">Back to List</router-link>
+    <router-link v-if="isSingle" :to="{ name: 'Plants' }">Back to List</router-link>
   </div>
 </template>
 
 <script setup>
-import GardenCard from "@/components/gardens/GardenCard.vue";
+import PlantCard from "@/components/plants/PlantCard.vue";
 import router from "@/router";
 import { ref, computed, onMounted,watch } from "vue";
 import { useRoute } from "vue-router";
@@ -32,57 +48,57 @@ import { useStore } from "vuex";
 const route = useRoute();
 const store = useStore();
 
-const gardens = ref(null);
+const plants = ref(null);
 
 const isLoading = ref(true);
 const isSingle = computed(() => {
-  return Array.isArray(gardens.value) && gardens.value.length === 1;
+  return Array.isArray(plants.value) && plants.value.length === 1;
 });
 const filterStatus = ref(null);
-//const gardenStatuses = ['Active', 'Inactive']; // Add your statuses
+//const plantStatuses = ['Active', 'Inactive']; // Add your statuses
 
 const sortOrder = ref('desc');
 //const gardenTypes = ['Vegetable', 'Flower', 'Herb']; // Add your types
-const filteredSortedGardens = computed(() => {
-  let gardenList = Array.isArray(gardens.value)
-    ? gardens.value.slice()
-    : (gardens.value ? [gardens.value] : []);
+const filteredSortedPlants = computed(() => {
+  let plantList = Array.isArray(plants.value)
+    ? plants.value.slice()
+    : (plants.value ? [plants.value] : []);
   if (filterStatus.value) {
-    gardenList = gardenList.filter(garden => garden.status === filterStatus.value);
+    plantList = plantList.filter(plant => plant.status === filterStatus.value);
   }
-  gardenList.sort((a, b) => {
+  plantList.sort((a, b) => {
     const dateA = new Date(a.start_time);
     const dateB = new Date(b.start_time);
     return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
   });
-  return gardenList;
+  return plantList;
 });
-async function fetchGardens() {
-  await store.dispatch("fetchGardens");
-  gardens.value = store.getters.gardens;
+async function fetchPlants() {
+  await store.dispatch("fetchPlants");
+  plants.value = store.getters.plants;
 }
-async function fetchGarden() {
+async function fetchPlant() {
   isLoading.value = true;
-  
-  await store.dispatch("fetchGarden", route.params.id);
+
+  await store.dispatch("fetchPlant", route.params.id);
   // If the store returns a single object, wrap it in an array for the card view
-  const garden = store.state.garden;
-  gardens.value = Array.isArray(garden) ? garden : (garden ? [garden] : []);
+  const plant = store.state.plant;
+  plants.value = Array.isArray(plant) ? plant : (plant ? [plant] : []);
   isLoading.value = false;
 }
-function editGarden(garden) {
-  router.push({ name: 'GardenEdit', params: { id: garden.id } });
+function editPlant(plant) {
+  router.push({ name: 'PlantEdit', params: { id: plant.id } });
 }
 onMounted(() => {
   if (route.params.id && route.params.id !== '') {
-    fetchGarden();
+    fetchPlant();
   } else {
-    fetchGardens();
+    fetchPlants();
   }
 });
-// Optional: If you can navigate to GardenDetails with a different id without remounting
+// Optional: If you can navigate to PlantDetails with a different id without remounting
 watch(() => route.params.id, (newId) => {
-  store.dispatch("fetchGarden", newId)
+  store.dispatch("fetchPlant", newId)
 })
 </script>
 <style scoped>

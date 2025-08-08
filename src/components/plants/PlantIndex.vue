@@ -60,25 +60,15 @@ const props = defineProps({
 // Emits
 const emit = defineEmits(['edit','delete']);
 const onlineStatus = ref(navigator.onLine);
-const sortKey = ref('name');
-const sortAsc = ref(false);
+//const sortKey = ref('reading_date');
+//const sortAsc = ref(false);
+const inputSearchText = ref("");
 const sortedGardens = computed(() => {
-  const arr = [...props.gardens];
-  arr.sort((a, b) => {
-    if (a[sortKey.value] < b[sortKey.value]) return sortAsc.value ? -1 : 1;
-    if (a[sortKey.value] > b[sortKey.value]) return sortAsc.value ? 1 : -1;
-    return 0;
+  return props.gardens.filter(garden => {
+    return garden.name.toLowerCase().includes(inputSearchText.value.toLowerCase()) ||
+           (garden.notes && garden.notes.toLowerCase().includes(inputSearchText.value.toLowerCase()));
   });
-  return arr;
 });
-function sortList(key) {
-  if (sortKey.value === key) {
-    sortAsc.value = !sortAsc.value;
-  } else {
-    sortKey.value = key;
-    sortAsc.value = true;
-  }
-}
 function deleteGarden(garden) {
   emit('delete', garden);
 }

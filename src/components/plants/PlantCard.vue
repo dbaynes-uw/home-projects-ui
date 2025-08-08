@@ -46,7 +46,7 @@
           </i>
         </router-link>
         </td>
-        <td id="icon-block">
+        <!--td id="icon-block">
           <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
             <i
               id="card-medium-block-icon-eye"
@@ -54,7 +54,7 @@
             >
             </i>
           </router-link>
-        </td>
+        </!--td-->
         <td id="icon-block">
           <span class="fa-table-stack">
             <i

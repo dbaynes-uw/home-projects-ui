@@ -68,6 +68,7 @@ const emit = defineEmits(['edit','delete']);
 
 // State
 const onlineStatus = ref(navigator.onLine);
+
 const sortKey = ref('reading_date');
 const sortAsc = ref(false);
 
@@ -104,6 +105,7 @@ function deleteGlucoseReading(reading) {
 }
 
 function sortList(key) {
+  console.log("Sortlist Key: ", key)
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;
   } else {

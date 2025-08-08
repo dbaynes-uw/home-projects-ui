@@ -14,7 +14,11 @@
     <p id="p-custom-left">Notes:</p>
     <b class="li-left-none">{{ garden.notes }}</b>
     <br/>
-    <p id="p-custom-left">Waterings:</p>
+    <p id="p-custom-left">
+      <router-link :to="{ name: 'Waterings' }" >
+        Waterings:
+      </router-link>
+    </p>
     <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
       <ul>
         <li class="li-left">
@@ -37,7 +41,7 @@
     </span>
     <p id="p-custom-link">
       <router-link
-        :to="{ name: 'WateringCreate', params: { garden_id: `${garden.id}` } }"
+        :to="{ name: 'WateringCreate' }"
         >
           Add Watering
       </router-link>

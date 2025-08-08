@@ -80,9 +80,17 @@
           rows="3"
           cols="40"
         />
-        <button class="button" id="link-as-button" type="submit">
-          Submit
-        </button>
+       <!-- Action Buttons -->
+        <v-row>
+          <v-col cols="12">
+            <v-btn color="primary" type="submit" aria-label="Submit">
+              Update
+            </v-btn>
+            <v-btn color="secondary" :to="{ name: 'PlantDetails', params: { id: plant.id } }" aria-label="Go back to the plant details">
+              Back to Plant Details
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
     </form>
   </div>
@@ -132,7 +140,7 @@ export default {
   methods: {
     async updatePlant() {
       const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Garden Plant from List ",
+        title: "Update Garden Plant ",
         message:
           "Are you sure you want to update " + 
           this.plant.plant_name,

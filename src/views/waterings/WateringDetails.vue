@@ -2,31 +2,31 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>{{ watering.name }} Details</h2>
+      <h2>VIEW!!{{ watering.name }} Details</h2>
     </v-card-title>
     <ul>
-    <li class="left">
-      <button id="button-as-link">
-        <router-link :to="{ name: 'Gardens' }">
-          <b>Back to Gardens</b>
-        </router-link>
-      </button>
-    </li>
-    <li>
-      <button id="button-as-link">
-        <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-          <b>Garden Details</b>
-        </router-link>
-      </button>
-    </li>
-    <li>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'WateringList' }">
-          <b>All Waterings</b>
-        </router-link>
-      </button>
-    </li>
-  </ul> 
+      <li class="left">
+        <button id="button-as-link">
+          <router-link :to="{ name: 'Gardens' }">
+            <b>Back to Gardens</b>
+          </router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link">
+          <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
+            <b>Garden Details</b>
+          </router-link>
+        </button>
+      </li>
+      <li>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <router-link :to="{ name: 'Waterings' }">
+            <b>All Waterings</b>
+          </router-link>
+        </button>
+      </li>
+    </ul> 
   <br/>
   </v-card>
   <br/>

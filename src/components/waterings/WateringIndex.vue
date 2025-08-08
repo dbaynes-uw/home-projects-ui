@@ -1,10 +1,10 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total: {{ waterings.length }}</h3>
+  <h3 id="h3-left">Total: {{ sortedWaterings.length }} Watering{{ sortedWaterings.length === 1 ? '' : 's' }}</h3>
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('name')">Name</th>
-      <th id="background-blue" @click="sortList('name')">Target</th>
+      <th id="background-blue" @click="sortList('target')">Target</th>
       <th id="background-blue" @click="sortList('start_time')">Start</th>
       <th id="background-blue" @click="sortList('end_time')">End</th>
       <th id="background-blue" @click="sortList('location')">Location</th>
@@ -13,7 +13,7 @@
       <th id="background-blue">Notes</th>
       <th class="th-center" id="background-blue">Actions</th>
     </tr>
-    <tr v-for="watering in waterings" :key="watering.id" watering="watering">
+    <tr v-for="watering in sortedWaterings" :key="watering.id">
       <td>{{ watering.name }}</td>
       <td>{{ watering.target }}</td>
       <td>{{ formatTime(watering.start_time) }}</td>
@@ -53,97 +53,51 @@
     </tr>
   </v-table>
   <br />
-  <b>Online Status: {{ this.onlineStatus }}</b>
+  <b>Online Status: {{ onlineStatus }}</b>
 </template>
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-export default {
-  name: "WateringIndex",
-  props: ["waterings"],
-  components: {
-    ConfirmDialogue,
-  },
-  data() {
-    return {
-      inputSearchText: "",
-      onlineStatus: navigator.onLine,
-    };
-  },
-  methods: {
-    searchColumns() {
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.waterings &&
-          this.waterings.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.waterings.forEach((watering) => {
-            const searchHasWateringName =
-              watering.name &&
-              watering.name
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasNotes =
-              watering.notes &&
-              watering.notes
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasWateringName || searchHasNotes) {
-              this.filteredResults.push(watering);
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    sortList(sortBy) {
-      this.sortedData = this.waterings;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
-      } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
-      }
-    },
-    async deleteWatering(watering) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Watering from List",
-        message:
-          "Are you sure you want to delete " +
-          watering.name +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteWatering", watering);
-        this.statusMessage =
-          "Watering was Deleted for " +
-          watering.name +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-      }
-    },
-    formatTime(value) {
-      return DateFormatService.formatTimejs(value);
-    },
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
-    },
-  },
-};
+const props = defineProps({
+  waterings: { type: Array, required: true }
+});
+// Emits
+const emit = defineEmits(['edit','delete']);
+// State
+const onlineStatus = ref(navigator.onLine);
+
+const sortKey = ref('name');
+const sortAsc = ref(false);
+//?const inputSearchText = ref("");
+const sortedWaterings = computed(() => {
+  const arr = [...props.waterings];
+  arr.sort((a, b) => {
+    if (a[sortKey.value] < b[sortKey.value]) return sortAsc.value ? -1 : 1;
+    if (a[sortKey.value] > b[sortKey.value]) return sortAsc.value ? 1 : -1;
+    return 0;
+  });
+  console.log("ARR: ", arr)
+  return arr;
+});
+function sortList(key) {
+  console.log("Sortlist Key: ", key)
+  if (sortKey.value === key) {
+    sortAsc.value = !sortAsc.value;
+  } else {
+    sortKey.value = key;
+    sortAsc.value = true;
+  }
+}
+function deleteWatering(watering) {
+  emit('delete', watering);
+}
+function formatTime(value) {
+  if (!value) {
+    return '';
+  }
+  return DateFormatService.formatTimejs(value);
+}
 </script>
 <style scoped>
 #action-eye-icon {

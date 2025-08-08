@@ -1,6 +1,5 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <span class="h3-left-total-child">Double click Item Below to Edit</span>
   <div class="card" v-bind="$attrs" @dblclick="emit('dblclick', watering)">
     <h4>
       <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
@@ -92,7 +91,7 @@ const emit = defineEmits(['dblclick']);
 async function deleteWatering(watering) {
   if (confirm(`Are you sure you want to delete ${watering.name}? It cannot be undone.`)) {
     await store.dispatch("deleteWatering", watering);
-    router.push({ name: "WateringList" });
+    router.push({ name: "Waterings" });
   }
 }
 function formatTime(value) {

@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Waterings List</h2>
+      <h2>VIEW Waterings List</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
