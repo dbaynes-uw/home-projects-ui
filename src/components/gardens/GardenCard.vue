@@ -47,7 +47,12 @@
       </router-link>
     </p>
     <span v-if="garden.plants && garden.plants.length > 0">
-      <p id="p-custom-left">Plants:</p>
+      <router-link
+        :to="{ name: 'Plants' }"
+      >
+        <p id="p-custom-left">Plants:</p>
+      </router-link>
+
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
         <ul>
           <li class="li-left">
