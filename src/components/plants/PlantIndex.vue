@@ -62,7 +62,7 @@ const emit = defineEmits(['edit','delete']);
 const onlineStatus = ref(navigator.onLine);
 const sortKey = ref('plant_name');
 const sortAsc = ref(false);
-const inputSearchText = ref("");
+//const inputSearchText = ref("");
 // Computed sorted plants
 const sortedPlants = computed(() => {
   const arr = [...props.plants];
