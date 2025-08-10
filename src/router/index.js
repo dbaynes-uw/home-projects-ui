@@ -59,7 +59,7 @@ import UserList from "../views/users/UserList.vue";
 import WateringCreate from "@/views/waterings/WateringCreate.vue";
 import Waterings from "../views/waterings/Waterings.vue";
 import WateringEdit from "@/views/waterings/WateringEdit.vue";
-import WateringDetails from "@/views/waterings/WateringDetails.vue";
+import WateringDetails from "@/components/waterings/WateringDetails.vue";
 import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
