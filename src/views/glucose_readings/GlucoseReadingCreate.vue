@@ -53,34 +53,22 @@
         <v-col cols="12" md="6" id="bullet-style">
           <v-list dense>
             <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title><span class="text-green">Fasting: Good 70-99 mg/dl</span></v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title><span class="text-green">Fasting: Good 70-99 mg/dl</span></v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title><span class="text-blue">Fasting: Prediabetes 100-125 mg/dl</span></v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title><span class="text-blue">Fasting: Prediabetes 100-125 mg/dl</span></v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title><span class="text-red">Fasting: Type 2 Diabetes 126+ mg/dl</span></v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title><span class="text-red">Fasting: Type 2 Diabetes 126+ mg/dl</span></v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title><span class="text-green">NonFasting: Good 80-140 mg/dl</span></v-list-item-title>
-              </v-list-item-content>
+              <v-list-item-title><span class="text-green">NonFasting: Good 80-140 mg/dl</span></v-list-item-title>
             </v-list-item>
-            <v-list-item>              
-              <v-list-item-content>
-               <v-list-item-title><span class="text-blue">NonFasting: Prediabetes 140-200 mg/dl</span></v-list-item-title>
-              </v-list-item-content>
+            <v-list-item>
+              <v-list-item-title><span class="text-blue">NonFasting: Prediabetes 140-200 mg/dl</span></v-list-item-title>
             </v-list-item>
-            <v-list-item>              
-              <v-list-item-content>
-               <v-list-item-title><span class="text-red">NonFasting: Type 2 Diabetes 200+ mg/dl</span></v-list-item-title>
-              </v-list-item-content>
+            <v-list-item>
+              <v-list-item-title><span class="text-red">NonFasting: Type 2 Diabetes 200+ mg/dl</span></v-list-item-title>
             </v-list-item>
           </v-list>
         </v-col>
@@ -110,12 +98,10 @@
     </v-form>
   </v-container>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-
   const store = useStore();
   const router = useRouter();
   // Reactive variables for form inputs

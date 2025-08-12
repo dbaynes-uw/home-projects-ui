@@ -1,90 +1,114 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h3>Add Garden</h3>
-    </v-card-title>
-  </v-card>
-  <router-link :to="{ name: 'Gardens' }">
-      <b>Back to Gardens</b>
+  <v-container>
+    <h1>Add Garden</h1>
+    <router-link :to="{ name: 'Gardens' }">
+      <h3><b>Back to Gardens</b></h3>
     </router-link>
-  <v-card-text>
-    <v-form @submit.prevent="onSubmit">
-      <v-container id="form-container">
-        <v-text-field
-          v-model="garden.name"
-          :rules="[requiredGardenName]"
-          label="Garden Name"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Notes" v-model="garden.notes">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
-          </template>
-        </v-text-field>
-        <v-btn type="submit" block class="mt-2">Submit</v-btn>
-        <!--button type="submit" block class="mt-2">Submit</~button-->
-      </v-container>
+    <br/>
+    <v-form @submit.prevent="createGarden" ref="form">
+      <v-row>
+        <!-- Garden Name Input -->
+         <v-col cols="12">
+           <v-text-field
+             v-model="garden.name"
+             :rules="[requiredGardenName]"
+             label="Garden Name"
+             class="wide-input"
+           >
+            <template v-slot:prepend-inner>
+              <v-icon class="icon-css">mdi-magnify</v-icon>
+            </template>
+          </v-text-field>
+        </v-col>
+        <v-col cols="12">
+          <v-textarea label="Notes"
+            v-model="garden.notes"
+            class="wide-input"
+          >
+            <template v-slot:prepend-inner>
+              <v-icon class="icon-css">mdi-note</v-icon>
+            </template>
+          </v-textarea>
+        </v-col>
+      </v-row>
+      <!-- Action Buttons -->
+      <v-row>
+        <v-col cols="12">
+          <v-btn color="primary" type="submit" aria-label="Submit">
+            Create
+          </v-btn>
+          <v-btn color="secondary" :to="{ name: 'Gardens' }" aria-label="Go back to the gardens list">
+            Back to List
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-form>
-  </v-card-text>
+  </v-container>
 </template>
-<script>
-import { v4 as uuidv4 } from "uuid";
-export default {
-  components: {},
-  data() {
-    return {
-      garden: {
-        name: null,
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      isGardenNameValid: false,
-    };
-  },
-  methods: {
-    onSubmit() {
-      this.checkValidations();
-      if (this.isFormValid) {
-        const garden = {
-          ...this.garden,
-          id: uuidv4(),
-          created_by: this.$store.state.user.resource_owner.email,
-        };
-        if (this.$store.dispatch("createGarden", garden)) {
-          this.$router.push({ name: "Gardens" });
-        } else {
-          alert("Error adding Garden Name" + garden.name);
-        } 
-      } else {
-        alert("Please correct required fields and resubmit");
-      }
-    },
-    requiredGardenName: function (value) {
-      if (value) {
-          this.isGardenNameValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isGardenNameValid = false
-          return 'Please enter Garden Name';
-      }
-    },
-    checkValidations() {
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { v4 as uuidv4 } from 'uuid';
+  const store = useStore();
+  const router = useRouter();
+  
+  import { reactive } from 'vue';
 
-      if (this.isGardenNameValid ) {
-        this.isFormValid = true
+  const garden = reactive({
+    name: '',
+    notes: '',
+    created_by: '',
+    status: '',
+  });
+
+  const isGardenNameValid = ref(false),
+  isFormValid = ref(false);
+
+  const createGarden = async () => {
+    checkValidations();
+    if (isFormValid.value) {
+      const gardenData = {
+        id: uuidv4(),
+        name: garden.name,
+        notes: garden.notes,
+        status: garden.status,
+        created_by: store.state.user.resource_owner.email,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      await store.dispatch("createGarden", gardenData);
+      if (store.state.garden) {
+        router.push({ name: "Gardens" });
       } else {
-        this.isFormValid = false
+        alert("Error adding Garden Name" + garden.name);
       }
+    } else {
+      alert("Please correct required fields and resubmit");
     }
-  },
-};
+  };
+  const requiredGardenName = (value) => {
+    if (value) {
+      isGardenNameValid.value = true;
+      return true;
+    } else {
+      isFormValid.value = false;
+      isGardenNameValid.value = false;
+      return 'Please enter Garden Name';
+    }
+  };
+  const checkValidations = () => {
+    if (isGardenNameValid.value) {
+      isFormValid.value = true;
+    } else {
+      isFormValid.value = false;
+    }
+  };
+  onMounted(() => {
+    //garden.value.created_by = store.state.user.resource_owner.email;
+  });
 </script>
 <style lang="css">
-
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
@@ -102,10 +126,6 @@ export default {
 .v-icon {
   color: darkslategrey;
   top: -0.2rem;
-}
-#form-container {
-  text-align: left;
-  width: 75% !important;
 }
 [type="checkbox"],
 #notes {

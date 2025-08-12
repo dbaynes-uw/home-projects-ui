@@ -130,6 +130,9 @@ export default new Vuex.Store({
     ADD_GARDEN(state, garden) {
       state.gardens.push(garden);
     },
+    DELETE_GARDEN(state, garden) {
+      state.gardens.push(garden);
+    },
     ADD_GLUCOSE_READING(state, reading) {
       //state.glucoseReadings.push(reading);
       // Optionally update the glucoseResult if needed
@@ -672,6 +675,16 @@ export default new Vuex.Store({
         .catch((error) => {
           alert("Garden Post Error: ", error.response.data )
         });
+    },
+        async deleteGarden({ commit }, garden) {
+      console.log("Deleting garden with ID:", garden.id);
+      try {
+        await EventService.deleteGarden(garden);
+        commit("DELETE_GARDEN", garden);
+        alert("Garden " + garden.name + " was deleted.");
+      } catch (error) {
+        alert("Garden Delete Error: " + (error.response?.data || error.message));
+      }
     },
     async updateGarden({ commit }, garden) {
       EventService.putGarden(garden)

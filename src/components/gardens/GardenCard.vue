@@ -112,7 +112,7 @@ const emit = defineEmits(['dblclick']);
 async function deleteGarden(garden) {
   if (confirm(`Are you sure you want to delete ${garden.name}? It cannot be undone.`)) {
     await store.dispatch("deleteGarden", garden);
-    router.push({ name: "GlucoseReadings" });
+    router.push({ name: "Gardens" });
   }
 }  
 function formatTime(value) {

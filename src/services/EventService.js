@@ -151,7 +151,12 @@ export default {
     this.init();
     return axios.post(api_url + 'golfs', golf);
   },
-
+  deleteGarden(garden) {
+    this.init();
+    console.log("Deleting garden with ID:", garden.id);
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "gardens/" + `${garden.id}`);
+  },
   async postGarden(garden) {
     this.init();
     return axios.post(api_url + 'gardens', garden);
