@@ -221,11 +221,6 @@ export default {
     this.init();
     return axios.post(api_url + 'meds', med);
   },
-  deleteOutlet(outlet) {
-    this.init();
-    // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "outlets/" + `${outlet.id}`);
-  },
   deletePlant(plant) {
     this.init();
     // For Testing: setTimeout(5000);
@@ -239,18 +234,6 @@ export default {
   getPlants(garden) {
     this.init();
     return axios.get(api_url + "plants",`${garden}`);
-  },
-  async getGardenOutlet(garden) {
-    this.init();
-    return axios.get(api_url + "gardens/garden_outlet", `${garden}`)
-  },
-  async getOutletsDisplayGroup() {
-    this.init();
-    return axios.get(api_url + "outlets_display_group")
-  },
-  async getOutletsHash() {
-    this.init();
-    return axios.get(api_url + "outlets_hash")
   },
   async postPlant(plant) {
     this.init();
@@ -408,10 +391,6 @@ export default {
     this.init();
     return axios.put(api_url + "waterings" + `/${updatedWatering.id}`, updatedWatering);
   },
-  async postWateringOutlet(watering_outlet) {
-    this.init();
-    return axios.post(api_url + 'outlets', watering_outlet);
-  },
   async getWatering(id) {
     this.init();
     return axios.get(api_url + "waterings/" + id)
@@ -428,17 +407,5 @@ export default {
     this.init();
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "waterings/" + `${watering.id}`);
-  },
-  getOutlet(id) {
-    this.init();
-    return axios.get(api_url + "outlets/" + id);
-  },
-  async putOutlet(updatedOutlet) {
-    this.init();
-    return axios.put(api_url + "outlets" + `/${updatedOutlet.id}`, updatedOutlet);
-  },
-  getOutletDetailsByName(name) {
-    this.init();
-    return axios.get(api_url + "outlets/get_plant_watering_outlet/" + `?name=${name}`);
   },
 };

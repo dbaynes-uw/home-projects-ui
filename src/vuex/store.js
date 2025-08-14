@@ -1325,11 +1325,11 @@ export default new Vuex.Store({
         });
     },
 
-    async fetchWatering({ commit, state }, id) {
-      const existingWatering = state.waterings.find((watering) => watering.id === id);
-      if (existingWatering) {
-        commit("SET_WATERING", existingWatering);
-      } else {
+    async fetchWatering({ commit }, id) {
+      //const existingWatering = state.waterings.find((watering) => watering.id === id);
+      //if (existingWatering) {
+      //  commit("SET_WATERING", existingWatering);
+      //} else {
         EventService.getWatering(id)
           .then((response) => {
             commit("SET_WATERING", response.data);
@@ -1338,7 +1338,7 @@ export default new Vuex.Store({
           .catch((error) => {
             alert("Watering Fetch Error", error.data)
           });
-      }
+      //}
     },
 
     async fetchWaterings({ commit }) {

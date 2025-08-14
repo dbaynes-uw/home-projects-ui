@@ -108,22 +108,8 @@ export default {
   created() {
     this.$store.dispatch("fetchPlant", this.id);
     //this.$store.dispatch("fetchGarden", this.id);
-    //this.$store.dispatch("fetchOutletsDisplayGroup");
-    //this.$store.dispatch("fetchOutletsHash");
   },
   computed: {
-    showOutletName:{
-      get(){
-       var outletName = ""
-       for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
-         if (this.plant.outlet_id == this.outletsHash.outletsHash[i].id) {
-           outletName = this.outletsHash.outletsHash[i].outlet_name
-           i = 99
-         }
-       }
-       return outletName
-      },
-    },
     plant() {
       return this.$store.state.plant;
     },
@@ -148,7 +134,6 @@ export default {
       });
       // If you throw an error, the method will terminate here unless you surround it wil try/catch
       if (ok) {
-        //this.plant.outlet_id = this.getOutletId(this.outlet_id)
         const plant = {
           ...this.plant,
           updated_by: this.$store.state.created_by,
@@ -160,16 +145,6 @@ export default {
         alert("Plant Update Error Code ");
       }
     },
-    getOutletId(name_to_id) {
-      var outletId = ""
-      for (let i=0; i < this.outletsHash.outletsHash.length; i++) {
-        if (name_to_id == this.outletsHash.outletsHash[i].outlet_name) {
-          outletId = this.outletsHash.outletsHash[i].id
-          i = 99
-        }
-      }
-      return outletId
-    }
   },
 };
 </script>

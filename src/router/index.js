@@ -233,7 +233,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/gardens/:id",
+    path: "/gardens/:id?",
     name: "GardenDetails",
     props: true,
     component: () => import('@/components/gardens/GardenDetails.vue'),
@@ -252,7 +252,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/glucose_readings/:id",
+    path: "/glucose_readings/:id?",
     name: "GlucoseReadingDetails",
     props: true,
     component: () => import('@/components/glucose_readings/GlucoseReadingDetails.vue'),
@@ -336,15 +336,6 @@ const routes = [
     name: "ProductsLocationList",
     meta: { requiresAuth: true}
   },
-  /*
-  {
-    path: "/get_plant_watering_outlet/:outlet_details_by_name",
-    name: "OutletDetailsByName",
-    props: true,
-    component: OutletDetailsByName,
-    meta: { requiresAuth: true}
-  },
-  */
   {
     path: "/products",
     name: "ProductList",
@@ -484,7 +475,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/plants/:id",
+    path: "/plants/:id?",
     name: "PlantDetails",
     props: true,
     component: PlantDetails,
@@ -500,7 +491,7 @@ const routes = [
   {
     path: "/waterings",
     name: "Waterings",
-    component: Waterings,
+    component: Waterings, // Use the imported component
     meta: { requiresAuth: true}
   },
   {
@@ -511,7 +502,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/waterings/:id",
+    path: "/waterings/:id", // <-- Add ? to make id optional
     name: "WateringDetails",
     props: true,
     component: WateringDetails,

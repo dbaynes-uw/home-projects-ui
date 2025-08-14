@@ -3,7 +3,7 @@
     <v-card class="mx-auto mt-5">
       <v-card-title>
         <h2>Plants</h2>
-        <router-link :to="{ name: 'PlantCreate' }">Create New Plant</router-link>
+        <!--router-link :to="{ name: 'PlantCreate' }">Create New Plant</!--router-link-->
       </v-card-title>
     </v-card>
     <div class="plant-details">

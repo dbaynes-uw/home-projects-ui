@@ -21,6 +21,7 @@
       <td>{{ watering.location }}</td>
       <td>{{ watering.days }}</td>
       <td>{{ watering.notes }}</td>
+      <td>{{ watering.name }} (ID: {{ watering.id || 'UNDEFINED' }})</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">
@@ -34,9 +35,7 @@
               </i>
             </router-link>
             <span class="fa-stack fa-table-stack">
-              <router-link
-                :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
-              >
+              <router-link :to="{ name: 'Waterings' }">
                 <i class="fa fa-eye" id="action-eye-icon"></i>
               </router-link>
             </span>
@@ -77,11 +76,9 @@ const sortedWaterings = computed(() => {
     if (a[sortKey.value] > b[sortKey.value]) return sortAsc.value ? 1 : -1;
     return 0;
   });
-  console.log("ARR: ", arr)
   return arr;
 });
 function sortList(key) {
-  console.log("Sortlist Key: ", key)
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;
   } else {

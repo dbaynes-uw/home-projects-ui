@@ -6,7 +6,10 @@ import "./assets/global.css";
 import router from "./router";
 import store from "./vuex/store.js";
 import "./plugins/vuetify";
-import vuetify from "./plugins/vuetify";
+import { createVuetify } from 'vuetify'
+const vuetify = createVuetify({
+  // config
+})
 //import { VuelidatePlugin } from '@vuelidate/core'
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
@@ -45,6 +48,6 @@ createApp({
   .use(store)
   .use(createPinia())
   .use(vuetify)
-  .use("v-select", vSelect)
+  .component("v-select", vSelect)
   .mount("#app")
 

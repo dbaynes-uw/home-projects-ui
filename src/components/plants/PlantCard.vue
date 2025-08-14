@@ -13,9 +13,11 @@
       <li class="li-left"><b>Date Planted: {{ formatYearDate(plant.date_planted) }}</b></li>
       <li class="li-left"><b>Location: {{plant.yard_location }}</b></li>
       <li class="li-left"><b><u>Watering: 
-        <router-link
-          :to="{ name: 'WateringDetails', params: { id: `${plant.watering_id}` } }"
-        >
+            <router-link
+              :to="watering.id ? 
+                { name: 'WateringDetails', params: { id: `${watering.id}` } } : 
+                { name: 'WateringDetails' }"
+            >
           {{ watering.name}}
         </router-link>
          </u></b></li>    

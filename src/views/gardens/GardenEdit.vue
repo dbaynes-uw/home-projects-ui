@@ -1,46 +1,56 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <h1>Edit Garden {{ garden.name }}</h1>
+  <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+    <b>Garden Details</b>
+  </router-link>
   <br/>
-  <div class="edit">
-    <h2>Edit Garden {{ garden.name }}</h2>
-    <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-      <b>Garden Details</b>
-    </router-link>
+  <router-link :to="{ name: 'Gardens' }">
+    <b>Back to Gardens</b>
+   </router-link>
     <br/>
-    <router-link :to="{ name: 'Gardens' }">
-      <b>Back to Gardens</b>
-    </router-link>
-    <br/>
-    <br/>
-    <form class="form-card-display" @submit.prevent="updateGarden">
-      <div class="form-container">
-        <v-text-field
-          label="Garden Name"
-          v-model="garden.name"
-        /> 
-        <span v-if="garden.status">
-          <h3 id="p-custom-left">Current Status: {{ garden.status }}</h3>
-        </span>
-        <v-select
-          v-model="status"
-          :items="ACTIVE_STATUSES"
-          label="Select Status to Change"
-        />
-        <br/>
+    <v-form @submit.prevent="updateGarden">
+    <ConfirmDialogue ref="confirmDialogue" />
+       <v-row>
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="garden.name"
+            label="Garden Name"
+            outlined
+            required
+            aria-label="Enter the name of the garden"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="6">
+          <span v-if="garden.status">
+            <h3 id="p-custom-left">Current Status: {{ garden.status }}</h3>
+          </span>
+          <v-select
+            v-model="status"
+            :items="ACTIVE_STATUSES"
+            label="Select Status to Change"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
         <v-textarea
           label="Notes"
           v-model="garden.notes"
           rows="3"
           cols="40"
         />
-        <br/>
-        <br/>
-        <button class="button" id="link-as-button" type="submit">
-          Submit
-        </button>
-      </div>
-    </form>
-  </div>
+      </v-row>
+      <!-- Action Buttons -->
+      <v-row>
+        <v-col cols="12">
+          <v-btn color="primary" type="submit" aria-label="Update the Garden">
+            Update
+          </v-btn>
+          <v-btn color="secondary" :to="{ name: 'Gardens' }" aria-label="Go back to the Gardens list">
+            Back to List
+          </v-btn>
+        </v-col>
+      </v-row>
+  </v-form>
 </template>
 <script setup>
 import { ACTIVE_STATUSES } from "@/services/constants";

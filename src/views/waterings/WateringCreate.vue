@@ -1,165 +1,178 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h3>Add Watering System for {{ garden.name }}</h3>
-    </v-card-title>
-    <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-      <b>Back to Garden</b>
-    </router-link>
-    <br/>
-    <router-link :to="{ name: 'Gardens' }">
-      <b>Back to Gardens</b>
-    </router-link>
-  </v-card>
-  <v-card-text>
-    <v-form @submit.prevent="onSubmit">
-      <v-container id="form-container">
-        <v-text-field
-          v-model="watering.name"
-          :rules="[requiredWateringName]"
-          label="Watering Name"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-
-        <v-text-field
-          v-model="watering.location"
-          label="Location"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-        
-        <v-text-field
-          v-model="watering.line"
-          label="Line"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-
-        <v-text-field
-          v-model="watering.target"
-          label="Target"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-
-        <v-text-field label="Start Time"
-          v-model="watering.start_time"
-          type="time">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-
-        <v-text-field label="End Time"
-          v-model="watering.end_time"
-          type="time">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-
-        <v-text-field
-          v-model="watering.days"
-          label="Days"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-
-        <v-text-field label="Notes" v-model="watering.notes">
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
-          </template>
-        </v-text-field>
-        <v-btn type="submit" block class="mt-2">Submit</v-btn>
-        <!--button type="submit" block class="mt-2">Submit</~button-->
-      </v-container>
+  <v-container>
+    <h1>Add Watering System for {{ garden.name }}</h1>
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card class="mx-auto mt-5">
+          <v-card-text>
+            <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
+              <h2><b>Back to Garden</b></h2>
+            </router-link>
+            <router-link :to="{ name: 'Gardens' }">
+              <h2><b>Back to Gardens</b></h2>
+            </router-link>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-form @submit.prevent="createWatering" ref="form">
+      <v-row>   
+        <!-- Watering Name Input -->
+        <v-col cols="12">
+          <v-text-field
+            v-model="watering.name"
+            :rules="[requiredWateringName]"
+            label="Watering Name"
+            outlined
+            required
+            aria-label="Enter the name of the watering system"
+          ></v-text-field>
+        </v-col>
+        <!-- Location Input -->
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="watering.location"
+            label="Location"
+            outlined
+            aria-label="Enter the location of the watering system"
+          ></v-text-field>
+        </v-col>
+        <!-- Line Input -->
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="watering.line"
+            label="Line"
+            outlined
+            aria-label="Enter the line of the watering system"
+          ></v-text-field>
+        </v-col>
+        <!-- Target Input -->
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="watering.target"
+            label="Target"
+            outlined
+            aria-label="Enter the target of the watering system"
+          ></v-text-field>
+        </v-col>
+        <!-- Start Time Input -->
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="watering.start_time"
+            label="Start Time"
+            type="time"
+            outlined
+            aria-label="Enter the start time for the watering system"
+          ></v-text-field>
+        </v-col>
+        <!-- End Time Input -->
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="watering.end_time"
+            label="End Time"
+            type="time"
+            outlined
+            aria-label="Enter the end time for the watering system"
+          ></v-text-field>
+        </v-col>
+        <!-- Days Input -->
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="watering.days"
+            label="Days (e.g., Mon,Tue,Wed)"
+            outlined
+            aria-label="Enter the days for the watering system (e.g., Mon,Tue,Wed)"
+          ></v-text-field>
+        </v-col>
+        <!-- Notes Input -->
+        <v-col cols="12">
+          <v-textarea label="Notes" v-model="watering.notes">
+            <template v-slot:prepend-inner>
+              <v-icon class="icon-css">mdi-note</v-icon>
+            </template>
+          </v-textarea>
+        </v-col>
+      </v-row>
+      <!-- Action Buttons -->
+      <v-row>
+        <v-col cols="12">
+          <v-btn color="primary" type="submit" aria-label="Submit">
+            Create
+          </v-btn>
+          <v-btn color="secondary" :to="{ name: 'WateringDetails' }" aria-label="Go back to the Waterings list">
+            Back to Waterings
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-form>
-  </v-card-text>
+  </v-container>
 </template>
-<script>
-import { v4 as uuidv4 } from "uuid";
-export default {
-  props: ["id","garden_id"],
-  components: {},
-  data() {
-    return {
-      watering: {
-        id: null,
-        garden_id: null,
-        name: "",
-        location: "",
-        target: "",
-        line: "",
-        start_time: "",
-        end_time: "",
-        duration: "",
-        days: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      isFormValid: false,
-      isWateringNameValid: false,
-    };
-  },
-  created() {
-    this.$store.dispatch("fetchGarden", this.garden_id);
-  },
-  computed: {
-    garden() {
-      return this.$store.state.garden;
-    },
-  },
-  methods: {
-    async onSubmit() {
-      this.checkValidations();
-      if (!this.isFormValid) {
-        alert("Please fill in all required fields.");
-        return;
-      }
-      const watering = {
-        ...this.watering,
-        id: uuidv4(),
-        garden_id: this.garden.id,
-        created_by: this.$store.state.user.resource_owner.email,
-      };
-      await this.$store.dispatch("createWatering", watering)
-      // wait 3 seconds before redirecting
-      //setTimeout(() => {
-        this.$store.dispatch("fetchGarden", this.garden.id);
-        this.$router.push({ name: 'GardenDetails', params: { id: this.garden.id } });
-      //}, 5000);
-    },
-    requiredWateringName: function (value) {
-      if (value) {
-          this.isWateringNameValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isWateringNameValid = false
-          return 'Please enter Watering Name';
-      }
-    },
-    checkValidations() {
-      console.log("this.garden.id: ", this.garden.id)
-      if (this.isWateringNameValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-    }
-  },
-};
+<script setup>
+//import { v4 as uuidv4 } from "uuid";
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+//import { f } from "vue-numeric-input";
+const store = useStore();
+const router = useRouter();
+// Reactive variables for form inputs
+const watering = ref({
+  garden_id: null,
+  name: "",
+  location: "",
+  target: "",
+  line: "",
+  start_time: "",
+  end_time: "",
+  duration: "",
+  days: "",
+  notes: "",
+  created_by: store.state.user.resource_owner.email,
+});
+const isFormValid = ref(false);
+const isWateringNameValid = ref(false);
+const garden = computed(() => store.state.garden);
+
+//xonMounted(() => {
+//x  store.dispatch("fetchGarden", route.params.id)
+//x})
+function requiredWateringName(value) {
+  if (value) {
+    isWateringNameValid.value = true;
+    return true;
+  } else {
+    isFormValid.value = false;
+    isWateringNameValid.value = false;
+    return 'Please enter Watering Name';
+  }
+}
+
+function checkValidations() {
+  if (isWateringNameValid.value) {
+    isFormValid.value = true;
+  } else {
+    isFormValid.value = false;
+  }
+}
+
+async function createWatering() {
+  checkValidations();
+  if (!isFormValid.value) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+  const newWatering = {
+    ...watering.value,
+    //id: uuidv4(),
+    //Tgarden_id: garden.value.id,
+    created_by: store.state.user.resource_owner.email,
+  };
+  await store.dispatch("createWatering", newWatering);
+  //await store.dispatch("fetchGarden", garden.value.id);
+  //router.push({ name: 'GardenDetails', params: { id: garden.value.id } });
+  //router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
+  router.push({ name: 'Waterings' });
+}
 </script>
 <style lang="css">
 

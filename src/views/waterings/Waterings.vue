@@ -27,6 +27,7 @@
           v-else
           @edit="editWatering"
           @delete="handleDeleteWatering"
+          @dblclick="editWatering"
         />
         
       </template>

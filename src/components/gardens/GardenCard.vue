@@ -20,7 +20,7 @@
       </router-link>
     </p>
     <span v-for="watering, wateringIndex in garden.waterings" :key="wateringIndex">
-      <ul>
+     <ul>
         <li class="li-left">
           <span v-if="watering.start_time && watering.end_time">
             <router-link
@@ -65,13 +65,13 @@
         </ul>          
       </span>
     </span>
-    <p id="p-custom-link">
+    <!--p id="p-custom-link">
       <router-link
         :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
       >
         Add Plant
       </router-link>
-    </p>
+    </!--p-->
     <br/>
     <div id="spread" class="icon-actions">
       <span class="fa-stack">
