@@ -1306,8 +1306,13 @@ export default new Vuex.Store({
     async createWatering({ commit, dispatch }, watering) {
       EventService.postWatering(watering)
         .then(async () => {
-          commit("SET_WATERING", watering);
-          await dispatch("fetchGarden", watering.garden_id);
+          commit("ADD_WATERING", watering);
+          //OLD: await dispatch("fetchGarden", watering.garden_id);
+          if (watering.garden_id) {
+            await dispatch("fetchGarden", watering.garden_id);
+          } else {
+            await dispatch("fetchWaterings");
+          }      
           alert("Watering was successfully added for " + watering.name);
         })
         .catch((error) => {

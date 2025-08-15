@@ -7,10 +7,14 @@
         </router-link>
     </h4>
     <ul>
-      <li class="li-left"><b>Garden: </b> 
+      <li v-if="watering.garden_id && garden" class="li-left">
+        <b>Garden: </b> 
         <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
           <b>{{ garden.name }}</b>
         </router-link>
+      </li>
+      <li v-else class="li-left">
+        <b>Garden: TBD</b>
       </li>
       <li class="li-left"><b>Location: {{ watering.location}}</b></li>
       <li class="li-left"><b>Line: {{ watering.line}}</b></li>
@@ -84,7 +88,12 @@ const props = defineProps({
   },
 });
 const store = useStore();
-const garden = computed(() => store.state.gardens.find(g => g.id === props.watering.garden_id));
+const garden = computed(() => {
+  if (!props.watering.garden_id) {
+    return null;
+  }
+  return store.state.gardens.find(g => g.id === props.watering.garden_id);
+});
 //const plants = computed(() => store.state.plants.filter(p => p.watering_id === props.watering.id));
 const router = useRouter();
 const emit = defineEmits(['dblclick']);

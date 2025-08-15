@@ -10,7 +10,7 @@
       <b>Watering Details</b>
     </router-link>
     <br/>
-    <router-link :to="{ name: 'WateringDetails' }">
+    <router-link :to="{ name: 'Waterings' }">
       <b>Back to Watering List</b>
     </router-link>
     <br/><br/>
