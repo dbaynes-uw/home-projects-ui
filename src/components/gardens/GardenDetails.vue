@@ -25,65 +25,45 @@
 <script setup>
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import router from "@/router";
-import { ref, computed, onMounted,watch } from "vue";
-import { useRoute } from "vue-router";
-import { useStore } from "vuex";
+import { ref, computed} from "vue";
 
-const route = useRoute();
-const store = useStore();
-
-const gardens = ref(null);
-
-const isLoading = ref(true);
-const isSingle = computed(() => {
-  return Array.isArray(gardens.value) && gardens.value.length === 1;
+// Define the props
+const props = defineProps({
+  gardens: {
+    type: Array,
+    required: true
+  }
 });
-const filterStatus = ref(null);
-//const gardenStatuses = ['Active', 'Inactive']; // Add your statuses
 
+//const isLoading = ref(false); // No loading needed since parent handles it
+const filterStatus = ref(null);
 const sortOrder = ref('desc');
-//const gardenTypes = ['Vegetable', 'Flower', 'Herb']; // Add your types
+
+// Use props.gardens instead of gardens.value
+const isSingle = computed(() => {
+  return Array.isArray(props.gardens) && props.gardens.length === 1;
+});
 const filteredSortedGardens = computed(() => {
-  let gardenList = Array.isArray(gardens.value)
-    ? gardens.value.slice()
-    : (gardens.value ? [gardens.value] : []);
+  // Use props.gardens instead of gardens.value
+  let gardenList = Array.isArray(props.gardens)
+    ? props.gardens.slice()
+    : (props.gardens ? [props.gardens] : []);
+    
   if (filterStatus.value) {
     gardenList = gardenList.filter(garden => garden.status === filterStatus.value);
   }
+  
   gardenList.sort((a, b) => {
     const dateA = new Date(a.start_time);
     const dateB = new Date(b.start_time);
     return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
   });
+  
   return gardenList;
 });
-async function fetchGardens() {
-  await store.dispatch("fetchGardens");
-  gardens.value = store.getters.gardens;
-}
-async function fetchGarden() {
-  isLoading.value = true;
-  
-  await store.dispatch("fetchGarden", route.params.id);
-  // If the store returns a single object, wrap it in an array for the card view
-  const garden = store.state.garden;
-  gardens.value = Array.isArray(garden) ? garden : (garden ? [garden] : []);
-  isLoading.value = false;
-}
 function editGarden(garden) {
   router.push({ name: 'GardenEdit', params: { id: garden.id } });
 }
-onMounted(() => {
-  if (route.params.id && route.params.id !== '') {
-    fetchGarden();
-  } else {
-    fetchGardens();
-  }
-});
-// Optional: If you can navigate to GardenDetails with a different id without remounting
-watch(() => route.params.id, (newId) => {
-  store.dispatch("fetchGarden", newId)
-})
 </script>
 <style scoped>
 .center-single {

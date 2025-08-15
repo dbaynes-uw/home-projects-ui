@@ -18,6 +18,18 @@
           </v-btn>
         </v-card-actions>
 
+        <!-- Add search input -->
+        <v-text-field
+          v-model="searchQuery"
+          label="Search gardens..."
+          prepend-inner-icon="mdi-magnify"
+          clearable
+          density="compact"
+          variant="outlined"
+          style="max-width: 300px; margin-left: 1rem;"
+          @input="console.log('Search query:', searchQuery)"
+        ></v-text-field>
+  
         <GardenIndex :gardens="gardens"
           v-if="showIndex"
           @edit="editGarden"
@@ -28,7 +40,6 @@
           @edit="editGarden"
           @delete="handleDeleteGarden"
         />
-        
       </template>
     </div>
   </v-container>
@@ -43,7 +54,24 @@ import GardenDetails from '@/components/gardens/GardenDetails.vue';
 
 const store = useStore();
 const router = useRouter();
-const gardens = computed(() => store.state.gardens);
+
+// Replace the gardens computed with filtered version
+const searchQuery = ref(''); // Add search query
+const gardens = computed(() => {
+  const allGardens = store.state.gardens;
+  
+  if (!searchQuery.value) {
+    return allGardens;
+  }
+  
+  const query = searchQuery.value.toLowerCase();
+  return allGardens.filter(garden => 
+    garden.name?.toLowerCase().includes(query) ||
+    garden.location?.toLowerCase().includes(query) ||
+    garden.description?.toLowerCase().includes(query)
+  );
+});
+
 const isLoading = ref(true);
 const showIndex = ref(false);
 
