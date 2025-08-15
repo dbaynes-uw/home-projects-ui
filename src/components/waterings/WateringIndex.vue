@@ -21,7 +21,6 @@
       <td>{{ watering.location }}</td>
       <td>{{ watering.days }}</td>
       <td>{{ watering.notes }}</td>
-      <td>{{ watering.name }} (ID: {{ watering.id || 'UNDEFINED' }})</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">

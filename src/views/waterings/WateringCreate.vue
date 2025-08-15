@@ -1,12 +1,16 @@
 <template>
   <v-container>
-    <h1>Add Watering System for {{ garden.name }}</h1>
+    <h1>Add Watering System for {{garden.name}}</h1>
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" >
         <v-card class="mx-auto mt-5">
           <v-card-text>
-            <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-              <h2><b>Back to Garden</b></h2>
+            <router-link 
+              :to="garden && garden.id ? 
+                { name: 'GardenDetails', params: { id: garden.id } } : 
+                { name: 'Gardens' }"
+            >
+              <h2><b>Back to {{ garden && garden.id ? 'Garden' : 'Gardens' }}</b></h2>
             </router-link>
             <router-link :to="{ name: 'Gardens' }">
               <h2><b>Back to Gardens</b></h2>
@@ -99,7 +103,8 @@
           <v-btn color="primary" type="submit" aria-label="Submit">
             Create
           </v-btn>
-          <v-btn color="secondary" :to="{ name: 'WateringDetails' }" aria-label="Go back to the Waterings list">
+          &nbsp;
+          <v-btn color="secondary" :to="{ name: 'Waterings' }" aria-label="Go back to the Waterings list">
             Back to Waterings
           </v-btn>
         </v-col>
@@ -136,6 +141,7 @@ const garden = computed(() => store.state.garden);
 //xonMounted(() => {
 //x  store.dispatch("fetchGarden", route.params.id)
 //x})
+
 function requiredWateringName(value) {
   if (value) {
     isWateringNameValid.value = true;
