@@ -65,9 +65,9 @@
     </span>
     <p id="p-custom-link">
       <router-link
-        :to="{ name: 'PlantCreate' }"
+        :to="{ name: 'PlantCreate', params: { gardenId: garden.id } }"
       >
-        Add Plant
+        Add Plant  {{ garden.id }}
       </router-link>
     </p>
     <br/>

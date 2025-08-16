@@ -469,9 +469,10 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/plants/create",
+    path: "/plants/create/:gardenId?", // Make gardenId optional",
     name: "PlantCreate",
     component: PlantCreate,
+    props: true, // This passes gardenId as a prop
     meta: { requiresAuth: true}
   },
   {

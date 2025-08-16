@@ -699,6 +699,7 @@ export default new Vuex.Store({
     },
 
     async createPlant({ commit }, plant) {
+      console.log("Creating plant with data:", plant);
       EventService.postPlant(plant)
         .then(() => {
           commit("SET_PLANT", plant);

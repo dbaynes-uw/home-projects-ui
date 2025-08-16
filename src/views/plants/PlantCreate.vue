@@ -9,7 +9,7 @@
     <br/><br/>
   </v-card>
   <v-card-text>
-    <v-form @submit.prevent="onSubmit">
+    <v-form @submit.prevent="createPlant" ref="form">
       <v-container id="form-container">
         <v-text-field
           v-model="garden.name"
@@ -110,16 +110,25 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { v4 as uuidv4 } from 'uuid'
+//import { v4 as uuidv4 } from 'uuid'
+import { toRaw } from 'vue';
+//import { create } from 'core-js/core/object';
 
 const store = useStore()
 const router = useRouter()
 
+const props = defineProps({
+  gardenId: {
+    type: String,
+    default: null
+  }
+});
+
 const plant = ref({
-  garden_id: null,
+  garden_id: props.gardenId || null, // Set garden_id if provided
   watering_id: null,
   plant_name: "",
   yard_location: "",
@@ -132,7 +141,30 @@ const plant = ref({
   created_by: computed(() => store.state.user.resource_owner.email),
   frequency: ""
 })
-const garden = computed(() => store.state.garden);
+const garden = computed(() => {
+  if (props.gardenId) {
+    // First try to find in gardens list
+    const foundGarden = store.state.gardens.find(g => g.id === parseInt(props.gardenId));
+    if (foundGarden) {
+      return foundGarden;
+    }
+    
+    // If not in list, try individual garden state
+    if (store.state.garden && store.state.garden.id === parseInt(props.gardenId)) {
+      return store.state.garden;
+    }
+    
+    // Fallback while loading
+    return {
+      id: props.gardenId,
+      name: 'Loading garden...'
+    };
+  }  return {
+    id: null,
+    name: 'No Garden Selected'
+  };
+});
+
 //const watering = computed(() => store.state.watering);
 const yard_locations = ref(["North", "South"])
 
@@ -140,10 +172,35 @@ const isFormValid = ref(false)
 const isPlantNameValid = ref(false)
 const isWateringValid = ref(false)
 
-//onMounted(() => {
-//  store.dispatch("fetchGarden", route.params.id)
-//})
+onMounted(async () => {
+  if (props.gardenId) {
+    try {
+      await store.dispatch("fetchGarden", props.gardenId);
+    } catch (error) {
+      console.error("Error fetching garden:", error);
+    }
+  }
+  
+  // Always ensure we have the gardens list for the dropdown
+  if (!store.state.gardens.length) {
+    await store.dispatch("fetchGardens");
+  }
+});
 
+async function createPlant() {
+  checkValidations()
+  if (!isFormValid.value) {
+        alert("Please fill in all required fields.");
+    return;
+  }
+  const plantData = {
+    ...toRaw(plant.value), // Convert to plain object
+    created_by: store.state.user.resource_owner.email,
+  };
+  await store.dispatch("createPlant", plantData);
+  await store.dispatch("fetchGarden", garden.value.id);
+  router.push({ name: 'GardenDetails', params: { id: garden.value.id } });
+}
 function requiredPlantName(value) {
   if (value) {
     isPlantNameValid.value = true
@@ -172,22 +229,5 @@ function checkValidations() {
   } else {
     isFormValid.value = false
   }
-}
-
-async function onSubmit() {
-  checkValidations()
-  if (!isFormValid.value) {
-        alert("Please fill in all required fields.");
-    return;
-  }
-  const newPlant = {
-    ...plant,
-    id: uuidv4(),
-    garden_id: garden.value.id,
-    created_by: store.state.user.resource_owner.email,
-  }
-  await store.dispatch("createPlant", newPlant) //.then(() => {
-  await store.dispatch("fetchGarden", garden.value.id);
-  router.push({ name: 'GardenDetails', params: { id: garden.value.id } });
 }
 </script>

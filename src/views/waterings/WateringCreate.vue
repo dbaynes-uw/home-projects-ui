@@ -38,13 +38,23 @@
         
         <!-- Show selected garden if pre-selected -->
         <v-col v-else cols="12">
-<v-text-field
-  v-model="garden.name"
-  label="Garden"
-  outlined
-  readonly
-  aria-label="Selected garden"
-></v-text-field>
+          <v-text-field
+            v-model="garden.name"
+            label="Garden"
+            outlined
+            readonly
+            aria-label="Selected garden"
+          ></v-text-field>
+        </v-col>
+        <!-- Watering Name Input -->
+        <v-col cols="12">
+          <v-text-field
+            v-model="watering.name"
+            :rules="[requiredWateringName]"
+            label="Watering Name"
+            outlined
+            required
+        ></v-text-field>
         </v-col>
         <!-- Watering Name Input -->
         <v-col cols="12">

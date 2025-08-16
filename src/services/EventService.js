@@ -237,6 +237,7 @@ export default {
   },
   async postPlant(plant) {
     this.init();
+    console.log("Posting plant with data:", plant);
     return axios.post(api_url + 'plants', plant);
   },
   async deleteProduct(product) {
