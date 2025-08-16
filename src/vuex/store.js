@@ -719,17 +719,19 @@ export default new Vuex.Store({
           alert("Plant Put Error: ", error.response.data )
         });
     },
-    async updateWatering({ commit }, watering) {
-      EventService.putWatering(watering)
-        .then((response) => {
-          commit("SET_WATERING", response.data);
-          alert("Watering " + watering.name + " was Successfully Updated.")
-        })
-        .catch((error) => {
-          alert("Watering Put Error for " + watering.name + ": " + error.response.request.statusText)
-          location.reload();
-      });
-    },
+  async updateWatering({ commit }, watering) {
+    try {
+      const response = await EventService.putWatering(watering);      
+      // Commit the updated watering to state
+      commit('SET_WATERING', response.data); 
+      // ✅ IMPORTANT: Return something truthy!
+      return response.data; // or return true;
+      
+    } catch (error) {
+      console.error('❌ Store: Update watering error:', error);
+      throw error; // Re-throw so component can catch it
+    }
+  },
     async fetchGlucoseReadings({ commit }) {
       try {
         const response = await EventService.getGlucoseReadings();

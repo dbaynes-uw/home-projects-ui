@@ -25,29 +25,37 @@
 <script setup>
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import router from "@/router";
-import { ref, computed} from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useStore } from "vuex";
 
-// Define the props
+const route = useRoute();
+const store = useStore();
+
+// Make gardens prop optional
 const props = defineProps({
   gardens: {
     type: Array,
-    required: true
+    default: null  // Make it optional
   }
 });
 
-//const isLoading = ref(false); // No loading needed since parent handles it
+const localGardens = ref(null);
+const isLoading = ref(true);
 const filterStatus = ref(null);
 const sortOrder = ref('desc');
 
-// Use props.gardens instead of gardens.value
+// Use prop if available, otherwise use local data
+const gardens = computed(() => props.gardens || localGardens.value);
+
 const isSingle = computed(() => {
-  return Array.isArray(props.gardens) && props.gardens.length === 1;
+  return Array.isArray(gardens.value) && gardens.value.length === 1;
 });
+
 const filteredSortedGardens = computed(() => {
-  // Use props.gardens instead of gardens.value
-  let gardenList = Array.isArray(props.gardens)
-    ? props.gardens.slice()
-    : (props.gardens ? [props.gardens] : []);
+  let gardenList = Array.isArray(gardens.value)
+    ? gardens.value.slice()
+    : (gardens.value ? [gardens.value] : []);
     
   if (filterStatus.value) {
     gardenList = gardenList.filter(garden => garden.status === filterStatus.value);
@@ -61,9 +69,54 @@ const filteredSortedGardens = computed(() => {
   
   return gardenList;
 });
+
+// Data fetching functions for standalone usage
+async function fetchGardens() {
+  try {
+    await store.dispatch("fetchGardens");
+    localGardens.value = store.getters.gardens;
+  } catch (error) {
+    console.error("Error fetching gardens:", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function fetchGarden() {
+  try {
+    await store.dispatch("fetchGarden", route.params.id);
+    localGardens.value = [store.state.garden];
+  } catch (error) {
+    console.error("Error fetching garden:", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 function editGarden(garden) {
   router.push({ name: 'GardenEdit', params: { id: garden.id } });
 }
+
+// Only fetch data if no prop was provided (standalone usage)
+onMounted(() => {
+  if (!props.gardens) {
+    if (route.params.id && route.params.id !== '') {
+      fetchGarden();
+    } else {
+      fetchGardens();
+    }
+  } else {
+    isLoading.value = false;
+  }
+});
+
+// Watch for route changes in standalone mode
+watch(() => route.params.id, (newId) => {
+  if (!props.gardens && newId) {
+    isLoading.value = true;
+    fetchGarden();
+  }
+});
 </script>
 <style scoped>
 .center-single {

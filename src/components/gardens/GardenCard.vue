@@ -65,13 +65,13 @@
         </ul>          
       </span>
     </span>
-    <!--p id="p-custom-link">
+    <p id="p-custom-link">
       <router-link
-        :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
+        :to="{ name: 'PlantCreate' }"
       >
         Add Plant
       </router-link>
-    </!--p-->
+    </p>
     <br/>
     <div id="spread" class="icon-actions">
       <span class="fa-stack">

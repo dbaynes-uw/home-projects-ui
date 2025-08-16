@@ -1,5 +1,6 @@
 <template>
   <div>
+    isSingle: {{ isSingle }}
     <span v-if="isSingle">
       <h1>Plant Details</h1>
       <button id="button-as-link" @click="requestIndexDetail">

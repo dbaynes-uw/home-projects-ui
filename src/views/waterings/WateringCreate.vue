@@ -1,26 +1,52 @@
 <template>
   <v-container>
-    <h1>Add Watering System for {{garden.name}}</h1>
+    <h1>Add Watering System{{ garden.id ? ` for ${garden.name}` : '' }}</h1>
+    
     <v-row>
-      <v-col cols="12" >
+      <v-col cols="12">
         <v-card class="mx-auto mt-5">
           <v-card-text>
+            <!-- Back button logic -->
             <router-link 
-              :to="garden && garden.id ? 
-                { name: 'GardenDetails', params: { id: garden.id } } : 
-                { name: 'Gardens' }"
+              v-if="garden.id"
+              :to="{ name: 'GardenDetails', params: { id: garden.id } }"
             >
-              <h2><b>Back to {{ garden && garden.id ? 'Garden' : 'Gardens' }}</b></h2>
+              <h2><b>Back to {{ garden.name }}</b></h2>
             </router-link>
-            <router-link :to="{ name: 'Gardens' }">
+            <router-link v-else :to="{ name: 'Gardens' }">
               <h2><b>Back to Gardens</b></h2>
             </router-link>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+
     <v-form @submit.prevent="createWatering" ref="form">
-      <v-row>   
+      <v-row>
+        <!-- Garden Selection (only show if no garden pre-selected) -->
+        <v-col v-if="!gardenId" cols="12">
+          <v-select
+            v-model="watering.garden_id"
+            :items="store.state.gardens"
+            item-title="name"
+            item-value="id"
+            label="Select Garden (Optional)"
+            outlined
+            clearable
+            aria-label="Select a garden for this watering system"
+          ></v-select>
+        </v-col>
+        
+        <!-- Show selected garden if pre-selected -->
+        <v-col v-else cols="12">
+          <v-text-field
+            :value="garden.name"
+            label="Garden"
+            outlined
+            readonly
+            aria-label="Selected garden"
+          ></v-text-field>
+        </v-col>
         <!-- Watering Name Input -->
         <v-col cols="12">
           <v-text-field
@@ -97,15 +123,21 @@
           </v-textarea>
         </v-col>
       </v-row>
-      <!-- Action Buttons -->
+   <!-- Action Buttons -->
       <v-row>
         <v-col cols="12">
           <v-btn color="primary" type="submit" aria-label="Submit">
             Create
           </v-btn>
           &nbsp;
-          <v-btn color="secondary" :to="{ name: 'Waterings' }" aria-label="Go back to the Waterings list">
-            Back to Waterings
+          <v-btn 
+            color="secondary" 
+            @click="garden.id ? 
+              router.push({ name: 'GardenDetails', params: { id: garden.id } }) : 
+              router.push({ name: 'Waterings' })"
+            aria-label="Go back"
+          >
+            Cancel
           </v-btn>
         </v-col>
       </v-row>
@@ -113,16 +145,24 @@
   </v-container>
 </template>
 <script setup>
-//import { v4 as uuidv4 } from "uuid";
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-//import { f } from "vue-numeric-input";
+
 const store = useStore();
 const router = useRouter();
+
+// Accept gardenId as optional prop from route
+const props = defineProps({
+  gardenId: {
+    type: String,
+    default: null
+  }
+});
+
 // Reactive variables for form inputs
 const watering = ref({
-  garden_id: null,
+  garden_id: props.gardenId || null, // Set garden_id if provided
   name: "",
   location: "",
   target: "",
@@ -134,14 +174,42 @@ const watering = ref({
   notes: "",
   created_by: store.state.user.resource_owner.email,
 });
+
 const isFormValid = ref(false);
 const isWateringNameValid = ref(false);
-const garden = computed(() => store.state.garden);
 
-//xonMounted(() => {
-//x  store.dispatch("fetchGarden", route.params.id)
-//x})
+// Garden computed based on whether gardenId was provided
+const garden = computed(() => {
+  if (props.gardenId) {
+    // Find garden by ID from store
+    return store.state.gardens.find(g => g.id === parseInt(props.gardenId)) || {
+      id: props.gardenId,
+      name: 'Loading...'
+    };
+  }
+  return {
+    id: null,
+    name: 'No Garden Selected'
+  };
+});
 
+// Fetch specific garden if gardenId provided
+onMounted(async () => {
+  if (props.gardenId) {
+    try {
+      await store.dispatch("fetchGarden", props.gardenId);
+    } catch (error) {
+      console.error("Error fetching garden:", error);
+    }
+  }
+  
+  // Always ensure we have the gardens list for the dropdown
+  if (!store.state.gardens.length) {
+    await store.dispatch("fetchGardens");
+  }
+});
+
+// Your existing functions remain the same...
 function requiredWateringName(value) {
   if (value) {
     isWateringNameValid.value = true;
@@ -167,20 +235,22 @@ async function createWatering() {
     alert("Please fill in all required fields.");
     return;
   }
+  
   const newWatering = {
     ...watering.value,
-    //id: uuidv4(),
-    //Tgarden_id: garden.value.id,
     created_by: store.state.user.resource_owner.email,
   };
+  
   await store.dispatch("createWatering", newWatering);
-  //await store.dispatch("fetchGarden", garden.value.id);
-  //router.push({ name: 'GardenDetails', params: { id: garden.value.id } });
-  //router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
-  router.push({ name: 'Waterings' });
+  
+  // Navigate back to appropriate place
+  if (props.gardenId) {
+    router.push({ name: 'GardenDetails', params: { id: props.gardenId } });
+  } else {
+    router.push({ name: 'Waterings' });
+  }
 }
-</script>
-<style lang="css">
+</script><style lang="css">
 
 /* Create two equal columns that floats next to each other */
 .column {

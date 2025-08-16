@@ -49,11 +49,11 @@
       </span>
     </span>
     <p id="p-custom-link">
-      <!--router-link
-        :to="{ name: 'PlantCreate', params: { id: `${garden.id}` } }"
-    -->
+      <router-link
+        :to="{ name: 'PlantCreate' }"
+    >
         Add Plant
-      <!--/router-link-->
+      </router-link>
     </p>
     <br/>
 

@@ -233,7 +233,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/gardens/:id?",
+    path: "/gardens/:id",
     name: "GardenDetails",
     props: true,
     component: () => import('@/components/gardens/GardenDetails.vue'),
@@ -321,12 +321,6 @@ const routes = [
     name: "MedEdit",
     props: true,
     component: MedEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/gardens/create_plant",
-    name: "PlantCreate",
-    component: PlantCreate,
     meta: { requiresAuth: true}
   },
   {
@@ -468,14 +462,20 @@ const routes = [
     component: ProductsByVendors,
     meta: { requiresAuth: true}
   },
-    {
+  {
     path: "/plants",
     name: "Plants",
     component: Plants,
     meta: { requiresAuth: true}
   },
   {
-    path: "/plants/:id?",
+    path: "/plants/create",
+    name: "PlantCreate",
+    component: PlantCreate,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/plants/:id",
     name: "PlantDetails",
     props: true,
     component: PlantDetails,
@@ -509,10 +509,10 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/watering/create",
+    path: "/watering/create/:gardenId?", // Make gardenId optional
     name: "WateringCreate",
     component: WateringCreate,
-    props: true,
+    props: true, // This passes gardenId as a prop
     meta: { requiresAuth: true}
   },
 ];

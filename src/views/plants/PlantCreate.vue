@@ -110,21 +110,17 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { v4 as uuidv4 } from 'uuid'
 
 const store = useStore()
-const route = useRoute()
 const router = useRouter()
 
-const plant = reactive({
-  user_id: store.state.user.resource_owner.id,
-  garden_id: route.params.id,
-  watering_id: "",
-  //watering_ids: [], // For multiple waterings
-  id: null,
+const plant = ref({
+  garden_id: null,
+  watering_id: null,
   plant_name: "",
   yard_location: "",
   description: "",
@@ -136,18 +132,17 @@ const plant = reactive({
   created_by: computed(() => store.state.user.resource_owner.email),
   frequency: ""
 })
-
+const garden = computed(() => store.state.garden);
+//const watering = computed(() => store.state.watering);
 const yard_locations = ref(["North", "South"])
 
 const isFormValid = ref(false)
 const isPlantNameValid = ref(false)
 const isWateringValid = ref(false)
 
-const garden = computed(() => store.state.garden)
-
-onMounted(() => {
-  store.dispatch("fetchGarden", route.params.id)
-})
+//onMounted(() => {
+//  store.dispatch("fetchGarden", route.params.id)
+//})
 
 function requiredPlantName(value) {
   if (value) {
