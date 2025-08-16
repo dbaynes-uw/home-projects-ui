@@ -40,10 +40,8 @@
       </ul>
     </span>
     <p id="p-custom-link">
-      <router-link
-        :to="{ name: 'WateringCreate' }"
-        >
-          Add Watering
+      <router-link :to="{ name: 'WateringCreate', params: { gardenId: garden.id } }">
+        Add Watering
       </router-link>
     </p>
     <span v-if="garden.plants && garden.plants.length > 0">

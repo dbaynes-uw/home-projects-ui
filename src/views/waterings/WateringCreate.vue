@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <h1>Add Watering System{{ garden.id ? ` for ${garden.name}` : '' }}</h1>
-    
     <v-row>
       <v-col cols="12">
         <v-card class="mx-auto mt-5">
@@ -39,13 +38,13 @@
         
         <!-- Show selected garden if pre-selected -->
         <v-col v-else cols="12">
-          <v-text-field
-            :value="garden.name"
-            label="Garden"
-            outlined
-            readonly
-            aria-label="Selected garden"
-          ></v-text-field>
+<v-text-field
+  v-model="garden.name"
+  label="Garden"
+  outlined
+  readonly
+  aria-label="Selected garden"
+></v-text-field>
         </v-col>
         <!-- Watering Name Input -->
         <v-col cols="12">
@@ -181,13 +180,23 @@ const isWateringNameValid = ref(false);
 // Garden computed based on whether gardenId was provided
 const garden = computed(() => {
   if (props.gardenId) {
-    // Find garden by ID from store
-    return store.state.gardens.find(g => g.id === parseInt(props.gardenId)) || {
+    // First try to find in gardens list
+    const foundGarden = store.state.gardens.find(g => g.id === parseInt(props.gardenId));
+    if (foundGarden) {
+      return foundGarden;
+    }
+    
+    // If not in list, try individual garden state
+    if (store.state.garden && store.state.garden.id === parseInt(props.gardenId)) {
+      return store.state.garden;
+    }
+    
+    // Fallback while loading
+    return {
       id: props.gardenId,
-      name: 'Loading...'
+      name: 'Loading garden...'
     };
-  }
-  return {
+  }  return {
     id: null,
     name: 'No Garden Selected'
   };
