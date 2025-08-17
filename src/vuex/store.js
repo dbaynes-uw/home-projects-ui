@@ -171,8 +171,8 @@ export default new Vuex.Store({
     SET_MEDS(state, meds) {
       state.meds = meds;
     },
-    DELETE_PLANT(state, plant) {
-      state.plant = plant;
+    DELETE_PLANT(state, plantId) {
+      state.plants = state.plants.filter(plant => plant.id !== plantId);
     },
     SET_PLANT(state, plant) {
       state.plant = plant;
@@ -697,29 +697,68 @@ export default new Vuex.Store({
           location.reload();
       });
     },
-
-    async createPlant({ commit }, plant) {
-      console.log("Creating plant with data:", plant);
-      EventService.postPlant(plant)
-        .then(() => {
-          commit("SET_PLANT", plant);
-          alert("Plant was successfully added for " + plant.plant_name);
-        })
-        .catch((error) => {
-          alert("Plant Post Error: ", error.response.data )
-        });
+    async deletePlant({ commit }, plant) {
+      try {
+        const response = await EventService.deletePlant(plant);
+        commit('DELETE_PLANT', plant.id);
+        return response.data;
+      } catch (error) {
+        console.error('❌ Store: Delete plant error:', error);
+        throw error;
+      }
     },
-    async updatePlant({ commit }, plant) {
-      EventService.putPlant(plant)
+    async fetchPlant({ commit }, plant) {
+      EventService.getPlant(plant)
         .then((response) => {
           commit("SET_PLANT", response.data);
-          alert("Plant was successfully Updated for " + plant.plant_name);
-          location.reload();
+          return response.data;
         })
         .catch((error) => {
-          alert("Plant Put Error: ", error.response.data )
+          alert("Plant Fetch Error: ", error.response.data )
         });
     },
+    async fetchPlants({ commit }, garden) {
+      EventService.getPlants(garden)
+        .then((response) => {
+          commit("SET_PLANTS", response.data);
+          return response.data;
+        })
+        .catch((error) => {
+          alert("Plant Fetch Error: ", error.response.data )
+        });
+    },
+
+async createPlant({ commit, state }, plant) {
+  try {
+    const response = await EventService.postPlant(plant);    
+    // ✅ Add to plants array, don't just set single plant
+    const updatedPlants = [...state.plants, response.data];
+    commit('SET_PLANTS', updatedPlants);
+    
+    // Or refresh from server
+    // await dispatch('fetchPlants');
+    
+    return response.data;
+    
+  } catch (error) {
+    console.error('❌ Store: Create plant error:', error);
+    throw error;
+  }
+},
+  async updatePlant({ commit }, plant) {
+    try {
+      console.log('🔍 Store: Updating plant with ID:', plant.id);
+      const response = await EventService.putPlant(plant);
+      console.log('✅ Store: API response:', response);
+
+      commit('SET_PLANT', response.data);
+      return response.data; // ✅ IMPORTANT: Return something truthy!
+
+    } catch (error) {
+      console.error('❌ Store: Update plant error:', error);
+      throw error; // Re-throw so component can catch it
+    }
+  },
   async updateWatering({ commit }, watering) {
     try {
       const response = await EventService.putWatering(watering);      
@@ -885,36 +924,6 @@ export default new Vuex.Store({
         });
     },
 
-    async deletePlant({ commit }, plant) {
-      EventService.deletePlant(plant)
-        .then((response) => {
-          commit("DELETE_PLANT", response.data);
-          alert("Plant " + plant.plant_name + " was Successfully Deleted");
-        })
-        .catch((error) => {
-          alert("Plant Delete Error: ", error.response.data )
-        });
-    },
-    async fetchPlant({ commit }, plant) {
-      EventService.getPlant(plant)
-        .then((response) => {
-          commit("SET_PLANT", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Plant Fetch Error: ", error.response.data )
-        });
-    },
-    async fetchPlants({ commit }, garden) {
-      EventService.getPlants(garden)
-        .then((response) => {
-          commit("SET_PLANTS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Plant Fetch Error: ", error.response.data )
-        });
-    },
     async deleteProduct({ commit }, product) {
       EventService.deleteProduct(product)
         .then((response) => {

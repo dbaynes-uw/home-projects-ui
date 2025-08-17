@@ -9,18 +9,27 @@
       </router-link>
     </h4>
     <ul>
+      <li class="li-left"><b><u>Garden: 
+  <router-link
+    v-if="garden?.id"
+    :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }"
+  >
+    {{ garden.name }}
+  </router-link>
+  <span v-else>{{ garden?.name || 'No Garden Assigned' }}</span>
+</u></b></li>
       <li class="li-left"><b>Biological Name: {{ plant.biological_name }}</b></li>
       <li class="li-left"><b>Date Planted: {{ formatYearDate(plant.date_planted) }}</b></li>
       <li class="li-left"><b>Location: {{plant.yard_location }}</b></li>
-      <li class="li-left"><b><u>Watering: 
-            <router-link
-              :to="watering.id ? 
-                { name: 'WateringDetails', params: { id: `${watering.id}` } } : 
-                { name: 'WateringDetails' }"
-            >
-          {{ watering.name}}
-        </router-link>
-         </u></b></li>    
+<li class="li-left"><b><u>Watering: 
+  <router-link
+    v-if="watering?.id"
+    :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+  >
+    {{ watering.name }}
+  </router-link>
+  <span v-else>{{ watering?.name || 'No Watering Assigned' }}</span>
+</u></b></li>  
       <span v-if="plant.date_harvest">
         <li class="li-left"><b>Date Harvest: {{ formatYearDate(plant.date_harvest) }}</b></li>
       </span>
@@ -87,12 +96,21 @@ const props = defineProps({
 const store = useStore();
 const router = useRouter();
 const emit = defineEmits(['dblclick']);
-const watering = computed(() => store.state.waterings.find(w => w.id === props.plant.watering_id));
+
+const garden = computed(() => {
+  const found = store.state.gardens.find(g => g.id === props.plant.garden_id);
+  return found || { id: null, name: 'No Garden Assigned' };
+}); 
+
+const watering = computed(() => {
+  const found = store.state.waterings.find(w => w.id === props.plant.watering_id);
+  return found || { id: null, name: 'No Watering Assigned' };
+});
 
 async function deletePlant(plant) {
   if (confirm(`Are you sure you want to delete ${plant.plant_name}? It cannot be undone.`)) {
     await store.dispatch("deletePlant", plant);
-    router.push({ name: "PlantList" });
+    router.push({ name: "Plants" });
   }
 }
 function formatYearDate(value) {

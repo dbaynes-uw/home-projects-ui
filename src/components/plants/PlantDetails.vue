@@ -1,6 +1,5 @@
 <template>
   <div>
-    isSingle: {{ isSingle }}
     <span v-if="isSingle">
       <h1>Plant Details</h1>
       <button id="button-as-link" @click="requestIndexDetail">
@@ -42,65 +41,68 @@
 <script setup>
 import PlantCard from "@/components/plants/PlantCard.vue";
 import router from "@/router";
-import { ref, computed, onMounted,watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
 const route = useRoute();
 const store = useStore();
 
-const plants = ref(null);
+// ✅ FIXED - Use props instead of local ref
+const props = defineProps(['plants']);
 
 const isLoading = ref(true);
-const isSingle = computed(() => {
-  return Array.isArray(plants.value) && plants.value.length === 1;
-});
-const filterStatus = ref(null);
-//const plantStatuses = ['Active', 'Inactive']; // Add your statuses
 
+// ✅ FIXED - Use props.plants instead of local plants ref
+const isSingle = computed(() => {
+  return Array.isArray(props.plants) && props.plants.length === 1;
+});
+
+const filterStatus = ref(null);
 const sortOrder = ref('desc');
-//const gardenTypes = ['Vegetable', 'Flower', 'Herb']; // Add your types
+
+// ✅ FIXED - Use props.plants in computed
 const filteredSortedPlants = computed(() => {
-  let plantList = Array.isArray(plants.value)
-    ? plants.value.slice()
-    : (plants.value ? [plants.value] : []);
+  let plantList = Array.isArray(props.plants)
+    ? props.plants.slice()
+    : (props.plants ? [props.plants] : []);
+    
   if (filterStatus.value) {
     plantList = plantList.filter(plant => plant.status === filterStatus.value);
   }
+  
   plantList.sort((a, b) => {
     const dateA = new Date(a.start_time);
     const dateB = new Date(b.start_time);
     return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
   });
+  
   return plantList;
 });
-async function fetchPlants() {
-  await store.dispatch("fetchPlants");
-  plants.value = store.getters.plants;
-}
-async function fetchPlant() {
-  isLoading.value = true;
 
-  await store.dispatch("fetchPlant", route.params.id);
-  // If the store returns a single object, wrap it in an array for the card view
-  const plant = store.state.plant;
-  plants.value = Array.isArray(plant) ? plant : (plant ? [plant] : []);
-  isLoading.value = false;
-}
 function editPlant(plant) {
   router.push({ name: 'PlantEdit', params: { id: plant.id } });
 }
-onMounted(() => {
+
+// ✅ FIXED - Handle single plant view differently
+onMounted(async () => {
   if (route.params.id && route.params.id !== '') {
-    fetchPlant();
-  } else {
-    fetchPlants();
+    // Single plant view - fetch specific plant
+    await store.dispatch("fetchPlant", route.params.id);
+  }
+  isLoading.value = false;
+});
+
+// ✅ DEBUG - Watch props changes
+//watch(() => props.plants, (newPlants) => {
+//}, { deep: true });
+
+// Handle route changes for single plant view
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    store.dispatch("fetchPlant", newId);
   }
 });
-// Optional: If you can navigate to PlantDetails with a different id without remounting
-watch(() => route.params.id, (newId) => {
-  store.dispatch("fetchPlant", newId)
-})
 </script>
 <style scoped>
 .center-single {
