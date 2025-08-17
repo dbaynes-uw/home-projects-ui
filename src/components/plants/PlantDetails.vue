@@ -48,14 +48,11 @@ import { useStore } from "vuex";
 const route = useRoute();
 const store = useStore();
 
-// ✅ FIXED - Use props instead of local ref
-const props = defineProps(['plants']);
+const plants = ref(null);
 
 const isLoading = ref(true);
-
-// ✅ FIXED - Use props.plants instead of local plants ref
 const isSingle = computed(() => {
-  return Array.isArray(props.plants) && props.plants.length === 1;
+  return Array.isArray(plants.value) && plants.value.length === 1;
 });
 
 const filterStatus = ref(null);
@@ -63,10 +60,10 @@ const sortOrder = ref('desc');
 
 // ✅ FIXED - Use props.plants in computed
 const filteredSortedPlants = computed(() => {
-  let plantList = Array.isArray(props.plants)
-    ? props.plants.slice()
-    : (props.plants ? [props.plants] : []);
-    
+  let plantList = Array.isArray(plants.value)
+    ? plants.value.slice()
+    : (plants.value ? [plants.value] : []);
+
   if (filterStatus.value) {
     plantList = plantList.filter(plant => plant.status === filterStatus.value);
   }
@@ -79,30 +76,39 @@ const filteredSortedPlants = computed(() => {
   
   return plantList;
 });
-
+async function fetchPlants() {
+  await store.dispatch("fetchPlants");
+  plants.value = store.getters.plants;
+}
+async function fetchPlant() {
+  isLoading.value = true;
+  
+  await store.dispatch("fetchPlant", route.params.id);
+  // If the store returns a single object, wrap it in an array for the card view
+  const watering = store.state.watering;
+  plants.value = Array.isArray(watering) ? watering : (watering ? [watering] : []);
+  isLoading.value = false;
+}
 function editPlant(plant) {
   router.push({ name: 'PlantEdit', params: { id: plant.id } });
 }
 
 // ✅ FIXED - Handle single plant view differently
-onMounted(async () => {
+onMounted(() => {
   if (route.params.id && route.params.id !== '') {
-    // Single plant view - fetch specific plant
-    await store.dispatch("fetchPlant", route.params.id);
+    fetchPlant();
+  } else {
+    fetchPlants();
   }
-  isLoading.value = false;
 });
-
 // ✅ DEBUG - Watch props changes
 //watch(() => props.plants, (newPlants) => {
 //}, { deep: true });
 
-// Handle route changes for single plant view
+// Optional: If you can navigate to WateringDetails with a different id without remounting
 watch(() => route.params.id, (newId) => {
-  if (newId) {
-    store.dispatch("fetchPlant", newId);
-  }
-});
+  store.dispatch("fetchPlant", newId)
+})
 </script>
 <style scoped>
 .center-single {
