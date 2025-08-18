@@ -4,6 +4,23 @@
       <v-card-title>
         <h2>Plants</h2>
       </v-card-title>
+      <span>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Gardens' }">
+          <b>All Gardens</b>
+        </router-link>
+      </button>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Waterings' }">
+          <b>All Waterings</b>
+        </router-link>
+      </button>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Plants' }">
+          <b>All Plants</b>
+        </router-link>
+      </button>      
+    </span>      
     </v-card>
     
     <div class="plant-details" :key="refreshKey">

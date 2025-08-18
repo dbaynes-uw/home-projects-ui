@@ -3,10 +3,20 @@
     <span v-if="isSingle">
       <h1>Plant Details</h1>
       <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Gardens' }">
+          <b>All Gardens</b>
+        </router-link>
+      </button>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Waterings' }">
+          <b>All Waterings</b>
+        </router-link>
+      </button>
+      <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'Plants' }">
           <b>All Plants</b>
         </router-link>
-      </button>
+      </button>      
     </span>
     <!--span v-if="!isSingle">
       <div class="controls-bar">

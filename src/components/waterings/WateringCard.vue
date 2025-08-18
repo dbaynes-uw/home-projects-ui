@@ -34,20 +34,34 @@
         </p>
     </ul>
     <br/>
-    <span v-if="watering.plants && watering.plants.length > 0">
-      <p id="p-custom-left">Plants:</p>
-      <span v-for="(plant, plantIndex) in watering.plants" :key="plantIndex ">
+    <!-- ✅ FIXED - Use computed plants instead of watering.plants -->
+    <span v-if="plants && plants.length > 0">
+      <p id="p-custom-left">Plants ({{ plants.length }}):</p>
+      <span v-for="plant in plants" :key="plant.id">
         <ul>
           <li class="li-left">
             <router-link
               :to="{ name: 'PlantDetails', params: { id: `${plant.id}`} }"
             >
-            <b>{{plant.plant_name}}</b>
+              <b>{{ plant.plant_name }}</b>
             </router-link>
           </li>
         </ul>          
       </span>
     </span>
+      <!-- ✅ ENHANCED - Show when no plants -->
+    <span v-else>
+      <p id="p-custom-left">No plants assigned to this watering system.</p>
+    </span>
+    <br/>
+      <p id="p-custom-link">
+    <!-- ✅ ENHANCED - Pass watering context to plant creation -->
+    <router-link
+      :to="{ name: 'PlantCreate', query: { wateringId: watering.id } }"
+    >
+      Add Plant to This Watering System
+    </router-link>
+  </p>
     <p id="p-custom-link">
       <router-link
         :to="{ name: 'PlantCreate' }"
@@ -88,15 +102,43 @@ const props = defineProps({
   },
 });
 const store = useStore();
+const router = useRouter();
+const emit = defineEmits(['dblclick']);
+
 const garden = computed(() => {
   if (!props.watering.garden_id) {
     return null;
   }
   return store.state.gardens.find(g => g.id === props.watering.garden_id);
 });
-//const plants = computed(() => store.state.plants.filter(p => p.watering_id === props.watering.id));
-const router = useRouter();
-const emit = defineEmits(['dblclick']);
+const plants = computed(() => {
+  let plantList = [];
+  
+  // Method 1: Check if plants are nested in watering object (from API)
+  if (props.watering.plants && Array.isArray(props.watering.plants)) {
+    plantList = [...props.watering.plants];
+    console.log('🔍 Found plants in watering object:', plantList.length);
+  }
+  
+  // Method 2: Also check store for plants with matching watering_id
+  if (store.state.plants) {
+    const storePlants = store.state.plants.filter(p => 
+      parseInt(p.watering_id) === parseInt(props.watering.id)
+    );
+    console.log('🔍 Found plants in store:', storePlants.length);
+    
+    // Merge without duplicates (in case plant exists in both places)
+    storePlants.forEach(storePlant => {
+      const exists = plantList.find(p => p.id === storePlant.id);
+      if (!exists) {
+        plantList.push(storePlant);
+      }
+    });
+  }
+  
+  console.log('🔍 Total plants for watering:', plantList.length);
+  return plantList;
+});
 async function deleteWatering(watering) {
   if (confirm(`Are you sure you want to delete ${watering.name}? It cannot be undone.`)) {
     await store.dispatch("deleteWatering", watering);

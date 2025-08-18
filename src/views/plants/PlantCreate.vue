@@ -1,7 +1,11 @@
 <template>
   <v-container>
     <h1>Add Plant{{ garden.id ? ` for ${garden.name}` : '' }}</h1>
-    
+    <template>
+  <!-- Add this temporarily to see plant fields -->
+  <li class="li-left"><b>DEBUG - Plant fields: {{ Object.keys(plant) }}</b></li>
+  <li class="li-left"><b>DEBUG - Full plant: {{ plant }}</b></li>
+</template>
     <v-row>
       <v-col cols="12">
         <v-card class="mx-auto mt-5">
@@ -24,30 +28,59 @@
     <v-form @submit.prevent="createPlant" ref="form">
       <v-row>
         <!-- Garden Selection (only show if no garden pre-selected) -->
-        <v-col v-if="!gardenId" cols="12">
-          <v-select
-            v-model="plant.garden_id"
-            :items="store.state.gardens"
-            item-title="name"
-            item-value="id"
-            label="Select Garden (Optional)"
-            outlined
-            clearable
-            aria-label="Select a garden for this plant"
-          ></v-select>
-        </v-col>
-        
-        <!-- Show selected garden if pre-selected -->
-        <v-col v-else cols="12">
-          <v-text-field
-            v-model="garden.name"
-            label="Garden"
-            outlined
-            readonly
-            aria-label="Selected garden"
-          ></v-text-field>
-        </v-col>
 
+  <!-- Garden Selection -->
+  <v-col v-if="!gardenId" cols="12">
+    <v-select
+      v-model="plant.garden_id"
+      :items="store.state.gardens"
+      item-title="name"
+      item-value="id"
+      label="Select Garden (Optional)"
+      outlined
+      clearable
+    ></v-select>
+  </v-col>
+  
+  <!-- Show selected garden if pre-selected -->
+  <v-col v-else cols="12">
+    <v-text-field
+      v-model="garden.name"
+      label="Garden"
+      outlined
+      readonly
+    ></v-text-field>
+  </v-col>
+
+  <!-- ✅ ADD WATERING SELECTION LOGIC -->
+  <!-- Watering Selection (only show if no watering pre-selected) -->
+  <v-col v-if="!wateringId" cols="12">
+    <v-select
+      v-model="plant.watering_id"
+      :items="availableWaterings"
+      item-value="id"
+      item-title="name"
+      label="Select Watering System"
+      outlined
+      clearable
+      :rules="[requiredWatering]"
+    >
+      <template v-slot:prepend-inner>
+        <v-icon>mdi-water</v-icon>
+      </template>
+    </v-select>
+  </v-col>
+  
+  <!-- Show selected watering if pre-selected -->
+  <v-col v-else cols="12">
+    <v-text-field
+      v-model="watering.name"
+      label="Watering System"
+      outlined
+      readonly
+      prepend-inner-icon="mdi-water"
+    ></v-text-field>
+  </v-col>
         <!-- Plant Name Input -->
         <v-col cols="12">
           <v-text-field
@@ -224,13 +257,17 @@ const props = defineProps({
   gardenId: {
     type: String,
     default: null
+  },
+    wateringId: {
+    type: String,
+    default: null
   }
 });
 
 // ✅ FIXED - No computed in data
 const plant = ref({
   garden_id: props.gardenId || null,
-  watering_id: null,
+  watering_id: props.wateringId || null,
   plant_name: "",
   biological_name: "", // ✅ ADDED
   yard_location: "",

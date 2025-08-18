@@ -18,18 +18,21 @@
   </router-link>
   <span v-else>{{ garden?.name || 'No Garden Assigned' }}</span>
 </u></b></li>
+      <li class="li-left"><b>Plant Name: {{ plant.plant_name }}</b></li>
       <li class="li-left"><b>Biological Name: {{ plant.biological_name }}</b></li>
       <li class="li-left"><b>Date Planted: {{ formatYearDate(plant.date_planted) }}</b></li>
       <li class="li-left"><b>Location: {{plant.yard_location }}</b></li>
-<li class="li-left"><b><u>Watering: 
-  <router-link
-    v-if="watering?.id"
-    :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
-  >
-    {{ watering.name }}
-  </router-link>
-  <span v-else>{{ watering?.name || 'No Watering Assigned' }}</span>
-</u></b></li>  
+  <li class="li-left">
+    <b><u>Watering: 
+      <router-link
+        v-if="watering?.id"
+        :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+      >
+        {{ watering.name }}
+      </router-link>
+      <span v-else>{{ watering?.name || 'No Watering Assigned' }}</span>
+    </u></b>
+  </li>
       <span v-if="plant.date_harvest">
         <li class="li-left"><b>Date Harvest: {{ formatYearDate(plant.date_harvest) }}</b></li>
       </span>
@@ -103,8 +106,28 @@ const garden = computed(() => {
 }); 
 
 const watering = computed(() => {
-  const found = store.state.waterings.find(w => w.id === props.plant.watering_id);
-  return found || { id: null, name: 'No Watering Assigned' };
+  // First try direct watering_id relationship
+  if (props.plant.watering_id) {
+    const found = store.state.waterings.find(w => w.id === props.plant.watering_id);
+    if (found) return found;
+  }
+  
+  // If no direct relationship, check if watering is nested in garden
+  if (props.plant.garden_id) {
+    const garden = store.state.gardens.find(g => g.id === props.plant.garden_id);
+    if (garden?.waterings?.length) {
+      // You might need logic here to determine which watering system
+      // For now, let's return the first one or find by some criteria
+      const wateringInGarden = garden.waterings.find(w => 
+        w.id === props.plant.watering_id || // Specific watering
+        w.is_default === true || // Default watering for garden
+        garden.waterings[0] // Or just first one
+      );
+      if (wateringInGarden) return wateringInGarden;
+    }
+  }
+  
+  return { id: null, name: 'No Watering Assigned' };
 });
 
 async function deletePlant(plant) {
