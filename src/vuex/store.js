@@ -1359,11 +1359,9 @@ async createPlant({ commit, state }, plant) {
     },
 
     async fetchWaterings({ commit }) {
-      console.log("Fetching waterings...");
       EventService.getWaterings()
         .then((response) => {
           commit("SET_WATERINGS", response.data);
-          console.log("Waterings fetched successfully:", response.data);
           return response.data;
         })
         .catch((error) => {

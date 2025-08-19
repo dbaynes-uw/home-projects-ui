@@ -397,7 +397,6 @@ export default {
   },
   async getWaterings() {
     this.init();
-    console.log("Fetching all waterings from API");
     return axios.get(api_url + "waterings")
   },
   async getGardenWaterings(id) {
