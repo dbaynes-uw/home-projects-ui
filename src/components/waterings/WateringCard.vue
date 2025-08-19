@@ -117,7 +117,6 @@ const plants = computed(() => {
   // Method 1: Check if plants are nested in watering object (from API)
   if (props.watering.plants && Array.isArray(props.watering.plants)) {
     plantList = [...props.watering.plants];
-    console.log('🔍 Found plants in watering object:', plantList.length);
   }
   
   // Method 2: Also check store for plants with matching watering_id
@@ -125,7 +124,6 @@ const plants = computed(() => {
     const storePlants = store.state.plants.filter(p => 
       parseInt(p.watering_id) === parseInt(props.watering.id)
     );
-    console.log('🔍 Found plants in store:', storePlants.length);
     
     // Merge without duplicates (in case plant exists in both places)
     storePlants.forEach(storePlant => {
@@ -134,9 +132,7 @@ const plants = computed(() => {
         plantList.push(storePlant);
       }
     });
-  }
-  
-  console.log('🔍 Total plants for watering:', plantList.length);
+  }  
   return plantList;
 });
 async function deleteWatering(watering) {

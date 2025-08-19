@@ -26,7 +26,7 @@
             <router-link
               :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
             >
-              <b>{{watering.name}} - {{ formatTime(watering.start_time) }} to {{ formatTime(watering.end_time) }}</b>
+              <b>{{watering.name}} - {{ formatTime(watering.start_time) }} to {{ formatTime(watering.end_time) }} - {{ watering.days }}</b>
             </router-link>
           </span>
           <span v-else>

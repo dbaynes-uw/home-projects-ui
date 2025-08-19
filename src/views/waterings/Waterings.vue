@@ -64,11 +64,18 @@ async function handleDeleteWatering(watering) {
 }
 
 onMounted(async () => {
-  await Promise.all([
-    store.dispatch('fetchWaterings'),
-    store.dispatch('fetchPlants'), // ✅ Make sure this is called!
-    store.dispatch('fetchGardens')
-  ]);
+  try {
+    await Promise.all([
+      store.dispatch('fetchWaterings'),
+      store.dispatch('fetchPlants'),
+      store.dispatch('fetchGardens')
+    ]);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    // ✅ ADD THIS - Stop loading spinner
+    isLoading.value = false;
+  }
 });
 </script>
 <style scoped>
