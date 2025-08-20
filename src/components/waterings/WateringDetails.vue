@@ -121,6 +121,7 @@ watch(() => route.params.id, (newId) => {
   font-weight: bold;
   font-size: 1.25rem;
 }
+
 @media (max-width: 600px) {
   .controls-bar {
     flex-direction: column;

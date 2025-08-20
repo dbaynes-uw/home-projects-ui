@@ -78,6 +78,40 @@
   width: 100%;
   grid-gap: 1rem;
 }
+.action-icons {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  align-items: center;
+}
+.center-single .action-icons {
+  justify-content: center !important;  /* Center icons for single items */
+}
+.action-icons .v-btn {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  display: flex !important;           /* ✅ ADD THIS */
+  align-items: center !important;     /* ✅ ADD THIS */
+  justify-content: center !important; /* ✅ ADD THIS */
+}
+
+/* ✅ ADD THIS - Force icon alignment */
+.action-icons .v-btn .v-icon {
+  margin: 0 !important;              /* Remove any icon margins */
+  line-height: 1 !important;         /* Consistent line height */
+  vertical-align: middle !important; /* Force vertical alignment */
+}
+
+@media (max-width: 600px) {
+  .action-icons {
+    justify-content: center;
+    gap: 8px;
+  }
+}
 #read-only-label {
   font-size: 1.25rem;
   font-weight: bold;

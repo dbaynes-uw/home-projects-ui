@@ -71,25 +71,51 @@
     </p>
     <br/>
 
-    <div id="spread">
-      <span class="fa-stack">
-        <router-link :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }">
-          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <router-link :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
-      <span class="fa-stack">
-        <i @click="deleteWatering(watering)" class="fas fa-trash-alt fa-stack-1x">
-        </i>
-      </span>
+    <div class="action-icons">
+      <v-tooltip text="Edit Watering" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-pencil"
+            size="small"
+            color="primary"
+            variant="text"
+            :to="{ name: 'WateringEdit', params: { id: watering.id } }"
+          />
+        </template>
+      </v-tooltip>
+
+      <v-tooltip text="View Details" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-eye"
+            size="small"
+            color="brown"
+            variant="text"
+            :to="{ name: 'WateringDetails', params: { id: watering.id } }"
+          />
+        </template>
+      </v-tooltip>
+
+      <v-tooltip text="Delete Watering" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-delete"
+            size="small"
+            color="error"
+            variant="text"
+            @click="handleDelete"
+          />
+        </template>
+      </v-tooltip>
     </div>
   </div>
 </template>
 <script setup>
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+//import { useRouter } from 'vue-router';
 import { computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
@@ -102,8 +128,8 @@ const props = defineProps({
   },
 });
 const store = useStore();
-const router = useRouter();
-const emit = defineEmits(['dblclick']);
+//const router = useRouter();
+const emit = defineEmits(['dblclick', 'delete']);
 
 const garden = computed(() => {
   if (!props.watering.garden_id) {
@@ -135,10 +161,26 @@ const plants = computed(() => {
   }  
   return plantList;
 });
-async function deleteWatering(watering) {
-  if (confirm(`Are you sure you want to delete ${watering.name}? It cannot be undone.`)) {
-    await store.dispatch("deleteWatering", watering);
-    router.push({ name: "Waterings" });
+async function handleDelete() {
+  const confirmed = confirm(
+    `Delete "${props.watering.name}"?\n\n` +
+    `This will remove the watering system and may affect ${plants.value.length} plant(s).\n\n` +
+    `This action cannot be undone.`
+  );
+  
+  if (confirmed) {
+    try {
+      await store.dispatch("deleteWatering", props.watering);
+      
+      // Emit event to parent instead of direct navigation
+      emit('delete', props.watering);
+      
+      // Alternative: Navigate back
+      // router.push({ name: "Waterings" });
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Failed to delete watering. Please try again.');
+    }
   }
 }
 function formatTime(value) {
@@ -150,24 +192,19 @@ function formatTime(value) {
 </script>
 
 <style scoped>
-.watering-card {
-  width: 100%;
-  margin: 1em auto 1em auto;
-  padding: 1em;
-  border: solid 1px #2c3e50;
-  cursor: pointer;
-  transition: all 0.2s linear;
+.action-icons {
+  display: flex;
+  gap: 4px;  /* Tighter spacing for icons */
+  justify-content: flex-end;  /* Right-align the icons */
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
 }
-.watering-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
-}
-.watering-card h4 {
-  font-size: 1.4em;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
-}
-.status-red {
-  color: red;
+
+@media (max-width: 600px) {
+  .action-icons {
+    justify-content: center;  /* Center on mobile */
+    gap: 8px;  /* Slightly more spacing on mobile */
+  }
 }
 </style>
