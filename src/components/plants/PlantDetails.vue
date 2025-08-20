@@ -36,6 +36,7 @@
     </!--span-->
     <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
     <br/>
+    <br/>
     <div :class="['cards', { 'center-single': isSingle }]">
       <PlantCard 
         v-for="plant in filteredSortedPlants"
@@ -70,6 +71,7 @@ const sortOrder = ref('desc');
 
 // ✅ FIXED - Use props.plants in computed
 const filteredSortedPlants = computed(() => {
+  
   let plantList = Array.isArray(plants.value)
     ? plants.value.slice()
     : (plants.value ? [plants.value] : []);
@@ -77,7 +79,7 @@ const filteredSortedPlants = computed(() => {
   if (filterStatus.value) {
     plantList = plantList.filter(plant => plant.status === filterStatus.value);
   }
-  
+ 
   plantList.sort((a, b) => {
     const dateA = new Date(a.start_time);
     const dateB = new Date(b.start_time);
@@ -95,8 +97,8 @@ async function fetchPlant() {
   
   await store.dispatch("fetchPlant", route.params.id);
   // If the store returns a single object, wrap it in an array for the card view
-  const watering = store.state.watering;
-  plants.value = Array.isArray(watering) ? watering : (watering ? [watering] : []);
+  const plant = store.state.plant;
+  plants.value = Array.isArray(plant) ? plant : (plant ? [plant] : []);
   isLoading.value = false;
 }
 function editPlant(plant) {

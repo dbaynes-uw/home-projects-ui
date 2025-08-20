@@ -1,7 +1,7 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue> 
   <div class="card" v-bind="$attrs" @dblclick="emit('dblclick', plant)">
-    <h4 id="p-custom-link">
+     <h4 id="p-custom-link">
       <router-link
         :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
       >

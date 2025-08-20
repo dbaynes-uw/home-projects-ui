@@ -34,7 +34,6 @@
              {{ showIndex ? 'Show Card View' : 'Show Index View' }}
           </v-btn>
         </v-card-actions>
-
         <!-- Add key to force re-render -->
         <PlantIndex 
           v-if="showIndex" 
@@ -43,6 +42,7 @@
           @edit="editPlant" 
           @delete="handleDeletePlant" 
         />
+        
         <PlantDetails 
           v-else 
           :key="`details-${refreshKey}`"
