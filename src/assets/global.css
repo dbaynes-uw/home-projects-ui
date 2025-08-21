@@ -105,7 +105,9 @@
   line-height: 1 !important;         /* Consistent line height */
   vertical-align: middle !important; /* Force vertical alignment */
 }
-
+.action-icons .v-btn:focus::before {
+  opacity: 0 !important;  /* Remove the focus circle */
+}
 @media (max-width: 600px) {
   .action-icons {
     justify-content: center;

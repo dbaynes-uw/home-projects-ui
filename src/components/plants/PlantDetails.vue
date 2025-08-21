@@ -58,23 +58,35 @@ import { useStore } from "vuex";
 
 const route = useRoute();
 const store = useStore();
-
-const plants = ref(null);
+const props = defineProps({
+  plants: {
+    type: Array,
+    required: false,
+    default: () => []
+  }
+});
 
 const isLoading = ref(true);
 const isSingle = computed(() => {
-  return Array.isArray(plants.value) && plants.value.length === 1;
+  return (route.params.id && route.params.id !== '') || 
+         (Array.isArray(props.plants) && props.plants.length === 1 && route.name === 'PlantDetails');
 });
 
 const filterStatus = ref(null);
 const sortOrder = ref('desc');
 
-// ✅ FIXED - Use props.plants in computed
+const singlePlant = ref(null);
+
 const filteredSortedPlants = computed(() => {
+  // ✅ If we have a single plant from store, use that
+  if (route.params.id && singlePlant.value) {
+    return [singlePlant.value];
+  }
   
-  let plantList = Array.isArray(plants.value)
-    ? plants.value.slice()
-    : (plants.value ? [plants.value] : []);
+  // Otherwise use the plants prop
+  let plantList = Array.isArray(props.plants)
+    ? props.plants.slice()
+    : (props.plants ? [props.plants] : []);
 
   if (filterStatus.value) {
     plantList = plantList.filter(plant => plant.status === filterStatus.value);
@@ -88,39 +100,31 @@ const filteredSortedPlants = computed(() => {
   
   return plantList;
 });
-async function fetchPlants() {
-  await store.dispatch("fetchPlants");
-  plants.value = store.getters.plants;
-}
+
+// ✅ FIXED - Store the fetched plant
 async function fetchPlant() {
-  isLoading.value = true;
+  if (!route.params.id) return;
   
+  isLoading.value = true;
   await store.dispatch("fetchPlant", route.params.id);
-  // If the store returns a single object, wrap it in an array for the card view
-  const plant = store.state.plant;
-  plants.value = Array.isArray(plant) ? plant : (plant ? [plant] : []);
+  singlePlant.value = store.state.plant; // ✅ Store the single plant
   isLoading.value = false;
 }
+
+onMounted(() => {
+  if (route.params.id && route.params.id !== '') {
+    fetchPlant(); // Fetch single plant and store it
+  }
+});
+
 function editPlant(plant) {
   router.push({ name: 'PlantEdit', params: { id: plant.id } });
 }
 
-// ✅ FIXED - Handle single plant view differently
-onMounted(() => {
-  if (route.params.id && route.params.id !== '') {
-    fetchPlant();
-  } else {
-    fetchPlants();
-  }
-});
 // ✅ DEBUG - Watch props changes
-//watch(() => props.plants, (newPlants) => {
-//}, { deep: true });
-
-// Optional: If you can navigate to WateringDetails with a different id without remounting
-watch(() => route.params.id, (newId) => {
-  store.dispatch("fetchPlant", newId)
-})
+watch(() => props.plants, (newPlants) => {
+  console.log('🔄 PlantDetails props.plants changed:', newPlants.length);
+}, { deep: true });
 </script>
 <style scoped>
 .center-single {

@@ -38,7 +38,7 @@
         <PlantIndex 
           v-if="showIndex" 
           :key="`index-${refreshKey}`"
-          :plants="plants" 
+          :plants="filteredPlants" 
           @edit="editPlant" 
           @delete="handleDeletePlant" 
         />
@@ -46,27 +46,38 @@
         <PlantDetails 
           v-else 
           :key="`details-${refreshKey}`"
-          :plants="plants" 
+          :plants="filteredPlants" 
           @edit="editPlant" 
           @delete="handleDeletePlant" 
         />
       </template>
     </div>
   </v-container>
-</template><script setup>
+</template>
+<script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import PlantIndex from '@/components/plants/PlantIndex.vue';
 import PlantDetails from '@/components/plants/PlantDetails.vue';
 
 const store = useStore();
+const route = useRoute();
 const router = useRouter();
-const plants = computed(() => store.state.plants);
-const isLoading = ref(true);
+const plants = ref([]);const isLoading = ref(true);
 const showIndex = ref(false);
 const refreshKey = ref(0); 
-
+const filteredPlants = computed(() => {
+  if (route.query.wateringId) {
+    const wateringId = parseInt(route.query.wateringId);
+    return plants.value.filter(plant => 
+      parseInt(plant.watering_id) === wateringId
+    );
+  }
+  
+  // If no wateringId query, show all plants
+  return plants.value;
+});
 function toggleView() {
   showIndex.value = !showIndex.value;
 }
@@ -99,9 +110,6 @@ async function handleDeletePlant(plant) {
       
       // 3. Force Vue to process the changes
       await new Promise(resolve => setTimeout(resolve, 100));
-      console.log('🔄 Timeout completed');
-      
-      console.log('✅ Plant deleted and UI refreshed!');
       
     } catch (error) {
       console.error('❌ Error deleting plant:', error);
@@ -117,10 +125,19 @@ async function handleDeletePlant(plant) {
 }
 onMounted(async () => {
   try {
+    // Fetch all plants
     await store.dispatch('fetchPlants');
+    plants.value = store.getters.plants;
+    
+    // Check if we need to filter
+    if (route.query.wateringId) {
+      console.log(`Filtering plants for watering ID: ${route.query.wateringId}`);
+      console.log(`Found ${filteredPlants.value.length} plants for this watering`);
+    }
   } catch (error) {
-    console.error("Error fetching plants:", error);
+    console.error('❌ Error loading plants:', error);
   } finally {
+    // ✅ ADD THIS MISSING LINE
     isLoading.value = false;
   }
 });

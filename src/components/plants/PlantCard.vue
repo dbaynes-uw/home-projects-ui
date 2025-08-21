@@ -45,49 +45,52 @@
       </span>
     </ul>
     <br/>
-    <table>
-      <thead>
-      <tr>
-        <td id="icon-block">
-          <router-link
-            :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
-          >
-          <i
-            id="card-medium-block-icon-edit"
-            class="fa-solid fa-pen-to-square fa-stack-1x"
-          >
-          </i>
-        </router-link>
-        </td>
-        <!--td id="icon-block">
-          <router-link :to="{ name: 'PlantDetails', params: { id: `${plant.id}` } }">
-            <i
-              id="card-medium-block-icon-eye"
-              class="fa fa-eye"
-            >
-            </i>
-          </router-link>
-        </!--td-->
-        <td id="icon-block">
-          <span class="fa-table-stack">
-            <i
-              @click="deletePlant(plant)"
-              class="fas fa-trash-alt fa-stack-1x"
-              id="card-medium-block-icon-delete"
-            >
-            </i>
-          </span>
-        </td>
-      </tr>
-      </thead>
-    </table>
+    <div class="action-icons">
+      <v-tooltip text="Edit Plant" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-pencil"
+            size="small"
+            color="primary"
+            variant="text"
+            :to="{ name: 'PlantEdit', params: { id: plant.id } }"
+          />
+        </template>
+      </v-tooltip>
+
+      <v-tooltip text="View Details" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-eye"
+            size="small"
+            color="brown"
+            variant="text"
+            :to="{ name: 'PlantDetails', params: { id: plant.id } }"
+          />
+        </template>
+      </v-tooltip>
+
+      <v-tooltip text="Delete Plant" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-delete"
+            size="small"
+            color="error"
+            variant="text"
+            @click="handleDelete"
+          />
+        </template>
+      </v-tooltip>
+    </div>  
   </div>
 </template>
 <script setup>
 //let time = null;
 import { useStore } from 'vuex';
 import { computed } from "vue";
-import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 const props = defineProps({
@@ -97,7 +100,6 @@ const props = defineProps({
   }
 });
 const store = useStore();
-const router = useRouter();
 const emit = defineEmits(['dblclick']);
 
 const garden = computed(() => {
@@ -130,10 +132,25 @@ const watering = computed(() => {
   return { id: null, name: 'No Watering Assigned' };
 });
 
-async function deletePlant(plant) {
-  if (confirm(`Are you sure you want to delete ${plant.plant_name}? It cannot be undone.`)) {
-    await store.dispatch("deletePlant", plant);
-    router.push({ name: "Plants" });
+async function handleDelete() {
+  const confirmed = confirm(
+    `Delete "${props.plant.plant_name}"?\n\n` +
+    `This action cannot be undone.`
+  );
+  
+  if (confirmed) {
+    try {
+      await store.dispatch("deletePlant", props.plant);
+      
+      // Emit event to parent instead of direct navigation
+      emit('delete', props.plant);
+      
+      // Alternative: Navigate back
+      // router.push({ name: "Waterings" });
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Failed to delete plant. Please try again.');
+    }
   }
 }
 function formatYearDate(value) {

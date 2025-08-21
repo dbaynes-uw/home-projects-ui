@@ -41,7 +41,7 @@
     </span>
     <p id="p-custom-link">
       <router-link :to="{ name: 'WateringCreate', params: { gardenId: garden.id } }">
-        Add Watering
+        Add Watering to {{ garden.name }}
       </router-link>
     </p>
     <span v-if="garden.plants && garden.plants.length > 0">
@@ -67,31 +67,50 @@
       <router-link
         :to="{ name: 'PlantCreate', params: { gardenId: garden.id } }"
       >
-        Add Plant  {{ garden.id }}
+        Add Plant to {{ garden.name }}
       </router-link>
     </p>
     <br/>
-    <div id="spread" class="icon-actions">
-      <span class="fa-stack">
-        <router-link :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }">
-          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack" v-if="$route.name == 'Gardens'">
-        <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
-          <i class="fa-solid fa-backward fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack" v-else>
-        <router-link :to="{ name: 'Gardens' }">
-          <i class="fa-solid fa-eye fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack">
-        <i @click="deleteGarden(garden)" class="fas fa-trash-alt fa-stack-1x"></i>
-      </span>
-    </div>
-</div>
+    <div class="action-icons">
+      <v-tooltip text="Edit Garden" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-pencil"
+            size="small"
+            color="primary"
+            variant="text"
+            :to="{ name: 'GardenEdit', params: { id: garden.id } }"
+          />
+        </template>
+      </v-tooltip>
+
+      <v-tooltip text="View Details" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-eye"
+            size="small"
+            color="brown"
+            variant="text"
+            :to="{ name: 'GardenDetails', params: { id: garden.id } }"
+          />
+        </template>
+      </v-tooltip>
+
+      <v-tooltip text="Delete Garden" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-delete"
+            size="small"
+            color="error"
+            variant="text"
+            @click="handleDelete"
+          />
+        </template>
+      </v-tooltip>
+    </div>  </div>
 </template>
 <script setup>
 import { useStore } from 'vuex';
@@ -107,7 +126,7 @@ defineProps({
 const store = useStore();
 const router = useRouter();
 const emit = defineEmits(['dblclick']);
-async function deleteGarden(garden) {
+async function handleDelete(garden) {
   if (confirm(`Are you sure you want to delete ${garden.name}? It cannot be undone.`)) {
     await store.dispatch("deleteGarden", garden);
     router.push({ name: "Gardens" });

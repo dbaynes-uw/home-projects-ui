@@ -5,6 +5,17 @@
         <h2>Gardens</h2>
         <router-link :to="{ name: 'GardenCreate' }">Create New Garden</router-link>
       </v-card-title>
+
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Waterings' }">
+          <b>All Waterings</b>
+        </router-link>
+      </button>     
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Plants' }">
+          <b>All Plants</b>
+        </router-link>
+      </button> 
     </v-card>
     <div class="garden-details">
       <template v-if="isLoading">

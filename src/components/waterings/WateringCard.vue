@@ -36,7 +36,11 @@
     <br/>
     <!-- ✅ FIXED - Use computed plants instead of watering.plants -->
     <span v-if="plants && plants.length > 0">
-      <p id="p-custom-left">Plants ({{ plants.length }}):</p>
+      <p id="p-custom-left">
+        <router-link :to="{ name: 'Plants', query: { wateringId: watering.id } }">
+          Plants ({{ plants.length }}):
+        </router-link>
+      </p>
       <span v-for="plant in plants" :key="plant.id">
         <ul>
           <li class="li-left">
@@ -59,7 +63,7 @@
     <router-link
       :to="{ name: 'PlantCreate', query: { wateringId: watering.id } }"
     >
-      Add Plant to This Watering System
+      Add Plant to {{ watering.name }}
     </router-link>
   </p>
     <p id="p-custom-link">
@@ -70,7 +74,6 @@
       </router-link>
     </p>
     <br/>
-
     <div class="action-icons">
       <v-tooltip text="Edit Watering" location="top">
         <template v-slot:activator="{ props }">
@@ -192,19 +195,4 @@ function formatTime(value) {
 </script>
 
 <style scoped>
-.action-icons {
-  display: flex;
-  gap: 4px;  /* Tighter spacing for icons */
-  justify-content: flex-end;  /* Right-align the icons */
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
-}
-
-@media (max-width: 600px) {
-  .action-icons {
-    justify-content: center;  /* Center on mobile */
-    gap: 8px;  /* Slightly more spacing on mobile */
-  }
-}
 </style>

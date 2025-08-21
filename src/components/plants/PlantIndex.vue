@@ -55,7 +55,11 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 //import DateFormatService from "@/services/DateFormatService.js";
 // Props
 const props = defineProps({
-  plants: { type: Array, required: true }
+  plants: {
+    type: Array,
+    required: true,
+    default: () => []
+  }
 });
 // Emits
 const emit = defineEmits(['edit','delete']);

@@ -4,6 +4,16 @@
       <v-card-title>
         <h2>Waterings</h2>
         <router-link :to="{ name: 'WateringCreate' }">Create New Watering</router-link>
+              <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Gardens' }">
+          <b>All Gardens</b>
+        </router-link>
+      </button>
+      <button id="button-as-link" @click="requestIndexDetail">
+        <router-link :to="{ name: 'Plants' }">
+          <b>All Plants</b>
+        </router-link>
+      </button> 
       </v-card-title>
     </v-card>
     <div class="watering-details">
