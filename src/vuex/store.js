@@ -247,6 +247,9 @@ export default new Vuex.Store({
         userData.token
       }`
     },
+    CLEAR_PLANT() {
+      localStorage.removeItem('plant')
+    },
     CLEAR_USER_DATA () {
       //var user = localStorage.getItem('user')
       localStorage.removeItem('user')
@@ -710,16 +713,13 @@ export default new Vuex.Store({
         throw error;
       }
     },
-    async fetchPlant({ commit }, plant) {
-      EventService.getPlant(plant)
-        .then((response) => {
-          commit("SET_PLANT", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Plant Fetch Error: ", error.response.data )
-        });
+
+    async fetchPlant({ commit }, id) {
+      commit('CLEAR_PLANT'); // Clear old data first
+      const response = await EventService.getPlant(id);
+      commit('SET_PLANT', response.data);
     },
+
     async fetchPlants({ commit }, garden) {
       EventService.getPlants(garden)
         .then((response) => {
@@ -1350,6 +1350,7 @@ async createPlant({ commit, state }, plant) {
       const response = await EventService.getWatering(id);
       commit('SET_WATERING', response.data);
     },
+
     async fetchWaterings({ commit }) {
       EventService.getWaterings()
         .then((response) => {
