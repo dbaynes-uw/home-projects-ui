@@ -61,18 +61,43 @@
           v-model="watering.duration"
           style="font-weight: bold"
         />
-        <h3 id="p-custom-left">Current Start Time: {{ formatTime(watering.start_time)  }}</h3>
-        <v-text-field 
+        <div class="date-field-container">
+          <v-text-field
+            v-model="displayStartTime"
             type="time"
-            label="Click to Edit Start Time"
-            v-model="watering.start_time"
-          />
-          <h3 id="p-custom-left">Current End Time: {{ formatTime(watering.end_time) }}</h3>
-          <v-text-field 
+            label="Start Time"
+          >
+            <template v-slot:append-inner>
+              <v-btn
+                v-if="displayStartTime"
+                @click="clearStartTime"
+                icon="mdi-close"
+                size="small"
+                variant="text"
+                color="error"
+              />
+            </template>
+          </v-text-field>
+        </div>
+      
+        <div class="date-field-container">
+          <v-text-field
+            v-model="displayEndTime"
             type="time"
-            label="Click to Edit End Time"
-            v-model="watering.end_time"
-          />
+            label="End Time"
+          >
+            <template v-slot:append-inner>
+              <v-btn
+                v-if="displayEndTime"
+                @click="clearEndTime"
+                icon="mdi-close"
+                size="small"
+                variant="text"
+                color="error"
+              />
+            </template>
+          </v-text-field>
+        </div>
         <h3 id="p-custom-left">Last Updated: {{ formatStandardDateTime(watering.updated_at) }}</h3>
         <h3 id="p-custom-left">Current Status: {{ watering.status }}</h3>
         <v-select
@@ -98,9 +123,23 @@
           cols="40"
           class="textarea-style"
         />
-        <button class="button" id="link-as-button" type="submit">
-          Submit
-        </button>
+      <v-row>
+        <v-col cols="12">
+          <v-btn color="primary" type="submit" aria-label="Submit">
+            Update
+          </v-btn>
+          &nbsp;
+          <v-btn 
+            color="secondary" 
+            @click="watering.id ? 
+              router.push({ name: 'WateringDetails', params: { id: watering.id } }) : 
+              router.push({ name: 'Waterings' })"
+            aria-label="Go back"
+          >
+            Cancel
+          </v-btn>
+        </v-col>
+      </v-row>
       </div>
     </form>
   </div>
@@ -117,7 +156,7 @@ const store = useStore();
 const router = useRouter();
 
 const props = defineProps(["id"]);
-
+const isMobile = ref(false);
 // Refs
 const confirmDialogue = ref(null);
 //const displayStartTime = ref('');
@@ -127,8 +166,45 @@ const watering = computed(() => store.state.watering);
 const gardens = computed(() => store.state.gardens);
 
 // Methods
-function formatTime(value) {
-  return DateFormatService.formatTimejs(value);
+const displayStartTime = computed({
+  get() {
+    if (!watering.value.start_time) return '';
+    
+    // If it's a full datetime, extract just the time part
+    if (watering.value.start_time.includes('T')) {
+      return watering.value.start_time.split('T')[1].substring(0, 5); // "14:30"
+    }
+    
+    // If it's already in HH:MM format, return as-is
+    return watering.value.start_time;
+  },
+  set(value) {
+    // Store the time value back to the watering object
+    watering.value.start_time = value;
+  }
+});
+
+const displayEndTime = computed({
+  get() {
+    if (!watering.value.end_time) return '';
+    
+    if (watering.value.end_time.includes('T')) {
+      return watering.value.end_time.split('T')[1].substring(0, 5);
+    }
+    
+    return watering.value.end_time;
+  },
+  set(value) {
+    watering.value.end_time = value;
+  }
+});
+
+function clearStartTime() {
+  watering.value.start_time = '';
+}
+
+function clearEndTime() {
+  watering.value.end_time = '';
 }
 
 function formatStandardDateTime(value) {
@@ -155,20 +231,8 @@ async function updateWatering() {
     };
     
     try {
-      console.log('🔍 Updating watering:', wateringData);
       const result = await store.dispatch("updateWatering", wateringData);
-      console.log('✅ Update result:', result);
-      
       if (result) {
-        // Navigate based on whether garden exists
-        //if (wateringData.garden_id) {
-        //  router.push({ 
-        //    name: "GardenDetails", 
-        //    params: { id: `${wateringData.garden_id}` } 
-        //  });
-        //} else {
-        //  router.push({ name: "WateringDetails" });
-        //}
         router.push({ name: "WateringDetails" });
       } else {
         console.error('❌ Update failed - no result returned');
@@ -181,10 +245,12 @@ async function updateWatering() {
   }
 }// Lifecycle
 onMounted(async () => {
+  isMobile.value = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   await store.dispatch("fetchWatering", props.id);
   if (!store.state.gardens.length) {
     await store.dispatch("fetchGardens");
   }
 });
 </script>
-<style></style>
+<style>
+</style>

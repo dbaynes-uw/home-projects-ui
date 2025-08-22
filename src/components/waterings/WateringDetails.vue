@@ -164,7 +164,6 @@ async function fetchWatering() {
   await store.dispatch("fetchWatering", requestedId);
   const watering = store.state.watering;
   if (watering && watering.id === parseInt(requestedId)) {
-    console.log('✅ Correct watering received');
     waterings.value = [watering];
   } else {
     console.error('❌ Wrong watering received!');
