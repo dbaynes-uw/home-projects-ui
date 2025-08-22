@@ -35,7 +35,7 @@
 <script setup>
 import WateringCard from "@/components/waterings/WateringCard.vue";
 import router from "@/router";
-import { ref, computed, onMounted,watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
@@ -68,21 +68,48 @@ const filteredSortedWaterings = computed(() => {
   return wateringList;
 });
 async function fetchWaterings() {
+  isLoading.value = true;  // ✅ Add this
+  
   await store.dispatch("fetchWaterings");
   waterings.value = store.getters.waterings;
+  console.log('💧 Fetched waterings:', waterings.value);
+  
+  isLoading.value = false;  // ✅ Add this
 }
 async function fetchWatering() {
   isLoading.value = true;
   
-  await store.dispatch("fetchWatering", route.params.id);
-  // If the store returns a single object, wrap it in an array for the card view
+  const requestedId = route.params.id;  
+  await store.dispatch("fetchWatering", requestedId);
   const watering = store.state.watering;
-  waterings.value = Array.isArray(watering) ? watering : (watering ? [watering] : []);
+  if (watering && watering.id === parseInt(requestedId)) {
+    console.log('✅ Correct watering received');
+    waterings.value = [watering];
+  } else {
+    console.error('❌ Wrong watering received!');
+    console.error('  Requested:', requestedId);
+    console.error('  Received:', watering?.id);
+    
+    // Try to find correct watering from all waterings
+    await store.dispatch("fetchWaterings");
+    const allWaterings = store.getters.waterings;
+    const correctWatering = allWaterings.find(w => w.id === parseInt(requestedId));
+    
+    if (correctWatering) {
+      console.log('✅ Found correct watering in all waterings');
+      waterings.value = [correctWatering];
+    } else {
+      console.error('❌ Watering not found anywhere!');
+      waterings.value = [];
+    }
+  }
   isLoading.value = false;
 }
+
 function editWatering(watering) {
   router.push({ name: 'WateringEdit', params: { id: watering.id } });
 }
+
 onMounted(() => {
   if (route.params.id && route.params.id !== '') {
     fetchWatering();
@@ -90,10 +117,6 @@ onMounted(() => {
     fetchWaterings();
   }
 });
-// Optional: If you can navigate to WateringDetails with a different id without remounting
-watch(() => route.params.id, (newId) => {
-  store.dispatch("fetchWatering", newId)
-})
 </script>
 <style scoped>
 .center-single {

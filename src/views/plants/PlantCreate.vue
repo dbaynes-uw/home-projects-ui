@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <h1>Add Plant{{ garden.id ? ` for ${garden.name}` : '' }}</h1>
-    <template>
-  <!-- Add this temporarily to see plant fields -->
-  <li class="li-left"><b>DEBUG - Plant fields: {{ Object.keys(plant) }}</b></li>
-  <li class="li-left"><b>DEBUG - Full plant: {{ plant }}</b></li>
-</template>
+    <!--<template>
+      <! Add this temporarily to see plant fields >
+      <li class="li-left"><b>DEBUG - Plant fields: {{ Object.keys(plant) }}</b></li>
+      <li class="li-left"><b>DEBUG - Full plant: {{ plant }}</b></li>
+    </template-->
     <v-row>
       <v-col cols="12">
         <v-card class="mx-auto mt-5">
@@ -93,24 +93,6 @@
           ></v-text-field>
         </v-col>
 
-        <!-- Watering Selection -->
-        <v-col cols="12">
-          <v-select
-            v-model="plant.watering_id"
-            :items="availableWaterings"
-            item-value="id"
-            item-title="name"
-            label="Select Watering System"
-            outlined
-            clearable
-            :rules="[requiredWatering]"
-            aria-label="Select which watering system will water this plant"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon>mdi-water</v-icon>
-            </template>
-          </v-select>
-        </v-col>
         <!-- Biological Name Input -->
         <v-col cols="12">
           <v-text-field

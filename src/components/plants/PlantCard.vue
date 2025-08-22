@@ -10,29 +10,30 @@
     </h4>
     <ul>
       <li class="li-left"><b><u>Garden: 
-  <router-link
-    v-if="garden?.id"
-    :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }"
-  >
-    {{ garden.name }}
-  </router-link>
-  <span v-else>{{ garden?.name || 'No Garden Assigned' }}</span>
-</u></b></li>
+          <router-link
+            v-if="garden?.id"
+            :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }"
+          >
+            {{ garden.name }}
+          </router-link>
+          <span v-else>{{ garden?.name || 'TBD' }}</span>
+        </u></b>
+      </li>
+      <li class="li-left">
+        <b><u>Watering: 
+          <router-link
+            v-if="watering?.id"
+            :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
+          >
+            {{ watering.name }}
+          </router-link>
+          <span v-else>{{ watering?.name || 'TBD' }}</span>
+        </u></b>
+      </li>      
       <li class="li-left"><b>Plant Name: {{ plant.plant_name }}</b></li>
       <li class="li-left"><b>Biological Name: {{ plant.biological_name }}</b></li>
       <li class="li-left"><b>Date Planted: {{ formatYearDate(plant.date_planted) }}</b></li>
       <li class="li-left"><b>Location: {{plant.yard_location }}</b></li>
-  <li class="li-left">
-    <b><u>Watering: 
-      <router-link
-        v-if="watering?.id"
-        :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
-      >
-        {{ watering.name }}
-      </router-link>
-      <span v-else>{{ watering?.name || 'No Watering Assigned' }}</span>
-    </u></b>
-  </li>
       <span v-if="plant.date_harvest">
         <li class="li-left"><b>Date Harvest: {{ formatYearDate(plant.date_harvest) }}</b></li>
       </span>

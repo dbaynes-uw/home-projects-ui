@@ -252,6 +252,9 @@ export default new Vuex.Store({
       localStorage.removeItem('user')
       axios.defaults.headers.common['Authorization'] = null
     },
+    CLEAR_WATERING() {
+      localStorage.removeItem('watering')
+    },
     SET_USERS(state, users) {
       state.users = users;
     },
@@ -1343,21 +1346,10 @@ async createPlant({ commit, state }, plant) {
     },
 
     async fetchWatering({ commit }, id) {
-      //const existingWatering = state.waterings.find((watering) => watering.id === id);
-      //if (existingWatering) {
-      //  commit("SET_WATERING", existingWatering);
-      //} else {
-        EventService.getWatering(id)
-          .then((response) => {
-            commit("SET_WATERING", response.data);
-            return response.data;
-          })
-          .catch((error) => {
-            alert("Watering Fetch Error", error.data)
-          });
-      //}
+      commit('CLEAR_WATERING'); // Clear old data first
+      const response = await EventService.getWatering(id);
+      commit('SET_WATERING', response.data);
     },
-
     async fetchWaterings({ commit }) {
       EventService.getWaterings()
         .then((response) => {
