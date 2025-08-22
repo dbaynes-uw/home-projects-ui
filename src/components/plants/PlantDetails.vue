@@ -18,22 +18,46 @@
         </router-link>
       </button>      
     </span>
-    <!--span v-if="!isSingle">
-      <div class="controls-bar">
-        <v-select
-          v-model="filterStatus"
-          :items="gardenStatuses"
-          label="Status"
-          clearable
-          class="filter-select"
-          density="compact"
-        />
-        <br/>
-        <span id="count-display" class="filtered-count">
-          Showing {{ filteredSortedGardens.length }} Garden{{ filteredSortedGardens.length === 1 ? '' : 's' }}
-        </span>
-      </div>
-    </!--span-->
+    <div v-if="!isSingle" class="controls-bar">
+      <v-btn-group variant="outlined" divided>
+        <v-btn
+          @click="setSortField('plant_name')"
+          :color="sortField === 'plant_name' ? 'primary' : 'default'"
+          :prepend-icon="sortField === 'plant_name' && sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
+          centered
+          class="sort-btn"
+        >
+          Sort by Name
+        </v-btn>
+        
+        <v-btn
+          @click="setSortField('yard_location')"
+          :color="sortField === 'yard_location' ? 'primary' : 'default'"
+          :prepend-icon="sortField === 'yard_location' && sortOrder === 'asc' ? 'mdi-sort-calendar-ascending' : 'mdi-sort-calendar-descending'"
+          centered
+          class="sort-btn"
+        >
+          Yard Location
+        </v-btn>
+      </v-btn-group>
+      
+      <!-- ✅ Optional: Separate toggle button -->
+      <v-btn
+        @click="toggleSortOrder"
+        variant="outlined"
+        :prepend-icon="sortOrder === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'"
+        centered
+        class="sort-btn"
+      >
+        {{ sortOrder === 'asc' ? 'Ascending' : 'Descending' }}
+      </v-btn>
+      
+      <!-- ✅ Show current sort info -->
+      <span id="count-display">
+        {{ filteredSortedPlants.length }} Plants
+        <small>(by {{ sortField === 'plant_name' ? 'Name' : 'Yard Location' }}, {{ sortOrder === 'asc' ? (sortField === 'plant_name' ? 'A-Z' : 'A-Z') : (sortField === 'plant_name' ? 'Z-A' : 'Z-A') }})</small>
+      </span>
+    </div>
     <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
     <br/>
     <br/>
@@ -73,17 +97,12 @@ const isSingle = computed(() => {
 });
 
 const filterStatus = ref(null);
-const sortOrder = ref('desc');
+const sortField = ref('plant_name'); // Default sort by plant name
+const sortOrder = ref('asc');
 
 const singlePlant = ref(null);
 
 const filteredSortedPlants = computed(() => {
-  // ✅ If we have a single plant from store, use that
-  if (route.params.id && singlePlant.value) {
-    return [singlePlant.value];
-  }
-  
-  // Otherwise use the plants prop
   let plantList = Array.isArray(props.plants)
     ? props.plants.slice()
     : (props.plants ? [props.plants] : []);
@@ -91,15 +110,52 @@ const filteredSortedPlants = computed(() => {
   if (filterStatus.value) {
     plantList = plantList.filter(plant => plant.status === filterStatus.value);
   }
- 
-  plantList.sort((a, b) => {
-    const dateA = new Date(a.start_time);
-    const dateB = new Date(b.start_time);
-    return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
-  });
   
+  // ✅ FIXED - Proper sorting for both fields
+  plantList.sort((a, b) => {
+    let valueA, valueB;
+    
+    if (sortField.value === 'plant_name') {
+      valueA = (a.plant_name || '').toLowerCase();
+      valueB = (b.plant_name || '').toLowerCase();
+      
+      if (sortOrder.value === 'asc') {
+        return valueA.localeCompare(valueB); // A-Z
+      } else {
+        return valueB.localeCompare(valueA); // Z-A
+      }
+    } else if (sortField.value === 'yard_location') {
+      valueA = (a.yard_location || '').toLowerCase();
+      valueB = (b.yard_location || '').toLowerCase();
+
+      // ✅ FIXED - Use localeCompare for strings, not subtraction
+      if (sortOrder.value === 'asc') {
+        return valueA.localeCompare(valueB); // A-Z
+      } else {
+        return valueB.localeCompare(valueA); // Z-A
+      }
+    }
+    
+    return 0; // Fallback
+  });
+
   return plantList;
 });
+
+function setSortField(field) {
+  if (sortField.value === field) {
+    // If clicking same field, toggle order
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    // If different field, set to ascending
+    sortField.value = field;
+    sortOrder.value = 'asc';
+  }
+}
+
+function toggleSortOrder() {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+};
 
 // ✅ FIXED - Store the fetched plant
 async function fetchPlant() {

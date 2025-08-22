@@ -18,8 +18,25 @@
         </router-link>
       </button> 
     </span>
-    <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
+
+    <div v-if="!isSingle" class="controls-bar">
+      <v-btn
+        @click="toggleSortOrder"
+        variant="outlined"
+        color="primary"
+        centered
+        class="sort-btn"
+        :prepend-icon="sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
+      >
+        {{ sortOrder === 'asc' ? 'A → Z' : 'Z → A' }}
+      </v-btn>
+      <span id="count-display">
+        {{ filteredSortedGardens.length }} Gardens
+      </span>
+    </div>
+      <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
     <br/>
+    
     <div :class="['cards', { 'center-single': isSingle }]">
       <GardenCard 
         v-for="garden in filteredSortedGardens"
@@ -28,10 +45,10 @@
         @dblclick="editGarden"
       />
     </div>
+    
     <router-link v-if="isSingle" :to="{ name: 'Gardens' }">Back to List</router-link>
   </div>
 </template>
-
 <script setup>
 import GardenCard from "@/components/gardens/GardenCard.vue";
 import router from "@/router";
@@ -53,7 +70,7 @@ const props = defineProps({
 const localGardens = ref(null);
 const isLoading = ref(true);
 const filterStatus = ref(null);
-const sortOrder = ref('desc');
+const sortOrder = ref('asc');
 
 // Use prop if available, otherwise use local data
 const gardens = computed(() => props.gardens || localGardens.value);
@@ -71,14 +88,24 @@ const filteredSortedGardens = computed(() => {
     gardenList = gardenList.filter(garden => garden.status === filterStatus.value);
   }
   
+  // ✅ SIMPLIFIED - Only sort by name
   gardenList.sort((a, b) => {
-    const dateA = new Date(a.start_time);
-    const dateB = new Date(b.start_time);
-    return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
+    const nameA = (a.name || '').toLowerCase();
+    const nameB = (b.name || '').toLowerCase();
+    
+    if (sortOrder.value === 'asc') {
+      return nameA.localeCompare(nameB); // A-Z
+    } else {
+      return nameB.localeCompare(nameA); // Z-A
+    }
   });
   
   return gardenList;
-});
+});  
+
+function toggleSortOrder() {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+};
 
 // Data fetching functions for standalone usage
 async function fetchGardens() {

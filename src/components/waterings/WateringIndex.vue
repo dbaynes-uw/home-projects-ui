@@ -68,15 +68,37 @@ const onlineStatus = ref(navigator.onLine);
 const sortKey = ref('name');
 const sortAsc = ref(false);
 //?const inputSearchText = ref("");
+
 const sortedWaterings = computed(() => {
   const arr = [...props.waterings];
+  
   arr.sort((a, b) => {
-    if (a[sortKey.value] < b[sortKey.value]) return sortAsc.value ? -1 : 1;
-    if (a[sortKey.value] > b[sortKey.value]) return sortAsc.value ? 1 : -1;
-    return 0;
+    let valueA, valueB;
+    
+    // ✅ FIXED - Handle date fields specially
+    if (sortKey.value === 'start_time' || sortKey.value === 'end_time') {
+      valueA = new Date(a[sortKey.value] || 0); // Convert to Date object
+      valueB = new Date(b[sortKey.value] || 0);
+      
+      // Compare as dates
+      if (sortAsc.value) {
+        return valueA - valueB; // Oldest first
+      } else {
+        return valueB - valueA; // Newest first
+      }
+    } else {
+      // ✅ Handle text fields (name, target, location, etc.)
+      valueA = (a[sortKey.value] || '').toString().toLowerCase();
+      valueB = (b[sortKey.value] || '').toString().toLowerCase();
+      
+      if (valueA < valueB) return sortAsc.value ? -1 : 1;
+      if (valueA > valueB) return sortAsc.value ? 1 : -1;
+      return 0;
+    }
   });
   return arr;
 });
+
 function sortList(key) {
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;

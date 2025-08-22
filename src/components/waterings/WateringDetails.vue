@@ -18,6 +18,46 @@
         </router-link>
       </button> 
     </span>
+    <div v-if="!isSingle" class="controls-bar">
+      <v-btn-group variant="outlined" divided>
+        <v-btn
+          @click="setSortField('name')"
+          :color="sortField === 'name' ? 'primary' : 'default'"
+          :prepend-icon="sortField === 'name' && sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
+          centered
+          class="sort-btn"
+        >
+          Sort by Name
+        </v-btn>
+        
+        <v-btn
+          @click="setSortField('start_time')"
+          :color="sortField === 'start_time' ? 'primary' : 'default'"
+          :prepend-icon="sortField === 'start_time' && sortOrder === 'asc' ? 'mdi-sort-calendar-ascending' : 'mdi-sort-calendar-descending'"
+          centered
+          class="sort-btn"
+        >
+          Start Time
+        </v-btn>
+      </v-btn-group>
+      
+      <!-- ✅ Optional: Separate toggle button -->
+      <v-btn
+        @click="toggleSortOrder"
+        variant="outlined"
+        :prepend-icon="sortOrder === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'"
+        centered
+        class="sort-btn"
+      >
+        {{ sortOrder === 'asc' ? 'Ascending' : 'Descending' }}
+      </v-btn>
+      
+      <!-- ✅ Show current sort info -->
+      <span id="count-display">
+        {{ filteredSortedWaterings.length }} Waterings 
+        <small>(by {{ sortField === 'name' ? 'Name' : 'Date' }}, {{ sortOrder === 'asc' ? (sortField === 'name' ? 'A-Z' : 'Oldest') : (sortField === 'name' ? 'Z-A' : 'Newest') }})</small>
+      </span>
+    </div>
     <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
     <br/>
     <div :class="['cards', { 'center-single': isSingle }]">
@@ -51,28 +91,69 @@ const isSingle = computed(() => {
 const filterStatus = ref(null);
 //const wateringStatuses = ['Active', 'Inactive']; // Add your statuses
 
-const sortOrder = ref('desc');
-//const wateringTypes = ['Vegetable', 'Flower', 'Herb']; // Add your types
+const sortField = ref('name'); // Default sort by name
+const sortOrder = ref('asc');
+
 const filteredSortedWaterings = computed(() => {
   let wateringList = Array.isArray(waterings.value)
     ? waterings.value.slice()
     : (waterings.value ? [waterings.value] : []);
+
   if (filterStatus.value) {
     wateringList = wateringList.filter(watering => watering.status === filterStatus.value);
   }
+  
+  // ✅ FLEXIBLE SORTING - Handle both name and start_time
   wateringList.sort((a, b) => {
-    const dateA = new Date(a.start_time);
-    const dateB = new Date(b.start_time);
-    return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
+    let valueA, valueB;
+    
+    if (sortField.value === 'name') {
+      valueA = (a.name || '').toLowerCase();
+      valueB = (b.name || '').toLowerCase();
+      
+      if (sortOrder.value === 'asc') {
+        return valueA.localeCompare(valueB); // A-Z
+      } else {
+        return valueB.localeCompare(valueA); // Z-A
+      }
+    } else if (sortField.value === 'start_time') {
+      valueA = new Date(a.start_time);
+      valueB = new Date(b.start_time);
+      
+      if (sortOrder.value === 'asc') {
+        return valueA - valueB; // Oldest first
+      } else {
+        return valueB - valueA; // Newest first
+      }
+    }
+    
+    return 0; // Fallback
   });
+
   return wateringList;
 });
+
+// ✅ ADD THESE - Sort control functions
+function setSortField(field) {
+  if (sortField.value === field) {
+    // If clicking same field, toggle order
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    // If different field, set to ascending
+    sortField.value = field;
+    sortOrder.value = 'asc';
+  }
+}
+
+function toggleSortOrder() {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+}
+
 async function fetchWaterings() {
   isLoading.value = true;  // ✅ Add this
   
   await store.dispatch("fetchWaterings");
   waterings.value = store.getters.waterings;
-  console.log('💧 Fetched waterings:', waterings.value);
   
   isLoading.value = false;  // ✅ Add this
 }
