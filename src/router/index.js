@@ -323,13 +323,14 @@ const routes = [
     component: MedEdit,
     meta: { requiresAuth: true}
   },
+  
   {
-    path: "/products_by_location/:location",
-    component: ProductsLocationList,
-    props: true,
-    name: "ProductsLocationList",
-    meta: { requiresAuth: true}
+   path: "/products_by_location/:location",
+   component: ProductsLocationList,
+   name: "ProductsLocationList",
+   meta: { requiresAuth: true}
   },
+
   {
     path: "/products",
     name: "ProductList",
