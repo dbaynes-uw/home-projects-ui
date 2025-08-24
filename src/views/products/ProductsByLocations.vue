@@ -6,7 +6,7 @@
         <h2>Products By Locations</h2>
       </v-card-title>
 
-      <!-- ✅ MODERN NAVIGATION -->
+      <!-- ✅ NAVIGATION (unchanged) -->
       <div class="navigation-grid">
         <v-btn 
           variant="outlined" 
@@ -35,27 +35,26 @@
       </div>
     </v-card>
 
-    <!-- ✅ LOADING STATE -->
+    <!-- ✅ LOADING STATE (unchanged) -->
     <div v-if="isLoading" class="text-center pa-4">
       <v-progress-circular indeterminate color="primary" />
       <p class="mt-2">Loading locations...</p>
     </div>
 
-    <!-- ✅ CLEAN MODERN UI -->
+    <!-- ✅ MAIN CONTENT -->
     <v-card v-else class="mt-4">
       <v-card-title class="d-flex justify-space-between align-center">
-        <h2>Double click location to see products</h2>
-
+        <!-- ✅ CLEAN SINGLE CONTROL - Remove Multi-Select switch -->
         <v-switch
           v-model="showShoppingList"
           :label="`Show: ${showShoppingList ? 'Selected Items' : 'All Items'}`"
           color="primary"
           hide-details
+          density="compact"
         />
       </v-card-title>
 
       <v-card-text>
-        <!-- ✅ CLEAN LOCATION GRID -->
         <div class="locations-grid">
           <v-card
             v-for="(location, index) in locations"
@@ -76,7 +75,6 @@
               </v-icon>
             </v-card-title>
 
-            <!-- ✅ VENDOR PRODUCTS INSIDE LOCATION -->
             <v-expand-transition>
               <v-card-text v-show="expandedLocation === index">
                 <div 
@@ -97,18 +95,47 @@
                     </v-card-title>
 
                     <v-card-text>
+                      <!-- ✅ PRODUCTS LIST - Remove isMultiSelectMode references -->
                       <div class="products-list">
-                        <v-checkbox
-                          v-for="product in getFilteredProducts(vendor)"
+                        <v-card
+                          v-for="(product, productIndex) in getFilteredProducts(vendor)"
                           :key="product.id"
-                          v-model="product.active"
-                          :label="product.product_name"
-                          @update:model-value="updateProduct(product)"
-                          @dblclick="editProduct(product)"
-                          color="primary"
-                          density="compact"
-                          class="product-checkbox"
-                        />
+                          @click.stop="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+                          @dblclick.stop="editProduct(product)"
+                          :class="{ 
+                            'product-selected': product.active,
+                            'product-multi-selected': selectedProducts.has(product.id)
+                          }"
+                          variant="outlined"
+                          class="product-card"
+                          hover
+                        >
+                          <v-card-text class="py-3">
+                            <div class="d-flex align-center">
+                              <!-- ✅ ACTIVE STATE CHECKBOX -->
+                              <v-checkbox
+                                :model-value="product.active"
+                                color="primary"
+                                density="compact"
+                                hide-details
+                                readonly
+                                class="mr-3"
+                              />
+                              
+                              <span class="product-name">{{ product.product_name }}</span>
+                              
+                              <!-- ✅ VISUAL INDICATOR FOR MULTI-SELECT -->
+                              <v-icon 
+                                v-if="selectedProducts.has(product.id)"
+                                color="secondary"
+                                size="small"
+                                class="ml-auto"
+                              >
+                                mdi-check-circle
+                              </v-icon>
+                            </div>
+                          </v-card-text>
+                        </v-card>
                       </div>
                     </v-card-text>
                   </v-card>
@@ -117,8 +144,7 @@
             </v-expand-transition>
           </v-card>
         </div>
-
-        <!-- ✅ MODERN SUBMIT -->
+        
         <v-btn 
           @click="submitChanges"
           :loading="isSubmitting"
@@ -134,7 +160,6 @@
     </v-card>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -145,37 +170,33 @@ import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 const router = useRouter();
 const store = useStore();
 
-// ✅ REACTIVE STATE
+// ✅ CLEAN STATE - Remove isMultiSelectMode
 const showShoppingList = ref(true);
 const expandedLocation = ref(null);
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const confirmDialogue = ref(null);
 
-// ✅ BULLETPROOF COMPUTED PROPERTIES
+// ✅ KEEP MULTI-SELECT STATE (for Ctrl/Shift functionality)
+const selectedProducts = ref(new Set());
+const lastSelectedIndex = ref(null);
+
+// ✅ EXISTING COMPUTED PROPERTIES (unchanged)
 const vendorsProducts = computed(() => {
   const rawData = store.state.vendors_products;
   
-  //console.log('🔍 Raw vendors_products:', rawData, typeof rawData);
-  
-  // ✅ HANDLE DIFFERENT API RESPONSE STRUCTURES
-  
-  // Direct array
   if (Array.isArray(rawData)) {
     return rawData;
   }
   
-  // Wrapped in 'data' property
   if (rawData?.data && Array.isArray(rawData.data)) {
     return rawData.data;
   }
   
-  // Wrapped in 'vendors_products' property
   if (rawData?.vendors_products && Array.isArray(rawData.vendors_products)) {
     return rawData.vendors_products;
   }
   
-  // Object with array values
   if (rawData && typeof rawData === 'object') {
     const arrayValues = Object.values(rawData).find(val => Array.isArray(val));
     if (arrayValues) {
@@ -184,41 +205,67 @@ const vendorsProducts = computed(() => {
   }
   
   console.warn('❌ vendorsProducts is not in expected format:', rawData);
-  return []; // ✅ ALWAYS RETURN ARRAY
+  return [];
 });
 
 const vendorsLocationsGroup = computed(() => {
   const rawData = store.state.vendors_locations_group;
   
-  //console.log('🔍 Raw vendors_locations_group:', rawData);
-  
-  // Already correct format
   if (rawData?.vendorsLocationsGroup && Array.isArray(rawData.vendorsLocationsGroup)) {
     return rawData.vendorsLocationsGroup;
   }
   
-  // Direct array
   if (Array.isArray(rawData)) {
     return rawData;
   }
   
-  // Wrapped in 'data' property
   if (rawData?.data && Array.isArray(rawData.data)) {
     return rawData.data;
   }
   
   console.warn('❌ vendorsLocationsGroup is not in expected format:', rawData);
-  return []; // ✅ ALWAYS RETURN ARRAY
+  return [];
 });
 
 const locations = computed(() => vendorsLocationsGroup.value);
 
-// ✅ BULLETPROOF METHODS - Add null checks everywhere
+// ✅ UPDATED - Remove isMultiSelectMode checks, keep functionality
+function handleProductClick(product, event, productIndex, vendorProducts) {
+  if (event?.shiftKey && lastSelectedIndex.value !== null) {
+    // Shift-click: select range (works anytime)
+    const start = Math.min(lastSelectedIndex.value, productIndex);
+    const end = Math.max(lastSelectedIndex.value, productIndex);
+    
+    for (let i = start; i <= end; i++) {
+      if (vendorProducts[i]) {
+        selectedProducts.value.add(vendorProducts[i].id);
+      }
+    }
+  } else if (event?.ctrlKey || event?.metaKey) {
+    // Ctrl/Cmd-click: toggle individual selection (works anytime)
+    if (selectedProducts.value.has(product.id)) {
+      selectedProducts.value.delete(product.id);
+    } else {
+      selectedProducts.value.add(product.id);
+    }
+    lastSelectedIndex.value = productIndex;
+  } else {
+    // Normal click: toggle product active state
+    product.active = !product.active;
+    updateProduct(product);
+    
+    // Clear visual selections when toggling directly
+    selectedProducts.value.clear();
+    lastSelectedIndex.value = null;
+  }
+}
+
+// ✅ ALL OTHER FUNCTIONS STAY EXACTLY THE SAME
 function getVendorsForLocation(location) {
   const vendors = vendorsProducts.value;
   
   if (!Array.isArray(vendors)) {
-    console.error('❌ vendorsProducts is not an array in getVendorsForLocation:', vendors);
+    console.error('❌ vendorsProducts is not an array:', vendors);
     return [];
   }
   
@@ -255,7 +302,7 @@ function navigateToLocation(location) {
 function editVendor(vendor) {
   router.push({ 
     name: 'VendorEdit', 
-    params: { id: vendor.vendor_id || vendor.id } // ✅ Handle different ID fields
+    params: { id: vendor.vendor_id || vendor.id }
   });
 }
 
@@ -274,7 +321,6 @@ function updateProduct(product) {
   console.log(`Updated ${product.product_name}:`, product.active);
 }
 
-// ✅ BULLETPROOF SUBMIT - Handle undefined return
 async function submitChanges() {
   isSubmitting.value = true;
   
@@ -294,15 +340,13 @@ async function submitChanges() {
     
     console.log('📤 Submitting payload:', payload);
     
-    // ✅ DON'T CHECK RETURN VALUE - Just submit and refresh
     await store.dispatch('updateVendorsProducts', payload);
-    console.log('✅ Submit completed');
+    alert('✅ Update completed');
     
   } catch (error) {
     console.error('❌ Submit error (but continuing):', error);
   }
   
-  // ✅ ALWAYS REFRESH REGARDLESS
   try {
     await fetchData();
     console.log('✅ Products refreshed');
@@ -313,7 +357,6 @@ async function submitChanges() {
   isSubmitting.value = false;
 }
 
-// ✅ BULLETPROOF FETCH
 async function fetchData() {
   isLoading.value = true;
   
@@ -326,14 +369,6 @@ async function fetchData() {
     
     await Promise.all(promises);
     
-    // ✅ LOG WHAT WE GOT
-    //console.log('📊 Fetched data:', {
-    //  vendorsProducts: store.state.vendors_products,
-    //  vendorsLocationsGroup: store.state.vendors_locations_group,
-    //  isVendorsArray: Array.isArray(store.state.vendors_products),
-    //  isLocationsArray: Array.isArray(store.state.vendors_locations_group?.vendorsLocationsGroup)
-    //});
-    
   } catch (error) {
     console.error('❌ Error fetching data:', error);
   } finally {
@@ -341,12 +376,10 @@ async function fetchData() {
   }
 }
 
-// ✅ LIFECYCLE
 onMounted(() => {
   fetchData();
 });
 </script>
-
 <style scoped>
 .navigation-grid {
   display: grid;
@@ -402,8 +435,33 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
-.product-checkbox {
+/* ✅ ADD MISSING PRODUCT CARD STYLES */
+.product-card {
   cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  user-select: none;
+}
+
+.product-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.product-selected {
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgba(var(--v-theme-primary), 0.08);
+}
+
+.product-multi-selected {
+  border-color: rgb(var(--v-theme-secondary));
+  background-color: rgba(var(--v-theme-secondary), 0.12);
+  box-shadow: 0 0 0 1px rgb(var(--v-theme-secondary));
+}
+
+.product-name {
+  font-weight: 500;
+  flex: 1;
 }
 
 /* ✅ RESPONSIVE */
