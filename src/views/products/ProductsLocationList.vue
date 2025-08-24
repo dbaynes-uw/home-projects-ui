@@ -64,12 +64,12 @@
       </div>
       
       <!-- ✅ STREAMLINED - Product display -->
-      <div v-else class="vendors-container">
-        <div 
-          v-for="vendor in groupedProducts" 
-          :key="vendor.vendor_name"
-          class="vendor-section"
-        >
+        <div v-else class="vendors-container" :key="refreshKey">
+          <div 
+            v-for="vendor in groupedProducts" 
+            :key="`${vendor.vendor_name}-${refreshKey}`"
+            class="vendor-section"
+          >
           <v-card variant="outlined" class="mb-4">
             <v-card-title class="vendor-header">
               <v-icon start>mdi-store</v-icon>
@@ -118,38 +118,50 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-// ✅ COMPOSITION API SETUP
 const route = useRoute();
 const router = useRouter();
 const store = useStore();
 
-// No longer need props
-//const props = defineProps({
-//  location: {
-//    type: String,
-//    required: true
-//  }
-//});
-
 // ✅ REACTIVE STATE
+const refreshKey = ref(0);
 const showShoppingList = ref(true);
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const confirmDialogue = ref(null);
 
-// ✅ COMPUTED PROPERTIES
-const productsByLocation = computed(() => store.state.products_by_location);
+// ✅ TRACK LOCAL CHANGES
+const localProductChanges = ref(new Map()); // productId -> { active: boolean }
+
+// ✅ GET FRESH DATA BUT PRESERVE LOCAL CHANGES
+const productsByLocation = computed(() => {
+  const storeData = store.state.products_by_location;
+  if (!storeData) return [];
+  
+  // Deep clone to break references
+  const clonedData = JSON.parse(JSON.stringify(storeData));
+  
+  // ✅ APPLY LOCAL CHANGES to the fresh data
+  clonedData.forEach(vendor => {
+    vendor.products.forEach(product => {
+      const localChange = localProductChanges.value.get(product.id);
+      if (localChange !== undefined) {
+        product.active = localChange.active;
+      }
+    });
+  });
+  
+  return clonedData;
+});
 
 const groupedProducts = computed(() => {
   if (!productsByLocation.value) return [];
   
-  // Group products by vendor and filter if needed
   const vendors = {};
   
   productsByLocation.value.forEach(item => {
@@ -161,7 +173,6 @@ const groupedProducts = computed(() => {
       };
     }
     
-    // Filter products based on shopping list toggle
     const filteredProducts = showShoppingList.value 
       ? item.products.filter(product => product.active)
       : item.products;
@@ -172,22 +183,15 @@ const groupedProducts = computed(() => {
   return Object.values(vendors).filter(vendor => vendor.products.length > 0);
 });
 
-// ✅ METHODS
-async function fetchProducts() {
-  isLoading.value = true;
-  try {
-    await store.dispatch('fetchProductsByLocation', route.params.location);
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    // TODO: Add proper error handling/notification
-  } finally {
-    isLoading.value = false;
-  }
-}
-
+// ✅ UPDATED - Track changes locally
 function updateProductStatus(product) {
-  // Product status is automatically updated via v-model
   console.log(`Updated ${product.product_name} status to:`, product.active);
+  
+  // ✅ STORE THE CHANGE LOCALLY
+  localProductChanges.value.set(product.id, { active: product.active });
+  
+  // Force reactivity update
+  refreshKey.value++;
 }
 
 async function submitChanges() {
@@ -200,22 +204,53 @@ async function submitChanges() {
       created_by: store.state.user.resource_owner.email,
     };
     
-    const success = await store.dispatch('updateVendorsProducts', payload);
+    const result = await store.dispatch('updateVendorsProducts', payload);
     
-    if (success) {
-      // ✅ MODERN - Use proper notification instead of alert
-      console.log('Products updated successfully');
-      // TODO: Add toast notification
-      // Refresh data
-      await fetchProducts();
+    if (result !== false && result !== null) {
+      console.log('✅ Products updated successfully');
+      
+      // ✅ CLEAR LOCAL CHANGES after successful submit
+      localProductChanges.value.clear();
+      
+      // ✅ NUCLEAR REFRESH SEQUENCE
+      store.commit('SET_PRODUCTS_BY_LOCATION', null);
+      refreshKey.value++;
+      await nextTick();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      await store.dispatch('fetchProductsByLocation', route.params.location);
+      refreshKey.value++;
+      await nextTick();
+      
+      console.log('✅ Nuclear refresh complete');
+      
     } else {
       throw new Error('Failed to update products');
     }
+    
   } catch (error) {
-    console.error('Error updating products:', error);
-    // TODO: Add error notification
+    console.error('❌ Error updating products:', error);
+    
+    // ✅ DON'T CLEAR LOCAL CHANGES on error - keep user's selections
+    store.commit('SET_PRODUCTS_BY_LOCATION', null);
+    refreshKey.value++;
+    await nextTick();
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await store.dispatch('fetchProductsByLocation', route.params.location);
+    refreshKey.value++;
+    
   } finally {
     isSubmitting.value = false;
+  }
+}
+
+async function fetchProducts() {
+  isLoading.value = true;
+  try {
+    await store.dispatch('fetchProductsByLocation', route.params.location);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -226,14 +261,6 @@ function editProduct(product) {
   });
 }
 
-//function editVendor(vendor) {
-//  router.push({ 
-//    name: 'VendorEdit', 
-//    params: { id: vendor.vendor_id } 
-//  });
-//}
-
-// ✅ LIFECYCLE
 onMounted(() => {
   fetchProducts();
 });
@@ -256,7 +283,11 @@ onMounted(() => {
 }
 
 .vendor-header {
-  background-color: rgb(var(--v-theme-surface-variant));
+  /* #52a9c6; 
+  --v-theme-surface-variant: 245, 245, 245;  /* Light gray */
+
+  /*background-color: rgb(var(--v-theme-surface-variant));*/
+  background-color: rgba(var(--v-theme-primary), 0.08);
   display: flex;
   align-items: center;
   gap: 0.5rem;
