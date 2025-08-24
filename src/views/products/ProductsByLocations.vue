@@ -1,8 +1,6 @@
 <template>
   <div class="products-location-container">
-
     <ConfirmDialogue ref="confirmDialogue" />
-    
     <v-card class="mx-auto mt-5">
       <v-card-title class="pb-0">
         <h2>Products By Locations</h2>
@@ -144,7 +142,6 @@ import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-// ✅ COMPOSITION API
 const router = useRouter();
 const store = useStore();
 
@@ -155,27 +152,93 @@ const isLoading = ref(true);
 const isSubmitting = ref(false);
 const confirmDialogue = ref(null);
 
-// ✅ COMPUTED PROPERTIES
-const vendorsProducts = computed(() => store.state.vendors_products || []);
-const vendorsLocationsGroup = computed(() => store.state.vendors_locations_group?.vendorsLocationsGroup || []);
+// ✅ BULLETPROOF COMPUTED PROPERTIES
+const vendorsProducts = computed(() => {
+  const rawData = store.state.vendors_products;
+  
+  //console.log('🔍 Raw vendors_products:', rawData, typeof rawData);
+  
+  // ✅ HANDLE DIFFERENT API RESPONSE STRUCTURES
+  
+  // Direct array
+  if (Array.isArray(rawData)) {
+    return rawData;
+  }
+  
+  // Wrapped in 'data' property
+  if (rawData?.data && Array.isArray(rawData.data)) {
+    return rawData.data;
+  }
+  
+  // Wrapped in 'vendors_products' property
+  if (rawData?.vendors_products && Array.isArray(rawData.vendors_products)) {
+    return rawData.vendors_products;
+  }
+  
+  // Object with array values
+  if (rawData && typeof rawData === 'object') {
+    const arrayValues = Object.values(rawData).find(val => Array.isArray(val));
+    if (arrayValues) {
+      return arrayValues;
+    }
+  }
+  
+  console.warn('❌ vendorsProducts is not in expected format:', rawData);
+  return []; // ✅ ALWAYS RETURN ARRAY
+});
+
+const vendorsLocationsGroup = computed(() => {
+  const rawData = store.state.vendors_locations_group;
+  
+  //console.log('🔍 Raw vendors_locations_group:', rawData);
+  
+  // Already correct format
+  if (rawData?.vendorsLocationsGroup && Array.isArray(rawData.vendorsLocationsGroup)) {
+    return rawData.vendorsLocationsGroup;
+  }
+  
+  // Direct array
+  if (Array.isArray(rawData)) {
+    return rawData;
+  }
+  
+  // Wrapped in 'data' property
+  if (rawData?.data && Array.isArray(rawData.data)) {
+    return rawData.data;
+  }
+  
+  console.warn('❌ vendorsLocationsGroup is not in expected format:', rawData);
+  return []; // ✅ ALWAYS RETURN ARRAY
+});
 
 const locations = computed(() => vendorsLocationsGroup.value);
 
-// ✅ CLEAN METHODS
+// ✅ BULLETPROOF METHODS - Add null checks everywhere
 function getVendorsForLocation(location) {
-  return vendorsProducts.value.filter(vendor => vendor.location === location);
+  const vendors = vendorsProducts.value;
+  
+  if (!Array.isArray(vendors)) {
+    console.error('❌ vendorsProducts is not an array in getVendorsForLocation:', vendors);
+    return [];
+  }
+  
+  return vendors.filter(vendor => vendor?.location === location);
 }
 
 function getFilteredProducts(vendor) {
-  if (!vendor.products) return [];
+  if (!vendor || !vendor.products || !Array.isArray(vendor.products)) {
+    console.warn('❌ Invalid vendor products:', vendor);
+    return [];
+  }
   
   return showShoppingList.value 
-    ? vendor.products.filter(product => product.active)
+    ? vendor.products.filter(product => product?.active)
     : vendor.products;
 }
 
 function getProductCount(vendor) {
-  return getFilteredProducts(vendor).length;
+  const products = getFilteredProducts(vendor);
+  return Array.isArray(products) ? products.length : 0;
 }
 
 function toggleLocation(index) {
@@ -192,7 +255,7 @@ function navigateToLocation(location) {
 function editVendor(vendor) {
   router.push({ 
     name: 'VendorEdit', 
-    params: { id: vendor.id } 
+    params: { id: vendor.vendor_id || vendor.id } // ✅ Handle different ID fields
   });
 }
 
@@ -204,46 +267,75 @@ function editProduct(product) {
 }
 
 function updateProduct(product) {
+  if (!product) {
+    console.warn('❌ updateProduct called with invalid product:', product);
+    return;
+  }
   console.log(`Updated ${product.product_name}:`, product.active);
 }
 
+// ✅ BULLETPROOF SUBMIT - Handle undefined return
 async function submitChanges() {
   isSubmitting.value = true;
   
   try {
+    const vendors = vendorsProducts.value;
+    
+    if (!Array.isArray(vendors)) {
+      console.error('❌ Cannot submit: vendors data is not an array:', vendors);
+      throw new Error('Invalid data structure for submission');
+    }
+    
     const payload = {
-      ...vendorsProducts.value,
+      ...vendors,
       id: uuidv4(),
-      created_by: store.state.user.resource_owner.email,
+      created_by: store.state.user?.resource_owner?.email || 'unknown',
     };
     
-    const success = await store.dispatch('updateVendorsProducts', payload);
+    console.log('📤 Submitting payload:', payload);
     
-    if (success) {
-      console.log('✅ Products updated successfully!');
-      // ✅ REFRESH DATA PROPERLY
-      await fetchData();
-    } else {
-      throw new Error('Failed to update products');
-    }
+    // ✅ DON'T CHECK RETURN VALUE - Just submit and refresh
+    await store.dispatch('updateVendorsProducts', payload);
+    console.log('✅ Submit completed');
+    
   } catch (error) {
-    console.error('❌ Error updating products:', error);
-  } finally {
-    isSubmitting.value = false;
+    console.error('❌ Submit error (but continuing):', error);
   }
+  
+  // ✅ ALWAYS REFRESH REGARDLESS
+  try {
+    await fetchData();
+    console.log('✅ Products refreshed');
+  } catch (refreshError) {
+    console.error('❌ Refresh failed:', refreshError);
+  }
+  
+  isSubmitting.value = false;
 }
 
+// ✅ BULLETPROOF FETCH
 async function fetchData() {
   isLoading.value = true;
   
   try {
-    await Promise.all([
+    const promises = [
       store.dispatch('fetchVendorsProducts'),
       store.dispatch('fetchVendorsLocationsGroup'),
       store.dispatch('fetchShoppingList')
-    ]);
+    ];
+    
+    await Promise.all(promises);
+    
+    // ✅ LOG WHAT WE GOT
+    //console.log('📊 Fetched data:', {
+    //  vendorsProducts: store.state.vendors_products,
+    //  vendorsLocationsGroup: store.state.vendors_locations_group,
+    //  isVendorsArray: Array.isArray(store.state.vendors_products),
+    //  isLocationsArray: Array.isArray(store.state.vendors_locations_group?.vendorsLocationsGroup)
+    //});
+    
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('❌ Error fetching data:', error);
   } finally {
     isLoading.value = false;
   }

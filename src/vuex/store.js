@@ -1308,16 +1308,26 @@ async createPlant({ commit, state }, plant) {
           alert("VendorsProducts Fetch Error: ", error.response.data )
         });
     },
-    async updateVendorsProducts({ commit }, vendors_products) {
-      EventService.putVendorsProducts(vendors_products)
-        .then(() => {
-          commit("SET_VENDORS_PRODUCTS", vendors_products);
-        })
-        .catch((error) => {
-          //.log(error);
-          alert("VendorsProducts Put Error: ", error.response.data )
-        });
-    },
+async updateVendorsProducts({ commit }, payload) {
+  try {
+    const response = await EventService.putVendorsProducts(payload);
+    
+    // ✅ RETURN SUCCESS INDICATOR
+    if (response && (response.status === 200 || response.data)) {
+      // Update state if needed
+      if (response.data) {
+        commit('SET_VENDORS_PRODUCTS', response.data);
+      }
+      return true; // ✅ EXPLICIT SUCCESS
+    }
+    
+    return false; // ✅ EXPLICIT FAILURE
+    
+  } catch (error) {
+    console.error('Store action error:', error);
+    return false; // ✅ RETURN FALSE ON ERROR
+  }
+},
     async createWatering({ commit, dispatch }, watering) {
       EventService.postWatering(watering)
         .then(async () => {
