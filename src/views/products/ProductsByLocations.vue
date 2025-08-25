@@ -318,7 +318,6 @@ function updateProduct(product) {
     console.warn('❌ updateProduct called with invalid product:', product);
     return;
   }
-  console.log(`Updated ${product.product_name}:`, product.active);
 }
 
 async function submitChanges() {
@@ -338,7 +337,7 @@ async function submitChanges() {
       created_by: store.state.user?.resource_owner?.email || 'unknown',
     };
     
-    console.log('📤 Submitting payload:', payload);
+    //console.log('📤 Submitting payload:', payload);
     
     await store.dispatch('updateVendorsProducts', payload);
     alert('✅ Update completed');
