@@ -1,350 +1,444 @@
 <template>
-  <div class="div-frame">
-    <h2>Events Created By:</h2>
-    <h3>{{ user.email  }}</h3>
-    <!--h2 id="status-message">
-      <u>Status Message: {{ this.statusMessage }}</u>
-    </h2-->
-    <div>
-      <h2>
-        <router-link :to="{ name: 'EventStatistics' }">Statistics</router-link> |
-        <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
-      </h2>
-      <br/>
-      <ul>
-        <li>
-          <button id="button-as-link" @click="refreshPage"><u>Active Events</u></button>  
-        </li>
-        <li>
-          <h1>
-            <EventsPastDue/>
-          </h1>
-        </li>
-        <li>
-          <h1>
-            <EventsInactive />
-          </h1>
-        </li>
-      </ul>
-    </div>
-    <ul>
-    <li><EventsDueBy v-model:selectedDueByValue="parentDueBy"/>
-      &nbsp;
-      &nbsp;
-      <EventsLocations v-model:selectedLocationValue="parentLocation"/></li>
-    </ul>
-    <span v-if="$store.state.user.resource_owner.email.toLowerCase().includes('baynes')">
-      <br/>
-      <button id="button-as-link-wide" @click="notifyEventsDue"><u>Send Events Due Notification</u></button>  
-      <br />
-    </span>
-    <div style="width: 100%">
-      <div class="auto-search-container">
+  <div class="event-list-container">
+    <!-- ✅ MODERN HEADER -->
+    <v-card class="mx-auto mt-5">
+      <v-card-title class="d-flex align-center">
+        <v-avatar color="primary" class="mr-3">
+          <v-icon>mdi-calendar-check</v-icon>
+        </v-avatar>
+        <div>
+          <h2 class="mb-0">Events Dashboard</h2>
+          <p class="text-medium-emphasis mb-0">Created by: {{ user?.email }}</p>
+        </div>
+      </v-card-title>
+
+      <!-- ✅ MODERN NAVIGATION -->
+      <v-card-text>
+        <div class="navigation-grid">
+          <v-btn
+            variant="outlined"
+            :to="{ name: 'EventStatistics' }"
+            prepend-icon="mdi-chart-bar"
+          >
+            Statistics
+          </v-btn>
+          
+          <v-btn
+            variant="outlined"
+            :to="{ name: 'EventCreate' }"
+            prepend-icon="mdi-plus"
+            color="primary"
+          >
+            Create Event
+          </v-btn>
+          
+          <v-btn
+            variant="outlined"
+            @click="refreshPage"
+            prepend-icon="mdi-refresh"
+          >
+            Active Events
+          </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <!-- ✅ MODERN FILTERS & SEARCH -->
+    <v-card class="mt-4">
+      <v-card-title>
+        <h3>Filters & Search</h3>
+      </v-card-title>
+      
+      <v-card-text>
+        <!-- ✅ FILTER COMPONENTS ROW -->
+        <div class="filters-grid mb-4">
+          <EventsPastDue />
+          <EventsInactive />
+          <EventsDueBy v-model:selectedDueByValue="parentDueBy" />
+          <EventsLocations v-model:selectedLocationValue="parentLocation" />
+        </div>
+
+        <!-- ✅ SEARCH BAR -->
         <v-text-field
-          clearable
-          clear-icon="mdi-close"
-          @click:clear="showIndex"
-          type="text"
-          class="np-input-search"
           v-model="inputSearchText"
-          placeholder="Search"
-          autocomplete="off"
-          v-on:keyup="searchColumns"
+          @input="searchColumns"
+          @click:clear="showIndex"
+          placeholder="Search events by description or assignee..."
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          clearable
+          hide-details
+          class="mb-4"
         />
-      </div>
+
+        <!-- ✅ VIEW TOGGLE -->
+        <div class="d-flex align-center justify-space-between">
+          <v-btn-toggle
+            v-model="viewMode"
+            mandatory
+            variant="outlined"
+            divided
+          >
+            <v-btn value="cards">
+              <v-icon start>mdi-view-grid</v-icon>
+              Cards
+            </v-btn>
+            <v-btn value="table">
+              <v-icon start>mdi-table</v-icon>
+              Table
+            </v-btn>
+          </v-btn-toggle>
+
+          <!-- ✅ ADMIN NOTIFICATION -->
+          <v-btn
+            v-if="isAdmin"
+            @click="notifyEventsDue"
+            color="warning"
+            variant="elevated"
+            prepend-icon="mdi-email-send"
+          >
+            Send Due Notifications
+          </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <!-- ✅ LOADING STATE -->
+    <div v-if="isLoading" class="text-center pa-8">
+      <v-progress-circular indeterminate color="primary" size="64" />
+      <p class="mt-4">Loading events...</p>
     </div>
-  
-    <div class="event-list">
-      <button id="button-as-link" @click="requestIndexDetail">
-        <u>Detail for Edit/Delete</u>
-      </button>
-      <span v-if="filteredResults.length == 0">
-        <span v-if="requestIndexDetailFlag == true">
-          <span v-if="events_request == 'DueBy'">
-            <p id="p-informational">{{ events.length }} events Due in the next {{ parentDueBy }} Days.</p>
-          </span>
-          <span v-if="events_request == 'Location'">
-            <p id="p-informational">{{ events.length }} Active {{ parentLocation }} events </p>
-          </span>
-          <br/>
-          <div class="legend">
-            <span><b>Double click to mark as TBD/Done or Active/Inactive.</b></span>
-            <span><span class="incomplete-box"></span> = Incomplete</span>
-            <span><span class="complete-box"></span> = Complete</span>
-          </div>
-          <div class="cards">
-            <EventCard
-              v-for="event in events"
-              :key="event.id"
-              :event="event"
-              :class="duePastDueOrInactive(event)"
-              @dblclick="editEvent(event)"
-            />
-          </div>
-          <div class="cards">
-            <!--EventCard
-              v-for="event in events"
-              :key="event.id"
-              :event="event"
-              :class="inactive(event)"
-              @dblclick="editEvent(event)"
-            /-->
-            <br />
-          </div>
-        </span>
-        <span v-else>
-          <br/>
-          <EventIndex :events="events" />
-        </span>
-      </span>
-  
-      <span v-if="filteredResults.length > 0">
-        <span v-if="requestIndexDetailFlag == true">
-          <p id="p-informational">Number of events returned: {{ filteredResults.length }}</p>
-          <div class="legend">
-            <span>Double click to mark as complete.</span>
-            <span><span class="incomplete-box"></span> = Incomplete</span>
-            <span><span class="complete-box"></span> = Complete</span>
-          </div>
-          <div class="events">
-            <EventCard
-              v-for="event in filteredResults"
-              :key="event.id"
-              :event="event"
-              class="card"
-              @dblclick="editEvent(event)"
-            />
-            <br />
-          </div>
-        </span>
-        <span v-else>
-          <EventIndex :events="filteredResults" />
-        </span>
-      </span>
-    </div>
+
+    <!-- ✅ RESULTS SECTION -->
+    <v-card v-else class="mt-4">
+      <v-card-title class="d-flex justify-space-between align-center">
+        <div>
+          <h3>{{ getResultsTitle() }}</h3>
+          <p class="text-medium-emphasis mb-0">
+            {{ getResultsCount() }} event{{ displayEvents.length !== 1 ? 's' : '' }} found
+          </p>
+        </div>
+
+        <!-- ✅ LEGEND -->
+        <v-chip-group>
+          <v-chip color="success" variant="outlined" size="small">
+            <v-icon start size="small">mdi-check-circle</v-icon>
+            Complete
+          </v-chip>
+          <v-chip color="warning" variant="outlined" size="small">
+            <v-icon start size="small">mdi-clock-alert</v-icon>
+            Incomplete
+          </v-chip>
+          <v-chip color="error" variant="outlined" size="small">
+            <v-icon start size="small">mdi-alert-circle</v-icon>
+            Past Due
+          </v-chip>
+        </v-chip-group>
+      </v-card-title>
+
+      <v-card-text>
+        <!-- ✅ CARDS VIEW -->
+        <div v-if="viewMode === 'cards'" class="events-grid">
+          <v-card
+            v-for="event in displayEvents"
+            :key="event.id"
+            @dblclick="editEvent(event)"
+            :class="getEventCardClass(event)"
+            variant="outlined"
+            hover
+            class="event-card"
+          >
+            <v-card-title class="pb-2">
+              <div class="d-flex align-center">
+                <v-icon 
+                  :color="getEventStatusColor(event)"
+                  start
+                >
+                  {{ getEventStatusIcon(event) }}
+                </v-icon>
+                <span class="text-truncate">{{ event.description }}</span>
+              </div>
+            </v-card-title>
+
+            <v-card-text>
+              <div class="event-details">
+                <div class="d-flex align-center mb-2">
+                  <v-icon size="small" class="mr-2">mdi-account</v-icon>
+                  <span>{{ event.assigned }}</span>
+                </div>
+                
+                <div class="d-flex align-center mb-2">
+                  <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
+                  <span>{{ formatStandardDate(event.action_due_date) }}</span>
+                  <v-chip
+                    v-if="isEventPastDue(event)"
+                    color="error"
+                    size="x-small"
+                    class="ml-2"
+                  >
+                    PAST DUE
+                  </v-chip>
+                </div>
+
+                <div class="d-flex align-center">
+                  <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
+                  <span>{{ event.location || 'No location' }}</span>
+                </div>
+              </div>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                @click.stop="editEvent(event)"
+                variant="text"
+                size="small"
+                color="primary"
+              >
+                <v-icon start>mdi-pencil</v-icon>
+                Edit
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </div>
+
+        <!-- ✅ TABLE VIEW -->
+        <div v-else>
+          <EventIndex :events="displayEvents" />
+        </div>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
 <script setup>
-//import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import { ref } from 'vue';
-import EventCard from '@/components/events/EventCard'
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import dayjs from 'dayjs';
+import axios from 'axios';
+
+// Components
+import EventIndex from "@/components/events/EventIndex.vue";
 import EventsDueBy from "@/components/events/EventsDueBy.vue";
 import EventsInactive from "@/components/events/EventsInactive.vue";
 import EventsLocations from "@/components/events/EventsLocations.vue";
 import EventsPastDue from "@/components/events/EventsPastDue.vue";
-import EventIndex from "@/components/events/EventIndex.vue";
-//import EventSearchResults from "@/components/events/EventSearchResults.vue";
-import axios from "axios";
+import DateFormatService from "@/services/DateFormatService.js";
+
+const router = useRouter();
+const store = useStore();
+
+// ✅ REACTIVE STATE
+const isLoading = ref(true);
+const inputSearchText = ref('');
 const parentDueBy = ref('');
 const parentLocation = ref('');
-</script>
-<script>
-// @ is an alias to /src
-import DateFormatService from "@/services/DateFormatService.js";
-export default {
-  name: "EventList",
-  components: {
-    EventIndex,
-    /*EventIndexDetail,*/
-    EventCard,
-    //EventSearchResults,
-    EventsDueBy,
-    EventsInactive,
-    EventsLocations,
-    EventsPastDue,
-  },
-  props: ["id", "pastDue", "eventCard", "filteredResults[]"],
-  data() {
-    return {
-      isAdmin: false,
-      requestIndexDetailFlag: true,
-      assigned: "assigned",
-      eventList: null,
-      updatedEvent: null,
-      inputSearchText: "",
-      filteredResults: [],
-      searchResults: false,
-      columnDetails: null,
-      //sortedData: [],
-      sortedbyASC: false,
-      statusMessage: "",
-      user: null,
-    };
-  },
-  async mounted() {
-    // FOR URL:
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macbook-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/events/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
-    }
-    this.api_url = work_url
-  },
-  created() {
-    this.$store.dispatch("fetchEvents");
-    //this.sortedData = this.events;
-    this.user = this.$store.state.user.resource_owner
-    if (this.user.email == 'dlbaynes@gmail.com') {
-      this.isAdmin = true;
-    }
-  },
-  computed: {    
-    events() {
-      return this.$store.state.events;
-    },
-    events_request() {
-      return this.$store.state.eventsRequest
-    }
-  },
-  methods: {
-    async notifyEventsDue(){
-      alert("Email Notification Sent")
-      const result = await axios.put(this.api_url + "notification_events_due");
-      if (result.statusText.toLowerCase() == 'ok') {
-        alert("Notification emails were successfully sent to assignees")
-      } else {
-        alert("There was an error send emails to assignees")
-      }
-    },
-    duePastDueOrInactive(e) {
-      var dayjs = require('dayjs')
-      let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
-      if (e.status == 'active') {
-        if (e.action_due_date < formatDateToday ){
-          return 'event-pastdue'
-        } else {
-          return 'card'
-        }
-      } else {
-        return 'event-inactive'
-      }
-      //e.status == 'inactive' ? 'event-inactive' : 'event'
-      //return e.status
-    },
-    inactive(e) {
-      return e.status == 'inactive'
-    },
-    requestIndexDetail() {
-      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
-    },
-    showIndex() {
-      this.filteredResults = [];
-    },
-    searchColumns() {
-      this.filteredResults = [];
-      this.searchResults = true;
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.events &&
-          this.events.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.events.forEach((event) => {
-            const searchHasDescription =
-              event.description &&
-              event.description
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasAssigned =
-              event.assigned &&
-              event.assigned
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasDescription || searchHasAssigned) {
-              this.filteredResults.push(event);
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    refreshPage() {
-      //this.$router.push({ path: "/" });
-      window.location.reload();
-    },
-    //async deleteEvent(event) {
-    //  const ok = await this.$refs.confirmDialogue.show({
-    //    title: "Delete Event from List",
-    //    message:
-    //      "Are you sure you want to delete " +
-    //      event.description +
-    //      "? It cannot be undone.",
-    //    okButton: "Delete",
-    //  });
-    //  // If you throw an error, the method will terminate here unless you surround it wil try/catch
-    //  if (ok) {
-    //    this.$store.dispatch("deleteEvent", event);
-    //    this.statusMessage =
-    //      "Event was Deleted for " +
-    //      event.description +
-    //      "! Page will restore in 2 seconds";
-    //    setTimeout(() => location.reload(), 2500);
-    //  }
-    //},
-    editEvent(event) {
-      //var updatedEvent = event;
-      //updatedEvent.action_active = !event.action_active;
-      //this.$store.dispatch("updateEvent", updatedEvent);
-      this.$router.push({ name: 'EventEdit', params: { id: `${event.id}` } });
-    },
-    DatePastDue(value) {
-      return DateFormatService.datePastDuejs(value);
-    },
+const viewMode = ref('cards');
+const apiUrl = ref('');
 
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDatejs(value);
-    },
-    formatSystemDate(value) {
-      return DateFormatService.formatSystemDatejs(value);
-    },
-    //Keep for now:
-    calculateDue(action_date, frequency) {
-      return DateFormatService.calculateDuejs(action_date, frequency);
-    },
-    calculateDateDue(action_date, frequency) {
-      return DateFormatService.calculateDateDuejs(action_date, frequency);
-    },
-    //
-  },
-};
-</script>
-<style>
-.events {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1rem;
-}
-i {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  color: #fff;
-  cursor: pointer;
-}
-select {
-  border-color: darkgreen;
-}
-.fa-table {
-  margin-top: 1rem;
-}
-/*
-@media (max-width: 500px) {
-  .events {
-    grid-template.columns: 1fr;
+// ✅ COMPUTED PROPERTIES
+const user = computed(() => store.state.user?.resource_owner);
+const events = computed(() => store.state.events || []);
+const eventsRequest = computed(() => store.state.eventsRequest);
+
+const isAdmin = computed(() => 
+  user.value?.email?.toLowerCase().includes('baynes') || 
+  user.value?.email === 'dlbaynes@gmail.com'
+);
+
+// ✅ SEARCH & FILTER LOGIC
+const filteredResults = ref([]);
+
+const displayEvents = computed(() => {
+  return filteredResults.value.length > 0 ? filteredResults.value : events.value;
+});
+
+// ✅ SEARCH FUNCTION
+function searchColumns() {
+  filteredResults.value = [];
+  
+  if (!inputSearchText.value || inputSearchText.value.length < 2) {
+    filteredResults.value = [];
+    return;
+  }
+
+  if (events.value && events.value.length > 0) {
+    events.value.forEach((event) => {
+      const searchHasDescription = 
+        event.description?.toLowerCase().includes(inputSearchText.value.toLowerCase());
+      const searchHasAssigned = 
+        event.assigned?.toLowerCase().includes(inputSearchText.value.toLowerCase());
+      
+      if (searchHasDescription || searchHasAssigned) {
+        filteredResults.value.push(event);
+      }
+    });
   }
 }
-*/
+
+function showIndex() {
+  filteredResults.value = [];
+  inputSearchText.value = '';
+}
+
+// ✅ EVENT HELPERS
+function getEventCardClass(event) {
+  if (event.status === 'inactive') return 'event-inactive';
+  if (isEventPastDue(event)) return 'event-pastdue';
+  return 'event-active';
+}
+
+function getEventStatusColor(event) {
+  if (event.status === 'inactive') return 'grey';
+  if (isEventPastDue(event)) return 'error';
+  return 'success';
+}
+
+function getEventStatusIcon(event) {
+  if (event.status === 'inactive') return 'mdi-pause-circle';
+  if (isEventPastDue(event)) return 'mdi-alert-circle';
+  return 'mdi-check-circle';
+}
+
+function isEventPastDue(event) {
+  const today = dayjs().format("YYYY-MM-DD");
+  return event.status === 'active' && event.action_due_date < today;
+}
+
+function getResultsTitle() {
+  if (filteredResults.value.length > 0) {
+    return 'Search Results';
+  }
+  
+  if (eventsRequest.value === 'DueBy') {
+    return `Events Due in ${parentDueBy.value} Days`;
+  }
+  
+  if (eventsRequest.value === 'Location') {
+    return `${parentLocation.value} Events`;
+  }
+  
+  return 'All Events';
+}
+
+function getResultsCount() {
+  return displayEvents.value.length;
+}
+
+// ✅ ACTIONS
+function refreshPage() {
+  window.location.reload();
+}
+
+function editEvent(event) {
+  router.push({ name: 'EventEdit', params: { id: event.id } });
+}
+
+async function notifyEventsDue() {
+  try {
+    const result = await axios.put(apiUrl.value + "notification_events_due");
+    
+    if (result.statusText.toLowerCase() === 'ok') {
+      // Use modern toast notification instead of alert
+      console.log("✅ Notification emails sent successfully");
+    } else {
+      console.error("❌ Error sending notification emails");
+    }
+  } catch (error) {
+    console.error("❌ Failed to send notifications:", error);
+  }
+}
+
+// ✅ DATE FORMATTING
+function formatStandardDate(value) {
+  return DateFormatService.formatStandardDatejs(value);
+}
+
+// ✅ LIFECYCLE
+onMounted(async () => {
+  // Set API URL
+  if (window.location.port === "8080") {
+    apiUrl.value = "http://localhost:3000/api/v1/events/";
+  } else {
+    apiUrl.value = "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/events/";
+  }
+
+  try {
+    await store.dispatch("fetchEvents");
+  } catch (error) {
+    console.error("❌ Error fetching events:", error);
+  } finally {
+    isLoading.value = false;
+  }
+});
+</script>
+
+<style scoped>
+.event-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+}
+
+.event-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.event-active {
+  border-left: 4px solid rgb(var(--v-theme-success));
+}
+
+.event-pastdue {
+  border-left: 4px solid rgb(var(--v-theme-error));
+  background-color: rgba(var(--v-theme-error), 0.05);
+}
+
+.event-inactive {
+  border-left: 4px solid rgb(var(--v-theme-grey));
+  opacity: 0.7;
+}
+
+.event-details {
+  font-size: 0.875rem;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 600px) {
+  .navigation-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
