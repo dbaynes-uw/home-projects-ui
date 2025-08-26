@@ -1,92 +1,90 @@
 <template>
   <div class="event-list-container">
-    <!-- ✅ MODERN HEADER -->
-    <v-card class="mx-auto mt-5">
-      <v-card-title>
-        <div>
-          <h2>Events Dashboard</h2>
-          <h3 class="text-medium-emphasis mb-0">Created by: {{ user?.email }}</h3>
-        </div>
-      </v-card-title>
-
-      <!-- ✅ MODERN NAVIGATION -->
-      <v-card-text>
-        <div class="navigation-grid">
-          <v-btn
-            variant="outlined"
-            :to="{ name: 'EventStatistics' }"
-            prepend-icon="mdi-chart-bar"
-            id="button-as-link"
-          >
-            Statistics
-          </v-btn>
-          
-          <v-btn
-            variant="outlined"
-            :to="{ name: 'EventCreate' }"
-            prepend-icon="mdi-plus"
-            color="primary"
-            id="button-as-link"
-            style="width: auto;"
-          >
-            Create Event
-          </v-btn>
-          
-          <!--v-btn
-            variant="outlined"
-            @click="refreshPage"
-            prepend-icon="mdi-refresh"
-          >
-            Active Events
-          </v-btn-->
-        </div>
-      </v-card-text>
-    </v-card>
-
-    <v-card class="mt-4">
-      <v-card-title>
-        <h3>Filters & Search</h3>
-      </v-card-title>
+    <!-- ✅ CONSISTENT CARD CONTAINER -->
+    <div class="cards-container">
       
-      <v-card-text>
-        <!-- ✅ FILTER COMPONENTS ROW - Fix v-model refs -->
-        <div class="filters-grid mb-4">
-          <EventsPastDue />
+      <!-- ✅ HEADER CARD -->
+      <v-card class="mt-5">
+        <v-card-title>
+          <div>
+            <h2>Events Dashboard</h2>
+            <h3 class="text-medium-emphasis mb-0">Created by: {{ user?.email }}</h3>
+          </div>
+        </v-card-title>
 
-   <!-- ✅ STEALTH TOGGLE WITH DYNAMIC STYLING -->
-          <div class="filter-button-container">
-            <div class="stealth-select-wrapper">
-              <label class="stealth-label"></label>
-              <button 
-                class="stealth-toggle-button stealth-button"
-                :class="{ 'showing-inactive': !showActiveEvents }"
-                @click="toggleStatus"
-              >
-                <div class="stealth-button-content">
-                  <v-icon class="stealth-icon">{{ getToggleIcon() }}</v-icon>
-                  {{ getToggleText() }}
-                </div>
-              </button>
+        <!-- ✅ MODERN NAVIGATION -->
+        <v-card-text>
+          <div class="navigation-grid">
+            <v-btn
+              variant="outlined"
+              :to="{ name: 'EventStatistics' }"
+              prepend-icon="mdi-chart-bar"
+              id="button-as-link"
+              style="margin-left: 3rem !important; width: auto;"
+            >
+              Statistics
+            </v-btn>
+            
+            <v-btn
+              variant="outlined"
+              :to="{ name: 'EventCreate' }"
+              prepend-icon="mdi-plus"
+              color="primary"
+              id="button-as-link"
+              style="margin-left: 1rem !important; width: auto;"
+
+            >
+              Create Event
+            </v-btn>
+          </div>
+        </v-card-text>
+      </v-card>
+
+      <!-- ✅ FILTERS CARD -->
+      <v-card class="mt-4">
+        <v-card-title>
+          <h3>Filters & Search</h3>
+        </v-card-title>
+        
+        <v-card-text>
+          <!-- ✅ FILTER COMPONENTS ROW -->
+          <div class="filters-grid mb-4">
+            <EventsPastDue />
+
+            <!-- ✅ STEALTH TOGGLE WITH DYNAMIC STYLING -->
+            <div class="filter-button-container">
+              <div class="stealth-select-wrapper">
+                <label class="stealth-label"></label>
+                <button 
+                  class="stealth-toggle-button stealth-button"
+                  :class="{ 'showing-inactive': !showActiveEvents }"
+                  @click="toggleStatus"
+                >
+                  <div class="stealth-button-content">
+                    <v-icon class="stealth-icon">{{ getToggleIcon() }}</v-icon>
+                    {{ getToggleText() }}
+                  </div>
+                </button>
+              </div>
             </div>
+
+            <!-- ✅ MODERN V-MODEL BINDING -->
+            <EventsDueBy v-model:selectedDueByValue="selectedDueByValue" />
+            <EventsLocations v-model:selectedLocationValue="selectedLocationValue" />
           </div>
 
-          <!-- ✅ MODERN V-MODEL BINDING -->
-          <EventsDueBy v-model:selectedDueByValue="selectedDueByValue" />
-          <EventsLocations v-model:selectedLocationValue="selectedLocationValue" />
-        </div>
-
-        <!-- ✅ SEARCH BAR -->
-        <v-text-field
-          v-model="inputSearchText"
-          @input="searchColumns"
-          @click:clear="showIndex"
-          placeholder="Search events by description or assignee..."
-          prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          clearable
-          hide-details
-          class="mb-4"
-        />
+          <!-- ✅ SEARCH BAR -->
+          <v-text-field
+            v-model="inputSearchText"
+            @input="searchColumns"
+            @click:clear="showIndex"
+            placeholder="Search events by description or assignee..."
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            clearable
+            hide-details
+            class="mb-4"
+          />
 
           <!-- ✅ ENHANCED VIEW TOGGLE -->
           <div>
@@ -117,130 +115,132 @@
                 Table View
               </v-btn>
 
+              <!-- ✅ ADMIN NOTIFICATION - Match the other buttons -->
+              <v-btn
+                v-if="isAdmin"
+                @click="notifyEventsDue"
+                class="view-btn consistent-btn"
+                id="button-as-link"
+                variant="elevated"
+              >
+                <v-icon start size="large">mdi-email-send</v-icon>
+                Notify Due
+              </v-btn>
+            </v-btn-toggle>
+          </div>
+        </v-card-text>
+      </v-card>
 
-            <!-- ✅ ADMIN NOTIFICATION - Match the other buttons -->
-            <v-btn
-              v-if="isAdmin"
-              @click="notifyEventsDue"
-              class="view-btn consistent-btn"
-              id="button-as-link"
-              variant="elevated"
-            >
-              <v-icon start size="large">mdi-email-send</v-icon>
-              Notify Due
-            </v-btn>
-                        </v-btn-toggle>
+      <br/><br/>
+
+      <!-- ✅ LOADING STATE -->
+      <div v-if="isLoading" class="text-center pa-8">
+        <v-progress-circular indeterminate color="primary" size="64" />
+        <p class="mt-4">Loading events...</p>
+      </div>
+
+      <!-- ✅ RESULTS SECTION -->
+      <v-card v-else class="mt-4">
+        <v-card-title class="d-flex justify-space-between align-center">
+          <div>
+            <h3>{{ getResultsTitle() }}</h3>
+            <p class="text-medium-emphasis mb-0">
+              {{ getResultsCount() }} event{{ displayEvents.length !== 1 ? 's' : '' }} found
+            </p>
           </div>
 
-      </v-card-text>
-    </v-card>
-    <br/><br/>
-    <!-- ✅ LOADING STATE -->
-    <div v-if="isLoading" class="text-center pa-8">
-      <v-progress-circular indeterminate color="primary" size="64" />
-      <p class="mt-4">Loading events...</p>
-    </div>
+          <!-- ✅ LEGEND -->
+          <v-chip-group>
+            <v-chip color="success" variant="outlined" size="small">
+              <v-icon start size="small">mdi-check-circle</v-icon>
+              Complete
+            </v-chip>
+            <v-chip color="warning" variant="outlined" size="small">
+              <v-icon start size="small">mdi-clock-alert</v-icon>
+              Incomplete
+            </v-chip>
+            <v-chip color="error" variant="outlined" size="small">
+              <v-icon start size="small">mdi-alert-circle</v-icon>
+              Past Due
+            </v-chip>
+          </v-chip-group>
+        </v-card-title>
 
-    <!-- ✅ RESULTS SECTION -->
-    <v-card v-else class="mt-4">
-      <v-card-title class="d-flex justify-space-between align-center">
-        <div>
-          <h3>{{ getResultsTitle() }}</h3>
-          <p class="text-medium-emphasis mb-0">
-            {{ getResultsCount() }} event{{ displayEvents.length !== 1 ? 's' : '' }} found
-          </p>
-        </div>
-
-        <!-- ✅ LEGEND -->
-        <v-chip-group>
-          <v-chip color="success" variant="outlined" size="small">
-            <v-icon start size="small">mdi-check-circle</v-icon>
-            Complete
-          </v-chip>
-          <v-chip color="warning" variant="outlined" size="small">
-            <v-icon start size="small">mdi-clock-alert</v-icon>
-            Incomplete
-          </v-chip>
-          <v-chip color="error" variant="outlined" size="small">
-            <v-icon start size="small">mdi-alert-circle</v-icon>
-            Past Due
-          </v-chip>
-        </v-chip-group>
-      </v-card-title>
-
-      <v-card-text>
-        <!-- ✅ CARDS VIEW -->
-        <div v-if="viewMode === 'cards'" class="events-grid">
-          <v-card
-            v-for="event in displayEvents"
-            :key="event.id"
-            @dblclick="editEvent(event)"
-            :class="getEventCardClass(event)"
-            variant="outlined"
-            hover
-            class="event-card"
-          >
-            <v-card-title class="pb-2">
-              <div class="d-flex align-center">
-                <v-icon 
-                  :color="getEventStatusColor(event)"
-                  start
-                >
-                  {{ getEventStatusIcon(event) }}
-                </v-icon>
-                <span class="text-truncate">{{ event.description }}</span>
-              </div>
-            </v-card-title>
-
-            <v-card-text>
-              <div class="event-details">
-                <div class="d-flex align-center mb-2">
-                  <v-icon size="small" class="mr-2">mdi-account</v-icon>
-                  <span>{{ event.assigned }}</span>
-                </div>
-                
-                <div class="d-flex align-center mb-2">
-                  <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
-                  <span>{{ formatStandardDate(event.action_due_date) }}</span>
-                  <v-chip
-                    v-if="isEventPastDue(event)"
-                    color="error"
-                    size="x-small"
-                    class="ml-2"
-                  >
-                    PAST DUE
-                  </v-chip>
-                </div>
-
+        <v-card-text>
+          <!-- ✅ CARDS VIEW -->
+          <div v-if="viewMode === 'cards'" class="events-grid">
+            <v-card
+              v-for="event in displayEvents"
+              :key="event.id"
+              @dblclick="editEvent(event)"
+              :class="getEventCardClass(event)"
+              variant="outlined"
+              hover
+              class="event-card"
+            >
+              <v-card-title class="pb-2">
                 <div class="d-flex align-center">
-                  <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
-                  <span>{{ event.location || 'No location' }}</span>
+                  <v-icon 
+                    :color="getEventStatusColor(event)"
+                    start
+                  >
+                    {{ getEventStatusIcon(event) }}
+                  </v-icon>
+                  <span class="text-truncate">{{ event.description }}</span>
                 </div>
-              </div>
-            </v-card-text>
+              </v-card-title>
 
-            <v-card-actions>
-              <v-spacer />
-              <v-btn
-                @click.stop="editEvent(event)"
-                variant="text"
-                size="small"
-                color="primary"
-              >
-                <v-icon start>mdi-pencil</v-icon>
-                Edit
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </div>
+              <v-card-text>
+                <div class="event-details">
+                  <div class="d-flex align-center mb-2">
+                    <v-icon size="small" class="mr-2">mdi-account</v-icon>
+                    <span>{{ event.assigned }}</span>
+                  </div>
+                  
+                  <div class="d-flex align-center mb-2">
+                    <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
+                    <span>{{ formatStandardDate(event.action_due_date) }}</span>
+                    <v-chip
+                      v-if="isEventPastDue(event)"
+                      color="error"
+                      size="x-small"
+                      class="ml-2"
+                    >
+                      PAST DUE
+                    </v-chip>
+                  </div>
 
-        <!-- ✅ TABLE VIEW -->
-        <div v-else>
-          <EventIndex :events="displayEvents" />
-        </div>
-      </v-card-text>
-    </v-card>
-  </div>
+                  <div class="d-flex align-center">
+                    <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
+                    <span>{{ event.location || 'No location' }}</span>
+                  </div>
+                </div>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer />
+                <v-btn
+                  @click.stop="editEvent(event)"
+                  variant="text"
+                  size="small"
+                  color="primary"
+                >
+                  <v-icon start>mdi-pencil</v-icon>
+                  Edit
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </div>
+
+          <!-- ✅ TABLE VIEW -->
+          <div v-else>
+            <EventIndex :events="displayEvents" />
+          </div>
+        </v-card-text>
+      </v-card>
+      
+    </div> <!-- ✅ END cards-container -->
+  </div> <!-- ✅ END event-list-container -->
 </template>
 
 <script setup>
@@ -490,6 +490,22 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ✅ CONSISTENT CARD CONTAINER */
+.cards-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.event-list-container {
+  padding: 1rem;
+}
+
+/* ✅ ENSURE ALL CARDS HAVE CONSISTENT WIDTH */
+.cards-container .v-card {
+  width: 100%;
+  max-width: 100%;
+}
 .event-list-container {
   max-width: 1200px;
   margin: 0 auto;
