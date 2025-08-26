@@ -617,6 +617,11 @@ export default new Vuex.Store({
           location.reload();
         });
     },
+    
+    setEventsRequest({ commit }, requestType) {
+      commit('SET_EVENTS_REQUEST', requestType);
+    },
+
     async createFilm({ commit }, film) {
       EventService.postFilm(film)
         .then(() => {

@@ -307,22 +307,26 @@
   color: #fff;
 }
 #button-as-link {
-  margin: auto;
+  margin: auto !important;
   width: 12rem;
   height: 2rem;
   /*background-color: #7ba8bd; */
+  /*background-color: #adb4b7;*/
   background-color: #adb4b7;
+  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
   border-radius: 5px;
   font-size: 18px;
   font-weight: bold;
-  color: #000;
+  color: #000 !important;
 }
 #button-as-link-wide { @extend #button-as-link;
   margin: auto;
   width: 20rem !important;
+  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
+
   font-size: 18px;
   font-weight: bold;
-  color: #000;
+  color: #000 !important;
 }
 #link-as-button {
   margin: auto;
