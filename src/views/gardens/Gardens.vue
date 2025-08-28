@@ -8,12 +8,12 @@
 
       <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'Waterings' }">
-          <b>All Waterings</b>
+          <b>Waterings</b>
         </router-link>
       </button>     
       <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'Plants' }">
-          <b>All Plants</b>
+          <b>Plants</b>
         </router-link>
       </button> 
     </v-card>

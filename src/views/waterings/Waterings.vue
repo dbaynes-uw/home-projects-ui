@@ -6,12 +6,12 @@
         <router-link :to="{ name: 'WateringCreate' }">Create New Watering</router-link>
               <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'Gardens' }">
-          <b>All Gardens</b>
+          <b>Gardens</b>
         </router-link>
       </button>
       <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'Plants' }">
-          <b>All Plants</b>
+          <b>Plants</b>
         </router-link>
       </button> 
       </v-card-title>

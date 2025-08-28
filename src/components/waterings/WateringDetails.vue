@@ -21,16 +21,6 @@
     <div v-if="!isSingle" class="controls-bar">
       <v-btn-group variant="outlined" divided>
         <v-btn
-          @click="setSortField('name')"
-          :color="sortField === 'name' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'name' && sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
-          centered
-          class="sort-btn"
-        >
-          Sort by Name
-        </v-btn>
-        
-        <v-btn
           @click="setSortField('start_time')"
           :color="sortField === 'start_time' ? 'primary' : 'default'"
           :prepend-icon="sortField === 'start_time' && sortOrder === 'asc' ? 'mdi-sort-calendar-ascending' : 'mdi-sort-calendar-descending'"
@@ -39,6 +29,16 @@
         >
           Start Time
         </v-btn>
+        <v-btn
+          @click="setSortField('name')"
+          :color="sortField === 'name' ? 'primary' : 'default'"
+          :prepend-icon="sortField === 'name' && sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
+          centered
+          class="sort-btn"
+        >
+          Sort by Name
+        </v-btn>
+                
       </v-btn-group>
       
       <!-- ✅ Optional: Separate toggle button -->
