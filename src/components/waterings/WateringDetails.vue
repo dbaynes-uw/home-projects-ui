@@ -102,11 +102,19 @@ const filteredSortedWaterings = computed(() => {
   if (filterStatus.value) {
     wateringList = wateringList.filter(watering => watering.status === filterStatus.value);
   }
+  // ✅ NEW: FILTER OUT NULL start_time WHEN SORTING BY start_time
+  if (sortField.value === 'start_time') {
+    wateringList = wateringList.filter(watering => 
+      watering.start_time && 
+      watering.start_time !== null && 
+      watering.start_time !== ''
+    );
+  }
   
   // ✅ FLEXIBLE SORTING - Handle both name and start_time
   wateringList.sort((a, b) => {
     let valueA, valueB;
-    
+    console.log('Sorting by', sortField.value, 'in', sortOrder.value, 'order');
     if (sortField.value === 'name') {
       valueA = (a.name || '').toLowerCase();
       valueB = (b.name || '').toLowerCase();
