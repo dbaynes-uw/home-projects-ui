@@ -55,7 +55,7 @@
       <!-- ✅ Show current sort info -->
       <span id="count-display">
         {{ filteredSortedWaterings.length }} Waterings 
-        <small>(by {{ sortField === 'name' ? 'Name' : 'Date' }}, {{ sortOrder === 'asc' ? (sortField === 'name' ? 'A-Z' : 'Oldest') : (sortField === 'name' ? 'Z-A' : 'Newest') }})</small>
+        <small>(by {{ sortField === 'name' ? 'Name' : 'Time' }}, {{ sortOrder === 'asc' ? (sortField === 'name' ? 'A-Z' : 'Earliest to Latest') : (sortField === 'name' ? 'Z-A' : 'Latest to Earliest') }})</small>
       </span>
     </div>
     <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
