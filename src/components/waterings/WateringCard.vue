@@ -20,7 +20,7 @@
       <li class="li-left"><b>Line: {{ watering.line}}</b></li>
       <li class="li-left"><b>Target: {{ watering.target}}</b></li>
       <li class="li-left"><b>Days: {{ watering.days}}</b></li>
-      <li class="li-left"><b>Start: {{ formatTime(watering.start_time) }}</b></li>
+      <li class="li-left"><b>Start: <span style="color: yellow">{{ formatTime(watering.start_time) }}</span></b></li>
       <li class="li-left"><b>End: {{ formatTime(watering.end_time) }}</b></li>
       <li class="li-left"><b>Duration: {{ watering.duration}}</b></li>
       <li class="li-left">
