@@ -22,7 +22,15 @@
       <li class="li-left"><b>Days: {{ watering.days}}</b></li>
       <li class="li-left"><b>Start: <span style="color: yellow">{{ formatTime(watering.start_time) }}</span></b></li>
       <li class="li-left"><b>End: {{ formatTime(watering.end_time) }}</b></li>
-      <li class="li-left"><b>Duration: {{ watering.duration}}</b></li>
+      <!--li class="li-left"><b>Duration: {{ watering.duration}}</b></li-->
+      <!-- ✅ REPLACE LINE 25 WITH CALCULATED DURATION -->
+      <li class="li-left">
+        <b>Duration: 
+          <span :class="{ 'duration-calculated': calculatedDuration !== props.watering.duration }">
+            {{ calculatedDuration }}
+          </span>
+        </b>
+      </li>
       <li class="li-left">
         <b>Status: </b>
         <b :class="{ 'status-red': watering.status && watering.status.toLowerCase() !== 'active' }">
@@ -163,6 +171,48 @@ const plants = computed(() => {
     });
   }  
   return plantList;
+});
+// ✅ ADD COMPUTED DURATION
+const calculatedDuration = computed(() => {
+  const startTime = props.watering.start_time;
+  const endTime = props.watering.end_time;
+  
+  // Return stored duration if calculation isn't possible
+  if (!startTime || !endTime) {
+    return props.watering.duration || 'Not set';
+  }
+  
+  try {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    
+    // Check if dates are valid
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return props.watering.duration || 'Invalid dates';
+    }
+    
+    // Calculate difference in minutes
+    const diffMs = end - start;
+    const diffMinutes = Math.round(diffMs / (1000 * 60));
+    
+    // Handle negative duration (end before start)
+    if (diffMinutes < 0) {
+      return props.watering.duration || 'Invalid range';
+    }
+    
+    // Format duration nicely
+    if (diffMinutes < 60) {
+      return `${diffMinutes} min`;
+    } else {
+      const hours = Math.floor(diffMinutes / 60);
+      const minutes = diffMinutes % 60;
+      return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+    }
+    
+  } catch (error) {
+    console.warn('Duration calculation error:', error);
+    return props.watering.duration || 'Error';
+  }
 });
 async function handleDelete() {
   const confirmed = confirm(
