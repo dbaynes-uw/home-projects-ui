@@ -43,8 +43,8 @@
   border-radius: 5px;
   text-align: center;
   position: relative;
-  cursor: pointer;
-  width: 105%;
+  cursor: pointer;  
+  width: 100%;
   margin: 0; /* ✅ REMOVE negative margin */
   /* ✅ REMOVE: margin-left: -.5rem !important; */
 }
@@ -394,7 +394,7 @@ td {
 
 .li-left {
   text-align: left;
-  margin-left: 1rem;
+  margin-left: 1.25rem;
   display: list-item;
   list-style-type: square;
 }
