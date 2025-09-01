@@ -226,14 +226,12 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 1.5rem;
   padding: 0 1rem !important;
-  border: 2px solid red; /* ✅ DEBUG */
 }
 
 .cards {
   padding: 0 1rem !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  border: 2px solid blue; /* ✅ DEBUG */
 }
 
 .filter-select {
