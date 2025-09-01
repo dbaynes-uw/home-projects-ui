@@ -27,7 +27,7 @@
       <li class="li-left">
         <b>Duration: 
           <span :class="{ 'duration-calculated': calculatedDuration !== props.watering.duration }">
-            {{ calculatedDuration }}
+             <span style="color: yellow;">{{ calculatedDuration }}</span>
           </span>
         </b>
       </li>
@@ -44,7 +44,7 @@
     <br/>
     <!-- ✅ FIXED - Use computed plants instead of watering.plants -->
     <span v-if="plants && plants.length > 0">
-      <p id="p-custom-left">
+      <p id="p-card-left">
         <router-link :to="{ name: 'Plants', query: { wateringId: watering.id } }">
           Plants ({{ plants.length }}):
         </router-link>
@@ -63,7 +63,7 @@
     </span>
       <!-- ✅ ENHANCED - Show when no plants -->
     <span v-else>
-      <p id="p-custom-left">No plants assigned to this watering system.</p>
+      <p id="p-card-left">No plants assigned to this watering system.</p>
     </span>
     <br/>
       <p id="p-custom-link">

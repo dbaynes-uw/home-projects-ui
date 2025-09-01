@@ -11,10 +11,10 @@
         <h4><b>{{garden.name}}</b></h4>
       </router-link>
     </span>
-    <p id="p-custom-left">Notes:</p>
+    <p id="p-card-left">Notes:</p>
     <b class="li-left-none">{{ garden.notes }}</b>
     <br/>
-    <p id="p-custom-left">
+    <p id="p-card-left">
       <router-link :to="{ name: 'Waterings' }" >
         Waterings:
       </router-link>
@@ -48,7 +48,7 @@
       <router-link
         :to="{ name: 'Plants' }"
       >
-        <p id="p-custom-left">Plants:</p>
+        <p id="p-card-left">Plants:</p>
       </router-link>
 
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">

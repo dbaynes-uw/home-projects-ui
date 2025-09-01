@@ -35,16 +35,20 @@
   left: 25%;
   width: 50%;
 }
+/* ✅ UPDATED .card FOR 2-COLUMN LAYOUT */
 .card {
-  /*border: 1px solid #ccc;*/
   background: #41b883;
-  padding: 1rem;
+  padding: 0rem !important;
   padding-top: 0em;
   border-radius: 5px;
   text-align: center;
   position: relative;
   cursor: pointer;
+  width: 105%;
+  margin: 0; /* ✅ REMOVE negative margin */
+  /* ✅ REMOVE: margin-left: -.5rem !important; */
 }
+
 .card:hover {
   transform: scale(1.01);
   box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19);
@@ -260,6 +264,12 @@
 #p-left {
   text-align: left;
   font-size: 1rem;
+}
+#p-card-left {
+  margin-left: 0rem;
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 #p-custom-left {
   margin-left: -.75rem;

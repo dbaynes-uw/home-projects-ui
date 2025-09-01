@@ -114,7 +114,6 @@ const filteredSortedWaterings = computed(() => {
   // ✅ FLEXIBLE SORTING - Handle both name and start_time
   wateringList.sort((a, b) => {
     let valueA, valueB;
-    console.log('Sorting by', sortField.value, 'in', sortOrder.value, 'order');
     if (sortField.value === 'name') {
       valueA = (a.name || '').toLowerCase();
       valueB = (b.name || '').toLowerCase();
@@ -207,19 +206,36 @@ onMounted(() => {
 });
 </script>
 <style scoped>
+/* ✅ CONTAINER APPROACH */
+.waterings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
 .center-single {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 60vh; /* Adjust as needed */
 }
+/* ✅ TEMPORARY DEBUG BORDERS */
 .controls-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
   margin-bottom: 1.5rem;
+  padding: 0 1rem !important;
+  border: 2px solid red; /* ✅ DEBUG */
 }
+
+.cards {
+  padding: 0 1rem !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  border: 2px solid blue; /* ✅ DEBUG */
+}
+
 .filter-select {
   min-width: 180px;
   max-width: 220px;
