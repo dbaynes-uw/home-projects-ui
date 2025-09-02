@@ -160,6 +160,10 @@
 #menu-dropdown-div {
   width: 50%;
 }
+.status-red {
+  color: red;
+  font-weight: bold;
+}
 .select-status {
   width: 100%;
   border-style: groove;
@@ -391,7 +395,6 @@ td {
   list-style-type: disc;
   text-align: left;
 }
-
 .li-left {
   text-align: left;
   margin-left: 1.25rem;
