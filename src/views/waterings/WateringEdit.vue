@@ -215,35 +215,47 @@ function formatStandardDateTime(value) {
 //  return DateFormatService.formatFullYearDatejs(value);
 //}
 
+
 async function updateWatering() {
-  const ok = await confirmDialogue.value.show({
-    title: "Update Watering ",
-    message: "Are you sure you want to update " + watering.value.name,
-    okButton: "Update",
+  // ✅ ADD CONFIRMATION DIALOG
+  const isConfirmed = await confirmDialogue.value.show({
+    title: 'Confirm Update',
+    message: `Are you sure you want to update '${watering.value.name}'?`,
+    okButton: 'Update',
+    cancelButton: 'Cancel'
   });
-  
-  if (ok) {
-    const wateringData = {
-      ...watering.value,
-      status: watering.value.status,
-      updated_at: store.state.created_by,
-      updated_by: store.state.created_by,
-    };
-    
-    try {
-      const result = await store.dispatch("updateWatering", wateringData);
-      if (result) {
-        router.push({ name: "WateringDetails" });
-      } else {
-        console.error('❌ Update failed - no result returned');
-        alert("Error in Watering Update");
-      }
-    } catch (error) {
-      console.error('❌ Update error:', error);
-      alert("Error in Watering Update: " + error.message);
-    }
+
+  // ✅ ONLY PROCEED IF CONFIRMED
+  if (!isConfirmed) {
+    console.log('❌ Update cancelled by user');
+    return;
   }
-}// Lifecycle
+
+  try {
+    console.log('🔄 Updating watering:', watering.value.name);
+    
+    // Update the watering
+    await store.dispatch('updateWatering', watering.value);
+    
+    // ✅ REFRESH THE LIST DATA
+    await store.dispatch('fetchWaterings');
+         
+    // Navigate back
+    router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
+    
+  } catch (error) {
+    console.error('❌ Update failed:', error);
+    
+    // ✅ OPTIONAL: Show error to user
+    await confirmDialogue.value.show({
+      title: 'Update Failed',
+      message: `Failed to update ${watering.value.name}. Please try again.`,
+      okButton: 'OK',
+      cancelButton: null // Hide cancel button for error dialog
+    });
+  }
+}
+// Lifecycle
 onMounted(async () => {
   isMobile.value = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   await store.dispatch("fetchWatering", props.id);
