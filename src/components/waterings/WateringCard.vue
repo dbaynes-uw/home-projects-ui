@@ -20,7 +20,16 @@
       <li class="li-left"><b>Line: {{ watering.line}}</b></li>
       <li class="li-left"><b>Target: {{ watering.target}}</b></li>
       <li class="li-left"><b>Days: {{ watering.days}}</b></li>
-      <li class="li-left"><b>Start: <span style="color: yellow">{{ formatTime(watering.start_time) }}</span></b></li>
+      <li class="li-left">
+        <b>Start: 
+          <span 
+            :class="{ 'flashing-active': isCurrentlyActive }" 
+            style="color: yellow"
+          >
+            {{ formatTime(watering.start_time) }}
+          </span>
+        </b>
+      </li>
       <li class="li-left"><b>End: {{ formatTime(watering.end_time) }}</b></li>
       <!--li class="li-left"><b>Duration: {{ watering.duration}}</b></li-->
       <!-- ✅ REPLACE LINE 25 WITH CALCULATED DURATION -->
@@ -127,7 +136,7 @@
 <script setup>
 import { useStore } from 'vuex';
 //import { useRouter } from 'vue-router';
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 //import SplitStringService from "@/services/SplitStringService.js";
@@ -171,6 +180,45 @@ const plants = computed(() => {
     });
   }  
   return plantList;
+});
+// ✅ ADD CURRENT TIME TRACKING
+const currentTime = ref(new Date());
+let timeInterval = null;
+
+// ✅ COMPUTED TO CHECK IF WATERING IS ACTIVE
+const isCurrentlyActive = computed(() => {
+  const startTime = props.watering.start_time;
+  const endTime = props.watering.end_time;
+  
+  if (!startTime || !endTime) return false;
+  
+  try {
+    const now = currentTime.value;
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    
+    // Check if dates are valid
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
+    
+    // For daily recurring times, we need to check today's schedule
+    const todayStart = new Date();
+    todayStart.setHours(start.getHours(), start.getMinutes(), start.getSeconds(), 0);
+    
+    const todayEnd = new Date();
+    todayEnd.setHours(end.getHours(), end.getMinutes(), end.getSeconds(), 0);
+    
+    // Handle overnight watering (end time is next day)
+    if (todayEnd <= todayStart) {
+      todayEnd.setDate(todayEnd.getDate() + 1);
+    }
+    
+    // Check if current time is within the watering window
+    return now >= todayStart && now <= todayEnd;
+    
+  } catch (error) {
+    console.warn('Active time calculation error:', error);
+    return false;
+  }
 });
 // ✅ ADD COMPUTED DURATION
 const calculatedDuration = computed(() => {
@@ -242,7 +290,65 @@ function formatTime(value) {
   }
   return DateFormatService.formatTimejs(value);
 }
+onMounted(() => {
+  timeInterval = setInterval(() => {
+    currentTime.value = new Date();
+  }, 30000); // Update every minute
+});
+
+onUnmounted(() => {
+  if (timeInterval) {
+    clearInterval(timeInterval);
+  }
+});
 </script>
 
 <style scoped>
+/* ✅ ADD FLASHING ANIMATION */
+.flashing-active {
+  animation: flash 1s infinite;
+  font-weight: bold;
+  color: #00ff00 !important; /* Bright green when active */
+}
+
+@keyframes flash {
+  0%, 50% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  25%, 75% { 
+    opacity: 0.3; 
+    transform: scale(1.1);
+  }
+}
+
+/* ✅ ALTERNATIVE: PULSING GLOW EFFECT */
+.flashing-active-glow {
+  animation: pulse-glow 2s infinite;
+  color: #00ff00 !important;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    opacity: 1; 
+    text-shadow: 0 0 5px #00ff00;
+  }
+  50% { 
+    opacity: 0.5; 
+    text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00;
+  }
+}
+
+/* ✅ ALTERNATIVE: SUBTLE BLINK */
+.flashing-active-blink {
+  animation: blink 1.5s infinite;
+  color: #ffff00 !important; /* Bright yellow */
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 70% { opacity: 1; }
+  85%, 100% { opacity: 0.2; }
+}
 </style>
