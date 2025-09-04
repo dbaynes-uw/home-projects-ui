@@ -172,7 +172,7 @@
             <v-card
               v-for="event in displayEvents"
               :key="event.id"
-              @dblclick="editEvent(event)"
+              @dblclick="showEvent(event)"
               :class="getEventCardClass(event)"
               variant="outlined"
               hover
@@ -191,15 +191,22 @@
               </v-card-title>
 
               <v-card-text>
-                <div class="event-details">
+                <div class="event-details">          
                   <div class="d-flex align-center mb-2">
                     <v-icon size="small" class="mr-2">mdi-account</v-icon>
                     <span>{{ event.assigned }}</span>
                   </div>
-                  
+                  <div class="d-flex align-center">
+                    <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
+                    <span>Frequency: {{ event.frequency }} Days</span>
+                  </div>                         
                   <div class="d-flex align-center mb-2">
                     <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
-                    <span>{{ formatStandardDate(event.action_due_date) }}</span>
+                    <span>Last Action: {{ formatStandardDate(event.action_completed_date) }}</span>
+                  </div>                  
+                  <div class="d-flex align-center mb-2">
+                    <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
+                    <span> Due: {{ formatStandardDate(event.action_due_date) }}</span>
                     <v-chip
                       v-if="isEventPastDue(event)"
                       color="error"
@@ -220,7 +227,7 @@
               <v-card-actions>
                 <v-spacer />
                 <v-btn
-                  @click.stop="editEvent(event)"
+                  @click.stop="showEvent(event)"
                   variant="text"
                   size="small"
                   color="primary"
@@ -450,8 +457,8 @@ function getResultsCount() {
   return displayEvents.value.length;
 }
 
-function editEvent(event) {
-  router.push({ name: 'EventEdit', params: { id: event.id } });
+function showEvent(event) {
+  router.push({ name: 'EventShow', params: { id: event.id } });
 }
 
 async function notifyEventsDue() {
