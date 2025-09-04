@@ -22,8 +22,26 @@
       <li class="li-left">Due: <b>{{ formatYearDate(event.action_due_date) }}</b> </li>
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in joinedNotes(event)" :key="idx">{{ notes }}</b>
-
     </ul>
+    <br />
+    <div class="fa-1x">
+      <router-link :to="{ name: 'EventList' }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
+      </router-link>
+      <span class="fa-stack">
+        <router-link :to="{ name: 'EventEdit', params: { id: `${event.id}` } }">
+          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
+        </router-link>
+      </span>
+      <span class="fa-stack">
+        <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
+        </i>
+      </span>
+      <br />
+      <router-link :to="{ name: 'EventList' }">
+        <i class="fa-solid fa-backward fa-stack-1x"></i>
+      </router-link>
+    </div>
   </div>
 </template>
 <script>
@@ -37,7 +55,14 @@ export default {
       default: () => ({})
     }
   },
+
   methods: {
+    toggleHistory() {
+      this.showHistory = !this.showHistory;
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString();
+    },
     joinedNotes(e) {
       return e.notes.split('\n');
     },
@@ -69,4 +94,5 @@ export default {
   margin-top: 0.5em;
   margin-bottom: 0.3em;
 }
+
 </style>

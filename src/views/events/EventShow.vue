@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div>
     <router-link :to="{name: 'EventList'}">
-      <h2>Events List</h2>
+      <h2>Event Details</h2>
     </router-link>
     <router-link
       :to="{name: 'EventStatisticDetail',
@@ -10,6 +10,12 @@
       >
       <h2>Events Assigned to {{ event.assigned }}</h2>
     </router-link>
+    <br />
+    <div class="legend">
+      <span>Double click to mark as complete.</span>
+      <span><span class="incomplete-box"></span> = Incomplete</span>
+      <span><span class="complete-box"></span> = Complete</span>
+    </div>    
     <div class="card-display">
       <EventCard
       class="card"
@@ -18,13 +24,23 @@
       v-bind:class="{ 'is-complete': event.completed }"
       />
     </div>
-    <div class="legend">
-      <span>Double click to mark as complete.</span>
-      <span><span class="incomplete-box"></span> = Incomplete</span>
-      <span><span class="complete-box"></span> = Complete</span>
-    </div>
     <br />
-    <div
+    <div class="card-footer">
+      <button 
+        @click.stop="toggleHistory"
+        id="button-as-link"
+        class="history-btn"
+        :class="{ 'active': showHistory }"
+        v-if="event.histories && event.histories.length > 0"
+      >
+        <i :class="showHistory ? 'fa-eye-slash' : 'fa-eye'"></i>
+        {{ showHistory ? 'Hide' : 'Show' }} History ({{ historyCount }})
+      </button>
+    </div>
+    <br/> 
+    <!-- ✅ HISTORY SECTION IN CARD -->
+    <div v-if="showHistory" class="card-history">
+          <div
       v-if="event"
       class="event"
       id="center-align"
@@ -34,12 +50,6 @@
       <h1>
         <b>{{ event.description }}</b>
       </h1>
-      <p id="p-custom-left">Notes:</p>
-      <ul class="ul-left">
-        <li>
-          {{ event.notes }}
-        </li>
-      </ul>
       <p id="p-custom-left">History:</p>
       <ul class="ul-left" v-for="(event_history) in event.histories" :key="event_history.id">
         <span v-if="event.id == event_history.event_id">
@@ -48,24 +58,8 @@
           </li>
         </span>
       </ul>
-      <br />
-      <router-link :to="{ name: 'EventList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
-      <span class="fa-stack">
-        <router-link :to="{ name: 'EventEdit', params: { id: `${event.id}` } }">
-          <i class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-        </router-link>
-      </span>
-      <span class="fa-stack">
-        <i @click="deleteEvent(event)" class="fas fa-trash-alt fa-stack-1x">
-        </i>
-      </span>
-      <br />
-      <router-link :to="{ name: 'EventList' }">
-        <i class="fa-solid fa-backward fa-stack-1x"></i>
-      </router-link>
-    </div>
+    </div>    
+  </div>
   </div>
 </template>
 <script>
@@ -81,13 +75,35 @@ export default {
   },
   data() {
     return {
+      showHistory: false,
       history: null,
       assigned: "",
       updatedEvent: null,
       eventsAssigned: null,
     };
   },
+  computed: {
+    event() {
+      return this.$store.state.event;
+    },
+    filteredHistory() {
+      if (!this.event || !this.event.histories) {
+        return [];
+      }
+      // Sort histories by created_at date descending
+      return this.event.histories.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    },
+    historyCount() {
+      return this.event && this.event.histories ? this.event.histories.length : 0;
+    },
+  },
   methods: {
+    toggleHistory() {
+      this.showHistory = !this.showHistory;
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString();
+    },
     async deleteEvent(event) {
       const ok = await this.$refs.confirmDialogue.show({
         title: "Delete Event",
@@ -136,11 +152,6 @@ export default {
     //    console.log("ERROR: ", error);
     //    console.log(error);
     //  });
-  },
-  computed: {
-    event() {
-      return this.$store.state.event;
-    },
   },
 };
 </script>
