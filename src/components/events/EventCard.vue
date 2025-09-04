@@ -1,12 +1,6 @@
 <template>
-  <!--div class="legend">
-    <span>Double click to mark as complete.</span>
-    <span><span class="incomplete-box"></span> = Incomplete</span>
-    <span><span class="complete-box"></span> = Complete</span>
-  </div-->
   <div class="event-card">
     <h2><b>{{ formatDayOfWeek(event.action_due_date) }}</b></h2>
-
     <p id="p-custom-u">
       <router-link
         :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"

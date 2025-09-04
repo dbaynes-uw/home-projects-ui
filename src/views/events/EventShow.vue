@@ -10,11 +10,10 @@
       >
       <h2>Events Assigned to {{ event.assigned }}</h2>
     </router-link>
-    <br />
-    <div class="legend">
-      <span>Double click to mark as complete.</span>
-      <span><span class="incomplete-box"></span> = Incomplete</span>
-      <span><span class="complete-box"></span> = Complete</span>
+    <div>
+      <span><b>Double click to Edit</b></span>
+      <!--span class="incomplete-box"> = Incomplete</!--span>
+      <span-- class="complete-box"> = Complete</span-->
     </div>    
     <div class="card-display">
       <EventCard
