@@ -147,6 +147,9 @@
             <p class="text-medium-emphasis mb-0">
               {{ getResultsCount() }} event{{ displayEvents.length !== 1 ? 's' : '' }} found
             </p>
+            <p class="text-medium-emphasis mb-0">
+              Double click a card to view details or edit.
+            </p>
           </div>
 
           <!-- ✅ LEGEND -->
@@ -227,7 +230,7 @@
               <v-card-actions>
                 <v-spacer />
                 <v-btn
-                  @click.stop="showEvent(event)"
+                  @click.stop="editEvent(event)"
                   variant="text"
                   size="small"
                   color="primary"
@@ -455,6 +458,10 @@ function isEventPastDue(event) {
 
 function getResultsCount() {
   return displayEvents.value.length;
+}
+
+function editEvent(event) {
+  router.push({ name: 'EventEdit', params: { id: event.id } });
 }
 
 function showEvent(event) {

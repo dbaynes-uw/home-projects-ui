@@ -397,16 +397,18 @@ td {
 }
 .li-left {
   text-align: left;
-  margin-left: 1.25rem;
+  margin-left: 2rem;
   display: list-item;
   list-style-type: square;
 }
 .li-left-none {
   text-align: left;
+  margin-left: 2rem;
   display: list-item;
   list-style-type: none;
 }
 .li-left-capitalize {
+  margin-left: 1.25rem;
   text-transform: capitalize;
   text-align: left;
   display: list-item;
