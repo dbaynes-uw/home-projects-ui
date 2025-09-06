@@ -75,8 +75,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
-
 import DateFormatService from "@/services/DateFormatService.js";
 
 // ✅ PROPS

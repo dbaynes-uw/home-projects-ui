@@ -5,13 +5,13 @@
   "engines": {
     "node": "v18.17.1"
   },
-  "scripts": {
+    "scripts": {
     "heroku-postbuild": "npm run build",
     "server": "http-server",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build", 
     "lint": "vue-cli-service lint",
-    "start": "node index.js & node server.js & vue-cli-service serve"
+    "start": "vue-cli-service serve"
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",

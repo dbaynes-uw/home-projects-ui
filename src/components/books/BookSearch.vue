@@ -1,6 +1,6 @@
 <script setup>
   import { useBookStore } from '@/stores/BookStore';
-  import { ref, defineEmits  } from 'vue';
+  import { ref } from 'vue';
   /* const */
   const emit = defineEmits(['searchArrayReturned'])
   const filteredResults = ref([])
