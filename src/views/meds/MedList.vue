@@ -6,22 +6,22 @@
     
     <!-- ✅ MODERN NAVIGATION -->
     <div class="navigation-buttons">
-      <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn">
+      <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn" id="button-as-link">
         <i class="mdi mdi-chart-line"></i>
         <span>Glucose Readings</span>
       </router-link>
       
-      <router-link :to="{ name: 'MedCreate' }" class="nav-btn">
+      <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
         <i class="mdi mdi-plus"></i>
-        <span>Add Med</span>
+        <span style="position: relative; left: 2rem;">Add Med</span>
       </router-link>
       
-      <button @click="toggleIndexView" class="nav-btn">
+      <button @click="toggleIndexView" class="nav-btn" id="button-as-link">
         <i class="mdi" :class="showIndexView ? 'mdi-card-multiple' : 'mdi-view-list'"></i>
         <span>{{ showIndexView ? 'Card View' : 'Index View' }}</span>
       </button>
       
-      <button @click="toggleMedChart" class="nav-btn">
+      <button @click="toggleMedChart" class="nav-btn" id="button-as-link">
         <i class="mdi mdi-chart-bar"></i>
         <span>{{ showMedChart ? 'Hide Chart' : 'Show Chart' }}</span>
       </button>
