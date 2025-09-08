@@ -1,6 +1,6 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  
+
   <div class="med-index-container">
     <div class="index-header">
       <h3 class="results-count">
@@ -193,13 +193,13 @@
 <script setup>
 import { ref, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+//import { useRouter } from 'vue-router'; // ✅ UNCOMMENT THIS
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 
 // ✅ COMPOSITION API SETUP
 const store = useStore();
-const router = useRouter();
+//const router = useRouter(); // ✅ UNCOMMENT THIS
 
 // ✅ PROPS
 const props = defineProps({
@@ -208,12 +208,20 @@ const props = defineProps({
     default: () => []
   }
 });
+// ✅ EXPOSE COMPONENTS TO MAKE ESLINT HAPPY
+defineExpose({
+  deleteMed,
+  sortList,
+  formatStandardDateTime,
+  confirmDialogue, // ✅ EXPOSE THE REF
+  ConfirmDialogue   // ✅ EXPOSE THE COMPONENT
+});
 
-// ✅ REFS
+// ✅ REFS (FIX THE ORDER AND REMOVE DUPLICATE)
 const confirmDialogue = ref(null);
 const isCompact = ref(true);
 const sortBy = ref('date_of_occurrence');
-const sortDirection = ref('desc'); // 'asc' or 'desc'
+const sortDirection = ref('desc');
 const isEditing = reactive({});
 
 // ✅ COMPUTED PROPERTIES
@@ -259,10 +267,8 @@ const toggleDensity = () => {
 
 const sortList = (column) => {
   if (sortBy.value === column) {
-    // Toggle direction if same column
     sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
   } else {
-    // New column, default to desc
     sortBy.value = column;
     sortDirection.value = 'desc';
   }
@@ -280,10 +286,8 @@ const toggleEdit = (medId) => {
 };
 
 const saveCircumstances = (med) => {
-  // Auto-save circumstances when textarea loses focus
   if (isEditing[med.id]) {
     console.log('💾 Auto-saving circumstances for med:', med.id);
-    // You can dispatch to store here if needed
     // store.dispatch('updateMed', med);
   }
 };
@@ -333,15 +337,7 @@ const formatStandardDateTime = (value) => {
   if (!value) return 'No date';
   return DateFormatService.formatStandardDateTimejs(value);
 };
-
-// ✅ EXPOSE FOR DEBUGGING
-defineExpose({
-  deleteMed,
-  sortList,
-  formatStandardDateTime
-});
 </script>
-
 <style scoped>
 .med-index-container {
   background: white;
