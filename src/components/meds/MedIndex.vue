@@ -194,6 +194,7 @@
 import { ref, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 //import { useRouter } from 'vue-router'; // ✅ UNCOMMENT THIS
+// eslint-disable-next-line no-unused-vars
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 
@@ -207,14 +208,6 @@ const props = defineProps({
     type: Array,
     default: () => []
   }
-});
-// ✅ EXPOSE COMPONENTS TO MAKE ESLINT HAPPY
-defineExpose({
-  deleteMed,
-  sortList,
-  formatStandardDateTime,
-  confirmDialogue, // ✅ EXPOSE THE REF
-  ConfirmDialogue   // ✅ EXPOSE THE COMPONENT
 });
 
 // ✅ REFS (FIX THE ORDER AND REMOVE DUPLICATE)
