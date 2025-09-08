@@ -34,6 +34,10 @@
         Due: <b>{{ formatYearDate(event.action_due_date) }}</b>
       </li>
       <li class="li-left">
+        <i class="mdi mdi-repeat"></i>
+        Status: {{ event.status.toUpperCase() }}
+      </li>
+      <li class="li-left">
         <i class="mdi mdi-note-text"></i>
         Notes:
       </li>

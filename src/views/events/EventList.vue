@@ -222,8 +222,14 @@
 
                   <div class="d-flex align-center">
                     <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
-                    <span>{{ event.location || 'No location' }}</span>
+                    <span>Location: {{ event.location || 'No location' }}</span>
                   </div>
+
+                  <div class="d-flex align-center">
+                    <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
+                    <span>Status: {{ event.status.charAt(0).toUpperCase() + event.status.slice(1) }}</span>
+                  </div>
+
                 </div>
               </v-card-text>
 

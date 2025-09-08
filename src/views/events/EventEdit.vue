@@ -96,11 +96,10 @@
         <br>
         
         <!-- ✅ MODERN SUBMIT BUTTON -->
-        <button class="submit-btn" type="submit">
-          <i class="mdi mdi-content-save"></i>
-          <span>Update Event</span>
+        <br>
+        <button class="button" id="link-as-button" type="submit">
+          Update Event
         </button>
-        
         <br/>
         
         <!-- ✅ DETAILS BUTTON -->
@@ -161,13 +160,12 @@ const capitalizedStatus = computed({
 // ✅ METHODS
 const updateEvent = async () => {
   try {
-    console.log('💾 Attempting to update event:', event.value.description);
+    console.log('💾 Starting event update...');
     
-    const ok = await confirmDialogue.value?.show({
+    const ok = await confirmDialogue.value.show({
       title: "Update Event",
       message: `Are you sure you want to update "${event.value.description}"?`,
-      okButton: "Update Event",
-      cancelButton: "Cancel"
+      okButton: "Update",
     });
 
     if (!ok) {
@@ -175,40 +173,55 @@ const updateEvent = async () => {
       return;
     }
 
-    console.log('✅ User confirmed update, proceeding...');
-
-    const eventData = {
+    console.log('✅ User confirmed, updating event...');
+    
+    // ✅ PREPARE EVENT DATA
+    const updatedEvent = {
       ...event.value,
-      assigned_email: store.state.user?.resource_owner?.email || '',
-      updated_by: store.state.user?.resource_owner?.email || '',
+      status: 'Active',
+      updated_by: store.state.user?.email || store.state.created_by || 'unknown',
+      updated_at: new Date().toISOString()
     };
 
-    console.log('📤 Dispatching updateEvent action:', eventData);
+    console.log('📤 Dispatching updateEvent with data:', updatedEvent);
 
-    const result = await store.dispatch("updateEvent", eventData);
+    // ✅ DISPATCH AND HANDLE RESPONSE
+    const result = await store.dispatch("updateEvent", updatedEvent);
     
-    if (result) {
-      console.log('🎉 Event updated successfully');
+    console.log('📥 Update result:', result);
+    console.log('📥 Result type:', typeof result);
+    console.log('📥 Result truthy?', !!result);
+
+    // ✅ CHECK FOR SUCCESS (handle different return types)
+    const isSuccess = result === true || 
+                     result?.success === true || 
+                     result?.status === 'success' ||
+                     result?.data ||
+                     (result && typeof result === 'object' && !result.error);
+
+    if (isSuccess) {
+      console.log('🎉 Event updated successfully!');
       
       // ✅ SUCCESS FEEDBACK
-      await confirmDialogue.value?.show({
+      await confirmDialogue.value.show({
         title: "Update Successful",
         message: `"${event.value.description}" has been updated successfully.`,
         okButton: "View Details",
         cancelButton: null
       });
       
-      router.push({ name: "EventShow", params: { id: eventData.id } });
+      // ✅ NAVIGATE TO DETAILS (fix route name)
+      router.push({ name: "EventShow", params: { id: updatedEvent.id } });
     } else {
-      throw new Error('Update operation failed');
+      throw new Error(`Update failed: ${result?.message || 'Unknown error'}`);
     }
-    
+
   } catch (error) {
-    console.error('❌ Failed to update event:', error);
+    console.error('❌ Update failed:', error);
     
-    await confirmDialogue.value?.show({
-      title: "Update Failed",
-      message: `Failed to update "${event.value.description}". Please try again.`,
+    await confirmDialogue.value.show({
+      title: "Update Failed", 
+      message: `Failed to update "${event.value.description}". ${error.message || 'Please try again.'}`,
       okButton: "OK",
       cancelButton: null
     });

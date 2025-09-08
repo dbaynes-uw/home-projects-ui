@@ -606,18 +606,39 @@ export default new Vuex.Store({
           alert("EventsStatisticsDetail Get Error: ", error.response.data )
         });
     },
-    async updateEvent({ commit }, event) {
-      EventService.putEvent(event)
-        .then((response) => {
-          commit("SET_EVENT", response.data);
-          alert("Event " + event.description + " was Successfully Updated.")
-        })
-        .catch((error) => {
-          alert("Event Put Error for " + event.description + ": " + error.response.request.statusText)
-          location.reload();
-        });
-    },
+// ✅ FIXED VERSION:
+async updateEvent({ commit }, event) {
+  try {
     
+    const response = await EventService.putEvent(event);
+    
+    if (response && response.data) {
+      commit("SET_EVENT", response.data);
+      
+      // ✅ RETURN SUCCESS OBJECT
+      return {
+        success: true,
+        data: response.data,
+        message: 'Event updated successfully'
+      };
+    } else {
+      return {
+        success: false,
+        message: 'No data returned from server'
+      };
+    }
+    
+  } catch (error) {
+    console.error('🏪 Store: Update failed:', error);
+    
+    // ✅ RETURN ERROR OBJECT
+    return {
+      success: false,
+      error: error.message,
+      message: 'Failed to update event'
+    };
+  }
+},
     setEventsRequest({ commit }, requestType) {
       commit('SET_EVENTS_REQUEST', requestType);
     },
