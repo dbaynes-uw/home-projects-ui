@@ -24,7 +24,7 @@ export default new Vuex.Store({
     books: [],
     events: [],
     eventsRequest: [],
-    eventsInactive: [],
+    eventsStatus: [],
     eventStatistics: [],
     eventsPastDue: [],
     eventsDueBy: [],
@@ -571,15 +571,15 @@ export default new Vuex.Store({
         alert("EventsPastDue Get Error: ", error.response.data )
       });
     },
-    async eventsInactive({ commit }, inactive) {
-      EventService.getEventsInactive(inactive)
+    async eventsStatus({ commit }, status) {
+      EventService.getEventsStatus(status)
         .then((response) => {
       commit("SET_EVENTS", response.data);
       commit("SET_EVENTS_REQUEST", '');
       return response.data;
       })
       .catch((error) => {
-        alert("EventsInactive Get Error: ", error.response.data )
+        alert("EventsStatus Get Error: ", error.response.data )
       });
     },
     async fetchEventStatistics({ commit }) {

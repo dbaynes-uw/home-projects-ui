@@ -50,22 +50,11 @@
           <!-- ✅ FILTER COMPONENTS ROW -->
           <div class="filters-grid mb-4">
             <EventsPastDue />
-
-            <!-- ✅ STEALTH TOGGLE WITH DYNAMIC STYLING -->
             <div class="filter-button-container">
-              <div class="stealth-select-wrapper">
-                <label class="stealth-label"></label>
-                <button 
-                  class="stealth-toggle-button stealth-button"
-                  :class="{ 'showing-inactive': !showActiveEvents }"
-                  @click="toggleStatus"
-                >
-                  <div class="stealth-button-content">
-                    <v-icon class="stealth-icon">{{ getToggleIcon() }}</v-icon>
-                    {{ getToggleText() }}
-                  </div>
-                </button>
-              </div>
+              <EventsStatus 
+                :show-active-events="showActiveEvents"
+                @toggle-status="handleStatusToggle"
+              />
             </div>
 
             <!-- ✅ MODERN V-MODEL BINDING -->
@@ -260,7 +249,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
@@ -271,51 +260,64 @@ import EventIndex from "@/components/events/EventIndex.vue";
 import EventsDueBy from "@/components/events/EventsDueBy.vue";
 import EventsLocations from "@/components/events/EventsLocations.vue";
 import EventsPastDue from "@/components/events/EventsPastDue.vue";
+import EventsStatus from "@/components/events/EventsStatus.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 
 const router = useRouter();
 const store = useStore();
 
-// ✅ REACTIVE STATE
+// ✅ MOVE THESE TO THE TOP - BEFORE ANY COMPUTED PROPERTIES
+const showActiveEvents = ref(true); // ✅ DEFAULT TO INACTIVE
 const isLoading = ref(true);
 const inputSearchText = ref('');
 const viewMode = ref('cards');
 const apiUrl = ref('');
-
-// ✅ FILTER VALUES (these need to actually be used)
 const selectedLocationValue = ref(''); 
 const selectedDueByValue = ref('');    
+const filteredResults = ref([]);
 
-// ✅ STATUS TOGGLE STATE
-const showActiveEvents = ref(true);
-
-// ✅ COMPUTED PROPERTIES
+// ✅ NOW COMPUTED PROPERTIES CAN ACCESS THE REFS ABOVE
 const user = computed(() => store.state.user?.resource_owner);
 const events = computed(() => store.state.events || []);
-//const eventsRequest = computed(() => store.state.eventsRequest);
 
 const isAdmin = computed(() => 
   user.value?.email?.toLowerCase().includes('baynes') || 
   user.value?.email === 'dlbaynes@gmail.com'
 );
 
-// ✅ SEARCH & FILTER LOGIC
-const filteredResults = ref([]);
-
-// ✅ UPDATED - Actually use the filter values for filtering
+// ✅ NOW displayEvents CAN ACCESS showActiveEvents
 const displayEvents = computed(() => {
+  console.log('🔍 Computing displayEvents...');
+  console.log('🔍 showActiveEvents.value:', showActiveEvents.value);
+  console.log('🔍 Total events in store:', events.value?.length);
+  
+  // ✅ CHECK WHAT STATUS VALUES WE ACTUALLY HAVE
+  if (events.value?.length > 0) {
+    const statusCounts = events.value.reduce((acc, event) => {
+      acc[event.status] = (acc[event.status] || 0) + 1;
+      return acc;
+    }, {});
+    console.log('🔍 Status breakdown:', statusCounts);
+  }
+  
+  // ✅ DETERMINE TARGET STATUS
   const targetStatus = showActiveEvents.value ? 'active' : 'inactive';
+  console.log('🔍 Looking for status:', targetStatus);
   
   // Start with all events filtered by current status
-  let statusFiltered = events.value.filter(event => 
-    event.status === targetStatus
-  );
+  let statusFiltered = events.value.filter(event => {
+    console.log(`🔍 Event ${event.id} status: "${event.status}" (type: ${typeof event.status})`);
+    return event.status === targetStatus;
+  });
+  
+  console.log('🔍 Status filtered events:', statusFiltered?.length);
   
   // ✅ APPLY LOCATION FILTER if selected
   if (selectedLocationValue.value && selectedLocationValue.value !== '') {
     statusFiltered = statusFiltered.filter(event => 
       event.location === selectedLocationValue.value
     );
+    console.log('🔍 After location filter:', statusFiltered?.length);
   }
   
   // ✅ APPLY DUE BY FILTER if selected
@@ -325,6 +327,7 @@ const displayEvents = computed(() => {
     statusFiltered = statusFiltered.filter(event => 
       event.action_due_date <= targetDate
     );
+    console.log('🔍 After due by filter:', statusFiltered?.length);
   }
   
   // If there are search results, apply same filters
@@ -349,13 +352,36 @@ const displayEvents = computed(() => {
       );
     }
     
+    console.log('🔍 Final search filtered:', searchFiltered?.length);
     return searchFiltered;
   }
   
+  console.log('🔍 Final status filtered:', statusFiltered?.length);
   return statusFiltered;
 });
 
-// ✅ UPDATED RESULTS TITLE - Show active filters
+// ✅ WATCHES CAN NOW ACCESS THE REFS
+watch(displayEvents, (newEvents) => {
+  console.log('🎯 DisplayEvents updated:', newEvents?.length, 'events showing');
+}, { immediate: true });
+
+watch(showActiveEvents, (newStatus) => {
+  console.log('🔄 EventList showActiveEvents changed to:', newStatus ? 'Active' : 'Inactive');
+}, { immediate: true });
+
+// ✅ FUNCTIONS
+function handleStatusToggle(newActiveState) {
+  showActiveEvents.value = newActiveState;
+  
+  // Clear all filters when switching status
+  filteredResults.value = [];
+  inputSearchText.value = '';
+  selectedLocationValue.value = '';
+  selectedDueByValue.value = '';
+  
+  console.log('✅ Status toggled to:', newActiveState ? 'Active' : 'Inactive');
+}
+
 function getResultsTitle() {
   const statusText = showActiveEvents.value ? 'Active' : 'Inactive';
   let title = `${statusText} Events`;
@@ -378,40 +404,7 @@ function getResultsTitle() {
   return title;
 }
 
-// ✅ UPDATED TOGGLE - Clear filters when switching status
-function toggleStatus() {
-  showActiveEvents.value = !showActiveEvents.value;
-  
-  // Clear all filters when toggling status
-  filteredResults.value = [];
-  inputSearchText.value = '';
-  selectedLocationValue.value = '';  // ✅ Clear location filter
-  selectedDueByValue.value = '';     // ✅ Clear due by filter
-  
-  // Update Vuex
-  if (showActiveEvents.value) {
-    store.dispatch('fetchEvents');
-  } else {
-    store.dispatch('eventsInactive');
-  }
-  
-  store.dispatch('setEventsRequest', showActiveEvents.value ? 'Active' : 'Inactive');
-  
-  console.log('✅ Status toggled to:', showActiveEvents.value ? 'active' : 'inactive');
-}
-
-function getToggleText() {
-  return showActiveEvents.value ? 'Inactive Events' : 'Show Active Events';
-}
-
-function getToggleIcon() {
-  return showActiveEvents.value ? 'mdi-pause-circle' : 'mdi-play-circle';
-}
-
-//function getToggleColor() {
-//  return showActiveEvents.value ? 'blue-darken-2' : 'green-darken-3';
-//}
-
+// ✅ ALL YOUR OTHER FUNCTIONS (unchanged)
 function searchColumns() {
   filteredResults.value = [];
   
@@ -492,6 +485,7 @@ function formatStandardDate(value) {
   return DateFormatService.formatStandardDatejs(value);
 }
 
+// ✅ ONMOUNTED
 onMounted(async () => {
   if (window.location.port === "8080") {
     apiUrl.value = "http://localhost:3000/api/v1/events/";
@@ -500,7 +494,9 @@ onMounted(async () => {
   }
 
   try {
-    await store.dispatch("fetchEvents");
+    // ✅ LOAD INACTIVE EVENTS BY DEFAULT
+    await store.dispatch("eventsStatus", "active");
+    console.log('✅ Loaded active events on mount');
   } catch (error) {
     console.error("❌ Error fetching events:", error);
   } finally {

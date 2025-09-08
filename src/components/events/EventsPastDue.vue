@@ -1,6 +1,5 @@
 <template>
   <div class="action-button-wrapper">
-    <label class="action-label"></label>
     <v-btn
       class="action-button"
       @click="eventsPastDue($event)"

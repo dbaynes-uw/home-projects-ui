@@ -74,9 +74,15 @@ export default {
     form.target.options.selectedIndex = 0
     return axios.get(api_url + "events/" + `?due_by=${dueFilter}`)
   },
-  getEventsInactive() {
+  getEventsActive() {
     this.init();
-    return axios.get(api_url + "events/" + `?inactive=true`)
+    console.log("Fetching active events...");
+    return axios.get(api_url + "events/" + `?active=true`)
+  },
+  getEventsStatus(status) {
+    this.init();
+    console.log("Fetching events status...");
+    return axios.get(api_url + "events/" + `?status=${status}`)
   },
   getEventsLocations(form) {
     this.init();
