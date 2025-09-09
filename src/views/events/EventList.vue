@@ -567,7 +567,8 @@ onMounted(async () => {
 
 .event-inactive {
   border-left: 4px solid rgb(var(--v-theme-grey));
-  opacity: 0.7;
+  /*background-color: rgba(var(--v-theme-error), 0.05);*/
+  background-color: rgba(var(--v-theme-error), 0.05);
 }
 
 .event-details {
