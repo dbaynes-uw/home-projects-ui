@@ -506,6 +506,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+
 /* ✅ CONSISTENT CARD CONTAINER */
 .cards-container {
   max-width: 1200px;

@@ -78,6 +78,39 @@ function getStatusIcon() {
 </script>
 
 <style scoped>
+
+/* ✅ FORCE FILTER BUTTON ALIGNMENT */
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  align-items: end; /* ✅ ALIGN TO BOTTOM */
+}
+
+.filter-button-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-end; /* ✅ PUSH TO BOTTOM */
+}
+
+/* ✅ ENSURE ALL FILTER COMPONENTS HAVE SAME STRUCTURE */
+.filters-grid > * {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ✅ FORCE CONSISTENT HEIGHTS */
+.filters-grid .action-button-wrapper,
+.filters-grid .dropdown-wrapper,
+.filters-grid > div {
+  min-height: 76px; /* ✅ LABEL + BUTTON HEIGHT */
+  max-height: 76px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .action-button-wrapper {
   display: flex;
   flex-direction: column;
@@ -121,7 +154,7 @@ function getStatusIcon() {
 .action-button :deep(.v-btn__content) {
   color: black !important;
   font-weight: 800 !important;
-  font-size: 16px !important; /* ✅ MATCH DROPDOWN TEXT SIZE */
+  font-size: 1.25rem !important; /* ✅ MATCH DROPDOWN TEXT SIZE */
   text-transform: none !important;
   letter-spacing: 0.5px !important;
   height: 100% !important;
