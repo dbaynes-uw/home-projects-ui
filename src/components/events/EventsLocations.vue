@@ -114,6 +114,7 @@ watch(events, () => {
   justify-content: center;
   padding: 0 16px;
   position: relative;
+  left: 2rem;
   overflow: hidden;
 }
 
