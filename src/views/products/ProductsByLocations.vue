@@ -47,7 +47,7 @@
         <!-- ✅ CLEAN SINGLE CONTROL - Remove Multi-Select switch -->
         <v-switch
           v-model="showShoppingList"
-          :label="`Show: ${showShoppingList ? 'Selected Items' : 'All Items'}`"
+          :label="`Show: ${showShoppingList ? 'All Items' : 'Selected Items'}`"
           color="primary"
           hide-details
           density="compact"
