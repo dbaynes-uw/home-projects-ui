@@ -128,7 +128,7 @@
 
         <!-- ✅ LOADING STATE -->
         <div class="card-wrapper"> 
-          <v-card v-if="!isLoading" class="mt-4">
+          <v-card v-if="isLoading" class="mt-4">
             <v-progress-circular indeterminate color="primary" size="64" />
             <p class="mt-4">Loading events...</p>
           </v-card>
@@ -481,6 +481,7 @@ onMounted(async () => {
   try {
     // ✅ LOAD INACTIVE EVENTS BY DEFAULT
     await store.dispatch("eventsStatus", "active");
+    console.log("✅ Loaded active events by default");
   } catch (error) {
     console.error("❌ Error fetching events:", error);
   } finally {
