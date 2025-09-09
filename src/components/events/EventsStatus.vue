@@ -116,7 +116,8 @@ function getStatusIcon() {
   flex-direction: column;
   gap: 8px;
   width: 100%;
-  max-width: 250px;
+  max-width: 15.8rem !important;
+  max-width: 150px;
   height: auto; /* ✅ LET IT SIZE NATURALLY */
 }
 
@@ -269,7 +270,7 @@ function getStatusIcon() {
   }
   
   .action-button :deep(.v-btn__content) {
-    font-size: 13px !important;
+    font-size: 1.25rem !important;
   }
   
   .action-button :deep(.v-icon) {

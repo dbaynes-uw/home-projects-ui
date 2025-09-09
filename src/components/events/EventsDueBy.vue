@@ -95,7 +95,7 @@ function handleChange(newValue) {
   position: relative;
   top: 0.5rem;
   width: 100%;
-  max-width: 250px;
+  max-width: 15.8rem !important;
   height: 48px;
   display: flex;
   align-items: center;
@@ -197,21 +197,21 @@ function handleChange(newValue) {
   }
   
   .custom-due-by-button {
-    height: 44px !important;
+    height: 48px !important;
   }
   
   .due-by-text {
-    font-size: 1rem !important;
+    font-size: 1.25rem !important;
   }
 }
 
 @media (max-width: 480px) {
   .custom-due-by-button {
-    height: 40px !important;
+    height: 48px !important;
   }
   
   .due-by-text {
-    font-size: 0.9rem !important;
+    font-size: 1.25rem !important;
   }
 }
 </style>

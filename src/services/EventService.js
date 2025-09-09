@@ -76,12 +76,10 @@ export default {
   },
   getEventsActive() {
     this.init();
-    console.log("Fetching active events...");
     return axios.get(api_url + "events/" + `?active=true`)
   },
   getEventsStatus(status) {
     this.init();
-    console.log("Fetching events status...");
     return axios.get(api_url + "events/" + `?status=${status}`)
   },
   getEventsLocations(form) {

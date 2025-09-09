@@ -11,35 +11,34 @@
             <h3 class="text-medium-emphasis mb-0">Created by: {{ user?.email }}</h3>
           </div>
         </v-card-title>
-
-        <!-- ✅ MODERN NAVIGATION -->
-        <v-card-text>
-          <div class="navigation-grid">
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'EventStatistics' }"
-              prepend-icon="mdi-chart-bar"
-              id="button-as-link"
-              style="margin-left: 3rem !important; width: auto;"
-            >
-              Statistics
-            </v-btn>
-            
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'EventCreate' }"
-              prepend-icon="mdi-plus"
-              color="primary"
-              id="button-as-link"
-              style="margin-left: 1rem !important; width: auto;"
-
-            >
-              Create Event
-            </v-btn>
-          </div>
-        </v-card-text>
       </v-card>
 
+        <!-- ✅ MODERN NAVIGATION -->
+      <v-card-text>
+        <div class="navigation-flex">
+          <v-btn
+            variant="outlined"
+            :to="{ name: 'EventStatistics' }"
+            prepend-icon="mdi-chart-bar"
+            id="button-as-link"
+            class="nav-button"
+          >
+            Statistics
+          </v-btn>
+          
+          <v-btn
+            variant="outlined"
+            :to="{ name: 'EventCreate' }"
+            prepend-icon="mdi-plus"
+            color="primary"
+            id="button-as-link"
+            class="nav-button"
+          >
+            New Event
+          </v-btn>
+        </div>
+      </v-card-text>
+  
       <!-- ✅ FILTERS CARD -->
       <v-card class="mt-4">
         <v-card-title>
@@ -249,7 +248,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
@@ -286,38 +285,29 @@ const isAdmin = computed(() =>
 );
 
 // ✅ NOW displayEvents CAN ACCESS showActiveEvents
-const displayEvents = computed(() => {
-  console.log('🔍 Computing displayEvents...');
-  console.log('🔍 showActiveEvents.value:', showActiveEvents.value);
-  console.log('🔍 Total events in store:', events.value?.length);
-  
+const displayEvents = computed(() => {  
   // ✅ CHECK WHAT STATUS VALUES WE ACTUALLY HAVE
-  if (events.value?.length > 0) {
-    const statusCounts = events.value.reduce((acc, event) => {
-      acc[event.status] = (acc[event.status] || 0) + 1;
-      return acc;
-    }, {});
-    console.log('🔍 Status breakdown:', statusCounts);
-  }
+  //if (events.value?.length > 0) {
+  //  const statusCounts = events.value.reduce((acc, event) => {
+  //    acc[event.status] = (acc[event.status] || 0) + 1;
+  //    return acc;
+  //  }, {});
+  //  console.log('🔍 Status breakdown:', statusCounts);
+  //}
   
   // ✅ DETERMINE TARGET STATUS
   const targetStatus = showActiveEvents.value ? 'active' : 'inactive';
-  console.log('🔍 Looking for status:', targetStatus);
   
   // Start with all events filtered by current status
   let statusFiltered = events.value.filter(event => {
-    console.log(`🔍 Event ${event.id} status: "${event.status}" (type: ${typeof event.status})`);
     return event.status === targetStatus;
   });
-  
-  console.log('🔍 Status filtered events:', statusFiltered?.length);
-  
+    
   // ✅ APPLY LOCATION FILTER if selected
   if (selectedLocationValue.value && selectedLocationValue.value !== '') {
     statusFiltered = statusFiltered.filter(event => 
       event.location === selectedLocationValue.value
     );
-    console.log('🔍 After location filter:', statusFiltered?.length);
   }
   
   // ✅ APPLY DUE BY FILTER if selected
@@ -327,7 +317,6 @@ const displayEvents = computed(() => {
     statusFiltered = statusFiltered.filter(event => 
       event.action_due_date <= targetDate
     );
-    console.log('🔍 After due by filter:', statusFiltered?.length);
   }
   
   // If there are search results, apply same filters
@@ -352,22 +341,12 @@ const displayEvents = computed(() => {
       );
     }
     
-    console.log('🔍 Final search filtered:', searchFiltered?.length);
     return searchFiltered;
   }
   
-  console.log('🔍 Final status filtered:', statusFiltered?.length);
   return statusFiltered;
 });
 
-// ✅ WATCHES CAN NOW ACCESS THE REFS
-watch(displayEvents, (newEvents) => {
-  console.log('🎯 DisplayEvents updated:', newEvents?.length, 'events showing');
-}, { immediate: true });
-
-watch(showActiveEvents, (newStatus) => {
-  console.log('🔄 EventList showActiveEvents changed to:', newStatus ? 'Active' : 'Inactive');
-}, { immediate: true });
 
 // ✅ FUNCTIONS
 function handleStatusToggle(newActiveState) {
@@ -379,7 +358,6 @@ function handleStatusToggle(newActiveState) {
   selectedLocationValue.value = '';
   selectedDueByValue.value = '';
   
-  console.log('✅ Status toggled to:', newActiveState ? 'Active' : 'Inactive');
 }
 
 function getResultsTitle() {
@@ -496,7 +474,6 @@ onMounted(async () => {
   try {
     // ✅ LOAD INACTIVE EVENTS BY DEFAULT
     await store.dispatch("eventsStatus", "active");
-    console.log('✅ Loaded active events on mount');
   } catch (error) {
     console.error("❌ Error fetching events:", error);
   } finally {
