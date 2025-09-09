@@ -2,13 +2,14 @@
   <div class="action-button-wrapper">
     <v-btn
       class="action-button"
-      id="button-as-link"
       :class="{ 'active-state': isShowingActive }"
       @click="toggleEventsStatus"
       variant="elevated"
+      size="default"
       block
+      :prepend-icon="getStatusIcon()"
+      density="default"
     >
-      <v-icon start size="large">{{ getStatusIcon() }}</v-icon>
       {{ getStatusLabel() }}
     </v-btn>
   </div>
@@ -75,6 +76,7 @@ function getStatusIcon() {
   return isShowingActive.value ? 'mdi-play-circle' : 'mdi-pause-circle';
 }
 </script>
+
 <style scoped>
 .action-button-wrapper {
   display: flex;
@@ -82,13 +84,13 @@ function getStatusIcon() {
   gap: 8px;
   width: 100%;
   max-width: 250px;
-  height: 56px;
+  height: auto; /* ✅ LET IT SIZE NATURALLY */
 }
 
 .action-label {
   color: #1a1a1a !important;
   font-weight: 800 !important;
-  font-size: 15px !important;
+  font-size: 12px !important; /* ✅ MATCH OTHER LABELS */
   text-transform: uppercase !important;
   letter-spacing: 0.8px !important;
   text-align: center !important;
@@ -96,14 +98,17 @@ function getStatusIcon() {
   text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
 }
 
-/* ✅ ACTIVE STATE - GREEN GRADIENT (DEFAULT) */
+/* ✅ MATCH THE EXACT SIZING OF OTHER FILTER BUTTONS */
 .action-button {
   background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
   border-radius: 12px !important;
-  height: 48px !important;
+  height: 48px !important; /* ✅ SAME AS OTHER DROPDOWNS */
   box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
   transition: all 0.3s ease !important;
   border: none !important;
+  width: 100% !important;
+  min-height: 48px !important; /* ✅ PREVENT EXPANSION */
+  max-height: 48px !important; /* ✅ PREVENT EXPANSION */
 }
 
 .action-button:hover {
@@ -112,19 +117,27 @@ function getStatusIcon() {
   box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
 }
 
-/* ✅ ACTIVE STATE TEXT (DEFAULT) */
+/* ✅ BUTTON CONTENT SIZING TO MATCH DROPDOWNS */
 .action-button :deep(.v-btn__content) {
   color: black !important;
   font-weight: 800 !important;
-  font-size: 20px !important;
+  font-size: 16px !important; /* ✅ MATCH DROPDOWN TEXT SIZE */
   text-transform: none !important;
+  letter-spacing: 0.5px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 16px !important; /* ✅ MATCH DROPDOWN PADDING */
 }
 
 .action-button :deep(.v-icon) {
   color: black !important;
+  font-size: 18px !important; /* ✅ MATCH DROPDOWN ICON SIZE */
+  margin-right: 8px !important;
 }
 
-/* ✅ INACTIVE STATE - PURPLE GRADIENT (WHEN TOGGLED) */
+/* ✅ INACTIVE STATE - PURPLE GRADIENT */
 .action-button:not(.active-state) {
   background: linear-gradient(to right, #667eea, #764ba2) !important;
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
@@ -147,12 +160,87 @@ function getStatusIcon() {
 
 /* ✅ HOVER LABEL EFFECTS */
 .action-button-wrapper:hover .action-label {
-  color: #16c0b0 !important; /* Default to active color */
+  color: #16c0b0 !important;
   transform: translateY(-1px);
 }
 
 .action-button-wrapper:has(.action-button:not(.active-state)):hover .action-label {
-  color: #667eea !important; /* Inactive state color */
+  color: #667eea !important;
 }
 
+/* ✅ ANIMATED SHINE EFFECT */
+.action-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.action-button:hover::before {
+  left: 100%;
+}
+
+/* ✅ OVERRIDE ANY VUETIFY DEFAULT PADDING/MARGIN */
+.action-button :deep(.v-btn__prepend) {
+  margin-inline-end: 8px !important;
+  margin-inline-start: 0 !important;
+}
+
+.action-button :deep(.v-btn__append) {
+  margin-inline-start: 8px !important;
+  margin-inline-end: 0 !important;
+}
+
+/* ✅ ENSURE NO EXTRA SPACING */
+.action-button :deep(.v-btn__overlay) {
+  border-radius: 12px !important;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .action-button-wrapper {
+    max-width: 100%;
+  }
+  
+  .action-label {
+    font-size: 11px !important;
+  }
+  
+  .action-button {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+  }
+  
+  .action-button :deep(.v-btn__content) {
+    font-size: 1.25rem !important;
+  }
+  
+  .action-button :deep(.v-icon) {
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-button {
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+  }
+  
+  .action-button :deep(.v-btn__content) {
+    font-size: 13px !important;
+  }
+  
+  .action-button :deep(.v-icon) {
+    font-size: 15px !important;
+  }
+}
 </style>
