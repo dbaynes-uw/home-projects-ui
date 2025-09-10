@@ -100,6 +100,11 @@
                 prepend-inner-icon="mdi-package-variant-closed"
                 class="mb-4"
                 clearable
+                autocomplete
+                :menu-props="{ 
+                  openOnClick: false,  
+                  closeOnContentClick: true 
+                }"                
               />
 
               <!-- ✅ OTHER PRODUCT NAME (CONDITIONAL) -->
