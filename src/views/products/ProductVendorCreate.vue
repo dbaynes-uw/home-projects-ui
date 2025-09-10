@@ -1,327 +1,422 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h2>Add Vendor/Products</h2>
-    </v-card-title>
-    <ul>
-      <li class="left">
-        <button id="link-as-button">
-          <router-link :to="{ name: 'ProductsByLocations' }">Product Location List</router-link>
-        </button>
-      </li>
-    </ul>
-    <ul class="py-2">
-      <li>
-        <button id="link-as-button">
-          <router-link :to="{ name: 'ProductsByVendors' }">List By Vendor</router-link>
-        </button>
-      </li>
-      <li>
-        <button id="link-as-button">
-          <router-link :to="{ name: 'ProductList' }">List by Product</router-link>
-        </button>
-      </li>
-    </ul> 
-  </v-card>
-  <v-card-text>
-    <v-form @submit.prevent="onSubmit" >
-      <v-container id="form-container">
+  <div class="page-wrapper">
+    <div class="product-vendor-container">
+      <!-- ✅ HEADER CARD -->
+      <v-card class="mx-auto mt-5">
+        <v-card-title class="pb-0">
+          <h2>Add Vendor/Products</h2>
+        </v-card-title>
+        
+        <!-- ✅ NAVIGATION BUTTONS -->
+        <v-card-text>
+          <div class="navigation-flex">
+            <v-btn
+              variant="outlined"
+              :to="{ name: 'ProductsByLocations' }"
+              prepend-icon="mdi-map-marker"
+              class="nav-button"
+            >
+              Product Location List
+            </v-btn>
+            
+            <v-btn
+              variant="outlined"
+              :to="{ name: 'ProductsByVendors' }"
+              prepend-icon="mdi-store"
+              class="nav-button"
+            >
+              List By Vendor
+            </v-btn>
+            
+            <v-btn
+              variant="outlined"
+              :to="{ name: 'ProductList' }"
+              prepend-icon="mdi-package-variant"
+              class="nav-button"
+            >
+              List by Product
+            </v-btn>
+          </div>
+        </v-card-text>
+      </v-card>
 
-        <v-select
-          label="Vendor Location"
-          class="select-label"
-          :items="vendorsLocationsGroup.vendorsLocationsGroup"
-          :rules="[requiredLocation]"
-          v-model="vendor.location"
-        >
-          <option
-            v-for="option in vendorsLocationsGroup.vendorsLocationsGroup"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === vendor.location"
-          >
-            {{ option }}
-          </option>
-        </v-select>
+      <!-- ✅ FORM CARD -->
+      <v-card class="mt-4">
+        <v-card-title>
+          <h3>Vendor & Product Details</h3>
+        </v-card-title>
+        
+        <v-card-text>
+          <v-form @submit.prevent="onSubmit" ref="formRef">
+            <v-container class="form-container">
+              
+              <!-- ✅ VENDOR LOCATION -->
+              <v-select
+                v-model="vendor.location"
+                label="Vendor Location"
+                :items="vendorsLocationsGroup?.vendorsLocationsGroup || []"
+                :rules="[requiredLocation]"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-map-marker-outline"
+                class="mb-4"
+                clearable
+              />
 
-        <v-select
-          label="Vendor Name"
-          :items="vendorsGroup.vendorsGroup"
-          :rules="[requiredVendorName]"
-          class="select-label"
-          v-model="vendor.vendor_name"
-        >
-          <option
-            v-for="option in vendorsGroup.vendorsGroup"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === vendor.vendor_name"
-          >
-            {{ option }}
-          </option>
-        </v-select>
-        <br/>
-        <span v-if="vendor.vendor_name == 'Other'">
-          <v-text-field
-            id="customer-input-field"
-            v-model="vendor.other_vendor_name"
-            class="select-label"
-            label="Other Vendor Name"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-magnify</v-icon>
-            </template>
-          </v-text-field>
-        </span>
-        <v-select
-          label="Vendor Product"
-          :items="vendorsProductsGroup.vendorsProductsGroup"
-          :rules="[requiredProductName]"
-          class="select-label"
-          v-model="vendor.product_name"
-        >
-          <option
-            v-for="option in vendorsProductsGroup.vendorsProductsGroup"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === vendor.product_name"
-          >
-            {{ option }}
-          </option>
-        </v-select>
-        <span v-if="vendor.product_name == 'Other'">
-          <v-text-field
-            v-model="vendor.other_product_name"
-            id="custom-input-field"
-            label="Other Product Name"
-            :rules="[requiredOtherProductName]"
-            class="select-label"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-magnify</v-icon>
-            </template>
-          </v-text-field>
-        </span>   
-        <br/>
-        <br/>
-        <br/>
-        <v-btn type="submit" block class="mt-2">Submit</v-btn>
-      </v-container>
-    </v-form>
-  </v-card-text>
+              <!-- ✅ VENDOR NAME -->
+              <v-select
+                v-model="vendor.vendor_name"
+                label="Vendor Name"
+                :items="vendorsGroup?.vendorsGroup || []"
+                :rules="[requiredVendorName]"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-store-outline"
+                class="mb-4"
+                clearable
+              />
+
+              <!-- ✅ OTHER VENDOR NAME (CONDITIONAL) -->
+              <v-text-field
+                v-if="vendor.vendor_name === 'Other'"
+                v-model="vendor.other_vendor_name"
+                label="Other Vendor Name"
+                :rules="[requiredOtherVendorName]"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-store-plus"
+                class="mb-4"
+                clearable
+              />
+
+              <!-- ✅ PRODUCT NAME -->
+              <v-select
+                v-model="vendor.product_name"
+                label="Vendor Product"
+                :items="vendorsProductsGroup?.vendorsProductsGroup || []"
+                :rules="[requiredProductName]"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-package-variant-closed"
+                class="mb-4"
+                clearable
+              />
+
+              <!-- ✅ OTHER PRODUCT NAME (CONDITIONAL) -->
+              <v-text-field
+                v-if="vendor.product_name === 'Other'"
+                v-model="vendor.other_product_name"
+                label="Other Product Name"
+                :rules="[requiredOtherProductName]"
+                variant="outlined"
+                density="comfortable"
+                prepend-inner-icon="mdi-package-variant-plus"
+                class="mb-4"
+                clearable
+              />
+
+              <!-- ✅ SUBMIT BUTTON -->
+              <v-btn 
+                type="submit" 
+                color="primary"
+                size="large"
+                block
+                class="mt-4"
+                :loading="isSubmitting"
+                :disabled="!isFormValid"
+              >
+                <v-icon start>mdi-content-save</v-icon>
+                Submit Vendor & Product
+              </v-btn>
+            </v-container>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </div>
+  </div>
 </template>
-<script setup>
-//const format = (date) => {
-</script>
-<script>
-import { v4 as uuidv4 } from "uuid";
-export default {
-  created() {
-    this.$store.dispatch("fetchVendorsGroup");
-    this.$store.dispatch("fetchVendorsLocationsGroup");
-    this.$store.dispatch("fetchVendorsProductsGroup");
-  },
-  computed: {
-    vendorsGroup() {
-      return this.$store.state.vendors_group;
-    },
-    vendorsLocationsGroup() {
-      return this.$store.state.vendors_locations_group;
-    },
-    vendorsProductsGroup() {
-      return this.$store.state.vendors_products_group;
-    },
-  },    
-  components: {},
-  data() {
-    return {
-      vendor: {
-        vendor_name: null,
-        location: '',
-        created_by: this.$store.state.user.resource_owner.email,
-        other_vendor_name: '',
-        product_name: '',
-        other_product_name: '',
-      },
-      isFormValid: false,
-      isLocationValid: false,
-      isVendorNameValid: false,
-      isProductNameValid: false,
-      isOtherProductNameValid: false,
-      urlMaxLength: 255,
-    };
-  },
-  methods: {
-    onSubmit() {
-      this.checkValidations();
-      if (this.isFormValid) {
-        const vendor = {
-          ...this.vendor,
-          id: uuidv4(),
-          created_by: this.$store.state.user.resource_owner.email,
-        };
-        if (this.$store.dispatch("createVendor", vendor)) {
-          if (vendor.product_name == 'Other') {
-            alert("Product " + vendor.other_product_name + " was added for " + vendor.vendor_name);
-          } else {
-            alert("Product " + vendor.product_name + " was added for " + vendor.vendor_name);
-          }
-        } else {
-          alert("Error adding Vendor " + vendor.vendor_name);
-        }
-      } else {
-        alert("Please correct required fields and resubmit");
-      }  
-    },
-    requiredLocation: function (value) {
-      if (value) {
-          this.isLocationValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isLocationValid = false
-          return 'Please enter Location';
-      }
-    },
-    requiredVendorName: function (value) {
-      if (value) {
-          this.isVendorNameValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isVendorNameValid = false
-          return 'Please enter Vendor Name';
-      }
-    },
-    requiredProductName: function (value) {
-      if (value) {
-        if (value == 'Other')
-          {
-            this.isProductNameValid = true
-            this.isOtherProductNameValid = false
-          } else {
-            this.isProductNameValid = true
-            this.isOtherProductNameValid = true
-          }
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isProductNameValid = false
-          return 'Please enter Product Name';
-      }
-    },
-    requiredOtherProductName: function (value) {
-      if (value) {
-        if (this.isProductNameValid == true)
-          this.isOtherProductNameValid = true 
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isOtherProductNameValid = false
-          return 'Please enter Other Product Name';
-      }
-    },
-    checkValidations() {
-      if (this.isLocationValid &&
-          this.isVendorNameValid &&
-          this.isProductNameValid &&
-          this.isOtherProductNameValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-    }
 
-  },
-}
+<script setup>
+import { ref, computed, onMounted, watch } from 'vue';
+import { useStore } from 'vuex';
+import { v4 as uuidv4 } from 'uuid';
+
+const store = useStore();
+
+// ✅ REACTIVE STATE
+const formRef = ref(null);
+const isSubmitting = ref(false);
+
+// ✅ VENDOR DATA
+const vendor = ref({
+  vendor_name: null,
+  location: '',
+  created_by: '',
+  other_vendor_name: '',
+  product_name: '',
+  other_product_name: '',
+});
+
+// ✅ VALIDATION STATE
+const validationState = ref({
+  isLocationValid: false,
+  isVendorNameValid: false,
+  isProductNameValid: false,
+  isOtherProductNameValid: true, // Default true unless 'Other' is selected
+  isOtherVendorNameValid: true,  // Default true unless 'Other' is selected
+});
+
+// ✅ COMPUTED PROPERTIES
+const vendorsGroup = computed(() => store.state.vendors_group);
+const vendorsLocationsGroup = computed(() => store.state.vendors_locations_group);
+const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
+
+const user = computed(() => store.state.user?.resource_owner);
+
+const isFormValid = computed(() => {
+  return validationState.value.isLocationValid &&
+         validationState.value.isVendorNameValid &&
+         validationState.value.isProductNameValid &&
+         validationState.value.isOtherProductNameValid &&
+         validationState.value.isOtherVendorNameValid;
+});
+
+// ✅ VALIDATION RULES
+const requiredLocation = (value) => {
+  const isValid = !!value;
+  validationState.value.isLocationValid = isValid;
+  return isValid || 'Please select a location';
+};
+
+const requiredVendorName = (value) => {
+  const isValid = !!value;
+  validationState.value.isVendorNameValid = isValid;
+  return isValid || 'Please select a vendor name';
+};
+
+const requiredProductName = (value) => {
+  const isValid = !!value;
+  validationState.value.isProductNameValid = isValid;
+  
+  // Reset other product validation based on selection
+  if (value === 'Other') {
+    validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
+  } else {
+    validationState.value.isOtherProductNameValid = true;
+  }
+  
+  return isValid || 'Please select a product';
+};
+
+const requiredOtherProductName = (value) => {
+  const isValid = !!value;
+  validationState.value.isOtherProductNameValid = isValid;
+  return isValid || 'Please enter the other product name';
+};
+
+const requiredOtherVendorName = (value) => {
+  const isValid = !!value;
+  validationState.value.isOtherVendorNameValid = isValid;
+  return isValid || 'Please enter the other vendor name';
+};
+
+// ✅ WATCH FOR VENDOR NAME CHANGES
+watch(() => vendor.value.vendor_name, (newValue) => {
+  if (newValue === 'Other') {
+    validationState.value.isOtherVendorNameValid = !!vendor.value.other_vendor_name;
+  } else {
+    validationState.value.isOtherVendorNameValid = true;
+    vendor.value.other_vendor_name = ''; // Clear when not needed
+  }
+});
+
+// ✅ WATCH FOR PRODUCT NAME CHANGES
+watch(() => vendor.value.product_name, (newValue) => {
+  if (newValue === 'Other') {
+    validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
+  } else {
+    validationState.value.isOtherProductNameValid = true;
+    vendor.value.other_product_name = ''; // Clear when not needed
+  }
+});
+
+// ✅ WATCH FOR OTHER PRODUCT NAME CHANGES
+watch(() => vendor.value.other_product_name, (newValue) => {
+  if (vendor.value.product_name === 'Other') {
+    validationState.value.isOtherProductNameValid = !!newValue;
+  }
+});
+
+// ✅ WATCH FOR OTHER VENDOR NAME CHANGES
+watch(() => vendor.value.other_vendor_name, (newValue) => {
+  if (vendor.value.vendor_name === 'Other') {
+    validationState.value.isOtherVendorNameValid = !!newValue;
+  }
+});
+
+// ✅ SUBMIT FUNCTION - FIXED
+const onSubmit = async () => {
+  try {
+    isSubmitting.value = true;
+    
+    // Validate form
+    const { valid } = await formRef.value.validate();
+    
+    if (valid && isFormValid.value) {
+      const vendorData = {
+        ...vendor.value,
+        id: uuidv4(),
+        created_by: user.value?.email || '',
+      };
+      
+      console.log('🚀 Submitting vendor data:', vendorData);
+      
+      // ✅ FIX: Don't rely on return value, use try/catch instead
+      await store.dispatch('createVendor', vendorData);
+      
+      // ✅ If we get here, the dispatch succeeded
+      const productName = vendor.value.product_name === 'Other' 
+        ? vendor.value.other_product_name 
+        : vendor.value.product_name;
+        
+      const vendorName = vendor.value.vendor_name === 'Other'
+        ? vendor.value.other_vendor_name
+        : vendor.value.vendor_name;
+      
+      // ✅ SUCCESS MESSAGE
+      console.log(`✅ Product ${productName} was added for ${vendorName}`);
+      
+      // ✅ RESET FORM
+      resetForm();
+      
+      // ✅ SHOW SUCCESS FEEDBACK
+      alert(`Product ${productName} was added for ${vendorName}`);
+      
+    } else {
+      console.warn('⚠️ Form validation failed');
+      alert('Please correct required fields and resubmit');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error creating vendor:', error);
+    
+    // ✅ BETTER ERROR MESSAGE
+    const errorMessage = error.response?.data?.message || 
+                        error.message || 
+                        'Unknown error occurred';
+    alert(`Error adding vendor: ${errorMessage}`);
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+// ✅ RESET FORM FUNCTION
+const resetForm = () => {
+  vendor.value = {
+    vendor_name: null,
+    location: '',
+    created_by: user.value?.email || '',
+    other_vendor_name: '',
+    product_name: '',
+    other_product_name: '',
+  };
+  
+  validationState.value = {
+    isLocationValid: false,
+    isVendorNameValid: false,
+    isProductNameValid: false,
+    isOtherProductNameValid: true,
+    isOtherVendorNameValid: true,
+  };
+  
+  formRef.value?.resetValidation();
+};
+
+// ✅ LIFECYCLE - FETCH DATA ON MOUNT
+onMounted(async () => {
+  try {
+    // Set user email
+    vendor.value.created_by = user.value?.email || '';
+    
+    // Fetch data in parallel
+    await Promise.all([
+      store.dispatch('fetchVendorsGroup'),
+      store.dispatch('fetchVendorsLocationsGroup'), 
+      store.dispatch('fetchVendorsProductsGroup')
+    ]);
+    
+    console.log('✅ All vendor data loaded successfully');
+    
+  } catch (error) {
+    console.error('❌ Error loading vendor data:', error);
+  }
+});
 </script>
-<style>
-@import "vue-select/dist/vue-select.css";
-#form-container {
-  width: 75% !important;
-}
-.label-for-select {
- padding-left: 0rem;
-}
-.text-style {
-  float: right;
-  margin-right: 6rem;
-  width: 20px;
-  overflow: hidden;
-}
-#id {
+
+<style scoped>
+.page-wrapper {
   width: 100%;
-}
-#select-box{
-  /*width: 40%;*/
-  width: 45%;
-  position: relative;
-  left: 1rem;
-}
-#notes {
-  width: 100%;
-  height: 4rem;
-}
-.button {
-  margin: 30px;
-  background-color: #39495c;
-  border-radius: 5px;
-  font-size: 18px;
-  width: 160px;
-  height: 60px;
-  color: white;
-  padding: 20px;
-  box-shadow: inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.17),
-    inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15),
-    inset 0 0 0em 0.05em rgba(255, 255, 255, 0.12);
-  text-align: center;
-  cursor: pointer;
-}
-label {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-}
-fieldset {
-  border: 0;
-  margin: 0;
+  display: flex;
+  justify-content: center;
   padding: 0;
+  margin: 0;
 }
-select {
-  border-color: darkgreen;
-}
-legend {
-  font-size: 28px;
-  font-weight: 700;
-  margin-top: 20px;
-}
-.label-visible {
-  top: -35px;
-  left: 4px;
-  visibility: visible;
-}
-.label-invisible {
-  top: -10px;
-  left: 4px;
-  visibility: hidden;
-}
-.input-field {
-  margin-top: 30px;
-  position: relative;
-}
-.input-field > input {
+
+.product-vendor-container {
   width: 100%;
+  max-width: 800px;
+  padding: 1rem;
+  margin: 0 auto;
 }
-.input-field > p {
-  position: absolute;
-  font-size: 14px;
-  transition: 0.3s;
+
+.navigation-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  min-width: 160px !important;
+  height: 40px !important;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .product-vendor-container {
+    padding: 0.5rem;
+  }
+  
+  .navigation-flex {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .nav-button {
+    width: 100% !important;
+    max-width: 280px;
+  }
+  
+  .form-container {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navigation-flex {
+    gap: 0.5rem;
+  }
+  
+  .nav-button {
+    height: 36px !important;
+    font-size: 14px !important;
+  }
 }
 </style>
