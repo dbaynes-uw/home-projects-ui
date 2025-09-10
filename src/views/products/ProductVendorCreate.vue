@@ -89,7 +89,7 @@
                 clearable
               />
 
-              <!-- ✅ FIXED - Only shows dropdown after 3+ characters -->
+              <!-- ✅ FIXED - Only shows dropdown after 2+ characters -->
               <v-autocomplete
                 v-model="vendor.product_name"
                 v-model:search="productSearch"
@@ -189,7 +189,7 @@ const handleProductFocus = () => {
 const handleProductBlur = () => {
   console.log('🎯 Product field blurred');
   // Only clear search if no selection was made and search is incomplete
-  if (!vendor.value.product_name && productSearch.value.length < 3) {
+  if (!vendor.value.product_name && productSearch.value.length < 2) {
     productSearch.value = '';
   }
 };
@@ -202,8 +202,8 @@ const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
 const user = computed(() => store.state.user?.resource_owner);
 // ✅ ADD THIS MISSING COMPUTED PROPERTY
 const getFilteredProducts = computed(() => {
-  // Return empty array if search is less than 3 characters
-  if (!productSearch.value || productSearch.value.length < 3) {
+  // Return empty array if search is less than 2 characters
+  if (!productSearch.value || productSearch.value.length < 2) {
     return [];
   }
   
@@ -222,9 +222,9 @@ const getFilteredProducts = computed(() => {
 // ✅ NEW: DYNAMIC PLACEHOLDER TEXT
 const getProductPlaceholder = computed(() => {
   if (!productSearch.value) {
-    return 'Type 3+ characters to search products';
-  } else if (productSearch.value.length < 3) {
-    return `Type ${3 - productSearch.value.length} more character${3 - productSearch.value.length === 1 ? '' : 's'}`;
+    return 'Type 2+ characters to search products';
+  } else if (productSearch.value.length < 2) {
+    return `Type ${2 - productSearch.value.length} more character${2 - productSearch.value.length === 1 ? '' : 's'}`;
   } else {
     return `Searching for "${productSearch.value}"...`;
   }
@@ -310,7 +310,7 @@ watch(() => productSearch.value, (newValue) => {
     console.log('💡 Type 2 more characters to search');
   } else if (newValue.length === 2) {
     console.log('💡 Type 1 more character to search');
-  } else if (newValue.length >= 3) {
+  } else if (newValue.length >= 2) {
     const results = getFilteredProducts.value.length;
     console.log(`🎯 Found ${results} matching products`);
   }
