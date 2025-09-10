@@ -89,24 +89,30 @@
                 clearable
               />
 
-              <!-- ✅ PRODUCT NAME -->
-              <v-select
+              <!-- ✅ FIXED - Only shows dropdown after 3+ characters -->
+              <v-autocomplete
                 v-model="vendor.product_name"
+                v-model:search="productSearch"
                 label="Vendor Product"
-                :items="vendorsProductsGroup?.vendorsProductsGroup || []"
+                :items="getFilteredProducts"
                 :rules="[requiredProductName]"
                 variant="outlined"
                 density="comfortable"
                 prepend-inner-icon="mdi-package-variant-closed"
                 class="mb-4"
                 clearable
-                autocomplete
+                hide-no-data
+                no-filter
                 :menu-props="{ 
-                  openOnClick: false,  
-                  closeOnContentClick: true 
-                }"                
-              />
-
+                  closeOnClick: true,
+                  closeOnContentClick: true,
+                  openOnClick: false
+                }"
+                @focus="handleProductFocus"
+                @blur="handleProductBlur"
+                :readonly="false"
+                :placeholder="getProductPlaceholder"
+              />  
               <!-- ✅ OTHER PRODUCT NAME (CONDITIONAL) -->
               <v-text-field
                 v-if="vendor.product_name === 'Other'"
@@ -152,6 +158,9 @@ const store = useStore();
 const formRef = ref(null);
 const isSubmitting = ref(false);
 
+// ✅ ADD PRODUCT SEARCH STATE
+const productSearch = ref('');
+
 // ✅ VENDOR DATA
 const vendor = ref({
   vendor_name: null,
@@ -171,12 +180,55 @@ const validationState = ref({
   isOtherVendorNameValid: true,  // Default true unless 'Other' is selected
 });
 
+// ✅ ENHANCED PRODUCT FOCUS HANDLERS
+const handleProductFocus = () => {
+  console.log('🎯 Product field focused');
+  // Don't clear search on focus, let user continue typing
+};
+
+const handleProductBlur = () => {
+  console.log('🎯 Product field blurred');
+  // Only clear search if no selection was made and search is incomplete
+  if (!vendor.value.product_name && productSearch.value.length < 3) {
+    productSearch.value = '';
+  }
+};
+
 // ✅ COMPUTED PROPERTIES
 const vendorsGroup = computed(() => store.state.vendors_group);
 const vendorsLocationsGroup = computed(() => store.state.vendors_locations_group);
 const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
 
 const user = computed(() => store.state.user?.resource_owner);
+// ✅ ADD THIS MISSING COMPUTED PROPERTY
+const getFilteredProducts = computed(() => {
+  // Return empty array if search is less than 3 characters
+  if (!productSearch.value || productSearch.value.length < 3) {
+    return [];
+  }
+  
+  const products = vendorsProductsGroup.value?.vendorsProductsGroup || [];
+  const searchTerm = productSearch.value.toLowerCase();
+  
+  // Filter products that contain the search term
+  const filtered = products.filter(product => 
+    product.toLowerCase().includes(searchTerm)
+  );
+  
+  console.log(`🔍 Search "${productSearch.value}" found ${filtered.length} products`);
+  return filtered;
+});
+
+// ✅ NEW: DYNAMIC PLACEHOLDER TEXT
+const getProductPlaceholder = computed(() => {
+  if (!productSearch.value) {
+    return 'Type 3+ characters to search products';
+  } else if (productSearch.value.length < 3) {
+    return `Type ${3 - productSearch.value.length} more character${3 - productSearch.value.length === 1 ? '' : 's'}`;
+  } else {
+    return `Searching for "${productSearch.value}"...`;
+  }
+});
 
 const isFormValid = computed(() => {
   return validationState.value.isLocationValid &&
@@ -224,7 +276,58 @@ const requiredOtherVendorName = (value) => {
   validationState.value.isOtherVendorNameValid = isValid;
   return isValid || 'Please enter the other vendor name';
 };
-
+// ✅ RESET FORM - ENHANCED
+const resetForm = () => {
+  vendor.value = {
+    vendor_name: null,
+    location: '',
+    created_by: user.value?.email || '',
+    other_vendor_name: '',
+    product_name: '',
+    other_product_name: '',
+  };
+  
+  // ✅ CLEAR SEARCH
+  productSearch.value = '';
+  
+  validationState.value = {
+    isLocationValid: false,
+    isVendorNameValid: false,
+    isProductNameValid: false,
+    isOtherProductNameValid: true,
+    isOtherVendorNameValid: true,
+  };
+  
+  formRef.value?.resetValidation();
+  
+  console.log('🔄 Form reset - ready for new entry');
+};// ✅ WATCHERS - ENHANCED
+watch(() => productSearch.value, (newValue) => {
+  console.log(`🔍 Product search: "${newValue}" (${newValue.length} chars)`);
+  
+  // Show helpful feedback
+  if (newValue.length === 1) {
+    console.log('💡 Type 2 more characters to search');
+  } else if (newValue.length === 2) {
+    console.log('💡 Type 1 more character to search');
+  } else if (newValue.length >= 3) {
+    const results = getFilteredProducts.value.length;
+    console.log(`🎯 Found ${results} matching products`);
+  }
+});
+// ✅ WATCH FOR PRODUCT SELECTION TO CLEAR SEARCH
+watch(() => vendor.value.product_name, (newValue) => {
+  if (newValue) {
+    productSearch.value = ''; // Clear search when selection is made
+  }
+  
+  if (newValue === 'Other') {
+    validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
+  } else {
+    validationState.value.isOtherProductNameValid = true;
+    vendor.value.other_product_name = '';
+  }
+});
 // ✅ WATCH FOR VENDOR NAME CHANGES
 watch(() => vendor.value.vendor_name, (newValue) => {
   if (newValue === 'Other') {
@@ -290,8 +393,6 @@ const onSubmit = async () => {
       
       // ✅ SUCCESS MESSAGE
       console.log(`✅ Product ${productName} was added for ${vendorName}`);
-      
-      // ✅ RESET FORM
       resetForm();
       
       // ✅ SHOW SUCCESS FEEDBACK
@@ -313,28 +414,6 @@ const onSubmit = async () => {
   } finally {
     isSubmitting.value = false;
   }
-};
-
-// ✅ RESET FORM FUNCTION
-const resetForm = () => {
-  vendor.value = {
-    vendor_name: null,
-    location: '',
-    created_by: user.value?.email || '',
-    other_vendor_name: '',
-    product_name: '',
-    other_product_name: '',
-  };
-  
-  validationState.value = {
-    isLocationValid: false,
-    isVendorNameValid: false,
-    isProductNameValid: false,
-    isOtherProductNameValid: true,
-    isOtherVendorNameValid: true,
-  };
-  
-  formRef.value?.resetValidation();
 };
 
 // ✅ LIFECYCLE - FETCH DATA ON MOUNT
@@ -392,7 +471,16 @@ onMounted(async () => {
   margin: 0 auto;
   padding: 1rem;
 }
+/* ✅ ENHANCED PRODUCT SEARCH STYLING */
+:deep(.v-autocomplete .v-field__input) {
+  font-size: 16px !important; /* ✅ PREVENT iOS ZOOM */
+}
 
+/* ✅ SEARCH FEEDBACK STYLING */
+:deep(.v-autocomplete .v-field__placeholder) {
+  font-style: italic !important;
+  color: #666 !important;
+}
 /* ✅ RESPONSIVE */
 @media (max-width: 768px) {
   .product-vendor-container {
@@ -411,6 +499,11 @@ onMounted(async () => {
   
   .form-container {
     padding: 0.5rem;
+  }
+    /* ✅ MOBILE SEARCH ENHANCEMENTS */
+  :deep(.v-autocomplete .v-field__input) {
+    font-size: 16px !important; /* ✅ PREVENT ZOOM ON MOBILE */
+    -webkit-appearance: none !important;
   }
 }
 
