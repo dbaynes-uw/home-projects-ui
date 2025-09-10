@@ -50,7 +50,6 @@
           <v-form @submit.prevent="onSubmit" ref="formRef">
             <v-container class="form-container">
               
-              <!-- ✅ VENDOR LOCATION -->
               <v-select
                 v-model="vendor.location"
                 label="Vendor Location"
@@ -59,11 +58,11 @@
                 variant="outlined"
                 density="comfortable"
                 prepend-inner-icon="mdi-map-marker-outline"
-                class="mb-4"
+                class="mb-4 expanded-product-field"
                 clearable
               />
-
-              <!-- ✅ VENDOR NAME -->
+                        
+              <!-- ✅ VENDOR NAME - ADD EXPANDED CLASS -->
               <v-select
                 v-model="vendor.vendor_name"
                 label="Vendor Name"
@@ -72,11 +71,11 @@
                 variant="outlined"
                 density="comfortable"
                 prepend-inner-icon="mdi-store-outline"
-                class="mb-4"
+                class="mb-4 expanded-product-field"
                 clearable
               />
-
-              <!-- ✅ OTHER VENDOR NAME (CONDITIONAL) -->
+                        
+              <!-- ✅ OTHER VENDOR NAME - ADD EXPANDED CLASS -->
               <v-text-field
                 v-if="vendor.vendor_name === 'Other'"
                 v-model="vendor.other_vendor_name"
@@ -85,11 +84,11 @@
                 variant="outlined"
                 density="comfortable"
                 prepend-inner-icon="mdi-store-plus"
-                class="mb-4"
+                class="mb-4 expanded-product-field"
                 clearable
               />
-
-              <!-- ✅ FIXED - Only shows dropdown after 2+ characters -->
+                        
+              <!-- ✅ PRODUCT NAME - KEEP EXISTING CLASS -->
               <v-autocomplete
                 v-model="vendor.product_name"
                 v-model:search="productSearch"
@@ -99,7 +98,7 @@
                 variant="outlined"
                 density="comfortable"
                 prepend-inner-icon="mdi-package-variant-closed"
-                class="mb-4"
+                class="mb-4 expanded-product-field"
                 clearable
                 hide-no-data
                 no-filter
@@ -112,8 +111,9 @@
                 @blur="handleProductBlur"
                 :readonly="false"
                 :placeholder="getProductPlaceholder"
-              />  
-              <!-- ✅ OTHER PRODUCT NAME (CONDITIONAL) -->
+              />
+              
+              <!-- ✅ OTHER PRODUCT NAME - ADD EXPANDED CLASS -->
               <v-text-field
                 v-if="vendor.product_name === 'Other'"
                 v-model="vendor.other_product_name"
@@ -122,10 +122,9 @@
                 variant="outlined"
                 density="comfortable"
                 prepend-inner-icon="mdi-package-variant-plus"
-                class="mb-4"
+                class="mb-4 expanded-product-field"
                 clearable
               />
-
               <!-- ✅ SUBMIT BUTTON -->
               <v-btn 
                 type="submit" 
@@ -315,12 +314,20 @@ watch(() => productSearch.value, (newValue) => {
     console.log(`🎯 Found ${results} matching products`);
   }
 });
-// ✅ WATCH FOR PRODUCT SELECTION TO CLEAR SEARCH
+
 watch(() => vendor.value.product_name, (newValue) => {
+  console.log(`🎯 Product selection changed to: "${newValue}"`);
+  
   if (newValue) {
-    productSearch.value = ''; // Clear search when selection is made
+    // ✅ KEEP THE SELECTION VISIBLE IN SEARCH FIELD
+    productSearch.value = newValue;
+    console.log(`✅ Selected product: ${newValue}`);
+  } else {
+    // ✅ ONLY CLEAR WHEN NO SELECTION
+    productSearch.value = '';
   }
   
+  // ✅ HANDLE "OTHER" VALIDATION
   if (newValue === 'Other') {
     validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
   } else {
@@ -328,6 +335,7 @@ watch(() => vendor.value.product_name, (newValue) => {
     vendor.value.other_product_name = '';
   }
 });
+
 // ✅ WATCH FOR VENDOR NAME CHANGES
 watch(() => vendor.value.vendor_name, (newValue) => {
   if (newValue === 'Other') {
@@ -335,16 +343,6 @@ watch(() => vendor.value.vendor_name, (newValue) => {
   } else {
     validationState.value.isOtherVendorNameValid = true;
     vendor.value.other_vendor_name = ''; // Clear when not needed
-  }
-});
-
-// ✅ WATCH FOR PRODUCT NAME CHANGES
-watch(() => vendor.value.product_name, (newValue) => {
-  if (newValue === 'Other') {
-    validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
-  } else {
-    validationState.value.isOtherProductNameValid = true;
-    vendor.value.other_product_name = ''; // Clear when not needed
   }
 });
 
@@ -481,6 +479,105 @@ onMounted(async () => {
   font-style: italic !important;
   color: #666 !important;
 }
+/* ✅ EXPANDED PRODUCT FIELD - VERTICAL CENTERING */
+:deep(.expanded-product-field .v-field) {
+  min-height: 60px !important;
+  cursor: text !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+:deep(.expanded-product-field .v-field__field) {
+  padding: 16px 12px !important;
+  min-height: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+:deep(.expanded-product-field .v-field__input) {
+  font-size: 16px !important;
+  padding: 0 !important; /* ✅ REMOVE PADDING TO CENTER PROPERLY */
+  min-height: auto !important; /* ✅ LET FLEXBOX HANDLE HEIGHT */
+  line-height: 1.5 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* ✅ CENTER THE INPUT ELEMENT ITSELF */
+:deep(.expanded-product-field .v-field__input input) {
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  height: auto !important;
+  text-align: left !important;
+}
+
+/* ✅ CENTER THE PREPEND ICON */
+:deep(.expanded-product-field .v-field__prepend-inner) {
+  padding: 16px 8px 16px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ✅ CENTER THE APPEND ICONS (CLEAR & DROPDOWN ARROW) */
+:deep(.expanded-product-field .v-field__append-inner) {
+  padding: 16px 12px 16px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ✅ CENTER THE LABEL WHEN FLOATING */
+:deep(.expanded-product-field .v-label) {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* ✅ CENTER PLACEHOLDER TEXT */
+:deep(.expanded-product-field .v-field__input input::placeholder) {
+  line-height: 1.5 !important;
+  font-style: italic !important;
+  color: #666 !important;
+}
+
+/* ✅ MOBILE: MAINTAIN CENTERING */
+@media (max-width: 768px) {
+  :deep(.expanded-product-field .v-field) {
+    min-height: 70px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  :deep(.expanded-product-field .v-field__field) {
+    padding: 20px 16px !important;
+    min-height: 70px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  :deep(.expanded-product-field .v-field__input) {
+    font-size: 16px !important;
+    -webkit-appearance: none !important;
+    padding: 0 !important;
+    line-height: 1.5 !important;
+  }
+  
+  :deep(.expanded-product-field .v-field__prepend-inner) {
+    padding: 20px 12px 20px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  :deep(.expanded-product-field .v-field__append-inner) {
+    padding: 20px 16px 20px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
 /* ✅ RESPONSIVE */
 @media (max-width: 768px) {
   .product-vendor-container {
