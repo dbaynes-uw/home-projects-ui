@@ -62,8 +62,18 @@
                 </div>
 
                 <!-- ✅ MODERN V-MODEL BINDING -->
-                <EventsDueBy v-model:selectedDueByValue="selectedDueByValue" />
-                <EventsLocations v-model:selectedLocationValue="selectedLocationValue" />
+                <!-- ✅ FIXED - LISTEN FOR CUSTOM EVENTS -->
+                <EventsDueBy 
+                  :selectedDueByValue="selectedDueByValue"
+                  @events-due-by="handleDueByFilter"
+                  @clear-due-by="handleClearDueBy"
+                />
+                <!-- ✅ TO CUSTOM EVENT LISTENERS -->
+                <EventsLocations 
+                  :selectedLocationValue="selectedLocationValue"
+                  @events-location="handleLocationFilter"
+                  @clear-location="handleClearLocation"
+                />
               </div>
 
               <!-- ✅ SEARCH BAR -->
@@ -356,6 +366,30 @@ const displayEvents = computed(() => {
 
 
 // ✅ FUNCTIONS
+
+function handleDueByFilter(daysValue) {
+  console.log('🎯 EventList received due-by filter:', daysValue);
+  selectedDueByValue.value = daysValue;
+  console.log('✅ Due by filter applied:', selectedDueByValue.value);
+}
+// ✅ ADD THIS MISSING LOCATION HANDLER
+function handleLocationFilter(locationValue) {
+  console.log('📍 EventList received location filter:', locationValue);
+  console.log('📍 Type:', typeof locationValue);
+  
+  selectedLocationValue.value = locationValue;
+  console.log('✅ Location filter applied:', selectedLocationValue.value);
+}
+function handleClearDueBy() {
+  console.log('🗑️ EventList received clear due-by filter');
+  selectedDueByValue.value = '';
+  console.log('✅ Due by filter cleared');
+}
+function handleClearLocation() {
+  console.log('🗑️ EventList received clear location filter');
+  selectedLocationValue.value = '';
+  console.log('✅ Location filter cleared');
+}
 function handleStatusToggle(newActiveState) {
   showActiveEvents.value = newActiveState;
   

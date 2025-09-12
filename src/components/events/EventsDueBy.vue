@@ -1,14 +1,5 @@
 <template>
   <div class="due-by-wrapper">
-    <div class="custom-due-by-button" :class="{ 'has-selection': internalValue }" @click="openMenu">
-      <v-icon class="due-by-icon">mdi-clock-outline</v-icon>
-      <span class="due-by-text">
-        {{ getDisplayText() }}
-      </span>
-      <v-icon class="dropdown-arrow">mdi-chevron-down</v-icon>
-    </div>
-    
-    <!-- ✅ HIDDEN V-SELECT FOR FUNCTIONALITY -->
     <v-select
       v-model="internalValue"
       :items="dueByOptions"
@@ -16,18 +7,22 @@
       item-value="value"
       variant="outlined"
       hide-details
-      density="default"
-      class="hidden-select"
+      density="comfortable"
+      class="custom-styled-select"
       @update:model-value="handleChange"
-      ref="selectRef"
-      :menu-props="{ attach: true }"
       clearable
-    />
+      placeholder="By Due Date"
+    >
+      <!-- ✅ FIXED SELECTION SLOT - SHOWS ACTUAL SELECTED ITEM -->
+      <template v-slot:selection="{ item }">
+        <span class="selection-text">Due in {{ item.title }}</span>
+      </template>
+    </v-select>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 // ✅ DEFINE PROPS AND EMITS
 const props = defineProps({
@@ -41,9 +36,6 @@ const emit = defineEmits(['events-due-by', 'clear-due-by']);
 
 // ✅ REACTIVE STATE
 const internalValue = ref(props.selectedDueByValue);
-
-// ✅ REF FOR SELECT
-const selectRef = ref(null);
 
 // ✅ OPTIONS DATA
 const dueByOptions = [
@@ -59,35 +51,33 @@ const dueByOptions = [
   { title: '360 days', value: '360' }
 ];
 
-// ✅ GET DISPLAY TEXT
-function getDisplayText() {
-  if (!internalValue.value) {
-    return 'By Due Date';
-  }
-  
-  const selectedOption = dueByOptions.find(option => option.value === internalValue.value);
-  return selectedOption ? `Due in ${selectedOption.title}` : 'Filter by Due Date';
-}
-
-// ✅ OPEN MENU FUNCTION
-function openMenu() {
-  if (selectRef.value) {
-    selectRef.value.focus();
-    selectRef.value.activateMenu();
-  }
-}
-
-// ✅ HANDLE CHANGES
+// ✅ ENHANCED HANDLE CHANGES WITH MORE LOGGING
 function handleChange(newValue) {
-  console.log('📅 Due By changed to:', newValue);
+  console.log('📅 Due By handleChange called with:', newValue);
+  console.log('📅 Type of newValue:', typeof newValue);
+  console.log('📅 Previous internalValue:', internalValue.value);
+  
   internalValue.value = newValue;
   
-  if (newValue && newValue !== '') {
+  if (newValue && newValue !== '' && newValue !== null) {
+    console.log('✅ Emitting events-due-by with value:', newValue);
     emit('events-due-by', newValue);
   } else {
+    console.log('🗑️ Emitting clear-due-by');
     emit('clear-due-by');
   }
 }
+
+// ✅ WATCH FOR PROP CHANGES
+watch(() => props.selectedDueByValue, (newVal) => {
+  console.log('👁️ Prop selectedDueByValue changed to:', newVal);
+  internalValue.value = newVal;
+});
+
+// ✅ WATCH INTERNAL VALUE CHANGES
+watch(internalValue, (newVal, oldVal) => {
+  console.log('🔄 internalValue changed from:', oldVal, 'to:', newVal);
+});
 </script>
 
 <style scoped>
@@ -97,83 +87,124 @@ function handleChange(newValue) {
   width: 100%;
   max-width: 15.8rem !important;
   height: 48px;
-  display: flex;
-  align-items: center;
 }
 
-/* ✅ CUSTOM BUTTON STYLING - DEFAULT GREEN GRADIENT */
-.custom-due-by-button {
-  width: 100%;
-  height: 48px;
+/* ✅ REMOVE THIS HARDCODED STYLING */
+/* #due-by-label {
+  margin-left: 1rem;
+} */
+
+/* ✅ STYLE THE V-SELECT TO LOOK LIKE YOUR CUSTOM BUTTON */
+:deep(.custom-styled-select .v-field) {
   background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
-  position: relative;
-  overflow: hidden;
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
+  transition: all 0.3s ease !important;
+  height: 48px !important;
+  min-height: 48px !important;
 }
 
-.custom-due-by-button:hover {
+:deep(.custom-styled-select .v-field:hover) {
   background: linear-gradient(to right, #14a89a, #72b558) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
 }
 
 /* ✅ SELECTED STATE - PURPLE GRADIENT */
-.custom-due-by-button.has-selection {
+:deep(.custom-styled-select.v-field--dirty .v-field) {
   background: linear-gradient(to right, #667eea, #764ba2) !important;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
 }
 
-.custom-due-by-button.has-selection:hover {
+:deep(.custom-styled-select.v-field--dirty .v-field:hover) {
   background: linear-gradient(to right, #5a6fd8, #6a42a0) !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
 }
 
-/* ✅ TEXT AND ICON STYLING - DEFAULT STATE */
-.due-by-icon {
+/* ✅ FIELD CONTENT STYLING */
+:deep(.custom-styled-select .v-field__field) {
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 48px !important;
+}
+
+:deep(.custom-styled-select .v-field__input) {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: black !important;
+  text-align: center !important;
+  padding: 0 !important;
+  min-height: auto !important;
+}
+
+/* ✅ SELECTED STATE TEXT COLOR */
+:deep(.custom-styled-select.v-field--dirty .v-field__input) {
+  color: white !important;
+}
+
+/* ✅ REMOVE UNUSED PREPEND ICON STYLES */
+/* :deep(.custom-styled-select .prepend-icon) {
   color: black !important;
   font-size: 18px !important;
   margin-right: 8px !important;
 }
 
-.due-by-text {
-  color: black !important;
-  font-weight: 800 !important;
-  font-size: 1.25rem !important; /* ✅ SAME AS LOCATION TEXT */
-  flex: 1;
-  text-align: center;
-}
+:deep(.custom-styled-select.v-field--dirty .prepend-icon) {
+  color: white !important;
+} */
 
-.dropdown-arrow {
+/* ✅ DROPDOWN ARROW */
+:deep(.custom-styled-select .v-field__append-inner .v-icon) {
   color: black !important;
   font-size: 16px !important;
-  margin-left: 8px !important;
 }
 
-/* ✅ SELECTED STATE COLORS */
-.custom-due-by-button.has-selection .due-by-icon,
-.custom-due-by-button.has-selection .due-by-text,
-.custom-due-by-button.has-selection .dropdown-arrow {
+:deep(.custom-styled-select.v-field--dirty .v-field__append-inner .v-icon) {
   color: white !important;
 }
 
-/* ✅ HIDE THE ACTUAL SELECT */
-.hidden-select {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  z-index: -1;
+/* ✅ PLACEHOLDER STYLING */
+:deep(.custom-styled-select .v-field__input input::placeholder) {
+  color: black !important;
+  font-weight: 800 !important;
+  font-size: 1.25rem !important;
+  text-align: center !important;
 }
 
-/* ✅ ANIMATED SHINE EFFECT */
-.custom-due-by-button::before {
+/* ✅ SELECTION CONTENT - ENSURE LINEAR LAYOUT */
+.selection-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  flex-direction: row !important;
+}
+
+.selection-icon {
+  color: inherit !important;
+  font-size: 18px !important;
+  margin-right: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.selection-text {
+  color: inherit !important;
+  font-weight: 800 !important;
+  font-size: 1.25rem !important;
+  flex: 1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+/* ✅ REMOVE VUETIFY OUTLINE */
+:deep(.custom-styled-select .v-field__outline) {
+  display: none !important;
+}
+
+/* ✅ SHINE EFFECT */
+:deep(.custom-styled-select .v-field::before) {
   content: '';
   position: absolute;
   top: 0;
@@ -184,9 +215,10 @@ function handleChange(newValue) {
   transition: left 0.6s;
   z-index: 1;
   pointer-events: none;
+  border-radius: 12px;
 }
 
-.custom-due-by-button:hover::before {
+:deep(.custom-styled-select .v-field:hover::before) {
   left: 100%;
 }
 
@@ -196,21 +228,11 @@ function handleChange(newValue) {
     max-width: 100%;
   }
   
-  .custom-due-by-button {
-    height: 48px !important;
-  }
-  
-  .due-by-text {
+  :deep(.custom-styled-select .v-field__input) {
     font-size: 1.25rem !important;
   }
-}
-
-@media (max-width: 480px) {
-  .custom-due-by-button {
-    height: 48px !important;
-  }
   
-  .due-by-text {
+  .selection-text {
     font-size: 1.25rem !important;
   }
 }
