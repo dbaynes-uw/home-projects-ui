@@ -84,6 +84,7 @@ watch(internalValue, (newVal, oldVal) => {
 .due-by-wrapper {
   position: relative;
   top: 0.5rem;
+  left: 2.5rem !important;
   width: 100%;
   max-width: 15.8rem !important;
   height: 48px;

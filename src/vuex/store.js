@@ -549,6 +549,7 @@ export default new Vuex.Store({
       });
     },
     async eventsLocations({ commit }, form) {
+      console.log("Store EventsLocations Form: ", form)
       EventService.getEventsLocations(form)
         .then((response) => {
           //const location = response.config.url.split('?')

@@ -1,14 +1,5 @@
 <template>
-  <div class="location-wrapper">
-    <div class="custom-location-button" :class="{ 'has-selection': internalValue }" @click="openMenu">
-      <v-icon class="location-icon">mdi-map-marker-outline</v-icon>
-      <span class="location-text">
-        {{ internalValue || 'Filter by Location' }}
-      </span>
-      <v-icon class="dropdown-arrow">mdi-chevron-down</v-icon>
-    </div>
-    
-    <!-- ✅ HIDDEN V-SELECT FOR FUNCTIONALITY -->
+  <div class="locations-wrapper">
     <v-select
       v-model="internalValue"
       :items="locationOptions"
@@ -16,163 +7,198 @@
       item-value="value"
       variant="outlined"
       hide-details
-      density="default"
-      class="hidden-select"
+      density="comfortable"
+      class="custom-styled-select"
       @update:model-value="handleChange"
-      ref="selectRef"
-      :menu-props="{ attach: true }"
       clearable
-    />
+      placeholder="By Due Date"
+    >
+      <!-- ✅ FIXED SELECTION SLOT - SHOWS ACTUAL SELECTED ITEM -->
+      <template v-slot:selection="{ item }">
+        <span class="selection-text">Locations: {{ item.title }}</span>
+      </template>
+    </v-select>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useStore } from 'vuex';
-const store = useStore();
+import { ref, watch } from 'vue';
 
 // ✅ DEFINE PROPS AND EMITS
 const props = defineProps({
   selectedLocationValue: {
-    type: String,
+    type: [String, Number],
     default: ''
   }
 });
 
-const emit = defineEmits(['update:selectedLocationValue']);
+const emit = defineEmits(['events-location', 'clear-location']);
 
 // ✅ REACTIVE STATE
 const internalValue = ref(props.selectedLocationValue);
-const locationOptions = ref([]);
 
-// ✅ COMPUTED PROPERTIES
-const events = computed(() => store.state.events || []);
-const selectRef = ref(null);
-
-// ✅ OPEN MENU FUNCTION
-function openMenu() {
-  if (selectRef.value) {
-    selectRef.value.focus();
-    selectRef.value.activateMenu();
-  }
-}
-// ✅ GET UNIQUE LOCATIONS FROM EVENTS
-function getUniqueLocations() {
-  if (!events.value || events.value.length === 0) return [];
-  
-  const locations = events.value
-    .map(event => event.location)
-    .filter(location => location && location.trim() !== '')
-    .filter((location, index, array) => array.indexOf(location) === index)
-    .sort();
-  
-  return locations.map(location => ({
-    title: location,
-    value: location
-  }));
-}
-
-// ✅ SIMPLIFIED - NO EVENTSERVICE CALLS
+// ✅ LOCATION OPTIONS - SAME AS YOUR WORKING VERSION BUT AS ARRAY
+const locationOptions = [
+  'All Locations',
+  'Home', 
+  'Birch Bay',
+  'Seattle'
+];
+// ✅ ENHANCED HANDLE CHANGES WITH MORE LOGGING
 function handleChange(newValue) {
+  console.log('📅 Due By handleChange called with:', newValue);
+  console.log('📅 Type of newValue:', typeof newValue);
+  console.log('📅 Previous internalValue:', internalValue.value);
+  
   internalValue.value = newValue;
   
-  // Just emit to parent - let parent handle all filtering
-  emit('update:selectedLocationValue', newValue);
-  
-  // ✅ OPTIONAL: Just update request type for tracking (no service call)
-  if (newValue) {
-    store.commit('SET_EVENTS_REQUEST', 'Location');
+  if (newValue && newValue !== '' && newValue !== null) {
+    console.log('✅ Emitting events-location with value:', newValue);
+    emit('events-location', newValue);
   } else {
-    store.commit('SET_EVENTS_REQUEST', '');
+    console.log('🗑️ Emitting clear-location');
+    emit('clear-location');
   }
 }
 
-// ✅ LIFECYCLE
-onMounted(() => {
-  locationOptions.value = getUniqueLocations();
+// ✅ WATCH FOR PROP CHANGES
+watch(() => props.selectedLocationValue, (newVal) => {
+  console.log('👁️ Prop selectedLocationValue changed to:', newVal);
+  internalValue.value = newVal;
 });
 
-// ✅ WATCH FOR EVENTS CHANGES
-watch(events, () => {
-  locationOptions.value = getUniqueLocations();
-}, { deep: true });
+// ✅ WATCH INTERNAL VALUE CHANGES
+watch(internalValue, (newVal, oldVal) => {
+  console.log('🔄 internalValue changed from:', oldVal, 'to:', newVal);
+});
 </script>
 
 <style scoped>
-/* ✅ CUSTOM BUTTON STYLING */
-.custom-location-button {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
+.locations-wrapper {
   position: relative;
-  left: 2rem;
-  overflow: hidden;
+  top: 0.5rem;
+  left: 2.5rem;
+  width: 100%;
+  max-width: 15.8rem !important;
+  height: 48px;
 }
 
-.custom-location-button:hover {
+/* ✅ REMOVE THIS HARDCODED STYLING */
+/* #locations-label {
+  margin-left: 1rem;
+} */
+
+/* ✅ STYLE THE V-SELECT TO LOOK LIKE YOUR CUSTOM BUTTON */
+:deep(.custom-styled-select .v-field) {
+  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
+  transition: all 0.3s ease !important;
+  height: 48px !important;
+  min-height: 48px !important;
+}
+
+:deep(.custom-styled-select .v-field:hover) {
   background: linear-gradient(to right, #14a89a, #72b558) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
 }
 
-/* ✅ SELECTED STATE */
-.custom-location-button.has-selection {
+/* ✅ SELECTED STATE - PURPLE GRADIENT */
+:deep(.custom-styled-select.v-field--dirty .v-field) {
   background: linear-gradient(to right, #667eea, #764ba2) !important;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
 }
 
-.custom-location-button.has-selection:hover {
+:deep(.custom-styled-select.v-field--dirty .v-field:hover) {
   background: linear-gradient(to right, #5a6fd8, #6a42a0) !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
 }
 
-/* ✅ TEXT AND ICON STYLING */
-.location-icon {
+/* ✅ FIELD CONTENT STYLING */
+:deep(.custom-styled-select .v-field__field) {
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 48px !important;
+}
+
+:deep(.custom-styled-select .v-field__input) {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: black !important;
+  text-align: center !important;
+  padding: 0 !important;
+  min-height: auto !important;
+}
+
+/* ✅ SELECTED STATE TEXT COLOR */
+:deep(.custom-styled-select.v-field--dirty .v-field__input) {
+  color: white !important;
+}
+
+/* ✅ REMOVE UNUSED PREPEND ICON STYLES */
+/* :deep(.custom-styled-select .prepend-icon) {
   color: black !important;
   font-size: 18px !important;
   margin-right: 8px !important;
 }
 
-.location-text {
-  color: black !important;
-  font-weight: 800 !important;
-  font-size: 1.25rem !important;
-  flex: 1;
-  text-align: center;
-}
+:deep(.custom-styled-select.v-field--dirty .prepend-icon) {
+  color: white !important;
+} */
 
-.dropdown-arrow {
+/* ✅ DROPDOWN ARROW */
+:deep(.custom-styled-select .v-field__append-inner .v-icon) {
   color: black !important;
   font-size: 16px !important;
-  margin-left: 8px !important;
 }
 
-/* ✅ SELECTED STATE COLORS */
-.custom-location-button.has-selection .location-icon,
-.custom-location-button.has-selection .location-text,
-.custom-location-button.has-selection .dropdown-arrow {
+:deep(.custom-styled-select.v-field--dirty .v-field__append-inner .v-icon) {
   color: white !important;
 }
 
-/* ✅ HIDE THE ACTUAL SELECT */
-.hidden-select {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  z-index: -1;
+/* ✅ PLACEHOLDER STYLING */
+:deep(.custom-styled-select .v-field__input input::placeholder) {
+  color: black !important;
+  font-weight: 800 !important;
+  font-size: 1.25rem !important;
+  text-align: center !important;
 }
 
-/* ✅ ANIMATED SHINE EFFECT */
-.custom-location-button::before {
+/* ✅ SELECTION CONTENT - ENSURE LINEAR LAYOUT */
+.selection-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  flex-direction: row !important;
+}
+
+.selection-icon {
+  color: inherit !important;
+  font-size: 18px !important;
+  margin-right: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.selection-text {
+  color: inherit !important;
+  font-weight: 800 !important;
+  font-size: 1.25rem !important;
+  flex: 1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+/* ✅ REMOVE VUETIFY OUTLINE */
+:deep(.custom-styled-select .v-field__outline) {
+  display: none !important;
+}
+
+/* ✅ SHINE EFFECT */
+:deep(.custom-styled-select .v-field::before) {
   content: '';
   position: absolute;
   top: 0;
@@ -183,86 +209,25 @@ watch(events, () => {
   transition: left 0.6s;
   z-index: 1;
   pointer-events: none;
+  border-radius: 12px;
 }
 
-.custom-location-button:hover::before {
+:deep(.custom-styled-select .v-field:hover::before) {
   left: 100%;
 }
-.location-wrapper {
-  position: relative;
-  top: 0.5rem;
-  width: 100%;
-  max-width: 250px;
-  height: 48px; /* ✅ FORCE CONSISTENT HEIGHT */
-  display: flex;
-  align-items: center;
-}
 
-/* ✅ MATCH OTHER DROPDOWN STYLING */
-:deep(.location-select .v-field) {
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
-  border-radius: 12px !important;
-  border: none !important;
-  height: 48px !important;
-  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
-  transition: all 0.3s ease !important;
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .locations-wrapper {
+    max-width: 100%;
+  }
+  
+  :deep(.custom-styled-select .v-field__input) {
+    font-size: 1.25rem !important;
+  }
+  
+  .selection-text {
+    font-size: 1.25rem !important;
+  }
 }
-
-:deep(.location-select .v-field:hover) {
-  background: linear-gradient(to right, #14a89a, #72b558) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
-}
-
-/* ✅ SELECTION STATE */
-:deep(.location-select.has-selection .v-field) {
-  background: linear-gradient(to right, #667eea, #764ba2) !important;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
-}
-
-:deep(.location-select.has-selection .v-field:hover) {
-  background: linear-gradient(to right, #5a6fd8, #6a42a0) !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
-}
-
-/* ✅ TEXT STYLING */
-:deep(.location-select .v-field__input) {
-  color: black !important;
-  font-weight: 800 !important;
-  font-size: 1.25rem !important;
-  text-align: center !important;
-  padding: 0 16px !important;
-}
-
-:deep(.location-select.has-selection .v-field__input) {
-  color: white !important;
-}
-
-/* ✅ REMOVE OUTLINE */
-:deep(.location-select .v-field__outline) {
-  display: none !important;
-}
-
-/* ✅ DROPDOWN ARROW */
-:deep(.location-select .v-field__append-inner) {
-  color: black !important;
-}
-
-:deep(.location-select.has-selection .v-field__append-inner) {
-  color: white !important;
-}
-
-/* ✅ ICON STYLING */
-:deep(.location-select .v-field__prepend-inner) {
-  margin-right: 8px !important;
-}
-
-:deep(.location-select .v-field__prepend-inner .v-icon) {
-  color: black !important;
-}
-
-:deep(.location-select.has-selection .v-field__prepend-inner .v-icon) {
-  color: white !important;
-}
-
 </style>

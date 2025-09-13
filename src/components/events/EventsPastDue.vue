@@ -25,6 +25,8 @@ function eventsPastDue() {
 
 <style scoped>
 .action-button-wrapper {
+  position: relative; 
+  left: 2rem;
   display: flex;
   flex-direction: column;
   gap: 8px;

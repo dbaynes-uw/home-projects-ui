@@ -84,6 +84,7 @@ export default {
   },
   getEventsLocations(form) {
     this.init();
+    console.log("EventService Form: ", form)
     const location =
       form.target.options[form.target.options.selectedIndex].innerText;
     form.target.options.selectedIndex = 0
