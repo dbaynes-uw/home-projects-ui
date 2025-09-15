@@ -1,9 +1,25 @@
 <template>
   <div class="page-wrapper">
+      <!-- ✅ ANIMATED BACKGROUND SHAPES -->
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+      <div class="shape shape-6"></div>
+    </div>
     <div class="event-list-container">
       <!-- ✅ CONSISTENT CARD CONTAINER -->
       <div class="cards-container">
-
+        <div class="background-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+          <div class="shape shape-4"></div>
+          <div class="shape shape-5"></div>
+          <div class="shape shape-6"></div>
+        </div>
         <!-- ✅ HEADER CARD -->
         <v-card class="mt-5">
           <v-card-title>
@@ -16,7 +32,7 @@
 
           <!-- ✅ MODERN NAVIGATION -->
         <!-- ✅ NAVIGATION SECTION -->
-        <div class="card-wrapper">        
+        <div class="card-wrapper">     
           <v-card-text>
             <div class="navigation-flex">
               <v-btn
@@ -44,7 +60,7 @@
         </div>
       
         <!-- ✅ FILTERS CARD -->
-        <div class="card-wrapper">        
+        <div class="card-wrapper">     
           <v-card class="mt-4">
             <v-card-title>
               <h3>Filters & Search</h3>
@@ -53,13 +69,18 @@
             <v-card-text>
               <!-- ✅ FILTER COMPONENTS ROW -->
               <div class="filters-grid mb-4">
-                <EventsPastDue />
-                <div class="filter-button-container">
-                  <EventsStatus 
-                    :show-active-events="showActiveEvents"
-                    @toggle-status="handleStatusToggle"
-                  />
-                </div>
+   <div class="filter-with-counter">
+      <EventsPastDue />
+      <div class="counter-badge pulse-animation">{{ pastDueCount }}</div>
+    </div>
+    
+    <div class="filter-with-counter">
+      <EventsStatus 
+        :show-active-events="showActiveEvents"
+        @toggle-status="handleStatusToggle"
+      />
+      <div class="counter-badge bounce-animation">{{ displayEvents.length }}</div>
+    </div>
 
                 <!-- ✅ MODERN V-MODEL BINDING -->
                 <!-- ✅ FIXED - LISTEN FOR CUSTOM EVENTS -->
@@ -145,6 +166,14 @@
 
           <!-- ✅ RESULTS SECTION -->
           <v-card v-else class="mt-4">
+            <div class="background-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            <div class="shape shape-6"></div>
+          </div>
             <v-card-title class="d-flex justify-space-between align-center">
               <div>
                 <h3>{{ getResultsTitle() }}</h3>
@@ -175,17 +204,17 @@
 
             <v-card-text>
               <!-- ✅ CARDS VIEW -->
-              <div v-if="viewMode === 'cards'" class="events-grid">
-                <v-card
-                  v-for="event in displayEvents"
-                  :key="event.id"
-                  @dblclick="showEvent(event)"
-                  :class="getEventCardClass(event)"
-                  variant="outlined"
-                  hover
-                  class="event-card"
-                >
-                  <v-card-title class="pb-2">
+  <div v-if="viewMode === 'cards'" class="events-grid">
+    <v-card
+      v-for="(event, index) in displayEvents"
+      :key="event.id"
+      @dblclick="showEvent(event)"
+      :class="[getEventCardClass(event), 'animated-card']"
+      :style="{ animationDelay: `${index * 0.1}s` }"
+      variant="outlined"
+      hover
+      class="event-card"
+    >                  <v-card-title class="pb-2">
                     <div class="d-flex align-center">
                       <v-icon 
                         :color="getEventStatusColor(event)"
@@ -300,6 +329,9 @@ const isAdmin = computed(() =>
   user.value?.email?.toLowerCase().includes('baynes') || 
   user.value?.email === 'dlbaynes@gmail.com'
 );
+const pastDueCount = computed(() => {
+  return events.value.filter(event => isEventPastDue(event)).length;
+});
 
 // ✅ NOW displayEvents CAN ACCESS showActiveEvents
 const displayEvents = computed(() => {  
@@ -314,7 +346,6 @@ const displayEvents = computed(() => {
   
   // ✅ DETERMINE TARGET STATUS
   const targetStatus = showActiveEvents.value ? 'active' : 'inactive';
-  
   // Start with all events filtered by current status
   let statusFiltered = events.value.filter(event => {
     return event.status === targetStatus;
@@ -525,7 +556,159 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ✅ FLOATING SHAPES BACKGROUND */
+.page-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  position: relative;
+  overflow-x: hidden;
+}
 
+.background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+  animation: float 20s infinite ease-in-out;
+}
+
+.shape-1 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(45deg, #16c0b0, #84cf6a);
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  top: 60%;
+  right: 10%;
+  animation-delay: -5s;
+}
+
+.shape-3 {
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(45deg, #ff7e5f, #feb47b);
+  top: 30%;
+  left: 60%;
+  animation-delay: -10s;
+}
+
+.shape-4 {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(45deg, #84cf6a, #16c0b0);
+  bottom: 20%;
+  left: 20%;
+  animation-delay: -15s;
+}
+
+.shape-5 {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(45deg, #764ba2, #667eea);
+  top: 80%;
+  right: 30%;
+  animation-delay: -7s;
+}
+
+.shape-6 {
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(45deg, #feb47b, #ff7e5f);
+  top: 5%;
+  right: 50%;
+  animation-delay: -12s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-20px) rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: translateY(20px) rotate(180deg) scale(0.9);
+  }
+  75% {
+    transform: translateY(-10px) rotate(270deg) scale(1.05);
+  }
+}
+/* ✅ STAGGERED CARD ENTRY ANIMATION */
+.animated-card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  animation: cardEnter 0.6s ease forwards;
+}
+
+@keyframes cardEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* ✅ ANIMATED COUNTER BADGES */
+.filter-with-counter {
+  position: relative;
+}
+
+.counter-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+.bounce-animation {
+  animation: bounce 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); box-shadow: 0 4px 16px rgba(255, 65, 108, 0.6); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+  60% { transform: translateY(-3px); }
+}
+/* ✅ ENHANCED HOVER ANIMATION */
+.event-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 /* ✅ CONSISTENT CARD CONTAINER */
 .cards-container {
   max-width: 1200px;
