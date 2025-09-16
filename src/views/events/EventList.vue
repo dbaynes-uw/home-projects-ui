@@ -29,8 +29,7 @@
             </div>
           </v-card-title>
         </v-card>
-
-          <!-- ✅ MODERN NAVIGATION -->
+        <!-- ✅ MODERN NAVIGATION -->
         <!-- ✅ NAVIGATION SECTION -->
         <div class="card-wrapper">     
           <v-card-text>
@@ -69,53 +68,64 @@
             <v-card-text>
               <!-- ✅ FILTER COMPONENTS ROW -->
               <div class="filters-grid mb-4">
-   <div class="filter-with-counter bounce-animation">
-      <EventsPastDue />
-      <div class="counter-badge pulse-animation">{{ pastDueCount }}</div>
-    </div>
-    
-    <div class="filter-with-counter">
-      <EventsStatus 
-        :show-active-events="showActiveEvents"
-        @toggle-status="handleStatusToggle"
-      />
-      <div class="counter-badge bounce-animation">{{ displayEvents.length }}</div>
-    </div>
+                <div class="filter-with-counter bounce-animation">
+                  <EventsPastDue />
+                  <div class="filter-with-counter counter-badge pulse-animation">{{ pastDueCount }}</div>
+                </div>
 
-                <!-- ✅ MODERN V-MODEL BINDING -->
-                <!-- ✅ FIXED - LISTEN FOR CUSTOM EVENTS -->
+                <div class="filter-with-counter bounce-animation">
+                  <EventsStatus 
+                    :show-active-events="showActiveEvents"
+                    @toggle-status="handleStatusToggle"
+                  />
+                  <div class="counter-badge bounce-animation">{{ displayEvents.length }}</div>
+                </div>
+                
+                <!-- ✅ DUE BY FILTER -->
                 <EventsDueBy 
                   :selectedDueByValue="selectedDueByValue"
                   @events-due-by="handleDueByFilter"
                   @clear-due-by="handleClearDueBy"
                 />
-                <!-- ✅ TO CUSTOM EVENT LISTENERS -->
+                
+                <!-- ✅ LOCATIONS FILTER -->
                 <EventsLocations 
                   :selectedLocationValue="selectedLocationValue"
                   @events-location="handleLocationFilter"
                   @clear-location="handleClearLocation"
                 />
               </div>
-
-   <div class="search-container" :class="{ 'search-focused': searchFocused }">
-    <v-text-field
-      v-model="inputSearchText"
-      @input="searchColumns"
-      @focus="searchFocused = true"
-      @blur="searchFocused = false"
-      @click:clear="showIndex"
-      placeholder="Search events by description or assignee..."
-      prepend-inner-icon="mdi-magnify"
-      variant="outlined"
-      clearable
-      hide-details
-      class="morphing-search"
-    />
-    <div class="search-suggestions" v-if="searchFocused && inputSearchText">
-      <div class="suggestion-count">{{ filteredResults.length }} results found</div>
-    </div>
-  </div>
-
+              
+              <!-- ✅ SEARCH CONTAINER -->
+              <div class="search-container" :class="{ 'search-focused': searchFocused }">
+                <div class="background-shapes">
+                  <div class="shape shape-1"></div>
+                  <div class="shape shape-2"></div>
+                  <div class="shape shape-3"></div>
+                  <div class="shape shape-4"></div>
+                  <div class="shape shape-5"></div>
+                  <div class="shape shape-6"></div>
+                </div>
+                
+                <v-text-field
+                  v-model="inputSearchText"
+                  @input="searchColumns"
+                  @focus="searchFocused = true"
+                  @blur="searchFocused = false"
+                  @click:clear="showIndex"
+                  placeholder="Search events by description or assignee..."
+                  prepend-inner-icon="mdi-magnify"
+                  variant="outlined"
+                  clearable
+                  hide-details
+                  class="morphing-search"
+                />
+                
+                <div class="search-suggestions" v-if="searchFocused && inputSearchText">
+                  <div class="suggestion-count">{{ filteredResults.length }} results found</div>
+                </div>
+              </div>
+              
               <!-- ✅ ENHANCED VIEW TOGGLE -->
               <div>
                 <v-btn-toggle
@@ -135,7 +145,8 @@
                     <v-icon start size="large">mdi-view-grid</v-icon>
                     Cards View
                   </v-btn>
-                  <v-btn 
+                  
+                  <v-btn
                     value="table"
                     class="view-btn consistent-btn"
                     :class="{ 'view-btn-active': viewMode === 'table' }"
@@ -144,8 +155,8 @@
                     <v-icon start size="large">mdi-table</v-icon>
                     Table View
                   </v-btn>
-
-                  <!-- ✅ ADMIN NOTIFICATION - Match the other buttons -->
+                  
+                  <!-- ✅ ADMIN NOTIFICATION -->
                   <v-btn
                     v-if="isAdmin"
                     @click="notifyEventsDue"
@@ -161,6 +172,7 @@
             </v-card-text>
           </v-card>
         </div> 
+
         <br/><br/>
 
         <!-- ✅ LOADING STATE -->
@@ -173,13 +185,14 @@
           <!-- ✅ RESULTS SECTION -->
           <v-card v-else class="mt-4">
             <div class="background-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
-            <div class="shape shape-5"></div>
-            <div class="shape shape-6"></div>
-          </div>
+              <div class="shape shape-1"></div>
+              <div class="shape shape-2"></div>
+              <div class="shape shape-3"></div>
+              <div class="shape shape-4"></div>
+              <div class="shape shape-5"></div>
+              <div class="shape shape-6"></div>
+            </div>
+            
             <v-card-title class="d-flex justify-space-between align-center">
               <div>
                 <h3>{{ getResultsTitle() }}</h3>
@@ -210,17 +223,18 @@
 
             <v-card-text>
               <!-- ✅ CARDS VIEW -->
-  <div v-if="viewMode === 'cards'" class="events-grid">
-    <v-card
-      v-for="(event, index) in displayEvents"
-      :key="event.id"
-      @dblclick="showEvent(event)"
-      :class="[getEventCardClass(event), 'animated-card']"
-      :style="{ animationDelay: `${index * 0.1}s` }"
-      variant="outlined"
-      hover
-      class="event-card"
-    >                  <v-card-title class="pb-2">
+              <div v-if="viewMode === 'cards'" class="events-grid">
+                <v-card
+                  v-for="(event, index) in displayEvents"
+                  :key="event.id"
+                  @dblclick="showEvent(event)"
+                  :class="[getEventCardClass(event), 'animated-card']"
+                  :style="{ animationDelay: `${index * 0.1}s` }"
+                  variant="outlined"
+                  hover
+                  class="event-card"
+                >                
+                  <v-card-title class="pb-2">
                     <div class="d-flex align-center">
                       <v-icon 
                         :color="getEventStatusColor(event)"
@@ -233,19 +247,31 @@
                   </v-card-title>
 
                   <v-card-text>
-                    <div class="event-details">          
+                    <div class="event-details"> 
+                      <div class="background-shapes">
+                        <div class="shape shape-1"></div>
+                        <div class="shape shape-2"></div>
+                        <div class="shape shape-3"></div>
+                        <div class="shape shape-4"></div>
+                        <div class="shape shape-5"></div>
+                        <div class="shape shape-6"></div>
+                      </div>
+                      
                       <div class="d-flex align-center mb-2">
                         <v-icon size="small" class="mr-2">mdi-account</v-icon>
                         <span>{{ event.assigned }}</span>
                       </div>
+                      
                       <div class="d-flex align-center">
                         <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
                         <span>Frequency: {{ event.frequency }} Days</span>
-                      </div>                         
+                      </div>
+                      
                       <div class="d-flex align-center mb-2">
                         <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
                         <span>Last Action: {{ formatStandardDate(event.action_completed_date) }}</span>
-                      </div>                  
+                      </div>
+                      
                       <div class="d-flex align-center mb-2">
                         <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
                         <span> Due: {{ formatStandardDate(event.action_due_date) }}</span>
@@ -258,17 +284,16 @@
                           PAST DUE
                         </v-chip>
                       </div>
-
+                      
                       <div class="d-flex align-center">
                         <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
                         <span>Location: {{ event.location || 'No location' }}</span>
                       </div>
-
+                      
                       <div class="d-flex align-center">
                         <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
                         <span>Status: {{ event.status.charAt(0).toUpperCase() + event.status.slice(1) }}</span>
                       </div>
-
                     </div>
                   </v-card-text>
 
@@ -294,6 +319,7 @@
             </v-card-text>
           </v-card>
         </div>
+
       </div> <!-- ✅ END cards-container -->
     </div> <!-- ✅ END event-list-container -->
   </div>  <!-- ✅ END page-wrapper -->
@@ -580,14 +606,119 @@ onMounted(async () => {
   z-index: 0;
   overflow: hidden;
 }
+/* ✅ PAGE WRAPPER AND BACKGROUND */
+.page-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+  position: relative;
+  overflow-x: hidden;
+  height: 102% !important;
+}
 
+/* ✅ LAYERED BACKGROUND SHAPES - MULTIPLE SECTIONS */
+
+/* PAGE-LEVEL BACKGROUND SHAPES */
+.page-wrapper > .background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* CARDS CONTAINER BACKGROUND SHAPES */
+.cards-container > .background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* SEARCH CONTAINER BACKGROUND SHAPES */
+.search-container > .background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+/* RESULTS CARD BACKGROUND SHAPES */
+.v-card > .background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+/* EVENT DETAILS BACKGROUND SHAPES */
+.event-details > .background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+/* ✅ SHARED SHAPE STYLING */
 .shape {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.1;
   animation: float 20s infinite ease-in-out;
 }
 
+/* PAGE-LEVEL SHAPES */
+.page-wrapper > .background-shapes .shape {
+  opacity: 0.1;
+}
+
+/* CARDS CONTAINER SHAPES - SLIGHTLY DIFFERENT */
+.cards-container > .background-shapes .shape {
+  opacity: 0.08;
+  animation: float 25s infinite ease-in-out;
+}
+
+/* SEARCH CONTAINER SHAPES - SUBTLE */
+.search-container > .background-shapes .shape {
+  opacity: 0.05;
+  animation: float 15s infinite ease-in-out;
+  transform: scale(0.6);
+}
+
+/* RESULTS CARD SHAPES - SLOW */
+.v-card > .background-shapes .shape {
+  opacity: 0.06;
+  animation: float 30s infinite ease-in-out;
+  transform: scale(0.8);
+}
+
+/* EVENT DETAILS SHAPES - TINY */
+.event-details > .background-shapes .shape {
+  opacity: 0.03;
+  animation: float 10s infinite ease-in-out;
+  transform: scale(0.3);
+}
+
+/* ✅ INDIVIDUAL SHAPE DEFINITIONS */
 .shape-1 {
   width: 200px;
   height: 200px;
@@ -642,6 +773,56 @@ onMounted(async () => {
   animation-delay: -12s;
 }
 
+/* ✅ SHAPE VARIATIONS FOR DIFFERENT SECTIONS */
+.cards-container > .background-shapes .shape-1 {
+  top: 15%;
+  left: 15%;
+  animation-delay: -2s;
+}
+
+.cards-container > .background-shapes .shape-2 {
+  top: 65%;
+  right: 15%;
+  animation-delay: -7s;
+}
+
+.search-container > .background-shapes .shape-1 {
+  top: 20%;
+  left: 20%;
+  animation-delay: -1s;
+}
+
+.search-container > .background-shapes .shape-2 {
+  bottom: 20%;
+  right: 20%;
+  animation-delay: -3s;
+}
+
+.v-card > .background-shapes .shape-1 {
+  top: 25%;
+  left: 25%;
+  animation-delay: -4s;
+}
+
+.v-card > .background-shapes .shape-2 {
+  bottom: 25%;
+  right: 25%;
+  animation-delay: -8s;
+}
+
+.event-details > .background-shapes .shape-1 {
+  top: 10%;
+  left: 80%;
+  animation-delay: -1.5s;
+}
+
+.event-details > .background-shapes .shape-2 {
+  bottom: 10%;
+  left: 10%;
+  animation-delay: -3.5s;
+}
+
+/* ✅ FLOAT ANIMATION */
 @keyframes float {
   0%, 100% {
     transform: translateY(0) rotate(0deg) scale(1);
@@ -656,12 +837,93 @@ onMounted(async () => {
     transform: translateY(-10px) rotate(270deg) scale(1.05);
   }
 }
-/*.card-wrapper {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+
+/* ✅ ENSURE CONTENT STAYS ON TOP */
+.event-list-container {
+  position: relative;
+  z-index: 1;
 }
-.v-card-text {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}*/
+
+.cards-container {
+  position: relative;
+  z-index: 1;
+}
+
+.v-card-title,
+.v-card-text,
+.v-card-actions {
+  position: relative;
+  z-index: 2;
+}
+
+.search-container .v-text-field {
+  position: relative;
+  z-index: 2;
+}
+
+/* ✅ CARD ANIMATIONS */
+.animated-card {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  animation: cardEnter 0.6s ease forwards;
+}
+
+@keyframes cardEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.event-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ✅ COUNTER BADGES */
+.filter-with-counter {
+  position: relative;
+}
+
+.counter-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+.bounce-animation {
+  animation: bounce 1s 3;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); box-shadow: 0 4px 16px rgba(255, 65, 108, 0.6); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+  60% { transform: translateY(-3px); }
+}
+
+/* ✅ SEARCH MORPHING ANIMATION */
 .search-container {
   position: relative;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -706,62 +968,8 @@ onMounted(async () => {
   font-weight: 600;
   font-size: 14px;
 }
-/* ✅ STAGGERED CARD ENTRY ANIMATION */
-.animated-card {
-  opacity: 0;
-  transform: translateY(30px) scale(0.95);
-  animation: cardEnter 0.6s ease forwards;
-}
 
-@keyframes cardEnter {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-/* ✅ ANIMATED COUNTER BADGES */
-.filter-with-counter {
-  position: relative;
-}
-
-.counter-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: linear-gradient(45deg, #ff416c, #ff4b2b);
-  color: white;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 12px;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
-}
-
-.pulse-animation {
-  animation: pulse 2s infinite;
-}
-
-.bounce-animation {
-  /*animation: bounce 1s infinite;*/
-  animation: bounce 1s 3;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); box-shadow: 0 4px 16px rgba(255, 65, 108, 0.6); }
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-6px); }
-  60% { transform: translateY(-3px); }
-}
-
+/* ✅ CARD TITLE STYLING */
 :deep(.v-card-title) {
   background: linear-gradient(135deg, rgba(22, 192, 176, 0.08) 0%, rgba(132, 207, 106, 0.08) 100%) !important;
   border-bottom: 1px solid rgba(22, 192, 176, 0.15) !important;
@@ -769,7 +977,6 @@ onMounted(async () => {
   border-radius: 12px 12px 0 0 !important;
 }
 
-/* ✅ OPTIONAL: ADD SUBTLE PATTERN */
 :deep(.v-card-title)::before {
   content: '';
   position: absolute;
@@ -777,49 +984,20 @@ onMounted(async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-
   background: 
     radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(22, 192, 176, 0.05) 0%, transparent 50%);
   pointer-events: none;
   border-radius: 12px 12px 0 0;
 }
-/* ✅ ENHANCED HOVER ANIMATION */
-.event-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-/* ✅ CONSISTENT CARD CONTAINER */
+/* ✅ LAYOUT AND GRID STYLING */
 .cards-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
 }
-.action-button-wrapper {
-  position: relative;
-  left: 2rem;
-}
-.due-by-wrapper {
-  position: relative;
-  left: 2rem;
-}
-.custom-location-button {
-  position: relative;
-  left: 2rem;
-}
-.event-list-container {
-  padding: 1rem;
-}
 
-/* ✅ ENSURE ALL CARDS HAVE CONSISTENT WIDTH */
-.cards-container .v-card {
-  width: 100%;
-  max-width: 100%;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-}
 .event-list-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -846,14 +1024,10 @@ onMounted(async () => {
   gap: 1rem;
 }
 
+/* ✅ EVENT CARD STYLING */
 .event-card {
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.event-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .event-active {
@@ -867,363 +1041,46 @@ onMounted(async () => {
 
 .event-inactive {
   border-left: 4px solid rgb(var(--v-theme-grey));
-  /*background-color: rgba(var(--v-theme-error), 0.05);*/
   background-color: rgba(var(--v-theme-error), 0.05);
 }
 
 .event-details {
   font-size: 0.875rem;
-}
-
-/* ✅ RESPONSIVE */
-.consistent-btn {
-  min-width: 280px !important;
-  height: 64px !important; /* ✅ FORCE same height for all */
-  font-size: 18px !important;
-  font-weight: 700 !important;
-  text-transform: none !important;
-  padding: 0 40px !important;
-  border-radius: 12px !important;
-  transition: all 0.3s ease !important;
   position: relative;
-  overflow: hidden;
-  letter-spacing: 0.5px;
-  border: 2px solid transparent !important;
-  box-sizing: border-box !important; /* ✅ Important for consistent sizing */
 }
 
-/* ✅ CONSISTENT ICON STYLING */
-.consistent-btn .v-icon {
-  font-size: 28px !important;
-  margin-right: 12px !important;
-}
-
-/* ✅ VIEW TOGGLE ENHANCED CONTAINER */
-.view-toggle-enhanced {
-  border-radius: 12px !important;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-  min-width: 600px;
-}
-
-/* ✅ INACTIVE VIEW BUTTONS */
-.view-btn:not(.view-btn-active) {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
-  color: #6c757d !important;
-  border: 2px solid #dee2e6 !important;
-}
-
-.view-btn:not(.view-btn-active):hover {
-  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%) !important;
-  color: #495057 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-}
-
-/* ✅ ACTIVE VIEW BUTTONS */
-.view-btn-active[value="cards"] {
-  background: linear-gradient(135deg, #16c0b0 0%, #84cf6a 100%) !important;
-  color: black !important;
-  border: 2px solid #16c0b0 !important;
-  box-shadow: 0 4px 16px rgba(22, 192, 176, 0.4) !important;
-  font-weight: 800 !important;
-}
-
-.view-btn-active[value="table"] {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-  border: 2px solid #667eea !important;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4) !important;
-  font-weight: 800 !important;
-}
-
-/* ✅ NOTIFY BUTTON - Match the same height and styling */
-.notify-btn {
-  background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%) !important;
-  color: white !important;
-  border: 2px solid #ff7e5f !important;
-  box-shadow: 0 4px 16px rgba(255, 126, 95, 0.4) !important;
-  margin-left: 20px; /* Space from toggle buttons */
-  /* ✅ Override any Vuetify defaults that might make it taller */
-  max-height: 64px !important;
-  line-height: normal !important;
-}
-
-/* ✅ HOVER EFFECTS FOR ALL BUTTONS */
-.view-btn-active:hover,
-.notify-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  filter: brightness(1.1);
-}
-
-/* ✅ ANIMATED BACKGROUND EFFECT FOR ALL */
-.consistent-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.6s;
-}
-
-.consistent-btn:hover::before {
-  left: 100%;
-}
-
-/* ✅ REMOVE OLD .view-btn STYLES that might conflict */
-/* Comment out or remove the old .view-btn styles */
-
-/* ✅ RESPONSIVE - All buttons scale together */
-@media (max-width: 1200px) {
-  .view-toggle-enhanced {
-    min-width: 500px;
-  }
-  
-  .consistent-btn {
-    min-width: 220px !important;
-    height: 60px !important;
-    font-size: 16px !important;
-    padding: 0 32px !important;
-    max-height: 60px !important;
-  }
-  
-  .consistent-btn .v-icon {
-    font-size: 24px !important;
-    margin-right: 10px !important;
-  }
-}
-
+/* ✅ RESPONSIVE DESIGN */
 @media (max-width: 768px) {
-  .view-toggle-enhanced {
-    min-width: 400px;
+  /* Hide some shapes on mobile for performance */
+  .shape-4,
+  .shape-5,
+  .shape-6 {
+    display: none;
   }
   
-  .consistent-btn {
-    min-width: 180px !important;
-    height: 56px !important;
-    font-size: 15px !important;
-    padding: 0 24px !important;
-    max-height: 56px !important;
+  /* Make remaining shapes smaller */
+  .shape {
+    transform: scale(0.7) !important;
+    opacity: 0.05 !important;
   }
   
-  .notify-btn {
-    margin-left: 12px;
-  }
-}
-
-@media (max-width: 640px) {
-  .d-flex.align-center.justify-space-between {
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
+  .cards-container {
+    padding: 0 0.5rem;
   }
   
-  .view-toggle-enhanced {
-    width: 100% !important;
-    min-width: unset !important;
+  .filters-grid {
+    left: 0;
+    grid-template-columns: 1fr;
   }
   
-  .consistent-btn {
-    flex: 1;
-    min-width: unset !important;
-    height: 52px !important;
-    max-height: 52px !important;
-  }
-  
-  .notify-btn {
-    margin-left: 0;
-    width: 100%;
+  .events-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-/* ✅ REMOVE/OVERRIDE ANY CONFLICTING GLOBAL STYLES */
-#button-as-link.consistent-btn {
-  /* Override your global #button-as-link styles for these buttons */
-  height: 64px !important;
-  width: auto !important;
-  margin: 0 !important;
-}
-/* ✅ STEALTH TOGGLE BUTTON - Match your dropdown styling exactly */
-.stealth-toggle-button {
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
-  border-radius: 12px !important;
-  border: none !important;
-  height: 48px !important;
-  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
-  transition: all 0.3s ease !important;
-  cursor: pointer !important;
-  width: 100% !important;
-  padding: 0 !important;
-  outline: none !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.stealth-toggle-button:hover {
-  background: linear-gradient(to right, #14a89a, #72b558) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
-}
-
-/* ✅ ANIMATED SHINE EFFECT */
-.stealth-toggle-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.6s;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.stealth-toggle-button:hover::before {
-  left: 100%;
-}
-
-/* ✅ ACTIVE STATE - Different gradient when showing inactive events */
-.stealth-toggle-button.showing-inactive {
-  background: linear-gradient(to right, #667eea, #764ba2) !important;
-  border: 2px solid #667eea !important;
-}
-
-.stealth-toggle-button.showing-inactive:hover {
-  background: linear-gradient(to right, #5a6fd8, #6a42a0) !important;
-}
-
-/* ✅ REMOVE OLD FILTER TOGGLE STYLES */
-.filter-toggle-btn {
-  /* Override any old styling */
-  all: unset;
-}
-.stealth-select-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  max-width: 250px;
-}
-
-.stealth-label {
-  color: #1a1a1a !important;
-  font-weight: 800 !important;
-  font-size: 15px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.8px !important;
-  text-align: center !important;
-  margin-bottom: 6px !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
-}
-
-.stealth-button-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 25px;
-  color: black !important;
-  font-weight: 800 !important;
-  font-size: 20px !important;
-  text-transform: none !important;
-  padding-bottom: .5rem !important;
-}
-
-.stealth-icon {
-  color: black !important;
-  font-size: 20px !important;
-  margin-right: 8px !important;
-}
-
-.stealth-select-wrapper:hover .stealth-label {
-  color: #16c0b0 !important;
-  transform: translateY(-1px);
-}
-
-/* ✅ STEALTH TOGGLE BUTTON - Match your dropdown styling exactly */
-.stealth-toggle-button {
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
-  border-radius: 12px !important;
-  border: none !important;
-  height: 48px !important;
-  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
-  transition: all 0.3s ease !important;
-  cursor: pointer !important;
-  width: 100% !important;
-  padding: 0 !important;
-  outline: none !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.stealth-toggle-button:hover {
-  background: linear-gradient(to right, #14a89a, #72b558) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
-}
-
-/* ✅ SHOWING INACTIVE STATE - Different gradient */
-.stealth-toggle-button.showing-inactive {
-  background: linear-gradient(to right, #667eea, #764ba2) !important;
-  border: 2px solid #667eea !important;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
-}
-
-.stealth-toggle-button.showing-inactive:hover {
-  background: linear-gradient(to right, #5a6fd8, #6a42a0) !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
-}
-
-.stealth-toggle-button.showing-inactive .stealth-button-content {
-  color: white !important;
-}
-
-.stealth-toggle-button.showing-inactive .stealth-icon {
-  color: white !important;
-}
-
-/* ✅ ANIMATED SHINE EFFECT */
-.stealth-toggle-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.6s;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.stealth-toggle-button:hover::before {
-  left: 100%;
-}
-
-/* ✅ RESPONSIVE FOR ALL STEALTH COMPONENTS */
-@media (max-width: 768px) {
-  .stealth-select-wrapper {
-    max-width: 100%;
-  }
-  
-  .stealth-label {
-    font-size: 12px !important;
-  }
-  
-  .stealth-toggle-button {
-    height: 52px !important;
-  }
-  
-  .stealth-button-content {
-    height: 52px;
-    font-size: 14px !important;
-  }
-  
-  .stealth-icon {
-    font-size: 18px !important;
+@media (max-width: 480px) {
+  .shape {
+    display: none; /* Hide all shapes on very small screens */
   }
 }
 </style>
