@@ -69,7 +69,7 @@
             <v-card-text>
               <!-- ✅ FILTER COMPONENTS ROW -->
               <div class="filters-grid mb-4">
-   <div class="filter-with-counter">
+   <div class="filter-with-counter bounce-animation">
       <EventsPastDue />
       <div class="counter-badge pulse-animation">{{ pastDueCount }}</div>
     </div>
@@ -97,18 +97,24 @@
                 />
               </div>
 
-              <!-- ✅ SEARCH BAR -->
-              <v-text-field
-                v-model="inputSearchText"
-                @input="searchColumns"
-                @click:clear="showIndex"
-                placeholder="Search events by description or assignee..."
-                prepend-inner-icon="mdi-magnify"
-                variant="outlined"
-                clearable
-                hide-details
-                class="mb-4"
-              />
+   <div class="search-container" :class="{ 'search-focused': searchFocused }">
+    <v-text-field
+      v-model="inputSearchText"
+      @input="searchColumns"
+      @focus="searchFocused = true"
+      @blur="searchFocused = false"
+      @click:clear="showIndex"
+      placeholder="Search events by description or assignee..."
+      prepend-inner-icon="mdi-magnify"
+      variant="outlined"
+      clearable
+      hide-details
+      class="morphing-search"
+    />
+    <div class="search-suggestions" v-if="searchFocused && inputSearchText">
+      <div class="suggestion-count">{{ filteredResults.length }} results found</div>
+    </div>
+  </div>
 
               <!-- ✅ ENHANCED VIEW TOGGLE -->
               <div>
@@ -320,7 +326,7 @@ const apiUrl = ref('');
 const selectedLocationValue = ref(''); 
 const selectedDueByValue = ref('');    
 const filteredResults = ref([]);
-
+const searchFocused = ref(false);
 // ✅ NOW COMPUTED PROPERTIES CAN ACCESS THE REFS ABOVE
 const user = computed(() => store.state.user?.resource_owner);
 const events = computed(() => store.state.events || []);
@@ -559,7 +565,8 @@ onMounted(async () => {
 /* ✅ FLOATING SHAPES BACKGROUND */
 .page-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  /*background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);*-moz-animation: gradientBG 15s ease infinite*/;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
   position: relative;
   overflow-x: hidden;
 }
@@ -649,6 +656,56 @@ onMounted(async () => {
     transform: translateY(-10px) rotate(270deg) scale(1.05);
   }
 }
+/*.card-wrapper {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+}
+.v-card-text {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}*/
+.search-container {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 1rem;
+}
+
+.search-focused {
+  transform: scale(1.02);
+  z-index: 10;
+}
+
+.morphing-search {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-focused .morphing-search {
+  box-shadow: 0 8px 32px rgba(22, 192, 176, 0.3);
+  border-radius: 16px;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  padding: 1rem;
+  transform: translateY(-8px);
+  animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+  to {
+    transform: translateY(0);
+  }
+}
+
+.suggestion-count {
+  color: #16c0b0;
+  font-weight: 600;
+  font-size: 14px;
+}
 /* ✅ STAGGERED CARD ENTRY ANIMATION */
 .animated-card {
   opacity: 0;
@@ -690,7 +747,8 @@ onMounted(async () => {
 }
 
 .bounce-animation {
-  animation: bounce 1s infinite;
+  /*animation: bounce 1s infinite;*/
+  animation: bounce 1s 3;
 }
 
 @keyframes pulse {
@@ -703,6 +761,7 @@ onMounted(async () => {
   40% { transform: translateY(-6px); }
   60% { transform: translateY(-3px); }
 }
+
 :deep(.v-card-title) {
   background: linear-gradient(135deg, rgba(22, 192, 176, 0.08) 0%, rgba(132, 207, 106, 0.08) 100%) !important;
   border-bottom: 1px solid rgba(22, 192, 176, 0.15) !important;
@@ -718,6 +777,8 @@ onMounted(async () => {
   left: 0;
   right: 0;
   bottom: 0;
+  background-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+
   background: 
     radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(22, 192, 176, 0.05) 0%, transparent 50%);
@@ -757,6 +818,7 @@ onMounted(async () => {
 .cards-container .v-card {
   width: 100%;
   max-width: 100%;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
 }
 .event-list-container {
   max-width: 1200px;
