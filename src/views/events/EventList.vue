@@ -565,10 +565,10 @@ onMounted(async () => {
 /* ✅ FLOATING SHAPES BACKGROUND */
 .page-wrapper {
   min-height: 100vh;
-  /*background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);*-moz-animation: gradientBG 15s ease infinite*/;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
   position: relative;
   overflow-x: hidden;
+  height: 102% !important
 }
 
 .background-shapes {
