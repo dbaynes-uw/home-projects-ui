@@ -703,12 +703,34 @@ onMounted(async () => {
   40% { transform: translateY(-6px); }
   60% { transform: translateY(-3px); }
 }
+:deep(.v-card-title) {
+  background: linear-gradient(135deg, rgba(22, 192, 176, 0.08) 0%, rgba(132, 207, 106, 0.08) 100%) !important;
+  border-bottom: 1px solid rgba(22, 192, 176, 0.15) !important;
+  padding: 1.5rem !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* ✅ OPTIONAL: ADD SUBTLE PATTERN */
+:deep(.v-card-title)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(22, 192, 176, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  border-radius: 12px 12px 0 0;
+}
 /* ✅ ENHANCED HOVER ANIMATION */
 .event-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 /* ✅ CONSISTENT CARD CONTAINER */
 .cards-container {
   max-width: 1200px;
