@@ -41,10 +41,9 @@
       <p class="mt-2">Loading locations...</p>
     </div>
 
-    <!-- ✅ MAIN CONTENT -->
+    <!-- ✅ MAIN CONTENT WITH HIERARCHICAL CONTROLS -->
     <v-card v-else class="mt-4">
       <v-card-title class="d-flex justify-space-between align-center">
-        <!-- ✅ CLEAN SINGLE CONTROL - Remove Multi-Select switch -->
         <v-switch
           v-model="showShoppingList"
           :label="`Show: ${showShoppingList ? 'All Items' : 'Selected Items'}`"
@@ -52,99 +51,211 @@
           hide-details
           density="compact"
         />
+
+        <!-- ✅ GLOBAL CONTROLS -->
+        <div class="global-controls">
+          <v-btn
+            @click="toggleAllLocations"
+            variant="outlined"
+            size="small"
+            prepend-icon="mdi-map-marker"
+          >
+            {{ allLocationsExpanded ? 'Collapse All Locations' : 'Expand All Locations' }}
+          </v-btn>
+
+          <v-btn
+            @click="toggleAllVendors"
+            variant="outlined"
+            size="small"
+            prepend-icon="mdi-store"
+            :disabled="!hasAnyExpandedLocations"
+          >
+            {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
+          </v-btn>
+        </div>
       </v-card-title>
 
       <v-card-text>
         <div class="locations-grid">
+          <!-- ✅ LOCATION CARDS WITH ENHANCED DROPDOWN SYSTEM -->
           <v-card
-            v-for="(location, index) in locations"
-            :key="index"
-            @click="toggleLocation(index)"
-            @dblclick="navigateToLocation(location)"
-            :class="{ 'location-expanded': expandedLocation === index }"
+            v-for="(location, locationIndex) in locations"
+            :key="locationIndex"
+            :class="{ 'location-expanded': expandedLocations.has(locationIndex) }"
             variant="outlined"
             class="location-card"
-            hover
           >
-            <v-card-title class="location-header">
+            <!-- ✅ LOCATION HEADER WITH CONTROLS -->
+            <v-card-title 
+              @click="toggleLocation(locationIndex)"
+              class="location-header"
+            >
               <v-icon start>mdi-map-marker</v-icon>
-              {{ location }}
-              <v-spacer />
-              <v-icon>
-                {{ expandedLocation === index ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-              </v-icon>
+              <span class="location-name">{{ location }}</span>
+              
+              <div class="location-controls">
+                <v-chip 
+                  size="small" 
+                  color="primary"
+                  variant="outlined"
+                >
+                  {{ getVendorsForLocation(location).length }} vendors
+                </v-chip>
+
+                <!-- ✅ LOCATION-SPECIFIC VENDOR CONTROLS -->
+                <v-btn
+                  v-if="expandedLocations.has(locationIndex)"
+                  @click.stop="toggleAllVendorsForLocation(location)"
+                  variant="text"
+                  size="x-small"
+                  :color="allVendorsExpandedForLocation(location) ? 'error' : 'primary'"
+                >
+                  {{ allVendorsExpandedForLocation(location) ? 'Collapse All' : 'Expand All' }}
+                </v-btn>
+
+                <v-icon>
+                  {{ expandedLocations.has(locationIndex) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                </v-icon>
+              </div>
             </v-card-title>
 
+            <!-- ✅ EXPANDABLE LOCATION CONTENT -->
             <v-expand-transition>
-              <v-card-text v-show="expandedLocation === index">
+              <v-card-text v-show="expandedLocations.has(locationIndex)">
+                
+                <!-- ✅ VENDORS DROPDOWN SYSTEM -->
                 <div 
                   v-for="vendor in getVendorsForLocation(location)"
                   :key="vendor.vendor_name"
-                  class="vendor-section mb-4"
+                  class="vendor-section mb-3"
                 >
-                  <v-card variant="tonal" class="mb-2">
+                  <v-card 
+                    variant="tonal" 
+                    class="vendor-card"
+                    :class="{ 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)) }"
+                  >
+                    <!-- ✅ VENDOR HEADER WITH DROPDOWN -->
                     <v-card-title 
-                      @dblclick="editVendor(vendor)"
-                      class="vendor-title"
+                      @click="toggleVendor(location, vendor)"
+                      @dblclick.stop="editVendor(vendor)"
+                      class="vendor-header"
                     >
                       <v-icon start>mdi-store</v-icon>
-                      {{ vendor.vendor_name }}
-                      <v-chip size="small" color="primary">
-                        {{ getProductCount(vendor) }} products
-                      </v-chip>
+                      <span class="vendor-name">{{ vendor.vendor_name }}</span>
+                      
+                      <div class="vendor-controls">
+                        <v-chip 
+                          size="small" 
+                          :color="getFilteredProducts(vendor).length > 0 ? 'success' : 'warning'"
+                          variant="outlined"
+                        >
+                          {{ getFilteredProducts(vendor).length }} products
+                        </v-chip>
+
+                        <v-tooltip text="Double-click to edit vendor">
+                          <template v-slot:activator="{ props }">
+                            <v-icon 
+                              v-bind="props"
+                              size="small"
+                              class="edit-hint"
+                            >
+                              mdi-pencil-outline
+                            </v-icon>
+                          </template>
+                        </v-tooltip>
+
+                        <v-icon>
+                          {{ expandedVendors.has(getVendorKey(location, vendor)) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                        </v-icon>
+                      </div>
                     </v-card-title>
 
-                    <v-card-text>
-                      <!-- ✅ PRODUCTS LIST - Remove isMultiSelectMode references -->
-                      <div class="products-list">
-                        <v-card
-                          v-for="(product, productIndex) in getFilteredProducts(vendor)"
-                          :key="product.id"
-                          @click.stop="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
-                          @dblclick.stop="editProduct(product)"
-                          :class="{ 
-                            'product-selected': product.active,
-                            'product-multi-selected': selectedProducts.has(product.id)
-                          }"
-                          variant="outlined"
-                          class="product-card"
-                          hover
-                        >
-                          <v-card-text class="py-3">
-                            <div class="d-flex align-center">
-                              <!-- ✅ ACTIVE STATE CHECKBOX -->
-                              <v-checkbox
-                                :model-value="product.active"
-                                color="primary"
-                                density="compact"
-                                hide-details
-                                readonly
-                                class="mr-3"
-                              />
-                              
-                              <span class="product-name">{{ product.product_name }}</span>
-                              
-                              <!-- ✅ VISUAL INDICATOR FOR MULTI-SELECT -->
-                              <v-icon 
-                                v-if="selectedProducts.has(product.id)"
-                                color="secondary"
-                                size="small"
-                                class="ml-auto"
-                              >
-                                mdi-check-circle
-                              </v-icon>
-                            </div>
-                          </v-card-text>
-                        </v-card>
-                      </div>
-                    </v-card-text>
+                    <!-- ✅ EXPANDABLE VENDOR PRODUCTS -->
+                    <v-expand-transition>
+                      <v-card-text v-show="expandedVendors.has(getVendorKey(location, vendor))">
+                        <div class="products-header mb-3">
+                          <h4>Products for {{ vendor.vendor_name }}</h4>
+                          <v-divider class="mt-2"></v-divider>
+                        </div>
+
+                        <!-- ✅ PRODUCTS LIST -->
+                        <div class="products-list">
+                          <v-card
+                            v-for="(product, productIndex) in getFilteredProducts(vendor)"
+                            :key="product.id"
+                            @click.stop="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+                            @dblclick.stop="editProduct(product)"
+                            :class="{ 
+                              'product-selected': product.active,
+                              'product-multi-selected': selectedProducts.has(product.id)
+                            }"
+                            variant="outlined"
+                            class="product-card"
+                            hover
+                          >
+                            <v-card-text class="py-3">
+                              <div class="d-flex align-center">
+                                <!-- ✅ ACTIVE STATE CHECKBOX -->
+                                <v-checkbox
+                                  :model-value="product.active"
+                                  color="primary"
+                                  density="compact"
+                                  hide-details
+                                  readonly
+                                  class="mr-3"
+                                />
+                                
+                                <span class="product-name">{{ product.product_name }}</span>
+                                
+                                <!-- ✅ VISUAL INDICATORS -->
+                                <div class="product-indicators">
+                                  <v-icon 
+                                    v-if="selectedProducts.has(product.id)"
+                                    color="secondary"
+                                    size="small"
+                                  >
+                                    mdi-check-circle
+                                  </v-icon>
+
+                                  <v-tooltip text="Double-click to edit product">
+                                    <template v-slot:activator="{ props }">
+                                      <v-icon 
+                                        v-bind="props"
+                                        size="x-small"
+                                        class="edit-hint ml-2"
+                                      >
+                                        mdi-pencil-outline
+                                      </v-icon>
+                                    </template>
+                                  </v-tooltip>
+                                </div>
+                              </div>
+                            </v-card-text>
+                          </v-card>
+                        </div>
+
+                        <!-- ✅ NO PRODUCTS MESSAGE -->
+                        <div v-if="getFilteredProducts(vendor).length === 0" class="no-products">
+                          <v-icon color="grey">mdi-package-variant-remove</v-icon>
+                          <span class="text-medium-emphasis">
+                            {{ showShoppingList ? 'No active products' : 'No products found' }}
+                          </span>
+                        </div>
+                      </v-card-text>
+                    </v-expand-transition>
                   </v-card>
+                </div>
+                <!-- ✅ NO VENDORS MESSAGE -->
+                <div v-if="getVendorsForLocation(location).length === 0" class="no-vendors">
+                  <v-icon color="grey" size="large">mdi-store-remove</v-icon>
+                  <h4 class="text-medium-emphasis">No vendors found for {{ location }}</h4>
                 </div>
               </v-card-text>
             </v-expand-transition>
           </v-card>
         </div>
         
+        <!-- ✅ SAVE BUTTON -->
         <v-btn 
           @click="submitChanges"
           :loading="isSubmitting"
@@ -160,6 +271,7 @@
     </v-card>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -170,16 +282,47 @@ import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 const router = useRouter();
 const store = useStore();
 
-// ✅ CLEAN STATE - Remove isMultiSelectMode
+// ✅ ENHANCED STATE MANAGEMENT
 const showShoppingList = ref(true);
-const expandedLocation = ref(null);
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const confirmDialogue = ref(null);
 
-// ✅ KEEP MULTI-SELECT STATE (for Ctrl/Shift functionality)
+// ✅ HIERARCHICAL DROPDOWN STATE
+const expandedLocations = ref(new Set()); // Track which locations are expanded
+const expandedVendors = ref(new Set());   // Track which vendors are expanded
 const selectedProducts = ref(new Set());
 const lastSelectedIndex = ref(null);
+
+// ✅ COMPUTED PROPERTIES FOR EXPAND/COLLAPSE CONTROLS
+const allLocationsExpanded = computed(() => {
+  return expandedLocations.value.size === locations.value.length;
+});
+
+const hasAnyExpandedLocations = computed(() => {
+  return expandedLocations.value.size > 0;
+});
+
+const allVendorsExpanded = computed(() => {
+  if (expandedLocations.value.size === 0) return false;
+  
+  let totalVendors = 0;
+  let expandedVendorCount = 0;
+  
+  expandedLocations.value.forEach(locationIndex => {
+    const location = locations.value[locationIndex];
+    const vendors = getVendorsForLocation(location);
+    totalVendors += vendors.length;
+    
+    vendors.forEach(vendor => {
+      if (expandedVendors.value.has(getVendorKey(location, vendor))) {
+        expandedVendorCount++;
+      }
+    });
+  });
+  
+  return totalVendors > 0 && expandedVendorCount === totalVendors;
+});
 
 // ✅ EXISTING COMPUTED PROPERTIES (unchanged)
 const vendorsProducts = computed(() => {
@@ -229,10 +372,93 @@ const vendorsLocationsGroup = computed(() => {
 
 const locations = computed(() => vendorsLocationsGroup.value);
 
-// ✅ UPDATED - Remove isMultiSelectMode checks, keep functionality
+// ✅ HIERARCHICAL DROPDOWN FUNCTIONS
+
+function getVendorKey(location, vendor) {
+  return `${location}-${vendor.vendor_name}-${vendor.vendor_id || vendor.id}`;
+}
+
+function toggleLocation(locationIndex) {
+  if (expandedLocations.value.has(locationIndex)) {
+    expandedLocations.value.delete(locationIndex);
+    // Also collapse all vendors in this location
+    const location = locations.value[locationIndex];
+    const vendors = getVendorsForLocation(location);
+    vendors.forEach(vendor => {
+      expandedVendors.value.delete(getVendorKey(location, vendor));
+    });
+  } else {
+    expandedLocations.value.add(locationIndex);
+  }
+}
+
+function toggleVendor(location, vendor) {
+  const vendorKey = getVendorKey(location, vendor);
+  if (expandedVendors.value.has(vendorKey)) {
+    expandedVendors.value.delete(vendorKey);
+  } else {
+    expandedVendors.value.add(vendorKey);
+  }
+}
+
+function toggleAllLocations() {
+  if (allLocationsExpanded.value) {
+    // Collapse all locations and vendors
+    expandedLocations.value.clear();
+    expandedVendors.value.clear();
+  } else {
+    // Expand all locations
+    locations.value.forEach((location, index) => {
+      expandedLocations.value.add(index);
+    });
+  }
+}
+
+function toggleAllVendors() {
+  if (allVendorsExpanded.value) {
+    // Collapse all vendors
+    expandedVendors.value.clear();
+  } else {
+    // Expand all vendors in expanded locations
+    expandedLocations.value.forEach(locationIndex => {
+      const location = locations.value[locationIndex];
+      const vendors = getVendorsForLocation(location);
+      vendors.forEach(vendor => {
+        expandedVendors.value.add(getVendorKey(location, vendor));
+      });
+    });
+  }
+}
+
+function toggleAllVendorsForLocation(location) {
+  const vendors = getVendorsForLocation(location);
+  const allExpanded = vendors.every(vendor => 
+    expandedVendors.value.has(getVendorKey(location, vendor))
+  );
+  
+  if (allExpanded) {
+    // Collapse all vendors for this location
+    vendors.forEach(vendor => {
+      expandedVendors.value.delete(getVendorKey(location, vendor));
+    });
+  } else {
+    // Expand all vendors for this location
+    vendors.forEach(vendor => {
+      expandedVendors.value.add(getVendorKey(location, vendor));
+    });
+  }
+}
+
+function allVendorsExpandedForLocation(location) {
+  const vendors = getVendorsForLocation(location);
+  return vendors.length > 0 && vendors.every(vendor => 
+    expandedVendors.value.has(getVendorKey(location, vendor))
+  );
+}
+
+// ✅ EXISTING FUNCTIONS (unchanged)
 function handleProductClick(product, event, productIndex, vendorProducts) {
   if (event?.shiftKey && lastSelectedIndex.value !== null) {
-    // Shift-click: select range (works anytime)
     const start = Math.min(lastSelectedIndex.value, productIndex);
     const end = Math.max(lastSelectedIndex.value, productIndex);
     
@@ -242,7 +468,6 @@ function handleProductClick(product, event, productIndex, vendorProducts) {
       }
     }
   } else if (event?.ctrlKey || event?.metaKey) {
-    // Ctrl/Cmd-click: toggle individual selection (works anytime)
     if (selectedProducts.value.has(product.id)) {
       selectedProducts.value.delete(product.id);
     } else {
@@ -250,17 +475,13 @@ function handleProductClick(product, event, productIndex, vendorProducts) {
     }
     lastSelectedIndex.value = productIndex;
   } else {
-    // Normal click: toggle product active state
     product.active = !product.active;
     updateProduct(product);
-    
-    // Clear visual selections when toggling directly
     selectedProducts.value.clear();
     lastSelectedIndex.value = null;
   }
 }
 
-// ✅ ALL OTHER FUNCTIONS STAY EXACTLY THE SAME
 function getVendorsForLocation(location) {
   const vendors = vendorsProducts.value;
   
@@ -281,22 +502,6 @@ function getFilteredProducts(vendor) {
   return showShoppingList.value 
     ? vendor.products.filter(product => product?.active)
     : vendor.products;
-}
-
-function getProductCount(vendor) {
-  const products = getFilteredProducts(vendor);
-  return Array.isArray(products) ? products.length : 0;
-}
-
-function toggleLocation(index) {
-  expandedLocation.value = expandedLocation.value === index ? null : index;
-}
-
-function navigateToLocation(location) {
-  router.push({ 
-    name: 'ProductsLocationList', 
-    params: { location } 
-  });
 }
 
 function editVendor(vendor) {
@@ -336,8 +541,6 @@ async function submitChanges() {
       id: uuidv4(),
       created_by: store.state.user?.resource_owner?.email || 'unknown',
     };
-    
-    //console.log('📤 Submitting payload:', payload);
     
     await store.dispatch('updateVendorsProducts', payload);
     alert('✅ Update completed');
@@ -379,7 +582,9 @@ onMounted(() => {
   fetchData();
 });
 </script>
+
 <style scoped>
+/* ✅ EXISTING STYLES */
 .navigation-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -389,12 +594,13 @@ onMounted(() => {
 
 .locations-grid {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
+/* ✅ ENHANCED LOCATION CARD STYLES */
 .location-card {
-  cursor: pointer;
   transition: all 0.3s ease;
+  border: 1px solid /*transparent*/
 }
 
 .location-card:hover {
@@ -404,28 +610,94 @@ onMounted(() => {
 
 .location-expanded {
   border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 0 1px rgba(var(--v-theme-primary), 0.2);
 }
 
 .location-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.vendor-section {
-  border-left: 3px solid rgb(var(--v-theme-primary));
-  padding-left: 1rem;
-}
-
-.vendor-title {
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  transition: background-color 0.2s ease;
 }
 
-.vendor-title:hover {
-  background-color: rgba(var(--v-theme-primary), 0.1);
+.location-header:hover {
+  background-color: rgba(var(--v-theme-primary), 0.05);
+}
+
+.location-name {
+  font-weight: 600;
+  flex: 1;
+}
+
+.location-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ✅ GLOBAL CONTROLS */
+.global-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ✅ ENHANCED VENDOR STYLES */
+.vendor-section {
+  border-left: 3px solid rgba(var(--v-theme-primary), 0.3);
+  padding-left: 1rem;
+  margin-left: 0.5rem;
+}
+
+.vendor-card {
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.vendor-expanded {
+  border-color: rgba(var(--v-theme-secondary), 0.5);
+  background-color: rgba(var(--v-theme-secondary), 0.02);
+}
+
+.vendor-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.vendor-header:hover {
+  background-color: rgba(var(--v-theme-secondary), 0.08);
+}
+
+.vendor-name {
+  font-weight: 500;
+  flex: 1;
+}
+
+.vendor-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edit-hint {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.edit-hint:hover {
+  opacity: 1;
+}
+
+/* ✅ PRODUCTS STYLES */
+.products-header h4 {
+  color: rgb(var(--v-theme-secondary));
+  font-weight: 500;
 }
 
 .products-list {
@@ -434,7 +706,6 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
-/* ✅ ADD MISSING PRODUCT CARD STYLES */
 .product-card {
   cursor: pointer;
   transition: all 0.2s ease;
@@ -463,14 +734,63 @@ onMounted(() => {
   flex: 1;
 }
 
+.product-indicators {
+  display: flex;
+  align-items: center;
+}
+
+/* ✅ EMPTY STATES */
+.no-vendors,
+.no-products {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.no-products {
+  padding: 1rem;
+}
+
+.no-vendors h4 {
+  margin-top: 0.5rem;
+}
+
 /* ✅ RESPONSIVE */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .navigation-grid {
     grid-template-columns: 1fr;
   }
   
+  .global-controls {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .location-controls {
+    flex-wrap: wrap;
+  }
+  
+  .vendor-controls {
+    flex-wrap: wrap;
+  }
+  
   .products-list {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-header,
+  .vendor-header {
+    padding: 0.5rem;
+  }
+  
+  .vendor-section {
+    padding-left: 0.5rem;
+    margin-left: 0.25rem;
   }
 }
 </style>
