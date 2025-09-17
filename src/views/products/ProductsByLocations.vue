@@ -53,12 +53,16 @@
         />
 
         <!-- ✅ GLOBAL CONTROLS -->
+      <!-- ✅ ENHANCED GLOBAL CONTROLS -->
+      <div class="global-controls-wrapper">
         <div class="global-controls">
           <v-btn
             @click="toggleAllLocations"
             variant="outlined"
             size="small"
             prepend-icon="mdi-map-marker"
+            class="control-btn"
+            :color="allLocationsExpanded ? 'error' : 'primary'"
           >
             {{ allLocationsExpanded ? 'Collapse All Locations' : 'Expand All Locations' }}
           </v-btn>
@@ -68,11 +72,14 @@
             variant="outlined"
             size="small"
             prepend-icon="mdi-store"
+            class="control-btn"
             :disabled="!hasAnyExpandedLocations"
+            :color="allVendorsExpanded ? 'error' : 'primary'"
           >
             {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
           </v-btn>
         </div>
+      </div>        
       </v-card-title>
 
       <v-card-text>
@@ -643,7 +650,65 @@ onMounted(() => {
   gap: 0.5rem;
   align-items: center;
 }
+/* ✅ ENHANCED STACKED CONTROLS */
+.global-controls-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
 
+.global-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
+  min-width: 240px;
+  background: rgba(var(--v-theme-surface), 0.8);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.control-btn {
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.025em !important;
+}
+
+.control-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.control-btn:disabled {
+  opacity: 0.4 !important;
+  transform: none !important;
+}
+
+/* ✅ RESPONSIVE BEHAVIOR */
+@media (max-width: 768px) {
+  .global-controls {
+    min-width: 200px;
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  .control-btn {
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .global-controls-wrapper {
+    justify-content: center;
+  }
+  
+  .global-controls {
+    min-width: 100%;
+    max-width: 280px;
+  }
+}
 /* ✅ ENHANCED VENDOR STYLES */
 .vendor-section {
   border-left: 3px solid rgba(var(--v-theme-primary), 0.3);
