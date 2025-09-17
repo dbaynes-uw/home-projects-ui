@@ -87,6 +87,33 @@ watch(internalValue, (newVal, oldVal) => {
 /* #locations-label {
   margin-left: 1rem;
 } */
+/* ✅ FIX CLEAR ICON POSITION - ADD THIS */
+:deep(.custom-styled-select .v-field__clearable) {
+  margin-right: 4px !important; /* ✅ MOVE CLOSER TO DROPDOWN ARROW */
+  margin-left: auto !important; /* ✅ PUSH TO RIGHT SIDE */
+}
+
+:deep(.custom-styled-select .v-field__append-inner) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important; /* ✅ SMALL GAP BETWEEN CLEAR AND DROPDOWN */
+}
+
+/* ✅ STYLE THE CLEAR ICON */
+:deep(.custom-styled-select .v-field__clearable .v-icon) {
+  position: relative !important;
+  left: .5rem !important; /* ✅ ADJUST POSITION */
+  color: black !important;
+  font-size: 18px !important;
+  opacity: 0.7 !important;
+  transition: all 0.3s ease !important;
+}
+
+:deep(.custom-styled-select .v-field__clearable:hover .v-icon) {
+  opacity: 1 !important;
+  transform: scale(1.1) !important;
+}
+
 
 /* ✅ STYLE THE V-SELECT TO LOOK LIKE YOUR CUSTOM BUTTON */
 :deep(.custom-styled-select .v-field) {
