@@ -67,21 +67,28 @@
     </div>
   </div>
 
-  <!-- ✅ CHART SECTION -->
-  <div v-if="showMedChart && displayedMeds.length > 0" class="chart-section">
-    <MedChart 
-      :meds="displayedMeds" 
-      :timeFrame="selectedTimeFrame || 30"
-      :chartLabels="chartLabels" 
-      :chartIntervals="chartIntervals"
-    />
+<!-- ✅ ENHANCED CHART SECTION WITH FORCED REACTIVITY -->
+<div v-if="showMedChart && displayedMeds.length > 0" class="chart-section">
+  <div class="chart-debug mb-3">
+    <p><strong>Debug Info:</strong></p>
+    <p>📊 Displaying {{ displayedMeds.length }} meds</p>
+    <p>📅 Time Frame: {{ selectedTimeFrame || 'All Time' }} days</p>
   </div>
-
+  
+  <!-- ✅ ADD KEY TO FORCE CHART RE-RENDER -->
+  <MedChart 
+    :key="chartKey"
+    :meds="displayedMeds" 
+    :timeFrame="parseInt(selectedTimeFrame) || 365"
+    :chartLabels="chartLabels" 
+    :chartIntervals="chartIntervals"
+  />
+</div>
   <!-- ✅ RESULTS SECTION -->
   <div class="results-section">
     <h3 class="results-count">
       <i class="mdi mdi-counter"></i>
-      Total: {{ displayedMeds.length }}
+      List Total: {{ displayedMeds.length }}
     </h3>
     
     <div v-if="displayedMeds.length === 0" class="no-results">
@@ -117,7 +124,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import MedCard from "@/components/meds/MedCard.vue";
@@ -134,7 +141,7 @@ const showIndexView = ref(false);
 const showMedChart = ref(false);
 const searchText = ref('');
 const selectedTimeFrame = ref('30'); // Default to 30 days
-//const filteredMeds = ref([]);
+const chartKey = ref(0); // Force chart re-render
 
 // ✅ COMPUTED PROPERTIES
 const meds = computed(() => store.state.meds || []);
@@ -191,6 +198,16 @@ const displayedMeds = computed(() => {
   );
 });
 
+// ✅ WATCHER TO FORCE CHART UPDATE (NO SIDE EFFECTS)
+watch(
+  [selectedTimeFrame, displayedMeds], 
+  () => {    
+    // Force chart re-render by incrementing key
+    chartKey.value++;
+  },
+  { immediate: true }
+);
+
 // ✅ METHODS
 const toggleIndexView = () => {
   showIndexView.value = !showIndexView.value;
@@ -210,16 +227,17 @@ const clearSearch = () => {
 
 const performSearch = () => {
   // Search is reactive through computed property
-  console.log('🔍 Searching for:', searchText.value);
 };
 
+// ✅ SIMPLIFIED FILTER FUNCTION
 const filterByTimeFrame = () => {
-  console.log('📅 Time frame changed to:', selectedTimeFrame.value);
+  // The watcher will handle chartKey increment
+  nextTick(() => {
+  });
 };
 
 // ✅ LIFECYCLE
 onMounted(async () => {
-  console.log('✅ MedList mounted (Composition API)');
   
   // Fetch meds data
   await store.dispatch("fetchMeds");
@@ -227,13 +245,7 @@ onMounted(async () => {
   // Wait for data to load
   await nextTick();
   
-  console.log('📊 Loaded meds:', meds.value.length);
 });
-
-// ✅ WATCH FOR CHANGES
-watch(meds, (newMeds) => {
-  console.log('📊 Meds updated:', newMeds.length);
-}, { deep: true });
 </script>
 
 <style scoped>
