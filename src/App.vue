@@ -35,8 +35,13 @@
                 @click="$router.push({ name: link.label })"
                 class="nav-menu-item"
               >
-                <!-- ✅ ADD TOOLTIP TO EACH ICON -->
-                <v-tooltip location="right" :text="link.title">
+                <!-- ✅ MOBILE-FRIENDLY TOOLTIP APPROACH -->
+                <v-tooltip 
+                  :location="isMobile ? 'left' : 'right'" 
+                  :text="link.title"
+                  :open-on-hover="!isMobile"
+                  :open-on-click="isMobile"
+                >
                   <template v-slot:activator="{ props }">
                     <v-icon 
                       v-bind="props"
@@ -46,13 +51,13 @@
                     />
                   </template>
                 </v-tooltip>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
-        <h1 class="heading-aligned">&nbsp;
-          <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
-        </h1>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
+      <h1 class="heading-aligned">&nbsp;
+        <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
+      </h1>
       </div>
       <span>
         <router-view></router-view>
@@ -71,8 +76,13 @@
             rounded
           >
             <router-link :to="{ name: `${link.label}` }" class="footer-link">
-              <!-- ✅ ADD TOOLTIP TO FOOTER ICONS TOO -->
-              <v-tooltip location="top" :text="link.title">
+              <!-- ✅ MOBILE-FRIENDLY FOOTER TOOLTIPS -->
+              <v-tooltip 
+                :location="isMobile ? 'top' : 'top'" 
+                :text="link.title"
+                :open-on-hover="!isMobile"
+                :open-on-click="isMobile"
+              >
                 <template v-slot:activator="{ props }">
                   <v-icon 
                     v-bind="props"
