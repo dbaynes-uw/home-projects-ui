@@ -1,5 +1,3 @@
-<script setup>
-</script>
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div id="nav">
@@ -23,23 +21,29 @@
     <v-app v-else>
       <div class="header-base">
         <div class="menu-base">
-          <v-menu offset-y>
-            <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" class="menu-dropdown" variant="plain">
-                <v-icon v-if="isMobile">mdi-menu</v-icon>
-                <span v-else>&nbsp;Menu</span>
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item
-                v-for="link in links"
-                :key="`${link.label}-header-link`"
-                @click="$router.push({ name: link.label })"
-              >
-                <v-list-item-title>{{ link.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>        
+<v-menu offset-y>
+  <template v-slot:activator="{ props }">
+    <v-btn v-bind="props" class="menu-dropdown" variant="plain">
+      <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
+      <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
+    </v-btn>
+  </template>
+  <v-list class="navigation-menu">
+    <v-list-item
+      v-for="link in links"
+      :key="`${link.label}-header-link`"
+      @click="$router.push({ name: link.label })"
+      class="nav-menu-item"
+    >
+      <!-- ✅ SAME AS FOOTER - JUST ICON WITH RED COLOR -->
+      <v-icon 
+        :icon="link.icon" 
+        class="dropdown-icon"
+        style="color: #8b0000 !important; text-align: center;"
+      />
+    </v-list-item>
+  </v-list>
+</v-menu>
         </div>
         <h1 class="heading-aligned">&nbsp;
           <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
@@ -61,11 +65,19 @@
             text
             rounded
           >
-            <router-link :to="{ name: `${link.label}` }">
-              {{ link.title }}
+            <router-link :to="{ name: `${link.label}` }" class="footer-link">
+            <v-icon 
+              :icon="link.icon" 
+              size="small" 
+              class="footer-icon"
+              style="color: #8b0000 !important; text-align: center; margin-left: 1rem;"
+            />          
+            <!--span class="footer-text">{{ link.title }}</span-->
             </router-link>
           </button>
-          <p class="footer-info" style="margin-top: 0.75rem">{{ this.onlineStatus == true ? "Online" : "Offline" }}</p>      
+          <p class="footer-info" style="margin-top: 0.75rem">
+            {{ this.onlineStatus == true ? "Online" : "Offline" }}
+          </p>      
         </v-layout>
       </v-footer>
     </v-app>
@@ -90,116 +102,212 @@ export default {
       this.$store.dispatch('logout');
     }
   },
-  data() {
-    return {
-      onlineStatus: navigator.onLine,
-      links: [
-        {
-          label: "About",
-          url: "/about",
-          title: "About",
-        },
-        {
-          label: "BookList",
-          url: "/books",
-          title: "Books",
-        },
-        {
-          label: "EventList",
-          url: "/",
-          title: "Events",
-        },
-        {
-          label: "FilmList",
-          url: "/",
-          title: "Films",
-        },
-        {
-          label: "Gardens",
-          url: "/gardens",
-          title: "Gardens",
-        },
-        {
-          label: "GolfList",
-          url: "/golfs",
-          title: "Golf",
-        },
-        {
-          label: "MedList",
-          url: "/meds",
-          title: "Meds",
-        },
-        //{
-        //  label: "ProductLocationList",
-        //  url: "/products",
-        //  title: "location_list",
-        //},
-        {
-          label: "ProductsByLocations",
-          url: "/products",
-          title: "Shopping",
-        },
-        {
-          label: "TrailList",
-          url: "/trails",
-          title: "Trails",
-        },
-        {
-          label: "TravelList",
-          url: "/travels",
-          title: "Travels",
-        },
-        {
-          label: "Login",
-          url: "/login",
-          title: "SignOut",
-        },
-      ],
-      menu: "@Menu",
-    };
-  },
+data() {
+  return {
+    onlineStatus: navigator.onLine,
+    links: [
+      {
+        label: "About",
+        url: "/about",
+        title: "About",
+        icon: "mdi-information-outline" // ℹ️ Info icon
+      },
+      {
+        label: "BookList",
+        url: "/books", 
+        title: "Books",
+        icon: "mdi-book-open-page-variant" // 📖 Open book
+      },
+      {
+        label: "EventList",
+        url: "/",
+        title: "Events", 
+        icon: "mdi-calendar-check" // 📅 Calendar with check
+      },
+      {
+        label: "FilmList",
+        url: "/",
+        title: "Films",
+        icon: "mdi-movie-open" // 🎬 Film/movie icon
+      },
+      {
+        label: "Gardens",
+        url: "/gardens",
+        title: "Gardens",
+        icon: "mdi-flower" // 🌸 Flower/garden icon
+      },
+      {
+        label: "GolfList", 
+        url: "/golfs",
+        title: "Golf",
+        icon: "mdi-golf" // ⛳ Golf flag
+      },
+      {
+        label: "MedList",
+        url: "/meds", 
+        title: "Meds",
+        icon: "mdi-medical-bag" // 💊 Medical bag
+      },
+      {
+        label: "ProductsByLocations",
+        url: "/products",
+        title: "Shopping",
+        icon: "mdi-cart" // 🛒 Shopping cart
+      },
+      {
+        label: "TrailList",
+        url: "/trails",
+        title: "Trails", 
+        icon: "mdi-hiking" // 🥾 Hiking icon
+      },
+      {
+        label: "TravelList",
+        url: "/travels",
+        title: "Travels",
+        icon: "mdi-airplane" // ✈️ Airplane
+      },
+      {
+        label: "Login",
+        url: "/login", 
+        title: "SignOut",
+        icon: "mdi-logout" // 🚪 Logout icon
+      },
+    ],
+    menu: "@Menu",
+  };
+},
 }
 </script>
 <style scoped>
+
 .menu-dropdown {
-  background-color: #d3d3d3 !important; /* solid light grey */
-  /* If you want a more visible grey, try #bdbdbd or #e0e0e0 */
+  background-color: #d3d3d3 !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   font-size: 1.1rem;
   font-weight: bold;
   min-width: 120px;
   padding: 0.5rem 1rem;
-  color: #333 !important;
+  color: #333 !important; /* Original dark grey color */
   border-radius: 8px;
   border: none !important;
 }
-/* Remove overlay/underlay background */
+/* ✅ REMOVE OVERLAY/UNDERLAY BACKGROUND */
 .menu-dropdown .v-btn__overlay,
 .menu-dropdown .v-btn__underlay {
   background: transparent !important;
 }
+
+/* ✅ NAVIGATION MENU STYLING */
+.navigation-menu {
+  min-width: 120px; /* Smaller since just icons */
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.nav-menu-item {
+  padding: 12px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 4px 8px;
+  text-align: center; /* Center the icons */
+  min-height: 48px; /* Consistent height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-menu-item:hover {
+  background-color: rgba(139, 0, 0, 0.1) !important; /* Light red hover */
+  transform: scale(1.1); /* Slight grow on hover */
+}
+
+.dropdown-icon {
+  font-size: 20px !important;
+}
+
+/* ✅ FOOTER LINK STYLING (keep as-is since it's perfect) */
+.footer-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 12px 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+  background-color: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+/* ✅ MOBILE RESPONSIVE */
 @media (max-width: 600px) {
   .menu-dropdown {
-    background-color: #bdbdbd !important; /* solid light grey */
+    background-color: #bdbdbd !important;
     font-size: 1.3rem;
     min-width: 160px;
     padding: 0.75rem 1.25rem;
-    color: #333;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  
+  .dropdown-icon {
+    font-size: 24px !important;
+  }
+  
+  .navigation-menu {
+    min-width: 140px;
+  }
+  
+  .nav-menu-item {
+    padding: 16px;
   }
 }
+
+/* ✅ HEADER LAYOUT */
+.header-base {
+  display: flex;
+  align-items: center;
+  background-color: #00695c;
+  padding: 1rem;
+}
+
+.menu-base {
+  margin-right: 1rem;
+}
+
+.heading-aligned {
+  color: white;
+  margin: 0;
+}
+
+#h1-link {
+  color: white;
+  text-decoration: none;
+}
+
+#h1-link:hover {
+  text-decoration: underline;
+}
+
+/* ✅ EXISTING STYLES */
 #tool-bar-title {
   flex: .7;
   margin-inline-start: 2px;
   text-align: left;
   width: 10rem;
 }
+
 .nav-button {
   cursor: pointer;
   font-weight: bold;
 }
-  .footer-info {
-    margin-top: 0.75rem !important;
-  }
+
+.footer-info {
+  margin-top: 0.75rem !important;
+}
+
+#content-margin {
+  margin-top: 4rem;
+}
 </style>
