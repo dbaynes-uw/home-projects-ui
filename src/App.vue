@@ -21,29 +21,34 @@
     <v-app v-else>
       <div class="header-base">
         <div class="menu-base">
-<v-menu offset-y>
-  <template v-slot:activator="{ props }">
-    <v-btn v-bind="props" class="menu-dropdown" variant="plain">
-      <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
-      <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
-    </v-btn>
-  </template>
-  <v-list class="navigation-menu">
-    <v-list-item
-      v-for="link in links"
-      :key="`${link.label}-header-link`"
-      @click="$router.push({ name: link.label })"
-      class="nav-menu-item"
-    >
-      <!-- ✅ SAME AS FOOTER - JUST ICON WITH RED COLOR -->
-      <v-icon 
-        :icon="link.icon" 
-        class="dropdown-icon"
-        style="color: #8b0000 !important; text-align: center;"
-      />
-    </v-list-item>
-  </v-list>
-</v-menu>
+          <v-menu offset-y>
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" class="menu-dropdown" variant="plain">
+                <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
+                <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
+              </v-btn>
+            </template>
+            <v-list class="navigation-menu">
+              <v-list-item
+                v-for="link in links"
+                :key="`${link.label}-header-link`"
+                @click="$router.push({ name: link.label })"
+                class="nav-menu-item"
+              >
+                <!-- ✅ ADD TOOLTIP TO EACH ICON -->
+                <v-tooltip location="right" :text="link.title">
+                  <template v-slot:activator="{ props }">
+                    <v-icon 
+                      v-bind="props"
+                      :icon="link.icon" 
+                      class="dropdown-icon"
+                      style="color: #8b0000 !important; text-align: center;"
+                    />
+                  </template>
+                </v-tooltip>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
         <h1 class="heading-aligned">&nbsp;
           <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
@@ -66,12 +71,18 @@
             rounded
           >
             <router-link :to="{ name: `${link.label}` }" class="footer-link">
-            <v-icon 
-              :icon="link.icon" 
-              size="small" 
-              class="footer-icon"
-              style="color: #8b0000 !important; text-align: center; margin-left: 1rem;"
-            />          
+              <!-- ✅ ADD TOOLTIP TO FOOTER ICONS TOO -->
+              <v-tooltip location="top" :text="link.title">
+                <template v-slot:activator="{ props }">
+                  <v-icon 
+                    v-bind="props"
+                    :icon="link.icon" 
+                    size="small" 
+                    class="footer-icon"
+                    style="color: #8b0000 !important; text-align: center; margin-left: 1rem;"
+                  />
+                </template>
+              </v-tooltip>          
             <!--span class="footer-text">{{ link.title }}</span-->
             </router-link>
           </button>
@@ -204,27 +215,34 @@ data() {
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
+/* ✅ ENHANCED HOVER EFFECTS FOR TOOLTIPS */
 .nav-menu-item {
   padding: 12px;
   transition: all 0.3s ease;
   border-radius: 8px;
   margin: 4px 8px;
-  text-align: center; /* Center the icons */
-  min-height: 48px; /* Consistent height */
+  text-align: center;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer; /* Show it's clickable */
 }
 
 .nav-menu-item:hover {
-  background-color: rgba(139, 0, 0, 0.1) !important; /* Light red hover */
-  transform: scale(1.1); /* Slight grow on hover */
+  background-color: rgba(139, 0, 0, 0.1) !important;
+  transform: scale(1.1);
 }
 
 .dropdown-icon {
   font-size: 20px !important;
+  transition: all 0.3s ease;
 }
 
+.nav-menu-item:hover .dropdown-icon {
+  transform: scale(1.2); /* Icon grows slightly on hover */
+  filter: brightness(1.2); /* Icon gets slightly brighter */
+}
 /* ✅ FOOTER LINK STYLING (keep as-is since it's perfect) */
 .footer-link {
   display: flex;
