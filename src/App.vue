@@ -34,27 +34,37 @@
                 :key="`${link.label}-header-link`"
                 @click="$router.push({ name: link.label })"
                 class="nav-menu-item"
+                :class="{ 'mobile-nav-item': isMobile }"
               >
-                <!-- ✅ MOBILE-FRIENDLY TOOLTIP APPROACH -->
-                <v-tooltip 
-                  :location="isMobile ? 'left' : 'right'" 
-                  :text="link.title"
-                  :open-on-hover="!isMobile"
-                  :open-on-click="isMobile"
-                >
-                  <template v-slot:activator="{ props }">
+                <!-- ✅ DESKTOP: ICON-ONLY WITH HOVER TOOLTIP -->
+                <template v-if="!isMobile">
+                  <v-tooltip location="right" :text="link.title">
+                    <template v-slot:activator="{ props }">
+                      <v-icon 
+                        v-bind="props"
+                        :icon="link.icon" 
+                        class="dropdown-icon"
+                        style="color: #8b0000 !important; text-align: center;"
+                      />
+                    </template>
+                  </v-tooltip>
+                </template>
+
+                <!-- ✅ MOBILE: ICON + TITLE (NO TOOLTIP NEEDED) -->
+                <template v-else>
+                  <div class="mobile-nav-content">
                     <v-icon 
-                      v-bind="props"
                       :icon="link.icon" 
-                      class="dropdown-icon"
-                      style="color: #8b0000 !important; text-align: center;"
+                      class="dropdown-icon mobile-icon"
+                      style="color: #8b0000 !important;"
                     />
-                  </template>
-                </v-tooltip>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
+                    <span class="mobile-nav-title">{{ link.title }}</span>
+                  </div>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
       <h1 class="heading-aligned">&nbsp;
         <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
       </h1>
@@ -62,45 +72,54 @@
       <span>
         <router-view></router-view>
       </span>
-      <v-footer
-        color="teal-darken-2"
-        padless
-        style="display: flex; flex: 0 0 auto !important; top: 2rem"
-      >
-        <v-layout justify-center wrap>
-          <button
-            v-for="link in links"
-            :key="`${link.label}-footer-link`"
-            class="nav-button"
-            text
-            rounded
-          >
-            <router-link :to="{ name: `${link.label}` }" class="footer-link">
-              <!-- ✅ MOBILE-FRIENDLY FOOTER TOOLTIPS -->
-              <v-tooltip 
-                :location="isMobile ? 'top' : 'top'" 
-                :text="link.title"
-                :open-on-hover="!isMobile"
-                :open-on-click="isMobile"
-              >
-                <template v-slot:activator="{ props }">
-                  <v-icon 
-                    v-bind="props"
-                    :icon="link.icon" 
-                    size="small" 
-                    class="footer-icon"
-                    style="color: #8b0000 !important; text-align: center; margin-left: 1rem;"
-                  />
+        <v-footer
+          color="teal-darken-2"
+          padless
+          class="mobile-footer"
+        >
+          <v-layout justify-center wrap class="footer-layout">
+            <div 
+              v-for="link in links"
+              :key="`${link.label}-footer-link`"
+              class="footer-nav-item"
+            >
+              <router-link :to="{ name: `${link.label}` }" class="footer-link">
+                <!-- ✅ DESKTOP: ICON-ONLY WITH HOVER TOOLTIP -->
+                <template v-if="!isMobile">
+                  <v-tooltip location="top" :text="link.title">
+                    <template v-slot:activator="{ props }">
+                      <v-icon 
+                        v-bind="props"
+                        :icon="link.icon" 
+                        size="small"
+                        class="footer-icon"
+                      />
+                    </template>
+                  </v-tooltip>
                 </template>
-              </v-tooltip>          
-            <!--span class="footer-text">{{ link.title }}</span-->
-            </router-link>
-          </button>
-          <p class="footer-info" style="margin-top: 0.75rem">
-            {{ this.onlineStatus == true ? "Online" : "Offline" }}
-          </p>      
-        </v-layout>
-      </v-footer>
+              
+                <!-- ✅ MOBILE: ICON + TITLE -->
+                <template v-else>
+                  <div class="mobile-footer-content">
+                    <v-icon 
+                      :icon="link.icon" 
+                      size="small"
+                      class="footer-icon mobile-footer-icon"
+                    />
+                    <span class="mobile-footer-title">{{ link.title }}</span>
+                  </div>
+                </template>
+              </router-link>
+            </div>
+          
+            <!-- ✅ ONLINE STATUS -->
+            <div class="footer-status">
+              <p class="footer-info">
+                {{ this.onlineStatus == true ? "Online" : "Offline" }}
+              </p>
+            </div>
+          </v-layout>
+        </v-footer>
     </v-app>
   </div>
 </template>
@@ -200,7 +219,7 @@ data() {
 }
 </script>
 <style scoped>
-
+/* ===== MENU DROPDOWN STYLING ===== */
 .menu-dropdown {
   background-color: #d3d3d3 !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
@@ -208,24 +227,24 @@ data() {
   font-weight: bold;
   min-width: 120px;
   padding: 0.5rem 1rem;
-  color: #333 !important; /* Original dark grey color */
+  color: #333 !important;
   border-radius: 8px;
   border: none !important;
 }
-/* ✅ REMOVE OVERLAY/UNDERLAY BACKGROUND */
+
 .menu-dropdown .v-btn__overlay,
 .menu-dropdown .v-btn__underlay {
   background: transparent !important;
 }
 
-/* ✅ NAVIGATION MENU STYLING */
+/* ===== NAVIGATION MENU STYLING ===== */
 .navigation-menu {
-  min-width: 120px; /* Smaller since just icons */
+  min-width: 120px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
-/* ✅ ENHANCED HOVER EFFECTS FOR TOOLTIPS */
+/* ===== DESKTOP NAV ITEMS (ICON-ONLY) ===== */
 .nav-menu-item {
   padding: 12px;
   transition: all 0.3s ease;
@@ -236,12 +255,37 @@ data() {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer; /* Show it's clickable */
+  cursor: pointer;
 }
 
 .nav-menu-item:hover {
   background-color: rgba(139, 0, 0, 0.1) !important;
   transform: scale(1.1);
+}
+
+/* ===== MOBILE NAV ITEMS (ICON + TEXT) ===== */
+.mobile-nav-item {
+  padding: 16px 20px !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+
+.mobile-nav-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.mobile-icon {
+  flex-shrink: 0;
+  font-size: 20px !important;
+}
+
+.mobile-nav-title {
+  color: #333 !important;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .dropdown-icon {
@@ -250,49 +294,11 @@ data() {
 }
 
 .nav-menu-item:hover .dropdown-icon {
-  transform: scale(1.2); /* Icon grows slightly on hover */
-  filter: brightness(1.2); /* Icon gets slightly brighter */
-}
-/* ✅ FOOTER LINK STYLING (keep as-is since it's perfect) */
-.footer-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  padding: 12px 8px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  transform: scale(1.2);
+  filter: brightness(1.2);
 }
 
-.footer-link:hover {
-  background-color: rgba(255,255,255,0.1);
-  transform: translateY(-2px);
-}
-
-/* ✅ MOBILE RESPONSIVE */
-@media (max-width: 600px) {
-  .menu-dropdown {
-    background-color: #bdbdbd !important;
-    font-size: 1.3rem;
-    min-width: 160px;
-    padding: 0.75rem 1.25rem;
-  }
-  
-  .dropdown-icon {
-    font-size: 24px !important;
-  }
-  
-  .navigation-menu {
-    min-width: 140px;
-  }
-  
-  .nav-menu-item {
-    padding: 16px;
-  }
-}
-
-/* ✅ HEADER LAYOUT */
+/* ===== HEADER LAYOUT ===== */
 .header-base {
   display: flex;
   align-items: center;
@@ -318,7 +324,91 @@ data() {
   text-decoration: underline;
 }
 
-/* ✅ EXISTING STYLES */
+/* ===== FOOTER STYLING ===== */
+.mobile-footer {
+  padding: 1rem !important;
+}
+
+.footer-layout {
+  justify-content: center !important;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0 1rem; /* ✅ BALANCED PADDING */
+}
+
+.footer-nav-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.footer-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: 100%;
+  min-height: 48px;
+}
+
+.footer-link:hover {
+  background-color: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.footer-icon {
+  color: #8b0000 !important;
+  margin-bottom: 2px;
+}
+
+/* ===== MOBILE FOOTER CONTENT ===== */
+.mobile-footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.mobile-footer-icon {
+  color: #8b0000 !important;
+}
+
+.mobile-footer-title {
+  color: white !important;
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.footer-status {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+  flex-basis: 100%;
+}
+
+.footer-info {
+  margin: 0 !important;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ===== CONTENT LAYOUT ===== */
+#content-margin {
+  margin-top: 4rem;
+}
+
 #tool-bar-title {
   flex: .7;
   margin-inline-start: 2px;
@@ -331,11 +421,68 @@ data() {
   font-weight: bold;
 }
 
-.footer-info {
-  margin-top: 0.75rem !important;
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+@media (max-width: 600px) {
+  .menu-dropdown {
+    background-color: #bdbdbd !important;
+    font-size: 1.3rem;
+    min-width: 160px;
+    padding: 0.75rem 1.25rem;
+  }
+  
+  .navigation-menu {
+    min-width: 220px;
+  }
+  
+  .dropdown-icon {
+    font-size: 24px !important;
+  }
+  
+  .mobile-footer {
+    padding: 1rem 0.5rem !important;
+  }
+  
+  .footer-layout {
+    flex-wrap: wrap;
+    justify-content: space-around !important;
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+  }
+  
+  .footer-nav-item {
+    flex: 0 1 calc(20% - 0.5rem);
+    margin: 0.25rem 0;
+  }
+  
+  .footer-link {
+    padding: 8px 2px;
+    min-height: 56px;
+  }
+  
+  .mobile-footer-title {
+    font-size: 9px;
+  }
 }
 
-#content-margin {
-  margin-top: 4rem;
+@media (max-width: 480px) {
+  .footer-nav-item {
+    flex: 0 1 calc(25% - 0.5rem);
+  }
+  
+  .mobile-footer-title {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .footer-nav-item {
+    flex: 0 1 calc(33.333% - 0.5rem);
+  }
+  
+  .mobile-footer-title {
+    font-size: 7px;
+  }
 }
 </style>
+<!-- @@@@ -->
+<!-- @@@@  -->
