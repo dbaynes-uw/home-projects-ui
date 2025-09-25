@@ -200,7 +200,48 @@ data() {
 }
 </script>
 <style scoped>
+/* ✅ HEADER LAYOUT */
+.header-base {
+  display: flex;
+  align-items: center;
+  background-color: #00695c;
+  padding: 1rem;
+}
 
+.menu-base {
+  margin-right: 1rem;
+}
+
+.heading-aligned {
+  color: white;
+  margin: 0;
+}
+
+#h1-link {
+  color: white;
+  text-decoration: none;
+}
+
+#h1-link:hover {
+  text-decoration: underline;
+}
+
+/* ✅ EXISTING STYLES */
+#tool-bar-title {
+  flex: .7;
+  margin-inline-start: 2px;
+  text-align: left;
+  width: 10rem;
+}
+#content-margin {
+  margin-top: 4rem;
+} 
+/* Changes Here */
+.nav-button {
+  cursor: pointer;
+  font-weight: bold;
+}
+/* ✅ DROPDOWN MENU STYLING */
 .menu-dropdown {
   background-color: #d3d3d3 !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
@@ -313,46 +354,4 @@ data() {
   }
 }
 
-/* ✅ HEADER LAYOUT */
-.header-base {
-  display: flex;
-  align-items: center;
-  background-color: #00695c;
-  padding: 1rem;
-}
-
-.menu-base {
-  margin-right: 1rem;
-}
-
-.heading-aligned {
-  color: white;
-  margin: 0;
-}
-
-#h1-link {
-  color: white;
-  text-decoration: none;
-}
-
-#h1-link:hover {
-  text-decoration: underline;
-}
-
-/* ✅ EXISTING STYLES */
-#tool-bar-title {
-  flex: .7;
-  margin-inline-start: 2px;
-  text-align: left;
-  width: 10rem;
-}
-
-.nav-button {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-#content-margin {
-  margin-top: 4rem;
-}
 </style>
