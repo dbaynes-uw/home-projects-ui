@@ -254,6 +254,27 @@ data() {
   filter: brightness(1.2); /* Icon gets slightly brighter */
 }
 /* ✅ FOOTER LINK STYLING (keep as-is since it's perfect) */
+.footer-info {
+  margin-top: 0.75rem !important;
+}
+.footer-icon {
+  color: #8b0000 !important;
+  margin-bottom: 2px;
+}
+
+/* ✅ OR ADD CONTAINER MARGIN IF NEEDED */
+.footer-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 12px 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 0 0.5rem; /* ✅ BALANCED MARGIN ON CONTAINER */
+}
+
 .footer-link {
   display: flex;
   flex-direction: column;
@@ -329,10 +350,6 @@ data() {
 .nav-button {
   cursor: pointer;
   font-weight: bold;
-}
-
-.footer-info {
-  margin-top: 0.75rem !important;
 }
 
 #content-margin {
