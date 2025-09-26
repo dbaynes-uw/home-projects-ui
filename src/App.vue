@@ -62,45 +62,56 @@
       <span>
         <router-view></router-view>
       </span>
-      <v-footer
-        color="teal-darken-2"
-        padless
-        style="display: flex; flex: 0 0 auto !important; top: 2rem"
-      >
-        <v-layout justify-center wrap>
-          <button
-            v-for="link in links"
-            :key="`${link.label}-footer-link`"
-            class="nav-button"
-            text
-            rounded
-          >
-            <router-link :to="{ name: `${link.label}` }" class="footer-link">
-              <!-- ✅ MOBILE-FRIENDLY FOOTER TOOLTIPS -->
-              <v-tooltip 
-                :location="isMobile ? 'top' : 'top'" 
-                :text="link.title"
-                :open-on-hover="!isMobile"
-                :open-on-click="isMobile"
-              >
-                <template v-slot:activator="{ props }">
-                  <v-icon 
-                    v-bind="props"
-                    :icon="link.icon" 
-                    size="small" 
-                    class="footer-icon"
-                    style="color: #8b0000 !important; text-align: center; margin-left: 1rem;"
-                  />
-                </template>
-              </v-tooltip>          
-            <!--span class="footer-text">{{ link.title }}</span-->
-            </router-link>
-          </button>
-          <p class="footer-info" style="margin-top: 0.75rem">
-            {{ this.onlineStatus == true ? "Online" : "Offline" }}
-          </p>      
-        </v-layout>
-      </v-footer>
+<v-footer
+  color="teal-darken-2"
+  padless
+  style="display: flex; flex: 0 0 auto !important; top: 2rem"
+>
+  <v-layout justify-center wrap>
+    <button
+      v-for="link in links"
+      :key="`${link.label}-footer-link`"
+      class="nav-button"
+      text
+      rounded
+    >
+      <router-link :to="{ name: `${link.label}` }" class="footer-link">
+        <!-- ✅ DESKTOP: ICON-ONLY WITH HOVER TOOLTIP -->
+        <template v-if="!isMobile">
+          <v-tooltip location="top" :text="link.title">
+            <template v-slot:activator="{ props }">
+              <v-icon 
+                v-bind="props"
+                :icon="link.icon" 
+                size="small" 
+                class="footer-icon"
+                style="color: #8b0000 !important;
+                  position: relative;
+                  left: .05rem;"
+              />
+            </template>
+          </v-tooltip>
+        </template>
+      
+        <!-- ✅ MOBILE: ICON + TEXT (NO TOOLTIP NEEDED) -->
+        <template v-else>
+          <v-icon 
+            :icon="link.icon" 
+            size="small" 
+            class="footer-icon"
+            style="color: #8b0000 ;
+              position: relative;
+              left: .05rem;"
+          />
+          <!--span class="mobile-footer-text">{{ link.title }}</~span-->
+        </template>
+      </router-link>
+    </button>
+    <p class="footer-info" style="margin-top: 0.75rem">
+      {{ this.onlineStatus == true ? "Online" : "Offline" }}
+    </p>      
+  </v-layout>
+</v-footer>
     </v-app>
   </div>
 </template>
@@ -299,32 +310,21 @@ data() {
   margin-top: 0.75rem !important;
 }
 .footer-icon {
-  color: #8b0000 !important;
+  color: blue !important;
+  margin-left: 2rem;
   margin-bottom: 2px;
 }
 
-/* ✅ OR ADD CONTAINER MARGIN IF NEEDED */
 .footer-link {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-decoration: none;
   color: inherit;
-  padding: 12px 8px;
+  padding: 8px 4px;
   border-radius: 8px;
   transition: all 0.3s ease;
-  margin: 0 0.5rem; /* ✅ BALANCED MARGIN ON CONTAINER */
-}
-
-.footer-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  padding: 12px 8px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  min-width: 0; /* ✅ ALLOW SHRINKING */
 }
 
 .footer-link:hover {
@@ -332,7 +332,32 @@ data() {
   transform: translateY(-2px);
 }
 
-/* ✅ MOBILE RESPONSIVE */
+.nav-button {
+  cursor: pointer;
+  font-weight: bold;
+  flex: 1; /* ✅ EQUAL DISTRIBUTION */
+  min-width: 0; /* ✅ ALLOW SHRINKING */
+}
+
+/* ✅ DESKTOP: SHOW TOOLTIPS ON HOVER */
+@media (min-width: 601px) {
+  .footer-link {
+    padding: 12px 8px;
+    min-height: 48px;
+  }
+  
+  .footer-icon {
+    color: blue !important;
+    font-size: 16px !important;
+    margin-left: 1rem;
+  }
+  
+  .nav-button {
+    max-width: calc(100% / 11); /* ✅ EQUAL WIDTH FOR 11 ITEMS */
+  }
+}
+
+/* ✅ MOBILE: SHOW ICON + TEXT, WRAP TO MULTIPLE ROWS */
 @media (max-width: 600px) {
   .menu-dropdown {
     background-color: #bdbdbd !important;
@@ -352,6 +377,73 @@ data() {
   .nav-menu-item {
     padding: 16px;
   }
+  
+  /* ✅ MOBILE FOOTER LAYOUT */
+  .v-layout {
+    flex-wrap: wrap !important;
+    justify-content: space-around !important;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+  
+  .nav-button {
+    flex: 0 1 calc(20% - 0.5rem); /* ✅ 5 ITEMS PER ROW */
+    margin: 0.25rem 0;
+    max-width: none;
+  }
+  
+  .footer-link {
+    padding: 10px 2px;
+    min-height: 60px;
+    font-size: 10px;
+  }
+  
+  .footer-icon {
+    font-size: 14px !important;
+    margin-left: 1rem;
+    margin-bottom: 4px;
+  }
+  
+  .footer-info {
+    flex-basis: 100%; /* ✅ FORCE TO NEW ROW */
+    text-align: center;
+    margin-top: 1rem !important;
+    font-size: 12px;
+  }
 }
 
+/* ✅ VERY SMALL MOBILE SCREENS */
+@media (max-width: 480px) {
+  .nav-button {
+    flex: 0 1 calc(25% - 0.5rem); /* ✅ 4 ITEMS PER ROW */
+  }
+  
+  .footer-link {
+    font-size: 9px;
+    min-height: 56px;
+  }
+  
+  .footer-icon {
+    font-size: 12px !important;
+    margin-left: 1rem;
+
+  }
+}
+
+/* ✅ EXTRA SMALL SCREENS */
+@media (max-width: 360px) {
+  .nav-button {
+    flex: 0 1 calc(33.333% - 0.5rem); /* ✅ 3 ITEMS PER ROW */
+  }
+  
+  .footer-link {
+    font-size: 8px;
+    min-height: 52px;
+  }
+  
+  .footer-icon {
+    font-size: 10px !important;
+    margin-left: 1rem;
+  }
+}
 </style>
