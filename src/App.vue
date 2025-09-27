@@ -21,40 +21,42 @@
     <v-app v-else>
       <div class="header-base">
         <div class="menu-base">
-          <v-menu offset-y>
-            <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" class="menu-dropdown" variant="plain">
-                <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
-                <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
-              </v-btn>
-            </template>
-            <v-list class="navigation-menu">
-              <v-list-item
-                v-for="link in links"
-                :key="`${link.label}-header-link`"
-                @click="$router.push({ name: link.label })"
-                class="nav-menu-item"
-              >
-                <!-- ✅ MOBILE-FRIENDLY TOOLTIP APPROACH -->
-                <v-tooltip 
-                  :location="isMobile ? 'left' : 'right'" 
-                  :text="link.title"
-                  :open-on-hover="!isMobile"
-                  :open-on-click="isMobile"
-                >
-                  <template v-slot:activator="{ props }">
-                    <v-icon 
-                      v-bind="props"
-                      :icon="link.icon" 
-                      class="dropdown-icon"
-                      style="color: #8b0000 !important; text-align: center;"
-                    />
-                  </template>
-                </v-tooltip>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
+<v-menu offset-y>
+  <template v-slot:activator="{ props }">
+    <v-btn v-bind="props" class="menu-dropdown" variant="plain">
+      <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
+      <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
+    </v-btn>
+  </template>
+  <v-list class="navigation-menu">
+    <v-list-item
+      v-for="link in links"
+      :key="`${link.label}-header-link`"
+      @click="$router.push({ name: link.label })"
+      class="nav-menu-item"
+      :class="{ 'mobile-nav-item': isMobile }"
+    >
+      <!-- ✅ DESKTOP: SHOW ICON-ONLY WITH TOOLTIP -->
+      <template v-if="!isMobile">
+        <v-tooltip location="right" :text="link.title">
+          <template v-slot:activator="{ props }">
+            <v-icon 
+              v-bind="props"
+              :icon="link.icon" 
+              class="dropdown-icon"
+              style="color: #8b0000 !important; text-align: center;"
+            />
+          </template>
+        </v-tooltip>
+      </template>
+      
+      <!-- ✅ MOBILE: SHOW TEXT-ONLY (NO ICONS) -->
+      <template v-else>
+        <span class="mobile-nav-text">{{ link.title }}</span>
+      </template>
+    </v-list-item>
+  </v-list>
+</v-menu>      </div>
       <h1 class="heading-aligned">&nbsp;
         <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
       </h1>
@@ -89,6 +91,8 @@
                   position: relative;
                   left: .05rem;"
               />
+          <!--span class="mobile-footer-text">{{ link.title }}</~span-->
+
             </template>
           </v-tooltip>
         </template>
@@ -103,7 +107,6 @@
               position: relative;
               left: .05rem;"
           />
-          <!--span class="mobile-footer-text">{{ link.title }}</~span-->
         </template>
       </router-link>
     </button>
@@ -358,7 +361,29 @@ data() {
 }
 
 /* ✅ MOBILE: SHOW ICON + TEXT, WRAP TO MULTIPLE ROWS */
+.mobile-nav-item {
+  padding: 16px 20px !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+
+.mobile-nav-text {
+  color: #333 !important;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+  text-align: left;
+}
+
+.mobile-nav-item:hover .mobile-nav-text {
+  color: #8b0000 !important; /* Red text on hover */
+}
+
+/* ✅ ADJUST MOBILE NAVIGATION MENU WIDTH */
 @media (max-width: 600px) {
+  .navigation-menu {
+    min-width: 180px; /* Wider for text */
+  }
   .menu-dropdown {
     background-color: #bdbdbd !important;
     font-size: 1.3rem;
