@@ -10,12 +10,12 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'FilmCreate' }">Add Film To Films Viewed</router-link>
+          <router-link  :to="{ name: 'FilmCreate' }">Add Films Viewed</router-link>
         </button>
       </li>
       <li>
         <button id="button-as-link" @click="requestIndexDetail">
-          <u>Marquee or Index View</u>
+          <u>Film Marquee</u>
         </button>
       </li>
     </ul> 

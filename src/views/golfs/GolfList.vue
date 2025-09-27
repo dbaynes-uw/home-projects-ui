@@ -10,7 +10,7 @@
     <ul>
       <li class="left">
         <button id="button-as-link">
-          <router-link  :to="{ name: 'GolfCreate' }">Add Golf Round Played</router-link>
+          <router-link  :to="{ name: 'GolfCreate' }">Add Round</router-link>
         </button>
       </li>
       <li>
