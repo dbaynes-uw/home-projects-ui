@@ -63,6 +63,7 @@
             prepend-icon="mdi-map-marker"
             class="control-btn"
             :color="allLocationsExpanded ? 'error' : 'primary'"
+            style="width: 20rem;"
           >
             {{ allLocationsExpanded ? 'Collapse All Locations' : 'Expand All Locations' }}
           </v-btn>
@@ -75,6 +76,7 @@
             class="control-btn"
             :disabled="!hasAnyExpandedLocations"
             :color="allVendorsExpanded ? 'error' : 'primary'"
+            style="width: 20rem;"
           >
             {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
           </v-btn>
