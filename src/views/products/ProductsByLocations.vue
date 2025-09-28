@@ -224,15 +224,23 @@
                                     mdi-check-circle
                                   </v-icon>
 
-                                  <v-tooltip text="Double-click to edit product">
+                                  <v-tooltip text="Edit Product">
                                     <template v-slot:activator="{ props }">
-                                      <v-icon 
-                                        v-bind="props"
-                                        size="x-small"
-                                        class="edit-hint ml-2"
+                                      <v-btn
+                                        @click.stop="editProduct(product)"
+                                        variant="text"
+                                        size="small"
+                                        color="primary"
                                       >
-                                        mdi-pencil-outline
-                                      </v-icon>
+                                        <v-icon 
+                                          v-bind="props"
+                                          size="x-small"
+                                          class="edit-hint ml-2"
+                                        >
+                                          mdi-pencil-outline
+                                        </v-icon>
+                                        Edit
+                                      </v-btn>
                                     </template>
                                   </v-tooltip>
                                 </div>
