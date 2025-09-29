@@ -70,15 +70,17 @@
               <div class="filters-grid mb-4">
                 <div class="filter-with-counter bounce-animation">
                   <EventsPastDue />
-                  <div class="filter-with-counter counter-badge pulse-animation">{{ pastDueCount }}</div>
+                  <div class="filter-with-counter counter-badge-red pulse-animation">{{ pastDueCount }}</div>
                 </div>
 
-                <div class="filter-with-counter bounce-animation">
+                <div class="filter-with-counter">
                   <EventsStatus 
                     :show-active-events="showActiveEvents"
                     @toggle-status="handleStatusToggle"
                   />
-                  <div class="counter-badge bounce-animation">{{ displayEvents.length }}</div>
+                  <div
+                    :class="getStatusBadgeClass()" 
+                    class="counter-badge-green">{{ displayEvents.length }}</div>
                 </div>
                 
                 <!-- ✅ DUE BY FILTER -->
@@ -463,7 +465,15 @@ function handleStatusToggle(newActiveState) {
   selectedDueByValue.value = '';
   
 }
-
+function getStatusBadgeClass() {
+  const baseClass = 'counter-badge';
+  
+  if (showActiveEvents.value) {
+    return `${baseClass}-green`; // Green for active
+  } else {
+    return `${baseClass}-purple`;  // Purple for inactive
+  }
+}
 function getResultsTitle() {
   const statusText = showActiveEvents.value ? 'Active' : 'Inactive';
   let title = `${statusText} Events`;
@@ -886,11 +896,50 @@ onMounted(async () => {
   position: relative;
 }
 
+/* Counter Badges*/
 .counter-badge {
+  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
+}
+/* RED - For Past Due (your existing one) */
+.counter-badge-red {
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
+}
+
+/* GREEN - For Active Events */
+.counter-badge-green {
+  background: linear-gradient(45deg, #4caf50, #8bc34a);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+/* BLUE - For Info/Statistics */
+.counter-badge-blue {
+  background: linear-gradient(45deg, #2196f3, #03a9f4);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+}
+
+/* ORANGE - For Warnings */
+.counter-badge-orange {
+  background: linear-gradient(45deg, #ff9800, #ffc107);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+}
+
+/* PURPLE - For Special Categories */
+.counter-badge-purple {
+  background: linear-gradient(45deg, #9c27b0, #e91e63);
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.4);
+}
+
+/* ✅ SHARED COUNTER BADGE BASE STYLES */
+.counter-badge,
+.counter-badge-red,
+.counter-badge-green,
+.counter-badge-blue,
+.counter-badge-orange,
+.counter-badge-purple {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: linear-gradient(45deg, #ff416c, #ff4b2b);
   color: white;
   border-radius: 50%;
   width: 32px;
@@ -901,7 +950,6 @@ onMounted(async () => {
   font-weight: bold;
   font-size: 12px;
   z-index: 10;
-  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
 }
 
 .pulse-animation {
