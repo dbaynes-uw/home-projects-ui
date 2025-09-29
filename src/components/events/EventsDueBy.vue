@@ -15,7 +15,7 @@
     >
       <!-- ✅ FIXED SELECTION SLOT - SHOWS ACTUAL SELECTED ITEM -->
       <template v-slot:selection="{ item }">
-        <span class="selection-text">Due in {{ item.title }}</span>
+        <span class="selection-text">Due in: {{ item.title }}</span>
       </template>
     </v-select>
   </div>
