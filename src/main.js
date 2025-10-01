@@ -11,10 +11,12 @@ const vuetify = createVuetify({
   // config
 })
 //import { VuelidatePlugin } from '@vuelidate/core'
+
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { loadFonts } from "./plugins/webfontloader";
-import "material-design-icons-iconfont/dist/material-design-icons.css";
+//import "material-design-icons-iconfont/dist/material-design-icons.css";
+import '@fortawesome/fontawesome-free/css/all.css'
 
 loadFonts();
 

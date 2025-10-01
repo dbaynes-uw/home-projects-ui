@@ -21,45 +21,48 @@
     <v-app v-else>
       <div class="header-base">
         <div class="menu-base">
-<v-menu offset-y>
-  <template v-slot:activator="{ props }">
-    <v-btn v-bind="props" class="menu-dropdown" variant="plain">
-      <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
-      <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
-    </v-btn>
-  </template>
-  <v-list class="navigation-menu">
-    <v-list-item
-      v-for="link in links"
-      :key="`${link.label}-header-link`"
-      @click="$router.push({ name: link.label })"
-      class="nav-menu-item"
-      :class="{ 'mobile-nav-item': isMobile }"
-    >
-      <!-- ✅ DESKTOP: SHOW ICON-ONLY WITH TOOLTIP -->
-      <template v-if="!isMobile">
-        <v-tooltip location="right" :text="link.title">
-          <template v-slot:activator="{ props }">
-            <v-icon 
-              v-bind="props"
-              :icon="link.icon" 
-              class="dropdown-icon"
-              style="color: #8b0000 !important; text-align: center;"
-            />
-          </template>
-        </v-tooltip>
-      </template>
-      
-      <!-- ✅ MOBILE: SHOW TEXT-ONLY (NO ICONS) -->
-      <template v-else>
-        <span class="mobile-nav-text">{{ link.title }}</span>
-      </template>
-    </v-list-item>
-  </v-list>
-</v-menu>      </div>
-      <h1 class="heading-aligned">&nbsp;
-        <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
-      </h1>
+          <v-menu offset-y>
+            <template v-slot:activator="{ props }">
+              <!-- DROPDOWN MENU -->
+              <v-btn v-bind="props" class="menu-dropdown" variant="plain">
+                <i v-if="isMobile" class="fas fa-bars" style="color: #8b0000 !important;"></i>
+                <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
+              </v-btn>
+            </template>
+            <v-list class="navigation-menu">
+              <v-list-item
+                v-for="link in links"
+                :key="`${link.label}-header-link`"
+                @click="$router.push({ name: link.label })"
+                class="nav-menu-item"
+                :class="{ 'mobile-nav-item': isMobile }"
+              >
+                <template v-if="!isMobile">
+                  <v-tooltip location="top" :text="link.title">
+                    <template v-slot:activator="{ props }">
+                      <i
+                        v-bind="props"
+                        :key="`${link.label}-header-link`"
+                        :class="link.icon"
+                        class="footer-icon"
+                        style="color: #8b0000 !important; font-size: 14px; position: relative; top: 0rem;left: .05rem;"
+                      ></i>
+                    </template>
+                  </v-tooltip>
+                </template>
+
+                <!-- MOBILE FOOTER -->
+                <template v-else>
+                  <i
+                    :class="link.icon"
+                    class="footer-icon"
+                    style="color: #8b0000 !important; font-size: 14px;"
+                  ></i>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
       </div>
       <span>
         <router-view></router-view>
@@ -137,80 +140,78 @@ export default {
       this.$store.dispatch('logout');
     }
   },
-data() {
-  return {
-    onlineStatus: navigator.onLine,
-    links: [
-      {
-        label: "About",
-        url: "/about",
-        title: "About",
-        icon: "mdi-information-outline" // ℹ️ Info icon
-      },
-      {
-        label: "BookList",
-        url: "/books", 
-        title: "Books",
-        icon: "mdi-book-open-page-variant" // 📖 Open book
-      },
-      {
-        label: "EventList",
-        url: "/",
-        title: "Events", 
-        icon: "mdi-calendar-check" // 📅 Calendar with check
-      },
-      {
-        label: "FilmList",
-        url: "/",
-        title: "Films",
-        icon: "mdi-movie-open" // 🎬 Film/movie icon
-      },
-      {
-        label: "Gardens",
-        url: "/gardens",
-        title: "Gardens",
-        icon: "mdi-flower" // 🌸 Flower/garden icon
-      },
-      {
-        label: "GolfList", 
-        url: "/golfs",
-        title: "Golf",
-        icon: "mdi-golf" // ⛳ Golf flag
-      },
-      {
-        label: "MedList",
-        url: "/meds", 
-        title: "Meds",
-        icon: "mdi-medical-bag" // 💊 Medical bag
-      },
-      {
-        label: "ProductsByLocations",
-        url: "/products",
-        title: "Shopping",
-        icon: "mdi-cart" // 🛒 Shopping cart
-      },
-      {
-        label: "TrailList",
-        url: "/trails",
-        title: "Trails", 
-        icon: "mdi-hiking" // 🥾 Hiking icon
-      },
-      {
-        label: "TravelList",
-        url: "/travels",
-        title: "Travels",
-        icon: "mdi-airplane" // ✈️ Airplane
-      },
-      {
-        label: "Login",
-        url: "/login", 
-        title: "SignOut",
-        icon: "mdi-logout" // 🚪 Logout icon
-      },
-    ],
-    menu: "@Menu",
-  };
-},
+  data() {
+    return {
+      links: [
+        {
+          label: "About",
+          url: "/about",
+          title: "About",
+          icon: "fas fa-info-circle" // ℹ️ Info icon
+        },
+        {
+          label: "BookList",
+          url: "/books", 
+          title: "Books",
+          icon: "fas fa-book-open" // 📖 Open book
+        },
+        {
+          label: "EventList",
+          url: "/",
+          title: "Events", 
+          icon: "fas fa-calendar-check" // 📅 Calendar with check
+        },
+        {
+          label: "FilmList",
+          url: "/",
+          title: "Films",
+          icon: "fas fa-film" // 🎬 Film icon
+        },
+        {
+          label: "Gardens",
+          url: "/gardens",
+          title: "Gardens",
+          icon: "fas fa-seedling" // 🌱 Plant/garden icon
+        },
+        {
+          label: "GolfList", 
+          url: "/golfs",
+          title: "Golf",
+          icon: "fas fa-golf-ball" // ⛳ Golf ball
+        },
+        {
+          label: "MedList",
+          url: "/meds", 
+          title: "Meds",
+          icon: "fas fa-pills" // 💊 Pills
+        },
+        {
+          label: "ProductsByLocations",
+          url: "/products",
+          title: "Shopping",
+          icon: "fas fa-shopping-cart" // 🛒 Shopping cart
+        },
+        {
+          label: "TrailList",
+          url: "/trails",
+          title: "Trails", 
+          icon: "fas fa-hiking" // 🥾 Hiking
+        },
+        {
+          label: "TravelList",
+          url: "/travels",
+          title: "Travels",
+          icon: "fas fa-plane" // ✈️ Airplane
+        },
+        {
+          label: "Login",
+          url: "/login", 
+          title: "SignOut",
+          icon: "fas fa-sign-out-alt" // 🚪 Logout
+        },
+      ],
+    };
+  },
 }
 </script>
 <style scoped>
