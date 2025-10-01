@@ -37,27 +37,30 @@
                 class="nav-menu-item"
                 :class="{ 'mobile-nav-item': isMobile }"
               >
+                <!-- ✅ DESKTOP: ICON-ONLY WITH TOOLTIP -->
                 <template v-if="!isMobile">
-                  <v-tooltip location="top" :text="link.title">
+                  <v-tooltip location="right" :text="link.title">
                     <template v-slot:activator="{ props }">
                       <i
                         v-bind="props"
-                        :key="`${link.label}-header-link`"
                         :class="link.icon"
-                        class="footer-icon"
-                        style="color: #8b0000 !important; font-size: 14px; position: relative; top: 0rem;left: .05rem;"
+                        class="dropdown-icon"
+                        style="color: #8b0000 !important; font-size: 18px;"
                       ></i>
                     </template>
                   </v-tooltip>
                 </template>
-
-                <!-- MOBILE FOOTER -->
+              
+                <!-- ✅ MOBILE: ICON + TEXT -->
                 <template v-else>
-                  <i
-                    :class="link.icon"
-                    class="footer-icon"
-                    style="color: #8b0000 !important; font-size: 14px;"
-                  ></i>
+                  <div class="mobile-nav-content">
+                    <i
+                      :class="link.icon"
+                      class="mobile-icon"
+                      style="color: #8b0000 !important; font-size: 18px;"
+                    ></i>
+                    <span class="mobile-nav-text">{{ link.title }}</span>
+                  </div>
                 </template>
               </v-list-item>
             </v-list>
@@ -81,35 +84,30 @@
       rounded
     >
       <router-link :to="{ name: `${link.label}` }" class="footer-link">
-        <!-- ✅ DESKTOP: ICON-ONLY WITH HOVER TOOLTIP -->
+        <!-- ✅ DESKTOP: FONT AWESOME ICON WITH TOOLTIP -->
         <template v-if="!isMobile">
+          {{ link.icon }} 
           <v-tooltip location="top" :text="link.title">
             <template v-slot:activator="{ props }">
-              <v-icon 
+              <i 
                 v-bind="props"
-                :icon="link.icon" 
-                size="small" 
-                class="footer-icon"
-                style="color: #8b0000 !important;
-                  position: relative;
-                  left: .05rem;"
-              />
-          <!--span class="mobile-footer-text">{{ link.title }}</~span-->
-
+                :class="link.icon" 
+                style="color: #8b0000 !important; font-size: 16px;"
+              ></i>
             </template>
           </v-tooltip>
         </template>
       
-        <!-- ✅ MOBILE: ICON + TEXT (NO TOOLTIP NEEDED) -->
+        <!-- ✅ MOBILE: FONT AWESOME ICON + TEXT -->
         <template v-else>
-          <v-icon 
-            :icon="link.icon" 
-            size="small" 
-            class="footer-icon"
-            style="color: #8b0000 ;
-              position: relative;
-              left: .05rem;"
-          />
+          <div class="mobile-footer-content">
+            <i 
+              :class="link.icon" 
+              class="footer-icon mobile-footer-icon"
+              style="color: #8b0000 !important; font-size: 12px;"
+            ></i>
+            <span class="mobile-footer-text">{{ link.title }}</span>
+          </div>
         </template>
       </router-link>
     </button>
@@ -118,6 +116,12 @@
     </p>      
   </v-layout>
 </v-footer>
+        <!-- ✅ FONT AWESOME TEST -->
+  <div style="position: fixed; top: 10px; right: 10px; background: yellow; padding: 10px; z-index: 9999;">
+    <i class="fas fa-heart" style="color: red; font-size: 24px;"></i>
+    <i class="fas fa-star" style="color: blue; font-size: 24px;"></i>
+    <i class="fas fa-info-circle" style="color: green; font-size: 24px;"></i>
+  </div>
     </v-app>
   </div>
 </template>
@@ -241,21 +245,25 @@ export default {
   text-decoration: underline;
 }
 
-/* ✅ EXISTING STYLES */
+/* ✅ CONTENT LAYOUT */
 #tool-bar-title {
   flex: .7;
   margin-inline-start: 2px;
   text-align: left;
   width: 10rem;
 }
+
 #content-margin {
   margin-top: 4rem;
 } 
-/* Changes Here */
+
 .nav-button {
   cursor: pointer;
   font-weight: bold;
+  flex: 1;
+  min-width: 0;
 }
+
 /* ✅ DROPDOWN MENU STYLING */
 .menu-dropdown {
   background-color: #d3d3d3 !important;
@@ -264,11 +272,11 @@ export default {
   font-weight: bold;
   min-width: 120px;
   padding: 0.5rem 1rem;
-  color: #333 !important; /* Original dark grey color */
+  color: #333 !important;
   border-radius: 8px;
   border: none !important;
 }
-/* ✅ REMOVE OVERLAY/UNDERLAY BACKGROUND */
+
 .menu-dropdown .v-btn__overlay,
 .menu-dropdown .v-btn__underlay {
   background: transparent !important;
@@ -276,12 +284,12 @@ export default {
 
 /* ✅ NAVIGATION MENU STYLING */
 .navigation-menu {
-  min-width: 120px; /* Smaller since just icons */
+  min-width: 120px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
-/* ✅ ENHANCED HOVER EFFECTS FOR TOOLTIPS */
+/* ✅ DESKTOP NAV ITEMS */
 .nav-menu-item {
   padding: 12px;
   transition: all 0.3s ease;
@@ -292,7 +300,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer; /* Show it's clickable */
+  cursor: pointer;
 }
 
 .nav-menu-item:hover {
@@ -306,62 +314,11 @@ export default {
 }
 
 .nav-menu-item:hover .dropdown-icon {
-  transform: scale(1.2); /* Icon grows slightly on hover */
-  filter: brightness(1.2); /* Icon gets slightly brighter */
-}
-/* ✅ FOOTER LINK STYLING (keep as-is since it's perfect) */
-.footer-info {
-  margin-top: 0.75rem !important;
-}
-.footer-icon {
-  color: blue !important;
-  margin-left: 2rem;
-  margin-bottom: 2px;
+  transform: scale(1.2);
+  filter: brightness(1.2);
 }
 
-.footer-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  padding: 8px 4px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  min-width: 0; /* ✅ ALLOW SHRINKING */
-}
-
-.footer-link:hover {
-  background-color: rgba(255,255,255,0.1);
-  transform: translateY(-2px);
-}
-
-.nav-button {
-  cursor: pointer;
-  font-weight: bold;
-  flex: 1; /* ✅ EQUAL DISTRIBUTION */
-  min-width: 0; /* ✅ ALLOW SHRINKING */
-}
-
-/* ✅ DESKTOP: SHOW TOOLTIPS ON HOVER */
-@media (min-width: 601px) {
-  .footer-link {
-    padding: 12px 8px;
-    min-height: 48px;
-  }
-  
-  .footer-icon {
-    color: blue !important;
-    font-size: 16px !important;
-    margin-left: 1rem;
-  }
-  
-  .nav-button {
-    max-width: calc(100% / 11); /* ✅ EQUAL WIDTH FOR 11 ITEMS */
-  }
-}
-
-/* ✅ MOBILE: SHOW ICON + TEXT, WRAP TO MULTIPLE ROWS */
+/* ✅ MOBILE NAV ITEMS */
 .mobile-nav-item {
   padding: 16px 20px !important;
   text-align: left !important;
@@ -377,14 +334,99 @@ export default {
 }
 
 .mobile-nav-item:hover .mobile-nav-text {
-  color: #8b0000 !important; /* Red text on hover */
+  color: #8b0000 !important;
+}
+.mobile-nav-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
 }
 
-/* ✅ ADJUST MOBILE NAVIGATION MENU WIDTH */
+.mobile-icon {
+  flex-shrink: 0;
+  font-size: 18px !important;
+}
+
+/* ✅ UPDATE DROPDOWN ICON HOVER */
+.nav-menu-item:hover .footer-icon {
+  transform: scale(1.2);
+  filter: brightness(1.2);
+}
+/* ✅ FOOTER STYLING */
+.footer-info {
+  margin-top: 0.75rem !important;
+}
+
+.footer-icon {
+  color: #8b0000 !important;
+  margin-bottom: 2px;
+  transition: all 0.3s ease;
+}
+
+.footer-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  min-width: 0;
+}
+
+.footer-link:hover {
+  background-color: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.footer-link:hover .footer-icon {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+/* ✅ MOBILE FOOTER CONTENT */
+.mobile-footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.mobile-footer-icon {
+  color: #8b0000 !important;
+}
+
+.mobile-footer-text {
+  color: white !important;
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ✅ RESPONSIVE BREAKPOINTS */
+@media (min-width: 601px) {
+  .footer-link {
+    padding: 12px 8px;
+    min-height: 48px;
+  }
+  
+  .footer-icon {
+    font-size: 16px !important;
+  }
+  
+  .nav-button {
+    max-width: calc(100% / 11);
+  }
+}
+
 @media (max-width: 600px) {
   .navigation-menu {
-    min-width: 180px; /* Wider for text */
+    min-width: 180px;
   }
+  
   .menu-dropdown {
     background-color: #bdbdbd !important;
     font-size: 1.3rem;
@@ -394,10 +436,6 @@ export default {
   
   .dropdown-icon {
     font-size: 24px !important;
-  }
-  
-  .navigation-menu {
-    min-width: 140px;
   }
   
   .nav-menu-item {
@@ -413,7 +451,7 @@ export default {
   }
   
   .nav-button {
-    flex: 0 1 calc(20% - 0.5rem); /* ✅ 5 ITEMS PER ROW */
+    flex: 0 1 calc(20% - 0.5rem);
     margin: 0.25rem 0;
     max-width: none;
   }
@@ -426,22 +464,24 @@ export default {
   
   .footer-icon {
     font-size: 14px !important;
-    margin-left: 1rem;
     margin-bottom: 4px;
   }
   
+  .mobile-footer-text {
+    font-size: 9px;
+  }
+  
   .footer-info {
-    flex-basis: 100%; /* ✅ FORCE TO NEW ROW */
+    flex-basis: 100%;
     text-align: center;
     margin-top: 1rem !important;
     font-size: 12px;
   }
 }
 
-/* ✅ VERY SMALL MOBILE SCREENS */
 @media (max-width: 480px) {
   .nav-button {
-    flex: 0 1 calc(25% - 0.5rem); /* ✅ 4 ITEMS PER ROW */
+    flex: 0 1 calc(25% - 0.5rem);
   }
   
   .footer-link {
@@ -451,15 +491,16 @@ export default {
   
   .footer-icon {
     font-size: 12px !important;
-    margin-left: 1rem;
-
+  }
+  
+  .mobile-footer-text {
+    font-size: 8px;
   }
 }
 
-/* ✅ EXTRA SMALL SCREENS */
 @media (max-width: 360px) {
   .nav-button {
-    flex: 0 1 calc(33.333% - 0.5rem); /* ✅ 3 ITEMS PER ROW */
+    flex: 0 1 calc(33.333% - 0.5rem);
   }
   
   .footer-link {
@@ -469,7 +510,10 @@ export default {
   
   .footer-icon {
     font-size: 10px !important;
-    margin-left: 1rem;
+  }
+  
+  .mobile-footer-text {
+    font-size: 7px;
   }
 }
 </style>
