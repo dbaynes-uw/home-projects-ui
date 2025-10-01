@@ -3,12 +3,13 @@
     <v-card-title class="pb-0">
       <h2><i class="mdi mdi-medication-outline"></i> Med List</h2>
     </v-card-title>
-    
     <!-- ✅ MODERN NAVIGATION -->
     <div class="navigation-buttons">
-      <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn" id="button-as-link">
-        <i class="mdi mdi-chart-line"></i>
+      <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
+        <!--i class="mdi mdi-chart-line chart-icon"></!--i-->
+        <i class="mdi mdi-heart heart-icon"></i>
         <span>Glucose Readings</span>
+        <!--<i-- class="mdi mdi-heart heart-icon"></i--> <!-- ✅ HEART ICON -->
       </router-link>
       
       <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
@@ -249,6 +250,48 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ✅ GLUCOSE BUTTON WITH HEART ICON */
+.glucose-btn {
+  position: relative; /* ✅ ENABLE ABSOLUTE POSITIONING */
+}
+.chart-icon {
+  position: absolute !important;
+  top: -.5rem !important;
+  right: -.2rem !important;
+  color: #2196f3;
+  font-size: 20px;
+}
+.heart-icon {
+  position: absolute !important;
+  top: 0rem !important;
+  right: 0rem !important;
+  color: #e91e63 !important; /* ✅ PINK HEART */
+  font-size: 16px !important;
+  /*border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10;*/
+}
+
+/* ✅ HEART PULSE ANIMATION */
+.heart-icon {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ✅ HEART ON HOVER */
+.glucose-btn:hover .heart-icon {
+  color: #ff1744 !important; /* ✅ BRIGHTER RED ON HOVER */
+  transform: scale(1.2);
+}
 /* ✅ MODERN STYLING */
 .navigation-buttons {
   display: flex;
