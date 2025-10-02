@@ -5,13 +5,6 @@
     </v-card-title>
     <!-- ✅ MODERN NAVIGATION -->
     <div class="navigation-buttons">
-      <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
-        <!--i class="mdi mdi-chart-line chart-icon"></!--i-->
-        <i class="mdi mdi-heart heart-icon"></i>
-        <span>Glucose Readings</span>
-        <!--<i-- class="mdi mdi-heart heart-icon"></i--> <!-- ✅ HEART ICON -->
-      </router-link>
-      
       <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
         <i class="mdi mdi-plus"></i>
         <span style="position: relative; left: 2rem;">Add Med</span>
