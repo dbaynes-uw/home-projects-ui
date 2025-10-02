@@ -70,58 +70,50 @@
       <span>
         <router-view></router-view>
       </span>
-<v-footer
-  color="teal-darken-2"
-  padless
-  style="display: flex; flex: 0 0 auto !important; top: 2rem"
->
-  <v-layout justify-center wrap>
-    <button
-      v-for="link in links"
-      :key="`${link.label}-footer-link`"
-      class="nav-button"
-      text
-      rounded
-    >
-      <router-link :to="{ name: `${link.label}` }" class="footer-link">
-        <!-- ✅ DESKTOP: FONT AWESOME ICON WITH TOOLTIP -->
-        <template v-if="!isMobile">
-          {{ link.icon }} 
-          <v-tooltip location="top" :text="link.title">
-            <template v-slot:activator="{ props }">
-              <i 
-                v-bind="props"
-                :class="link.icon" 
-                style="color: #8b0000 !important; font-size: 16px;"
-              ></i>
-            </template>
-          </v-tooltip>
-        </template>
-      
-        <!-- ✅ MOBILE: FONT AWESOME ICON + TEXT -->
-        <template v-else>
-          <div class="mobile-footer-content">
-            <i 
-              :class="link.icon" 
-              class="footer-icon mobile-footer-icon"
-              style="color: #8b0000 !important; font-size: 12px;"
-            ></i>
-            <span class="mobile-footer-text">{{ link.title }}</span>
-          </div>
-        </template>
-      </router-link>
-    </button>
-    <p class="footer-info" style="margin-top: 0.75rem">
-      {{ this.onlineStatus == true ? "Online" : "Offline" }}
-    </p>      
-  </v-layout>
-</v-footer>
-        <!-- ✅ FONT AWESOME TEST -->
-  <div style="position: fixed; top: 10px; right: 10px; background: yellow; padding: 10px; z-index: 9999;">
-    <i class="fas fa-heart" style="color: red; font-size: 24px;"></i>
-    <i class="fas fa-star" style="color: blue; font-size: 24px;"></i>
-    <i class="fas fa-info-circle" style="color: green; font-size: 24px;"></i>
-  </div>
+      <!--v-footer
+        color="teal-darken-2"
+        padless
+        style="display: flex; flex: 0 0 auto !important; top: 2rem"
+      >
+        <v-layout justify-center wrap>
+          <button
+            v-for="link in links"
+            :key="`${link.label}-footer-link`"
+            class="nav-button"
+            text
+            rounded
+          >
+            <router-link :to="{ name: `${link.label}` }" class="footer-link">
+              <template v-if="!isMobile">
+                {{ link.icon }} 
+                <v-tooltip location="top" :text="link.title">
+                  <template v-slot:activator="{ props }">
+                    <i 
+                      v-bind="props"
+                      :class="link.icon" 
+                      style="color: #8b0000 !important; font-size: 16px;"
+                    ></i>
+                  </template>
+                </v-tooltip>
+              </template>
+            
+              <template v-else>
+                <div class="mobile-footer-content">
+                  <i 
+                    :class="link.icon" 
+                    class="footer-icon mobile-footer-icon"
+                    style="color: #8b0000 !important; font-size: 12px;"
+                  ></i>
+                  <span class="mobile-footer-text">{{ link.title }}</span>
+                </div>
+              </template>
+            </router-link>
+          </button>
+          <p class="footer-info" style="margin-top: 0.75rem">
+            {{ this.onlineStatus == true ? "Online" : "Offline" }}
+          </p>      
+        </v-layout>
+      </v-footer-->
     </v-app>
   </div>
 </template>
