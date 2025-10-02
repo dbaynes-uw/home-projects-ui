@@ -78,7 +78,7 @@
       label="Watering System"
       outlined
       readonly
-      prepend-inner-icon="mdi-water"
+      prepend-inner-icon="fas fa-water"
     ></v-text-field>
   </v-col>
         <!-- Plant Name Input -->
@@ -119,7 +119,7 @@
           <v-text-field
             v-model="plant.online_link"
             label="URL to Research"
-            prepend-inner-icon="mdi-link"
+            prepend-inner-icon="fas fa-link"
             outlined
             aria-label="Link to plant research"
           ></v-text-field>

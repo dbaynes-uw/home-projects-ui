@@ -71,7 +71,7 @@
               <v-btn
                 v-if="displayStartTime"
                 @click="clearStartTime"
-                icon="mdi-close"
+                icon="fas fa-close"
                 size="small"
                 variant="text"
                 color="error"
@@ -90,7 +90,7 @@
               <v-btn
                 v-if="displayEndTime"
                 @click="clearEndTime"
-                icon="mdi-close"
+                icon="fas fa-close"
                 size="small"
                 variant="text"
                 color="error"

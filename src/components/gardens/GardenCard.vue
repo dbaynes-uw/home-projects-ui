@@ -76,7 +76,7 @@
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
-            icon="mdi-pencil"
+            icon="fas fa-pencil"
             size="small"
             color="primary"
             variant="text"
@@ -89,7 +89,7 @@
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
-            icon="mdi-eye"
+            icon="fas fa-eye"
             size="small"
             color="brown"
             variant="text"
@@ -102,7 +102,7 @@
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
-            icon="mdi-delete"
+            icon="fas fa-delete"
             size="small"
             color="error"
             variant="text"

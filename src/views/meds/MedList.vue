@@ -1,22 +1,27 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2><i class="mdi mdi-medication-outline"></i> Med List</h2>
+      <h2><i class="fas fa-pills"></i> Med List</h2>
     </v-card-title>
     <!-- ✅ MODERN NAVIGATION -->
     <div class="navigation-buttons">
+      <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
+        <i class="fas fa-heart heart-icon"></i>
+        <span>Glucose Readings</span>
+      </router-link>
+      
       <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
-        <i class="mdi mdi-plus"></i>
+        <i class="fas fa-plus"></i>
         <span style="position: relative; left: 2rem;">Add Med</span>
       </router-link>
       
       <button @click="toggleIndexView" class="nav-btn" id="button-as-link">
-        <i class="mdi" :class="showIndexView ? 'mdi-card-multiple' : 'mdi-view-list'"></i>
+        <i class="fas" :class="showIndexView ? 'fa-th-large' : 'fa-list'"></i>
         <span>{{ showIndexView ? 'Card View' : 'Index View' }}</span>
       </button>
       
       <button @click="toggleMedChart" class="nav-btn" id="button-as-link">
-        <i class="mdi mdi-chart-bar"></i>
+        <i class="fas fa-chart-bar"></i>
         <span>{{ showMedChart ? 'Hide Chart' : 'Show Chart' }}</span>
       </button>
     </div>
@@ -25,7 +30,7 @@
   <!-- ✅ EXTERNAL LINK -->
   <div class="external-link">
     <a href="https://myhealthchart.com/" target="_blank">
-      <i class="mdi mdi-open-in-new"></i>
+      <i class="fas fa-external-link-alt"></i>
       MyHealthChart Portal
     </a>
   </div>
@@ -34,7 +39,7 @@
   <div class="filters-section">
     <div class="time-frame-filter">
       <label>
-        <i class="mdi mdi-calendar-range"></i>
+        <i class="fas fa-calendar-alt"></i>
         Time Frame:
       </label>
       <select v-model="selectedTimeFrame" @change="filterByTimeFrame" class="time-select">
@@ -51,42 +56,43 @@
       <v-text-field
         v-model="searchText"
         clearable
-        clear-icon="mdi-close"
+        clear-icon="fas fa-times"
         @click:clear="clearSearch"
         @input="performSearch"
         placeholder="Search meds..."
-        prepend-inner-icon="mdi-magnify"
+        prepend-inner-icon="fas fa-search"
         class="search-field"
       />
     </div>
   </div>
 
-<!-- ✅ ENHANCED CHART SECTION WITH FORCED REACTIVITY -->
-<div v-if="showMedChart && displayedMeds.length > 0" class="chart-section">
-  <div class="chart-debug mb-3">
-    <p><strong>Debug Info:</strong></p>
-    <p>📊 Displaying {{ displayedMeds.length }} meds</p>
-    <p>📅 Time Frame: {{ selectedTimeFrame || 'All Time' }} days</p>
+  <!-- ✅ ENHANCED CHART SECTION WITH FORCED REACTIVITY -->
+  <div v-if="showMedChart && displayedMeds.length > 0" class="chart-section">
+    <div class="chart-debug mb-3">
+      <p><strong>Debug Info:</strong></p>
+      <p>📊 Displaying {{ displayedMeds.length }} meds</p>
+      <p>📅 Time Frame: {{ selectedTimeFrame || 'All Time' }} days</p>
+    </div>
+    
+    <!-- ✅ ADD KEY TO FORCE CHART RE-RENDER -->
+    <MedChart 
+      :key="chartKey"
+      :meds="displayedMeds" 
+      :timeFrame="parseInt(selectedTimeFrame) || 365"
+      :chartLabels="chartLabels" 
+      :chartIntervals="chartIntervals"
+    />
   </div>
   
-  <!-- ✅ ADD KEY TO FORCE CHART RE-RENDER -->
-  <MedChart 
-    :key="chartKey"
-    :meds="displayedMeds" 
-    :timeFrame="parseInt(selectedTimeFrame) || 365"
-    :chartLabels="chartLabels" 
-    :chartIntervals="chartIntervals"
-  />
-</div>
   <!-- ✅ RESULTS SECTION -->
   <div class="results-section">
     <h3 class="results-count">
-      <i class="mdi mdi-counter"></i>
+      <i class="fas fa-hashtag"></i>
       List Total: {{ displayedMeds.length }}
     </h3>
     
     <div v-if="displayedMeds.length === 0" class="no-results">
-      <i class="mdi mdi-information-outline"></i>
+      <i class="fas fa-info-circle"></i>
       <p>No meds found matching your criteria.</p>
     </div>
     
@@ -99,7 +105,7 @@
       <!-- ✅ CARD VIEW -->
       <div v-else class="cards-container">
         <p class="edit-hint">
-          <i class="mdi mdi-gesture-double-tap"></i>
+          <i class="fas fa-hand-pointer"></i>
           Double click any card to edit
         </p>
         
@@ -116,7 +122,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
@@ -243,27 +248,17 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* ✅ GLUCOSE BUTTON WITH HEART ICON */
+/* ✅ FONT AWESOME GLUCOSE BUTTON WITH HEART ICON */
 .glucose-btn {
-  position: relative; /* ✅ ENABLE ABSOLUTE POSITIONING */
+  position: relative;
 }
-.chart-icon {
-  position: absolute !important;
-  top: -.5rem !important;
-  right: -.2rem !important;
-  color: #2196f3;
-  font-size: 20px;
-}
+
 .heart-icon {
   position: absolute !important;
   top: 0rem !important;
   right: 0rem !important;
-  color: #e91e63 !important; /* ✅ PINK HEART */
+  color: #e91e63 !important;
   font-size: 16px !important;
-  /*border-radius: 50%;
-  padding: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  z-index: 10;*/
 }
 
 /* ✅ HEART PULSE ANIMATION */
@@ -282,10 +277,11 @@ onMounted(async () => {
 
 /* ✅ HEART ON HOVER */
 .glucose-btn:hover .heart-icon {
-  color: #ff1744 !important; /* ✅ BRIGHTER RED ON HOVER */
+  color: #ff1744 !important;
   transform: scale(1.2);
 }
-/* ✅ MODERN STYLING */
+
+/* ✅ YOUR EXISTING CSS STAYS THE SAME */
 .navigation-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -296,6 +292,7 @@ onMounted(async () => {
   margin: 1rem;
 }
 
+/* ... rest of your existing CSS ... */
 .nav-btn {
   display: flex;
   align-items: center;

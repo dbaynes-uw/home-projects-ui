@@ -13,7 +13,7 @@
             <v-btn
               variant="outlined"
               :to="{ name: 'ProductsByLocations' }"
-              prepend-icon="mdi-map-marker"
+              prepend-icon="fas fa-map-marker"
               class="nav-button"
             >
               Product Location List
@@ -22,7 +22,7 @@
             <v-btn
               variant="outlined"
               :to="{ name: 'ProductsByVendors' }"
-              prepend-icon="mdi-store"
+              prepend-icon="fas fa-store"
               class="nav-button"
             >
               List By Vendor
@@ -31,7 +31,7 @@
             <v-btn
               variant="outlined"
               :to="{ name: 'ProductList' }"
-              prepend-icon="mdi-package-variant"
+              prepend-icon="fas fa-package-variant"
               class="nav-button"
             >
               List by Product
@@ -57,7 +57,7 @@
                 :rules="[requiredLocation]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="mdi-map-marker-outline"
+                prepend-inner-icon="fas fa-map-marker-outline"
                 class="mb-4 expanded-product-field"
                 clearable
               />
@@ -70,7 +70,7 @@
                 :rules="[requiredVendorName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="mdi-store-outline"
+                prepend-inner-icon="fas fa-store-outline"
                 class="mb-4 expanded-product-field"
                 clearable
               />
@@ -83,7 +83,7 @@
                 :rules="[requiredOtherVendorName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="mdi-store-plus"
+                prepend-inner-icon="fas fa-store-plus"
                 class="mb-4 expanded-product-field"
                 clearable
               />
@@ -97,7 +97,7 @@
                 :rules="[requiredProductName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="mdi-package-variant-closed"
+                prepend-inner-icon="fas fa-package-variant-closed"
                 class="mb-4 expanded-product-field"
                 clearable
                 hide-no-data
@@ -121,7 +121,7 @@
                 :rules="[requiredOtherProductName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="mdi-package-variant-plus"
+                prepend-inner-icon="fas fa-package-variant-plus"
                 class="mb-4 expanded-product-field"
                 clearable
               />

@@ -23,7 +23,7 @@
         <v-btn
           @click="setSortField('plant_name')"
           :color="sortField === 'plant_name' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'plant_name' && sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
+          :prepend-icon="sortField === 'plant_name' && sortOrder === 'asc' ? 'fas fa-sort-alphabetical-ascending' : 'fas fa-sort-alphabetical-descending'"
           centered
           class="sort-btn"
         >
@@ -33,7 +33,7 @@
         <v-btn
           @click="setSortField('yard_location')"
           :color="sortField === 'yard_location' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'yard_location' && sortOrder === 'asc' ? 'mdi-sort-calendar-ascending' : 'mdi-sort-calendar-descending'"
+          :prepend-icon="sortField === 'yard_location' && sortOrder === 'asc' ? 'fas fa-sort-calendar-ascending' : 'fas fa-sort-calendar-descending'"
           centered
           class="sort-btn"
         >
@@ -45,7 +45,7 @@
       <v-btn
         @click="toggleSortOrder"
         variant="outlined"
-        :prepend-icon="sortOrder === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'"
+        :prepend-icon="sortOrder === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"
         centered
         class="sort-btn"
       >

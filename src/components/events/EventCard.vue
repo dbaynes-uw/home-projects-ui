@@ -7,38 +7,38 @@
         :to="{ name: 'EventEdit', params: { id: `${event.id}` } }"
         class="event-title-link"
       >
-        <i class="mdi mdi-calendar-edit"></i>
+        <i class="fas fa-calendar-edit"></i>
         {{ event.description }}
       </router-link>
     </p>
     
     <ul>
       <li class="li-left-capitalize">
-        <i class="mdi mdi-check-circle"></i>
+        <i class="fas fa-check-circle"></i>
         Active: <b>{{ event.status }}</b>
       </li>
       <li class="li-left">
-        <i class="mdi mdi-account"></i>
+        <i class="fas fa-account"></i>
         Assigned To: <b>{{ event.assigned }}</b>
       </li>
       <li class="li-left">
-        <i class="mdi mdi-clock-outline"></i>
+        <i class="fas fa-clock-outline"></i>
         Last Action: {{ formatYearDate(event.action_completed_date) }}
       </li>
       <li class="li-left">
-        <i class="mdi mdi-repeat"></i>
+        <i class="fas fa-repeat"></i>
         Every {{ event.frequency }} days
       </li>
       <li class="li-left">
-        <i class="mdi mdi-calendar-alert"></i>
+        <i class="fas fa-calendar-alert"></i>
         Due: <b>{{ formatYearDate(event.action_due_date) }}</b>
       </li>
       <li class="li-left">
-        <i class="mdi mdi-repeat"></i>
+        <i class="fas fa-repeat"></i>
         Status: {{ event.status.toUpperCase() }}
       </li>
       <li class="li-left">
-        <i class="mdi mdi-note-text"></i>
+        <i class="fas fa-note-text"></i>
         Notes:
       </li>
       <b class="li-left-none" v-for="(notes, idx) in joinedNotes(event)" :key="idx">
@@ -53,7 +53,7 @@
         class="action-link back-link"
         title="Back to Event List"
       >
-        <i class="mdi mdi-arrow-left"></i>
+        <i class="fas fa-arrow-left"></i>
         <span>Back</span>
       </router-link>
       
@@ -62,7 +62,7 @@
         class="action-link edit-link"
         title="Edit Event"
       >
-        <i class="mdi mdi-pencil"></i>
+        <i class="fas fa-pencil"></i>
         <span>Edit</span>
       </router-link>
       
@@ -71,7 +71,7 @@
         class="action-btn delete-btn"
         title="Delete Event"
       >
-        <i class="mdi mdi-delete"></i>
+        <i class="fas fa-delete"></i>
         <span>Delete</span>
       </button>
     </div>

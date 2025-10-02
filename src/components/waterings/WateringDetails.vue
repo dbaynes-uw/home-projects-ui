@@ -23,7 +23,7 @@
         <v-btn
           @click="setSortField('start_time')"
           :color="sortField === 'start_time' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'start_time' && sortOrder === 'asc' ? 'mdi-sort-calendar-ascending' : 'mdi-sort-calendar-descending'"
+          :prepend-icon="sortField === 'start_time' && sortOrder === 'asc' ? 'fas fa-sort-calendar-ascending' : 'fas fa-sort-calendar-descending'"
           centered
           class="sort-btn"
         >
@@ -32,7 +32,7 @@
         <v-btn
           @click="setSortField('name')"
           :color="sortField === 'name' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'name' && sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
+          :prepend-icon="sortField === 'name' && sortOrder === 'asc' ? 'fas fa-sort-alphabetical-ascending' : 'fas fa-sort-alphabetical-descending'"
           centered
           class="sort-btn"
         >
@@ -45,7 +45,7 @@
       <v-btn
         @click="toggleSortOrder"
         variant="outlined"
-        :prepend-icon="sortOrder === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'"
+        :prepend-icon="sortOrder === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"
         centered
         class="sort-btn"
       >

@@ -11,7 +11,7 @@
       <v-btn 
         variant="outlined" 
         :to="{ name: 'ProductsByLocations' }"
-        prepend-icon="mdi-map-marker-multiple"
+        prepend-icon="fas fa-map-marker-multiple"
       >
         Products By Locations
       </v-btn>
@@ -19,7 +19,7 @@
       <v-btn 
         variant="outlined" 
         :to="{ name: 'ProductsByVendors' }"
-        prepend-icon="mdi-store"
+        prepend-icon="fas fa-store"
       >
         Shopping List By Vendor
       </v-btn>
@@ -27,7 +27,7 @@
       <v-btn 
         variant="outlined" 
         :to="{ name: 'ProductList' }"
-        prepend-icon="mdi-cart"
+        prepend-icon="fas fa-cart"
       >
         Shopping List By Product
       </v-btn>
@@ -35,7 +35,7 @@
       <v-btn 
         variant="outlined" 
         :to="{ name: 'ProductVendorCreate' }"
-        prepend-icon="mdi-plus"
+        prepend-icon="fas fa-plus"
         color="primary"
       >
         Create Vendor/Product

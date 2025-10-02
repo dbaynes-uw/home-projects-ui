@@ -24,7 +24,7 @@
         v-if="event && event.histories && event.histories.length > 0"
       >
         <!-- ✅ MATERIAL DESIGN ICONS -->
-        <i class="mdi" :class="showHistory ? 'mdi-eye-off' : 'mdi-eye'"></i>
+        <i class="mdi" :class="showHistory ? 'fas fa-eye-off' : 'fas fa-eye'"></i>
         <span>{{ showHistory ? 'Hide' : 'Show' }} History ({{ historyCount }})</span>
       </button>
     </div>
@@ -42,9 +42,9 @@
     <!-- ✅ HISTORY SECTION -->
     <div v-if="showHistory" class="card-history">
       <div class="history-content">
-        <h3><i class="mdi mdi-history"></i> Event History</h3>
+        <h3><i class="fas fa-history"></i> Event History</h3>
         <div v-if="filteredHistory.length === 0" class="no-history">
-          <i class="mdi mdi-information-outline"></i>
+          <i class="fas fa-information-outline"></i>
           <p>No history entries found for this event.</p>
         </div>
         <div v-else class="history-list">
@@ -54,11 +54,11 @@
             class="history-item"
           >
             <div class="history-meta">
-              <i class="mdi mdi-clock-outline"></i>
+              <i class="fas fa-clock-outline"></i>
               <span class="history-date">{{ formatStandardDateTime(history.created_at) }}</span>
             </div>
             <div class="history-notes">
-              <i class="mdi mdi-note-text-outline"></i>
+              <i class="fas fa-note-text-outline"></i>
               <span v-html="history.notes"></span>
             </div>
           </div>

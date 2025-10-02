@@ -4,7 +4,7 @@
   <div class="med-index-container">
     <div class="index-header">
       <h3 class="results-count">
-        <i class="mdi mdi-counter"></i>
+        <i class="fas fa-counter"></i>
         Total: {{ meds.length }}
       </h3>
       
@@ -14,7 +14,7 @@
           class="density-btn"
           :title="isCompact ? 'Expand Table' : 'Compact Table'"
         >
-          <i class="mdi" :class="isCompact ? 'mdi-table-large' : 'mdi-table'"></i>
+          <i class="mdi" :class="isCompact ? 'fas fa-table-large' : 'fas fa-table'"></i>
           <span>{{ isCompact ? 'Expand' : 'Compact' }}</span>
         </button>
       </div>
@@ -31,7 +31,7 @@
             :class="{ 'sorted': sortBy === 'date_of_occurrence' }"
           >
             <div class="header-content">
-              <i class="mdi mdi-calendar-clock"></i>
+              <i class="fas fa-calendar-clock"></i>
               <span>Date of Occurrence</span>
               <i class="mdi sort-icon" :class="getSortIcon('date_of_occurrence')"></i>
             </div>
@@ -43,7 +43,7 @@
             :class="{ 'sorted': sortBy === 'duration' }"
           >
             <div class="header-content">
-              <i class="mdi mdi-timer-outline"></i>
+              <i class="fas fa-timer-outline"></i>
               <span>Duration</span>
               <i class="mdi sort-icon" :class="getSortIcon('duration')"></i>
             </div>
@@ -55,7 +55,7 @@
             :class="{ 'sorted': sortBy === 'interval_days' }"
           >
             <div class="header-content">
-              <i class="mdi mdi-calendar-range"></i>
+              <i class="fas fa-calendar-range"></i>
               <span>Days Since Last</span>
               <i class="mdi sort-icon" :class="getSortIcon('interval_days')"></i>
             </div>
@@ -64,28 +64,28 @@
           <!-- ✅ NON-SORTABLE HEADERS -->
           <th class="non-sortable-header">
             <div class="header-content">
-              <i class="mdi mdi-clock-time-four-outline"></i>
+              <i class="fas fa-clock-time-four-outline"></i>
               <span>Hours</span>
             </div>
           </th>
           
           <th class="non-sortable-header">
             <div class="header-content">
-              <i class="mdi mdi-clock-outline"></i>
+              <i class="fas fa-clock-outline"></i>
               <span>Minutes</span>
             </div>
           </th>
           
           <th class="non-sortable-header">
             <div class="header-content">
-              <i class="mdi mdi-note-text-outline"></i>
+              <i class="fas fa-note-text-outline"></i>
               <span>Circumstances</span>
             </div>
           </th>
           
           <th class="non-sortable-header actions-header">
             <div class="header-content">
-              <i class="mdi mdi-cog"></i>
+              <i class="fas fa-cog"></i>
               <span>Actions</span>
             </div>
           </th>
@@ -101,14 +101,14 @@
         >
           <td class="date-cell">
             <div class="cell-content">
-              <i class="mdi mdi-calendar-clock cell-icon"></i>
+              <i class="fas fa-calendar-clock cell-icon"></i>
               <span>{{ formatStandardDateTime(med.date_of_occurrence) }}</span>
             </div>
           </td>
           
           <td class="duration-cell">
             <div class="cell-content">
-              <i class="mdi mdi-timer-outline cell-icon"></i>
+              <i class="fas fa-timer-outline cell-icon"></i>
               <span>{{ capitalizeFirst(med.duration) }}</span>
             </div>
           </td>
@@ -139,11 +139,11 @@
                 class="edit-circumstances-btn"
                 :title="isEditing[med.id] ? 'Save' : 'Edit'"
               >
-                <i class="mdi" :class="isEditing[med.id] ? 'mdi-content-save' : 'mdi-pencil'"></i>
+                <i class="mdi" :class="isEditing[med.id] ? 'fas fa-content-save' : 'fas fa-pencil'"></i>
               </button>
             </div>
             <span v-else class="no-circumstances">
-              <i class="mdi mdi-minus"></i>
+              <i class="fas fa-minus"></i>
               No notes
             </span>
           </td>
@@ -156,7 +156,7 @@
                 class="action-btn edit-btn"
                 title="Edit Med"
               >
-                <i class="mdi mdi-pencil"></i>
+                <i class="fas fa-pencil"></i>
               </router-link>
               
               <!-- ✅ VIEW DETAILS BUTTON -->
@@ -165,7 +165,7 @@
                 class="action-btn view-btn"
                 title="View Details"
               >
-                <i class="mdi mdi-eye"></i>
+                <i class="fas fa-eye"></i>
               </router-link>
               
               <!-- ✅ DELETE BUTTON -->
@@ -174,7 +174,7 @@
                 class="action-btn delete-btn"
                 title="Delete Med"
               >
-                <i class="mdi mdi-delete"></i>
+                <i class="fas fa-delete"></i>
               </button>
             </div>
           </td>
@@ -184,7 +184,7 @@
     
     <!-- ✅ EMPTY STATE -->
     <div v-if="meds.length === 0" class="empty-state">
-      <i class="mdi mdi-medication-outline"></i>
+      <i class="fas fa-medication-outline"></i>
       <p>No meds to display</p>
     </div>
   </div>
@@ -270,8 +270,8 @@ const sortList = (column) => {
 };
 
 const getSortIcon = (column) => {
-  if (sortBy.value !== column) return 'mdi-sort';
-  return sortDirection.value === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending';
+  if (sortBy.value !== column) return 'fas fa-sort';
+  return sortDirection.value === 'asc' ? 'fas fa-sort-ascending' : 'fas fa-sort-descending';
 };
 
 const toggleEdit = (medId) => {

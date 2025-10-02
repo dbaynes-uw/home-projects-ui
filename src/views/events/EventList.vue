@@ -37,7 +37,7 @@
               <v-btn
                 variant="outlined"
                 :to="{ name: 'EventStatistics' }"
-                prepend-icon="mdi-chart-bar"
+                prepend-icon="fas fa-chart-bar"
                 id="button-as-link"
                 class="nav-button"
               >
@@ -47,7 +47,7 @@
               <v-btn
                 variant="outlined"
                 :to="{ name: 'EventCreate' }"
-                prepend-icon="mdi-plus"
+                prepend-icon="fas fa-plus"
                 color="primary"
                 id="button-as-link"
                 class="nav-button"
@@ -116,7 +116,7 @@
                   @blur="searchFocused = false"
                   @click:clear="showIndex"
                   placeholder="Search events by description or assignee..."
-                  prepend-inner-icon="mdi-magnify"
+                  prepend-inner-icon="fas fa-magnify"
                   variant="outlined"
                   clearable
                   hide-details
@@ -537,9 +537,9 @@ function getEventStatusColor(event) {
 }
 
 function getEventStatusIcon(event) {
-  if (event.status === 'inactive') return 'mdi-pause-circle';
-  if (isEventPastDue(event)) return 'mdi-alert-circle';
-  return 'mdi-check-circle';
+  if (event.status === 'inactive') return 'fas fa-pause-circle';
+  if (isEventPastDue(event)) return 'fas fa-alert-circle';
+  return 'fas fa-check-circle';
 }
 
 function isEventPastDue(event) {

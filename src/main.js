@@ -7,8 +7,16 @@ import router from "./router";
 import store from "./vuex/store.js";
 import "./plugins/vuetify";
 import { createVuetify } from 'vuetify'
+import { aliases, fa } from 'vuetify/iconsets/fa'
 const vuetify = createVuetify({
   // config
+    icons: {
+    defaultSet: 'fa',
+    aliases,
+    sets: {
+      fa,
+    },
+  },
 })
 //import { VuelidatePlugin } from '@vuelidate/core'
 

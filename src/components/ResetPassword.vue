@@ -13,7 +13,7 @@
           v-model="password"
           id="password"
           placeholder="New Password"
-          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-off'"
           :type="showPassword ? 'text' : 'password'"
           @click:append="showPassword = !showPassword"
         />
@@ -25,7 +25,7 @@
           v-model="password_confirmation"
           id="password_confirmation"
           placeholder="Password Confirmation"
-          :append-icon="showPasswordConfirmation ? 'mdi-eye' : 'mdi-eye-off'"
+          :append-icon="showPasswordConfirmation ? 'fas fa-eye' : 'fas fa-eye-off'"
           :type="showPasswordConfirmation ? 'text' : 'password'"
           @click:append="showPasswordConfirmation = !showPasswordConfirmation"
         />

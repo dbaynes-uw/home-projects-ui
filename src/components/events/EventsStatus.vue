@@ -73,7 +73,7 @@ function getStatusLabel() {
 
 // ✅ DYNAMIC ICON BASED ON PROPS  
 function getStatusIcon() {
-  return isShowingActive.value ? 'mdi-play-circle' : 'mdi-pause-circle';
+  return isShowingActive.value ? 'fas fa-play-circle' : 'fas fa-pause-circle';
 }
 </script>
 

@@ -2,10 +2,10 @@
   <ConfirmDialogue ref="confirmDialogue" />
   <br/>
   <div class="eventEdit">
-    <h2><i class="mdi mdi-pencil"></i> Edit Event {{ event?.description }}</h2>
+    <h2><i class="fas fa-pencil"></i> Edit Event {{ event?.description }}</h2>
     
     <router-link :to="{ name: 'EventList' }" class="back-link">
-      <i class="mdi mdi-arrow-left"></i>
+      <i class="fas fa-arrow-left"></i>
       <span>Back to Event List</span>
     </router-link>
     
@@ -36,7 +36,7 @@
         
         <!-- ✅ PAST DUE WARNING -->
         <div v-if="datePastDue(event?.action_completed_date, event?.frequency)" class="past-due-warning">
-          <i class="mdi mdi-alert-circle"></i>
+          <i class="fas fa-alert-circle"></i>
           <span>
             Event is Past Due: {{ calculateDateDue(event?.action_completed_date, event?.frequency) }}
           </span>
@@ -107,7 +107,7 @@
           :to="{ name: 'EventShow', params: { id: `${event?.id}` } }" 
           class="details-btn"
         >
-          <i class="mdi mdi-information"></i>
+          <i class="fas fa-information"></i>
           <span>Details and History</span>
         </router-link>
       </div>

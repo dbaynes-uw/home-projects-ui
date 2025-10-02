@@ -33,7 +33,7 @@
         <v-text-field
           v-model="searchQuery"
           label="Search gardens..."
-          prepend-inner-icon="mdi-magnify"
+          prepend-inner-icon="fas fa-magnify"
           clearable
           density="compact"
           variant="outlined"

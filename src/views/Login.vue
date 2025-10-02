@@ -26,7 +26,7 @@
         <v-text-field
           label="Password (Mininum 8 characters)"
           v-model="state.password"
-          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-off'"
           :type="showPassword ? 'text' : 'password'"
           name="password"
           @click:append="showPassword = !showPassword"

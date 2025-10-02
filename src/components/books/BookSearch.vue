@@ -60,7 +60,7 @@
     <div class="auto-search-container">
       <v-text-field
         clearable
-        clear-icon="mdi-close"
+        clear-icon="fas fa-close"
         @click:clear="resetSearch"
         type="text"
         class="np-input-search"

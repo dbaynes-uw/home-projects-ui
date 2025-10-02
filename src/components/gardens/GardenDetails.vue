@@ -26,7 +26,7 @@
         color="primary"
         centered
         class="sort-btn"
-        :prepend-icon="sortOrder === 'asc' ? 'mdi-sort-alphabetical-ascending' : 'mdi-sort-alphabetical-descending'"
+        :prepend-icon="sortOrder === 'asc' ? 'fas fa-sort-alphabetical-ascending' : 'fas fa-sort-alphabetical-descending'"
       >
         {{ sortOrder === 'asc' ? 'A → Z' : 'Z → A' }}
       </v-btn>

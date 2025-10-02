@@ -11,7 +11,7 @@
         <v-btn 
           variant="outlined" 
           :to="{ name: 'ProductsByVendors' }"
-          prepend-icon="mdi-store"
+          prepend-icon="fas fa-store"
         >
           Shopping List By Vendor
         </v-btn>
@@ -19,7 +19,7 @@
         <v-btn 
           variant="outlined" 
           :to="{ name: 'ProductList' }"
-          prepend-icon="mdi-cart"
+          prepend-icon="fas fa-cart"
         >
           Shopping List By Product
         </v-btn>
@@ -27,7 +27,7 @@
         <v-btn 
           variant="outlined" 
           :to="{ name: 'ProductVendorCreate' }"
-          prepend-icon="mdi-plus"
+          prepend-icon="fas fa-plus"
           color="primary"
         >
           Create Vendor/Product
@@ -60,7 +60,7 @@
             @click="toggleAllLocations"
             variant="outlined"
             size="small"
-            prepend-icon="mdi-map-marker"
+            prepend-icon="fas fa-map-marker"
             class="control-btn"
             :color="allLocationsExpanded ? 'error' : 'primary'"
             style="width: 20rem;"
@@ -72,7 +72,7 @@
             @click="toggleAllVendors"
             variant="outlined"
             size="small"
-            prepend-icon="mdi-store"
+            prepend-icon="fas fa-store"
             class="control-btn"
             :disabled="!hasAnyExpandedLocations"
             :color="allVendorsExpanded ? 'error' : 'primary'"
@@ -123,7 +123,7 @@
                 </v-btn>
 
                 <v-icon>
-                  {{ expandedLocations.has(locationIndex) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                  {{ expandedLocations.has(locationIndex) ? 'fas fa-chevron-up' : 'fas fa-chevron-down' }}
                 </v-icon>
               </div>
             </v-card-title>
@@ -174,7 +174,7 @@
                         </v-tooltip>
 
                         <v-icon>
-                          {{ expandedVendors.has(getVendorKey(location, vendor)) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                          {{ expandedVendors.has(getVendorKey(location, vendor)) ? 'fas fa-chevron-up' : 'fas fa-chevron-down' }}
                         </v-icon>
                       </div>
                     </v-card-title>
