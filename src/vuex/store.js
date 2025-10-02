@@ -23,12 +23,6 @@ export default new Vuex.Store({
     book: [],
     books: [],
     events: [],
-    eventsRequest: [],
-    eventsStatus: [],
-    eventStatistics: [],
-    eventsPastDue: [],
-    eventsDueBy: [],
-    eventsAssigned: [],
     event: {},
     film: [],
     films: [],
@@ -50,18 +44,19 @@ export default new Vuex.Store({
     trails: [],
     travel: [],
     travels: [],
-    travel_event: [],
     travel_events: [],
     users: [],
     vendor: {},
     vendors: [],
-    vendors_group: [],
-    vendors_locations_group: [],
-    vendors_products_group: [],
     //plants: [
     //  {author: 'Test Author 1'},
     //  {author: 'Test Author 2'},
-    //]  
+    //]
+    // Pagination states
+    medsPage: 1,
+    medsPerPage: 20,
+    medsTotal: 0,
+    medsLoading: false,    
   },
   data() {
     return {
@@ -71,7 +66,32 @@ export default new Vuex.Store({
       //],
     }
   },
-  plugins: [createPersistedState()],
+  plugins: [
+    createPersistedState({
+      // Only persist essential data
+      paths: [
+        'user',
+        'token',
+        'loggedIn',
+        'meds',        // Keep recent meds
+        'gardens',     // Keep gardens (probably small)
+        'plants'
+      ],
+      // Don't persist large datasets
+      filter: (mutation) => {
+        const excludedMutations = [
+          'SET_BOOKS',
+          'SET_EVENTS', 
+          'SET_FILMS',
+          'SET_TRAVELS',
+          'SET_TRAILS',
+          'SET_PRODUCTS',
+          'SET_VENDORS'
+        ];
+        return !excludedMutations.includes(mutation.type);
+      }
+    })
+  ],
   mutations: {
     ADD_BOOK(state, book) {
       state.books.push(book);
@@ -170,6 +190,18 @@ export default new Vuex.Store({
     },
     SET_MEDS(state, meds) {
       state.meds = meds;
+    },
+    APPEND_MEDS(state, newMeds) {
+      state.meds = [...state.meds, ...newMeds];
+    },
+    SET_MEDS_LOADING(state, loading) {
+      state.medsLoading = loading;
+    },
+    SET_MEDS_TOTAL(state, total) {
+      state.medsTotal = total;
+    },
+    SET_MEDS_PAGE(state, page) {
+      state.medsPage = page;
     },
     DELETE_PLANT(state, plantId) {
       state.plants = state.plants.filter(plant => plant.id !== plantId);
@@ -294,6 +326,22 @@ export default new Vuex.Store({
     ADD_WATERING(state, watering) {
       state.waterings.push(watering);
     },
+    // CLEAN UP MUTATIONS
+    CLEAR_BOOKS(state) {
+      state.books = [];
+    },
+    CLEAR_EVENTS(state) {
+      state.events = [];
+    },
+    CLEAR_FILMS(state) {
+      state.films = [];
+    },
+    CLEAR_TRAVELS(state) {
+      state.travels = [];
+    },
+    CLEAR_TRAILS(state) {
+      state.trails = [];
+    }    
   },
   actions: {
     async register ({ commit }, credentials) {
@@ -925,16 +973,29 @@ async createPlant({ commit, state }, plant) {
           });
       }
     },
-    async fetchMeds({ commit }) {
-      EventService.getMeds()
-        .then((response) => {
-          commit("SET_MEDS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Med Fetch Error: ", error.response.data )
+    async fetchMeds({ commit }, { page = 1, perPage = 20 } = {}) {
+      commit('SET_MEDS_LOADING', true);
 
-        });
+      try {
+        const response = await EventService.getMeds({ page, perPage });
+
+        if (page === 1) {
+          // First page - replace data
+          commit("SET_MEDS", response.data.meds || []);
+        } else {
+          // Additional pages - append data
+          commit("APPEND_MEDS", response.data.meds || []);
+        }
+
+        commit('SET_MEDS_TOTAL', response.data.total || 0);
+        commit('SET_MEDS_PAGE', page);
+
+      } catch (error) {
+        console.error("Meds fetch error:", error);
+        commit("SET_MEDS", []);
+      } finally {
+        commit('SET_MEDS_LOADING', false);
+      }
     },
     async updateMed({ commit }, med) {
       EventService.putMed(med)
@@ -1389,7 +1450,15 @@ async updateVendorsProducts({ commit }, payload) {
         .catch((error) => {
           alert("Waterings Fetch Error: ", error.response.data)
         });
-    }
+    },
+    clearUnusedData({ commit }) {
+      // Clear data when navigating away from pages
+      commit('CLEAR_BOOKS');
+      commit('CLEAR_EVENTS');
+      commit('CLEAR_FILMS');
+      commit('CLEAR_TRAVELS');
+      commit('CLEAR_TRAILS');
+    }    
   },
   getters: {
     gardens(state) {
