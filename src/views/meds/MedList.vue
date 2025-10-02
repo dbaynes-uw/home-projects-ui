@@ -157,7 +157,13 @@ const chartIntervals = computed(() => {
 
 // ✅ MAIN DISPLAY LOGIC
 const displayedMeds = computed(() => {
-  let result = meds.value;
+  // ✅ SAFETY CHECK: ENSURE WE HAVE AN ARRAY
+  let result = Array.isArray(meds.value) ? meds.value : [];
+  
+  // Early return if no meds
+  if (result.length === 0) {
+    return [];
+  }
   
   // Apply time frame filter
   if (selectedTimeFrame.value && result.length > 0) {
@@ -191,12 +197,11 @@ const displayedMeds = computed(() => {
     });
   }
   
-  // Sort by date (newest first)
-  return result.sort((a, b) => 
+  // ✅ SAFE SORT: ENSURE result IS STILL AN ARRAY
+  return Array.isArray(result) ? result.sort((a, b) => 
     new Date(b.date_of_occurrence) - new Date(a.date_of_occurrence)
-  );
+  ) : [];
 });
-
 // ✅ WATCHER TO FORCE CHART UPDATE (NO SIDE EFFECTS)
 watch(
   [selectedTimeFrame, displayedMeds], 

@@ -549,7 +549,6 @@ export default new Vuex.Store({
       });
     },
     async eventsLocations({ commit }, form) {
-      console.log("Store EventsLocations Form: ", form)
       EventService.getEventsLocations(form)
         .then((response) => {
           //const location = response.config.url.split('?')
@@ -709,8 +708,7 @@ async updateEvent({ commit }, event) {
           alert("Garden Post Error: ", error.response.data )
         });
     },
-        async deleteGarden({ commit }, garden) {
-      console.log("Deleting garden with ID:", garden.id);
+    async deleteGarden({ commit }, garden) {
       try {
         await EventService.deleteGarden(garden);
         commit("DELETE_GARDEN", garden);
@@ -777,9 +775,7 @@ async createPlant({ commit, state }, plant) {
 },
   async updatePlant({ commit }, plant) {
     try {
-      console.log('🔍 Store: Updating plant with ID:', plant.id);
       const response = await EventService.putPlant(plant);
-      console.log('✅ Store: API response:', response);
 
       commit('SET_PLANT', response.data);
       return response.data; // ✅ IMPORTANT: Return something truthy!
@@ -815,7 +811,6 @@ async createPlant({ commit, state }, plant) {
         const response = await EventService.getGlucoseReading(id); // Call the API
         commit("SET_GLUCOSE_READING", response.data); // Commit the data to the state
       } catch (error) {
-        console.error("Error fetching glucose reading: ");
         alert("Failed to fetch glucose reading. Please try again.");
       }
     },
@@ -827,12 +822,10 @@ async createPlant({ commit, state }, plant) {
         // Optionally fetch the updated list of readings
         await dispatch("fetchGlucoseReadings");
       } catch (error) {
-        console.error("Error creating glucose reading:", error.response.data);
         alert("Failed to create glucose reading. Please try again.");
       }
     },    
     async deleteGlucoseReading({ commit }, glucose_reading) {
-      console.log("Deleting glucose reading with ID:", glucose_reading.id);
       try {
         await EventService.deleteGlucoseReading(glucose_reading);
         commit("DELETE_GLUCOSE_READING", glucose_reading); // <-- Pass the original reading!
@@ -841,6 +834,7 @@ async createPlant({ commit, state }, plant) {
         alert("GlucoseReading Delete Error: " + (error.response?.data || error.message));
       }
     },
+
     async updateGlucoseReading({ commit, dispatch }, glucose_reading) {
       try {
         const response = await EventService.putGlucoseReading(glucose_reading);   
@@ -849,7 +843,6 @@ async createPlant({ commit, state }, plant) {
         // Optionally fetch the updated list of readings
         await dispatch("fetchGlucoseReadings");
       } catch (error) {
-        console.error("Error creating glucose reading:", error.response.data);
         alert("Failed to create glucose reading. Please try again.");
       }
     },
@@ -1351,7 +1344,6 @@ async updateVendorsProducts({ commit }, payload) {
     return false; // ✅ EXPLICIT FAILURE
     
   } catch (error) {
-    console.error('Store action error:', error);
     return false; // ✅ RETURN FALSE ON ERROR
   }
 },
