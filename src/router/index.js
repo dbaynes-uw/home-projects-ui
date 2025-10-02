@@ -1,87 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
-import About from "../views/About.vue";
-import BookCreate from "@/views/books/BookCreate.vue";
-import BookDetails from "@/views/books/BookDetails.vue";
-import BookEdit from "@/views/books/BookEdit.vue";
-import BookList from "../views/books/BookList.vue";
-import FilmCreate from "@/views/films/FilmCreate.vue";
-import FilmDetails from "@/views/films/FilmDetails.vue";
-import FilmEdit from "@/views/films/FilmEdit.vue";
-import FilmList from "../views/films/FilmList.vue";
-import EventCreate from "@/views/events/EventCreate.vue";
-import EventsAssigned from "@/views/events/EventsAssigned.vue";
-import EventShow from "@/views/events/EventShow.vue";
-import EventEdit from "@/views/events/EventEdit.vue";
-import EventList from "../views/events/EventList.vue";
-import EventStatistics from "@/views/events/EventStatistics.vue";
-import EventStatisticDetail from "../views/events/EventStatisticDetail.vue";
-import ForgotPassword from "../components/ForgotPassword.vue";
-import ResetPassword from "../components/ResetPassword.vue";
-import Gardens from "../views/gardens/Gardens.vue";
-import GardenCreate from "@/views/gardens/GardenCreate.vue";
-import GardenEdit from "@/views/gardens/GardenEdit.vue";
-import GlucoseReadings from "@/views/glucose_readings/GlucoseReadings.vue";
-import GlucoseReadingCreate from "@/views/glucose_readings/GlucoseReadingCreate.vue";
-import GlucoseReadingEdit from "@/views/glucose_readings/GlucoseReadingEdit.vue";
-import GolfCreate from "../views/golfs/GolfCreate.vue";
-import GolfDetails from "@/views/golfs/GolfDetails.vue";
-import GolfEdit from "@/views/golfs/GolfEdit.vue"
-import GolfList from "../views/golfs/GolfList.vue";
-import MedCreate from "@/views/meds/MedCreate.vue";
-import MedDetails from "@/views/meds/MedDetails.vue";
-import MedEdit from "@/views/meds/MedEdit.vue";
-import MedList from "../views/meds/MedList.vue";
-import Plants from "../views/plants/Plants.vue";
-import PlantCreate from "@/views/plants/PlantCreate.vue";
-import PlantDetails from "@/components/plants/PlantDetails.vue";
-import PlantEdit from "@/views/plants/PlantEdit.vue";
-import ProductEdit from "../views/products/ProductEdit.vue";
-import ProductsLocationList from "../views/products/ProductsLocationList.vue";
-import ProductsByLocations from "../views/products/ProductsByLocations.vue";
-import ProductsByVendors from "../views/products/ProductsByVendors.vue";
-import ProductList from "../views/products/ProductList.vue";
-import ProductVendorCreate from "../views/products/ProductVendorCreate.vue";
-import VendorEdit from "../views/vendors/VendorEdit.vue";
-import TrailCreate from "@/views/trails/TrailCreate.vue";
-import TrailDetails from "@/views/trails/TrailDetails.vue";
-import TrailEdit from "@/views/trails/TrailEdit.vue";
-import TrailList from "../views/trails/TrailList.vue";
-import TravelCreate from "@/views/travels/TravelCreate.vue";
-import TravelDetails from "@/views/travels/TravelDetails.vue";
-import TravelList from "../views/travels/TravelList.vue";
-import TravelEdit from "@/views/travels/TravelEdit.vue";
-import TravelEventCreate from "@/views/travel_events/TravelEventCreate.vue";
-import TravelEventEdit from "@/views/travel_events/TravelEventEdit.vue";
-import TravelEventDetails from "@/views/travel_events/TravelEventDetails.vue";
-import UserCreate from "@/views/users/UserCreate.vue";
-import UserEdit from "@/views/users/UserEdit.vue";
-import UserList from "../views/users/UserList.vue";
-import WateringCreate from "@/views/waterings/WateringCreate.vue";
-import Waterings from "../views/waterings/Waterings.vue";
-import WateringEdit from "@/views/waterings/WateringEdit.vue";
-import WateringDetails from "@/components/waterings/WateringDetails.vue";
+
+// ✅ ONLY IMPORT CORE COMPONENTS (Used immediately)
 import Home from '../views/Home.vue'
-import Dashboard from '../views/Dashboard.vue'
 import Login from '../views/Login.vue'
-import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
 
 const routes = [
-  {
-  path: '/glucose-readings',
-  name: 'GlucoseReadings',
-  component: () => import('@/views/glucose_readings/GlucoseReadings.vue')
-},
+  // ✅ CORE ROUTES (EAGER LOADING)
   {
     path: '/',
     name: 'home',
     component: Home,
-  },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: Dashboard,
-    meta: { requiresAuth: true }
   },
   {
     path: '/login',
@@ -89,147 +18,156 @@ const routes = [
     component: Login
   },
   {
-    path: '/logout',
-    name: 'Logout',
-    component: Logout
-  },
-  {
     path: '/register',
     name: 'register',
     component: Register
   },
+
+  // ✅ ALL OTHER ROUTES (LAZY LOADING)
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/Dashboard.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: () => import('../views/Logout.vue')
+  },
   {
     path: '/forgot_password',
     name: 'ForgotPassword',
-    component: ForgotPassword
+    component: () => import('../components/ForgotPassword.vue')
   },
   {
     path: '/password_resets/:token',
     name: 'ResetPassword',
-    component: ResetPassword
+    component: () => import('../components/ResetPassword.vue')
   },
+
+  // ✅ ABOUT
   {
     path: "/about",
     name: "About",
-    component: About,
-    //meta: { requiresAuth: true}
+    component: () => import("../views/About.vue"),
+  },
+
+  // ✅ BOOKS
+  {
+    path: "/books",
+    name: "BookList",
+    component: () => import('../views/books/BookList.vue'),
+    meta: { requiresAuth: true}
   },
   {
     path: "/book/create",
     name: "BookCreate",
-    component: BookCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/books",
-    name: "BookList",
-    component: BookList,
+    component: () => import('@/views/books/BookCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/books/:id",
     name: "BookDetails",
     props: true,
-    component: BookDetails,
+    component: () => import('@/views/books/BookDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/book/:id",
     name: "BookEdit",
     props: true,
-    component: BookEdit,
+    component: () => import('@/views/books/BookEdit.vue'),
     meta: { requiresAuth: true}
   },
+
+  // ✅ EVENTS
   {
     path: "/events",
     name: "EventList",
-    component: EventList,
+    component: () => import('../views/events/EventList.vue'),
     meta: { requiresAuth: true}
   },
-  //{
-  //  path: "/events/notification_events_due/",
-  //  name: "EventList",
-  //  props: true,
-  //  component: EventList,
-  //  meta: { requiresAuth: true}
-  //},
   {
     path: "/events/statistic_detail/:statistic",
     name: "EventStatisticDetail",
     props: true,
-    component: EventStatisticDetail,
+    component: () => import('../views/events/EventStatisticDetail.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/events/:id",
     name: "EventShow",
     props: true,
-    component: EventShow,
+    component: () => import('@/views/events/EventShow.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/event/:id",
     name: "EventEdit",
     props: true,
-    component: EventEdit,
+    component: () => import('@/views/events/EventEdit.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/event/create",
     name: "EventCreate",
-    component: EventCreate,
+    component: () => import('@/views/events/EventCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/event_statistics",
     name: "EventStatistics",
-    component: EventStatistics,
+    component: () => import('@/views/events/EventStatistics.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/events_assigned/:assigned",
     props: true,
     name: "EventsAssigned",
-    component: EventsAssigned,
+    component: () => import('@/views/events/EventsAssigned.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ FILMS
+  {
+    path: "/films",
+    name: "FilmList",
+    component: () => import('../views/films/FilmList.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/film/create",
     name: "FilmCreate",
-    component: FilmCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/films",
-    name: "FilmList",
-    component: FilmList,
+    component: () => import('@/views/films/FilmCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/films/:id",
     name: "FilmDetails",
     props: true,
-    component: FilmDetails,
+    component: () => import('@/views/films/FilmDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/film/:id",
     name: "FilmEdit",
     props: true,
-    component: FilmEdit,
+    component: () => import('@/views/films/FilmEdit.vue'),
     meta: { requiresAuth: true}
   },
-    {
-    path: "/garden/:id",
-    name: "GardenEdit",
-    props: true,
-    component: GardenEdit,
-    meta: { requiresAuth: true}
-  },
-    {
+
+  // ✅ GARDENS
+  {
     path: "/gardens/",
     name: "Gardens",
-    component: Gardens,
+    component: () => import('../views/gardens/Gardens.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/garden/create",
+    name: "GardenCreate",
+    component: () => import('@/views/gardens/GardenCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
@@ -240,15 +178,18 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/garden/create",
-    name: "GardenCreate",
-    component: GardenCreate,
+    path: "/garden/:id",
+    name: "GardenEdit",
+    props: true,
+    component: () => import('@/views/gardens/GardenEdit.vue'),
     meta: { requiresAuth: true}
   },
+
+  // ✅ GLUCOSE READINGS
   {
     path: "/glucose-readings",
     name: "GlucoseReadings",
-    component: GlucoseReadings,
+    component: () => import('@/views/glucose_readings/GlucoseReadings.vue'),
     meta: { requiresAuth: true },
   },
   {
@@ -261,263 +202,280 @@ const routes = [
   {
     path: "/glucose_reading/create",
     name: "GlucoseReadingCreate",
-    component: GlucoseReadingCreate,
+    component: () => import('@/views/glucose_readings/GlucoseReadingCreate.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: "/glucose_reading/:id",
     name: "GlucoseReadingEdit",
     props: true,
-    component: GlucoseReadingEdit,
+    component: () => import('@/views/glucose_readings/GlucoseReadingEdit.vue'),
     meta: { requiresAuth: true },
+  },
+
+  // ✅ GOLF
+  {
+    path: "/golfs",
+    name: "GolfList",
+    component: () => import('../views/golfs/GolfList.vue'),
+    meta: { requiresAuth: true}
   },
   {
     path: "/golf/create",
     name: "GolfCreate",
-    component: GolfCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/golfs",
-    name: "GolfList",
-    component: GolfList,
+    component: () => import('../views/golfs/GolfCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/golfs/:id",
     name: "GolfDetails",
     props: true,
-    component: GolfDetails,
+    component: () => import('@/views/golfs/GolfDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/golf/:id",
     name: "GolfEdit",
     props: true,
-    component: GolfEdit,
+    component: () => import('@/views/golfs/GolfEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ MEDS - FIXED ROUTES
+  {
+    path: "/meds",
+    name: "MedList",
+    component: () => import('@/views/meds/MedList.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/med/create",
     name: "MedCreate",
-    component: MedCreate,
+    component: () => import('@/views/meds/MedCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/meds",
-    name: "MedList",
-    component: MedList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/meds/:id",
+    path: "/meds/:id/details",  // ← FIXED: Different path for details
     name: "MedDetails",
     props: true,
-    component: MedDetails,
+    component: () => import('@/views/meds/MedDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/meds/:id",
+    path: "/med/:id",  // ← FIXED: Different path pattern for edit
     name: "MedEdit",
     props: true,
-    component: MedEdit,
+    component: () => import('@/views/meds/MedEdit.vue'),
     meta: { requiresAuth: true}
-  },
-  
-  {
-   path: "/products_by_location/:location",
-   component: ProductsLocationList,
-   name: "ProductsLocationList",
-   meta: { requiresAuth: true}
   },
 
-  {
-    path: "/products",
-    name: "ProductList",
-    component: ProductList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/product/:id",
-    name: "ProductEdit",
-    props: true,
-    component: ProductEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/trail/create",
-    name: "TrailCreate",
-    component: TrailCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/trails",
-    name: "TrailList",
-    component: TrailList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/trails/:id",
-    name: "TrailDetails",
-    props: true,
-    component: TrailDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/trails/:id",
-    name: "TrailEdit",
-    props: true,
-    component: TrailEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travel/create",
-    name: "TravelCreate",
-    component: TravelCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travels/create_travel_event/:id",
-    name: "TravelEventCreate",
-    component: TravelEventCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travels",
-    name: "TravelList",
-    component: TravelList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travels/:id",
-    name: "TravelDetails",
-    props: true,
-    component: TravelDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travel/:id",
-    name: "TravelEdit",
-    props: true,
-    component: TravelEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travel_event/:id",
-    name: "TravelEventEdit",
-    props: true,
-    component: TravelEventEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travel_events/:id",
-    name: "TravelEventDetails",
-    props: true,
-    component: TravelEventDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/user/create",
-    props: true,
-    name: "UserCreate",
-    component: UserCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/users",
-    name: "UserList",
-    component: UserList,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/users/:id",
-    name: "UserEdit",
-    props: true,
-    component: UserEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/vendor/create",
-    name: "ProductVendorCreate",
-    component: ProductVendorCreate,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/vendor/:id",
-    name: "VendorEdit",
-    props: true,
-    component: VendorEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/products_by_locations",
-    name: "ProductsByLocations",
-    props: true,
-    component: ProductsByLocations,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/products_by_vendors",
-    name: "ProductsByVendors",
-    props: true,
-    component: ProductsByVendors,
-    meta: { requiresAuth: true}
-  },
+  // ✅ PLANTS
   {
     path: "/plants",
     name: "Plants",
-    component: Plants,
+    component: () => import('../views/plants/Plants.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/plants/create/:gardenId?", // Make gardenId optional",
+    path: "/plants/create/:gardenId?",
     name: "PlantCreate",
-    component: PlantCreate,
-    props: true, // This passes gardenId as a prop
+    component: () => import('@/views/plants/PlantCreate.vue'),
+    props: true,
     meta: { requiresAuth: true}
   },
   {
     path: "/plants/:id",
     name: "PlantDetails",
     props: true,
-    component: PlantDetails,
+    component: () => import('@/components/plants/PlantDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/plant/:id",
     name: "PlantEdit",
     props: true,
-    component: PlantEdit,
+    component: () => import('@/views/plants/PlantEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ PRODUCTS
+  {
+    path: "/products",
+    name: "ProductList",
+    component: () => import('../views/products/ProductList.vue'),
     meta: { requiresAuth: true}
   },
   {
+    path: "/products_by_locations",
+    name: "ProductsByLocations",
+    props: true,
+    component: () => import('../views/products/ProductsByLocations.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/products_by_vendors",
+    name: "ProductsByVendors",
+    props: true,
+    component: () => import('../views/products/ProductsByVendors.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/products_by_location/:location",
+    component: () => import('../views/products/ProductsLocationList.vue'),
+    name: "ProductsLocationList",
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/product/:id",
+    name: "ProductEdit",
+    props: true,
+    component: () => import('../views/products/ProductEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ TRAILS
+  {
+    path: "/trails",
+    name: "TrailList",
+    component: () => import('../views/trails/TrailList.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/trail/create",
+    name: "TrailCreate",
+    component: () => import('@/views/trails/TrailCreate.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/trails/:id/details", // ← FIXED: Different path for details
+    name: "TrailDetails",
+    props: true,
+    component: () => import('@/views/trails/TrailDetails.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/trail/:id", // ← Different pattern for edit
+    name: "TrailEdit",
+    props: true,
+    component: () => import('@/views/trails/TrailEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ TRAVELS
+  {
+    path: "/travels",
+    name: "TravelList",
+    component: () => import('../views/travels/TravelList.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travel/create",
+    name: "TravelCreate",
+    component: () => import('@/views/travels/TravelCreate.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travels/:id",
+    name: "TravelDetails",
+    props: true,
+    component: () => import('@/views/travels/TravelDetails.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travel/:id",
+    name: "TravelEdit",
+    props: true,
+    component: () => import('@/views/travels/TravelEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travels/create_travel_event/:id",
+    name: "TravelEventCreate",
+    component: () => import('@/views/travel_events/TravelEventCreate.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travel_event/:id",
+    name: "TravelEventEdit",
+    props: true,
+    component: () => import('@/views/travel_events/TravelEventEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/travel_events/:id",
+    name: "TravelEventDetails",
+    props: true,
+    component: () => import('@/views/travel_events/TravelEventDetails.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ USERS
+  {
+    path: "/users",
+    name: "UserList",
+    component: () => import('../views/users/UserList.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/user/create",
+    props: true,
+    name: "UserCreate",
+    component: () => import('@/views/users/UserCreate.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/users/:id",
+    name: "UserEdit",
+    props: true,
+    component: () => import('@/views/users/UserEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ VENDORS
+  {
+    path: "/vendor/create",
+    name: "ProductVendorCreate",
+    component: () => import('../views/products/ProductVendorCreate.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/vendor/:id",
+    name: "VendorEdit",
+    props: true,
+    component: () => import('../views/vendors/VendorEdit.vue'),
+    meta: { requiresAuth: true}
+  },
+
+  // ✅ WATERINGS
+  {
     path: "/waterings",
     name: "Waterings",
-    component: Waterings, // Use the imported component
+    component: () => import('../views/waterings/Waterings.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/watering/create/:gardenId?",
+    name: "WateringCreate",
+    component: () => import('@/views/waterings/WateringCreate.vue'),
+    props: true,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/waterings/:id",
+    name: "WateringDetails",
+    props: true,
+    component: () => import('@/components/waterings/WateringDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/watering/:id",
     name: "WateringEdit",
     props: true,
-    component: WateringEdit,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/waterings/:id", // <-- Add ? to make id optional
-    name: "WateringDetails",
-    props: true,
-    component: WateringDetails,
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/watering/create/:gardenId?", // Make gardenId optional
-    name: "WateringCreate",
-    component: WateringCreate,
-    props: true, // This passes gardenId as a prop
+    component: () => import('@/views/waterings/WateringEdit.vue'),
     meta: { requiresAuth: true}
   },
 ];
+
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
@@ -525,15 +483,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('user')
-  //console.log("router beforeEach !loggedIn: ", !loggedIn)
-  //console.log("Matched?", to.matched.some(record => record.meta.requiresAuth))
-  //console.log("Current to: ", to);
-  //console.log("Current to.matched: ", to.matched == '/');
-  //console.log("Current from: ", from);
   
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     next('/')
+  } else {
+    next()
   }
-  next()
 })
+
 export default router;

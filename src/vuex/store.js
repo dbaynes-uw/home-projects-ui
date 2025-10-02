@@ -20,10 +20,8 @@ export default new Vuex.Store({
     isNewUser: null,
     loggedIn: null,
     loggedOut: null,
-    book: [],
     books: [],
     events: [],
-    event: {},
     film: [],
     films: [],
     garden: [],
@@ -32,7 +30,6 @@ export default new Vuex.Store({
     glucoseReading: null,
     watering: [],
     waterings: [],
-    med: {},
     meds: [],
     plant: {},
     plants: [],
@@ -973,26 +970,46 @@ async createPlant({ commit, state }, plant) {
           });
       }
     },
+ 
     async fetchMeds({ commit }, { page = 1, perPage = 20 } = {}) {
       commit('SET_MEDS_LOADING', true);
-
+    
       try {
         const response = await EventService.getMeds({ page, perPage });
 
+        // ✅ HANDLE DIFFERENT RESPONSE FORMATS
+        let medsData;
+        if (response.data && response.data.meds) {
+          // Paginated response with wrapper
+          medsData = response.data.meds;
+        } else if (Array.isArray(response.data)) {
+          // Direct array response
+          medsData = response.data;
+        } else {
+          // Fallback to empty array
+          medsData = [];
+        }
+      
         if (page === 1) {
           // First page - replace data
-          commit("SET_MEDS", response.data.meds || []);
+          commit("SET_MEDS", medsData);
         } else {
           // Additional pages - append data
-          commit("APPEND_MEDS", response.data.meds || []);
+          commit("APPEND_MEDS", medsData);
         }
-
-        commit('SET_MEDS_TOTAL', response.data.total || 0);
+      
+        commit('SET_MEDS_TOTAL', response.data.total || medsData.length);
         commit('SET_MEDS_PAGE', page);
 
+        // ✅ IMPORTANT: RETURN THE DATA
+        return medsData;
+      
       } catch (error) {
         console.error("Meds fetch error:", error);
         commit("SET_MEDS", []);
+
+        // ✅ RETURN EMPTY ARRAY ON ERROR
+        return [];
       } finally {
         commit('SET_MEDS_LOADING', false);
       }
@@ -1461,6 +1478,15 @@ async updateVendorsProducts({ commit }, payload) {
     }    
   },
   getters: {
+    currentBook: (state) => (id) => {
+      return state.books.find(book => book.id === id)
+    },
+    currentEvent: (state) => (id) => {
+     return state.events.find(event => event.id === id)
+    },
+    currentMed: (state) => (id) => {
+      return state.meds.find(med => med.id === id)
+    },
     gardens(state) {
       return state.gardens || []; // Ensure it always returns an array
     },

@@ -122,10 +122,11 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router'; // ✅ IMPORT BOTH
 import MedCard from "@/components/meds/MedCard.vue";
 import MedChart from "@/components/meds/MedChart.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
@@ -133,7 +134,8 @@ import DateFormatService from "@/services/DateFormatService.js";
 
 // ✅ COMPOSITION API SETUP
 const store = useStore();
-const router = useRouter();
+const router = useRouter(); // For navigation
+const route = useRoute();   // ✅ FIXED - For route info
 
 // ✅ REACTIVE STATE
 const showIndexView = ref(false);
@@ -143,7 +145,20 @@ const selectedTimeFrame = ref('30'); // Default to 30 days
 const chartKey = ref(0); // Force chart re-render
 
 // ✅ COMPUTED PROPERTIES
-const meds = computed(() => store.state.meds || []);
+const meds = computed(() => {
+  const storeState = store.state.meds;
+  console.log('🔍 Raw store.state.meds:', storeState, 'Type:', typeof storeState);
+  
+  // ✅ HANDLE BOTH ARRAY AND NON-ARRAY STATES
+  if (Array.isArray(storeState)) {
+    return storeState;
+  } else if (storeState === 0 || storeState === null || storeState === undefined) {
+    return [];
+  } else {
+    console.warn('⚠️ Unexpected meds state type:', typeof storeState, storeState);
+    return [];
+  }
+});
 
 const chartLabels = computed(() => {
   return displayedMeds.value.map(med => 
@@ -155,13 +170,18 @@ const chartIntervals = computed(() => {
   return displayedMeds.value.map(med => med.interval_days || 0);
 });
 
-// ✅ MAIN DISPLAY LOGIC
+// ✅ MAIN DISPLAY LOGIC - ENHANCED SAFETY
 const displayedMeds = computed(() => {
+  console.log('🔄 Computing displayedMeds...');
+  
   // ✅ SAFETY CHECK: ENSURE WE HAVE AN ARRAY
-  let result = Array.isArray(meds.value) ? meds.value : [];
+  let result = Array.isArray(meds.value) ? [...meds.value] : [];
+  
+  console.log('🔄 Initial result:', result.length, 'items');
   
   // Early return if no meds
   if (result.length === 0) {
+    console.log('🔄 No meds to display');
     return [];
   }
   
@@ -171,15 +191,18 @@ const displayedMeds = computed(() => {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysBack);
     
+    const beforeFilter = result.length;
     result = result.filter(med => {
       const medDate = new Date(med.date_of_occurrence);
       return medDate >= cutoffDate;
     });
+    console.log(`🔄 Time filter: ${beforeFilter} → ${result.length} items`);
   }
   
   // Apply search filter
   if (searchText.value && searchText.value.length >= 2) {
     const searchLower = searchText.value.toLowerCase();
+    const beforeFilter = result.length;
     
     result = result.filter(med => {
       const searchInDate = med.date_of_occurrence && 
@@ -195,13 +218,33 @@ const displayedMeds = computed(() => {
       
       return searchInDate || searchInDuration || searchInCircumstances;
     });
+    console.log(`🔄 Search filter: ${beforeFilter} → ${result.length} items`);
   }
   
   // ✅ SAFE SORT: ENSURE result IS STILL AN ARRAY
-  return Array.isArray(result) ? result.sort((a, b) => 
+  const sortedResult = Array.isArray(result) ? result.sort((a, b) => 
     new Date(b.date_of_occurrence) - new Date(a.date_of_occurrence)
   ) : [];
+  
+  console.log('🔄 Final result:', sortedResult.length, 'items');
+  return sortedResult;
 });
+
+// ✅ ENHANCED DEBUG WATCHERS
+watch(meds, (newMeds) => {
+  console.log('🔍 Meds changed:', newMeds)
+  console.log('🔍 Is array?', Array.isArray(newMeds))
+  console.log('🔍 Length:', newMeds?.length || 0)
+  if (newMeds && newMeds.length > 0) {
+    console.log('🔍 First med:', newMeds[0])
+  }
+}, { immediate: true })
+
+watch(displayedMeds, (newDisplayed) => {
+  console.log('📊 DisplayedMeds changed:', newDisplayed)
+  console.log('📊 Count:', newDisplayed?.length || 0)
+}, { immediate: true })
+
 // ✅ WATCHER TO FORCE CHART UPDATE (NO SIDE EFFECTS)
 watch(
   [selectedTimeFrame, displayedMeds], 
@@ -240,18 +283,28 @@ const filterByTimeFrame = () => {
   });
 };
 
-// ✅ LIFECYCLE
+// ✅ ENHANCED MOUNTED DEBUG
 onMounted(async () => {
+  console.log('🚀 MedList mounted!')
+  console.log('🚀 Route name:', route.name)
+  console.log('🚀 Route path:', route.path)
+  console.log('🚀 User logged in?', store.getters.loggedIn)
+  console.log('🚀 Store state keys:', Object.keys(store.state))
+  console.log('🚀 Initial meds state:', store.state.meds)
+  console.log('🚀 Initial meds type:', typeof store.state.meds)
   
-  // Fetch meds data
-  await store.dispatch("fetchMeds");
-  
-  // Wait for data to load
-  await nextTick();
-  
-});
+  try {
+    console.log('📡 Dispatching fetchMeds...')
+    const result = await store.dispatch('fetchMeds')
+    console.log('✅ Dispatch result:', result)
+    console.log('✅ Store meds after fetch:', store.state.meds)
+    console.log('✅ Store meds type after fetch:', typeof store.state.meds)
+  } catch (error) {
+    console.error('❌ Fetch error:', error)
+    console.error('❌ Error details:', error.message, error.stack)
+  }
+})
 </script>
-
 <style scoped>
 /* ✅ FONT AWESOME GLUCOSE BUTTON WITH HEART ICON */
 .glucose-btn {

@@ -20,7 +20,19 @@ module.exports = defineConfig({
           warnings: false,      // Suppress warnings
           runtimeErrors: false, // Suppress runtime errors like ResizeObserver errors
       },
+    },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['vue', 'vuex', 'vue-router'],
+          vuetify: ['vuetify'],
+          charts: ['chart.js'] // If you use charts
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
   },
   pluginOptions: {
     vuetify: {
