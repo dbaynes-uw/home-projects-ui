@@ -131,7 +131,22 @@ import MedCard from "@/components/meds/MedCard.vue";
 import MedChart from "@/components/meds/MedChart.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-
+// ✅ ADD CLEANUP ON UNMOUNT
+import { onUnmounted } from 'vue';
+// ✅ CLEANUP WHEN LEAVING COMPONENT
+onUnmounted(() => {
+  console.log('🧹 MedList unmounting - cleaning up...')
+  
+  // Clear search and filters
+  searchText.value = '';
+  selectedTimeFrame.value = '30';
+  
+  // Clear component-level data
+  if (meds.value.length > 100) {
+    console.log('🧹 Clearing large meds array...')
+    store.dispatch('clearLargeDatasets');
+  }
+})
 // ✅ COMPOSITION API SETUP
 const store = useStore();
 const router = useRouter(); // For navigation
@@ -168,58 +183,89 @@ const chartIntervals = computed(() => {
   return displayedMeds.value.map(med => med.interval_days || 0);
 });
 
-// ✅ MAIN DISPLAY LOGIC - ENHANCED SAFETY
+
 const displayedMeds = computed(() => {
+  console.log('🔄 Computing displayedMeds...');
   
   // ✅ SAFETY CHECK: ENSURE WE HAVE AN ARRAY
   let result = Array.isArray(meds.value) ? [...meds.value] : [];
-    
+  
+  console.log('🔄 Initial result:', result.length, 'items');
+  
+  // ✅ HARD LIMIT TO PREVENT MEMORY ISSUES (EMERGENCY PROTECTION)
+  if (result.length > 500) {
+    console.warn('🚨 Too many meds, limiting to 500 to prevent R14 memory errors');
+    result = result.slice(0, 500);
+  }
+  
   // Early return if no meds
   if (result.length === 0) {
     console.log('🔄 No meds to display');
     return [];
   }
   
-  // Apply time frame filter
+  // ✅ APPLY TIME FRAME FILTER
   if (selectedTimeFrame.value && result.length > 0) {
     const daysBack = parseInt(selectedTimeFrame.value);
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysBack);
     
-    //const beforeFilter = result.length;
+    const beforeFilter = result.length;
     result = result.filter(med => {
       const medDate = new Date(med.date_of_occurrence);
       return medDate >= cutoffDate;
     });
-    //console.log(`🔄 Time filter: ${beforeFilter} → ${result.length} items`);
+    console.log(`🔄 Time filter (${daysBack} days): ${beforeFilter} → ${result.length} items`);
   }
   
-  // Apply search filter
+  // ✅ APPLY SEARCH FILTER
   if (searchText.value && searchText.value.length >= 2) {
     const searchLower = searchText.value.toLowerCase();
     const beforeFilter = result.length;
     
     result = result.filter(med => {
+      // Search in date
       const searchInDate = med.date_of_occurrence && 
         DateFormatService.formatDatejs(med.date_of_occurrence)
           .toLowerCase()
           .includes(searchLower);
           
+      // Search in duration
       const searchInDuration = med.duration && 
         med.duration.toLowerCase().includes(searchLower);
         
+      // Search in circumstances
       const searchInCircumstances = med.circumstances && 
         med.circumstances.toLowerCase().includes(searchLower);
       
-      return searchInDate || searchInDuration || searchInCircumstances;
+      // Search in description (if exists)
+      const searchInDescription = med.description && 
+        med.description.toLowerCase().includes(searchLower);
+        
+      // Search in type (if exists)
+      const searchInType = med.type && 
+        med.type.toLowerCase().includes(searchLower);
+      
+      return searchInDate || searchInDuration || searchInCircumstances || 
+             searchInDescription || searchInType;
     });
-    console.log(`🔄 Search filter: ${beforeFilter} → ${result.length} items`);
+    console.log(`🔄 Search filter ("${searchText.value}"): ${beforeFilter} → ${result.length} items`);
   }
   
   // ✅ SAFE SORT: ENSURE result IS STILL AN ARRAY
-  const sortedResult = Array.isArray(result) ? result.sort((a, b) => 
-    new Date(b.date_of_occurrence) - new Date(a.date_of_occurrence)
-  ) : [];
+  const sortedResult = Array.isArray(result) ? result.sort((a, b) => {
+    // Sort by date (most recent first)
+    const dateA = new Date(a.date_of_occurrence);
+    const dateB = new Date(b.date_of_occurrence);
+    return dateB - dateA;
+  }) : [];
+  
+  console.log('🔄 Final result:', sortedResult.length, 'items');
+  
+  // ✅ ADDITIONAL MEMORY PROTECTION - WARN IF STILL TOO LARGE
+  if (sortedResult.length > 200) {
+    console.warn('⚠️ Large result set:', sortedResult.length, 'items - consider more filtering');
+  }
   
   return sortedResult;
 });

@@ -59,4 +59,27 @@ createApp({
   .use(vuetify)
   .component("v-select", vSelect)
   .mount("#app")
-
+  
+if (process.env.NODE_ENV === 'production') {
+  // Monitor memory usage
+  setInterval(() => {
+    if (performance.memory) {
+      const memory = performance.memory;
+      const used = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+      const total = Math.round(memory.totalJSHeapSize / 1024 / 1024);
+      
+      console.log(`💾 Memory: ${used}MB / ${total}MB`);
+      
+      // Warn if using too much memory
+      if (used > 100) { // 100MB warning
+        console.warn('🚨 High memory usage detected:', used, 'MB');
+        
+        // Auto-cleanup if memory is too high
+        if (used > 200 && window.app?.$store) { // 200MB critical
+          console.warn('🚨 Critical memory - forcing cleanup');
+          window.app.$store.dispatch('forceCleanup');
+        }
+      }
+    }
+  }, 30000); // Check every 30 seconds
+}

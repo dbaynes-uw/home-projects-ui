@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
-
+// In router/index.js - ADD THIS BEFORE export default router
 const routes = [
   // ✅ CORE ROUTES (EAGER LOADING)
   {
@@ -490,5 +490,31 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+router.beforeEach((to, from, next) => {
+  const loggedIn = localStorage.getItem('user')
+  
+  // ✅ MEMORY CLEANUP ON ROUTE CHANGE
+  if (from.name && from.name !== to.name) {
+    // Clear large datasets when changing routes
+    const store = router.app?.$store;
+    if (store) {
+      store.dispatch('clearLargeDatasets');
+    }
+  }
+  
+  if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
+    next('/')
+  } else {
+    next()
+  }
+})
+
+// ✅ CLEANUP ON UNLOAD
+window.addEventListener('beforeunload', () => {
+  const store = router.app?.$store;
+  if (store) {
+    store.dispatch('forceCleanup');
+  }
+});
 
 export default router;
