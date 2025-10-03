@@ -8,13 +8,13 @@ module.exports = defineConfig({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
       })
     ],
-    // ✅ ADDITIONAL OPTIMIZATIONS
-    resolve: {
-      alias: {
-        // Tree-shake Vuetify
-        'vuetify/lib': 'vuetify/lib/index.js'
-      }
-    },  
+    // ✅ REMOVE PROBLEMATIC ALIAS
+    // resolve: {
+    //   alias: {
+    //     'vuetify/lib': 'vuetify/lib/index.js'  ← This breaks Vuetify 3
+    //   }
+    // },
+    
     // ✅ WEBPACK OPTIMIZATION (Vue CLI way)
     optimization: {
       splitChunks: {
