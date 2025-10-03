@@ -30,7 +30,19 @@ export default new Vuex.Store({
     glucoseReading: null,
     watering: [],
     waterings: [],
+    
     meds: [],
+    medsLoading: false,
+    medsPagination: {
+      current_page: 1,
+      per_page: 20,
+      total_count: 0,
+      total_pages: 0
+    },
+    medsPage: 1,
+    medsTotal: 0,
+    medsPerPage: 20,
+
     plant: {},
     plants: [],
     location: {},
@@ -50,10 +62,6 @@ export default new Vuex.Store({
     //  {author: 'Test Author 2'},
     //]
     // Pagination states
-    medsPage: 1,
-    medsPerPage: 20,
-    medsTotal: 0,
-    medsLoading: false,    
   },
   data() {
     return {
@@ -188,17 +196,25 @@ export default new Vuex.Store({
     SET_MEDS(state, meds) {
       state.meds = meds;
     },
-    APPEND_MEDS(state, newMeds) {
-      state.meds = [...state.meds, ...newMeds];
+    // ✅ MEDS ADD THESE PAGINATION MUTATIONS
+    SET_MEDS_PAGINATION(state, pagination) {
+      state.medsPagination = pagination;
     },
+
     SET_MEDS_LOADING(state, loading) {
       state.medsLoading = loading;
     },
+
+    SET_MEDS_PAGE(state, page) {
+      state.medsPage = page;
+    },
+
     SET_MEDS_TOTAL(state, total) {
       state.medsTotal = total;
     },
-    SET_MEDS_PAGE(state, page) {
-      state.medsPage = page;
+
+    APPEND_MEDS(state, newMeds) {
+      state.meds = [...state.meds, ...newMeds];
     },
     DELETE_PLANT(state, plantId) {
       state.plants = state.plants.filter(plant => plant.id !== plantId);
@@ -971,29 +987,30 @@ async createPlant({ commit, state }, plant) {
       }
     },
  
-    // Simple version without pagination
-    async fetchMeds({ commit }) {
-      commit('SET_MEDS_LOADING', true);
-    
+    async fetchMeds({ commit }, { page = 1, limit = 20 } = {}) {
       try {
-        const response = await EventService.getMeds();
+        const response = await EventService.getMeds({ page, limit });
 
-        // ✅ HANDLE RESPONSE DATA
-        const medsData = Array.isArray(response.data) ? response.data : [];
+        if (page === 1) {
+          commit("SET_MEDS", response.data.data);
+        } else {
+          commit("APPEND_MEDS", response.data.data);
+        }
 
-        commit("SET_MEDS", medsData);
+        commit("SET_MEDS_PAGINATION", {
+          total: response.data.total,
+          page: response.data.page,
+          totalPages: response.data.totalPages
+        });
 
-        // ✅ RETURN THE DATA
-        return medsData;
-      
+        return response.data.data;
       } catch (error) {
-        console.error("❌ Meds fetch error:", error);
+        console.error("Meds fetch error:", error);
         commit("SET_MEDS", []);
         return [];
-      } finally {
-        commit('SET_MEDS_LOADING', false);
       }
     },
+
     async updateMed({ commit }, med) {
       EventService.putMed(med)
         .then((response) => {
