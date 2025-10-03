@@ -508,6 +508,17 @@ export default new Vuex.Store({
           location.reload();
       });
     },
+    async fetchBooks({ commit }) {
+      try {
+        // ✅ REPLACE WITH YOUR ACTUAL API ENDPOINT
+        const response = await EventService.getBooks()
+        commit('SET_BOOKS', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch books:', error);
+        commit('SET_BOOKS', []); // Set empty array on error
+      }
+    },
     async deleteBook({ commit }, book) {
       EventService.deleteBook(book)
         .then((response) => {
@@ -1528,6 +1539,27 @@ export default new Vuex.Store({
     }  
   },
   getters: {
+      // ✅ ADD FIRSTNAME GETTER
+    firstName: state => {
+      if (state.user && typeof state.user === 'string') {
+        return state.user.split(' ')[0]
+      }
+      if (state.user && state.user.name) {
+        return state.user.name.split(' ')[0]
+      }
+      return ''
+    },
+
+    // ✅ OTHER USER GETTERS
+    fullName: state => {
+      if (state.user && typeof state.user === 'string') {
+        return state.user
+      }
+      if (state.user && state.user.name) {
+        return state.user.name
+      }
+      return ''
+    },
     currentBook: (state) => (id) => {
       return state.books.find(book => book.id === id)
     },

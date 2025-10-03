@@ -1,18 +1,16 @@
 import { createApp } from "vue";
 import axios from "axios";
 import App from "./App.vue";
-import { createPinia } from 'pinia'
+// ❌ REMOVE PINIA - YOU'RE USING VUEX
+// import { createPinia } from 'pinia'
 import "./assets/global.css";
 import router from "./router";
 import store from "./vuex/store.js";
 
-// ✅ REMOVE THIS LINE - YOU HAVE DUPLICATE VUETIFY CONFIG
-// import "./plugins/vuetify";
-
 import { createVuetify } from 'vuetify'
-import 'vuetify/styles' // ✅ ADD VUETIFY STYLES
+import 'vuetify/styles'
 
-// ✅ TREE-SHAKEN VUETIFY COMPONENTS (Add more as needed)
+// ✅ MINIMAL VUETIFY COMPONENTS TO AVOID CRASHES
 import {
   VApp,
   VMain,
@@ -46,83 +44,12 @@ import {
   VToolbarTitle,
   VSpacer,
   VForm,
-  VTextarea,
-  VCheckbox,
-  VRadio,
-  VRadioGroup,
-  VSwitch,
-  VSlider,
-  VRangeSlider,
-  VDatePicker,
-  VTimePicker,
-  VAutocomplete,
-  VCombobox,
-  VFileInput,
-  VExpansionPanels,
-  VExpansionPanel,
-  VExpansionPanelTitle,
-  VExpansionPanelText
+  VTextarea
 } from 'vuetify/components'
 
 import { Ripple } from 'vuetify/directives'
 
-// ✅ FONTAWESOME OPTIMIZATION - SPECIFIC ICONS ONLY
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-// ✅ IMPORT ONLY ICONS YOU ACTUALLY USE
-import {
-  faUser,
-  faHome,
-  faBook,
-  faCalendar,
-  faFilm,
-  faPills,
-  faPlus,
-  faEdit,
-  faTrash,
-  faSearch,
-  faBars,
-  faSignOutAlt,
-  faSave,
-  faCancel,
-  faEye,
-  faFilter,
-  faSort,
-  faCog,
-  faChevronDown,
-  faChevronUp,
-  faChevronLeft,
-  faChevronRight
-} from '@fortawesome/free-solid-svg-icons'
-
-// ✅ ADD ONLY NEEDED ICONS TO LIBRARY
-library.add(
-  faUser,
-  faHome,
-  faBook,
-  faCalendar,
-  faFilm,
-  faPills,
-  faPlus,
-  faEdit,
-  faTrash,
-  faSearch,
-  faBars,
-  faSignOutAlt,
-  faSave,
-  faCancel,
-  faEye,
-  faFilter,
-  faSort,
-  faCog,
-  faChevronDown,
-  faChevronUp,
-  faChevronLeft,
-  faChevronRight
-)
-
-// ✅ OPTIMIZED VUETIFY CONFIG
+// ✅ SIMPLIFIED VUETIFY CONFIG
 const vuetify = createVuetify({
   components: {
     VApp,
@@ -157,22 +84,7 @@ const vuetify = createVuetify({
     VToolbarTitle,
     VSpacer,
     VForm,
-    VTextarea,
-    VCheckbox,
-    VRadio,
-    VRadioGroup,
-    VSwitch,
-    VSlider,
-    VRangeSlider,
-    VDatePicker,
-    VTimePicker,
-    VAutocomplete,
-    VCombobox,
-    VFileInput,
-    VExpansionPanels,
-    VExpansionPanel,
-    VExpansionPanelTitle,
-    VExpansionPanelText
+    VTextarea
   },
   directives: {
     Ripple,
@@ -180,111 +92,71 @@ const vuetify = createVuetify({
   theme: {
     defaultTheme: 'light'
   },
-  // ✅ FONTAWESOME ICONS (TREE-SHAKEN)
+  // ✅ USE MATERIAL DESIGN ICONS (NO FONTAWESOME FOR NOW)
   icons: {
-    defaultSet: 'fa',
-    sets: {
-      fa: {
-        component: FontAwesomeIcon,
-      },
-    },
+    defaultSet: 'mdi',
   },
 })
 
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-import { loadFonts } from "./plugins/webfontloader";
 
-// ✅ REMOVE THIS MASSIVE FONTAWESOME IMPORT - CAUSES R14!
-// import '@fortawesome/fontawesome-free/css/all.css'
+// ✅ SAFE FONT LOADING
+try {
+  const { loadFonts } = require("./plugins/webfontloader");
+  loadFonts();
+} catch (error) {
+  console.warn('Could not load fonts:', error.message);
+}
 
-loadFonts();
+// ✅ SIMPLE APP CREATION (NO COMPLEX BEFORECREATE)
+const app = createApp(App);
 
-// ✅ CREATE APP WITH MEMORY OPTIMIZATION
-const app = createApp({
-  extends: App,
-  beforeCreate() {
-    const userString = localStorage.getItem('user')
-    if (userString) {
-      try {
-        const userData = JSON.parse(userString)
-        this.$store.commit('SET_USER_DATA', userData)
-      } catch (error) {
-        console.warn('🚨 Invalid user data in localStorage, clearing...')
-        localStorage.removeItem('user')
-      }
-    }
-    
-    // ✅ OPTIMIZED AXIOS INTERCEPTOR
-    axios.interceptors.response.use(
-      response => response,
-      error => {
-        if (error.code && !error.message.includes("401")) {
-          return Promise.reject(error)
-        }
-        return Promise.reject(error)
-      }
-    )
+// ✅ CONFIGURE APP (NO PINIA!)
+app.use(router);
+app.use(store); // ✅ ONLY VUEX, NO PINIA
+app.use(vuetify);
+app.component("v-select", vSelect);
+
+// ✅ SAFE USER RESTORATION
+try {
+  const userString = localStorage.getItem('user');
+  if (userString) {
+    const userData = JSON.parse(userString);
+    store.commit('SET_USER_DATA', userData);
   }
-})
+} catch (error) {
+  console.warn('Could not restore user data:', error.message);
+  localStorage.removeItem('user');
+}
 
-// ✅ CONFIGURE APP
-app.use(router)
-app.use(store)
-app.use(createPinia())
-app.use(vuetify)
-app.component("v-select", vSelect)
-app.component("font-awesome-icon", FontAwesomeIcon) // ✅ REGISTER FONTAWESOME COMPONENT
+// ✅ BASIC AXIOS INTERCEPTOR
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      console.warn('401 Unauthorized - redirecting to login');
+    }
+    return Promise.reject(error);
+  }
+);
 
-// ✅ OPTIMIZED MEMORY MONITORING
+// ✅ BASIC MEMORY MONITORING (ONLY IN PRODUCTION)
 if (process.env.NODE_ENV === 'production') {
-  // Store app reference for cleanup
-  window.app = app
+  window.app = app;
   
-  // ✅ AGGRESSIVE MEMORY MONITORING FOR R14 PREVENTION
+  // ✅ SIMPLE MEMORY CHECK (EVERY 30 SECONDS)
   setInterval(() => {
     if (performance.memory) {
-      const memory = performance.memory;
-      const used = Math.round(memory.usedJSHeapSize / 1024 / 1024);
-      const total = Math.round(memory.totalJSHeapSize / 1024 / 1024);
+      const used = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+      console.log(`💾 Memory: ${used}MB`);
       
-      console.log(`💾 Memory: ${used}MB / ${total}MB`);
-      
-      // ✅ LOWER THRESHOLDS FOR R14 PREVENTION
-      if (used > 50) { // 50MB warning (was 100MB)
-        console.warn('🚨 Memory usage elevated:', used, 'MB');
-        
-        // ✅ FORCE CLEANUP AT 80MB (was 200MB)
-        if (used > 80 && store) {
-          console.warn('🚨 Critical memory - forcing cleanup');
-          try {
-            store.dispatch('forceCleanup');
-            
-            // ✅ FORCE GARBAGE COLLECTION
-            if (window.gc) {
-              window.gc();
-            }
-          } catch (error) {
-            console.error('🚨 Cleanup failed:', error);
-          }
-        }
+      if (used > 80) {
+        console.warn('🚨 High memory usage:', used, 'MB');
       }
     }
-  }, 15000); // ✅ CHECK EVERY 15 SECONDS (was 30)
-  
-  // ✅ EMERGENCY MEMORY CLEANUP ON ROUTE CHANGES
-  router.afterEach(() => {
-    setTimeout(() => {
-      if (performance.memory) {
-        const used = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
-        if (used > 60) {
-          console.warn('🧹 Post-route cleanup - memory:', used, 'MB');
-          store.dispatch('clearLargeDatasets');
-        }
-      }
-    }, 1000); // Cleanup 1 second after route change
-  });
+  }, 30000);
 }
 
 // ✅ MOUNT APP
-app.mount("#app")
+app.mount("#app");
