@@ -8,10 +8,19 @@ module.exports = defineConfig({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
       })
     ],
+    // ✅ ADDITIONAL OPTIMIZATIONS
+    resolve: {
+      alias: {
+        // Tree-shake Vuetify
+        'vuetify/lib': 'vuetify/lib/index.js'
+      }
+    },  
     // ✅ WEBPACK OPTIMIZATION (Vue CLI way)
     optimization: {
       splitChunks: {
         chunks: 'all',
+        minSize: 20000,
+        maxSize: 244000,
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
@@ -30,6 +39,12 @@ module.exports = defineConfig({
             name: 'charts',
             chunks: 'all',
             priority: 15
+          },
+          fontawesome: {
+            test: /[\\/]node_modules[\\/]@fortawesome[\\/]/,
+            name: 'fontawesome',
+            chunks: 'all',
+            priority: 25
           }
         }
       }
