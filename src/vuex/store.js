@@ -971,44 +971,24 @@ async createPlant({ commit, state }, plant) {
       }
     },
  
-    async fetchMeds({ commit }, { page = 1, perPage = 20 } = {}) {
+    // Simple version without pagination
+    async fetchMeds({ commit }) {
       commit('SET_MEDS_LOADING', true);
     
       try {
-        const response = await EventService.getMeds({ page, perPage });
+        const response = await EventService.getMeds();
 
-        // ✅ HANDLE DIFFERENT RESPONSE FORMATS
-        let medsData;
-        if (response.data && response.data.meds) {
-          // Paginated response with wrapper
-          medsData = response.data.meds;
-        } else if (Array.isArray(response.data)) {
-          // Direct array response
-          medsData = response.data;
-        } else {
-          // Fallback to empty array
-          medsData = [];
-        }
-      
-        if (page === 1) {
-          // First page - replace data
-          commit("SET_MEDS", medsData);
-        } else {
-          // Additional pages - append data
-          commit("APPEND_MEDS", medsData);
-        }
-      
-        commit('SET_MEDS_TOTAL', response.data.total || medsData.length);
-        commit('SET_MEDS_PAGE', page);
+        // ✅ HANDLE RESPONSE DATA
+        const medsData = Array.isArray(response.data) ? response.data : [];
 
-        // ✅ IMPORTANT: RETURN THE DATA
+        commit("SET_MEDS", medsData);
+
+        // ✅ RETURN THE DATA
         return medsData;
       
       } catch (error) {
-        console.error("Meds fetch error:", error);
+        console.error("❌ Meds fetch error:", error);
         commit("SET_MEDS", []);
-
-        // ✅ RETURN EMPTY ARRAY ON ERROR
         return [];
       } finally {
         commit('SET_MEDS_LOADING', false);

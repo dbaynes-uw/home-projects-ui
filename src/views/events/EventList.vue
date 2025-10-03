@@ -68,7 +68,7 @@
             <v-card-text>
               <!-- ✅ FILTER COMPONENTS ROW -->
               <div class="filters-grid mb-4">
-                <div class="filter-with-counter bounce-animation">
+                <div class="filter-with-counter">
                   <EventsPastDue />
                   <div class="filter-with-counter counter-badge-red pulse-animation">{{ pastDueCount }}</div>
                 </div>
@@ -249,16 +249,7 @@
                   </v-card-title>
 
                   <v-card-text>
-                    <div class="event-details"> 
-                      <div class="background-shapes">
-                        <div class="shape shape-1"></div>
-                        <div class="shape shape-2"></div>
-                        <div class="shape shape-3"></div>
-                        <div class="shape shape-4"></div>
-                        <div class="shape shape-5"></div>
-                        <div class="shape shape-6"></div>
-                      </div>
-                      
+                    <div class="event-details">                      
                       <div class="d-flex align-center mb-2">
                         <v-icon size="small" class="mr-2">mdi-account</v-icon>
                         <span>{{ event.assigned }}</span>
@@ -588,7 +579,6 @@ onMounted(async () => {
   try {
     // ✅ LOAD INACTIVE EVENTS BY DEFAULT
     await store.dispatch("eventsStatus", "active");
-    console.log("✅ Loaded active events by default");
   } catch (error) {
     console.error("❌ Error fetching events:", error);
   } finally {
@@ -607,15 +597,6 @@ onMounted(async () => {
   height: 102% !important
 }
 
-.background-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-}
 /* ✅ PAGE WRAPPER AND BACKGROUND */
 .page-wrapper {
   min-height: 100vh;
@@ -956,19 +937,10 @@ onMounted(async () => {
   animation: pulse 2s infinite;
 }
 
-.bounce-animation {
-  animation: bounce 1s 3;
-}
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); box-shadow: 0 4px 16px rgba(255, 65, 108, 0.6); }
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-6px); }
-  60% { transform: translateY(-3px); }
 }
 
 /* ✅ SEARCH MORPHING ANIMATION */
