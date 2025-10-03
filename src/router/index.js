@@ -484,36 +484,37 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('user')
   
-  if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
-    next('/')
-  } else {
-    next()
-  }
-})
-router.beforeEach((to, from, next) => {
-  const loggedIn = localStorage.getItem('user')
-  
   // ✅ MEMORY CLEANUP ON ROUTE CHANGE
   if (from.name && from.name !== to.name) {
     // Clear large datasets when changing routes
     const store = router.app?.$store;
-    if (store) {
-      store.dispatch('clearLargeDatasets');
+    if (store && store.dispatch) {
+      try {
+        store.dispatch('clearLargeDatasets');
+        console.log('🧹 Route cleanup:', from.name, '→', to.name);
+      } catch (error) {
+        console.warn('⚠️ Cleanup failed:', error.message);
+      }
     }
   }
   
+  // ✅ AUTH CHECK
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     next('/')
   } else {
     next()
   }
-})
+});
 
 // ✅ CLEANUP ON UNLOAD
 window.addEventListener('beforeunload', () => {
   const store = router.app?.$store;
-  if (store) {
-    store.dispatch('forceCleanup');
+  if (store && store.dispatch) {
+    try {
+      store.dispatch('forceCleanup');
+    } catch (error) {
+      console.warn('⚠️ Unload cleanup failed:', error.message);
+    }
   }
 });
 

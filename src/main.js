@@ -8,15 +8,71 @@ import store from "./vuex/store.js";
 import "./plugins/vuetify";
 import { createVuetify } from 'vuetify'
 import { aliases, fa } from 'vuetify/iconsets/fa'
+// ✅ IMPORT ONLY COMPONENTS YOU USE
+import {
+  VApp,
+  VMain,
+  VContainer,
+  VRow,
+  VCol,
+  VCard,
+  VCardTitle,
+  VCardText,
+  VCardActions,
+  VBtn,
+  VIcon,
+  VTextField,
+  VSelect,
+  VDataTable,
+  VDialog,
+  VList,
+  VListItem,
+  VAppBar,
+  VNavigationDrawer,
+  VTabs,
+  VTab,
+  VTabsWindow,
+  VTabsWindowItem
+} from 'vuetify/components'
+
+// ✅ IMPORT ONLY DIRECTIVES YOU USE
+import { Ripple } from 'vuetify/directives'
+
+// ✅ MINIMAL VUETIFY CONFIG
 const vuetify = createVuetify({
-  // config
-    icons: {
-    defaultSet: 'fa',
+  components: {
     aliases,
-    sets: {
-      fa,
-    },
+    fa,
+    VApp,
+    VMain,
+    VContainer,
+    VRow,
+    VCol,
+    VCard,
+    VCardTitle,
+    VCardText,
+    VCardActions,
+    VBtn,
+    VIcon,
+    VTextField,
+    VSelect,
+    VDataTable,
+    VDialog,
+    VList,
+    VListItem,
+    VAppBar,
+    VNavigationDrawer,
+    VTabs,
+    VTab,
+    VTabsWindow,
+    VTabsWindowItem
   },
+  directives: {
+    Ripple,
+  },
+  theme: {
+    defaultTheme: 'light'
+  }
 })
 //import { VuelidatePlugin } from '@vuelidate/core'
 
@@ -59,7 +115,7 @@ createApp({
   .use(vuetify)
   .component("v-select", vSelect)
   .mount("#app")
-  
+
 if (process.env.NODE_ENV === 'production') {
   // Monitor memory usage
   setInterval(() => {
