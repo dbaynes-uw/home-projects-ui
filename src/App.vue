@@ -21,102 +21,103 @@
     <v-app v-else>
       <div class="header-base">
         <div class="menu-base">
-<v-menu offset-y>
-  <template v-slot:activator="{ props }">
-    <v-btn v-bind="props" class="menu-dropdown" variant="plain">
-      <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
-      <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
-    </v-btn>
-  </template>
-  <v-list class="navigation-menu">
-    <v-list-item
-      v-for="link in links"
-      :key="`${link.label}-header-link`"
-      @click="$router.push({ name: link.label })"
-      class="nav-menu-item"
-      :class="{ 'mobile-nav-item': isMobile }"
-    >
-      <!-- ✅ DESKTOP: SHOW ICON-ONLY WITH TOOLTIP -->
-      <template v-if="!isMobile">
-        <v-tooltip location="right" :text="link.title">
-          <template v-slot:activator="{ props }">
-            <v-icon 
-              v-bind="props"
-              :icon="link.icon" 
-              class="dropdown-icon"
-              style="color: #8b0000 !important; text-align: center;"
-            />
-          </template>
-        </v-tooltip>
-      </template>
-      
-      <!-- ✅ MOBILE: SHOW TEXT-ONLY (NO ICONS) -->
-      <template v-else>
-        <span class="mobile-nav-text">{{ link.title }}</span>
-      </template>
-    </v-list-item>
-  </v-list>
-</v-menu>      </div>
-      <h1 class="heading-aligned">&nbsp;
-        <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
-      </h1>
-      </div>
+          <v-menu offset-y>
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" class="menu-dropdown" variant="plain">
+                <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
+                <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
+              </v-btn>
+            </template>
+            <v-list class="navigation-menu">
+              <v-list-item
+                v-for="link in links"
+                :key="`${link.label}-header-link`"
+                @click="$router.push({ name: link.label })"
+                class="nav-menu-item"
+                :class="{ 'mobile-nav-item': isMobile }"
+              >
+                <!-- ✅ DESKTOP: SHOW ICON-ONLY WITH TOOLTIP -->
+                <template v-if="!isMobile">
+                  <v-tooltip location="right" :text="link.title">
+                    <template v-slot:activator="{ props }">
+                      <v-icon 
+                        v-bind="props"
+                        :icon="link.icon" 
+                        class="dropdown-icon"
+                        style="color: #8b0000 !important; text-align: center;"
+                      />
+                    </template>
+                  </v-tooltip>
+                </template>
+
+                <!-- ✅ MOBILE: SHOW TEXT-ONLY (NO ICONS) -->
+                <template v-else>
+                  <span class="mobile-nav-text">{{ link.title }}</span>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div> <!-- End of .menu-base -->
+        <h1 class="heading-aligned">&nbsp;
+          <router-link id="h1-link" :to="{ name: 'EventList' }">Home Projects</router-link>
+        </h1>
+      </div> <!-- End of .header-base -->
       <span>
         <router-view></router-view>
       </span>
-<v-footer
-  color="teal-darken-2"
-  padless
-  style="display: flex; flex: 0 0 auto !important; top: 2rem"
->
-  <v-layout justify-center wrap>
-    <button
-      v-for="link in links"
-      :key="`${link.label}-footer-link`"
-      class="nav-button"
-      text
-      rounded
-    >
-      <router-link :to="{ name: `${link.label}` }" class="footer-link">
-        <!-- ✅ DESKTOP: ICON-ONLY WITH HOVER TOOLTIP -->
-        <template v-if="!isMobile">
-          <v-tooltip location="top" :text="link.title">
-            <template v-slot:activator="{ props }">
-              <v-icon 
-                v-bind="props"
-                :icon="link.icon" 
-                size="small" 
-                class="footer-icon"
-                style="color: #8b0000 !important;
-                  position: relative;
-                  left: .05rem;"
-              />
-          <!--span class="mobile-footer-text">{{ link.title }}</~span-->
-
-            </template>
-          </v-tooltip>
-        </template>
-      
-        <!-- ✅ MOBILE: ICON + TEXT (NO TOOLTIP NEEDED) -->
-        <template v-else>
-          <v-icon 
-            :icon="link.icon" 
-            size="small" 
-            class="footer-icon"
-            style="color: #8b0000 ;
-              position: relative;
-              left: .05rem;"
-          />
-        </template>
-      </router-link>
-    </button>
-    <p class="footer-info" style="margin-top: 0.75rem">
-      {{ this.onlineStatus == true ? "Online" : "Offline" }}
-    </p>      
-  </v-layout>
-</v-footer>
+      <v-footer
+        color="teal-darken-2"
+        padless
+        style="display: flex; flex: 0 0 auto !important; top: 2rem"
+      >
+        <v-layout justify-center wrap>
+          <button
+            v-for="link in links"
+            :key="`${link.label}-footer-link`"
+            class="nav-button"
+            text
+            rounded
+          >
+            <router-link :to="{ name: `${link.label}` }" class="footer-link">
+              <!-- ✅ DESKTOP: ICON-ONLY WITH HOVER TOOLTIP -->
+              <template v-if="!isMobile">
+                <v-tooltip location="top" :text="link.title">
+                  <template v-slot:activator="{ props }">
+                    <v-icon 
+                      v-bind="props"
+                      :icon="link.icon" 
+                      size="small" 
+                      class="footer-icon"
+                      style="color: #8b0000 !important;
+                        position: relative;
+                        left: .05rem;"
+                    />
+                <!--span class="mobile-footer-text">{{ link.title }}</~span-->
+                  
+                  </template>
+                </v-tooltip>
+              </template>
+            
+              <!-- ✅ MOBILE: ICON + TEXT (NO TOOLTIP NEEDED) -->
+              <template v-else>
+                <v-icon 
+                  :icon="link.icon" 
+                  size="small" 
+                  class="footer-icon"
+                  style="color: #8b0000 ;
+                    position: relative;
+                    left: .05rem;"
+                />
+              </template>
+            </router-link>
+          </button>
+          <p class="footer-info" style="margin-top: 0.75rem">
+            {{ this.onlineStatus == true ? "Online" : "Offline" }}
+          </p>      
+        </v-layout>
+      </v-footer>
     </v-app>
-  </div>
+  </div> <!-- End of #nav -->
 </template>
 
 <script>
