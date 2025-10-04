@@ -57,79 +57,44 @@
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
-import { required, email, minLength} from '@vuelidate/validators';
-import { reactive, computed } from 'vue';
-import { ref } from 'vue';
-const successMessage = ref('')
 export default {
-  mounted() {
-    this.$store.dispatch('logout');
-    if (this.$route.query.success) {
-      successMessage.value = this.$route.query.success;
-      this.statusMessage = successMessage.value
-    }
-  },
-  setup () {
-    const state = reactive({
-      email: '',
-      password: '',
-    })
-    const rules = computed(() => {
-      return {
-        email: { required, email},
-        password: { required, minLength: minLength(8) },
-      } 
-    })
-    const v$ = useVuelidate(rules, state)
-    return {
-      state,
-      v$,
-    }
-  },
-  data () {
+  data() {
     return {
       email: '',
       password: '',
-      showPassword: false,
-      error: null,
-      message: '',
-      isFormValid: true,
-      urlMinLength: 8,
-      statusMessage: '',
+      errors: {}
     }
   },
-
-  buttonLabel() {
-    return (this.showPassword) ? "Hide" : "Show";
+  
+  computed: {
+    isFormValid() {
+      return this.email && this.password && Object.keys(this.errors).length === 0
+    }
   },
-
+  
   methods: {
-    async login () {
-      this.v$.$validate()
-      if (!this.v$.$error) {
-        this.$store
-          .dispatch('login', {
-            email: this.state.email,
-            password: this.state.password
-          })
-          .then(() => {
-            //this.$router.push({ name: 'dashboard' })
-            this.$store.commit('SET_ERRORS', "")
-            this.$router.push({ name: 'About' })
-          })
-          .catch(err => { 
-            this.error = err.response.data.error     
-            this.$router.push({ name: "Login", query: {success: "Invalid Login Credentials - also make sure that API has started."} });
-            location.reload()
-          })
-        }
+    validateEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!this.email) {
+        this.errors.email = 'Email is required'
+      } else if (!emailRegex.test(this.email)) {
+        this.errors.email = 'Invalid email format'
+      } else {
+        delete this.errors.email
+      }
+    },
+    
+    validatePassword() {
+      if (!this.password) {
+        this.errors.password = 'Password is required'
+      } else if (this.password.length < 6) {
+        this.errors.password = 'Password must be at least 6 characters'
+      } else {
+        delete this.errors.password
+      }
     }
   }
 }
 </script>
-<style>
-/*@import '../assets/styles/global.css';*/
 
-@import '../assets/authorization.scss';
-</style>
+<style scoped></style>

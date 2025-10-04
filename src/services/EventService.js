@@ -1,6 +1,5 @@
 import axios from "axios";
-import moment from "moment-timezone";
-moment.tz.setDefault("America/Los_Angeles");
+
 var api_url = "";
 export default {
   data() {
