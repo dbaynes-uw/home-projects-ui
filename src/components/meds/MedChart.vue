@@ -1,92 +1,141 @@
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/meds/MedChart.vue -->
 <template>
   <div class="med-chart">
-    <!--canvas id="medChart" width="400" height="400"></canvas-->
-    <!--Bar :data="data" :options="options" /-->
-    <!--div class="div-select">
-      Time Frame:
-      <select class="border-select select-range" @change="filterTimeFrame($event)">
-        <option></option>
-        <option value="7">Week</option>
-        <option value="14">2 Weeks</option>
-        <option value="30">Month</option>
-        <option value="90">Quarter</option>
-        <option value="365">Year</option>
-      </select>
-    </!--div-->
-    <p>Number of occurrences: {{ timeFrameCount }}</p>
-      <Bar v-if="renderComponent" :data="data" :options="options" />
+    <h3>Med Chart (Chart temporarily disabled for memory optimization!)</h3>
+    
+    <!-- ✅ SIMPLE DATA DISPLAY INSTEAD OF CHART -->
+    <div class="chart-replacement">
+      <p><strong>Number of occurrences:</strong> {{ timeFrameCount }}</p>
+      
+      <div class="simple-stats">
+        <div class="stat-item" v-for="(med, index) in filteredMeds" :key="index">
+          <span class="date">{{ formatStandardDate(med.date_of_occurrence) }}</span>
+          <span class="interval">{{ med.interval_days }} days</span>
+        </div>
+      </div>
+      
+      <!-- ✅ OPTIONAL: Simple bar representation -->
+      <div class="simple-bars" v-if="filteredMeds.length > 0">
+        <div 
+          v-for="(med, index) in filteredMeds" 
+          :key="index"
+          class="bar-item"
+        >
+          <div class="bar-label">{{ formatStandardDate(med.date_of_occurrence) }}</div>
+          <div class="bar-container">
+            <div 
+              class="bar-fill" 
+              :style="{ width: (med.interval_days / maxInterval * 100) + '%' }"
+            ></div>
+          </div>
+          <div class="bar-value">{{ med.interval_days }}</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
 <script>
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import { Bar } from 'vue-chartjs';
 import DateFormatService from "@/services/DateFormatService.js";
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+
 export default {
   name: 'MedChart',
-  components: {Bar},
-  props: ["meds","timeFrame","chartLabels","chartIntervals"],
-  async mounted() {
-    this.filterTimeFrame(this.timeFrame)
-    this.data.labels  = this.chartLabels
-    this.data.datasets.data = this.chartIntervals
-  },
+  props: ["meds", "timeFrame", "chartLabels", "chartIntervals"],
+  
   data() {
     return {
-      data: {
-        labels: this.chartLabels,
-        datasets: [{
-          label: 'Occurrences by # of Days',
-          backgroundColor: 'red',
-          data: this.chartIntervals
-        }],
-        chartData: [],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: false,
-          }
-        },
-        ticks: {
-          max: 15,
-          stepSize: 1,
-        }
-      },
-      timeFrames: ["Week", "Month", "Quarter","YTD"],
-      timeFrameCount: "All",
-      renderComponent: true,
+      timeFrameCount: 0,
+      filteredMeds: []
     }
   },
+  
+  computed: {
+    maxInterval() {
+      return Math.max(...this.filteredMeds.map(med => med.interval_days), 1)
+    }
+  },
+  
+  mounted() {
+    this.filterTimeFrame(this.timeFrame || 30)
+  },
+  
   methods: {
-    async filterTimeFrame(value) {
-      this.renderComponent = false
-      await this.$nextTick();
+    filterTimeFrame(value) {
       this.timeFrameCount = 0
-      this.data.labels = []
-      this.data.datasets.data = []
+      this.filteredMeds = []
+      
       let compareDate = new Date()
-      if (!value.target) {
-        // Default set to 30 days in mounted()
-        compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value)).slice(0, 10)
-      } else {
-        compareDate.toISOString(compareDate.setDate(compareDate.getDate()-value.target.value)).slice(0, 10)
-      }
-      for (let i=0; i < this.meds.length; i++) {
-        if (DateFormatService.formatFullYearFirstjs(this.meds[i].date_of_occurrence) > 
-            DateFormatService.formatFullYearFirstjs(compareDate))
-          {
-            this.data.labels[i] = DateFormatService.formatStandardDatejs(this.meds[i].date_of_occurrence)
-            this.data.datasets.data[i] = this.meds[i].interval_days
-            this.timeFrameCount += 1
-          }
+      const days = value.target ? value.target.value : value
+      compareDate.setDate(compareDate.getDate() - days)
+      
+      this.filteredMeds = this.meds.filter(med => {
+        const medDate = new Date(med.date_of_occurrence)
+        if (medDate > compareDate) {
+          this.timeFrameCount++
+          return true
         }
-        this.renderComponent = true;
-      }
-    },  
+        return false
+      })
+    },
+    
     formatStandardDate(value) {
       return DateFormatService.formatStandardDatejs(value);
-    },
+    }
+  }
 }
 </script>
+
+<style scoped>
+.med-chart {
+  padding: 20px;
+}
+
+.simple-stats {
+  margin: 20px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.simple-bars {
+  margin-top: 20px;
+}
+
+.bar-item {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  gap: 10px;
+}
+
+.bar-label {
+  width: 100px;
+  font-size: 12px;
+}
+
+.bar-container {
+  flex: 1;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background-color: #ff6b6b;
+  transition: width 0.3s ease;
+}
+
+.bar-value {
+  width: 40px;
+  text-align: right;
+  font-weight: bold;
+}
+</style>
