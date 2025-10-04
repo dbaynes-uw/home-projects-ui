@@ -1,8 +1,3 @@
-import moment from "moment-timezone";
-moment.tz.setDefault("America/Los_Angeles");
-//moment.tz.setDefault("Central European Summer Time");
-//UTC OFFSET:
-  //moment.tz.setDefault("UTC");
 import dayjs from 'dayjs'
 //import customParseFormat from "dayjs/plugin/customParseFormat";
 export default {

@@ -1,27 +1,27 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2><i class="fas fa-pills"></i> Med List</h2>
+      <h2><v-icon>mdi-pill</v-icon> Med List</h2>
     </v-card-title>
     <!-- ✅ MODERN NAVIGATION -->
     <div class="navigation-buttons">
       <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
-        <i class="fas fa-heart heart-icon"></i>
+        <v-icon>mdi-heart</v-icon>
         <span>Glucose Readings</span>
       </router-link>
       
       <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
-        <i class="fas fa-plus"></i>
+        <v-icon>mdi-plus</v-icon>
         <span style="position: relative; left: 2rem;">Add Med</span>
       </router-link>
       
       <button @click="toggleIndexView" class="nav-btn" id="button-as-link">
-        <i class="fas" :class="showIndexView ? 'fa-th-large' : 'fa-list'"></i>
+        <v-icon :class="showIndexView ? 'mdi-view-grid' : 'mdi-view-list'"></v-icon>
         <span>{{ showIndexView ? 'Card View' : 'Index View' }}</span>
       </button>
       
       <button @click="toggleMedChart" class="nav-btn" id="button-as-link">
-        <i class="fas fa-chart-bar"></i>
+        <v-icon>mdi-chart-bar</v-icon>
         <span>{{ showMedChart ? 'Hide Chart' : 'Show Chart' }}</span>
       </button>
     </div>

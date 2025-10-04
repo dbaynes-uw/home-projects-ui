@@ -47,7 +47,7 @@
               <v-btn
                 variant="outlined"
                 :to="{ name: 'EventCreate' }"
-                prepend-icon="fas fa-plus"
+                prepend-icon="mdi-plus"
                 color="primary"
                 id="button-as-link"
                 class="nav-button"

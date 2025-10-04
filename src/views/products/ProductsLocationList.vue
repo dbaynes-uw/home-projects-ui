@@ -35,7 +35,7 @@
       <v-btn 
         variant="outlined" 
         :to="{ name: 'ProductVendorCreate' }"
-        prepend-icon="fas fa-plus"
+        prepend-icon="mdi-plus"
         color="primary"
       >
         Create Vendor/Product
