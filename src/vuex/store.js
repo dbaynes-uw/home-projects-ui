@@ -20,16 +20,8 @@ export default new Vuex.Store({
     isNewUser: null,
     loggedIn: null,
     loggedOut: null,
-    book: [],
     books: [],
     events: [],
-    eventsRequest: [],
-    eventsStatus: [],
-    eventStatistics: [],
-    eventsPastDue: [],
-    eventsDueBy: [],
-    eventsAssigned: [],
-    event: {},
     film: [],
     films: [],
     garden: [],
@@ -38,8 +30,19 @@ export default new Vuex.Store({
     glucoseReading: null,
     watering: [],
     waterings: [],
-    med: {},
+
     meds: [],
+    medsLoading: false,
+    medsPagination: {
+      current_page: 1,
+      per_page: 20,
+      total_count: 0,
+      total_pages: 0
+    },
+    medsPage: 1,
+    medsTotal: 0,
+    medsPerPage: 20,
+
     plant: {},
     plants: [],
     location: {},
@@ -50,18 +53,15 @@ export default new Vuex.Store({
     trails: [],
     travel: [],
     travels: [],
-    travel_event: [],
     travel_events: [],
     users: [],
     vendor: {},
     vendors: [],
-    vendors_group: [],
-    vendors_locations_group: [],
-    vendors_products_group: [],
     //plants: [
     //  {author: 'Test Author 1'},
     //  {author: 'Test Author 2'},
-    //]  
+    //]
+    // Pagination states
   },
   data() {
     return {
@@ -71,7 +71,55 @@ export default new Vuex.Store({
       //],
     }
   },
-  plugins: [createPersistedState()],
+  plugins: [
+    createPersistedState({
+      // Only persist essential data
+      paths: [
+        'user',
+        'token',
+        'loggedIn',
+      ],
+      // Don't persist large datasets
+      filter: (mutation) => {
+        const excludedMutations = [
+          'SET_BOOKS',
+          'SET_EVENTS', 
+          'SET_FILMS',
+          'SET_TRAVELS',
+          'SET_TRAILS',
+          'SET_PRODUCTS',
+          'SET_VENDORS',
+          'SET_MEDS',             // ✅ ADD THESE
+          'SET_GARDENS',          // ✅ ADD THESE
+          'SET_PLANTS',           // ✅ ADD THESE
+          'SET_WATERINGS',        // ✅ ADD THESE
+          'SET_GLUCOSE_READINGS', // ✅ ADD THESE
+          'APPEND_MEDS'          // ✅ ADD THESE
+        ];
+        return !excludedMutations.includes(mutation.type);
+      },
+      // ✅ REDUCE STORAGE SIZE
+      storage: {
+        getItem: (key) => {
+          const item = localStorage.getItem(key);
+          if (item && item.length > 100000) { // 100KB limit
+            console.warn('🚨 LocalStorage item too large, clearing:', key);
+            localStorage.removeItem(key);
+            return null;
+          }
+          return item;
+        },
+        setItem: (key, value) => {
+          if (value.length > 100000) { // 100KB limit
+            console.warn('🚨 Skipping large localStorage write:', key);
+            return;
+          }
+          localStorage.setItem(key, value);
+        },
+        removeItem: (key) => localStorage.removeItem(key)
+      }      
+    })
+  ],
   mutations: {
     ADD_BOOK(state, book) {
       state.books.push(book);
@@ -170,6 +218,26 @@ export default new Vuex.Store({
     },
     SET_MEDS(state, meds) {
       state.meds = meds;
+    },
+    // ✅ MEDS ADD THESE PAGINATION MUTATIONS
+    SET_MEDS_PAGINATION(state, pagination) {
+      state.medsPagination = pagination;
+    },
+
+    SET_MEDS_LOADING(state, loading) {
+      state.medsLoading = loading;
+    },
+
+    SET_MEDS_PAGE(state, page) {
+      state.medsPage = page;
+    },
+
+    SET_MEDS_TOTAL(state, total) {
+      state.medsTotal = total;
+    },
+
+    APPEND_MEDS(state, newMeds) {
+      state.meds = [...state.meds, ...newMeds];
     },
     DELETE_PLANT(state, plantId) {
       state.plants = state.plants.filter(plant => plant.id !== plantId);
@@ -294,6 +362,22 @@ export default new Vuex.Store({
     ADD_WATERING(state, watering) {
       state.waterings.push(watering);
     },
+    // CLEAN UP MUTATIONS
+    CLEAR_BOOKS(state) {
+      state.books = [];
+    },
+    CLEAR_EVENTS(state) {
+      state.events = [];
+    },
+    CLEAR_FILMS(state) {
+      state.films = [];
+    },
+    CLEAR_TRAVELS(state) {
+      state.travels = [];
+    },
+    CLEAR_TRAILS(state) {
+      state.trails = [];
+    }    
   },
   actions: {
     async register ({ commit }, credentials) {
@@ -424,6 +508,17 @@ export default new Vuex.Store({
           location.reload();
       });
     },
+    async fetchBooks({ commit }) {
+      try {
+        // ✅ REPLACE WITH YOUR ACTUAL API ENDPOINT
+        const response = await EventService.getBooks()
+        commit('SET_BOOKS', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch books:', error);
+        commit('SET_BOOKS', []); // Set empty array on error
+      }
+    },
     async deleteBook({ commit }, book) {
       EventService.deleteBook(book)
         .then((response) => {
@@ -549,7 +644,6 @@ export default new Vuex.Store({
       });
     },
     async eventsLocations({ commit }, form) {
-      console.log("Store EventsLocations Form: ", form)
       EventService.getEventsLocations(form)
         .then((response) => {
           //const location = response.config.url.split('?')
@@ -607,39 +701,40 @@ export default new Vuex.Store({
           alert("EventsStatisticsDetail Get Error: ", error.response.data )
         });
     },
-// ✅ FIXED VERSION:
-async updateEvent({ commit }, event) {
-  try {
-    
-    const response = await EventService.putEvent(event);
-    
-    if (response && response.data) {
-      commit("SET_EVENT", response.data);
-      
-      // ✅ RETURN SUCCESS OBJECT
-      return {
-        success: true,
-        data: response.data,
-        message: 'Event updated successfully'
-      };
-    } else {
-      return {
-        success: false,
-        message: 'No data returned from server'
-      };
-    }
-    
-  } catch (error) {
-    console.error('🏪 Store: Update failed:', error);
-    
-    // ✅ RETURN ERROR OBJECT
-    return {
-      success: false,
-      error: error.message,
-      message: 'Failed to update event'
-    };
-  }
-},
+    // ✅ FIXED VERSION:
+    async updateEvent({ commit }, event) {
+      try {
+
+        const response = await EventService.putEvent(event);
+
+        if (response && response.data) {
+          commit("SET_EVENT", response.data);
+
+          // ✅ RETURN SUCCESS OBJECT
+          return {
+            success: true,
+            data: response.data,
+            message: 'Event updated successfully'
+          };
+        } else {
+          return {
+            success: false,
+            message: 'No data returned from server'
+          };
+        }
+
+      } catch (error) {
+        console.error('🏪 Store: Update failed:', error);
+
+        // ✅ RETURN ERROR OBJECT
+        return {
+          success: false,
+          error: error.message,
+          message: 'Failed to update event'
+        };
+      }
+    },
+
     setEventsRequest({ commit }, requestType) {
       commit('SET_EVENTS_REQUEST', requestType);
     },
@@ -709,8 +804,7 @@ async updateEvent({ commit }, event) {
           alert("Garden Post Error: ", error.response.data )
         });
     },
-        async deleteGarden({ commit }, garden) {
-      console.log("Deleting garden with ID:", garden.id);
+    async deleteGarden({ commit }, garden) {
       try {
         await EventService.deleteGarden(garden);
         commit("DELETE_GARDEN", garden);
@@ -758,50 +852,48 @@ async updateEvent({ commit }, event) {
         });
     },
 
-async createPlant({ commit, state }, plant) {
-  try {
-    const response = await EventService.postPlant(plant);    
-    // ✅ Add to plants array, don't just set single plant
-    const updatedPlants = [...state.plants, response.data];
-    commit('SET_PLANTS', updatedPlants);
-    
-    // Or refresh from server
-    // await dispatch('fetchPlants');
-    
-    return response.data;
-    
-  } catch (error) {
-    console.error('❌ Store: Create plant error:', error);
-    throw error;
-  }
-},
-  async updatePlant({ commit }, plant) {
-    try {
-      console.log('🔍 Store: Updating plant with ID:', plant.id);
-      const response = await EventService.putPlant(plant);
-      console.log('✅ Store: API response:', response);
+    async createPlant({ commit, state }, plant) {
+      try {
+        const response = await EventService.postPlant(plant);    
+        // ✅ Add to plants array, don't just set single plant
+        const updatedPlants = [...state.plants, response.data];
+        commit('SET_PLANTS', updatedPlants);
 
-      commit('SET_PLANT', response.data);
-      return response.data; // ✅ IMPORTANT: Return something truthy!
+        // Or refresh from server
+        // await dispatch('fetchPlants');
 
-    } catch (error) {
-      console.error('❌ Store: Update plant error:', error);
-      throw error; // Re-throw so component can catch it
-    }
-  },
-  async updateWatering({ commit }, watering) {
-    try {
-      const response = await EventService.putWatering(watering);      
-      // Commit the updated watering to state
-      commit('SET_WATERING', response.data); 
-      // ✅ IMPORTANT: Return something truthy!
-      return response.data; // or return true;
-      
-    } catch (error) {
-      console.error('❌ Store: Update watering error:', error);
-      throw error; // Re-throw so component can catch it
-    }
-  },
+        return response.data;
+
+      } catch (error) {
+        console.error('❌ Store: Create plant error:', error);
+        throw error;
+      }
+    },
+    async updatePlant({ commit }, plant) {
+      try {
+        const response = await EventService.putPlant(plant);
+
+        commit('SET_PLANT', response.data);
+        return response.data; // ✅ IMPORTANT: Return something truthy!
+
+      } catch (error) {
+        console.error('❌ Store: Update plant error:', error);
+        throw error; // Re-throw so component can catch it
+      }
+    },
+    async updateWatering({ commit }, watering) {
+      try {
+        const response = await EventService.putWatering(watering);      
+        // Commit the updated watering to state
+        commit('SET_WATERING', response.data); 
+        // ✅ IMPORTANT: Return something truthy!
+        return response.data; // or return true;
+
+      } catch (error) {
+        console.error('❌ Store: Update watering error:', error);
+        throw error; // Re-throw so component can catch it
+      }
+    },
     async fetchGlucoseReadings({ commit }) {
       try {
         const response = await EventService.getGlucoseReadings();
@@ -815,7 +907,6 @@ async createPlant({ commit, state }, plant) {
         const response = await EventService.getGlucoseReading(id); // Call the API
         commit("SET_GLUCOSE_READING", response.data); // Commit the data to the state
       } catch (error) {
-        console.error("Error fetching glucose reading: ");
         alert("Failed to fetch glucose reading. Please try again.");
       }
     },
@@ -827,12 +918,10 @@ async createPlant({ commit, state }, plant) {
         // Optionally fetch the updated list of readings
         await dispatch("fetchGlucoseReadings");
       } catch (error) {
-        console.error("Error creating glucose reading:", error.response.data);
         alert("Failed to create glucose reading. Please try again.");
       }
     },    
     async deleteGlucoseReading({ commit }, glucose_reading) {
-      console.log("Deleting glucose reading with ID:", glucose_reading.id);
       try {
         await EventService.deleteGlucoseReading(glucose_reading);
         commit("DELETE_GLUCOSE_READING", glucose_reading); // <-- Pass the original reading!
@@ -841,6 +930,7 @@ async createPlant({ commit, state }, plant) {
         alert("GlucoseReading Delete Error: " + (error.response?.data || error.message));
       }
     },
+
     async updateGlucoseReading({ commit, dispatch }, glucose_reading) {
       try {
         const response = await EventService.putGlucoseReading(glucose_reading);   
@@ -849,7 +939,6 @@ async createPlant({ commit, state }, plant) {
         // Optionally fetch the updated list of readings
         await dispatch("fetchGlucoseReadings");
       } catch (error) {
-        console.error("Error creating glucose reading:", error.response.data);
         alert("Failed to create glucose reading. Please try again.");
       }
     },
@@ -932,17 +1021,31 @@ async createPlant({ commit, state }, plant) {
           });
       }
     },
-    async fetchMeds({ commit }) {
-      EventService.getMeds()
-        .then((response) => {
-          commit("SET_MEDS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Med Fetch Error: ", error.response.data )
+ 
+    async fetchMeds({ commit }, { page = 1, limit = 20 } = {}) {
+      try {
+        const response = await EventService.getMeds({ page, limit });
 
+        if (page === 1) {
+          commit("SET_MEDS", response.data.data);
+        } else {
+          commit("APPEND_MEDS", response.data.data);
+        }
+
+        commit("SET_MEDS_PAGINATION", {
+          total: response.data.total,
+          page: response.data.page,
+          totalPages: response.data.totalPages
         });
+
+        return response.data.data;
+      } catch (error) {
+        console.error("Meds fetch error:", error);
+        commit("SET_MEDS", []);
+        return [];
+      }
     },
+
     async updateMed({ commit }, med) {
       EventService.putMed(med)
         .then((response) => {
@@ -1335,26 +1438,25 @@ async createPlant({ commit, state }, plant) {
           alert("VendorsProducts Fetch Error: ", error.response.data )
         });
     },
-async updateVendorsProducts({ commit }, payload) {
-  try {
-    const response = await EventService.putVendorsProducts(payload);
-    
-    // ✅ RETURN SUCCESS INDICATOR
-    if (response && (response.status === 200 || response.data)) {
-      // Update state if needed
-      if (response.data) {
-        commit('SET_VENDORS_PRODUCTS', response.data);
+    async updateVendorsProducts({ commit }, payload) {
+      try {
+        const response = await EventService.putVendorsProducts(payload);
+
+        // ✅ RETURN SUCCESS INDICATOR
+        if (response && (response.status === 200 || response.data)) {
+          // Update state if needed
+          if (response.data) {
+            commit('SET_VENDORS_PRODUCTS', response.data);
+          }
+          return true; // ✅ EXPLICIT SUCCESS
+        }
+
+        return false; // ✅ EXPLICIT FAILURE
+
+      } catch (error) {
+        return false; // ✅ RETURN FALSE ON ERROR
       }
-      return true; // ✅ EXPLICIT SUCCESS
-    }
-    
-    return false; // ✅ EXPLICIT FAILURE
-    
-  } catch (error) {
-    console.error('Store action error:', error);
-    return false; // ✅ RETURN FALSE ON ERROR
-  }
-},
+    },
     async createWatering({ commit, dispatch }, watering) {
       EventService.postWatering(watering)
         .then(async () => {
@@ -1397,9 +1499,76 @@ async updateVendorsProducts({ commit }, payload) {
         .catch((error) => {
           alert("Waterings Fetch Error: ", error.response.data)
         });
-    }
+    },
+    clearUnusedData({ commit }) {
+      // Clear data when navigating away from pages
+      commit('CLEAR_BOOKS');
+      commit('CLEAR_EVENTS');
+      commit('CLEAR_FILMS');
+      commit('CLEAR_TRAVELS');
+      commit('CLEAR_TRAILS');
+    },
+    // ✅ AUTO-CLEANUP ON ROUTE CHANGES
+    clearLargeDatasets({ commit }) {
+      commit('SET_BOOKS', []);
+      commit('SET_EVENTS', []);
+      commit('SET_FILMS', []);
+      commit('SET_TRAVELS', []);
+      commit('SET_TRAILS', []);
+      commit('SET_MEDS', []);           // ✅ Clear meds too
+      commit('SET_GLUCOSE_READINGS', []);
+      commit('SET_WATERINGS', []);
+    },
+
+    // ✅ FORCE GARBAGE COLLECTION
+    forceCleanup({ dispatch }) {
+      dispatch('clearLargeDatasets');
+
+      // Clear localStorage
+      const keysToKeep = ['user', 'token', 'loggedIn'];
+      Object.keys(localStorage).forEach(key => {
+        if (!keysToKeep.includes(key) && key.startsWith('vuex')) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Force garbage collection (if available)
+      if (window.gc) {
+        window.gc();
+      }
+    }  
   },
   getters: {
+      // ✅ ADD FIRSTNAME GETTER
+    firstName: state => {
+      if (state.user && typeof state.user === 'string') {
+        return state.user.split(' ')[0]
+      }
+      if (state.user && state.user.name) {
+        return state.user.name.split(' ')[0]
+      }
+      return ''
+    },
+
+    // ✅ OTHER USER GETTERS
+    fullName: state => {
+      if (state.user && typeof state.user === 'string') {
+        return state.user
+      }
+      if (state.user && state.user.name) {
+        return state.user.name
+      }
+      return ''
+    },
+    currentBook: (state) => (id) => {
+      return state.books.find(book => book.id === id)
+    },
+    currentEvent: (state) => (id) => {
+     return state.events.find(event => event.id === id)
+    },
+    currentMed: (state) => (id) => {
+      return state.meds.find(med => med.id === id)
+    },
     gardens(state) {
       return state.gardens || []; // Ensure it always returns an array
     },

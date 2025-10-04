@@ -1,60 +1,3 @@
-<script setup>
-  import { useBookStore } from '@/stores/BookStore';
-  import { ref } from 'vue';
-  /* const */
-  const emit = defineEmits(['searchArrayReturned'])
-  const filteredResults = ref([])
-  const inputSearchText = ref('')
-  const searchResults = ref(null)
-  const columnDetails =  ref(Object)
-  const bookStore = useBookStore()
-   /* functions */
-  function resetSearch() {
-    filteredResults.value = [];
-    emit('searchArrayReturned', filteredResults.value)
-    return
-  }
-  function searchColumns() {
-    searchResults.value = true;
-    filteredResults.value = [];
-    columnDetails.value = null;
-    if (
-      inputSearchText.value == null ||
-      (inputSearchText.value != null && inputSearchText.value.length === 0)
-    ) {
-      filteredResults.value = [];
-      columnDetails.value = null;
-    } else {
-      if (
-        bookStore.books &&
-        bookStore.books.length > 0 &&
-        inputSearchText.value.length >= 2
-      ) {
-        bookStore.books.forEach((book) => {
-          const searchHasTitle =
-            book.title &&
-            book.title
-              .toLowerCase()
-              .includes(inputSearchText.value.toLowerCase()); 
-          const searchHasAuthor =
-            book.author &&
-            book.author
-              .toLowerCase()
-              .includes(inputSearchText.value.toLowerCase());
-          if (searchHasTitle || searchHasAuthor ) {
-            filteredResults.value.push(book);
-          }
-          if (filteredResults.value.length > 0) {
-            searchResults.value = true;
-            emit('searchArrayReturned', filteredResults.value)
-          } else {
-            searchResults.value = false;
-          }
-        });
-      }
-    }
-  }
-</script>
 <template>
   <div style="width: 100%">
     <div class="auto-search-container">
@@ -64,11 +7,75 @@
         @click:clear="resetSearch"
         type="text"
         class="np-input-search"
-        v-model="inputSearchText"
+        v-model="searchText"
         placeholder="Search"
         autocomplete="off"
-        v-on:keyup="searchColumns"
+        @keyup="searchColumns"
       />
     </div>
   </div>
 </template>
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/books/BookSearch.vue -->
+<script setup>
+import { useStore } from 'vuex'
+import { ref, computed, watch } from 'vue'
+
+const store = useStore()
+
+// ✅ PROPS (READ-ONLY)
+const props = defineProps({
+  inputSearchText: String,
+  books: Array
+})
+
+const emit = defineEmits(['search-array-returned'])
+
+// ✅ LOCAL REACTIVE VARIABLE (NOT PROP!)
+const searchText = ref(props.inputSearchText || '')
+const filteredBooks = ref([])
+
+// ✅ GET BOOKS FROM VUEX OR PROPS
+const books = computed(() => props.books || store.state.books || [])
+
+// ✅ SEARCH LOGIC
+const performSearch = () => {
+  const booksToSearch = books.value
+  
+  if (!searchText.value || searchText.value.length < 2) {
+    filteredBooks.value = booksToSearch
+  } else {
+    const searchLower = searchText.value.toLowerCase()
+    filteredBooks.value = booksToSearch.filter(book => {
+      return (
+        (book.title && book.title.toLowerCase().includes(searchLower)) ||
+        (book.author && book.author.toLowerCase().includes(searchLower)) ||
+        (book.description && book.description.toLowerCase().includes(searchLower))
+      )
+    })
+  }
+  
+  emit('search-array-returned', filteredBooks.value)
+}
+
+// ✅ SEARCH FUNCTION FOR KEYUP EVENT
+const searchColumns = () => {
+  performSearch()
+}
+
+// ✅ RESET SEARCH FUNCTION
+const resetSearch = () => {
+  searchText.value = ''
+  performSearch()
+}
+
+// ✅ WATCH FOR SEARCH TEXT CHANGES
+watch(searchText, performSearch)
+
+// ✅ WATCH FOR PROP CHANGES
+watch(() => props.inputSearchText, (newValue) => {
+  searchText.value = newValue || ''
+})
+
+// ✅ INITIAL SEARCH
+performSearch()
+</script>
