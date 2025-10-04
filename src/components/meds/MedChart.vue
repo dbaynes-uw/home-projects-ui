@@ -1,7 +1,7 @@
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/meds/MedChart.vue -->
 <template>
   <div class="med-chart">
-    <h3>Med Chart (Chart temporarily disabled for memory optimization!)</h3>
+    <h3>Med Chart (Chart temporarily disabled for memory optimization)</h3>
     
     <!-- ✅ SIMPLE DATA DISPLAY INSTEAD OF CHART -->
     <div class="chart-replacement">
