@@ -88,9 +88,9 @@
                       :icon="link.icon" 
                       size="small" 
                       class="footer-icon"
-                      style="color: #8b0000 !important;
-                        position: relative;
-                        left: .05rem;"
+                      style="position: relative;
+                             left: -.5rem;
+                             top: 0.2rem;"
                     />
                 <!--span class="mobile-footer-text">{{ link.title }}</~span-->
                   
@@ -104,9 +104,9 @@
                   :icon="link.icon" 
                   size="small" 
                   class="footer-icon"
-                  style="color: #8b0000 ;
-                    position: relative;
-                    left: .05rem;"
+                  style="position: relative;
+                         left: -.5rem;
+                         top: 0.2rem;"
                 />
               </template>
             </router-link>
@@ -303,6 +303,8 @@ data() {
 .dropdown-icon {
   font-size: 20px !important;
   transition: all 0.3s ease;
+  position: relative;
+  left: 0rem;
 }
 
 .nav-menu-item:hover .dropdown-icon {
@@ -314,7 +316,7 @@ data() {
   margin-top: 0.75rem !important;
 }
 .footer-icon {
-  color: blue !important;
+  color: #8b0000!important;
   margin-left: 2rem;
   margin-bottom: 2px;
 }
@@ -351,7 +353,7 @@ data() {
   }
   
   .footer-icon {
-    color: blue !important;
+    color: #8b0000 !important;
     font-size: 16px !important;
     margin-left: 1rem;
   }
@@ -425,6 +427,7 @@ data() {
   }
   
   .footer-icon {
+    color: #8b0000 !important;
     font-size: 14px !important;
     margin-left: 1rem;
     margin-bottom: 4px;
@@ -450,6 +453,7 @@ data() {
   }
   
   .footer-icon {
+    color: #8b0000 !important;
     font-size: 12px !important;
     margin-left: 1rem;
 
@@ -468,6 +472,7 @@ data() {
   }
   
   .footer-icon {
+    color: #8b0000 !important;
     font-size: 10px !important;
     margin-left: 1rem;
   }
