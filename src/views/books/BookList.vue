@@ -1,41 +1,9 @@
-<script setup>
-  import { useUserStore } from '@/stores/UserStore'
-  import { useBookStore } from '@/stores/BookStore.js'
-  import BookIndex from "@/components/books/BookIndex.vue";
-  import BookCard from "@/components/books/BookCard.vue";
-  import BookSearch from "@/components/books/BookSearch.vue";
-  import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-  import { ref, computed, onMounted } from 'vue';
-  import { useRouter } from 'vue-router'
-  onMounted(() => {
-    bookStore.fetchBooks()
-  })
-  const userStore = useUserStore()
-  const bookStore = useBookStore()
-  const requestIndexDetailFlag = ref(false)
-  const searchResults = ref(null)
-  const inputSearchText = ref('')
-  const filteredResults = ref([])
-  const handleReturnArray = (array) => {
-    filteredResults.value = array;
-  }
-  const isEmptyResultsArray = computed(() => filteredResults.value.length === 0);
-  const router = useRouter()
-  function requestIndexDetail() {
-    requestIndexDetailFlag.value = !requestIndexDetailFlag.value;
-  }
-  function editBook(book) {
-    router.push({ name: 'BookEdit', params: { id: `${book.id}` } });
-  }
-</script>
+
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2>Book List for {{ userStore.firstName }} - {{ bookStore.numberOfBooks }} Books Read</h2>
-      <!--h2 id="status-message">
-        u>Status: {{ $route.query.success }}</u>
-      </h2-->
+      <h2>Book List for {{ firstName }} - {{ numberOfBooks }} Books Read</h2>
     </v-card-title>
     <ul>
       <li class="left">
@@ -57,7 +25,7 @@
       ref="childRef"
       @search-array-returned="handleReturnArray"
       :inputSearchText="inputSearchText"
-      :bookStore="bookStore"
+      :books="books"
       >
     </BookSearch>
   </div>
@@ -69,11 +37,13 @@
       </span>
       <span v-else>
         <span v-if="requestIndexDetailFlag == false">
-          <h3 id="h3-left">&nbsp;&nbsp;Total: {{ bookStore.books.length }}</h3>
+          <!-- ✅ FIXED: Use books instead of bookStore.books -->
+          <h3 id="h3-left">&nbsp;&nbsp;Total: {{ books.length }}</h3>
           <span class="h3-left-total-child">Double click Item Below to Edit</span>
           <div class="cards">
+            <!-- ✅ FIXED: Use books instead of bookStore.books -->
             <BookCard
-              v-for="book in bookStore.books"
+              v-for="book in books"
               :key="book.id"
               :book="book"
               class="card"
@@ -83,7 +53,8 @@
           </div>
         </span>
         <span v-else>
-          <BookIndex :books="bookStore.books" />
+          <!-- ✅ FIXED: Use books instead of bookStore.books -->
+          <BookIndex :books="books" />
         </span>
       </span>
     </span>
@@ -108,4 +79,58 @@
     </span>
   </div>
 </template>
+<script setup>
+// ❌ REMOVE PINIA IMPORTS
+// import { useBookStore } from '@/stores/BookStore.js'
+// const userStore = useUserStore()
+// const bookStore = useBookStore()
+
+// ✅ USE VUEX INSTEAD
+import { useStore } from 'vuex'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+import BookIndex from "@/components/books/BookIndex.vue"
+import BookCard from "@/components/books/BookCard.vue"
+import BookSearch from "@/components/books/BookSearch.vue"
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue"
+
+// ✅ VUEX STORE ACCESS
+const store = useStore()
+
+// ✅ ACCESS FIRSTNAME FROM VUEX GETTERS
+const firstName = computed(() => store.getters.firstName)
+
+// ✅ ACCESS BOOKS FROM VUEX STATE
+const books = computed(() => store.state.books || [])
+const numberOfBooks = computed(() => books.value.length)
+
+// ✅ FETCH BOOKS FROM VUEX ACTION
+onMounted(() => {
+  store.dispatch('fetchBooks')
+})
+
+// ✅ REST OF YOUR COMPONENT LOGIC
+const requestIndexDetailFlag = ref(false)
+const searchResults = ref(null)
+const inputSearchText = ref('')
+const filteredResults = ref([])
+const router = useRouter()
+
+const handleReturnArray = (array) => {
+  filteredResults.value = array
+}
+
+const isEmptyResultsArray = computed(() => filteredResults.value.length === 0)
+
+function requestIndexDetail() {
+  requestIndexDetailFlag.value = !requestIndexDetailFlag.value
+}
+
+function editBook(book) {
+  router.push({ name: 'BookEdit', params: { id: `${book.id}` } })
+}
+</script>
+
+
 <style></style>
