@@ -2,8 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 
 // ✅ ONLY IMPORT CORE COMPONENTS (Used immediately)
 import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
 // In router/index.js - ADD THIS BEFORE export default router
 const routes = [
   // ✅ CORE ROUTES (EAGER LOADING)
@@ -15,12 +13,12 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: () => import('@/views/Login.vue')  // ✅ Lazy loading
   },
   {
-    path: '/register',
+    path: '/register', 
     name: 'register',
-    component: Register
+    component: () => import('@/views/Register.vue')  // ✅ Lazy loading
   },
 
   // ✅ ALL OTHER ROUTES (LAZY LOADING)
@@ -482,6 +480,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  console.log('🔍 Router navigating to:', to.name, to.path)
+  console.log('🔍 Available routes:', routes.map(r => r.path))
+
   const loggedIn = localStorage.getItem('user')
   
   // ✅ MEMORY CLEANUP ON ROUTE CHANGE

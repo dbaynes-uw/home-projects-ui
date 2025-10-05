@@ -267,11 +267,34 @@ export default new Vuex.Store({
       state.users.push(user);
     },
     SET_USER_DATA (state, userData) {
-      state.user = userData
-      localStorage.setItem('user', JSON.stringify(userData))
-      axios.defaults.headers.common['Authorization'] = `Bearer ${
-        userData.token
-      }`
+      console.log('🔍 Mutation: Setting user data:', userData);
+  
+      // ✅ HANDLE DIFFERENT DATA FORMATS
+      let user;
+      if (userData && typeof userData === 'object') {
+        user = userData;
+      } else {
+        console.error('❌ Invalid user data format:', userData);
+        return;
+      }
+  
+      state.user = user;
+        
+      // ✅ SAVE TO LOCALSTORAGE
+      try {
+        localStorage.setItem('user', JSON.stringify(user));
+        console.log('✅ User saved to localStorage');
+      } catch (error) {
+        console.error('❌ Failed to save user to localStorage:', error);
+      }
+      
+      // ✅ SET AUTH HEADER
+      if (user.token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+        console.log('✅ Auth header set');
+      }
+      
+      console.log('✅ Final user in state:', state.user);
     },
     CLEAR_PLANT() {
       localStorage.removeItem('plant')
@@ -353,30 +376,53 @@ export default new Vuex.Store({
           router.push({name:'home', params: {message: this.message}})
         });
     },
-    async login ({ commit }, credentials) {
-      if (window.location.port == "8080") {
-        //api_url = "http://davids-macbook-pro.local:3000/...";
-        api_authenticate_url = "//localhost:3000/users/tokens/";
-      } else {
-        api_authenticate_url =
-          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
-      }
-      //this.init_authentication;
-      return axios
-        .post(api_authenticate_url + "sign_in", credentials)
-        .then(({ data }) => {
-          commit('SET_USER_DATA', data)
-        })
-        .catch((error) => {
-          //alert("Invalid Login Credentials or API problem - Please try again")
-          //location.reload()
-          //const message = error.response.request.statusText + '!';
-          error = error.response.request.statusText + '!';
-          //!!!router.back(error)
-          error
-        });
-    },
 
+    async login ({ commit }, credentials) {
+      // ✅ FIX: Add proper protocol
+      if (window.location.port == "8080") {
+        api_authenticate_url = "http://localhost:3000/users/tokens/";
+      } else {
+        api_authenticate_url = "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
+      }
+    
+      try {
+        console.log('🔍 Store login: Attempting with:', credentials);
+        console.log('🔍 Store login: API URL:', api_authenticate_url + "sign_in");
+
+        const response = await axios.post(api_authenticate_url + "sign_in", credentials);
+
+        console.log('✅ Store login: API response:', response.data);
+
+        // ✅ YOUR API RETURNS USER DATA DIRECTLY
+        const userData = response.data;
+
+        console.log('✅ Store login: Setting user data:', userData);
+        commit('SET_USER_DATA', userData);
+
+        return { success: true, user: userData };
+      
+      } catch (error) {
+        console.error('❌ Store login: Error:', error);
+        console.error('❌ Store login: Error response:', error.response?.data);
+
+        // ✅ HANDLE YOUR API'S ERROR FORMAT: {"error":"invalid_email","error_description":["Email is invalid"]}
+        let errorMessage = 'Login failed';
+
+        if (error.response?.data) {
+          const errorData = error.response.data;
+
+          if (errorData.error_description && Array.isArray(errorData.error_description)) {
+            errorMessage = errorData.error_description.join(', ');
+          } else if (errorData.error) {
+            errorMessage = errorData.error.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        }
+
+        throw new Error(errorMessage);
+      }
+    },
     async logout ({ commit }) {
       commit('CLEAR_USER_DATA')
       router.push({name: 'Login'});

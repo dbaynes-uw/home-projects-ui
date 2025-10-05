@@ -5,21 +5,38 @@ import "./assets/global.css";
 import router from "./router";
 import store from "./vuex/store.js";
 
-// ✅ MINIMAL VUETIFY (NO FONTAWESOME)
+// ✅ FIXED VUETIFY IMPORTS
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+// ✅ IMPORT SPECIFIC COMPONENTS
+import { 
+  VCard, 
+  VCardTitle, 
+  VCardText, 
+  VCardSubtitle,
+  VCardActions,
+  VForm, 
+  VContainer, 
+  VTextField, 
+  VBtn 
+} from 'vuetify/components'
+
 const vuetify = createVuetify({
-  components,
+  components: {
+    VCard,
+    VCardTitle, 
+    VCardText,
+    VCardSubtitle,
+    VCardActions,
+    VForm,
+    VContainer,
+    VTextField,
+    VBtn
+  },
   directives,
-  theme: {
-    defaultTheme: 'light'
-  },
-  icons: {
-    defaultSet: 'mdi', // ✅ USE MATERIAL DESIGN ICONS ONLY
-  },
 })
 
 import vSelect from "vue-select";

@@ -144,21 +144,20 @@
                     :class="{ 'view-btn-active': viewMode === 'cards' }"
                     id="button-as-link"
                   >
-                    <v-icon start size="large">mdi-view-grid</v-icon>
+                    <i class="fas fa-th"></i> <!-- ✅ CHANGED FROM mdi-view-grid -->
                     Cards View
                   </v-btn>
-                  
+
                   <v-btn
                     value="table"
                     class="view-btn consistent-btn"
                     :class="{ 'view-btn-active': viewMode === 'table' }"
                     id="button-as-link"
                   >
-                    <v-icon start size="large">mdi-table</v-icon>
+                    <i class="fas fa-table"></i>
                     Table View
                   </v-btn>
-                  
-                  <!-- ✅ ADMIN NOTIFICATION -->
+
                   <v-btn
                     v-if="isAdmin"
                     @click="notifyEventsDue"
@@ -166,7 +165,7 @@
                     id="button-as-link"
                     variant="elevated"
                   >
-                    <v-icon start size="large">mdi-email-send</v-icon>
+                    <i class="fas fa-envelope"></i> <!-- ✅ CHANGED FROM mdi-email-send -->
                     Notify Due
                   </v-btn>
                 </v-btn-toggle>
@@ -209,15 +208,15 @@
               <!-- ✅ LEGEND -->
               <v-chip-group>
                 <v-chip color="success" variant="outlined" size="small">
-                  <v-icon start size="small">mdi-check-circle</v-icon>
+                <i class="fas fa-check-circle"></i>
                   Complete
                 </v-chip>
                 <v-chip color="warning" variant="outlined" size="small">
-                  <v-icon start size="small">mdi-clock-alert</v-icon>
+                  <i class="fas fa-clock"></i>
                   Incomplete
                 </v-chip>
                 <v-chip color="error" variant="outlined" size="small">
-                  <v-icon start size="small">mdi-alert-circle</v-icon>
+                  <i class="fas fa-exclamation-triangle" style="color: #8b0000"></i>
                   Past Due
                 </v-chip>
               </v-chip-group>
@@ -236,37 +235,36 @@
                   hover
                   class="event-card"
                 >                
+                  <!-- ✅ CARD TITLE WITH FA ICON -->
                   <v-card-title class="pb-2">
                     <div class="d-flex align-center">
-                      <v-icon 
-                        :color="getEventStatusColor(event)"
-                        start
-                      >
-                        {{ getEventStatusIcon(event) }}
-                      </v-icon>
+                      <i 
+                        :class="[getEventStatusIcon(event), `text-${getEventStatusColor(event)}`]"
+                        class="mr-2"
+                      ></i>
                       <span class="text-truncate">{{ event.description }}</span>
                     </div>
                   </v-card-title>
-
+                
                   <v-card-text>
                     <div class="event-details">                      
                       <div class="d-flex align-center mb-2">
-                        <v-icon size="small" class="mr-2">mdi-account</v-icon>
+                        <i class="fas fa-user mr-2" style="font-size: 14px;"></i>
                         <span>{{ event.assigned }}</span>
                       </div>
-                      
+
                       <div class="d-flex align-center">
-                        <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
+                        <i class="fas fa-sync-alt mr-2" style="font-size: 14px;"></i>
                         <span>Frequency: {{ event.frequency }} Days</span>
                       </div>
-                      
+
                       <div class="d-flex align-center mb-2">
-                        <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
+                        <i class="fas fa-calendar-alt mr-2" style="font-size: 14px;"></i>
                         <span>Last Action: {{ formatStandardDate(event.action_completed_date) }}</span>
                       </div>
-                      
+
                       <div class="d-flex align-center mb-2">
-                        <v-icon size="small" class="mr-2">mdi-calendar</v-icon>
+                        <i class="fas fa-calendar-check mr-2" style="font-size: 14px;"></i>
                         <span> Due: {{ formatStandardDate(event.action_due_date) }}</span>
                         <v-chip
                           v-if="isEventPastDue(event)"
@@ -276,20 +274,22 @@
                         >
                           PAST DUE
                         </v-chip>
+                        &nbsp;
+                        <i class="fas fa-triangle-exclamation" style="color: #8b0000"></i>
                       </div>
-                      
+
                       <div class="d-flex align-center">
-                        <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
+                        <i class="fas fa-map-marker-alt mr-2" style="font-size: 14px;"></i>
                         <span>Location: {{ event.location || 'No location' }}</span>
                       </div>
-                      
+
                       <div class="d-flex align-center">
-                        <v-icon size="small" class="mr-2">mdi-map-marker</v-icon>
+                        <i class="fas fa-info-circle mr-2" style="font-size: 14px;"></i>
                         <span>Status: {{ event.status.charAt(0).toUpperCase() + event.status.slice(1) }}</span>
                       </div>
                     </div>
                   </v-card-text>
-
+                
                   <v-card-actions>
                     <v-spacer />
                     <v-btn
@@ -298,7 +298,7 @@
                       size="small"
                       color="primary"
                     >
-                      <v-icon start>mdi-pencil</v-icon>
+                      <i class="fas fa-edit mr-1"></i>
                       Edit
                     </v-btn>
                   </v-card-actions>

@@ -6,7 +6,7 @@
       variant="elevated"
       block
     >
-      <v-icon start size="large">mdi-clock-alert-outline</v-icon>
+      <i class="fas fa-exclamation-triangle"></i>
       Events Past Due
     </v-btn>
   </div>
