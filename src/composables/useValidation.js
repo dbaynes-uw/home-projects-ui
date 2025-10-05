@@ -1,71 +1,100 @@
-import { computed } from 'vue'
-import { useVuelidate } from '@vuelidate/core'
+import { computed, reactive } from 'vue'
 
-// ✅ MEMORY-EFFICIENT VALIDATION WRAPPER
+// ✅ SIMPLE VALIDATION WITHOUT VUELIDATE
 export function useFormValidation(formData, validationRules) {
-  // ✅ CHECK MEMORY BEFORE CREATING VUELIDATE INSTANCE
-  const canUseVuelidate = computed(() => {
-    if (performance.memory) {
-      const used = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
-      return used < 80; // Only use if memory < 80MB
+  const errors = reactive({})
+  
+  const validateField = (fieldName, value) => {
+    const rules = validationRules.value[fieldName]
+    if (!rules) return ''
+    
+    // Check required
+    if (rules.required && (!value || value.trim() === '')) {
+      return 'This field is required'
     }
-    return true; // Default to true if can't check memory
-  });
-
-  const v$ = useVuelidate(validationRules, formData);
+    
+    // Check email
+    if (rules.email && value) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(value)) {
+        return 'Please enter a valid email address'
+      }
+    }
+    
+    // Check minLength
+    if (rules.minLength && value) {
+      const minLen = typeof rules.minLength === 'function' ? rules.minLength.min : rules.minLength
+      if (value.length < minLen) {
+        return `Minimum ${minLen} characters required`
+      }
+    }
+    
+    return ''
+  }
+  
+  const v$ = reactive({})
+  
+  // Create reactive validation object
+  Object.keys(validationRules.value).forEach(fieldName => {
+    v$[fieldName] = reactive({
+      $error: computed(() => !!errors[fieldName]),
+      $errors: computed(() => errors[fieldName] ? [{ $message: errors[fieldName] }] : []),
+      $touch: () => {
+        const error = validateField(fieldName, formData[fieldName])
+        if (error) {
+          errors[fieldName] = error
+        } else {
+          delete errors[fieldName]
+        }
+      }
+    })
+  })
   
   const isValid = computed(() => {
-    if (!canUseVuelidate.value) return true; // Skip validation if memory is high
-    return !v$.value.$invalid;
-  });
-  
-  const hasErrors = computed(() => {
-    if (!canUseVuelidate.value) return false;
-    return v$.value.$error;
-  });
-  
-  // ✅ LIGHTWEIGHT ERROR HANDLING
-  const getFieldError = (fieldName) => {
-    if (!canUseVuelidate.value) return '';
+    // Validate all fields
+    Object.keys(formData).forEach(fieldName => {
+      const error = validateField(fieldName, formData[fieldName])
+      if (error) {
+        errors[fieldName] = error
+      } else {
+        delete errors[fieldName]
+      }
+    })
     
-    const field = v$.value[fieldName];
-    if (field && field.$error) {
-      return field.$errors[0]?.$message || 'Invalid field';
-    }
-    return '';
-  };
+    return Object.keys(errors).length === 0
+  })
+  
+  const getFieldError = (fieldName) => {
+    return errors[fieldName] || ''
+  }
   
   const validate = async () => {
-    if (!canUseVuelidate.value) return true;
-    return await v$.value.$validate();
-  };
+    // Validate all fields
+    Object.keys(formData).forEach(fieldName => {
+      const error = validateField(fieldName, formData[fieldName])
+      if (error) {
+        errors[fieldName] = error
+      } else {
+        delete errors[fieldName]
+      }
+    })
+    
+    return Object.keys(errors).length === 0
+  }
   
   return {
     v$,
     isValid,
-    hasErrors,
     getFieldError,
     validate,
-    canUseVuelidate
-  };
+    canUseVuelidate: computed(() => false) // Always false for fallback
+  }
 }
 
-// ✅ LIGHTWEIGHT VALIDATORS (IMPORT ONLY WHAT YOU NEED)
+// ✅ SIMPLE VALIDATORS (NO VUELIDATE DEPENDENCY)
 export const validators = {
-  // Lazy load validators to save memory
-  get required() {
-    return require('@vuelidate/validators').required;
-  },
-  
-  get email() {
-    return require('@vuelidate/validators').email;
-  },
-  
-  get minLength() {
-    return require('@vuelidate/validators').minLength;
-  },
-  
-  get sameAs() {
-    return require('@vuelidate/validators').sameAs;
-  }
-};
+  required: true,
+  email: true,
+  minLength: (min) => ({ min }),
+  sameAs: (target) => ({ target })
+}
