@@ -71,6 +71,7 @@
   </div>
 </template>
 
+<!-- Keep your existing script -->
 <script>
 import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -88,7 +89,7 @@ export default {
       password: ''
     })
     
-    // ✅ VALIDATION RULES
+    // ✅ VALIDATION RULES (SIMPLE VERSION)
     const rules = computed(() => ({
       email: { 
         required: validators.required, 
@@ -100,16 +101,14 @@ export default {
       }
     }))
     
-    // ✅ USE MEMORY-SAFE VALIDATION
+    // ✅ USE SIMPLE VALIDATION
     const { v$, isValid, getFieldError, validate, canUseVuelidate } = useFormValidation(state, rules)
     
-    // ✅ COMPONENT STATE
     const showPassword = ref(false)
     const message = ref('')
     const error = ref(null)
     const showValidationErrors = ref(false)
     
-    // ✅ COMPUTED PROPERTIES
     const statusMessage = computed(() => store.state.message || '')
     
     const messageClass = computed(() => {
@@ -136,59 +135,34 @@ export default {
 
   methods: {
     async login() {
-      this.showValidationErrors = true;
+      this.showValidationErrors = true
       
-      // ✅ BASIC VALIDATION (FALLBACK)
-      if (!this.state.email || !this.state.password) {
-        this.message = 'Email and password are required';
-        this.error = true;
-        return;
-      }
+      // ✅ TRIGGER VALIDATION
+      const isFormValid = await this.validate()
       
-      // ✅ BASIC EMAIL VALIDATION
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(this.state.email)) {
-        this.message = 'Please enter a valid email address';
-        this.error = true;
-        return;
-      }
-      
-      // ✅ BASIC PASSWORD VALIDATION
-      if (this.state.password.length < 8) {
-        this.message = 'Password must be at least 8 characters';
-        this.error = true;
-        return;
-      }
-      
-      // ✅ VUELIDATE VALIDATION (IF MEMORY ALLOWS)
-      if (this.canUseVuelidate) {
-        const isFormValid = await this.validate();
-        if (!isFormValid) {
-          this.message = 'Please fix the errors above';
-          this.error = true;
-          return;
-        }
+      if (!isFormValid) {
+        this.message = 'Please fix the errors above'
+        this.error = true
+        return
       }
 
       try {
-        // ✅ ATTEMPT LOGIN
         await this.store.dispatch('login', {
           email: this.state.email,
           password: this.state.password
-        });
+        })
         
-        this.message = 'Login successful!';
-        this.error = false;
+        this.message = 'Login successful!'
+        this.error = false
         
-        // ✅ REDIRECT TO DASHBOARD
         setTimeout(() => {
-          this.router.push({ name: 'Dashboard' });
-        }, 1000);
+          this.router.push({ name: 'About' })
+        }, 1000)
         
       } catch (err) {
-        console.error('Login error:', err);
-        this.message = err.response?.data?.error || 'Login failed. Please try again.';
-        this.error = true;
+        console.error('Login error:', err)
+        this.message = err.response?.data?.error || 'Login failed. Please try again.'
+        this.error = true
       }
     }
   }
