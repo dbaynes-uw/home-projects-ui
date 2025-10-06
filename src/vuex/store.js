@@ -266,43 +266,52 @@ export default new Vuex.Store({
     ADD_USER(state, user) {
       state.users.push(user);
     },
+
     SET_USER_DATA (state, userData) {
-      console.log('🔍 Mutation: Setting user data:', userData);
-  
-      // ✅ HANDLE DIFFERENT DATA FORMATS
-      let user;
       if (userData && typeof userData === 'object') {
-        user = userData;
+        state.user = userData;
+        state.loggedIn = true;
+        state.token = userData.token || '';
+        state.id = userData.id || '';
+
+        // ✅ SAVE TO LOCALSTORAGE
+        try {
+          localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+          console.error('❌ SET_USER_DATA: Failed to save to localStorage:', error);
+        }
+
+        // ✅ SET AUTH HEADER FOR FUTURE REQUESTS
+        if (userData.token) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
+        }
+
+        console.log('✅ SET_USER_DATA: Final state:', {
+          user: state.user,
+          loggedIn: state.loggedIn,
+          token: state.token
+        });
       } else {
-        console.error('❌ Invalid user data format:', userData);
-        return;
+        console.error('❌ SET_USER_DATA: Invalid user data:', userData);
       }
-  
-      state.user = user;
-        
-      // ✅ SAVE TO LOCALSTORAGE
-      try {
-        localStorage.setItem('user', JSON.stringify(user));
-        console.log('✅ User saved to localStorage');
-      } catch (error) {
-        console.error('❌ Failed to save user to localStorage:', error);
-      }
-      
-      // ✅ SET AUTH HEADER
-      if (user.token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
-        console.log('✅ Auth header set');
-      }
-      
-      console.log('✅ Final user in state:', state.user);
     },
+
     CLEAR_PLANT() {
       localStorage.removeItem('plant')
     },
     CLEAR_USER_DATA () {
-      //var user = localStorage.getItem('user')
+      console.log('🔍 CLEAR_USER_DATA: Clearing user data');
+      state.user = null;
+      state.loggedIn = false;
+      state.token = '';
+      state.id = '';
+
       localStorage.removeItem('user')
-      axios.defaults.headers.common['Authorization'] = null
+      //axios.defaults.headers.common['Authorization'] = null
+      // ✅ CLEAR AUTH HEADER
+      delete axios.defaults.headers.common['Authorization'];
+  
+      console.log('✅ CLEAR_USER_DATA: User data cleared');
     },
     CLEAR_WATERING() {
       localStorage.removeItem('watering')
@@ -377,8 +386,9 @@ export default new Vuex.Store({
         });
     },
 
+      // In your store.js login action, make sure it looks exactly like this:
     async login ({ commit }, credentials) {
-      // ✅ FIX: Add proper protocol
+      let api_authenticate_url;
       if (window.location.port == "8080") {
         api_authenticate_url = "http://localhost:3000/users/tokens/";
       } else {
@@ -386,43 +396,43 @@ export default new Vuex.Store({
       }
     
       try {
-        console.log('🔍 Store login: Attempting with:', credentials);
-        console.log('🔍 Store login: API URL:', api_authenticate_url + "sign_in");
+        console.log('🔍 Store login: Attempting login...');
 
         const response = await axios.post(api_authenticate_url + "sign_in", credentials);
 
-        console.log('✅ Store login: API response:', response.data);
+        console.log('✅ Store login: Full API response:', response.data);
 
-        // ✅ YOUR API RETURNS USER DATA DIRECTLY
-        const userData = response.data;
+        // ✅ EXTRACT USER DATA FROM resource_owner
+        if (response.data.resource_owner) {
+          const userData = {
+            id: response.data.resource_owner.id,
+            email: response.data.resource_owner.email,
+            created_at: response.data.resource_owner.created_at,
+            updated_at: response.data.resource_owner.updated_at,
+            token: response.data.token,
+            refresh_token: response.data.refresh_token,
+            expires_in: response.data.expires_in,
+            token_type: response.data.token_type
+          };
 
-        console.log('✅ Store login: Setting user data:', userData);
-        commit('SET_USER_DATA', userData);
+          console.log('✅ Store login: Extracted userData:', userData);
 
-        return { success: true, user: userData };
+          commit('SET_USER_DATA', userData);
+
+          console.log('✅ Store login: User committed to store');
+          console.log('✅ Store login: State after commit:', this.state.user);
+
+          return { success: true, user: userData };
+        } else {
+          throw new Error('No resource_owner found in API response');
+        }
       
       } catch (error) {
-        console.error('❌ Store login: Error:', error);
-        console.error('❌ Store login: Error response:', error.response?.data);
-
-        // ✅ HANDLE YOUR API'S ERROR FORMAT: {"error":"invalid_email","error_description":["Email is invalid"]}
-        let errorMessage = 'Login failed';
-
-        if (error.response?.data) {
-          const errorData = error.response.data;
-
-          if (errorData.error_description && Array.isArray(errorData.error_description)) {
-            errorMessage = errorData.error_description.join(', ');
-          } else if (errorData.error) {
-            errorMessage = errorData.error.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-          } else if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        }
-
-        throw new Error(errorMessage);
+        console.error('❌ Store login error:', error);
+        throw new Error(error.message || 'Login failed');
       }
     },
+
     async logout ({ commit }) {
       commit('CLEAR_USER_DATA')
       router.push({name: 'Login'});

@@ -21,6 +21,19 @@ const routes = [
     component: () => import('@/views/Register.vue')  // ✅ Lazy loading
   },
 
+  {
+    path: '/password_resets/:token',
+    name: 'PasswordReset',
+    component: () => import('@/views/PasswordReset.vue'),
+    props: true
+  },
+  {
+    path: '/password_resets/:token/edit',  // ✅ HANDLE /edit SUFFIX
+    name: 'PasswordResetEdit',
+    component: () => import('@/views/PasswordReset.vue'),
+    props: true
+  },
+
   // ✅ ALL OTHER ROUTES (LAZY LOADING)
   {
     path: '/dashboard',
@@ -37,11 +50,6 @@ const routes = [
     path: '/forgot_password',
     name: 'ForgotPassword',
     component: () => import('../components/ForgotPassword.vue')
-  },
-  {
-    path: '/password_resets/:token',
-    name: 'ResetPassword',
-    component: () => import('../components/ResetPassword.vue')
   },
 
   // ✅ ABOUT
@@ -480,9 +488,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log('🔍 Router navigating to:', to.name, to.path)
-  console.log('🔍 Available routes:', routes.map(r => r.path))
-
   const loggedIn = localStorage.getItem('user')
   
   // ✅ MEMORY CLEANUP ON ROUTE CHANGE

@@ -24,7 +24,7 @@
           <v-menu offset-y>
             <template v-slot:activator="{ props }">
               <v-btn v-bind="props" class="menu-dropdown" variant="plain">
-                <v-icon v-if="isMobile" style="color: #8b0000 !important;">mdi-menu</v-icon>
+                <i v-if="isMobile" class="fas fa-bars" style="color: #8b0000 !important;"></i> <!-- ✅ CHANGED FROM mdi-menu -->
                 <span v-else class="menu-text" style="font-weight: bold !important;">&nbsp;Menu</span>
               </v-btn>
             </template>
@@ -40,19 +40,43 @@
                 <template v-if="!isMobile">
                   <v-tooltip location="right" :text="link.title">
                     <template v-slot:activator="{ props }">
-                      <v-icon 
+                      <i 
                         v-bind="props"
-                        :icon="link.icon" 
+                        :class="link.icon" 
                         class="dropdown-icon"
                         style="color: #8b0000 !important; text-align: center;"
-                      />
+                      ></i> <!-- ✅ CHANGED FROM v-icon to i -->
                     </template>
                   </v-tooltip>
                 </template>
 
-                <!-- ✅ MOBILE: SHOW TEXT-ONLY (NO ICONS) -->
+                <!-- ... later in footer ... -->
+
+                <!-- ✅ DESKTOP: ICON-ONLY WITH HOVER TOOLTIP -->
+                <template v-if="!isMobile">
+                  <v-tooltip location="top" :text="link.title">
+                    <template v-slot:activator="{ props }">
+                      <i 
+                        v-bind="props"
+                        :class="link.icon" 
+                        class="footer-icon"
+                        style="position: relative;
+                               left: -.5rem;
+                               top: 0.2rem;"
+                      ></i> <!-- ✅ CHANGED FROM v-icon to i -->
+                    </template>
+                  </v-tooltip>
+                </template>
+
+                <!-- ✅ MOBILE: ICON + TEXT (NO TOOLTIP NEEDED) -->
                 <template v-else>
-                  <span class="mobile-nav-text">{{ link.title }}</span>
+                  <i 
+                    :class="link.icon" 
+                    class="footer-icon"
+                    style="position: relative;
+                           left: -.5rem;
+                           top: 0.2rem;"
+                  ></i> <!-- ✅ CHANGED FROM v-icon to i -->
                 </template>
               </v-list-item>
             </v-list>
@@ -65,6 +89,7 @@
       <span>
         <router-view></router-view>
       </span>
+<!-- Replace the footer section in your App.vue: -->
       <v-footer
         color="teal-darken-2"
         padless
@@ -83,31 +108,27 @@
               <template v-if="!isMobile">
                 <v-tooltip location="top" :text="link.title">
                   <template v-slot:activator="{ props }">
-                    <v-icon 
+                    <i 
                       v-bind="props"
-                      :icon="link.icon" 
-                      size="small" 
+                      :class="link.icon" 
                       class="footer-icon"
                       style="position: relative;
                              left: -.5rem;
                              top: 0.2rem;"
-                    />
-                <!--span class="mobile-footer-text">{{ link.title }}</~span-->
-                  
+                    ></i> <!-- ✅ CHANGED FROM v-icon to i -->
                   </template>
                 </v-tooltip>
               </template>
             
               <!-- ✅ MOBILE: ICON + TEXT (NO TOOLTIP NEEDED) -->
               <template v-else>
-                <v-icon 
-                  :icon="link.icon" 
-                  size="small" 
+                <i 
+                  :class="link.icon" 
                   class="footer-icon"
                   style="position: relative;
                          left: -.5rem;
                          top: 0.2rem;"
-                />
+                ></i> <!-- ✅ CHANGED FROM v-icon to i -->
               </template>
             </router-link>
           </button>
@@ -138,80 +159,80 @@ export default {
       this.$store.dispatch('logout');
     }
   },
-data() {
-  return {
-    onlineStatus: navigator.onLine,
-    links: [
-      {
-        label: "About",
-        url: "/about",
-        title: "About",
-        icon: "mdi-information-outline" // ℹ️ Info icon
-      },
-      {
-        label: "BookList",
-        url: "/books", 
-        title: "Books",
-        icon: "mdi-book-open-page-variant" // 📖 Open book
-      },
-      {
-        label: "EventList",
-        url: "/",
-        title: "Events", 
-        icon: "mdi-calendar-check" // 📅 Calendar with check
-      },
-      {
-        label: "FilmList",
-        url: "/",
-        title: "Films",
-        icon: "mdi-movie-open" // 🎬 Film/movie icon
-      },
-      {
-        label: "Gardens",
-        url: "/gardens",
-        title: "Gardens",
-        icon: "mdi-flower" // 🌸 Flower/garden icon
-      },
-      {
-        label: "GolfList", 
-        url: "/golfs",
-        title: "Golf",
-        icon: "mdi-golf" // ⛳ Golf flag
-      },
-      {
-        label: "MedList",
-        url: "/meds", 
-        title: "Meds",
-        icon: "mdi-medical-bag" // 💊 Medical bag
-      },
-      {
-        label: "ProductsByLocations",
-        url: "/products",
-        title: "Shopping",
-        icon: "mdi-cart" // 🛒 Shopping cart
-      },
-      {
-        label: "TrailList",
-        url: "/trails",
-        title: "Trails", 
-        icon: "mdi-hiking" // 🥾 Hiking icon
-      },
-      {
-        label: "TravelList",
-        url: "/travels",
-        title: "Travels",
-        icon: "mdi-airplane" // ✈️ Airplane
-      },
-      {
-        label: "Login",
-        url: "/login", 
-        title: "SignOut",
-        icon: "mdi-logout" // 🚪 Logout icon
-      },
-    ],
-    menu: "@Menu",
-  };
-},
+  data() {
+    return {
+      onlineStatus: navigator.onLine,
+      links: [
+        {
+          label: "About",
+          url: "/about",
+          title: "About",
+          icon: "fas fa-info-circle" // ✅ CHANGED FROM mdi-information-outline
+        },
+        {
+          label: "BookList",
+          url: "/books", 
+          title: "Books",
+          icon: "fas fa-book-open" // ✅ CHANGED FROM mdi-book-open-page-variant
+        },
+        {
+          label: "EventList",
+          url: "/",
+          title: "Events", 
+          icon: "fas fa-calendar-check" // ✅ CHANGED FROM mdi-calendar-check
+        },
+        {
+          label: "FilmList",
+          url: "/",
+          title: "Films",
+          icon: "fas fa-film" // ✅ CHANGED FROM mdi-movie-open
+        },
+        {
+          label: "Gardens",
+          url: "/gardens",
+          title: "Gardens",
+          icon: "fas fa-seedling" // ✅ CHANGED FROM mdi-flower
+        },
+        {
+          label: "GolfList", 
+          url: "/golfs",
+          title: "Golf",
+          icon: "fas fa-golf-ball" // ✅ CHANGED FROM mdi-golf
+        },
+        {
+          label: "MedList",
+          url: "/meds", 
+          title: "Meds",
+          icon: "fas fa-pills" // ✅ CHANGED FROM mdi-medical-bag
+        },
+        {
+          label: "ProductsByLocations",
+          url: "/products",
+          title: "Shopping",
+          icon: "fas fa-shopping-cart" // ✅ CHANGED FROM mdi-cart
+        },
+        {
+          label: "TrailList",
+          url: "/trails",
+          title: "Trails", 
+          icon: "fas fa-hiking" // ✅ CHANGED FROM mdi-hiking
+        },
+        {
+          label: "TravelList",
+          url: "/travels",
+          title: "Travels",
+          icon: "fas fa-plane" // ✅ CHANGED FROM mdi-airplane
+        },
+        {
+          label: "Login",
+          url: "/login", 
+          title: "SignOut",
+          icon: "fas fa-sign-out-alt" // ✅ CHANGED FROM mdi-logout
+        },
+      ],
+      menu: "Menu",
+    };
+  },
 }
 </script>
 <style scoped>
@@ -300,44 +321,51 @@ data() {
   transform: scale(1.1);
 }
 
+/* ✅ FONTAWESOME ICON STYLING */
 .dropdown-icon {
   font-size: 20px !important;
   transition: all 0.3s ease;
   position: relative;
   left: 0rem;
+  width: 20px; /* ✅ ENSURE CONSISTENT WIDTH */
+  text-align: center;
 }
 
-.nav-menu-item:hover .dropdown-icon {
-  transform: scale(1.2); /* Icon grows slightly on hover */
-  filter: brightness(1.2); /* Icon gets slightly brighter */
-}
-/* ✅ FOOTER LINK STYLING (keep as-is since it's perfect) */
-.footer-info {
-  margin-top: 0.75rem !important;
-}
 .footer-icon {
-  color: #8b0000!important;
+  color: #8b0000 !important;
   margin-left: 2rem;
   margin-bottom: 2px;
+  font-size: 16px !important; /* ✅ ENSURE SIZE */
+  width: 16px; /* ✅ ENSURE CONSISTENT WIDTH */
+  text-align: center;
 }
 
-.footer-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  padding: 8px 4px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  min-width: 0; /* ✅ ALLOW SHRINKING */
+/* ✅ MOBILE ADJUSTMENTS */
+@media (max-width: 600px) {
+  .dropdown-icon {
+    font-size: 24px !important;
+    width: 24px;
+  }
+  
+  .footer-icon {
+    font-size: 14px !important;
+    width: 14px;
+  }
 }
 
-.footer-link:hover {
-  background-color: rgba(255,255,255,0.1);
-  transform: translateY(-2px);
+@media (max-width: 480px) {
+  .footer-icon {
+    font-size: 12px !important;
+    width: 12px;
+  }
 }
 
+@media (max-width: 360px) {
+  .footer-icon {
+    font-size: 10px !important;
+    width: 10px;
+  }
+}
 .nav-button {
   cursor: pointer;
   font-weight: bold;

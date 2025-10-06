@@ -6,14 +6,12 @@
       <h3>Log In</h3>
     </v-card-title>
     
-    <!-- ✅ MOVE THIS INSIDE THE CARD -->
     <v-card-subtitle v-if="statusMessage">
       <h2 style="color: red">
         {{ statusMessage }}
       </h2>
     </v-card-subtitle>
     
-    <!-- ✅ CARD-TEXT IS NOW INSIDE THE CARD -->
     <v-card-text>
       <v-form @submit.prevent="login">
         <v-container id="form-container">
@@ -31,7 +29,7 @@
           <v-text-field
             label="Password (Minimum 8 characters)"
             v-model="state.password"
-            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
             :type="showPassword ? 'text' : 'password'"
             name="password"
             :error="showValidationErrors && v$.password.$error"
@@ -44,7 +42,6 @@
             {{ state.password.length }} characters used.
           </span>
           
-          <!-- ✅ MEMORY STATUS INDICATOR -->
           <small v-if="!canUseVuelidate" class="text-warning">
             ⚠️ Advanced validation disabled (memory optimization)
           </small>
@@ -54,18 +51,25 @@
             type="submit" 
             block 
             class="mt-2" 
-            :disabled="!isValid"
-            @click="login"
+            :disabled="!isValid || loading"
+            :loading="loading"
           >
+            <i class="fas fa-sign-in-alt mr-2"></i>
             Submit
           </v-btn>
         </v-container>
       </v-form>
       
-      <p v-if="message" :class="messageClass">{{ message }}</p>
+      <v-alert 
+        v-if="message" 
+        :type="error ? 'error' : 'success'" 
+        variant="tonal" 
+        class="mt-4"
+      >
+        {{ message }}
+      </v-alert>
     </v-card-text>
     
-    <!-- ✅ ACTIONS SECTION INSIDE THE CARD -->
     <v-card-actions class="justify-center">
       <div class="text-center">
         Don't have an account? 
@@ -79,7 +83,6 @@
   </v-card>
 </template>
 
-<!-- Keep your existing script and style sections -->
 <script>
 import { reactive, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -92,9 +95,6 @@ export default {
     
     const router = useRouter()
     const store = useStore()
-
-    console.log('🔍 Router:', router)
-    console.log('🔍 Store:', store)
     
     // ✅ REACTIVE FORM DATA
     const state = reactive({
@@ -124,14 +124,11 @@ export default {
     
     const showPassword = ref(false)
     const message = ref('')
-    const error = ref(null)
+    const error = ref(false)
+    const loading = ref(false)
     const showValidationErrors = ref(false)
     
     const statusMessage = computed(() => store.state.message || '')
-    
-    const messageClass = computed(() => {
-      return error.value ? 'error-message' : 'success-message'
-    })
 
     return {
       state,
@@ -143,31 +140,31 @@ export default {
       showPassword,
       message,
       error,
+      loading,
       showValidationErrors,
       statusMessage,
-      messageClass,
       router,
       store
     }
   },
 
-  beforeMount() {
-    console.log('🔍 Login.vue beforeMount()')
-  },
-  
   mounted() {
     console.log('✅ Login.vue mounted successfully!')
-    console.log('✅ Component data:', this.$data)
   },
 
   methods: {
+    // ✅ PROPER COMPONENT LOGIN METHOD
     async login() {
       this.showValidationErrors = true
+      this.loading = true
+      this.message = ''
       
+      // ✅ EXTRA EMAIL VALIDATION
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (!emailRegex.test(this.state.email)) {
         this.message = 'Please enter a valid email address (e.g., user@example.com)';
         this.error = true;
+        this.loading = false;
         return;
       }
       
@@ -175,34 +172,38 @@ export default {
       if (!isFormValid) {
         this.message = 'Please fix the errors above'
         this.error = true
+        this.loading = false;
         return
       }
 
       try {
-        console.log('🔍 Login attempt with:', {
+        console.log('🔍 Login.vue: Calling store login action with:', {
           email: this.state.email,
           password: '[HIDDEN]'
         });
         
+        // ✅ CALL THE STORE LOGIN ACTION
         const result = await this.store.dispatch('login', {
           email: this.state.email.trim().toLowerCase(),
           password: this.state.password
         })
         
-        console.log('✅ Login successful:', result);
-        console.log('✅ User in store:', this.store.state.user);
+        console.log('✅ Login.vue: Store login returned:', result);
+        console.log('✅ Login.vue: User in store after login:', this.store.state.user);
         
-        this.message = 'Login successful!'
+        this.message = 'Login successful! Redirecting...'
         this.error = false
         
         setTimeout(() => {
           this.router.push({ name: 'About' })
-        }, 1000)
+        }, 1500)
         
       } catch (err) {
-        console.error('❌ Login failed:', err);
+        console.error('❌ Login.vue: Login failed:', err);
         this.message = err.message || 'Login failed. Please try again.'
         this.error = true
+      } finally {
+        this.loading = false
       }
     }
   }
