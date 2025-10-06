@@ -1,33 +1,39 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h2><v-icon>mdi-pill</v-icon> Med List</h2>
+      <!-- ✅ CHANGED: mdi-pill → fas fa-pills -->
+      <h2><i class="fas fa-pills"></i> Med List</h2>
     </v-card-title>
+    
     <!-- ✅ MODERN NAVIGATION -->
     <div class="navigation-buttons">
       <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
-        <v-icon>mdi-heart</v-icon>
+        <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
+        <i class="fas fa-heartbeat heart-icon"></i>
         <span>Glucose Readings</span>
       </router-link>
       
       <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
-        <v-icon>mdi-plus</v-icon>
+        <!-- ✅ CHANGED: mdi-plus → fas fa-plus -->
+        <i class="fas fa-plus"></i>
         <span style="position: relative; left: 2rem;">Add Med</span>
       </router-link>
       
       <button @click="toggleIndexView" class="nav-btn" id="button-as-link">
-        <v-icon :class="showIndexView ? 'mdi-view-grid' : 'mdi-view-list'"></v-icon>
+        <!-- ✅ CHANGED: mdi-view-grid/mdi-view-list → fas fa-th/fas fa-list -->
+        <i :class="showIndexView ? 'fas fa-th' : 'fas fa-list'"></i>
         <span>{{ showIndexView ? 'Card View' : 'Index View' }}</span>
       </button>
       
       <button @click="toggleMedChart" class="nav-btn" id="button-as-link">
-        <v-icon>mdi-chart-bar</v-icon>
+        <!-- ✅ CHANGED: mdi-chart-bar → fas fa-chart-bar -->
+        <i class="fas fa-chart-bar"></i>
         <span>{{ showMedChart ? 'Hide Chart' : 'Show Chart' }}</span>
       </button>
     </div>
   </v-card>
 
-  <!-- ✅ EXTERNAL LINK -->
+  <!-- ✅ EXTERNAL LINK (already FontAwesome) -->
   <div class="external-link">
     <a href="https://myhealthchart.com/" target="_blank">
       <i class="fas fa-external-link-alt"></i>
@@ -35,7 +41,7 @@
     </a>
   </div>
 
-  <!-- ✅ FILTERS SECTION -->
+  <!-- ✅ FILTERS SECTION (already FontAwesome) -->
   <div class="filters-section">
     <div class="time-frame-filter">
       <label>
@@ -66,7 +72,7 @@
     </div>
   </div>
 
-  <!-- ✅ ENHANCED CHART SECTION WITH FORCED REACTIVITY -->
+  <!-- ✅ ENHANCED CHART SECTION (no icon changes needed) -->
   <div v-if="showMedChart && displayedMeds.length > 0" class="chart-section">
     <div class="chart-debug mb-3">
       <p><strong>Debug Info:</strong></p>
@@ -74,7 +80,6 @@
       <p>📅 Time Frame: {{ selectedTimeFrame || 'All Time' }} days</p>
     </div>
     
-    <!-- ✅ ADD KEY TO FORCE CHART RE-RENDER -->
     <MedChart 
       :key="chartKey"
       :meds="displayedMeds" 
@@ -84,7 +89,7 @@
     />
   </div>
   
-  <!-- ✅ RESULTS SECTION -->
+  <!-- ✅ RESULTS SECTION (already FontAwesome) -->
   <div class="results-section">
     <h3 class="results-count">
       <i class="fas fa-hashtag"></i>
@@ -124,16 +129,16 @@
 </template>
 
 <script setup>
+// ✅ YOUR SCRIPT STAYS EXACTLY THE SAME
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router'; // ✅ IMPORT BOTH
+import { useRouter } from 'vue-router';
 import MedCard from "@/components/meds/MedCard.vue";
 import MedChart from "@/components/meds/MedChart.vue";
 import MedIndex from "@/components/meds/MedIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-// ✅ ADD CLEANUP ON UNMOUNT
 import { onUnmounted } from 'vue';
-// ✅ CLEANUP WHEN LEAVING COMPONENT
+
 onUnmounted(() => {
   console.log('🧹 MedList unmounting - cleaning up...')
   
@@ -366,6 +371,36 @@ onMounted(async () => {
   transform: scale(1.2);
 }
 
+/* ✅ NAVIGATION BUTTON ICONS */
+.nav-btn i {
+  color: #495057;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover i {
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ✅ SPECIAL STYLING FOR SPECIFIC ICONS */
+.fa-pills {
+  color: #17a2b8 !important; /* Blue for pills */
+}
+
+.fa-plus {
+  color: #28a745 !important; /* Green for add */
+}
+
+.fa-chart-bar {
+  color: #ffc107 !important; /* Yellow for chart */
+}
+
+.fa-th,
+.fa-list {
+  color: #6c757d !important; /* Gray for view toggle */
+}
+
 /* ✅ YOUR EXISTING CSS STAYS THE SAME */
 .navigation-buttons {
   display: flex;
@@ -377,7 +412,6 @@ onMounted(async () => {
   margin: 1rem;
 }
 
-/* ... rest of your existing CSS ... */
 .nav-btn {
   display: flex;
   align-items: center;
