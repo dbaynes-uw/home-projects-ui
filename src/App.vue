@@ -99,13 +99,19 @@
 
       <!-- ✅ BOTTOM FOOTER NAVIGATION -->
       <!-- ✅ SIMPLIFIED FOOTER -->
-      <v-footer color="teal-darken-2" app class="compact-footer">
+      <v-footer 
+        color="teal-darken-2" 
+        app 
+        class="smart-footer"
+        :class="{ 'footer-visible': showFooter, 'footer-hidden': !showFooter }"
+      >
         <div class="footer-nav">
           <button
             v-for="link in links"
             :key="`${link.label}-footer-link`"
             class="nav-button"
             @click="navigateToPage(link)"
+            :title="link.title"
           >
             <div class="footer-link">
               <i :class="link.icon" class="footer-icon"></i>
@@ -162,6 +168,14 @@ export default {
     isMobile() {
       return window.innerWidth <= 768;
     },
+    isAuthPage() {
+      const authPages = ['Login', 'Register', 'ForgotPassword', 'PasswordReset'];
+      return authPages.includes(this.$route.name);
+    },
+    
+    isHomePage() {
+      return this.$route.name === 'home';
+    }
   },
   
   methods: {
@@ -177,16 +191,36 @@ export default {
       } else {
         this.$router.push({ name: link.label });
       }
-    }
+    },
+
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
+    handleScroll() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // ✅ CALCULATE HOW CLOSE TO BOTTOM (within 100px)
+      const distanceFromBottom = documentHeight - (scrollTop + windowHeight);
+      
+      // ✅ SHOW FOOTER WHEN NEAR BOTTOM OR AT TOP
+      this.showFooter = distanceFromBottom <= 100 || scrollTop <= 50;
+      
+      // ✅ DEBUG (remove in production)
+      // console.log('📏 Scroll:', { windowHeight, documentHeight, scrollTop, distanceFromBottom, showFooter: this.showFooter });
+    }    
   },
   
   data() {
     return {
       onlineStatus: navigator.onLine,
+      windowWidth: window.innerWidth,
+      showFooter: false,
       links: [
         {
-          label: "About",
-          url: "/about",
+            label: "About",
+            url: "/about",
           title: "About",
           icon: "fas fa-info-circle"
         },
@@ -260,6 +294,9 @@ export default {
       this.$forceUpdate(); // Force re-render on resize
     });
     
+    // ✅ LISTEN FOR SCROLL EVENTS
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
+
     // ✅ LISTEN FOR ONLINE/OFFLINE STATUS
     window.addEventListener('online', () => {
       this.onlineStatus = true;
@@ -268,6 +305,12 @@ export default {
     window.addEventListener('offline', () => {
       this.onlineStatus = false;
     });
+  },
+  
+  beforeUnmount() {
+    // ✅ CLEANUP EVENT LISTENERS
+    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener('scroll', this.handleScroll);
   }
 }
 </script>
@@ -381,7 +424,33 @@ export default {
   min-height: auto; /* ✅ NO MIN HEIGHT */
   max-height: 80px; /* ✅ MAXIMUM HEIGHT LIMIT */
 }
+/* ✅ SMART FOOTER - SMOOTH TRANSITIONS */
+.smart-footer {
+  height: 50px !important;
+  min-height: 50px !important;
+  max-height: 50px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1005 !important;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out !important;
+}
 
+/* ✅ FOOTER VISIBILITY STATES */
+.footer-visible {
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+}
+
+.footer-hidden {
+  transform: translateY(100%) !important;
+  opacity: 0 !important;
+}
+
+/* ✅ FOOTER NAVIGATION */
 .footer-nav {
   display: flex;
   width: 100%;
