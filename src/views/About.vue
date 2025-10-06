@@ -1,3 +1,4 @@
+
 <template>
   <div class="about-page">
     <v-container>
@@ -20,12 +21,12 @@
                 <div class="user-info mb-4">
                   <v-chip color="primary" variant="elevated" class="mr-2 mb-2">
                     <i class="fas fa-user mr-2"></i>
-                    ID: {{ $store.state.user.resource_owner?.id }}
+                    ID: {{ $store.state.user.id }}
                   </v-chip>
                   
                   <v-chip color="success" variant="elevated" class="mr-2 mb-2">
                     <i class="fas fa-envelope mr-2"></i>
-                    {{ $store.state.user.resource_owner?.email }}
+                    {{ $store.state.user.email }}
                   </v-chip>
                   
                   <v-chip color="info" variant="elevated" class="mr-2 mb-2">
@@ -39,7 +40,6 @@
                   </v-chip>
                 </div>
                 
-                <!-- ... rest of your navigation section stays the same ... -->
                 <div class="navigation-section">
                   <h3 class="mb-3">🚀 What would you like to do?</h3>
                   
@@ -79,28 +79,25 @@
     </v-container>
   </div>
 </template>
-<script>
 
+<script>
 export default {
   computed: {
     userName() {
-      const user = this.$store.state.user;      
-      // ✅ CHECK FOR EMAIL IN resource_owner
-      const email = user?.resource_owner?.email;
+      const user = this.$store.state.user;
       
-      if (!user || !email) {
+      // ✅ NOW YOU CAN USE DIRECT EMAIL ACCESS (flattened data)
+      if (!user || !user.email) {
         return 'Guest';
       }
       
-      const emailUser = email.split('@')[0];
+      const emailUser = user.email.split('@')[0];
       const formattedName = emailUser
         .split(/[._-]/)
         .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-        .join(' ');      
+        .join(' ');
+      
       return formattedName;
-    },
-    user() {
-      return this.$store.state.user;
     },
     
     formatExpiration() {
@@ -126,7 +123,7 @@ export default {
           title: 'Events',
           description: 'Manage your home events',
           icon: 'fas fa-calendar-check',
-          url: '/events'
+          url: '/'
         },
         {
           name: 'books',
@@ -168,16 +165,6 @@ export default {
   },
   
   methods: {
-    // ✅ ADD THE MISSING METHOD
-    getLocalStorageDebug() {
-      try {
-        const user = localStorage.getItem('user');
-        return user ? JSON.parse(user) : 'No user in localStorage';
-      } catch (error) {
-        return 'Error parsing localStorage: ' + error.message;
-      }
-    },
-    
     navigateTo(url) {
       this.$router.push(url)
     },
@@ -191,10 +178,13 @@ export default {
       }
     }
   },
+  
+  mounted() {
+    console.log('✅ About page: Welcome', this.$store.state.user?.email);
+  }
 }
 </script>
 
-<!-- ✅ YOUR EXISTING STYLES STAY THE SAME -->
 <style scoped>
 .about-page {
   min-height: 100vh;

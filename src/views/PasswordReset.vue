@@ -100,6 +100,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { getApiUrl, API_ENDPOINTS } from '@/utils/apiConfig'  // ✅ IMPORT UTILITY
 
 export default {
   setup() {
@@ -117,12 +118,17 @@ export default {
     const error = ref(false)
     const loading = ref(false)
     const isValidToken = ref(true)
+    const apiUrl = ref('')
     
     // ✅ GET TOKEN FROM URL
     onMounted(() => {
       token.value = route.params.token
       console.log('🔍 Password reset token:', token.value)
       
+      // ✅ USE UTILITY FUNCTION
+      apiUrl.value = getApiUrl(API_ENDPOINTS.PASSWORD_RESET);
+      console.log('🔍 Password reset API URL:', apiUrl.value);
+  
       if (!token.value) {
         isValidToken.value = false
         message.value = 'No reset token provided'
@@ -201,12 +207,14 @@ export default {
       
       try {
         console.log('🔍 Resetting password with token:', token.value)
+        console.log('🔍 Using API URL:', apiUrl.value + token.value)
         
-        // ✅ USING YOUR EXACT CODE STRUCTURE
-        const response = await fetch(`http://localhost:3000/api/v1/password_resets/${token.value}`, {
+        // ✅ CLEANER URL CONSTRUCTION
+        const response = await fetch(`${apiUrl.value}${token.value}`, {
           method: 'PATCH',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
           body: JSON.stringify({
             password: newPassword.value,
@@ -262,6 +270,7 @@ export default {
       passwordStrengthPercentage,
       validatePassword,
       validateConfirm,
+      apiUrl,
       resetPassword
     }
   }
