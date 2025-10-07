@@ -380,6 +380,89 @@ export default new Vuex.Store({
         });
     },
 
+    // Update your login action to handle the resource_owner format:
+    async login ({ commit }, credentials) {
+      // ✅ SET API URL BASED ON ENVIRONMENT (or use your utility)
+      let api_authenticate_url;
+      if (window.location.port == "8080") {
+        api_authenticate_url = "http://localhost:3000/users/tokens/";
+      } else {
+        api_authenticate_url = "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
+      }
+    
+      try {
+        console.log('🔍 Store login: Attempting with:', {
+          email: credentials.email,
+          password: '[HIDDEN]'
+        });
+        console.log('🔍 Store login: API URL:', api_authenticate_url + "sign_in");
+        
+        const response = await axios.post(api_authenticate_url + "sign_in", credentials);
+        
+        console.log('✅ Store login: Full API response:', response.data);
+        
+        // ✅ HANDLE YOUR SPECIFIC API RESPONSE FORMAT (resource_owner)
+        let userData;
+        
+        if (response.data.resource_owner) {
+          // ✅ YOUR API FORMAT: resource_owner contains user data
+          userData = {
+            // ✅ FLATTEN THE USER DATA FROM resource_owner
+            id: response.data.resource_owner.id,
+            email: response.data.resource_owner.email,
+            created_at: response.data.resource_owner.created_at,
+            updated_at: response.data.resource_owner.updated_at,
+            // ✅ ADD TOKEN DATA FROM ROOT LEVEL
+            token: response.data.token,
+            refresh_token: response.data.refresh_token,
+            expires_in: response.data.expires_in,
+            token_type: response.data.token_type,
+            // ✅ KEEP ORIGINAL STRUCTURE FOR REFERENCE
+            resource_owner: response.data.resource_owner
+          };
+          console.log('✅ Store login: Extracted userData from resource_owner:', userData);
+        } else if (response.data.user) {
+          // Fallback: user object at root level
+          userData = { ...response.data.user };
+          userData.token = response.data.token;
+          console.log('✅ Store login: Using user format:', userData);
+        } else {
+          // Fallback: direct response data
+          userData = { ...response.data };
+          console.log('✅ Store login: Using direct response format:', userData);
+        }
+        
+        console.log('✅ Store login: Final userData before commit:', userData);
+        
+        // ✅ COMMIT USER DATA TO STORE
+        commit('SET_USER_DATA', userData);
+        
+        // ✅ VERIFY IT WAS SET
+        console.log('✅ Store login: User in state after commit:', this.state.user);
+        
+        return { success: true, user: userData };
+      
+      } catch (error) {
+        console.error('❌ Store login: Error:', error);
+        console.error('❌ Store login: Error response:', error.response?.data);
+        
+        let errorMessage = 'Login failed';
+        
+        if (error.response?.data) {
+          const errorData = error.response.data;
+          
+          if (errorData.error_description && Array.isArray(errorData.error_description)) {
+            errorMessage = errorData.error_description.join(', ');
+          } else if (errorData.error) {
+            errorMessage = errorData.error.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        }
+        
+        throw new Error(errorMessage);
+      }
+    },
 
     async logout ({ commit }) {
       commit('CLEAR_USER_DATA')
