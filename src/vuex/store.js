@@ -387,7 +387,6 @@ export default new Vuex.Store({
     },
 
     // Update your login action to handle the resource_owner format:
-
     async login ({ commit }, credentials) {
       // ✅ SET API URL BASED ON ENVIRONMENT (or use your utility)
       let api_authenticate_url;
