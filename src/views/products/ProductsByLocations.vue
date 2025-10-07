@@ -3,10 +3,14 @@
     <ConfirmDialogue ref="confirmDialogue" />
     <v-card class="mx-auto mt-5">
       <v-card-title class="pb-0">
-        <h2>Products By Locations</h2>
+        <h2>
+          <!-- ✅ ADD TITLE ICON -->
+          <i class="fas fa-map-marked-alt title-icon"></i>
+          Products By Locations
+        </h2>
       </v-card-title>
 
-      <!-- ✅ NAVIGATION (unchanged) -->
+      <!-- ✅ NAVIGATION (icons already converted) -->
       <div class="navigation-grid">
         <v-btn 
           variant="outlined" 
@@ -19,7 +23,7 @@
         <v-btn 
           variant="outlined" 
           :to="{ name: 'ProductList' }"
-          prepend-icon="fas fa-cart"
+          prepend-icon="fas fa-shopping-basket"
         >
           Shopping List By Product
         </v-btn>
@@ -44,44 +48,51 @@
     <!-- ✅ MAIN CONTENT WITH HIERARCHICAL CONTROLS -->
     <v-card v-else class="mt-4">
       <v-card-title class="d-flex justify-space-between align-center">
-        <v-switch
-          v-model="showShoppingList"
-          :label="`Show: ${showShoppingList ? 'All Items' : 'Selected Items'}`"
-          color="primary"
-          hide-details
-          density="compact"
-        />
 
-        <!-- ✅ GLOBAL CONTROLS -->
-      <!-- ✅ ENHANCED GLOBAL CONTROLS -->
-      <div class="global-controls-wrapper">
-        <div class="global-controls">
-          <v-btn
-            @click="toggleAllLocations"
-            variant="outlined"
-            size="small"
-            prepend-icon="fas fa-map-marker"
-            class="control-btn"
-            :color="allLocationsExpanded ? 'error' : 'primary'"
-            style="width: 20rem;"
-          >
-            {{ allLocationsExpanded ? 'Collapse All Locations' : 'Expand All Locations' }}
-          </v-btn>
+      <v-switch
+         v-model="showShoppingList"
+         color="primary"
+         hide-details
+         density="compact"
+         style="position: relative; left: 0rem;"
+       />
 
-          <v-btn
-            @click="toggleAllVendors"
-            variant="outlined"
-            size="small"
-            prepend-icon="fas fa-store"
-            class="control-btn"
-            :disabled="!hasAnyExpandedLocations"
-            :color="allVendorsExpanded ? 'error' : 'primary'"
-            style="width: 20rem;"
-          >
-            {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
-          </v-btn>
-        </div>
-      </div>        
+      <!-- ✅ ENHANCED DESCRIPTION -->
+       <div class="switch-description">
+         <medium class="text-medium-emphasis" style="font-weight: bold;">
+           {{ showShoppingList ? 'Selected' : 'All' }}
+         </medium>
+       </div>
+
+        <!-- ✅ ENHANCED GLOBAL CONTROLS -->
+        <div class="global-controls-wrapper">
+          <div class="global-controls">
+            <v-btn
+              @click="toggleAllLocations"
+              variant="outlined"
+              size="small"
+              prepend-icon="fas fa-map-marker-alt"
+              class="control-btn"
+              :color="allLocationsExpanded ? 'error' : 'primary'"
+              style="width: 12rem;"
+            >
+              {{ allLocationsExpanded ? 'Collapse Locations' : 'Expand Locations' }}
+            </v-btn>
+
+            <v-btn
+              @click="toggleAllVendors"
+              variant="outlined"
+              size="small"
+              prepend-icon="fas fa-store"
+              class="control-btn"
+              :disabled="!hasAnyExpandedLocations"
+              :color="allVendorsExpanded ? 'error' : 'primary'"
+              style="width: 12rem;"
+            >
+              {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
+            </v-btn>
+          </div>
+        </div>        
       </v-card-title>
 
       <v-card-text>
@@ -99,7 +110,7 @@
               @click="toggleLocation(locationIndex)"
               class="location-header"
             >
-              <v-icon start>mdi-map-marker</v-icon>
+              <i class="fas fa-map-marker-alt location-marker-icon"></i>
               <span class="location-name">{{ location }}</span>
               
               <div class="location-controls">
@@ -108,6 +119,8 @@
                   color="primary"
                   variant="outlined"
                 >
+                  <!-- ✅ CHANGED: no icon → fas fa-store -->
+                  <i class="fas fa-store chip-icon"></i>
                   {{ getVendorsForLocation(location).length }} vendors
                 </v-chip>
 
@@ -122,9 +135,8 @@
                   {{ allVendorsExpandedForLocation(location) ? 'Collapse All' : 'Expand All' }}
                 </v-btn>
 
-                <v-icon>
-                  {{ expandedLocations.has(locationIndex) ? 'fas fa-chevron-up' : 'fas fa-chevron-down' }}
-                </v-icon>
+                <!-- ✅ CHANGED: mdi chevrons → fas chevrons -->
+                <i :class="expandedLocations.has(locationIndex) ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="chevron-icon"></i>
               </div>
             </v-card-title>
 
@@ -149,7 +161,8 @@
                       @dblclick.stop="editVendor(vendor)"
                       class="vendor-header"
                     >
-                      <v-icon start>mdi-store</v-icon>
+                      <!-- ✅ CHANGED: mdi-store → fas fa-store -->
+                      <i class="fas fa-store vendor-store-icon"></i>
                       <span class="vendor-name">{{ vendor.vendor_name }}</span>
                       
                       <div class="vendor-controls">
@@ -158,24 +171,24 @@
                           :color="getFilteredProducts(vendor).length > 0 ? 'success' : 'warning'"
                           variant="outlined"
                         >
+                          <!-- ✅ CHANGED: no icon → fas fa-box -->
+                          <i class="fas fa-box chip-icon"></i>
                           {{ getFilteredProducts(vendor).length }} products
                         </v-chip>
 
                         <v-tooltip text="Double-click to edit vendor">
                           <template v-slot:activator="{ props }">
-                            <v-icon 
+                            <!-- ✅ CHANGED: mdi-pencil-outline → fas fa-edit -->
+                            <i 
                               v-bind="props"
-                              size="small"
-                              class="edit-hint"
-                            >
-                              mdi-pencil-outline
-                            </v-icon>
+                              class="fas fa-edit edit-hint"
+                              title="Double-click to edit vendor"
+                            ></i>
                           </template>
                         </v-tooltip>
 
-                        <v-icon>
-                          {{ expandedVendors.has(getVendorKey(location, vendor)) ? 'fas fa-chevron-up' : 'fas fa-chevron-down' }}
-                        </v-icon>
+                        <!-- ✅ CHANGED: mdi chevrons → fas chevrons -->
+                        <i :class="expandedVendors.has(getVendorKey(location, vendor)) ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="chevron-icon"></i>
                       </div>
                     </v-card-title>
 
@@ -183,7 +196,11 @@
                     <v-expand-transition>
                       <v-card-text v-show="expandedVendors.has(getVendorKey(location, vendor))">
                         <div class="products-header mb-3">
-                          <h4>Products for {{ vendor.vendor_name }}</h4>
+                          <h4>
+                            <!-- ✅ ADD PRODUCTS ICON -->
+                            <i class="fas fa-boxes products-icon"></i>
+                            Products for {{ vendor.vendor_name }}
+                          </h4>
                           <v-divider class="mt-2"></v-divider>
                         </div>
 
@@ -218,13 +235,11 @@
                                 
                                 <!-- ✅ VISUAL INDICATORS -->
                                 <div class="product-indicators">
-                                  <v-icon 
+                                  <!-- ✅ CHANGED: mdi-check-circle → fas fa-check-circle -->
+                                  <i 
                                     v-if="selectedProducts.has(product.id)"
-                                    color="secondary"
-                                    size="small"
-                                  >
-                                    mdi-check-circle
-                                  </v-icon>
+                                    class="fas fa-check-circle selected-indicator"
+                                  ></i>
 
                                   <v-tooltip text="Edit Product">
                                     <template v-slot:activator="{ props }">
@@ -234,13 +249,11 @@
                                         size="small"
                                         color="primary"
                                       >
-                                        <v-icon 
+                                        <!-- ✅ CHANGED: mdi-pencil-outline → fas fa-edit -->
+                                        <i 
                                           v-bind="props"
-                                          size="x-small"
-                                          class="edit-hint ml-2"
-                                        >
-                                          mdi-pencil-outline
-                                        </v-icon>
+                                          class="fas fa-edit edit-hint ml-2"
+                                        ></i>
                                         Edit
                                       </v-btn>
                                     </template>
@@ -253,7 +266,8 @@
 
                         <!-- ✅ NO PRODUCTS MESSAGE -->
                         <div v-if="getFilteredProducts(vendor).length === 0" class="no-products">
-                          <v-icon color="grey">mdi-package-variant-remove</v-icon>
+                          <!-- ✅ CHANGED: mdi-package-variant-remove → fas fa-box-open -->
+                          <i class="fas fa-box-open no-products-icon"></i>
                           <span class="text-medium-emphasis">
                             {{ showShoppingList ? 'No active products' : 'No products found' }}
                           </span>
@@ -264,7 +278,8 @@
                 </div>
                 <!-- ✅ NO VENDORS MESSAGE -->
                 <div v-if="getVendorsForLocation(location).length === 0" class="no-vendors">
-                  <v-icon color="grey" size="large">mdi-store-remove</v-icon>
+                  <!-- ✅ CHANGED: mdi-store-remove → fas fa-store-slash -->
+                  <i class="fas fa-store-slash no-vendors-icon"></i>
                   <h4 class="text-medium-emphasis">No vendors found for {{ location }}</h4>
                 </div>
               </v-card-text>
@@ -281,20 +296,22 @@
           block
           class="mt-4"
         >
-          <v-icon start>mdi-content-save</v-icon>
+          <!-- ✅ CHANGED: mdi-content-save → fas fa-save -->
+          <i class="fas fa-save save-icon"></i>
           Save All Changes
         </v-btn>
       </v-card-text>
     </v-card>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
+import { VProgressCircular } from 'vuetify/components'
+
 
 const router = useRouter();
 const store = useStore();
@@ -516,9 +533,12 @@ function getFilteredProducts(vendor) {
     return [];
   }
   
+  // ✅ CORRECTED LOGIC: 
+  // showShoppingList = true → show only ACTIVE (selected) products
+  // showShoppingList = false → show ALL products
   return showShoppingList.value 
-    ? vendor.products.filter(product => product?.active)
-    : vendor.products;
+    ? vendor.products.filter(product => product?.active)  // Only selected items
+    : vendor.products;  // All items
 }
 
 function editVendor(vendor) {
@@ -601,7 +621,140 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ✅ EXISTING STYLES */
+.switch-description {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.switch-description small {
+  font-style: italic;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+.title-icon {
+  color: #2196F3 !important;
+  margin-right: 0.5rem;
+  font-size: 1.2em;
+}
+
+.location-marker-icon {
+  color: #ff5722 !important;
+  font-size: 1.1em;
+  margin-right: 0.5rem;
+}
+
+.vendor-store-icon {
+  color: #4CAF50 !important;
+  font-size: 1.1em;
+  margin-right: 0.5rem;
+}
+
+.products-icon {
+  color: #ff9800 !important;
+  font-size: 1em;
+  margin-right: 0.5rem;
+}
+
+.chip-icon {
+  font-size: 0.8em !important;
+  margin-right: 0.3rem;
+  color: inherit;
+}
+
+.chevron-icon {
+  color: #666 !important;
+  font-size: 1em;
+  transition: transform 0.3s ease;
+}
+
+.save-icon {
+  margin-right: 0.5rem;
+  font-size: 1.1em;
+}
+
+.edit-hint {
+  color: #999 !important;
+  font-size: 0.9em;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.edit-hint:hover {
+  opacity: 1;
+  color: #2196F3 !important;
+  transform: scale(1.1);
+}
+
+.selected-indicator {
+  color: #4CAF50 !important;
+  font-size: 1em;
+  margin-right: 0.5rem;
+}
+
+.no-products-icon {
+  color: #ccc !important;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.no-vendors-icon {
+  color: #ccc !important;
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ✅ ICON HOVER EFFECTS */
+.location-marker-icon:hover {
+  color: #d32f2f !important;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+.vendor-store-icon:hover {
+  color: #388e3c !important;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+.products-icon:hover {
+  color: #f57c00 !important;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+.chevron-icon:hover {
+  color: #333 !important;
+  transform: scale(1.1);
+}
+
+/* ✅ LOCATION HEADER ENHANCED */
+.location-header:hover .chevron-icon {
+  transform: scale(1.1);
+}
+
+.location-header:hover .location-marker-icon {
+  color: #d32f2f !important;
+  transform: scale(1.1);
+}
+
+/* ✅ VENDOR HEADER ENHANCED */
+.vendor-header:hover .chevron-icon {
+  transform: scale(1.1);
+}
+
+.vendor-header:hover .vendor-store-icon {
+  color: #388e3c !important;
+  transform: scale(1.1);
+}
+
+/* ✅ SAVE BUTTON ENHANCEMENT */
+.v-btn.mt-4:hover .save-icon {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+/* ✅ YOUR EXISTING STYLES (unchanged) */
 .navigation-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -614,10 +767,9 @@ onMounted(() => {
   gap: 1.5rem;
 }
 
-/* ✅ ENHANCED LOCATION CARD STYLES */
 .location-card {
   transition: all 0.3s ease;
-  border: 1px solid /*transparent*/
+  border: 1px solid transparent;
 }
 
 .location-card:hover {
@@ -654,13 +806,6 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
-/* ✅ GLOBAL CONTROLS */
-.global-controls {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-/* ✅ ENHANCED STACKED CONTROLS */
 .global-controls-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -696,30 +841,6 @@ onMounted(() => {
   transform: none !important;
 }
 
-/* ✅ RESPONSIVE BEHAVIOR */
-@media (max-width: 768px) {
-  .global-controls {
-    min-width: 200px;
-    padding: 0.75rem;
-    gap: 0.5rem;
-  }
-  
-  .control-btn {
-    font-size: 0.875rem !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .global-controls-wrapper {
-    justify-content: center;
-  }
-  
-  .global-controls {
-    min-width: 100%;
-    max-width: 280px;
-  }
-}
-/* ✅ ENHANCED VENDOR STYLES */
 .vendor-section {
   border-left: 3px solid rgba(var(--v-theme-primary), 0.3);
   padding-left: 1rem;
@@ -760,19 +881,11 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
-.edit-hint {
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-}
-
-.edit-hint:hover {
-  opacity: 1;
-}
-
-/* ✅ PRODUCTS STYLES */
 .products-header h4 {
   color: rgb(var(--v-theme-secondary));
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .products-list {
@@ -814,7 +927,6 @@ onMounted(() => {
   align-items: center;
 }
 
-/* ✅ EMPTY STATES */
 .no-vendors,
 .no-products {
   display: flex;
@@ -833,15 +945,20 @@ onMounted(() => {
   margin-top: 0.5rem;
 }
 
-/* ✅ RESPONSIVE */
+/* ✅ MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .navigation-grid {
     grid-template-columns: 1fr;
   }
   
   .global-controls {
-    flex-direction: column;
-    gap: 0.25rem;
+    min-width: 200px;
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  .control-btn {
+    font-size: 0.875rem !important;
   }
   
   .location-controls {
@@ -855,9 +972,22 @@ onMounted(() => {
   .products-list {
     grid-template-columns: 1fr;
   }
+  
+  .edit-hint {
+    display: none; /* Hide edit hints on mobile for cleaner look */
+  }
 }
 
 @media (max-width: 480px) {
+  .global-controls-wrapper {
+    justify-content: center;
+  }
+  
+  .global-controls {
+    min-width: 100%;
+    max-width: 280px;
+  }
+  
   .location-header,
   .vendor-header {
     padding: 0.5rem;
@@ -866,6 +996,12 @@ onMounted(() => {
   .vendor-section {
     padding-left: 0.5rem;
     margin-left: 0.25rem;
+  }
+  
+  .title-icon,
+  .location-marker-icon,
+  .vendor-store-icon {
+    font-size: 1em;
   }
 }
 </style>
