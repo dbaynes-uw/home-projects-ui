@@ -123,7 +123,7 @@ export default {
           title: 'Events',
           description: 'Manage your home events',
           icon: 'fas fa-calendar-check',
-          url: '/'
+          url: '/events'
         },
         {
           name: 'books',
