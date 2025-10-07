@@ -470,6 +470,7 @@ export default new Vuex.Store({
     },
 
     async forgotPassword ({ commit }, email) {
+      console.log("Forgot Password for " + email)
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
@@ -493,6 +494,7 @@ export default new Vuex.Store({
        });
     },
     async resetPassword ({ commit }, email) {
+      console.log("Reset Password for " + email)  
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
