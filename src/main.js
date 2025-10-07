@@ -23,6 +23,7 @@ import {
   VContainer, 
   VTextField, 
   VBtn,
+  VAlert,
   VApp,                 // For app layout
   VAppBar,              // For top bar
   VMain,                // For main content
@@ -56,6 +57,7 @@ const vuetify = createVuetify({
     VContainer,
     VTextField,
     VBtn,
+    VAlert,
     VApp,
     VAppBar,
     VMain,

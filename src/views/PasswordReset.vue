@@ -1,8 +1,12 @@
-<!-- src/views/PasswordReset.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/PasswordReset.vue -->
 <template>
   <v-card class="mx-auto mt-5" max-width="500">
     <v-card-title class="pb-0">
-      <h1>Home Projects</h1>
+      <h1>
+        <!-- ✅ ADD TITLE ICON -->
+        <i class="fas fa-key"></i>
+        Home Projects
+      </h1>
       <h3>Reset Your Password</h3>
     </v-card-title>
     
@@ -10,9 +14,11 @@
       <!-- ✅ SHOW TOKEN STATUS -->
       <div v-if="!isValidToken" class="mb-4">
         <v-alert type="error" variant="tonal">
+          <i class="fas fa-exclamation-triangle"></i>
           Invalid or expired reset link. Please request a new password reset.
         </v-alert>
         <v-btn @click="$router.push('/forgot_password')" color="primary" block class="mt-3">
+          <i class="fas fa-redo"></i>
           Request New Reset Link
         </v-btn>
       </div>
@@ -25,33 +31,66 @@
         
         <v-form @submit.prevent="resetPassword">
           <v-container>
+            <!-- ✅ FIXED NEW PASSWORD FIELD -->
             <v-text-field
               label="New Password (Minimum 8 characters)"
               v-model="newPassword"
-              :append-icon="showNewPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
               :type="showNewPassword ? 'text' : 'password'"
               :error="!!passwordError"
               :error-messages="passwordError"
-              @click:append="showNewPassword = !showNewPassword"
               @blur="validatePassword"
               placeholder="Enter new password"
-            />
+              autocomplete="new-password"
+              prepend-inner-icon="fas fa-lock"
+            >
+              <!-- ✅ FIXED APPEND SLOT -->
+              <template v-slot:append-inner>
+                <v-btn
+                  @click="showNewPassword = !showNewPassword"
+                  variant="text"
+                  size="small"
+                  icon
+                  class="password-toggle"
+                >
+                  <i :class="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </v-btn>
+              </template>
+            </v-text-field>
             
+            <!-- ✅ FIXED CONFIRM PASSWORD FIELD -->
             <v-text-field
               label="Confirm New Password"
               v-model="confirmPassword"
-              :append-icon="showConfirmPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
               :type="showConfirmPassword ? 'text' : 'password'"
               :error="!!confirmError"
               :error-messages="confirmError"
-              @click:append="showConfirmPassword = !showConfirmPassword"
               @blur="validateConfirm"
               placeholder="Confirm new password"
-            />
+              autocomplete="new-password"
+              prepend-inner-icon="fas fa-lock"
+            >
+              <!-- ✅ FIXED APPEND SLOT -->
+              <template v-slot:append-inner>
+                <v-btn
+                  @click="showConfirmPassword = !showConfirmPassword"
+                  variant="text"
+                  size="small"
+                  icon
+                  class="password-toggle"
+                >
+                  <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </v-btn>
+              </template>
+            </v-text-field>
             
             <!-- ✅ PASSWORD STRENGTH INDICATOR -->
             <div class="mb-3">
-              <small>Password length: {{ newPassword.length }} characters</small>
+              <div class="d-flex justify-space-between align-center">
+                <small>Password length: {{ newPassword.length }} characters</small>
+                <small v-if="newPassword.length > 0" :class="passwordStrengthTextClass">
+                  {{ passwordStrengthText }}
+                </small>
+              </div>
               <div v-if="newPassword.length > 0" class="password-strength mt-1">
                 <div 
                   :class="passwordStrengthClass" 
@@ -70,7 +109,7 @@
               color="primary"
               size="large"
             >
-              <i class="fas fa-key mr-2"></i>
+              <i class="fas fa-key"></i>
               Reset Password
             </v-btn>
           </v-container>
@@ -84,12 +123,14 @@
         variant="tonal" 
         class="mt-4"
       >
+        <i :class="error ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle'"></i>
         {{ message }}
       </v-alert>
     </v-card-text>
     
     <v-card-actions class="justify-center">
       <div class="text-center">
+        <i class="fas fa-arrow-left"></i>
         Remember your password? 
         <router-link to="/login">Back to Login</router-link>
       </div>
@@ -100,7 +141,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { getApiUrl, API_ENDPOINTS } from '@/utils/apiConfig'  // ✅ IMPORT UTILITY
+import { getApiUrl, API_ENDPOINTS } from '@/utils/apiConfig'
 
 export default {
   setup() {
@@ -125,7 +166,6 @@ export default {
       token.value = route.params.token
       console.log('🔍 Password reset token:', token.value)
       
-      // ✅ USE UTILITY FUNCTION
       apiUrl.value = getApiUrl(API_ENDPOINTS.PASSWORD_RESET);
       console.log('🔍 Password reset API URL:', apiUrl.value);
   
@@ -184,6 +224,21 @@ export default {
       return Math.min((passwordStrength.value / 6) * 100, 100)
     })
     
+    // ✅ ENHANCED PASSWORD STRENGTH TEXT
+    const passwordStrengthText = computed(() => {
+      const strength = passwordStrength.value
+      if (strength <= 2) return 'Weak'
+      if (strength <= 4) return 'Medium'
+      return 'Strong'
+    })
+    
+    const passwordStrengthTextClass = computed(() => {
+      const strength = passwordStrength.value
+      if (strength <= 2) return 'text-error'
+      if (strength <= 4) return 'text-warning'
+      return 'text-success'
+    })
+    
     const isFormValid = computed(() => {
       return newPassword.value.length >= 8 && 
              newPassword.value === confirmPassword.value && 
@@ -191,7 +246,7 @@ export default {
              !confirmError.value
     })
     
-    // ✅ PASSWORD RESET FUNCTION USING YOUR CODE
+    // ✅ PASSWORD RESET FUNCTION
     const resetPassword = async () => {
       validatePassword()
       validateConfirm()
@@ -209,7 +264,6 @@ export default {
         console.log('🔍 Resetting password with token:', token.value)
         console.log('🔍 Using API URL:', apiUrl.value + token.value)
         
-        // ✅ CLEANER URL CONSTRUCTION
         const response = await fetch(`${apiUrl.value}${token.value}`, {
           method: 'PATCH',
           headers: {
@@ -229,7 +283,6 @@ export default {
           message.value = 'Password reset successful! Redirecting to login...'
           error.value = false
           
-          // ✅ REDIRECT TO LOGIN AFTER SUCCESS
           setTimeout(() => {
             router.push('/login')
           }, 2000)
@@ -268,6 +321,8 @@ export default {
       passwordStrength,
       passwordStrengthClass,
       passwordStrengthPercentage,
+      passwordStrengthText,
+      passwordStrengthTextClass,
       validatePassword,
       validateConfirm,
       apiUrl,
@@ -278,6 +333,25 @@ export default {
 </script>
 
 <style scoped>
+/* ✅ PASSWORD TOGGLE BUTTON STYLING */
+.password-toggle {
+  min-width: auto !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin: 0 !important;
+}
+
+.password-toggle i {
+  color: rgba(var(--v-theme-on-surface), 0.6) !important;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover i {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+/* ✅ PASSWORD STRENGTH STYLING */
 .password-strength {
   height: 4px;
   background-color: #e0e0e0;
@@ -301,5 +375,45 @@ export default {
 
 .strength-strong {
   background-color: #4caf50;
+}
+
+/* ✅ TEXT COLORS FOR STRENGTH */
+.text-error {
+  color: #f44336 !important;
+  font-weight: 500;
+}
+
+.text-warning {
+  color: #ff9800 !important;
+  font-weight: 500;
+}
+
+.text-success {
+  color: #4caf50 !important;
+  font-weight: 500;
+}
+
+/* ✅ ICON STYLING */
+.v-card-title i {
+  color: rgb(var(--v-theme-primary));
+  margin-right: 0.5rem;
+}
+
+.v-btn i {
+  margin-right: 0.5rem;
+}
+
+.v-alert i {
+  margin-right: 0.5rem;
+}
+
+.v-card-actions i {
+  margin-right: 0.3rem;
+  font-size: 0.9em;
+}
+
+/* ✅ PREPEND ICON STYLING */
+.v-text-field .v-input__prepend-inner i {
+  color: rgba(var(--v-theme-on-surface), 0.6) !important;
 }
 </style>

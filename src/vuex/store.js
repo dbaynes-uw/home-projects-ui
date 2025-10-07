@@ -293,8 +293,9 @@ export default new Vuex.Store({
     CLEAR_PLANT() {
       localStorage.removeItem('plant')
     },
-    CLEAR_USER_DATA () {
-      console.log('🔍 CLEAR_USER_DATA: Clearing user data');
+    
+    CLEAR_USER_DATA (state) {
+      console.log('🔍 CLEAR_USER_DATA: Clearing user data: ', state);
       state.user = null;
       state.loggedIn = false;
       state.token = '';
@@ -307,6 +308,7 @@ export default new Vuex.Store({
   
       console.log('✅ CLEAR_USER_DATA: User data cleared');
     },
+
     CLEAR_WATERING() {
       localStorage.removeItem('watering')
     },

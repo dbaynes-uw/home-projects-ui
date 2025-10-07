@@ -1,11 +1,11 @@
 export const getApiBaseUrl = () => {
   if (window.location.port == "8080") {
     // Development environment
-    return "http://localhost:3000";
+    return "http://localhost:3000/api/v1";
     // Alternative: "http://davids-macbook-pro.local:3000";
   } else {
     // Production environment
-    return "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com";
+    return "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1";
   }
 };
 
