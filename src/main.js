@@ -18,10 +18,30 @@ import {
   VCardText, 
   VCardSubtitle,
   VCardActions,
+  VProgressCircular,
   VForm, 
   VContainer, 
   VTextField, 
-  VBtn 
+  VBtn,
+  VApp,                 // For app layout
+  VAppBar,              // For top bar
+  VMain,                // For main content
+  VFooter,              // For bottom navigation
+  VToolbarTitle,        // For app bar title
+  VSpacer,              // For spacing
+  VMenu,                // For dropdown menus
+  VList,                // For menu lists
+  VListItem,            // For menu items
+  VTooltip,             // For tooltips
+  VSwitch,              // For toggle switches
+  VCheckbox,            // For checkboxes
+  VChip,                // For chips/badges
+  VDivider,             // For dividers
+  VExpandTransition,    // For expand animations
+  VBtnToggle,           // For button toggles
+  VSheet,               // For sheets
+  VRow,                 // For grid rows
+  VCol,                 // For grid columns
 } from 'vuetify/components'
 
 const vuetify = createVuetify({
@@ -31,12 +51,35 @@ const vuetify = createVuetify({
     VCardText,
     VCardSubtitle,
     VCardActions,
+    VProgressCircular,
     VForm,
     VContainer,
     VTextField,
-    VBtn
+    VBtn,
+    VApp,
+    VAppBar,
+    VMain,
+    VFooter,
+    VToolbarTitle,
+    VSpacer,
+    VMenu,
+    VList,
+    VListItem,
+    VTooltip,
+    VSwitch,
+    VCheckbox,
+    VChip,
+    VDivider,
+    VExpandTransition,
+    VBtnToggle,
+    VSheet,
+    VRow,
+    VCol,
   },
   directives,
+  theme: {
+    defaultTheme: 'light',
+  },
 })
 
 import vSelect from "vue-select";
