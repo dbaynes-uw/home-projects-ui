@@ -10,7 +10,7 @@
       <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
         <i class="fas fa-heartbeat heart-icon"></i>
-        <span>Glucose Readings</span>
+        <span>Glucose</span>
       </router-link>
       
       <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
@@ -340,15 +340,33 @@ onMounted(async () => {
 <style scoped>
 /* ✅ FONT AWESOME GLUCOSE BUTTON WITH HEART ICON */
 .glucose-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* ✅ SPACE BETWEEN ICON AND TEXT */
   position: relative;
 }
 
 .heart-icon {
-  position: absolute !important;
-  top: 0rem !important;
-  right: 0rem !important;
   color: #e91e63 !important;
-  font-size: 16px !important;
+  font-size: 18px !important;
+  animation: heartbeat 1.5s ease-in-out infinite;
+  /* ✅ REMOVE ABSOLUTE POSITIONING */
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ✅ HEART ON HOVER - ENHANCED */
+.glucose-btn:hover .heart-icon {
+  color: #ff1744 !important;
+  transform: scale(1.2);
+  animation-duration: 1s; /* Faster pulse on hover */
 }
 
 /* ✅ HEART PULSE ANIMATION */
