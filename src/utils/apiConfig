@@ -5,7 +5,7 @@ export const getApiBaseUrl = () => {
     // Alternative: "http://davids-macbook-pro.local:3000";
   } else {
     // Production environment
-    return "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com";
+    return "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1";
   }
 };
 

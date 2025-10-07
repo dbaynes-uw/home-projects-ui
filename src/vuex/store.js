@@ -285,12 +285,6 @@ export default new Vuex.Store({
         if (userData.token) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
         }
-
-        console.log('✅ SET_USER_DATA: Final state:', {
-          user: state.user,
-          loggedIn: state.loggedIn,
-          token: state.token
-        });
       } else {
         console.error('❌ SET_USER_DATA: Invalid user data:', userData);
       }
@@ -299,8 +293,9 @@ export default new Vuex.Store({
     CLEAR_PLANT() {
       localStorage.removeItem('plant')
     },
-    CLEAR_USER_DATA () {
-      console.log('🔍 CLEAR_USER_DATA: Clearing user data');
+    
+    CLEAR_USER_DATA (state) {
+      console.log('🔍 CLEAR_USER_DATA: Clearing user data: ', state);
       state.user = null;
       state.loggedIn = false;
       state.token = '';
@@ -313,6 +308,7 @@ export default new Vuex.Store({
   
       console.log('✅ CLEAR_USER_DATA: User data cleared');
     },
+
     CLEAR_WATERING() {
       localStorage.removeItem('watering')
     },
@@ -476,6 +472,7 @@ export default new Vuex.Store({
     },
 
     async forgotPassword ({ commit }, email) {
+      console.log("Forgot Password for " + email)
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
@@ -499,6 +496,7 @@ export default new Vuex.Store({
        });
     },
     async resetPassword ({ commit }, email) {
+      console.log("Reset Password for " + email)  
       if (window.location.port == "8080") {
         //api_url = "http://davids-macbook-pro.local:3000/...";
         api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
