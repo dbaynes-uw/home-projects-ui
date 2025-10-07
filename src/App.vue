@@ -635,7 +635,7 @@ export default {
   width: 100%;
   height: 100%;
   align-items: stretch;
-  padding: 2px;
+  padding-left: 1rem;
   box-sizing: border-box;
 }
 
