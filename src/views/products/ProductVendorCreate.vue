@@ -491,41 +491,6 @@ const onSubmit = async () => {
   }
 };
 
-// ✅ SIMPLIFIED LIFECYCLE
-onMounted(async () => {
-  try {
-    vendor.value.created_by = user.value?.email || '';
-    
-    console.log('🔍 Component mounted');
-    
-    // ✅ IMMEDIATE DEBUG
-    debugActualData();
-    
-    // ✅ TRY TO FETCH DATA IN BACKGROUND
-    setTimeout(async () => {
-      try {
-        console.log('🔄 Attempting to fetch API data...');
-        await Promise.allSettled([
-          store.dispatch('fetchVendorsGroup'),
-          store.dispatch('fetchVendorsLocationsGroup'), 
-          store.dispatch('fetchVendorsProductsGroup')
-        ]);
-        console.log('✅ Background API fetch completed');
-        
-        // ✅ DEBUG AFTER FETCH
-        setTimeout(() => {
-          debugActualData();
-        }, 500);
-        
-      } catch (error) {
-        console.log('⚠️ Background API fetch failed:', error);
-      }
-    }, 100);
-    
-  } catch (error) {
-    console.error('❌ Error in onMounted:', error);
-  }
-});
 </script>
 
 <style scoped>
