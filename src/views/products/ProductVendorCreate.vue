@@ -491,6 +491,63 @@ const onSubmit = async () => {
   }
 };
 
+// ✅ SIMPLIFIED LIFECYCLE
+onMounted(async () => {
+  try {
+    vendor.value.created_by = user.value?.email || '';
+    
+    console.log('🔍 Component mounted in:', process.env.NODE_ENV);
+    
+    // ✅ PRODUCTION DEBUG
+    if (process.env.NODE_ENV === 'production') {
+      debugProduction();
+    }
+    
+    console.log('🔄 Attempting to fetch API data...');
+    
+    // ✅ TRY TO FETCH DATA WITH BETTER ERROR HANDLING
+    try {
+      const results = await Promise.allSettled([
+        store.dispatch('fetchVendorsGroup'),
+        store.dispatch('fetchVendorsLocationsGroup'), 
+        store.dispatch('fetchVendorsProductsGroup')
+      ]);
+      
+      console.log('✅ API fetch results:', results);
+      
+      // ✅ CHECK EACH RESULT
+      results.forEach((result, index) => {
+        const actionNames = ['fetchVendorsGroup', 'fetchVendorsLocationsGroup', 'fetchVendorsProductsGroup'];
+        if (result.status === 'fulfilled') {
+          console.log(`✅ ${actionNames[index]} succeeded:`, result.value);
+        } else {
+          console.error(`❌ ${actionNames[index]} failed:`, result.reason);
+        }
+      });
+      
+    } catch (error) {
+      console.error('❌ API fetch failed:', error);
+      
+      // ✅ PRODUCTION DEBUG ON ERROR
+      if (process.env.NODE_ENV === 'production') {
+        console.log('🔍 Production error debug:');
+        debugProduction();
+      }
+    }
+    
+    // ✅ FINAL DATA CHECK
+    setTimeout(() => {
+      console.log('🔍 Final data check:');
+      console.log('Vendors:', vendorsGroup.value);
+      console.log('Locations:', vendorsLocationsGroup.value);
+      console.log('Products:', vendorsProductsGroup.value);
+      console.log('Product count:', getAllProducts.value.length);
+    }, 1000);
+    
+  } catch (error) {
+    console.error('❌ Error in onMounted:', error);
+  }
+});
 </script>
 
 <style scoped>
