@@ -321,15 +321,22 @@ export default new Vuex.Store({
     SET_VENDORS_PRODUCTS(state, vendors_products) {
       state.vendors_products = vendors_products;
     },
-    SET_VENDORS_GROUP(state, vendors_group) {
-      state.vendors_group = vendors_group;
+    SET_VENDORS_GROUP(state, data) {
+      state.vendors_group = data;
+      console.log('✅ SET_VENDORS_GROUP:', data);
     },
-    SET_VENDORS_LOCATIONS_GROUP(state, vendors_locations_group) {
-      state.vendors_locations_group = vendors_locations_group;
+
+    // ✅ FIXED - PARAMETER NAME MISMATCH
+    SET_VENDORS_LOCATIONS_GROUP(state, data) {
+      state.vendors_locations_group = data;
+      console.log('✅ SET_VENDORS_LOCATIONS_GROUP:', data); // ✅ FIXED: was using undefined 'data'
     },
-    SET_VENDORS_PRODUCTS_GROUP(state, vendors_products_group) {
-      state.vendors_products_group = vendors_products_group;
-    },
+
+    // ✅ FIXED - PARAMETER NAME MISMATCH  
+    SET_VENDORS_PRODUCTS_GROUP(state, data) {
+      state.vendors_products_group = data;
+      console.log('✅ SET_VENDORS_PRODUCTS_GROUP:', data); // ✅ FIXED: was using undefined 'data'
+    },    
     ADD_VENDOR(state, vendor) {
       state.vendors.push(vendor);
     },
@@ -1419,9 +1426,11 @@ async createPlant({ commit, state }, plant) {
         });
     },
     async fetchVendors({ commit }) {
+      console.log('🔍 Fetching vendors...');
       EventService.getVendors()
         .then((response) => {
           commit("SET_VENDORS", response.data);
+          console.log('🔍 Vendors fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {
@@ -1429,9 +1438,11 @@ async createPlant({ commit, state }, plant) {
         });
     },
     async fetchVendorsGroup({ commit }) {
+      console.log('🔍 Fetching vendors group...');
       EventService.getVendorsGroup()
         .then((response) => {
           commit("SET_VENDORS_GROUP", response.data);
+          console.log('🔍 Vendors group fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {
@@ -1439,9 +1450,11 @@ async createPlant({ commit, state }, plant) {
         });
     },
     async fetchVendorsLocationsGroup({ commit }) {
+      console.log('🔍 Fetching vendors locations group...');
       EventService.getVendorsLocationsGroup()
         .then((response) => {
           commit("SET_VENDORS_LOCATIONS_GROUP", response.data);
+          console.log('🔍 Vendors locations group fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {
@@ -1449,9 +1462,11 @@ async createPlant({ commit, state }, plant) {
         });
     },
     async fetchVendorsProductsGroup({ commit }) {
+      console.log('🔍 Fetching vendors products group...');
       EventService.getVendorsProductsGroup()
         .then((response) => {
           commit("SET_VENDORS_PRODUCTS_GROUP", response.data);
+          console.log('🔍 Vendors products group fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {

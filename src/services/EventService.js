@@ -352,6 +352,7 @@ export default {
     return axios.get(api_url + "vendors")
   },
   async getVendorsGroup() {
+    console.log("EventService: Fetching vendors group...");
     this.init();
     return axios.get(api_url + "vendors_group")
   },

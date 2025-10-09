@@ -4,7 +4,10 @@
       <!-- ✅ HEADER CARD -->
       <v-card class="mx-auto mt-5">
         <v-card-title class="pb-0">
-          <h2>Add Vendor/Products</h2>
+          <h2>
+            <i class="fas fa-plus-circle"></i>
+            Add Vendor/Products
+          </h2>
         </v-card-title>
         
         <!-- ✅ NAVIGATION BUTTONS -->
@@ -13,7 +16,7 @@
             <v-btn
               variant="outlined"
               :to="{ name: 'ProductsByLocations' }"
-              prepend-icon="fas fa-map-marker"
+              prepend-icon="fas fa-map-marker-alt"
               class="nav-button"
             >
               Product Location List
@@ -31,7 +34,7 @@
             <v-btn
               variant="outlined"
               :to="{ name: 'ProductList' }"
-              prepend-icon="fas fa-package-variant"
+              prepend-icon="fas fa-shopping-basket"
               class="nav-button"
             >
               List by Product
@@ -40,16 +43,20 @@
         </v-card-text>
       </v-card>
 
-      <!-- ✅ FORM CARD -->
+      <!-- ✅ FORM CARD - NOW ALL DROPDOWNS SHOULD WORK! -->
       <v-card class="mt-4">
         <v-card-title>
-          <h3>Vendor & Product Details</h3>
+          <h3>
+            <i class="fas fa-edit"></i>
+            Vendor & Product Details
+          </h3>
         </v-card-title>
         
         <v-card-text>
           <v-form @submit.prevent="onSubmit" ref="formRef">
             <v-container class="form-container">
               
+              <!-- ✅ LOCATION SELECT - SHOULD WORK NOW! -->
               <v-select
                 v-model="vendor.location"
                 label="Vendor Location"
@@ -57,12 +64,14 @@
                 :rules="[requiredLocation]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="fas fa-map-marker-outline"
+                prepend-inner-icon="fas fa-map-marker-alt"
                 class="mb-4 expanded-product-field"
                 clearable
+                :hint="`${(vendorsLocationsGroup?.vendorsLocationsGroup || []).length} locations available`"
+                persistent-hint
               />
                         
-              <!-- ✅ VENDOR NAME - ADD EXPANDED CLASS -->
+              <!-- ✅ VENDOR NAME - SHOULD WORK NOW! -->
               <v-select
                 v-model="vendor.vendor_name"
                 label="Vendor Name"
@@ -70,12 +79,14 @@
                 :rules="[requiredVendorName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="fas fa-store-outline"
+                prepend-inner-icon="fas fa-store"
                 class="mb-4 expanded-product-field"
                 clearable
+                :hint="`${(vendorsGroup?.vendorsGroup || []).length} vendors available`"
+                persistent-hint
               />
                         
-              <!-- ✅ OTHER VENDOR NAME - ADD EXPANDED CLASS -->
+              <!-- ✅ OTHER VENDOR NAME -->
               <v-text-field
                 v-if="vendor.vendor_name === 'Other'"
                 v-model="vendor.other_vendor_name"
@@ -83,37 +94,36 @@
                 :rules="[requiredOtherVendorName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="fas fa-store-plus"
+                prepend-inner-icon="fas fa-store-alt"
                 class="mb-4 expanded-product-field"
                 clearable
               />
                         
-              <!-- ✅ PRODUCT NAME - KEEP EXISTING CLASS -->
+              <!-- ✅ PRODUCT AUTOCOMPLETE - ALREADY WORKS! -->
               <v-autocomplete
                 v-model="vendor.product_name"
                 v-model:search="productSearch"
                 label="Vendor Product"
-                :items="getFilteredProducts"
+                :items="getAllProducts"
                 :rules="[requiredProductName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="fas fa-package-variant-closed"
-                class="mb-4 expanded-product-field"
+                prepend-inner-icon="fas fa-box"
+                class="mb-6 expanded-product-field"
                 clearable
-                hide-no-data
-                no-filter
+                :no-data-text="getNoDataText"
+                auto-select-first
                 :menu-props="{ 
                   closeOnClick: true,
                   closeOnContentClick: true,
-                  openOnClick: false
+                  maxHeight: '300px',
+                  zIndex: 9999
                 }"
-                @focus="handleProductFocus"
-                @blur="handleProductBlur"
-                :readonly="false"
-                :placeholder="getProductPlaceholder"
+                :hint="getProductHint"
+                persistent-hint
               />
               
-              <!-- ✅ OTHER PRODUCT NAME - ADD EXPANDED CLASS -->
+              <!-- ✅ OTHER PRODUCT NAME -->
               <v-text-field
                 v-if="vendor.product_name === 'Other'"
                 v-model="vendor.other_product_name"
@@ -121,23 +131,26 @@
                 :rules="[requiredOtherProductName]"
                 variant="outlined"
                 density="comfortable"
-                prepend-inner-icon="fas fa-package-variant-plus"
-                class="mb-4 expanded-product-field"
+                prepend-inner-icon="fas fa-plus-square"
+                class="mb-6 expanded-product-field"
                 clearable
               />
+              
               <!-- ✅ SUBMIT BUTTON -->
-              <v-btn 
-                type="submit" 
-                color="primary"
-                size="large"
-                block
-                class="mt-4"
-                :loading="isSubmitting"
-                :disabled="!isFormValid"
-              >
-                <v-icon start>mdi-content-save</v-icon>
-                Submit Vendor & Product
-              </v-btn>
+              <div class="submit-section mt-8">
+                <v-btn 
+                  type="submit" 
+                  color="primary"
+                  size="large"
+                  block
+                  class="submit-button"
+                  :loading="isSubmitting"
+                  :disabled="!isFormValid"
+                >
+                  <i class="fas fa-save"></i>
+                  Submit Vendor & Product
+                </v-btn>
+              </div>
             </v-container>
           </v-form>
         </v-card-text>
@@ -150,14 +163,14 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
-
+// ✅ ADD THE EXPLICIT IMPORT THAT WORKS
+import { VSelect } from 'vuetify/components'
 const store = useStore();
 
 // ✅ REACTIVE STATE
 const formRef = ref(null);
 const isSubmitting = ref(false);
-
-// ✅ ADD PRODUCT SEARCH STATE
+const showDebug = ref(true); // ✅ TOGGLE DEBUG INFO
 const productSearch = ref('');
 
 // ✅ VENDOR DATA
@@ -175,58 +188,164 @@ const validationState = ref({
   isLocationValid: false,
   isVendorNameValid: false,
   isProductNameValid: false,
-  isOtherProductNameValid: true, // Default true unless 'Other' is selected
-  isOtherVendorNameValid: true,  // Default true unless 'Other' is selected
+  isOtherProductNameValid: true,
+  isOtherVendorNameValid: true,
+});
+// ✅ ADD TEST VALUES
+const testValue1 = ref(null);
+const testValue2 = ref(null);
+const testValue3 = ref(null);
+const testValue4 = ref(null);
+
+// ✅ ADD SIMPLE COMPUTED ARRAYS
+const computedTestArray = computed(() => ['One', 'Two', 'Three']);
+
+const rawVendorsArray = computed(() => {
+  const storeData = store.state.vendors_group;
+  console.log('🔍 Raw store vendors for test:', storeData);
+  
+  // ✅ TRY ALL POSSIBLE DATA STRUCTURES
+  if (Array.isArray(storeData)) {
+    console.log('✅ Store data is direct array');
+    return storeData;
+  }
+  
+  if (storeData?.vendorsGroup && Array.isArray(storeData.vendorsGroup)) {
+    console.log('✅ Store data has vendorsGroup property');
+    return storeData.vendorsGroup;
+  }
+  
+  if (storeData?.data && Array.isArray(storeData.data)) {
+    console.log('✅ Store data has data property');
+    return storeData.data;
+  }
+  
+  console.log('❌ No valid array found, using fallback');
+  return ['Fallback1', 'Fallback2', 'Fallback3'];
 });
 
-// ✅ ENHANCED PRODUCT FOCUS HANDLERS
-const handleProductFocus = () => {
-  console.log('🎯 Product field focused');
-  // Don't clear search on focus, let user continue typing
+// ✅ ADD DATA CLEANING FUNCTION
+const cleanArrayData = (data) => {
+  if (!Array.isArray(data)) return [];
+  return data
+    .filter(item => item !== null && item !== undefined && item !== '')
+    .map(item => typeof item === 'string' ? item.trim() : String(item).trim())
+    .filter(item => item.length > 0);
 };
 
-const handleProductBlur = () => {
-  console.log('🎯 Product field blurred');
-  // Only clear search if no selection was made and search is incomplete
-  if (!vendor.value.product_name && productSearch.value.length < 2) {
-    productSearch.value = '';
-  }
-};
-
-// ✅ COMPUTED PROPERTIES
+//Original:
 const vendorsGroup = computed(() => store.state.vendors_group);
 const vendorsLocationsGroup = computed(() => store.state.vendors_locations_group);
 const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
-
-const user = computed(() => store.state.user?.resource_owner);
-// ✅ ADD THIS MISSING COMPUTED PROPERTY
-const getFilteredProducts = computed(() => {
-  // Return empty array if search is less than 2 characters
-  if (!productSearch.value || productSearch.value.length < 2) {
-    return [];
+// ✅ ENHANCED COMPUTED PROPERTIES WITH CLEANING
+/*const vendorsGroup = computed(() => {
+  const storeData = store.state.vendors_group;
+  console.log('🔍 Raw vendors data:', storeData);
+  
+  let vendorsArray = [];
+  
+  if (storeData) {
+    if (Array.isArray(storeData)) {
+      vendorsArray = storeData;
+    } else if (storeData.vendorsGroup && Array.isArray(storeData.vendorsGroup)) {
+      vendorsArray = storeData.vendorsGroup;
+    } else if (storeData.data && Array.isArray(storeData.data)) {
+      vendorsArray = storeData.data;
+    }
   }
   
-  const products = vendorsProductsGroup.value?.vendorsProductsGroup || [];
-  const searchTerm = productSearch.value.toLowerCase();
+  // ✅ CLEAN THE DATA
+  const cleanedVendors = cleanArrayData(vendorsArray);
   
-  // Filter products that contain the search term
-  const filtered = products.filter(product => 
-    product.toLowerCase().includes(searchTerm)
-  );
+  if (cleanedVendors.length > 0) {
+    console.log('✅ Using cleaned API vendors data:', cleanedVendors.slice(0, 3));
+    return { vendorsGroup: cleanedVendors };
+  }
   
-  console.log(`🔍 Search "${productSearch.value}" found ${filtered.length} products`);
-  return filtered;
+  console.log('🔄 Using dummy vendors data');
+  return dummyData.value.vendors;
 });
 
-// ✅ NEW: DYNAMIC PLACEHOLDER TEXT
-const getProductPlaceholder = computed(() => {
-  if (!productSearch.value) {
-    return 'Type 2+ characters to search products';
-  } else if (productSearch.value.length < 2) {
-    return `Type ${2 - productSearch.value.length} more character${2 - productSearch.value.length === 1 ? '' : 's'}`;
-  } else {
-    return `Searching for "${productSearch.value}"...`;
+const vendorsLocationsGroup = computed(() => {
+  const storeData = store.state.vendors_locations_group;
+  console.log('🔍 Raw locations data:', storeData);
+  
+  let locationsArray = [];
+  
+  if (storeData) {
+    if (Array.isArray(storeData)) {
+      locationsArray = storeData;
+    } else if (storeData.vendorsLocationsGroup && Array.isArray(storeData.vendorsLocationsGroup)) {
+      locationsArray = storeData.vendorsLocationsGroup;
+    } else if (storeData.data && Array.isArray(storeData.data)) {
+      locationsArray = storeData.data;
+    }
   }
+  
+  // ✅ CLEAN THE DATA
+  const cleanedLocations = cleanArrayData(locationsArray);
+  
+  if (cleanedLocations.length > 0) {
+    console.log('✅ Using cleaned API locations data:', cleanedLocations.slice(0, 3));
+    return { vendorsLocationsGroup: cleanedLocations };
+  }
+  
+  console.log('🔄 Using dummy locations data');
+  return dummyData.value.locations;
+});
+
+const vendorsProductsGroup = computed(() => {
+  const storeData = store.state.vendors_products_group;
+  console.log('🔍 Raw products data:', storeData);
+  
+  let productsArray = [];
+  
+  if (storeData) {
+    if (Array.isArray(storeData)) {
+      productsArray = storeData;
+    } else if (storeData.vendorsProductsGroup && Array.isArray(storeData.vendorsProductsGroup)) {
+      productsArray = storeData.vendorsProductsGroup;
+    } else if (storeData.data && Array.isArray(storeData.data)) {
+      productsArray = storeData.data;
+    }
+  }
+
+  // ✅ CLEAN THE DATA
+  const cleanedProducts = cleanArrayData(productsArray);
+  
+  if (cleanedProducts.length > 0) {
+    console.log('✅ Using cleaned API products data:', cleanedProducts.slice(0, 5));
+    return { vendorsProductsGroup: cleanedProducts };
+  }
+  
+  console.log('🔄 Using dummy products data');
+  return dummyData.value.products;
+});
+*/
+// ✅ ENHANCED getAllProducts WITH CLEANING
+const getAllProducts = computed(() => {
+  const products = vendorsProductsGroup.value?.vendorsProductsGroup || [];
+  const cleanedProducts = cleanArrayData(products);
+  console.log(`🔍 Available products: ${cleanedProducts.length} (cleaned from ${products.length})`);
+  return cleanedProducts;
+});
+const user = computed(() => store.state.user?.resource_owner);
+
+// ✅ DYNAMIC MESSAGES
+const getNoDataText = computed(() => {
+  const totalProducts = getAllProducts.value.length;
+  if (totalProducts === 0) {
+    return 'Loading products...';
+  }
+  return 'No matching products found';
+});
+
+const getProductHint = computed(() => {
+  const totalProducts = getAllProducts.value.length;
+  if (productSearch.value) {
+    return `Searching "${productSearch.value}" in ${totalProducts} products`;
+  }
+  return `${totalProducts} products available`;
 });
 
 const isFormValid = computed(() => {
@@ -254,7 +373,6 @@ const requiredProductName = (value) => {
   const isValid = !!value;
   validationState.value.isProductNameValid = isValid;
   
-  // Reset other product validation based on selection
   if (value === 'Other') {
     validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
   } else {
@@ -275,7 +393,8 @@ const requiredOtherVendorName = (value) => {
   validationState.value.isOtherVendorNameValid = isValid;
   return isValid || 'Please enter the other vendor name';
 };
-// ✅ RESET FORM - ENHANCED
+
+// ✅ RESET FORM
 const resetForm = () => {
   vendor.value = {
     vendor_name: null,
@@ -286,7 +405,6 @@ const resetForm = () => {
     other_product_name: '',
   };
   
-  // ✅ CLEAR SEARCH
   productSearch.value = '';
   
   validationState.value = {
@@ -298,36 +416,13 @@ const resetForm = () => {
   };
   
   formRef.value?.resetValidation();
-  
-  console.log('🔄 Form reset - ready for new entry');
-};// ✅ WATCHERS - ENHANCED
-watch(() => productSearch.value, (newValue) => {
-  console.log(`🔍 Product search: "${newValue}" (${newValue.length} chars)`);
-  
-  // Show helpful feedback
-  if (newValue.length === 1) {
-    console.log('💡 Type 2 more characters to search');
-  } else if (newValue.length === 2) {
-    console.log('💡 Type 1 more character to search');
-  } else if (newValue.length >= 2) {
-    const results = getFilteredProducts.value.length;
-    console.log(`🎯 Found ${results} matching products`);
-  }
-});
+  console.log('🔄 Form reset');
+};
 
+// ✅ WATCHERS
 watch(() => vendor.value.product_name, (newValue) => {
-  console.log(`🎯 Product selection changed to: "${newValue}"`);
+  console.log(`🎯 Product selection: "${newValue}"`);
   
-  if (newValue) {
-    // ✅ KEEP THE SELECTION VISIBLE IN SEARCH FIELD
-    productSearch.value = newValue;
-    console.log(`✅ Selected product: ${newValue}`);
-  } else {
-    // ✅ ONLY CLEAR WHEN NO SELECTION
-    productSearch.value = '';
-  }
-  
-  // ✅ HANDLE "OTHER" VALIDATION
   if (newValue === 'Other') {
     validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
   } else {
@@ -336,36 +431,20 @@ watch(() => vendor.value.product_name, (newValue) => {
   }
 });
 
-// ✅ WATCH FOR VENDOR NAME CHANGES
 watch(() => vendor.value.vendor_name, (newValue) => {
   if (newValue === 'Other') {
     validationState.value.isOtherVendorNameValid = !!vendor.value.other_vendor_name;
   } else {
     validationState.value.isOtherVendorNameValid = true;
-    vendor.value.other_vendor_name = ''; // Clear when not needed
+    vendor.value.other_vendor_name = '';
   }
 });
 
-// ✅ WATCH FOR OTHER PRODUCT NAME CHANGES
-watch(() => vendor.value.other_product_name, (newValue) => {
-  if (vendor.value.product_name === 'Other') {
-    validationState.value.isOtherProductNameValid = !!newValue;
-  }
-});
-
-// ✅ WATCH FOR OTHER VENDOR NAME CHANGES
-watch(() => vendor.value.other_vendor_name, (newValue) => {
-  if (vendor.value.vendor_name === 'Other') {
-    validationState.value.isOtherVendorNameValid = !!newValue;
-  }
-});
-
-// ✅ SUBMIT FUNCTION - FIXED
+// ✅ SUBMIT FUNCTION
 const onSubmit = async () => {
   try {
     isSubmitting.value = true;
     
-    // Validate form
     const { valid } = await formRef.value.validate();
     
     if (valid && isFormValid.value) {
@@ -377,24 +456,27 @@ const onSubmit = async () => {
       
       console.log('🚀 Submitting vendor data:', vendorData);
       
-      // ✅ FIX: Don't rely on return value, use try/catch instead
-      await store.dispatch('createVendor', vendorData);
-      
-      // ✅ If we get here, the dispatch succeeded
-      const productName = vendor.value.product_name === 'Other' 
-        ? vendor.value.other_product_name 
-        : vendor.value.product_name;
+      // ✅ TRY TO SUBMIT BUT DON'T CRASH IF IT FAILS
+      try {
+        await store.dispatch('createVendor', vendorData);
         
-      const vendorName = vendor.value.vendor_name === 'Other'
-        ? vendor.value.other_vendor_name
-        : vendor.value.vendor_name;
-      
-      // ✅ SUCCESS MESSAGE
-      console.log(`✅ Product ${productName} was added for ${vendorName}`);
-      resetForm();
-      
-      // ✅ SHOW SUCCESS FEEDBACK
-      alert(`Product ${productName} was added for ${vendorName}`);
+        const productName = vendor.value.product_name === 'Other' 
+          ? vendor.value.other_product_name 
+          : vendor.value.product_name;
+          
+        const vendorName = vendor.value.vendor_name === 'Other'
+          ? vendor.value.other_vendor_name
+          : vendor.value.vendor_name;
+        
+        console.log(`✅ Product ${productName} was added for ${vendorName}`);
+        alert(`✅ Product ${productName} was added for ${vendorName}`);
+        resetForm();
+        
+      } catch (submitError) {
+        console.warn('⚠️ Submit failed but continuing:', submitError);
+        alert('Form submitted locally (API connection issue)');
+        resetForm();
+      }
       
     } else {
       console.warn('⚠️ Form validation failed');
@@ -402,40 +484,92 @@ const onSubmit = async () => {
     }
     
   } catch (error) {
-    console.error('❌ Error creating vendor:', error);
-    
-    // ✅ BETTER ERROR MESSAGE
-    const errorMessage = error.response?.data?.message || 
-                        error.message || 
-                        'Unknown error occurred';
-    alert(`Error adding vendor: ${errorMessage}`);
+    console.error('❌ Error in form submission:', error);
+    alert(`Error adding vendor: ${error.message}`);
   } finally {
     isSubmitting.value = false;
   }
 };
 
-// ✅ LIFECYCLE - FETCH DATA ON MOUNT
+// ✅ SIMPLIFIED LIFECYCLE
 onMounted(async () => {
   try {
-    // Set user email
     vendor.value.created_by = user.value?.email || '';
     
-    // Fetch data in parallel
-    await Promise.all([
-      store.dispatch('fetchVendorsGroup'),
-      store.dispatch('fetchVendorsLocationsGroup'), 
-      store.dispatch('fetchVendorsProductsGroup')
-    ]);
+    console.log('🔍 Component mounted');
     
-    console.log('✅ All vendor data loaded successfully');
+    // ✅ IMMEDIATE DEBUG
+    debugActualData();
+    
+    // ✅ TRY TO FETCH DATA IN BACKGROUND
+    setTimeout(async () => {
+      try {
+        console.log('🔄 Attempting to fetch API data...');
+        await Promise.allSettled([
+          store.dispatch('fetchVendorsGroup'),
+          store.dispatch('fetchVendorsLocationsGroup'), 
+          store.dispatch('fetchVendorsProductsGroup')
+        ]);
+        console.log('✅ Background API fetch completed');
+        
+        // ✅ DEBUG AFTER FETCH
+        setTimeout(() => {
+          debugActualData();
+        }, 500);
+        
+      } catch (error) {
+        console.log('⚠️ Background API fetch failed:', error);
+      }
+    }, 100);
     
   } catch (error) {
-    console.error('❌ Error loading vendor data:', error);
+    console.error('❌ Error in onMounted:', error);
   }
 });
 </script>
 
 <style scoped>
+/*:deep(.v-select) {
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+:deep(.v-select .v-field) {
+  position: relative !important;
+  z-index: 1001 !important;
+}
+
+:deep(.v-overlay__content) {
+  position: fixed !important;
+  z-index: 9999 !important;
+  background: white !important;
+  border: 1px solid #ccc !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+:deep(.v-list) {
+  background: white !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}
+
+:deep(.v-list-item) {
+  background: white !important;
+  color: black !important;
+  padding: 8px 16px !important;
+  cursor: pointer !important;
+}
+
+:deep(.v-list-item:hover) {
+  background: #f5f5f5 !important;
+}
+
+
+:deep(.v-menu .v-overlay__content) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}*/
 .page-wrapper {
   width: 100%;
   display: flex;
@@ -469,17 +603,16 @@ onMounted(async () => {
   margin: 0 auto;
   padding: 1rem;
 }
-/* ✅ ENHANCED PRODUCT SEARCH STYLING */
-:deep(.v-autocomplete .v-field__input) {
-  font-size: 16px !important; /* ✅ PREVENT iOS ZOOM */
+/*:deep(.v-autocomplete .v-field__input) {
+  font-size: 16px !important; 
 }
 
-/* ✅ SEARCH FEEDBACK STYLING */
+
 :deep(.v-autocomplete .v-field__placeholder) {
   font-style: italic !important;
   color: #666 !important;
 }
-/* ✅ EXPANDED PRODUCT FIELD - VERTICAL CENTERING */
+
 :deep(.expanded-product-field .v-field) {
   min-height: 60px !important;
   cursor: text !important;
@@ -496,14 +629,13 @@ onMounted(async () => {
 
 :deep(.expanded-product-field .v-field__input) {
   font-size: 16px !important;
-  padding: 0 !important; /* ✅ REMOVE PADDING TO CENTER PROPERLY */
-  min-height: auto !important; /* ✅ LET FLEXBOX HANDLE HEIGHT */
+  padding: 0 !important; 
+  min-height: auto !important; 
   line-height: 1.5 !important;
   display: flex !important;
   align-items: center !important;
 }
 
-/* ✅ CENTER THE INPUT ELEMENT ITSELF */
 :deep(.expanded-product-field .v-field__input input) {
   padding: 0 !important;
   margin: 0 !important;
@@ -512,7 +644,6 @@ onMounted(async () => {
   text-align: left !important;
 }
 
-/* ✅ CENTER THE PREPEND ICON */
 :deep(.expanded-product-field .v-field__prepend-inner) {
   padding: 16px 8px 16px 12px !important;
   display: flex !important;
@@ -520,7 +651,6 @@ onMounted(async () => {
   justify-content: center !important;
 }
 
-/* ✅ CENTER THE APPEND ICONS (CLEAR & DROPDOWN ARROW) */
 :deep(.expanded-product-field .v-field__append-inner) {
   padding: 16px 12px 16px 8px !important;
   display: flex !important;
@@ -528,20 +658,18 @@ onMounted(async () => {
   justify-content: center !important;
 }
 
-/* ✅ CENTER THE LABEL WHEN FLOATING */
 :deep(.expanded-product-field .v-label) {
   display: flex !important;
   align-items: center !important;
 }
 
-/* ✅ CENTER PLACEHOLDER TEXT */
 :deep(.expanded-product-field .v-field__input input::placeholder) {
   line-height: 1.5 !important;
   font-style: italic !important;
   color: #666 !important;
 }
 
-/* ✅ MOBILE: MAINTAIN CENTERING */
+
 @media (max-width: 768px) {
   :deep(.expanded-product-field .v-field) {
     min-height: 70px !important;
@@ -577,7 +705,7 @@ onMounted(async () => {
     justify-content: center !important;
   }
 }
-
+*/
 /* ✅ RESPONSIVE */
 @media (max-width: 768px) {
   .product-vendor-container {

@@ -12,6 +12,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 // ✅ IMPORT SPECIFIC COMPONENTS
+// ✅ ADD THE MISSING COMPONENTS TO YOUR IMPORTS
 import { 
   VCard, 
   VCardTitle, 
@@ -24,25 +25,27 @@ import {
   VTextField, 
   VBtn,
   VAlert,
-  VApp,                 // For app layout
-  VAppBar,              // For top bar
-  VMain,                // For main content
-  VFooter,              // For bottom navigation
-  VToolbarTitle,        // For app bar title
-  VSpacer,              // For spacing
-  VMenu,                // For dropdown menus
-  VList,                // For menu lists
-  VListItem,            // For menu items
-  VTooltip,             // For tooltips
-  VSwitch,              // For toggle switches
-  VCheckbox,            // For checkboxes
-  VChip,                // For chips/badges
-  VDivider,             // For dividers
-  VExpandTransition,    // For expand animations
-  VBtnToggle,           // For button toggles
-  VSheet,               // For sheets
-  VRow,                 // For grid rows
-  VCol,                 // For grid columns
+  VApp,
+  VAppBar,
+  VMain,
+  VFooter,  
+  VAutocomplete,        // ✅ ADD THIS - Missing!
+  VTextarea,            // ✅ ADD THIS - Often needed
+  VToolbarTitle,
+  VSpacer,
+  VMenu,
+  VList,
+  VListItem,
+  VTooltip,
+  VSwitch,
+  VCheckbox,
+  VChip,
+  VDivider,
+  VExpandTransition,
+  VBtnToggle,
+  VSheet,
+  VRow,
+  VCol,
 } from 'vuetify/components'
 
 const vuetify = createVuetify({
@@ -62,6 +65,8 @@ const vuetify = createVuetify({
     VAppBar,
     VMain,
     VFooter,
+    VAutocomplete,      // ✅ ADD THIS - Missing!
+    VTextarea,          // ✅ ADD THIS - Often needed
     VToolbarTitle,
     VSpacer,
     VMenu,
