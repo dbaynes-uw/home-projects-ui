@@ -1154,15 +1154,45 @@ async createPlant({ commit, state }, plant) {
         });
     },
 
-    async putProducts({ commit }, products) {
-      EventService.putProducts(products)
-        .then(() => {
-          commit("SET_PRODUCTS", products);
-        })
-        .catch((error) => {
-          alert("Products Put Error: ", error.response.data )
-        });
-    },
+// ✅ UPDATE YOUR store.js putProducts ACTION
+async putProducts({ commit }, products) {
+  try {
+    console.log('🔍 Store putProducts called with:', products);
+    
+    const response = await EventService.putProducts(products);
+    
+    console.log('✅ Store putProducts response:', response);
+    
+    // ✅ RETURN TRUE ON SUCCESS
+    if (response && (response.status === 200 || response.status === 201)) {
+      console.log('✅ Store putProducts success');
+      
+      // ✅ UPDATE STORE STATE IF NEEDED
+      if (response.data) {
+        commit('SET_PRODUCTS', response.data);
+      }
+      
+      return true; // ✅ SUCCESS
+    }
+    
+    console.error('❌ Store putProducts: Invalid response');
+    return false;
+    
+  } catch (error) {
+    console.error('❌ Store putProducts error:', error);
+    
+    if (error.response) {
+      console.error('❌ Error response:', error.response.status, error.response.data);
+    } else if (error.request) {
+      console.error('❌ No response received:', error.request);
+    } else {
+      console.error('❌ Error setting up request:', error.message);
+    }
+    
+    return false; // ✅ FAILURE
+  }
+},
+
     async updateProductsVendors({ commit }, products_vendors) {
       EventService.putVendorsProducts(products_vendors)
         .then(() => {

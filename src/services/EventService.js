@@ -259,10 +259,29 @@ export default {
     this.init();
     return axios.put(api_url + "products" + `/${updatedProduct.id}`, updatedProduct);
   },
-  async putProducts(products) {
-    this.init();
-    return axios.put(api_url + "products/update", products) //, { params: {vendors_products}});
-  },
+// ✅ UPDATE YOUR EventService.js
+async putProducts(products) {
+  try {
+    console.log('🔍 EventService putProducts called with:', products);
+    console.log('🔍 API URL:', api_url + "products/update"); // ✅ OR "products" depending on your route
+    
+    // ✅ USE PATCH METHOD AS COPILOT SUGGESTED
+    const response = await axios.patch(api_url + "products/update", products);
+    
+    console.log('✅ EventService putProducts success:', response);
+    return response;
+    
+  } catch (error) {
+    console.error('❌ EventService putProducts error:', error);
+    console.error('❌ Error details:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    });
+    
+    throw error;
+  }
+},
   async postTrail(trail) {
     this.init();
     return axios.post(api_url + "trails", trail);
