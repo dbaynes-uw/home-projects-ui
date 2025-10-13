@@ -178,10 +178,40 @@ export default new Vuex.Store({
     SET_MED(state, med) {
       state.med = med;
     },
-    SET_MEDS(state, meds) {
-      state.meds = meds;
+    // ✅ FIXED SET_MEDS MUTATION
+    SET_MEDS(state, response) {
+      // ✅ HANDLE DIFFERENT RESPONSE FORMATS
+      if (Array.isArray(response)) {
+        // ✅ DIRECT ARRAY (YOUR CURRENT API FORMAT)
+        state.meds = response;
+      } else if (response && Array.isArray(response.data)) {
+        // ✅ NESTED IN response.data
+        state.meds = response.data;
+      } else if (response && response.data && Array.isArray(response.data.data)) {
+        // ✅ DOUBLE NESTED
+        state.meds = response.data.data;
+      } else {
+        // ✅ FALLBACK FOR UNEXPECTED FORMATS
+        console.error('❌ Unexpected meds response format:', response);
+        console.error('❌ Response type:', typeof response);
+        console.error('❌ Response keys:', response && typeof response === 'object' ? Object.keys(response) : 'N/A');
+        state.meds = []; // ✅ Fallback to empty array
+      }
     },
-    // CLEAN UP MUTATIONS
+
+    SET_MEDS_PAGINATION(state, pagination) {
+      if (pagination && typeof pagination === 'object') {
+        state.medsPagination = {
+          current_page: pagination.current_page || 1,
+          per_page: pagination.per_page || 20,
+          total_count: pagination.total_count || 0,
+          total_pages: pagination.total_pages || 0
+        };
+      } else {
+        console.warn('⚠️ SET_MEDS_PAGINATION: Invalid pagination data:', pagination);
+      }
+    },
+
     CLEAR_BOOKS(state) {
       state.books = [];
     },
@@ -1033,26 +1063,46 @@ async createPlant({ commit, state }, plant) {
           alert("Golf Fetch Error: ", error.response.data )
         });
     },
-    async createMed({ commit }, med) {
-      EventService.postMed(med)
-        .then(() => {
-          commit("SET_MEDS", med);
-        })
-        .catch((error) => {
-          alert("Med Create Error: ", error.response.data )
-        });
+    // ✅ FIXED createMed ACTION (around line 980)
+    async createMed({ commit, dispatch }, med) {
+      try {
+        console.log('🔍 Store: Creating med:', med);
+
+        const response = await EventService.postMed(med);
+
+        console.log('✅ Store: Med created successfully:', response.data);
+
+        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
+        await dispatch('fetchMeds');
+
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Med create error:', error);
+        throw error;
+      }
     },
 
-    async deleteMed({ commit }, med) {
-      EventService.deleteMed(med)
-        .then((response) => {
-          commit("SET_MEDS", response.data);
-        })
-        .catch((error) => {
-          alert("Med Delete Error: ", error.response.data )
+    // ✅ FIXED deleteMed ACTION (around line 1000)
+    async deleteMed({ commit, dispatch }, med) {
+      try {
+        console.log('🔍 Store: Deleting med:', med);
 
-        });
+        const response = await EventService.deleteMed(med);
+
+        console.log('✅ Store: Med deleted successfully:', response);
+
+        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
+        await dispatch('fetchMeds');
+
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Med delete error:', error);
+        throw error;
+      }
     },
+
     async fetchMed({ commit, state }, id) {
       const existingMed = state.meds.find((med) => med.id === id);
       if (existingMed) {
@@ -1067,32 +1117,42 @@ async createPlant({ commit, state }, plant) {
           });
       }
     },
-    // Fix the fetchMeds action (around line where you have it):
-      
     async fetchMeds({ commit }) {
       try {
         const response = await EventService.getMeds();
-        
-        // ✅ FIX: Extract the array from response.data
-        const medsData = response.data.data || response.data || [];
-        
-        commit("SET_MEDS", medsData);
-        return medsData;
+        // ✅ YOUR API RETURNS: response.data.data (NESTED!)
+        if (response && response.data && Array.isArray(response.data.data)) {
+          // ✅ OPTIONALLY SAVE PAGINATION INFO
+          if (response.data.pagination) {
+            commit('SET_MEDS_PAGINATION', response.data.pagination);
+          }
+          return response.data.data;
+        } else {
+          console.error('❌ Unexpected API response structure:', response);
+          commit('SET_MEDS', []);
+          return [];
+        }
+
       } catch (error) {
-        console.error("Med Fetch Error:", error);
-        commit("SET_MEDS", []); // Set empty array on error
-        return [];
+        console.error('❌ Error fetching meds:', error);
+        commit('SET_MEDS', []);
+        throw error;
       }
     },
-    async updateMed({ commit }, med) {
-      EventService.putMed(med)
-        .then((response) => {
-          commit("SET_MED", response.data);
-          alert("Med " + med.description + " was Successfully Updated.")
-        })
-        .catch((error) => {
-          alert("Med Put Error: ", error.response.data )
-        });
+
+    // ✅ ENHANCED updateMed ACTION (around line 1020)
+    async updateMed({ commit, dispatch }, med) {
+      try {
+        const response = await EventService.putMed(med);
+        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
+        await dispatch('fetchMeds');
+
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Med update error:', error);
+        throw error;
+      }
     },
 
     async deleteProduct({ commit }, product) {

@@ -189,14 +189,9 @@ const chartIntervals = computed(() => {
 });
 
 
-const displayedMeds = computed(() => {
-  console.log('🔄 Computing displayedMeds...');
-  
+const displayedMeds = computed(() => {  
   // ✅ SAFETY CHECK: ENSURE WE HAVE AN ARRAY
   let result = Array.isArray(meds.value) ? [...meds.value] : [];
-  
-  console.log('🔄 Initial result:', result.length, 'items');
-  
   // ✅ HARD LIMIT TO PREVENT MEMORY ISSUES (EMERGENCY PROTECTION)
   if (result.length > 500) {
     console.warn('🚨 Too many meds, limiting to 500 to prevent R14 memory errors');
@@ -220,7 +215,6 @@ const displayedMeds = computed(() => {
       const medDate = new Date(med.date_of_occurrence);
       return medDate >= cutoffDate;
     });
-    console.log(`🔄 Time filter (${daysBack} days): ${beforeFilter} → ${result.length} items`);
   }
   
   // ✅ APPLY SEARCH FILTER
@@ -254,7 +248,6 @@ const displayedMeds = computed(() => {
       return searchInDate || searchInDuration || searchInCircumstances || 
              searchInDescription || searchInType;
     });
-    console.log(`🔄 Search filter ("${searchText.value}"): ${beforeFilter} → ${result.length} items`);
   }
   
   // ✅ SAFE SORT: ENSURE result IS STILL AN ARRAY
@@ -264,8 +257,6 @@ const displayedMeds = computed(() => {
     const dateB = new Date(b.date_of_occurrence);
     return dateB - dateA;
   }) : [];
-  
-  console.log('🔄 Final result:', sortedResult.length, 'items');
   
   // ✅ ADDITIONAL MEMORY PROTECTION - WARN IF STILL TOO LARGE
   if (sortedResult.length > 200) {
