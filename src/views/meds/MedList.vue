@@ -139,9 +139,7 @@ import MedIndex from "@/components/meds/MedIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { onUnmounted } from 'vue';
 
-onUnmounted(() => {
-  console.log('🧹 MedList unmounting - cleaning up...')
-  
+onUnmounted(() => {  
   // Clear search and filters
   searchText.value = '';
   selectedTimeFrame.value = '30';
@@ -197,10 +195,8 @@ const displayedMeds = computed(() => {
     console.warn('🚨 Too many meds, limiting to 500 to prevent R14 memory errors');
     result = result.slice(0, 500);
   }
-  
   // Early return if no meds
   if (result.length === 0) {
-    console.log('🔄 No meds to display');
     return [];
   }
   

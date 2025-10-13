@@ -184,14 +184,12 @@ const requiredDuration = (value) => {
 // ✅ FORM VALIDATION WATCHER
 watch([isDateOccurrenceValid, isDurationValid], () => {
   isFormValid.value = isDateOccurrenceValid.value && isDurationValid.value;
-  console.log(`🔍 Form validation: Date(${isDateOccurrenceValid.value}) Duration(${isDurationValid.value}) = Valid(${isFormValid.value})`);
 });
 
 // ✅ WATCH USER AND SET CREATED_BY
 watch(user, (newUser) => {
   if (newUser?.email) {
     med.value.created_by = newUser.email;
-    console.log('✅ User loaded, set created_by:', newUser.email);
   }
 }, { immediate: true });
 
@@ -210,13 +208,10 @@ watch(() => med.value.duration, (newValue) => {
 
 // ✅ METHODS
 const checkValidations = () => {
-  console.log('🔍 Checking validations...');
   
   const dateValid = requiredDateOccurrence(med.value.date_of_occurrence);
   const durationValid = requiredDuration(med.value.duration);
-  
-  console.log(`🔍 Validation results: Date(${dateValid === true}) Duration(${durationValid === true})`);
-  
+    
   isFormValid.value = dateValid === true && durationValid === true;
   return isFormValid.value;
 };
@@ -225,10 +220,6 @@ const onSubmit = async () => {
   try {
     isSubmitting.value = true;
     hasAttemptedSubmit.value = true;
-    
-    console.log('🔍 PRE-SUBMIT DEBUG:');
-    console.log('- med.value:', med.value);
-    console.log('- user email:', user.value?.email);
     
     // ✅ VALIDATE FORM
     const isValid = checkValidations();
@@ -246,8 +237,6 @@ const onSubmit = async () => {
       created_by: user.value?.email || '',
     };
     
-    console.log('🚀 Submitting med data:', medData);
-    
     // ✅ VALIDATE REQUIRED FIELDS
     if (!medData.date_of_occurrence) {
       throw new Error('Date of occurrence is required');
@@ -262,12 +251,9 @@ const onSubmit = async () => {
     }
     
     // ✅ SUBMIT TO STORE
-    const result = await store.dispatch('createMed', medData);
-    
-    console.log('🔄 Store result:', result);
+    const result = await store.dispatch('createMed', medData);    
     
     if (result !== false) {
-      console.log('✅ Med created successfully');
       alert(`✅ Med was successfully added for ${medData.date_of_occurrence}`);
       
       // ✅ NAVIGATE TO MED LIST
@@ -314,13 +300,9 @@ const debugFormState = () => {
 
 // ✅ LIFECYCLE
 onMounted(() => {
-  console.log('🔍 MedCreate mounted');
-  console.log('✅ Available MED_DURATIONS:', MED_DURATIONS);
-  
   // ✅ SET INITIAL USER IF AVAILABLE
   if (user.value?.email) {
     med.value.created_by = user.value.email;
-    console.log('✅ Initial user set:', user.value.email);
   }
 });
 </script>

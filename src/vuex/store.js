@@ -1066,11 +1066,7 @@ async createPlant({ commit, state }, plant) {
     // ✅ FIXED createMed ACTION (around line 980)
     async createMed({ commit, dispatch }, med) {
       try {
-        console.log('🔍 Store: Creating med:', med);
-
         const response = await EventService.postMed(med);
-
-        console.log('✅ Store: Med created successfully:', response.data);
 
         // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
         await dispatch('fetchMeds');
@@ -1086,12 +1082,7 @@ async createPlant({ commit, state }, plant) {
     // ✅ FIXED deleteMed ACTION (around line 1000)
     async deleteMed({ commit, dispatch }, med) {
       try {
-        console.log('🔍 Store: Deleting med:', med);
-
         const response = await EventService.deleteMed(med);
-
-        console.log('✅ Store: Med deleted successfully:', response);
-
         // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
         await dispatch('fetchMeds');
 
@@ -1117,29 +1108,37 @@ async createPlant({ commit, state }, plant) {
           });
       }
     },
+// ✅ SIMPLIFIED fetchMeds ACTION
     async fetchMeds({ commit }) {
       try {
+        commit('SET_MEDS', []);
+
         const response = await EventService.getMeds();
-        // ✅ YOUR API RETURNS: response.data.data (NESTED!)
-        if (response && response.data && Array.isArray(response.data.data)) {
-          // ✅ OPTIONALLY SAVE PAGINATION INFO
-          if (response.data.pagination) {
-            commit('SET_MEDS_PAGINATION', response.data.pagination);
-          }
-          return response.data.data;
+
+        // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
+        let medsArray = [];
+
+        if (Array.isArray(response.data)) {
+          // ✅ NEW FORMAT: Direct array
+          medsArray = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          // ✅ OLD FORMAT: Paginated (fallback)
+          medsArray = response.data.data;
         } else {
-          console.error('❌ Unexpected API response structure:', response);
-          commit('SET_MEDS', []);
-          return [];
+          console.error('❌ Store: Unexpected response format:', response);
+          medsArray = [];
         }
 
+        commit('SET_MEDS', medsArray);
+
+        return medsArray;
+
       } catch (error) {
-        console.error('❌ Error fetching meds:', error);
+        console.error('❌ Store: Error fetching meds:', error);
         commit('SET_MEDS', []);
         throw error;
       }
     },
-
     // ✅ ENHANCED updateMed ACTION (around line 1020)
     async updateMed({ commit, dispatch }, med) {
       try {
