@@ -336,7 +336,6 @@ export default new Vuex.Store({
       // ✅ CLEAR AUTH HEADER
       delete axios.defaults.headers.common['Authorization'];
   
-      console.log('✅ CLEAR_USER_DATA: User data cleared');
     },
 
     CLEAR_WATERING() {
@@ -353,19 +352,16 @@ export default new Vuex.Store({
     },
     SET_VENDORS_GROUP(state, data) {
       state.vendors_group = data;
-      console.log('✅ SET_VENDORS_GROUP:', data);
     },
 
     // ✅ FIXED - PARAMETER NAME MISMATCH
     SET_VENDORS_LOCATIONS_GROUP(state, data) {
       state.vendors_locations_group = data;
-      console.log('✅ SET_VENDORS_LOCATIONS_GROUP:', data); // ✅ FIXED: was using undefined 'data'
     },
 
     // ✅ FIXED - PARAMETER NAME MISMATCH  
     SET_VENDORS_PRODUCTS_GROUP(state, data) {
       state.vendors_products_group = data;
-      console.log('✅ SET_VENDORS_PRODUCTS_GROUP:', data); // ✅ FIXED: was using undefined 'data'
     },    
     ADD_VENDOR(state, vendor) {
       state.vendors.push(vendor);
@@ -1543,7 +1539,6 @@ async putProducts({ commit }, products) {
       EventService.getVendorsLocationsGroup()
         .then((response) => {
           commit("SET_VENDORS_LOCATIONS_GROUP", response.data);
-          console.log('🔍 Vendors locations group fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {
