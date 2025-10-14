@@ -1,139 +1,512 @@
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/vendors/VendorEdit.vue -->
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h2>Vendor Maintenance</h2>
-      <p id="status-message">
-        <u>{{ statusMessage }}</u>
-      </p>
-      <br/>
-    </v-card-title>
-    <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'ProductsByLocations' }">Back to Shopping</router-link>
-        </button>
-      </li>
-      <li>
-        <button id="link-as-button" @click="deleteVendor(vendor)">
+  <div class="vendor-edit-wrapper">
+    <!-- ✅ CONFIRMATION DIALOG -->
+    <ConfirmDialogue ref="confirmDialogue" />
+    
+    <!-- ✅ HEADER CARD -->
+    <v-card class="mx-auto mt-5">
+      <v-card-title class="pb-0">
+        <div class="title-section">
+          <h2>
+            <i class="fas fa-edit"></i>
+            Vendor Maintenance
+          </h2>
+          <p v-if="statusMessage" class="status-message">
+            <u>{{ statusMessage }}</u>
+          </p>
+        </div>
+      </v-card-title>
+      
+      <!-- ✅ NAVIGATION BUTTONS -->
+      <v-card-text>
+        <div class="navigation-flex">
+          <v-btn
+            variant="outlined"
+            :to="{ name: 'ProductsByLocations' }"
+            prepend-icon="fas fa-arrow-left"
+            class="nav-button"
+          >
+            Back to Shopping
+          </v-btn>
+          
+          <v-btn
+            variant="outlined"
+            color="error"
+            @click="handleDeleteVendor"
+            prepend-icon="fas fa-trash"
+            class="nav-button"
+            :disabled="!vendor.id"
+          >
             Delete Vendor
-        </button>
-      </li>
-    </ul> 
-    <br/>
-  </v-card>
-  <br/>
-  <div class="edit">
-    <form class="card-display" @submit.prevent="updateVendor">
-      <div class="form-container">
-        <v-text-field
-          label="Location"
-          v-model="vendor.location"
-          :readonly="true"
-        />
-        <v-text-field
-          label="Vendor Name"
-          v-model="vendor.vendor_name"
-        />
-        <br/>
-        <button class="button" id="link-as-button" type="submit">
-          Submit
-        </button>
-      </div>
-    </form>
+          </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <!-- ✅ EDIT FORM CARD -->
+    <v-card class="mt-4">
+      <v-card-title>
+        <h3>
+          <i class="fas fa-store"></i>
+          Edit Vendor Details
+        </h3>
+      </v-card-title>
+      
+      <v-card-text>
+        <v-form @submit.prevent="handleUpdateVendor" ref="formRef">
+          <v-container>
+            <!-- ✅ LOCATION (READONLY) -->
+            <v-text-field
+              label="Location"
+              v-model="vendor.location"
+              readonly
+              variant="outlined"
+              class="mb-4"
+              :rules="[requiredLocation]"
+            >
+              <template v-slot:prepend-inner>
+                <v-icon class="field-icon">mdi-map-marker</v-icon>
+              </template>
+            </v-text-field>
+
+            <!-- ✅ VENDOR NAME -->
+            <v-text-field
+              label="Vendor Name"
+              v-model="vendor.vendor_name"
+              variant="outlined"
+              class="mb-4"
+              :rules="[requiredVendorName]"
+              :error="!isVendorNameValid && hasAttemptedSubmit"
+            >
+              <template v-slot:prepend-inner>
+                <v-icon class="field-icon">mdi-store</v-icon>
+              </template>
+            </v-text-field>
+
+            <!-- ✅ SUBMIT BUTTON -->
+            <v-btn 
+              type="submit"
+              color="primary"
+              size="large"
+              block
+              class="mt-4"
+              :loading="isUpdating"
+              :disabled="!isFormValid && hasAttemptedSubmit"
+            >
+              <i class="fas fa-save"></i>
+              Update Vendor
+            </v-btn>
+          </v-container>
+        </v-form>
+      </v-card-text>
+    </v-card>
+
+    <!-- ✅ DEBUG INFO (DEV ONLY) -->
+    <v-card v-if="isDev" class="mt-4" color="info" variant="tonal">
+      <v-card-title>
+        <i class="fas fa-bug"></i>
+        Debug Info
+      </v-card-title>
+      <v-card-text>
+        <p><strong>Vendor ID:</strong> {{ vendor.id }}</p>
+        <p><strong>Location:</strong> {{ vendor.location }}</p>
+        <p><strong>Vendor Name:</strong> {{ vendor.vendor_name }}</p>
+        <p><strong>Form Valid:</strong> {{ isFormValid }}</p>
+        <p><strong>Is Loading:</strong> {{ isLoading }}</p>
+        <p><strong>Route ID:</strong> {{ $route.params.id }}</p>
+        
+        <v-btn 
+          @click="debugVendorState"
+          variant="outlined"
+          size="small"
+          class="mt-2"
+        >
+          Debug Vendor State
+        </v-btn>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
-<script>
-import axios from "axios";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-export default {
-  //props: ["id","statusMessage"],
-  props: ["id"],
-  components: {
-    ConfirmDialogue,
-  },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macmed-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/vendors/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/vendors/";
-    }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.vendor = result.data;
-  },
-  data() {
-    return {
-      vendor: {
-        id: "",
-        vendor_name: "",
-        location: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      api_url: "",
-      statusMessage: ''
-    };
-  },
-  setup() {},
-  methods: {
-    async updateVendor() {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Med from List ",
-        message:
-          "Are you sure you want to Update this record ",
-        okButton: "Update",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        const vendor = {
-          ...this.vendor,
-          updated_by: this.$store.state.created_by,
-        };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            vendor_name: this.vendor.vendor_name,
-            location: this.vendor.location,
-          }
-        );
-        if (result.status >= 200) {
-          this.statusMessage = "Vendor has been updated for " + vendor.vendor_name
-          //this.$router.push({ name: "ProductsByLocations" });
-        } else {
-          alert("Update Error Code ", result.status);
-        }
-      }
-    },
-    async deleteVendor(vendor) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Vendor from List?",
-        message:
-          "Are you sure you want to delete " +
-          vendor.title +
-          "? All of its products will also be deleted and it cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteVendor", vendor);
-        this.statusMessage =
-          "Vendor and all its products were Deleted for " +
-          vendor.vendor_name +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "ProductsByLocations" });
-      }
-    },
-  },
+
+<script setup>
+import { ref, computed, watch, onMounted, onErrorCaptured } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter, useRoute } from 'vue-router';
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
+
+// ✅ COMPOSITION API SETUP
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
+const formRef = ref(null);
+const confirmDialogue = ref(null);
+
+// ✅ ERROR HANDLER
+onErrorCaptured((error, instance, info) => {
+  console.error('❌ VendorEdit error captured:', error);
+  console.error('❌ Error info:', info);
+  return false;
+});
+
+// ✅ REACTIVE STATE
+const isLoading = ref(false);
+const isUpdating = ref(false);
+const isDeleting = ref(false);
+const hasAttemptedSubmit = ref(false);
+const isFormValid = ref(false);
+const isVendorNameValid = ref(false);
+const statusMessage = ref('');
+
+// ✅ VENDOR DATA
+const vendor = ref({
+  id: '',
+  vendor_name: '',
+  location: '',
+  created_by: '',
+  updated_by: ''
+});
+
+// ✅ COMPUTED PROPERTIES
+const user = computed(() => store.state.user?.resource_owner);
+const isDev = computed(() => process.env.NODE_ENV === 'development');
+
+// ✅ VALIDATION RULES
+const requiredLocation = (value) => {
+  return value && value.trim() ? true : 'Location is required';
 };
+
+const requiredVendorName = (value) => {
+  if (value && value.trim()) {
+    isVendorNameValid.value = true;
+    return true;
+  } else {
+    isVendorNameValid.value = false;
+    return 'Vendor Name is required';
+  }
+};
+
+// ✅ FORM VALIDATION WATCHER
+watch([isVendorNameValid], () => {
+  isFormValid.value = isVendorNameValid.value;
+  console.log(`🔍 Form validation: VendorName(${isVendorNameValid.value}) = Valid(${isFormValid.value})`);
+});
+
+// ✅ WATCH VENDOR NAME FOR VALIDATION
+watch(() => vendor.value.vendor_name, (newValue) => {
+  if (hasAttemptedSubmit.value) {
+    requiredVendorName(newValue);
+  }
+});
+
+// ✅ WATCH USER AND SET CREATED_BY
+watch(user, (newUser) => {
+  if (newUser?.email) {
+    vendor.value.created_by = newUser.email;
+    console.log('✅ User loaded, set created_by:', newUser.email);
+  }
+}, { immediate: true });
+
+// ✅ METHODS
+const loadVendor = async () => {
+  try {
+    isLoading.value = true;
+    
+    const vendorId = route.params.id;
+    console.log('🔍 Loading vendor with ID:', vendorId);
+    
+    if (!vendorId) {
+      throw new Error('Vendor ID is required');
+    }
+    
+    // ✅ USE STORE ACTION INSTEAD OF DIRECT AXIOS
+    const result = await store.dispatch('fetchVendor', vendorId);
+    
+    console.log('🔍 Store fetchVendor result:', result); // ✅ DEBUG THE RESULT
+    
+    if (result && typeof result === 'object') {
+      vendor.value = {
+        ...result,
+        created_by: result.created_by || user.value?.email || '',
+        updated_by: user.value?.email || ''
+      };
+      
+      console.log('✅ Vendor loaded successfully:', vendor.value);
+    } else {
+      console.error('❌ Invalid vendor result:', result);
+      throw new Error('Vendor data is invalid');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error loading vendor:', error);
+    
+    if (error.response?.status === 404) {
+      alert('❌ Vendor not found');
+      router.push({ name: 'ProductsByLocations' });
+    } else {
+      // ✅ REMOVED THE UNDEFINED `result` REFERENCE
+      console.error('❌ General error loading vendor:', error);
+      alert(`❌ Error loading vendor: ${error.message}`);
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const checkValidations = () => {
+  console.log('🔍 Checking validations...');
+  
+  const vendorNameValid = requiredVendorName(vendor.value.vendor_name);
+  
+  console.log(`🔍 Validation results: VendorName(${vendorNameValid === true})`);
+  
+  isFormValid.value = vendorNameValid === true;
+  return isFormValid.value;
+};
+
+const handleUpdateVendor = async () => {
+  try {
+    isUpdating.value = true;
+    hasAttemptedSubmit.value = true;
+    
+    console.log('🔍 PRE-UPDATE DEBUG:');
+    console.log('- vendor.value:', vendor.value);
+    console.log('- user email:', user.value?.email);
+    
+    // ✅ VALIDATE FORM
+    const isValid = checkValidations();
+    
+    if (!isValid) {
+      console.warn('❌ Form validation failed');
+      alert('Please correct required fields and resubmit');
+      return;
+    }
+    
+    // ✅ SHOW CONFIRMATION DIALOG
+    const ok = await confirmDialogue.value.show({
+      title: 'Update Vendor',
+      message: `Are you sure you want to update "${vendor.value.vendor_name}"?`,
+      okButton: 'Update',
+    });
+    
+    if (!ok) {
+      console.log('🔄 User cancelled update');
+      return;
+    }
+    
+    // ✅ PREPARE UPDATE DATA
+    const updateData = {
+      id: vendor.value.id,
+      vendor_name: vendor.value.vendor_name.trim(),
+      location: vendor.value.location.trim(),
+      updated_by: user.value?.email || '',
+      updated_at_client: new Date().toISOString()
+    };
+    
+    console.log('🚀 Updating vendor:', updateData);
+    
+    // ✅ VALIDATE REQUIRED FIELDS
+    if (!updateData.vendor_name) {
+      throw new Error('Vendor name is required');
+    }
+    
+    if (!updateData.location) {
+      throw new Error('Location is required');
+    }
+    
+    // ✅ UPDATE VIA STORE
+    const result = await store.dispatch('updateVendor', updateData);
+    
+    if (result !== false) {
+      console.log('✅ Vendor updated successfully');
+      statusMessage.value = `Vendor has been updated for ${updateData.vendor_name}`;
+      
+      // ✅ REFRESH RELATED DATA
+      await Promise.all([
+        store.dispatch('fetchVendors'),
+        store.dispatch('fetchVendorsProducts'),
+        store.dispatch('fetchVendorsLocationsGroup')
+      ]);
+      
+      // ✅ OPTIONAL: Navigate back after delay
+      setTimeout(() => {
+        router.push({ name: 'ProductsByLocations' });
+      }, 2000);
+      
+    } else {
+      console.error('❌ Store returned false');
+      alert('❌ Error updating vendor - please try again');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error in handleUpdateVendor:', error);
+    
+    if (error.response?.status === 422) {
+      alert(`❌ Validation Error: ${JSON.stringify(error.response.data)}`);
+    } else if (error.response?.status === 500) {
+      alert(`❌ Server Error: Check backend logs`);
+    } else {
+      alert(`❌ Error updating vendor: ${error.message}`);
+    }
+  } finally {
+    isUpdating.value = false;
+  }
+};
+
+const handleDeleteVendor = async () => {
+  try {
+    isDeleting.value = true;
+    
+    if (!vendor.value.id) {
+      throw new Error('Vendor ID is required for deletion');
+    }
+    
+    // ✅ SHOW CONFIRMATION DIALOG
+    const ok = await confirmDialogue.value.show({
+      title: 'Delete Vendor from List?',
+      message: `Are you sure you want to delete "${vendor.value.vendor_name}"? All of its products will also be deleted and it cannot be undone.`,
+      okButton: 'Delete',
+    });
+    
+    if (!ok) {
+      console.log('🔄 User cancelled deletion');
+      return;
+    }
+    
+    console.log('🗑️ Deleting vendor:', vendor.value);
+    
+    // ✅ DELETE VIA STORE
+    const result = await store.dispatch('deleteVendor', vendor.value);
+    
+    if (result !== false) {
+      console.log('✅ Vendor deleted successfully');
+      statusMessage.value = `Vendor and all its products were deleted for ${vendor.value.vendor_name}! Redirecting...`;
+      
+      // ✅ REFRESH RELATED DATA
+      await Promise.all([
+        store.dispatch('fetchVendors'),
+        store.dispatch('fetchVendorsProducts'),
+        store.dispatch('fetchVendorsLocationsGroup'),
+        store.dispatch('fetchProducts')
+      ]);
+      
+      // ✅ NAVIGATE BACK
+      setTimeout(() => {
+        router.push({ name: 'ProductsByLocations' });
+      }, 2000);
+      
+    } else {
+      console.error('❌ Delete failed');
+      alert('❌ Error deleting vendor - please try again');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error deleting vendor:', error);
+    
+    if (error.response?.status === 404) {
+      alert('❌ Vendor not found - it may have already been deleted');
+    } else if (error.response?.status === 500) {
+      alert('❌ Server error - please try again later');
+    } else {
+      alert(`❌ Error deleting vendor: ${error.message}`);
+    }
+  } finally {
+    isDeleting.value = false;
+  }
+};
+
+const debugVendorState = () => {
+  console.log('🔍 VENDOR STATE DEBUG:');
+  console.log('='.repeat(50));
+  
+  console.log('Vendor object:', vendor.value);
+  console.log('User:', user.value);
+  console.log('Route params:', route.params);
+  console.log('Validations:', {
+    isFormValid: isFormValid.value,
+    isVendorNameValid: isVendorNameValid.value,
+    hasAttemptedSubmit: hasAttemptedSubmit.value,
+    isLoading: isLoading.value,
+    isUpdating: isUpdating.value
+  });
+  
+  console.log('='.repeat(50));
+};
+
+// ✅ LIFECYCLE
+onMounted(async () => {
+  console.log('🔍 VendorEdit mounted');
+  await loadVendor();
+});
 </script>
-<style>
-#status-message {
+
+<style scoped>
+/* ✅ MODERN CONSISTENT STYLES */
+.vendor-edit-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.title-section {
+  width: 100%;
+}
+
+.status-message {
   font-weight: bold;
-  color: darkgreen;
+  color: #2e7d32;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.navigation-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  min-width: 200px !important;
+  height: 40px !important;
+}
+
+.field-icon {
+  color: #1976d2 !important;
+  top: -0.2rem;
+}
+
+/* ✅ RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .navigation-flex {
+    flex-direction: column;
+  }
+  
+  .nav-button {
+    min-width: 100% !important;
+  }
+  
+  .vendor-edit-wrapper {
+    padding: 0.5rem;
+  }
+}
+
+/* ✅ ACCESSIBILITY */
+.nav-button:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+/* ✅ SAFE AREA PADDING */
+.vendor-edit-wrapper {
+  padding-bottom: 80px;
+}
+
+@media (max-width: 768px) {
+  .vendor-edit-wrapper {
+    padding-bottom: 120px;
+  }
 }
 </style>

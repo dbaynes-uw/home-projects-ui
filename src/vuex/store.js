@@ -344,6 +344,9 @@ export default new Vuex.Store({
     SET_USERS(state, users) {
       state.users = users;
     },
+    SET_VENDOR(state, vendor) {
+      state.vendor = vendor;
+    },
     SET_VENDORS(state, vendors) {
       state.vendors = vendors;
     },
@@ -597,6 +600,7 @@ export default new Vuex.Store({
           });
       }
     },
+
     async fetchBooks({ commit }) {
       try {
         // ✅ REPLACE WITH YOUR ACTUAL API ENDPOINT
@@ -1510,6 +1514,48 @@ export default new Vuex.Store({
           alert(error.response.data.error);
         });
     },
+
+    // ✅ FIXED fetchVendor ACTION - ADD THE MISSING RETURN!
+    async fetchVendor({ commit }, vendorId) {
+      try {
+        console.log('Store fetchVendor ID: ', vendorId);
+
+        if (!vendorId) {
+          throw new Error('Vendor ID is required');
+        }
+
+        const response = await EventService.getVendor(vendorId);
+
+        console.log('✅ Store fetchVendor response:', response);
+        console.log('✅ Store fetchVendor response.data:', response.data);
+
+        // ✅ THIS IS THE MISSING LINE - RETURN THE DATA!
+        if (response && response.data) {
+          console.log('✅ Store fetchVendor returning vendor data:', response.data);
+          return response.data; // ✅ ADD THIS RETURN STATEMENT!
+        } else {
+          console.error('❌ Store fetchVendor: No data in response');
+          return null;
+        }
+
+      } catch (error) {
+        console.error('❌ Store fetchVendor error:', error);
+        throw error;
+      }
+    },
+
+    async updateVendor({ commit }, vendor) {
+      EventService.putVendor(vendor)
+        .then((response) => {
+          commit("SET_VENDOR", response.data);
+          alert("Vendor " + vendor.vendor_name + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          alert("Vendor Put Error for " + vendor.vendor_name + ": " + error.response.request.statusText)
+          location.reload();
+      });
+    },
+
     async fetchVendors({ commit }) {
       console.log('🔍 Fetching vendors...');
       EventService.getVendors()

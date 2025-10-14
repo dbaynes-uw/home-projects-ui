@@ -1,4 +1,5 @@
 <template>
+  <!--Optional: <div class="products-location-container products-location-wrapper"-->
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
     <v-card class="mx-auto mt-5">
@@ -294,7 +295,7 @@
           color="primary"
           size="large"
           block
-          class="mt-4"
+          class="mt-4 mb-safe-area"
         >
           <!-- ✅ CHANGED: mdi-content-save → fas fa-save -->
           <i class="fas fa-save save-icon"></i>
@@ -811,7 +812,51 @@ onMounted(() => {
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
+/* ✅ COMPONENT-SPECIFIC BOTTOM PADDING FIX */
+.products-location-wrapper {
+  padding-bottom: 120px; /* Extra space for Mac footer menu */
+  min-height: calc(100vh - 200px); /* Ensure scrolling works */
+}
 
+/* ✅ ENHANCED SAVE BUTTON WITH SAFE AREA */
+.mb-safe-area {
+  margin-bottom: 80px !important; /* Extra margin just for the save button */
+  position: relative;
+  z-index: 10; /* Ensure it stays above other elements */
+}
+
+/* ✅ SPECIFIC MAC SAFARI FIXES */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .products-location-wrapper {
+    padding-bottom: max(120px, calc(80px + env(safe-area-inset-bottom)));
+  }
+  
+  .mb-safe-area {
+    margin-bottom: max(80px, calc(40px + env(safe-area-inset-bottom))) !important;
+  }
+}
+
+/* ✅ MOBILE RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+  .products-location-wrapper {
+    padding-bottom: 140px; /* More space on mobile */
+  }
+  
+  .mb-safe-area {
+    margin-bottom: 100px !important;
+  }
+}
+
+/* ✅ EXTRA SMALL SCREENS (IPHONE) */
+@media (max-width: 480px) {
+  .products-location-wrapper {
+    padding-bottom: 160px; /* Even more space on small screens */
+  }
+  
+  .mb-safe-area {
+    margin-bottom: 120px !important;
+  }
+}
 /* ✅ YOUR EXISTING STYLES (unchanged) */
 .navigation-grid {
   display: grid;

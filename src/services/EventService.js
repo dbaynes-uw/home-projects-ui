@@ -366,6 +366,11 @@ async putProducts(products) {
     this.init();
     return axios.delete(api_url + "vendors/" + `${vendor.id}`);
   },
+  async getVendor(id) {
+    console.log("EventService: Fetching vendor with ID:", id);
+    this.init();
+    return axios.get(api_url + "vendors/" + id);
+  },
   async getVendors() {
     this.init();
     return axios.get(api_url + "vendors")
