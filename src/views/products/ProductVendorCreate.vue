@@ -202,21 +202,17 @@ const computedTestArray = computed(() => ['One', 'Two', 'Three']);
 
 const rawVendorsArray = computed(() => {
   const storeData = store.state.vendors_group;
-  console.log('🔍 Raw store vendors for test:', storeData);
   
   // ✅ TRY ALL POSSIBLE DATA STRUCTURES
   if (Array.isArray(storeData)) {
-    console.log('✅ Store data is direct array');
     return storeData;
   }
   
   if (storeData?.vendorsGroup && Array.isArray(storeData.vendorsGroup)) {
-    console.log('✅ Store data has vendorsGroup property');
     return storeData.vendorsGroup;
   }
   
   if (storeData?.data && Array.isArray(storeData.data)) {
-    console.log('✅ Store data has data property');
     return storeData.data;
   }
   
@@ -233,7 +229,7 @@ const cleanArrayData = (data) => {
     .filter(item => item.length > 0);
 };
 
-//Original:
+
 const vendorsGroup = computed(() => store.state.vendors_group);
 const vendorsLocationsGroup = computed(() => store.state.vendors_locations_group);
 const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
@@ -242,7 +238,6 @@ const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
 const getAllProducts = computed(() => {
   const products = vendorsProductsGroup.value?.vendorsProductsGroup || [];
   const cleanedProducts = cleanArrayData(products);
-  console.log(`🔍 Available products: ${cleanedProducts.length} (cleaned from ${products.length})`);
   return cleanedProducts;
 });
 const user = computed(() => store.state.user?.resource_owner);
@@ -271,7 +266,6 @@ const isFormValid = computed(() => {
          validationState.value.isOtherProductNameValid &&
          validationState.value.isOtherVendorNameValid;
 });
-
 // ✅ VALIDATION RULES
 const requiredLocation = (value) => {
   const isValid = !!value;
@@ -337,7 +331,6 @@ const resetForm = () => {
 
 // ✅ WATCHERS
 watch(() => vendor.value.product_name, (newValue) => {
-  console.log(`🎯 Product selection: "${newValue}"`);
   
   if (newValue === 'Other') {
     validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
@@ -369,9 +362,6 @@ const onSubmit = async () => {
         id: uuidv4(),
         created_by: user.value?.email || '',
       };
-      
-      console.log('🚀 Submitting vendor data:', vendorData);
-      
       // ✅ TRY TO SUBMIT BUT DON'T CRASH IF IT FAILS
       try {
         await store.dispatch('createVendor', vendorData);
@@ -384,7 +374,6 @@ const onSubmit = async () => {
           ? vendor.value.other_vendor_name
           : vendor.value.vendor_name;
         
-        console.log(`✅ Product ${productName} was added for ${vendorName}`);
         alert(`✅ Product ${productName} was added for ${vendorName}`);
         resetForm();
         
@@ -410,17 +399,7 @@ const onSubmit = async () => {
 // ✅ SIMPLIFIED LIFECYCLE
 onMounted(async () => {
   try {
-    vendor.value.created_by = user.value?.email || '';
-    
-    console.log('🔍 Component mounted in:', process.env.NODE_ENV);
-    
-    // ✅ PRODUCTION DEBUG
-    if (process.env.NODE_ENV === 'production') {
-      debugProduction();
-    }
-    
-    console.log('🔄 Attempting to fetch API data...');
-    
+    vendor.value.created_by = user.value?.email || '';    
     // ✅ TRY TO FETCH DATA WITH BETTER ERROR HANDLING
     try {
       const results = await Promise.allSettled([
@@ -429,35 +408,21 @@ onMounted(async () => {
         store.dispatch('fetchVendorsProductsGroup')
       ]);
       
-      console.log('✅ API fetch results:', results);
-      
       // ✅ CHECK EACH RESULT
       results.forEach((result, index) => {
         const actionNames = ['fetchVendorsGroup', 'fetchVendorsLocationsGroup', 'fetchVendorsProductsGroup'];
-        if (result.status === 'fulfilled') {
-          console.log(`✅ ${actionNames[index]} succeeded:`, result.value);
-        } else {
+        if (result.status !== 'fulfilled') {
           console.error(`❌ ${actionNames[index]} failed:`, result.reason);
         }
       });
       
     } catch (error) {
       console.error('❌ API fetch failed:', error);
-      
-      // ✅ PRODUCTION DEBUG ON ERROR
-      if (process.env.NODE_ENV === 'production') {
-        console.log('🔍 Production error debug:');
-        debugProduction();
-      }
+      alert('Error fetching initial data, some dropdowns may be empty');
     }
     
     // ✅ FINAL DATA CHECK
     setTimeout(() => {
-      console.log('🔍 Final data check:');
-      console.log('Vendors:', vendorsGroup.value);
-      console.log('Locations:', vendorsLocationsGroup.value);
-      console.log('Products:', vendorsProductsGroup.value);
-      console.log('Product count:', getAllProducts.value.length);
     }, 1000);
     
   } catch (error) {
@@ -467,47 +432,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/*:deep(.v-select) {
-  position: relative !important;
-  z-index: 1000 !important;
-}
-
-:deep(.v-select .v-field) {
-  position: relative !important;
-  z-index: 1001 !important;
-}
-
-:deep(.v-overlay__content) {
-  position: fixed !important;
-  z-index: 9999 !important;
-  background: white !important;
-  border: 1px solid #ccc !important;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
-}
-
-:deep(.v-list) {
-  background: white !important;
-  max-height: 300px !important;
-  overflow-y: auto !important;
-}
-
-:deep(.v-list-item) {
-  background: white !important;
-  color: black !important;
-  padding: 8px 16px !important;
-  cursor: pointer !important;
-}
-
-:deep(.v-list-item:hover) {
-  background: #f5f5f5 !important;
-}
-
-
-:deep(.v-menu .v-overlay__content) {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}*/
 .page-wrapper {
   width: 100%;
   display: flex;
