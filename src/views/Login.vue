@@ -26,17 +26,31 @@
             @blur="v$.email.$touch"
           />
           
-          <v-text-field
-            label="Password (Minimum 8 characters)"
-            v-model="state.password"
-            :append-icon="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
-            :type="showPassword ? 'text' : 'password'"
-            name="password"
-            :error="showValidationErrors && v$.password.$error"
-            :error-messages="showValidationErrors && v$.password.$error ? v$.password.$errors[0].$message : ''"
-            @click:append="showPassword = !showPassword"
-            @blur="v$.password.$touch"
-          />
+  <v-text-field
+    label="Password (Minimum 8 characters)"
+    v-model="state.password"
+    :type="showPassword ? 'text' : 'password'"
+    name="password"
+    variant="outlined"
+    :error="showValidationErrors && v$.password.$error"
+    :error-messages="showValidationErrors && v$.password.$error ? v$.password.$errors[0].$message : ''"
+    @blur="v$.password.$touch"
+  >
+    <!-- ✅ USE DIRECT FONTAWESOME ICON (NO V-ICON WRAPPER) -->
+    <template v-slot:append-inner>
+      <i 
+        :class="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+        class="password-eye-icon"
+        @click="showPassword = !showPassword"
+        role="button"
+        :aria-label="showPassword ? 'Hide password' : 'Show password'"
+        tabindex="0"
+        @keydown.enter="showPassword = !showPassword"
+        @keydown.space.prevent="showPassword = !showPassword"
+        :title="showPassword ? 'Hide password' : 'Show password'"
+      />
+    </template>
+  </v-text-field>
           
           <span>
             {{ state.password.length }} characters used.
@@ -210,6 +224,7 @@ export default {
 }
 </script>
 
+
 <style scoped>
 .error-message {
   color: #f44336;
@@ -229,4 +244,6 @@ export default {
   max-width: 400px;
   margin: 0 auto;
 }
+
+
 </style>
