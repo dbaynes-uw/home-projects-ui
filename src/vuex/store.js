@@ -1557,11 +1557,9 @@ export default new Vuex.Store({
     },
 
     async fetchVendors({ commit }) {
-      console.log('🔍 Fetching vendors...');
       EventService.getVendors()
         .then((response) => {
           commit("SET_VENDORS", response.data);
-          console.log('🔍 Vendors fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {
@@ -1572,7 +1570,6 @@ export default new Vuex.Store({
       EventService.getVendorsGroup()
         .then((response) => {
           commit("SET_VENDORS_GROUP", response.data);
-          console.log('🔍 Vendors group fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {
@@ -1593,7 +1590,6 @@ export default new Vuex.Store({
       EventService.getVendorsProductsGroup()
         .then((response) => {
           commit("SET_VENDORS_PRODUCTS_GROUP", response.data);
-          console.log('🔍 Vendors products group fetched successfully:', response.data);
           return response.data;
         })
         .catch((error) => {

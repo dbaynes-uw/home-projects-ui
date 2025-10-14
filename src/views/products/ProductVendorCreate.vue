@@ -326,7 +326,6 @@ const resetForm = () => {
   };
   
   formRef.value?.resetValidation();
-  console.log('🔄 Form reset');
 };
 
 // ✅ WATCHERS
