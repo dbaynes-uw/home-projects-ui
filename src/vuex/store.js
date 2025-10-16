@@ -178,10 +178,40 @@ export default new Vuex.Store({
     SET_MED(state, med) {
       state.med = med;
     },
-    SET_MEDS(state, meds) {
-      state.meds = meds;
+    // ✅ FIXED SET_MEDS MUTATION
+    SET_MEDS(state, response) {
+      // ✅ HANDLE DIFFERENT RESPONSE FORMATS
+      if (Array.isArray(response)) {
+        // ✅ DIRECT ARRAY (YOUR CURRENT API FORMAT)
+        state.meds = response;
+      } else if (response && Array.isArray(response.data)) {
+        // ✅ NESTED IN response.data
+        state.meds = response.data;
+      } else if (response && response.data && Array.isArray(response.data.data)) {
+        // ✅ DOUBLE NESTED
+        state.meds = response.data.data;
+      } else {
+        // ✅ FALLBACK FOR UNEXPECTED FORMATS
+        console.error('❌ Unexpected meds response format:', response);
+        console.error('❌ Response type:', typeof response);
+        console.error('❌ Response keys:', response && typeof response === 'object' ? Object.keys(response) : 'N/A');
+        state.meds = []; // ✅ Fallback to empty array
+      }
     },
-    // CLEAN UP MUTATIONS
+
+    SET_MEDS_PAGINATION(state, pagination) {
+      if (pagination && typeof pagination === 'object') {
+        state.medsPagination = {
+          current_page: pagination.current_page || 1,
+          per_page: pagination.per_page || 20,
+          total_count: pagination.total_count || 0,
+          total_pages: pagination.total_pages || 0
+        };
+      } else {
+        console.warn('⚠️ SET_MEDS_PAGINATION: Invalid pagination data:', pagination);
+      }
+    },
+
     CLEAR_BOOKS(state) {
       state.books = [];
     },
@@ -306,7 +336,6 @@ export default new Vuex.Store({
       // ✅ CLEAR AUTH HEADER
       delete axios.defaults.headers.common['Authorization'];
   
-      console.log('✅ CLEAR_USER_DATA: User data cleared');
     },
 
     CLEAR_WATERING() {
@@ -315,21 +344,28 @@ export default new Vuex.Store({
     SET_USERS(state, users) {
       state.users = users;
     },
+    SET_VENDOR(state, vendor) {
+      state.vendor = vendor;
+    },
     SET_VENDORS(state, vendors) {
       state.vendors = vendors;
     },
     SET_VENDORS_PRODUCTS(state, vendors_products) {
       state.vendors_products = vendors_products;
     },
-    SET_VENDORS_GROUP(state, vendors_group) {
-      state.vendors_group = vendors_group;
+    SET_VENDORS_GROUP(state, data) {
+      state.vendors_group = data;
     },
-    SET_VENDORS_LOCATIONS_GROUP(state, vendors_locations_group) {
-      state.vendors_locations_group = vendors_locations_group;
+
+    // ✅ FIXED - PARAMETER NAME MISMATCH
+    SET_VENDORS_LOCATIONS_GROUP(state, data) {
+      state.vendors_locations_group = data;
     },
-    SET_VENDORS_PRODUCTS_GROUP(state, vendors_products_group) {
-      state.vendors_products_group = vendors_products_group;
-    },
+
+    // ✅ FIXED - PARAMETER NAME MISMATCH  
+    SET_VENDORS_PRODUCTS_GROUP(state, data) {
+      state.vendors_products_group = data;
+    },    
     ADD_VENDOR(state, vendor) {
       state.vendors.push(vendor);
     },
@@ -564,7 +600,8 @@ export default new Vuex.Store({
           });
       }
     },
-async fetchBooks({ commit }) {
+
+    async fetchBooks({ commit }) {
       try {
         // ✅ REPLACE WITH YOUR ACTUAL API ENDPOINT
         const response = await EventService.getBooks()
@@ -735,39 +772,39 @@ async fetchBooks({ commit }) {
           alert("EventsStatisticsDetail Get Error: ", error.response.data )
         });
     },
-// ✅ FIXED VERSION:
-async updateEvent({ commit }, event) {
-  try {
-    
-    const response = await EventService.putEvent(event);
-    
-    if (response && response.data) {
-      commit("SET_EVENT", response.data);
-      
-      // ✅ RETURN SUCCESS OBJECT
-      return {
-        success: true,
-        data: response.data,
-        message: 'Event updated successfully'
-      };
-    } else {
-      return {
-        success: false,
-        message: 'No data returned from server'
-      };
-    }
-    
-  } catch (error) {
-    console.error('🏪 Store: Update failed:', error);
-    
-    // ✅ RETURN ERROR OBJECT
-    return {
-      success: false,
-      error: error.message,
-      message: 'Failed to update event'
-    };
-  }
-},
+    // ✅ FIXED VERSION:
+    async updateEvent({ commit }, event) {
+      try {
+
+        const response = await EventService.putEvent(event);
+
+        if (response && response.data) {
+          commit("SET_EVENT", response.data);
+
+          // ✅ RETURN SUCCESS OBJECT
+          return {
+            success: true,
+            data: response.data,
+            message: 'Event updated successfully'
+          };
+        } else {
+          return {
+            success: false,
+            message: 'No data returned from server'
+          };
+        }
+
+      } catch (error) {
+        console.error('🏪 Store: Update failed:', error);
+
+        // ✅ RETURN ERROR OBJECT
+        return {
+          success: false,
+          error: error.message,
+          message: 'Failed to update event'
+        };
+      }
+    },
     setEventsRequest({ commit }, requestType) {
       commit('SET_EVENTS_REQUEST', requestType);
     },
@@ -886,50 +923,50 @@ async updateEvent({ commit }, event) {
         });
     },
 
-async createPlant({ commit, state }, plant) {
-  try {
-    const response = await EventService.postPlant(plant);    
-    // ✅ Add to plants array, don't just set single plant
-    const updatedPlants = [...state.plants, response.data];
-    commit('SET_PLANTS', updatedPlants);
-    
-    // Or refresh from server
-    // await dispatch('fetchPlants');
-    
-    return response.data;
-    
-  } catch (error) {
-    console.error('❌ Store: Create plant error:', error);
-    throw error;
-  }
-},
-  async updatePlant({ commit }, plant) {
-    try {
-      console.log('🔍 Store: Updating plant with ID:', plant.id);
-      const response = await EventService.putPlant(plant);
-      console.log('✅ Store: API response:', response);
+    async createPlant({ commit, state }, plant) {
+      try {
+        const response = await EventService.postPlant(plant);    
+        // ✅ Add to plants array, don't just set single plant
+        const updatedPlants = [...state.plants, response.data];
+        commit('SET_PLANTS', updatedPlants);
 
-      commit('SET_PLANT', response.data);
-      return response.data; // ✅ IMPORTANT: Return something truthy!
+        // Or refresh from server
+        // await dispatch('fetchPlants');
 
-    } catch (error) {
-      console.error('❌ Store: Update plant error:', error);
-      throw error; // Re-throw so component can catch it
-    }
-  },
-  async updateWatering({ commit }, watering) {
-    try {
-      const response = await EventService.putWatering(watering);      
-      // Commit the updated watering to state
-      commit('SET_WATERING', response.data); 
-      // ✅ IMPORTANT: Return something truthy!
-      return response.data; // or return true;
-      
-    } catch (error) {
-      console.error('❌ Store: Update watering error:', error);
-      throw error; // Re-throw so component can catch it
-    }
-  },
+        return response.data;
+
+      } catch (error) {
+        console.error('❌ Store: Create plant error:', error);
+        throw error;
+      }
+    },
+    async updatePlant({ commit }, plant) {
+      try {
+        console.log('🔍 Store: Updating plant with ID:', plant.id);
+        const response = await EventService.putPlant(plant);
+        console.log('✅ Store: API response:', response);
+
+        commit('SET_PLANT', response.data);
+        return response.data; // ✅ IMPORTANT: Return something truthy!
+
+      } catch (error) {
+        console.error('❌ Store: Update plant error:', error);
+        throw error; // Re-throw so component can catch it
+      }
+    },
+    async updateWatering({ commit }, watering) {
+      try {
+        const response = await EventService.putWatering(watering);      
+        // Commit the updated watering to state
+        commit('SET_WATERING', response.data); 
+        // ✅ IMPORTANT: Return something truthy!
+        return response.data; // or return true;
+
+      } catch (error) {
+        console.error('❌ Store: Update watering error:', error);
+        throw error; // Re-throw so component can catch it
+      }
+    },
     async fetchGlucoseReadings({ commit }) {
       try {
         const response = await EventService.getGlucoseReadings();
@@ -1026,26 +1063,37 @@ async createPlant({ commit, state }, plant) {
           alert("Golf Fetch Error: ", error.response.data )
         });
     },
-    async createMed({ commit }, med) {
-      EventService.postMed(med)
-        .then(() => {
-          commit("SET_MEDS", med);
-        })
-        .catch((error) => {
-          alert("Med Create Error: ", error.response.data )
-        });
+    // ✅ FIXED createMed ACTION (around line 980)
+    async createMed({ commit, dispatch }, med) {
+      try {
+        const response = await EventService.postMed(med);
+
+        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
+        await dispatch('fetchMeds');
+
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Med create error:', error);
+        throw error;
+      }
     },
 
-    async deleteMed({ commit }, med) {
-      EventService.deleteMed(med)
-        .then((response) => {
-          commit("SET_MEDS", response.data);
-        })
-        .catch((error) => {
-          alert("Med Delete Error: ", error.response.data )
+    // ✅ FIXED deleteMed ACTION (around line 1000)
+    async deleteMed({ commit, dispatch }, med) {
+      try {
+        const response = await EventService.deleteMed(med);
+        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
+        await dispatch('fetchMeds');
 
-        });
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Med delete error:', error);
+        throw error;
+      }
     },
+
     async fetchMed({ commit, state }, id) {
       const existingMed = state.meds.find((med) => med.id === id);
       if (existingMed) {
@@ -1060,32 +1108,50 @@ async createPlant({ commit, state }, plant) {
           });
       }
     },
-    // Fix the fetchMeds action (around line where you have it):
-      
+    // ✅ SIMPLIFIED fetchMeds ACTION
     async fetchMeds({ commit }) {
       try {
+        commit('SET_MEDS', []);
+
         const response = await EventService.getMeds();
-        
-        // ✅ FIX: Extract the array from response.data
-        const medsData = response.data.data || response.data || [];
-        
-        commit("SET_MEDS", medsData);
-        return medsData;
+
+        // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
+        let medsArray = [];
+
+        if (Array.isArray(response.data)) {
+          // ✅ NEW FORMAT: Direct array
+          medsArray = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          // ✅ OLD FORMAT: Paginated (fallback)
+          medsArray = response.data.data;
+        } else {
+          console.error('❌ Store: Unexpected response format:', response);
+          medsArray = [];
+        }
+
+        commit('SET_MEDS', medsArray);
+
+        return medsArray;
+
       } catch (error) {
-        console.error("Med Fetch Error:", error);
-        commit("SET_MEDS", []); // Set empty array on error
-        return [];
+        console.error('❌ Store: Error fetching meds:', error);
+        commit('SET_MEDS', []);
+        throw error;
       }
     },
-    async updateMed({ commit }, med) {
-      EventService.putMed(med)
-        .then((response) => {
-          commit("SET_MED", response.data);
-          alert("Med " + med.description + " was Successfully Updated.")
-        })
-        .catch((error) => {
-          alert("Med Put Error: ", error.response.data )
-        });
+    // ✅ ENHANCED updateMed ACTION (around line 1020)
+    async updateMed({ commit, dispatch }, med) {
+      try {
+        const response = await EventService.putMed(med);
+        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
+        await dispatch('fetchMeds');
+
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Med update error:', error);
+        throw error;
+      }
     },
 
     async deleteProduct({ commit }, product) {
@@ -1147,15 +1213,45 @@ async createPlant({ commit, state }, plant) {
         });
     },
 
+    // ✅ UPDATE YOUR store.js putProducts ACTION
     async putProducts({ commit }, products) {
-      EventService.putProducts(products)
-        .then(() => {
-          commit("SET_PRODUCTS", products);
-        })
-        .catch((error) => {
-          alert("Products Put Error: ", error.response.data )
-        });
+      try {
+        console.log('🔍 Store putProducts called with:', products);
+
+        const response = await EventService.putProducts(products);
+
+        console.log('✅ Store putProducts response:', response);
+
+        // ✅ RETURN TRUE ON SUCCESS
+        if (response && (response.status === 200 || response.status === 201)) {
+          console.log('✅ Store putProducts success');
+
+          // ✅ UPDATE STORE STATE IF NEEDED
+          if (response.data) {
+            commit('SET_PRODUCTS', response.data);
+          }
+
+          return true; // ✅ SUCCESS
+        }
+
+        console.error('❌ Store putProducts: Invalid response');
+        return false;
+
+      } catch (error) {
+        console.error('❌ Store putProducts error:', error);
+
+        if (error.response) {
+          console.error('❌ Error response:', error.response.status, error.response.data);
+        } else if (error.request) {
+          console.error('❌ No response received:', error.request);
+        } else {
+          console.error('❌ Error setting up request:', error.message);
+        }
+
+        return false; // ✅ FAILURE
+      }
     },
+
     async updateProductsVendors({ commit }, products_vendors) {
       EventService.putVendorsProducts(products_vendors)
         .then(() => {
@@ -1418,6 +1514,48 @@ async createPlant({ commit, state }, plant) {
           alert(error.response.data.error);
         });
     },
+
+    // ✅ FIXED fetchVendor ACTION - ADD THE MISSING RETURN!
+    async fetchVendor({ commit }, vendorId) {
+      try {
+        console.log('Store fetchVendor ID: ', vendorId);
+
+        if (!vendorId) {
+          throw new Error('Vendor ID is required');
+        }
+
+        const response = await EventService.getVendor(vendorId);
+
+        console.log('✅ Store fetchVendor response:', response);
+        console.log('✅ Store fetchVendor response.data:', response.data);
+
+        // ✅ THIS IS THE MISSING LINE - RETURN THE DATA!
+        if (response && response.data) {
+          console.log('✅ Store fetchVendor returning vendor data:', response.data);
+          return response.data; // ✅ ADD THIS RETURN STATEMENT!
+        } else {
+          console.error('❌ Store fetchVendor: No data in response');
+          return null;
+        }
+
+      } catch (error) {
+        console.error('❌ Store fetchVendor error:', error);
+        throw error;
+      }
+    },
+
+    async updateVendor({ commit }, vendor) {
+      EventService.putVendor(vendor)
+        .then((response) => {
+          commit("SET_VENDOR", response.data);
+          alert("Vendor " + vendor.vendor_name + " was Successfully Updated.")
+        })
+        .catch((error) => {
+          alert("Vendor Put Error for " + vendor.vendor_name + ": " + error.response.request.statusText)
+          location.reload();
+      });
+    },
+
     async fetchVendors({ commit }) {
       EventService.getVendors()
         .then((response) => {
@@ -1469,26 +1607,26 @@ async createPlant({ commit, state }, plant) {
           alert("VendorsProducts Fetch Error: ", error.response.data )
         });
     },
-async updateVendorsProducts({ commit }, payload) {
-  try {
-    const response = await EventService.putVendorsProducts(payload);
-    
-    // ✅ RETURN SUCCESS INDICATOR
-    if (response && (response.status === 200 || response.data)) {
-      // Update state if needed
-      if (response.data) {
-        commit('SET_VENDORS_PRODUCTS', response.data);
+    async updateVendorsProducts({ commit }, payload) {
+      try {
+        const response = await EventService.putVendorsProducts(payload);
+
+        // ✅ RETURN SUCCESS INDICATOR
+        if (response && (response.status === 200 || response.data)) {
+          // Update state if needed
+          if (response.data) {
+            commit('SET_VENDORS_PRODUCTS', response.data);
+          }
+          return true; // ✅ EXPLICIT SUCCESS
+        }
+
+        return false; // ✅ EXPLICIT FAILURE
+
+      } catch (error) {
+        console.error('Store action error:', error);
+        return false; // ✅ RETURN FALSE ON ERROR
       }
-      return true; // ✅ EXPLICIT SUCCESS
-    }
-    
-    return false; // ✅ EXPLICIT FAILURE
-    
-  } catch (error) {
-    console.error('Store action error:', error);
-    return false; // ✅ RETURN FALSE ON ERROR
-  }
-},
+    },
     async createWatering({ commit, dispatch }, watering) {
       EventService.postWatering(watering)
         .then(async () => {

@@ -178,10 +178,6 @@ export default {
       }
     }
   },
-  
-  mounted() {
-    console.log('✅ About page: Welcome', this.$store.state.user?.email);
-  }
 }
 </script>
 

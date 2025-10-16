@@ -1,4 +1,5 @@
 <template>
+  <!--Optional: <div class="products-location-container products-location-wrapper"-->
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
     <v-card class="mx-auto mt-5">
@@ -59,9 +60,9 @@
 
       <!-- ✅ ENHANCED DESCRIPTION -->
        <div class="switch-description">
-         <medium class="text-medium-emphasis" style="font-weight: bold;">
+         <span class="text-medium-emphasis" style="font-weight: bold;">
            {{ showShoppingList ? 'Selected' : 'All' }}
-         </medium>
+         </span>
        </div>
 
         <!-- ✅ ENHANCED GLOBAL CONTROLS -->
@@ -294,7 +295,7 @@
           color="primary"
           size="large"
           block
-          class="mt-4"
+          class="mt-4 mb-safe-area"
         >
           <!-- ✅ CHANGED: mdi-content-save → fas fa-save -->
           <i class="fas fa-save save-icon"></i>
@@ -563,37 +564,95 @@ function updateProduct(product) {
 }
 
 async function submitChanges() {
-  isSubmitting.value = true;
-  
   try {
-    const vendors = vendorsProducts.value;
+    isSubmitting.value = true;
     
-    if (!Array.isArray(vendors)) {
-      console.error('❌ Cannot submit: vendors data is not an array:', vendors);
-      throw new Error('Invalid data structure for submission');
+    console.log('🔍 PRE-SUBMIT DEBUG:');
+    console.log('- vendorsProducts.value:', vendorsProducts.value);
+    
+    if (!Array.isArray(vendorsProducts.value) || vendorsProducts.value.length === 0) {
+      throw new Error('No vendors products to update!');
     }
     
-    const payload = {
-      ...vendors,
+    // ✅ FLATTEN ALL VENDOR PRODUCTS INTO SINGLE ARRAY (LIKE ProductsByVendors)
+    const allProducts = [];
+    
+    vendorsProducts.value.forEach((vendor, vendorIndex) => {
+      if (vendor.products && Array.isArray(vendor.products)) {
+        vendor.products.forEach((product, productIndex) => {
+          allProducts.push({
+            ...product,
+            vendor_id: product.vendor_id || vendor.id,
+            vendor_name: vendor.vendor_name || product.vendor_name,
+            location: vendor.location || product.location
+          });
+          
+          console.log(`📋 Vendor ${vendorIndex}, Product ${productIndex}: "${product.product_name}" - Active: ${product.active}`);
+        });
+      }
+    });
+    
+    // ✅ USE SAME LOGIC AS OTHER COMPONENTS
+    const changedProducts = allProducts.map(product => {
+      const isCurrentlyActive = !!product.active;
+      
+      return {
+        id: product.id,
+        vendor_id: product.vendor_id || 1,
+        product_name: product.product_name || product.name || 'Unknown Product',
+        location: product.location,
+        vendor_name: product.vendor_name,
+        active: isCurrentlyActive,
+        created_at: product.created_at,
+        updated_at: product.updated_at,
+        updated_by: store.state.user?.resource_owner?.email || '',
+        updated_at_client: new Date().toISOString()
+      };
+    });
+    
+    const activeCount = changedProducts.filter(p => p.active).length;
+    const inactiveCount = changedProducts.filter(p => !p.active).length;
+    
+    console.log('📊 SUBMISSION SUMMARY:');
+    console.log(`  Total products: ${changedProducts.length}`);
+    console.log(`  ✅ Will be marked active: ${activeCount}`);
+    console.log(`  ❌ Will be marked inactive: ${inactiveCount}`);
+    
+    // ✅ USE SAME SUBMIT DATA STRUCTURE AS OTHER COMPONENTS
+    const submitData = {
+      products: changedProducts,
       id: uuidv4(),
-      created_by: store.state.user?.resource_owner?.email || 'unknown',
+      created_by: store.state.user?.resource_owner?.email || '',
     };
     
-    await store.dispatch('updateVendorsProducts', payload);
-    alert('✅ Update completed');
+    console.log('🚀 Submitting all product states:', submitData);
+    
+    // ✅ USE THE SAME STORE ACTION AS OTHER COMPONENTS (PRODUCTS CONTROLLER)
+    const result = await store.dispatch('putProducts', submitData);
+    
+    if (result !== false) {
+      console.log('✅ All product states updated successfully');
+      alert(`✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`);
+      
+      // ✅ REFRESH ALL DATA
+      await Promise.all([
+        store.dispatch('fetchProducts'),
+        store.dispatch('fetchShoppingList'),
+        store.dispatch('fetchVendors'),
+        store.dispatch('fetchVendorsProducts'),
+        store.dispatch('fetchVendorsLocationsGroup')
+      ]);
+      
+    } else {
+      alert('❌ Update failed');
+    }
     
   } catch (error) {
-    console.error('❌ Submit error (but continuing):', error);
+    console.error('❌ Error:', error);
+    alert(`❌ Error: ${error.message}`);
+  } finally {
+    isSubmitting.value = false;
   }
-  
-  try {
-    await fetchData();
-    console.log('✅ Products refreshed');
-  } catch (refreshError) {
-    console.error('❌ Refresh failed:', refreshError);
-  }
-  
-  isSubmitting.value = false;
 }
 
 async function fetchData() {
@@ -753,7 +812,51 @@ onMounted(() => {
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
+/* ✅ COMPONENT-SPECIFIC BOTTOM PADDING FIX */
+.products-location-wrapper {
+  padding-bottom: 120px; /* Extra space for Mac footer menu */
+  min-height: calc(100vh - 200px); /* Ensure scrolling works */
+}
 
+/* ✅ ENHANCED SAVE BUTTON WITH SAFE AREA */
+.mb-safe-area {
+  margin-bottom: 80px !important; /* Extra margin just for the save button */
+  position: relative;
+  z-index: 10; /* Ensure it stays above other elements */
+}
+
+/* ✅ SPECIFIC MAC SAFARI FIXES */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .products-location-wrapper {
+    padding-bottom: max(120px, calc(80px + env(safe-area-inset-bottom)));
+  }
+  
+  .mb-safe-area {
+    margin-bottom: max(80px, calc(40px + env(safe-area-inset-bottom))) !important;
+  }
+}
+
+/* ✅ MOBILE RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+  .products-location-wrapper {
+    padding-bottom: 140px; /* More space on mobile */
+  }
+  
+  .mb-safe-area {
+    margin-bottom: 100px !important;
+  }
+}
+
+/* ✅ EXTRA SMALL SCREENS (IPHONE) */
+@media (max-width: 480px) {
+  .products-location-wrapper {
+    padding-bottom: 160px; /* Even more space on small screens */
+  }
+  
+  .mb-safe-area {
+    margin-bottom: 120px !important;
+  }
+}
 /* ✅ YOUR EXISTING STYLES (unchanged) */
 .navigation-grid {
   display: grid;
