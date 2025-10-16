@@ -99,22 +99,14 @@
           </v-text-field>
         </div>
         <h3 id="p-custom-left">Last Updated: {{ formatStandardDateTime(watering.updated_at) }}</h3>
-        <h3 id="p-custom-left">Current Status: {{ watering.status }}</h3>
+        <br/>
         <v-select
           label="Select Status to Change"
           :items="ACTIVE_STATUSES"
           v-model="watering.status"
-        >
-          <option
-            v-for="option in ACTIVE_STATUSES"
-            :value="option"
-            :key="option"
-            id="select-box"
-            :selected="option === watering.status"
-          >
-            {{ option }}
-          </option>
-        </v-select>
+          variant="outlined"
+          class="status-select"
+        />
         <br/>
         <label>Notes:</label>
         <textarea
@@ -145,6 +137,7 @@
   </div>
 </template>
 <script setup>
+import { VSelect } from 'vuetify/components'
 import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
