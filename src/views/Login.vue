@@ -91,7 +91,7 @@
         <br />
         Forgot or Need Password Reset?  
         <router-link to="/forgot_password">Forgot or Reset Password</router-link>
-        <p class="mt-2">T: dl..@.. t...t... P: dl..@.. sen...H...P</p>
+        <p class="mt-2">T: dl..@.. t...t... P: dl..@.. H...P...s</p>
       </div>
     </v-card-actions>
   </v-card>
