@@ -577,8 +577,7 @@ onMounted(async () => {
   }
 
   try {
-    // ✅ LOAD INACTIVE EVENTS BY DEFAULT
-    await store.dispatch("eventsStatus", "active");
+    await store.dispatch("fetchEvents");
   } catch (error) {
     console.error("❌ Error fetching events:", error);
   } finally {

@@ -7,7 +7,7 @@
       block
     >
       <i class="fas fa-exclamation-triangle"></i>
-      Events Past Due
+      Showing Past Due
     </v-btn>
   </div>
 </template>
