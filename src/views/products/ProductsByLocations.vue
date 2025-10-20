@@ -1,17 +1,17 @@
 <template>
-  <!--Optional: <div class="products-location-container products-location-wrapper"-->
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
+    
+    <!-- ✅ HEADER CARD (unchanged) -->
     <v-card class="mx-auto mt-5">
       <v-card-title class="pb-0">
         <h2>
-          <!-- ✅ ADD TITLE ICON -->
           <i class="fas fa-map-marked-alt title-icon"></i>
           Products By Locations
         </h2>
       </v-card-title>
 
-      <!-- ✅ NAVIGATION (icons already converted) -->
+      <!-- ✅ NAVIGATION (unchanged) -->
       <div class="navigation-grid">
         <v-btn 
           variant="outlined" 
@@ -40,252 +40,233 @@
       </div>
     </v-card>
 
-    <!-- ✅ LOADING STATE (unchanged) -->
+    <!-- ✅ LOADING STATE -->
     <div v-if="isLoading" class="text-center pa-4">
       <v-progress-circular indeterminate color="primary" />
       <p class="mt-2">Loading locations...</p>
     </div>
 
-    <!-- ✅ MAIN CONTENT WITH HIERARCHICAL CONTROLS -->
+    <!-- ✅ MAIN CONTENT WITH COMPLETE LOCATION CARDS -->
     <v-card v-else class="mt-4">
-      <v-card-title class="d-flex justify-space-between align-center">
+      <v-card-title class="switch-container">
+        <div class="switch-description-wrapper">
+          <span class="switch-description-text">
+            {{ showShoppingList ? 'Selected Items Only:' : 'All Items:' }}
+          </span>
+          <v-switch
+            v-model="showShoppingList"
+            color="primary"
+            hide-details
+            density="compact"
+            class="switch-control"
+          />
+        </div>
+      </v-card-title> 
 
-      <v-switch
-         v-model="showShoppingList"
-         color="primary"
-         hide-details
-         density="compact"
-         style="position: relative; left: 0rem;"
-       />
-
-      <!-- ✅ ENHANCED DESCRIPTION -->
-       <div class="switch-description">
-         <span class="text-medium-emphasis" style="font-weight: bold;">
-           {{ showShoppingList ? 'Selected' : 'All' }}
-         </span>
-       </div>
-
-        <!-- ✅ ENHANCED GLOBAL CONTROLS -->
-        <div class="global-controls-wrapper">
-          <div class="global-controls">
-            <v-btn
-              @click="toggleAllLocations"
+      <v-card-text class="content-wrapper">
+        <div class="content-container">
+          <!-- ✅ LOCATIONS GRID WITH COMPLETE CONTENT -->
+          <div class="locations-grid">
+            <v-card
+              v-for="(location, locationIndex) in locations"
+              :key="locationIndex"
+              :class="{ 'location-expanded': expandedLocations.has(locationIndex) }"
               variant="outlined"
-              size="small"
-              prepend-icon="fas fa-map-marker-alt"
-              class="control-btn"
-              :color="allLocationsExpanded ? 'error' : 'primary'"
-              style="width: 12rem;"
+              class="location-card"
             >
-              {{ allLocationsExpanded ? 'Collapse Locations' : 'Expand Locations' }}
-            </v-btn>
-
-            <v-btn
-              @click="toggleAllVendors"
-              variant="outlined"
-              size="small"
-              prepend-icon="fas fa-store"
-              class="control-btn"
-              :disabled="!hasAnyExpandedLocations"
-              :color="allVendorsExpanded ? 'error' : 'primary'"
-              style="width: 12rem;"
-            >
-              {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
-            </v-btn>
-          </div>
-        </div>        
-      </v-card-title>
-
-      <v-card-text>
-        <div class="locations-grid">
-          <!-- ✅ LOCATION CARDS WITH ENHANCED DROPDOWN SYSTEM -->
-          <v-card
-            v-for="(location, locationIndex) in locations"
-            :key="locationIndex"
-            :class="{ 'location-expanded': expandedLocations.has(locationIndex) }"
-            variant="outlined"
-            class="location-card"
-          >
-            <!-- ✅ LOCATION HEADER WITH CONTROLS -->
-            <v-card-title 
-              @click="toggleLocation(locationIndex)"
-              class="location-header"
-            >
-              <i class="fas fa-map-marker-alt location-marker-icon"></i>
-              <span class="location-name">{{ location }}</span>
-              
-              <div class="location-controls">
-                <v-chip 
-                  size="small" 
-                  color="primary"
-                  variant="outlined"
-                >
-                  <!-- ✅ CHANGED: no icon → fas fa-store -->
-                  <i class="fas fa-store chip-icon"></i>
-                  {{ getVendorsForLocation(location).length }} vendors
-                </v-chip>
-
-                <!-- ✅ LOCATION-SPECIFIC VENDOR CONTROLS -->
-                <v-btn
-                  v-if="expandedLocations.has(locationIndex)"
-                  @click.stop="toggleAllVendorsForLocation(location)"
-                  variant="text"
-                  size="x-small"
-                  :color="allVendorsExpandedForLocation(location) ? 'error' : 'primary'"
-                >
-                  {{ allVendorsExpandedForLocation(location) ? 'Collapse All' : 'Expand All' }}
-                </v-btn>
-
-                <!-- ✅ CHANGED: mdi chevrons → fas chevrons -->
-                <i :class="expandedLocations.has(locationIndex) ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="chevron-icon"></i>
-              </div>
-            </v-card-title>
-
-            <!-- ✅ EXPANDABLE LOCATION CONTENT -->
-            <v-expand-transition>
-              <v-card-text v-show="expandedLocations.has(locationIndex)">
+              <!-- ✅ LOCATION HEADER -->
+              <div 
+                class="location-header" 
+                @click="toggleLocation(locationIndex)"
+              >
+                <i class="fas fa-map-marker-alt location-marker-icon"></i>
+                <span class="location-name">{{ location }}</span>
                 
-                <!-- ✅ VENDORS DROPDOWN SYSTEM -->
-                <div 
-                  v-for="vendor in getVendorsForLocation(location)"
-                  :key="vendor.vendor_name"
-                  class="vendor-section mb-3"
-                >
-                  <v-card 
-                    variant="tonal" 
-                    class="vendor-card"
-                    :class="{ 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)) }"
+                <div class="location-controls">
+                  <v-chip 
+                    size="small" 
+                    :color="expandedLocations.has(locationIndex) ? 'primary' : 'default'"
+                    class="mr-2"
                   >
-                    <!-- ✅ VENDOR HEADER WITH DROPDOWN -->
-                    <v-card-title 
-                      @click="toggleVendor(location, vendor)"
-                      @dblclick.stop="editVendor(vendor)"
-                      class="vendor-header"
+                    <i class="fas fa-store chip-icon"></i>
+                    {{ getVendorsForLocation(location).length }} vendors
+                  </v-chip>
+                  
+                  <v-btn
+                    v-if="expandedLocations.has(locationIndex)"
+                    @click.stop="toggleAllVendorsForLocation(location)"
+                    size="x-small"
+                    variant="text"
+                    :color="allVendorsExpandedForLocation(location) ? 'error' : 'primary'"
+                    class="mr-2"
+                  >
+                    {{ allVendorsExpandedForLocation(location) ? 'Collapse All' : 'Expand All' }}
+                  </v-btn>
+                  
+                  <i 
+                    :class="[
+                      'fas', 
+                      'chevron-icon',
+                      expandedLocations.has(locationIndex) ? 'fa-chevron-up' : 'fa-chevron-down'
+                    ]"
+                  ></i>
+                </div>
+              </div>
+
+              <!-- ✅ LOCATION CONTENT (VENDORS) -->
+              <v-expand-transition>
+                <div v-show="expandedLocations.has(locationIndex)" class="pa-4">
+                  <div 
+                    v-for="vendor in getVendorsForLocation(location)" 
+                    :key="vendor.vendor_id || vendor.id"
+                    class="vendor-section mb-4"
+                  >
+                    <v-card 
+                      variant="outlined" 
+                      class="vendor-card"
+                      :class="{ 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)) }"
                     >
-                      <!-- ✅ CHANGED: mdi-store → fas fa-store -->
-                      <i class="fas fa-store vendor-store-icon"></i>
-                      <span class="vendor-name">{{ vendor.vendor_name }}</span>
-                      
-                      <div class="vendor-controls">
-                        <v-chip 
-                          size="small" 
-                          :color="getFilteredProducts(vendor).length > 0 ? 'success' : 'warning'"
-                          variant="outlined"
-                        >
-                          <!-- ✅ CHANGED: no icon → fas fa-box -->
-                          <i class="fas fa-box chip-icon"></i>
-                          {{ getFilteredProducts(vendor).length }} products
-                        </v-chip>
-
-                        <v-tooltip text="Double-click to edit vendor">
-                          <template v-slot:activator="{ props }">
-                            <!-- ✅ CHANGED: mdi-pencil-outline → fas fa-edit -->
-                            <i 
-                              v-bind="props"
-                              class="fas fa-edit edit-hint"
-                              title="Double-click to edit vendor"
-                            ></i>
-                          </template>
-                        </v-tooltip>
-
-                        <!-- ✅ CHANGED: mdi chevrons → fas chevrons -->
-                        <i :class="expandedVendors.has(getVendorKey(location, vendor)) ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="chevron-icon"></i>
-                      </div>
-                    </v-card-title>
-
-                    <!-- ✅ EXPANDABLE VENDOR PRODUCTS -->
-                    <v-expand-transition>
-                      <v-card-text v-show="expandedVendors.has(getVendorKey(location, vendor))">
-                        <div class="products-header mb-3">
-                          <h4>
-                            <!-- ✅ ADD PRODUCTS ICON -->
-                            <i class="fas fa-boxes products-icon"></i>
-                            Products for {{ vendor.vendor_name }}
-                          </h4>
-                          <v-divider class="mt-2"></v-divider>
-                        </div>
-
-                        <!-- ✅ PRODUCTS LIST -->
-                        <div class="products-list">
-                          <v-card
-                            v-for="(product, productIndex) in getFilteredProducts(vendor)"
-                            :key="product.id"
-                            @click.stop="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
-                            @dblclick.stop="editProduct(product)"
-                            :class="{ 
-                              'product-selected': product.active,
-                              'product-multi-selected': selectedProducts.has(product.id)
-                            }"
-                            variant="outlined"
-                            class="product-card"
-                            hover
+                      <!-- ✅ VENDOR HEADER -->
+                      <div 
+                        class="vendor-header" 
+                        @click="toggleVendor(location, vendor)"
+                      >
+                        <i class="fas fa-store vendor-store-icon"></i>
+                        <span class="vendor-name">{{ vendor.vendor_name }}</span>
+                        
+                        <div class="vendor-controls">
+                          <v-chip 
+                            size="small" 
+                            :color="expandedVendors.has(getVendorKey(location, vendor)) ? 'secondary' : 'default'"
+                            class="mr-2"
                           >
-                            <v-card-text class="py-3">
+                            <i class="fas fa-box chip-icon"></i>
+                            {{ getFilteredProducts(vendor).length }} products
+                          </v-chip>
+                          
+                          <v-btn
+                            @click.stop="editVendor(vendor)"
+                            size="x-small"
+                            variant="text"
+                            color="info"
+                            class="mr-2"
+                          >
+                            <i class="fas fa-edit"></i>
+                            <span class="edit-hint ml-1">Edit</span>
+                          </v-btn>
+                          
+                          <i 
+                            :class="[
+                              'fas', 
+                              'chevron-icon',
+                              expandedVendors.has(getVendorKey(location, vendor)) ? 'fa-chevron-up' : 'fa-chevron-down'
+                            ]"
+                          ></i>
+                        </div>
+                      </div>
+
+                      <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
+                      <v-expand-transition>
+                        <div v-show="expandedVendors.has(getVendorKey(location, vendor))" class="pa-4">
+                          <div class="products-header mb-3">
+                            <h4>
+                              <i class="fas fa-box products-icon"></i>
+                              Products
+                              <v-chip size="small" color="info" class="ml-2">
+                                {{ getFilteredProducts(vendor).length }} items
+                              </v-chip>
+                            </h4>
+                          </div>
+
+                          <!-- ✅ PRODUCTS LIST -->
+                          <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
+                            <v-card
+                              v-for="(product, productIndex) in getFilteredProducts(vendor)"
+                              :key="product.id"
+                              variant="outlined"
+                              class="product-card pa-3"
+                              :class="{
+                                'product-selected': product.active,
+                                'product-multi-selected': selectedProducts.has(product.id)
+                              }"
+                              @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+                            >
                               <div class="d-flex align-center">
-                                <!-- ✅ ACTIVE STATE CHECKBOX -->
-                                <v-checkbox
-                                  :model-value="product.active"
-                                  color="primary"
-                                  density="compact"
-                                  hide-details
-                                  readonly
-                                  class="mr-3"
-                                />
+                                <div class="product-indicators mr-3">
+                                  <i 
+                                    v-if="product.active" 
+                                    class="fas fa-check-circle selected-indicator"
+                                  ></i>
+                                </div>
                                 
                                 <span class="product-name">{{ product.product_name }}</span>
                                 
-                                <!-- ✅ VISUAL INDICATORS -->
-                                <div class="product-indicators">
-                                  <!-- ✅ CHANGED: mdi-check-circle → fas fa-check-circle -->
-                                  <i 
-                                    v-if="selectedProducts.has(product.id)"
-                                    class="fas fa-check-circle selected-indicator"
-                                  ></i>
-
-                                  <v-tooltip text="Edit Product">
-                                    <template v-slot:activator="{ props }">
-                                      <v-btn
-                                        @click.stop="editProduct(product)"
-                                        variant="text"
-                                        size="small"
-                                        color="primary"
-                                      >
-                                        <!-- ✅ CHANGED: mdi-pencil-outline → fas fa-edit -->
-                                        <i 
-                                          v-bind="props"
-                                          class="fas fa-edit edit-hint ml-2"
-                                        ></i>
-                                        Edit
-                                      </v-btn>
-                                    </template>
-                                  </v-tooltip>
-                                </div>
+                                <v-btn
+                                  @click.stop="editProduct(product)"
+                                  size="x-small"
+                                  variant="text"
+                                  color="info"
+                                  class="ml-auto"
+                                >
+                                  <i class="fas fa-edit"></i>
+                                  <span class="edit-hint ml-1">Edit</span>
+                                </v-btn>
                               </div>
-                            </v-card-text>
-                          </v-card>
-                        </div>
+                            </v-card>
+                          </div>
 
-                        <!-- ✅ NO PRODUCTS MESSAGE -->
-                        <div v-if="getFilteredProducts(vendor).length === 0" class="no-products">
-                          <!-- ✅ CHANGED: mdi-package-variant-remove → fas fa-box-open -->
-                          <i class="fas fa-box-open no-products-icon"></i>
-                          <span class="text-medium-emphasis">
-                            {{ showShoppingList ? 'No active products' : 'No products found' }}
-                          </span>
+                          <!-- ✅ NO PRODUCTS STATE -->
+                          <div v-else class="no-products">
+                            <i class="fas fa-inbox no-products-icon"></i>
+                            <p>{{ showShoppingList ? 'No selected products' : 'No products available' }} for this vendor</p>
+                          </div>
                         </div>
-                      </v-card-text>
-                    </v-expand-transition>
-                  </v-card>
+                      </v-expand-transition>
+                    </v-card>
+                  </div>
+
+                  <!-- ✅ NO VENDORS STATE -->
+                  <div v-if="getVendorsForLocation(location).length === 0" class="no-vendors">
+                    <i class="fas fa-store-slash no-vendors-icon"></i>
+                    <h4>No vendors in {{ location }}</h4>
+                  </div>
                 </div>
-                <!-- ✅ NO VENDORS MESSAGE -->
-                <div v-if="getVendorsForLocation(location).length === 0" class="no-vendors">
-                  <!-- ✅ CHANGED: mdi-store-remove → fas fa-store-slash -->
-                  <i class="fas fa-store-slash no-vendors-icon"></i>
-                  <h4 class="text-medium-emphasis">No vendors found for {{ location }}</h4>
-                </div>
-              </v-card-text>
-            </v-expand-transition>
-          </v-card>
+              </v-expand-transition>
+            </v-card>
+          </div>
+
+          <!-- ✅ FIXED GLOBAL CONTROLS (RIGHT SIDE) -->
+          <div class="global-controls-fixed">
+            <div class="global-controls">
+              <h4 class="controls-title">
+                <i class="fas fa-cogs"></i>
+                Quick Controls
+              </h4>
+              
+              <v-btn
+                @click="toggleAllLocations"
+                variant="outlined"
+                size="small"
+                prepend-icon="fas fa-map-marker-alt"
+                class="control-btn"
+                :color="allLocationsExpanded ? 'error' : 'primary'"
+              >
+                {{ allLocationsExpanded ? 'Collapse Locations' : 'Expand Locations' }}
+              </v-btn>
+
+              <v-btn
+                @click="toggleAllVendors"
+                variant="outlined"
+                size="small"
+                prepend-icon="fas fa-store"
+                class="control-btn"
+                :disabled="!hasAnyExpandedLocations"
+                :color="allVendorsExpanded ? 'error' : 'primary'"
+              >
+                {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
+              </v-btn>
+            </div>
+          </div>
         </div>
         
         <!-- ✅ SAVE BUTTON -->
@@ -297,7 +278,6 @@
           block
           class="mt-4 mb-safe-area"
         >
-          <!-- ✅ CHANGED: mdi-content-save → fas fa-save -->
           <i class="fas fa-save save-icon"></i>
           Save All Changes
         </v-btn>
@@ -305,6 +285,7 @@
     </v-card>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -679,17 +660,180 @@ onMounted(() => {
 });
 </script>
 
+
 <style scoped>
-.switch-description {
-  margin-left: 1rem;
-  display: flex;
-  align-items: center;
+/* ✅ NEW LAYOUT STYLES */
+.content-wrapper {
+  position: relative;
 }
 
-.switch-description small {
-  font-style: italic;
-  color: rgb(var(--v-theme-on-surface-variant));
+.content-container {
+  display: flex;
+  gap: 2rem;
+  position: relative;
 }
+
+/* ✅ LOCATIONS GRID - TAKES MOST OF THE SPACE */
+.locations-grid {
+  flex: 1;
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
+/* ✅ FIXED GLOBAL CONTROLS - RIGHT SIDE */
+.global-controls-fixed {
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  min-width: 280px;
+  max-width: 320px;
+  z-index: 10;
+}
+
+/* ✅ ADD THE MISSING .global-controls BASE STYLES */
+.global-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 2px solid rgba(var(--v-theme-primary), 0.2);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  transition: all 0.3s ease;
+}
+
+.global-controls:hover {
+  border-color: rgba(var(--v-theme-primary), 0.4);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+  transform: translateY(-2px);
+}
+
+.controls-title {
+  margin: 0 0 0.5rem 0;
+  color: rgb(var(--v-theme-primary));
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  justify-content: center;
+}
+
+.controls-title i {
+  color: rgb(var(--v-theme-primary));
+}
+
+.control-btn {
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.025em !important;
+  height: 48px !important;
+  font-size: 0.9rem !important;
+}
+
+.control-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.control-btn:disabled {
+  opacity: 0.4 !important;
+  transform: none !important;
+}
+
+/* ✅ MOBILE RESPONSIVE - STACK LAYOUT */
+@media (max-width: 1024px) {
+  .content-container {
+    flex-direction: column;
+  }
+  
+  .global-controls-fixed {
+    position: static;
+    min-width: 100%;
+    max-width: 100%;
+    order: -1; /* Move controls above locations on mobile */
+    margin-bottom: 2rem;
+  }
+  
+  .global-controls {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center;
+  }
+  
+  .controls-title {
+    display: none; /* Hide title on mobile to save space */
+  }
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    gap: 1rem;
+  }
+  
+  .global-controls-fixed {
+    margin-bottom: 1.5rem;
+  }
+  
+  .global-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .control-btn {
+    height: 44px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .global-controls {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  .control-btn {
+    height: 40px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .global-controls-fixed {
+    margin-bottom: 1rem;
+  }
+}
+.switch-container {
+  padding: 1.5rem !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+}
+
+.switch-description-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: auto;
+  max-width: 50%;
+}
+
+.switch-description-text {
+  color: #000 !important;
+  font-weight: bold !important;
+  font-size: 1.2rem !important;
+  white-space: nowrap;
+}
+
+.switch-control {
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
 .title-icon {
   color: #2196F3 !important;
   margin-right: 0.5rem;
@@ -763,111 +907,12 @@ onMounted(() => {
   margin-bottom: 0.5rem;
 }
 
-/* ✅ ICON HOVER EFFECTS */
-.location-marker-icon:hover {
-  color: #d32f2f !important;
-  transform: scale(1.1);
-  transition: all 0.3s ease;
-}
-
-.vendor-store-icon:hover {
-  color: #388e3c !important;
-  transform: scale(1.1);
-  transition: all 0.3s ease;
-}
-
-.products-icon:hover {
-  color: #f57c00 !important;
-  transform: scale(1.1);
-  transition: all 0.3s ease;
-}
-
-.chevron-icon:hover {
-  color: #333 !important;
-  transform: scale(1.1);
-}
-
-/* ✅ LOCATION HEADER ENHANCED */
-.location-header:hover .chevron-icon {
-  transform: scale(1.1);
-}
-
-.location-header:hover .location-marker-icon {
-  color: #d32f2f !important;
-  transform: scale(1.1);
-}
-
-/* ✅ VENDOR HEADER ENHANCED */
-.vendor-header:hover .chevron-icon {
-  transform: scale(1.1);
-}
-
-.vendor-header:hover .vendor-store-icon {
-  color: #388e3c !important;
-  transform: scale(1.1);
-}
-
-/* ✅ SAVE BUTTON ENHANCEMENT */
-.v-btn.mt-4:hover .save-icon {
-  transform: scale(1.1);
-  transition: transform 0.3s ease;
-}
-/* ✅ COMPONENT-SPECIFIC BOTTOM PADDING FIX */
-.products-location-wrapper {
-  padding-bottom: 120px; /* Extra space for Mac footer menu */
-  min-height: calc(100vh - 200px); /* Ensure scrolling works */
-}
-
-/* ✅ ENHANCED SAVE BUTTON WITH SAFE AREA */
-.mb-safe-area {
-  margin-bottom: 80px !important; /* Extra margin just for the save button */
-  position: relative;
-  z-index: 10; /* Ensure it stays above other elements */
-}
-
-/* ✅ SPECIFIC MAC SAFARI FIXES */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .products-location-wrapper {
-    padding-bottom: max(120px, calc(80px + env(safe-area-inset-bottom)));
-  }
-  
-  .mb-safe-area {
-    margin-bottom: max(80px, calc(40px + env(safe-area-inset-bottom))) !important;
-  }
-}
-
-/* ✅ MOBILE RESPONSIVE ADJUSTMENTS */
-@media (max-width: 768px) {
-  .products-location-wrapper {
-    padding-bottom: 140px; /* More space on mobile */
-  }
-  
-  .mb-safe-area {
-    margin-bottom: 100px !important;
-  }
-}
-
-/* ✅ EXTRA SMALL SCREENS (IPHONE) */
-@media (max-width: 480px) {
-  .products-location-wrapper {
-    padding-bottom: 160px; /* Even more space on small screens */
-  }
-  
-  .mb-safe-area {
-    margin-bottom: 120px !important;
-  }
-}
-/* ✅ YOUR EXISTING STYLES (unchanged) */
+/* ✅ COMPONENT STYLES */
 .navigation-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   padding: 1rem;
-}
-
-.locations-grid {
-  display: grid;
-  gap: 1.5rem;
 }
 
 .location-card {
@@ -901,47 +946,14 @@ onMounted(() => {
 .location-name {
   font-weight: 600;
   flex: 1;
+  font-size: 1.5rem !important; /* Bigger location text */
+  color: #2196F3;
 }
 
 .location-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.global-controls-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-}
-
-.global-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  align-items: stretch;
-  min-width: 240px;
-  background: rgba(var(--v-theme-surface), 0.8);
-  border-radius: 12px;
-  padding: 1rem;
-  border: 1px solid rgba(var(--v-theme-outline), 0.2);
-  backdrop-filter: blur(10px);
-}
-
-.control-btn {
-  transition: all 0.3s ease !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.025em !important;
-}
-
-.control-btn:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-}
-
-.control-btn:disabled {
-  opacity: 0.4 !important;
-  transform: none !important;
 }
 
 .vendor-section {
@@ -976,6 +988,8 @@ onMounted(() => {
 .vendor-name {
   font-weight: 500;
   flex: 1;
+  font-size: 1.25rem !important; /* Bigger vendor text */
+  color: #4CAF50;
 }
 
 .vendor-controls {
@@ -1023,6 +1037,8 @@ onMounted(() => {
 .product-name {
   font-weight: 500;
   flex: 1;
+  font-size: 1rem !important; /* Bigger product text */
+  color: #333;
 }
 
 .product-indicators {
@@ -1048,63 +1064,84 @@ onMounted(() => {
   margin-top: 0.5rem;
 }
 
+/* ✅ BOTTOM PADDING */
+.products-location-container {
+  padding-bottom: 120px;
+  min-height: calc(100vh - 200px);
+}
+
+.mb-safe-area {
+  margin-bottom: 80px !important;
+  position: relative;
+  z-index: 10;
+}
+
 /* ✅ MOBILE RESPONSIVE */
 @media (max-width: 768px) {
-  .navigation-grid {
-    grid-template-columns: 1fr;
+  .switch-container {
+    padding: 1rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem;
   }
   
-  .global-controls {
-    min-width: 200px;
-    padding: 0.75rem;
-    gap: 0.5rem;
+  .switch-description-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 100%;
   }
   
-  .control-btn {
-    font-size: 0.875rem !important;
+  .switch-description-text {
+    font-size: 1.1rem !important;
   }
   
-  .location-controls {
-    flex-wrap: wrap;
+  .switch-control {
+    align-self: flex-start;
+    min-width: auto;
   }
   
-  .vendor-controls {
-    flex-wrap: wrap;
+  /* ✅ MOBILE FONT SIZES */
+  .location-name {
+    font-size: 1.2rem !important;
   }
   
-  .products-list {
-    grid-template-columns: 1fr;
+  .vendor-name {
+    font-size: 1.1rem !important;
   }
   
-  .edit-hint {
-    display: none; /* Hide edit hints on mobile for cleaner look */
+  .product-name {
+    font-size: 1rem !important;
   }
 }
 
 @media (max-width: 480px) {
-  .global-controls-wrapper {
-    justify-content: center;
+  .switch-container {
+    padding: 0.75rem !important;
   }
   
-  .global-controls {
-    min-width: 100%;
-    max-width: 280px;
+  .switch-description-wrapper {
+    gap: 0.5rem;
   }
   
-  .location-header,
-  .vendor-header {
-    padding: 0.5rem;
+  .switch-description-text {
+    font-size: 1rem !important;
   }
   
-  .vendor-section {
-    padding-left: 0.5rem;
-    margin-left: 0.25rem;
+  /* ✅ SMALL MOBILE FONT SIZES */
+  .location-name {
+    font-size: 1.1rem !important;
   }
   
-  .title-icon,
-  .location-marker-icon,
-  .vendor-store-icon {
-    font-size: 1em;
+  .vendor-name {
+    font-size: 1rem !important;
+  }
+  
+  .product-name {
+    font-size: 0.95rem !important;
   }
 }
 </style>
+  
+  
