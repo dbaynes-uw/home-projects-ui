@@ -64,6 +64,22 @@
       </v-card-title> 
 
       <v-card-text class="content-wrapper">
+        <div class="top-submit-section mb-4">
+          <v-btn 
+            @click="submitChanges"
+            :loading="isSubmitting"
+            color="primary"
+            size="large"
+            block
+            class="top-submit-button"
+          >
+            <i class="fas fa-save save-icon"></i>
+            Save All Changes
+            <v-chip size="small" class="ml-2" style="color:darkblue">
+              Quick Save
+            </v-chip>
+          </v-btn>
+        </div>
         <div class="content-container">
           <!-- ✅ LOCATIONS GRID WITH COMPLETE CONTENT -->
           <div class="locations-grid">
@@ -662,6 +678,73 @@ onMounted(() => {
 
 
 <style scoped>
+.top-submit-section {
+  padding: 0 1rem;
+}
+
+.top-submit-button {
+  position: relative;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgba(var(--v-theme-primary), 0.8) 100%) !important;
+  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.3) !important;
+  transition: all 0.3s ease !important;
+  border-radius: 12px !important;
+  height: 56px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.025em !important;
+}
+
+.top-submit-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(var(--v-theme-primary), 0.4) !important;
+}
+
+.top-submit-button:active {
+  transform: translateY(0) !important;
+}
+
+.top-submit-button .v-chip {
+  background: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+}
+
+/* ✅ MOBILE RESPONSIVE FOR TOP BUTTON */
+@media (max-width: 768px) {
+  .top-submit-section {
+    padding: 0 0.5rem;
+    margin-bottom: 1rem !important;
+  }
+  
+  .top-submit-button {
+    height: 52px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .top-submit-button .v-chip {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-submit-section {
+    padding: 0;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .top-submit-button {
+    height: 48px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .top-submit-button .save-icon {
+    font-size: 1rem;
+  }
+  
+  .top-submit-button .v-chip {
+    display: none; /* Hide chip on very small screens */
+  }
+}
+
 /* ✅ NEW LAYOUT STYLES */
 .content-wrapper {
   position: relative;
