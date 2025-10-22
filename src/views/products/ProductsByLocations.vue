@@ -678,10 +678,14 @@ onMounted(() => {
 
 
 <style scoped>
+/* ✅ JUST CENTER THE TOP SUBMIT BUTTON */
 .top-submit-section {
+  max-width: 25rem;
+  margin: 0 auto;
   padding: 0 1rem;
 }
 
+/* ✅ KEEP ALL YOUR EXISTING STYLES UNCHANGED */
 .top-submit-button {
   position: relative;
   background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgba(var(--v-theme-primary), 0.8) 100%) !important;
@@ -711,6 +715,7 @@ onMounted(() => {
 /* ✅ MOBILE RESPONSIVE FOR TOP BUTTON */
 @media (max-width: 768px) {
   .top-submit-section {
+    max-width: 100%;
     padding: 0 0.5rem;
     margin-bottom: 1rem !important;
   }
@@ -744,7 +749,6 @@ onMounted(() => {
     display: none; /* Hide chip on very small screens */
   }
 }
-
 /* ✅ NEW LAYOUT STYLES */
 .content-wrapper {
   position: relative;
