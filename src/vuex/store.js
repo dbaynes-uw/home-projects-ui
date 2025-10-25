@@ -53,6 +53,7 @@ export default new Vuex.Store({
     plant: {},
     plants: [],
     location: {},
+    product: [],
     products: [],
     products_by_location: [],
     shopping_list: [],
@@ -235,6 +236,9 @@ export default new Vuex.Store({
     },
     SET_PLANTS(state, plants) {
       state.plants = plants;
+    },
+    ADD_PRODUCT(state, product) {
+      state.products.push(product);
     },
     DELETE_PRODUCT(state, product) {
       state.product = product;
@@ -1154,6 +1158,18 @@ export default new Vuex.Store({
       }
     },
 
+    async createProduct({ commit }, product) {
+      console.log('📝 Create product called with:', product);
+      EventService.postProduct(product)
+        .then((response) => {
+          commit("ADD_PRODUCT", response.data);
+          alert("Product " + product.product_name + " was created");
+        })
+        .catch((error) => {
+          alert("Product Create Error: ", error.response.data )
+        });
+    },
+
     async deleteProduct({ commit }, product) {
       EventService.deleteProduct(product)
         .then((response) => {
@@ -1164,6 +1180,7 @@ export default new Vuex.Store({
           alert("Product Delete Error: ", error.response.data )
         });
     },
+
     async fetchProducts({ commit }) {
       EventService.getProducts()
         .then((response) => {

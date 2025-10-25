@@ -255,6 +255,10 @@ export default {
     this.init();
     return axios.get(api_url + "shopping_list")
   },
+  async postProduct(product) {
+    this.init();
+    return await axios.post(api_url + 'products', product);
+  },
   async putProduct(updatedProduct) {
     this.init();
     return axios.put(api_url + "products" + `/${updatedProduct.id}`, updatedProduct);
