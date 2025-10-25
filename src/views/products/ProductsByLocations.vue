@@ -45,19 +45,31 @@
       <!-- Form -->
       <v-form ref="productForm" v-model="productFormValid">
         <!-- Product Autocomplete -->
-        <v-autocomplete
-          v-model="newProduct.product_name"
-          v-model:search="productSearch"
-          label="Product Name"
-          :items="getAllProducts"
-          :rules="[requiredProductName]"
-          variant="outlined"
-          class="mb-3"
-          clearable
-          :no-data-text="getNoDataText"
-          :hint="getProductHint"
-          persistent-hint
-        />
+<v-autocomplete
+  v-model="newProduct.product_name"
+  v-model:search="productSearch"
+  label="Product Name"
+  :items="getAllProducts"
+  :rules="[requiredProductName]"
+  variant="outlined"
+  class="mb-3"
+  clearable
+  :no-data-text="getNoDataText"
+  :hint="getProductHint"
+  persistent-hint
+  :menu-props="{ 
+    attach: true,
+    closeOnClick: true,
+    closeOnContentClick: true,
+    maxHeight: '250px',
+    zIndex: 2010,
+    contentClass: 'desktop-product-dropdown',
+    offsetY: true,
+    nudgeBottom: 4,
+    transition: 'slide-y-transition'
+  }"
+/>
+        
         
         <!-- Other Product Name -->
         <v-text-field
@@ -154,6 +166,15 @@
         >
           Create Vendor/Product
         </v-btn>
+          <!-- ✅ ADD THIS TEMPORARY TEST BUTTON -->
+  <v-btn 
+    variant="elevated" 
+    color="success"
+    @click="testDialogOpen"
+    prepend-icon="mdi-test-tube"
+  >
+    🧪 Test Product Dialog
+  </v-btn>
       </div>
     </v-card>
 
@@ -331,15 +352,15 @@
                           <!-- ✅ ENHANCED PRODUCTS HEADER WITH VENDOR-SPECIFIC SWITCH -->
                           <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
                           <!-- ✅ ENHANCED PRODUCTS HEADER WITH DOUBLE-CLICK -->
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
 
-<!-- ✅ REPLACE THE PRODUCTS HEADER SECTION -->
+<!-- ✅ FIND THIS SECTION AND REPLACE THE PRODUCTS HEADER (Around line 220) -->
 <div class="products-header mb-3">
   <div class="products-header-content">
     <div class="products-title">
       <h4 
         class="products-clickable-title"
         @dblclick="openProductDialog(location, vendor)"
+        @click="handleProductTitleClick(location, vendor)"
       >
         <i class="fas fa-box products-icon"></i>
         Products
@@ -347,12 +368,13 @@
           {{ getFilteredProducts(vendor).length }} items
         </v-chip>
         
-        <!-- ✅ SIMPLE TOOLTIP THAT WORKS -->
+        <!-- ✅ ADD SINGLE CLICK ON PLUS ICON AS BACKUP -->
         <v-icon 
           size="small" 
           color="success"
           class="ml-2 add-product-hint"
-          title="Double-click to add new product"
+          title="Double-click to add new product OR click this plus"
+          @click.stop="openProductDialog(location, vendor)"
         >
           mdi-plus-circle
         </v-icon>
@@ -669,9 +691,21 @@ const filteredLocations = computed(() => {
   });
 });
 
-// ✅ ENHANCED: OPEN DIALOG FUNCTION WITH BETTER MOBILE HANDLING
+// ✅ ENHANCED: OPEN DIALOG FUNCTION WITH BETTER DEBUG
 function openProductDialog(location, vendor) {
-  console.log(`🎯 Opening product dialog for ${vendor.vendor_name} at ${location}`);
+  console.log('🎯 🎯 🎯 DOUBLE CLICK DETECTED! 🎯 🎯 🎯');
+  console.log('📍 Location:', location);
+  console.log('🏪 Vendor:', vendor.vendor_name, vendor);
+  console.log('📱 User agent:', navigator.userAgent);
+  console.log('📱 Is mobile:', /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  
+  // Check if we have the required data
+  if (!vendor || !vendor.vendor_name) {
+    console.error('❌ Invalid vendor data:', vendor);
+    alert('❌ Invalid vendor data - cannot open dialog');
+    return;
+  }
+  
   selectedContext.value = {
     location: location,
     vendorName: vendor.vendor_name,
@@ -688,41 +722,31 @@ function openProductDialog(location, vendor) {
   
   productSearch.value = '';
   showProductDialog.value = true;
-  console.log('📱 Dialog opened:', showProductDialog.value);
+  
+  console.log('📱 Dialog state set to:', showProductDialog.value);
+  console.log('📱 Products available:', getAllProducts.value.length);
+  console.log('📱 Selected context:', selectedContext.value);
 
-
-  /* ✅ MOBILE-SPECIFIC FIXES */
+  // Force dialog visibility with timeout
   setTimeout(() => {
     const dialogs = document.querySelectorAll('.v-dialog');
-    const overlay = document.querySelector('.v-overlay');
+    console.log('📱 Found dialogs after timeout:', dialogs.length);
     
-    console.log('📱 Found dialogs:', dialogs.length);
-    console.log('📱 Found overlay:', !!overlay);
-    
-    if (overlay) {
-      overlay.style.zIndex = '9999';
-      overlay.style.display = 'block';
-      overlay.style.visibility = 'visible';
+    if (dialogs.length === 0) {
+      console.error('❌ No dialog found in DOM!');
+      alert('❌ Dialog not found - there may be a template issue');
+    } else {
+      dialogs.forEach((dialog, i) => {
+        console.log(`📱 Dialog ${i}:`, dialog);
+        dialog.style.zIndex = '9999';
+        dialog.style.display = 'flex';
+        dialog.style.visibility = 'visible';
+        dialog.style.opacity = '1';
+      });
     }
-    
-    dialogs.forEach((dialog, index) => {
-      console.log(`📱 Dialog ${index}:`, dialog);
-      dialog.style.zIndex = '10000';
-      dialog.style.display = 'flex';
-      dialog.style.visibility = 'visible';
-      dialog.style.opacity = '1';
-    });
-    
-    // Force form visibility
-    const form = document.querySelector('.mobile-product-dialog');
-    if (form) {
-      form.style.display = 'block';
-      form.style.visibility = 'visible';
-      form.style.opacity = '1';
-      console.log('📱 Form forced visible');
-    }
-  }, 100);
-} 
+  }, 500);
+}
+
 
 // ✅ ENHANCED: CLOSE DIALOG FUNCTION
 function closeProductDialog() {
@@ -992,7 +1016,26 @@ function allVendorsExpandedForLocation(location) {
     expandedVendors.value.has(getVendorKey(location, vendor))
   );
 }
-
+function testDialogOpen() {
+  console.log('🧪 TESTING DIALOG OPEN');
+  
+  const testLocation = 'Austin';
+  const testVendor = {
+    vendor_name: 'Test Vendor',
+    vendor_id: 1,
+    id: 1
+  };
+  
+  console.log('🧪 Calling openProductDialog with test data...');
+  openProductDialog(testLocation, testVendor);
+}
+// ✅ DEBUG: Test click handler
+function handleProductTitleClick(location, vendor) {
+  console.log('🎯 SINGLE CLICK detected on Products title');
+  console.log('📍 Location:', location);
+  console.log('🏪 Vendor:', vendor.vendor_name);
+  console.log('🔍 Function exists:', typeof openProductDialog);
+}
 // ✅ PRODUCT AND VENDOR FUNCTIONS
 function handleProductClick(product, event, productIndex, vendorProducts) {
   if (event?.shiftKey && lastSelectedIndex.value !== null) {
@@ -1168,12 +1211,333 @@ async function fetchData() {
   }
 }
 
+function debugDesktopDropdown() {
+  console.log('🔍 DESKTOP DROPDOWN DEBUG:');
+  console.log('- Window width:', window.innerWidth);
+  console.log('- Is mobile detected:', /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  console.log('- Products available:', getAllProducts.value);
+  console.log('- Dialog visible:', showProductDialog.value);
+  
+  // Check autocomplete elements
+  const autocomplete = document.querySelector('.v-autocomplete');
+  const menu = document.querySelector('.v-menu');
+  const dropdown = document.querySelector('.desktop-product-dropdown');
+  
+  console.log('- Autocomplete found:', !!autocomplete);
+  console.log('- Menu found:', !!menu);
+  console.log('- Dropdown found:', !!dropdown);
+  
+  if (autocomplete) {
+    const field = autocomplete.querySelector('.v-field');
+    const input = autocomplete.querySelector('input');
+    console.log('- Field found:', !!field);
+    console.log('- Input found:', !!input);
+    
+    if (input) {
+      console.log('- Input value:', input.value);
+      console.log('- Input focused:', document.activeElement === input);
+    }
+  }
+  
+  if (menu) {
+    const computed = window.getComputedStyle(menu);
+    console.log('- Menu display:', computed.display);
+    console.log('- Menu z-index:', computed.zIndex);
+    console.log('- Menu position:', computed.position);
+  }
+}
+
+// ✅ MAKE IT AVAILABLE IN CONSOLE
 onMounted(() => {
   fetchData();
+  
+  setTimeout(() => {
+    window.testDialogOpen = testDialogOpen;
+    window.openProductDialog = openProductDialog;
+    window.debugMobileDialog = debugMobileDialog;
+    window.debugDesktopDropdown = debugDesktopDropdown; // ✅ ADD THIS
+    
+    console.log('🔧 Test functions now available:');
+    console.log('  - testDialogOpen() - Test dialog with sample data');
+    console.log('  - debugDesktopDropdown() - Debug desktop dropdown');
+    console.log('  - openProductDialog(location, vendor) - Open dialog manually');
+    console.log('  - debugMobileDialog() - Check mobile dialog state');
+    console.log('🔧 Or just click the "🧪 Test Product Dialog" button!');
+  }, 1000);
 });
+
 </script>
 
 <style scoped>
+/* Desktop product dropdown fixes */
+:deep(.desktop-product-dropdown) {
+  z-index: 2010 !important;
+  position: absolute !important;
+  max-height: 250px !important;
+  overflow-y: auto !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+  border-radius: 8px !important;
+  margin-top: 8px !important;
+  background: white !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+}
+
+/* Force dropdown to appear below field on desktop */
+@media (min-width: 769px) {
+  :deep(.v-autocomplete .v-menu) {
+    z-index: 2010 !important;
+  }
+  
+  :deep(.v-menu .v-overlay__content) {
+    z-index: 2010 !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin-top: 8px !important;
+    transform: none !important;
+  }
+  
+  :deep(.desktop-product-dropdown) {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: translateY(0) !important;
+    margin-top: 8px !important;
+  }
+  
+  :deep(.v-list) {
+    padding: 8px 0 !important;
+  }
+  
+  :deep(.v-list-item) {
+    padding: 12px 16px !important;
+    min-height: 48px !important;
+    transition: background-color 0.2s ease !important;
+  }
+  
+  :deep(.v-list-item:hover) {
+    background-color: rgba(var(--v-theme-primary), 0.08) !important;
+  }
+  
+  :deep(.v-list-item--active) {
+    background-color: rgba(var(--v-theme-primary), 0.12) !important;
+    color: rgb(var(--v-theme-primary)) !important;
+  }
+}
+
+/* Ensure dialog and autocomplete container positioning */
+:deep(.v-dialog .v-card) {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+:deep(.v-dialog .v-card-text) {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+:deep(.v-autocomplete) {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+:deep(.v-autocomplete .v-field) {
+  background: white !important;
+  position: relative !important;
+  z-index: 1 !important;
+  border-radius: 8px !important;
+}
+
+/* Form field spacing for desktop */
+@media (min-width: 769px) {
+  .v-form .v-autocomplete {
+    margin-bottom: 3rem !important; /* Extra space for dropdown on desktop */
+  }
+  
+  .v-form .v-text-field,
+  .v-form .v-textarea {
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+/* Dialog z-index stack for desktop */
+@media (min-width: 769px) {
+  :deep(.v-dialog) {
+    z-index: 2000 !important;
+  }
+  
+  :deep(.v-overlay) {
+    z-index: 1999 !important;
+  }
+  
+  :deep(.v-menu) {
+    z-index: 2010 !important;
+  }
+  
+  :deep(.v-list) {
+    z-index: 2011 !important;
+  }
+  
+  :deep(.desktop-product-dropdown) {
+    z-index: 2012 !important;
+  }
+}
+/* Mobile specific dropdown fixes */
+@media (max-width: 768px) {
+  :deep(.product-dropdown-menu) {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-height: 50vh !important;
+    z-index: 10001 !important;
+    border-radius: 16px 16px 0 0 !important;
+    margin: 0 !important;
+  }
+  
+  :deep(.v-autocomplete),
+  :deep(.v-text-field),
+  :deep(.v-textarea) {
+    font-size: 16px !important;
+  }
+  
+  :deep(.v-autocomplete .v-field),
+  :deep(.v-text-field .v-field),
+  :deep(.v-textarea .v-field) {
+    min-height: 56px !important;
+  }
+  
+  :deep(.v-autocomplete .v-field__input),
+  :deep(.v-text-field .v-field__input),
+  :deep(.v-textarea .v-field__input) {
+    font-size: 16px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+  }
+  
+  :deep(.v-autocomplete input),
+  :deep(.v-text-field input),
+  :deep(.v-textarea textarea) {
+    font-size: 16px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+}
+
+/* Dialog z-index management */
+:deep(.v-dialog) {
+  z-index: 2000 !important;
+}
+
+:deep(.v-overlay) {
+  z-index: 1999 !important;
+}
+
+:deep(.v-menu) {
+  z-index: 2001 !important;
+}
+
+:deep(.v-list) {
+  z-index: 2002 !important;
+}
+
+/* Form field spacing to prevent overlap */
+.v-form > * {
+  margin-bottom: 1rem !important;
+}
+
+.v-form .v-autocomplete {
+  margin-bottom: 2rem !important; /* Extra space for dropdown */
+}
+/* Mobile dropdown fixes */
+:deep(.mobile-dropdown-menu) {
+  z-index: 10001 !important;
+  position: fixed !important;
+  max-height: 250px !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Mobile autocomplete field fixes */
+:deep(.v-autocomplete .v-field__input) {
+  font-size: 16px !important;
+  -webkit-appearance: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+}
+
+:deep(.v-autocomplete .v-field__input input) {
+  font-size: 16px !important;
+  -webkit-appearance: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  background-color: transparent !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* Prevent zoom on iOS */
+@media (max-width: 768px) {
+  :deep(.v-autocomplete),
+  :deep(.v-text-field),
+  :deep(.v-textarea) {
+    font-size: 16px !important;
+  }
+  
+  :deep(.v-autocomplete .v-field),
+  :deep(.v-text-field .v-field),
+  :deep(.v-textarea .v-field) {
+    min-height: 56px !important;
+  }
+  
+  :deep(.v-autocomplete .v-field__input),
+  :deep(.v-text-field .v-field__input),
+  :deep(.v-textarea .v-field__input) {
+    font-size: 16px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+  }
+  
+  :deep(.v-autocomplete input),
+  :deep(.v-text-field input),
+  :deep(.v-textarea textarea) {
+    font-size: 16px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+}
+
+/* Mobile dialog z-index fixes */
+@media (max-width: 768px) {
+  :deep(.v-dialog) {
+    z-index: 9999 !important;
+  }
+  
+  :deep(.v-overlay) {
+    z-index: 9998 !important;
+  }
+  
+  :deep(.v-menu) {
+    z-index: 10001 !important;
+  }
+  
+  :deep(.v-list) {
+    z-index: 10002 !important;
+  }
+}
+
 /* ✅ SIMPLE CLICKABLE TITLE STYLES */
 .products-clickable-title {
   cursor: pointer;
