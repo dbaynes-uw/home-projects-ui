@@ -3,6 +3,122 @@
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
     
+    <!-- ✅ ADD THE PRODUCT CREATION DIALOG HERE (RIGHT AFTER ConfirmDialogue) -->
+    <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
+
+    <!-- ✅ ENHANCED MOBILE-FRIENDLY PRODUCT CREATION DIALOG -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
+
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
+
+<!-- ✅ REPLACE ALL THE COMPLEX DIALOG CODE WITH THIS SIMPLE VERSION -->
+<v-dialog 
+  v-model="showProductDialog" 
+  max-width="500px"
+  persistent
+  :z-index="2000"
+>
+  <v-card>
+    <v-card-title class="bg-green-darken-1 text-white">
+      <div class="d-flex align-center w-100">
+        <v-icon class="mr-2">mdi-plus-circle</v-icon>
+        <span>Add New Product</span>
+        <v-spacer></v-spacer>
+        <v-btn 
+          icon 
+          variant="text" 
+          @click="closeProductDialog"
+          color="white"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </div>
+    </v-card-title>
+
+    <v-card-text class="pa-4">
+      <!-- Context Info -->
+      <v-alert type="info" class="mb-4">
+        <div><strong>Location:</strong> {{ selectedContext.location }}</div>
+        <div><strong>Vendor:</strong> {{ selectedContext.vendorName }}</div>
+      </v-alert>
+
+      <!-- Form -->
+      <v-form ref="productForm" v-model="productFormValid">
+        <!-- Product Autocomplete -->
+        <v-autocomplete
+          v-model="newProduct.product_name"
+          v-model:search="productSearch"
+          label="Product Name"
+          :items="getAllProducts"
+          :rules="[requiredProductName]"
+          variant="outlined"
+          class="mb-3"
+          clearable
+          :no-data-text="getNoDataText"
+          :hint="getProductHint"
+          persistent-hint
+        />
+        
+        <!-- Other Product Name -->
+        <v-text-field
+          v-if="newProduct.product_name === 'Other'"
+          v-model="newProduct.other_product_name"
+          label="Other Product Name"
+          :rules="[requiredOtherProductName]"
+          variant="outlined"
+          class="mb-3"
+          clearable
+          autofocus
+        />
+        
+        <!-- Description -->
+        <v-textarea
+          v-model="newProduct.description"
+          label="Description (Optional)"
+          variant="outlined"
+          rows="3"
+          class="mb-3"
+        />
+        
+        <!-- Switch -->
+        <v-switch
+          v-model="newProduct.active"
+          label="Add to shopping list immediately"
+          color="primary"
+          class="mb-3"
+          :disabled="newProduct.product_name === 'Other'"
+        />
+
+        <!-- Hint for Other -->
+        <v-alert 
+          v-if="newProduct.product_name === 'Other'"
+          type="info" 
+          density="compact"
+          class="mb-3"
+        >
+          New products are automatically added to your shopping list
+        </v-alert>
+      </v-form>
+    </v-card-text>
+
+    <v-card-actions class="pa-4">
+      <v-btn @click="closeProductDialog" :disabled="isSubmittingProduct">
+        Cancel
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="primary"
+        @click="submitNewProduct"
+        :loading="isSubmittingProduct"
+        :disabled="!productFormValid"
+      >
+        <v-icon class="mr-1">mdi-plus</v-icon>
+        Add Product
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
+    <!-- ✅ END OF PRODUCT DIALOG -->
     <!-- ✅ HEADER CARD -->
     <v-card class="mx-auto mt-5">
       <v-card-title class="pb-0">
@@ -209,87 +325,103 @@
                         </div>
                       </div>
 
+                      <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
+                      <v-expand-transition>
+                        <div v-show="expandedVendors.has(getVendorKey(location, vendor))" class="pa-4">
+                          <!-- ✅ ENHANCED PRODUCTS HEADER WITH VENDOR-SPECIFIC SWITCH -->
+                          <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
+                          <!-- ✅ ENHANCED PRODUCTS HEADER WITH DOUBLE-CLICK -->
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
 
-<!-- ✅ VENDOR CONTENT (PRODUCTS) -->
-<v-expand-transition>
-  <div v-show="expandedVendors.has(getVendorKey(location, vendor))" class="pa-4">
-    <!-- ✅ ENHANCED PRODUCTS HEADER WITH VENDOR-SPECIFIC SWITCH -->
-    <div class="products-header mb-3">
-      <div class="products-header-content">
-        <div class="products-title">
-          <h4>
-            <i class="fas fa-box products-icon"></i>
-            Products
-            <v-chip size="small" color="info" class="ml-2">
-              {{ getFilteredProducts(vendor).length }} items
-            </v-chip>
-          </h4>
-        </div>
+<!-- ✅ REPLACE THE PRODUCTS HEADER SECTION -->
+<div class="products-header mb-3">
+  <div class="products-header-content">
+    <div class="products-title">
+      <h4 
+        class="products-clickable-title"
+        @dblclick="openProductDialog(location, vendor)"
+      >
+        <i class="fas fa-box products-icon"></i>
+        Products
+        <v-chip size="small" color="info" class="ml-2">
+          {{ getFilteredProducts(vendor).length }} items
+        </v-chip>
         
-        <!-- ✅ NEW: VENDOR-SPECIFIC PRODUCT FILTER SWITCH -->
-        <div class="vendor-product-filter">
-          <div class="vendor-filter-wrapper">
-            <span class="vendor-filter-text">
-              {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
-            </span>
-            <v-switch
-              :model-value="getVendorProductFilter(vendor)"
-              @update:model-value="setVendorProductFilter(vendor, $event)"
-              color="secondary"
-              hide-details
-              density="compact"
-              class="vendor-switch-control"
-            />
-          </div>
-        </div>
+        <!-- ✅ SIMPLE TOOLTIP THAT WORKS -->
+        <v-icon 
+          size="small" 
+          color="success"
+          class="ml-2 add-product-hint"
+          title="Double-click to add new product"
+        >
+          mdi-plus-circle
+        </v-icon>
+      </h4>
+    </div>
+
+    <!-- Vendor-specific filter switch -->
+    <div class="vendor-product-filter">
+      <div class="vendor-filter-wrapper">
+        <span class="vendor-filter-text">
+          {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
+        </span>
+        <v-switch
+          :model-value="getVendorProductFilter(vendor)"
+          @update:model-value="setVendorProductFilter(vendor, $event)"
+          color="secondary"
+          hide-details
+          density="compact"
+          class="vendor-switch-control"
+        />
       </div>
     </div>
-
-    <!-- ✅ PRODUCTS LIST (UNCHANGED) -->
-    <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
-      <v-card
-        v-for="(product, productIndex) in getFilteredProducts(vendor)"
-        :key="product.id"
-        variant="outlined"
-        class="product-card pa-3"
-        :class="{
-          'product-selected': product.active,
-          'product-multi-selected': selectedProducts.has(product.id)
-        }"
-        @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
-      >
-        <div class="d-flex align-center">
-          <div class="product-indicators mr-3">
-            <i 
-              v-if="product.active" 
-              class="fas fa-check-circle selected-indicator"
-            ></i>
-          </div>
-          
-          <span class="product-name">{{ product.product_name }}</span>
-          
-          <v-btn
-            @click.stop="editProduct(product)"
-            size="x-small"
-            variant="text"
-            color="info"
-            class="ml-auto"
-          >
-            <i class="fas fa-edit"></i>
-            <span class="edit-hint ml-1">Edit</span>
-          </v-btn>
-        </div>
-      </v-card>
-    </div>
-
-    <!-- ✅ NO PRODUCTS STATE (UNCHANGED) -->
-    <div v-else class="no-products">
-      <i class="fas fa-inbox no-products-icon"></i>
-      <p>{{ getVendorProductFilter(vendor) ? 'No selected products' : 'No products available' }} for this vendor</p>
-    </div>
   </div>
-</v-expand-transition>
+</div>
+                        
+                          <!-- ✅ PRODUCTS LIST (UNCHANGED) -->
+                          <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
+                            <v-card
+                              v-for="(product, productIndex) in getFilteredProducts(vendor)"
+                              :key="product.id"
+                              variant="outlined"
+                              class="product-card pa-3"
+                              :class="{
+                                'product-selected': product.active,
+                                'product-multi-selected': selectedProducts.has(product.id)
+                              }"
+                              @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+                            >
+                              <div class="d-flex align-center">
+                                <div class="product-indicators mr-3">
+                                  <i 
+                                    v-if="product.active" 
+                                    class="fas fa-check-circle selected-indicator"
+                                  ></i>
+                                </div>
+                                
+                                <span class="product-name">{{ product.product_name }}</span>
+                                
+                                <v-btn
+                                  @click.stop="editProduct(product)"
+                                  size="x-small"
+                                  variant="text"
+                                  color="info"
+                                  class="ml-auto"
+                                >
+                                  <i class="fas fa-edit"></i>
+                                  <span class="edit-hint ml-1">Edit</span>
+                                </v-btn>
+                              </div>
+                            </v-card>
+                          </div>
+                        
+                          <!-- ✅ NO PRODUCTS STATE (UNCHANGED) -->
+                          <div v-else class="no-products">
+                            <i class="fas fa-inbox no-products-icon"></i>
+                            <p>{{ getVendorProductFilter(vendor) ? 'No selected products' : 'No products available' }} for this vendor</p>
+                          </div>
+                        </div>
+                      </v-expand-transition>
                     </v-card>
                   </div>
 
@@ -354,10 +486,8 @@
   </div>
 </template>
 
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
-
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
@@ -376,7 +506,6 @@ const confirmDialogue = ref(null);
 // ✅ VENDOR FILTER STATE
 const selectedVendorFilter = ref(null);
 const vendorFilterName = ref('');
-
 // ✅ NEW: VENDOR-SPECIFIC PRODUCT FILTER STATE
 const vendorProductFilters = ref(new Map());
 
@@ -386,6 +515,68 @@ const expandedVendors = ref(new Set());
 const selectedProducts = ref(new Set());
 const lastSelectedIndex = ref(null);
 
+// ✅ ADD THESE NEW PRODUCT DIALOG STATES
+const showProductDialog = ref(false);
+const isSubmittingProduct = ref(false);
+const productFormValid = ref(false);
+const productForm = ref(null);
+const productSearch = ref(''); // ✅ NEW: For autocomplete search
+
+const selectedContext = ref({
+  location: '',
+  vendorName: '',
+  vendorId: null
+});
+
+const newProduct = ref({
+  product_name: '',
+  other_product_name: '', // ✅ NEW: For "Other" option
+  description: '',
+  active: true
+});
+// ✅ NEW: GET PRODUCTS DATA FOR AUTOCOMPLETE (LIKE ProductVendorCreate)
+const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
+
+const getAllProducts = computed(() => {
+  const products = vendorsProductsGroup.value?.vendorsProductsGroup || [];
+  
+  // Clean and add "Other" option
+  const cleanedProducts = products
+    .filter(item => item !== null && item !== undefined && item !== '')
+    .map(item => typeof item === 'string' ? item.trim() : String(item).trim())
+    .filter(item => item.length > 0);
+    
+  // Add "Other" option at the end
+  return [...cleanedProducts, 'Other'];
+});
+
+// ✅ NEW: DYNAMIC MESSAGES FOR AUTOCOMPLETE
+const getNoDataText = computed(() => {
+  const totalProducts = getAllProducts.value.length - 1; // Subtract 1 for "Other"
+  if (totalProducts === 0) {
+    return 'Loading products...';
+  }
+  return 'No matching products found - try "Other"';
+});
+
+const getProductHint = computed(() => {
+  const totalProducts = getAllProducts.value.length - 1; // Subtract 1 for "Other"
+  if (productSearch.value) {
+    return `Searching "${productSearch.value}" in ${totalProducts} products`;
+  }
+  return `${totalProducts} products available + "Other" option`;
+});
+
+// ✅ NEW: VALIDATION RULES (LIKE ProductVendorCreate)
+const requiredProductName = (value) => {
+  const isValid = !!value;
+  return isValid || 'Please select a product';
+};
+
+const requiredOtherProductName = (value) => {
+  const isValid = !!value;
+  return isValid || 'Please enter the other product name';
+};
 // ✅ COMPUTED PROPERTIES FOR EXPAND/COLLAPSE CONTROLS
 const allLocationsExpanded = computed(() => {
   return expandedLocations.value.size === locations.value.length;
@@ -478,6 +669,178 @@ const filteredLocations = computed(() => {
   });
 });
 
+// ✅ ENHANCED: OPEN DIALOG FUNCTION WITH BETTER MOBILE HANDLING
+function openProductDialog(location, vendor) {
+  console.log(`🎯 Opening product dialog for ${vendor.vendor_name} at ${location}`);
+  selectedContext.value = {
+    location: location,
+    vendorName: vendor.vendor_name,
+    vendorId: vendor.vendor_id || vendor.id
+  };
+  
+  // Reset form
+  newProduct.value = {
+    product_name: '',
+    other_product_name: '',
+    description: '',
+    active: true
+  };
+  
+  productSearch.value = '';
+  showProductDialog.value = true;
+  console.log('📱 Dialog opened:', showProductDialog.value);
+
+
+  /* ✅ MOBILE-SPECIFIC FIXES */
+  setTimeout(() => {
+    const dialogs = document.querySelectorAll('.v-dialog');
+    const overlay = document.querySelector('.v-overlay');
+    
+    console.log('📱 Found dialogs:', dialogs.length);
+    console.log('📱 Found overlay:', !!overlay);
+    
+    if (overlay) {
+      overlay.style.zIndex = '9999';
+      overlay.style.display = 'block';
+      overlay.style.visibility = 'visible';
+    }
+    
+    dialogs.forEach((dialog, index) => {
+      console.log(`📱 Dialog ${index}:`, dialog);
+      dialog.style.zIndex = '10000';
+      dialog.style.display = 'flex';
+      dialog.style.visibility = 'visible';
+      dialog.style.opacity = '1';
+    });
+    
+    // Force form visibility
+    const form = document.querySelector('.mobile-product-dialog');
+    if (form) {
+      form.style.display = 'block';
+      form.style.visibility = 'visible';
+      form.style.opacity = '1';
+      console.log('📱 Form forced visible');
+    }
+  }, 100);
+} 
+
+// ✅ ENHANCED: CLOSE DIALOG FUNCTION
+function closeProductDialog() {
+  showProductDialog.value = false;
+  
+  // Reset form after animation
+  setTimeout(() => {
+    newProduct.value = {
+      product_name: '',
+      other_product_name: '',
+      description: '',
+      active: true
+    };
+    productSearch.value = '';
+    selectedContext.value = {
+      location: '',
+      vendorName: '',
+      vendorId: null
+    };
+    
+    if (productForm.value) {
+      productForm.value.reset();
+    }
+  }, 300);
+}
+
+// ✅ ENHANCED: SUBMIT FUNCTION WITH "OTHER" LOGIC
+async function submitNewProduct() {
+  try {
+    isSubmittingProduct.value = true;
+    
+    // Validate form
+    if (!productForm.value) {
+      throw new Error('Form not available');
+    }
+    
+    const { valid } = await productForm.value.validate();
+    if (!valid) {
+      throw new Error('Please fix form errors');
+    }
+    
+    // ✅ HANDLE "OTHER" PRODUCT NAME LOGIC
+    const finalProductName = newProduct.value.product_name === 'Other' 
+      ? newProduct.value.other_product_name.trim()
+      : newProduct.value.product_name.trim();
+      
+    if (!finalProductName) {
+      throw new Error('Product name is required');
+    }
+    // ✅ AUTO-SELECT "OTHER" PRODUCTS OR USE SWITCH VALUE
+    const shouldBeActive = newProduct.value.product_name === 'Other' 
+      ? true  // Always select new "Other" products
+      : newProduct.value.active;  // Use switch value for existing products
+    
+    // Prepare product data
+    const productData = {
+      product_name: finalProductName,
+      description: newProduct.value.description?.trim() || '',
+      vendor_id: selectedContext.value.vendorId,
+      location: selectedContext.value.location,
+      vendor_name: selectedContext.value.vendorName,
+      active: newProduct.value.active,
+      created_by: store.state.user?.resource_owner?.email || '',
+      created_at: new Date().toISOString(),
+      updated_by: store.state.user?.resource_owner?.email || '',
+      updated_at: new Date().toISOString()
+    };
+    
+    console.log('🚀 Creating new product:', productData);
+    
+    // ✅ New: Dispatch createProduct action
+    const result = await store.dispatch('createProduct', productData);
+    
+    console.log('📝 Create product result:', result);
+    // && result !== null && result !== undefined)
+    if (result !== false) {
+      console.log('✅ Product created successfully');
+
+      // Show success message with final product name
+      alert(`✅ Successfully added "${finalProductName}" to ${selectedContext.value.vendorName} at ${selectedContext.value.location}!`);
+      
+      // Refresh data to show new product
+      await Promise.all([
+        store.dispatch('fetchProducts'),
+        store.dispatch('fetchShoppingList'),
+        store.dispatch('fetchVendors'),
+        store.dispatch('fetchVendorsProducts'),
+        store.dispatch('fetchVendorsLocationsGroup'),
+        store.dispatch('fetchVendorsProductsGroup') // ✅ Also refresh products list
+      ]);
+      
+      // Close dialog
+      closeProductDialog();
+      
+      // Auto-expand the vendor to show the new product
+      //NOT NEEDEDconst vendorKey = getVendorKey(selectedContext.value.location, {
+      //NOT NEEDED  vendor_name: selectedContext.value.vendorName,
+      //NOT NEEDED  vendor_id: selectedContext.value.vendorId
+      //NOT NEEDED});
+      //NOT NEEDEDexpandedVendors.value.add(vendorKey);
+      
+    } else {
+      throw new Error('Failed to create product - no valid response');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error creating product:', error);
+    alert(`❌ Error: ${error.message}`);
+  } finally {
+    isSubmittingProduct.value = false;
+  }
+}
+// ✅ ADD WATCHER FOR "OTHER" OPTION (LIKE ProductVendorCreate)
+watch(() => newProduct.value.product_name, (newValue) => {
+  if (newValue !== 'Other') {
+    newProduct.value.other_product_name = '';
+  }
+});
 // ✅ VENDOR-SPECIFIC PRODUCT FILTER FUNCTIONS
 function getVendorProductFilter(vendor) {
   const vendorId = vendor.vendor_id || vendor.id;
@@ -784,6 +1147,7 @@ async function submitChanges() {
   }
 }
 
+// ✅ ENHANCED: FETCH DATA TO INCLUDE PRODUCTS GROUP
 async function fetchData() {
   isLoading.value = true;
   
@@ -791,7 +1155,8 @@ async function fetchData() {
     const promises = [
       store.dispatch('fetchVendorsProducts'),
       store.dispatch('fetchVendorsLocationsGroup'),
-      store.dispatch('fetchShoppingList')
+      store.dispatch('fetchShoppingList'),
+      store.dispatch('fetchVendorsProductsGroup') // ✅ ADD THIS FOR AUTOCOMPLETE
     ];
     
     await Promise.all(promises);
@@ -809,6 +1174,317 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ✅ SIMPLE CLICKABLE TITLE STYLES */
+.products-clickable-title {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.products-clickable-title:hover {
+  background-color: rgba(var(--v-theme-primary), 0.1);
+  transform: scale(1.02);
+}
+
+.add-product-hint {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.add-product-hint:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ✅ VENDOR PRODUCT FILTER STYLES */
+.products-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.products-title {
+  flex: 1;
+}
+
+.vendor-product-filter {
+  flex-shrink: 0;
+}
+
+.vendor-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(var(--v-theme-secondary), 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(var(--v-theme-secondary), 0.2);
+}
+
+.vendor-filter-text {
+  color: rgb(var(--v-theme-secondary)) !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  white-space: nowrap;
+}
+
+.vendor-switch-control {
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+/* ✅ MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .products-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .vendor-product-filter {
+    width: 100%;
+  }
+  
+  .vendor-filter-wrapper {
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
+/* ✅ FULLSCREEN MOBILE DIALOG */
+@media (max-width: 600px) {
+  .v-dialog--fullscreen .mobile-dialog-content {
+    max-height: calc(100vh - 140px);
+    padding: 1rem !important;
+  }
+  
+  .v-dialog--fullscreen .product-dialog-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .v-dialog--fullscreen .mobile-dialog-actions {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+}
+/* ✅ ENHANCED PRODUCT DIALOG STYLES */
+.expanded-product-field :deep(.v-field) {
+  min-height: 60px !important;
+  cursor: text !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.expanded-product-field :deep(.v-field__field) {
+  padding: 16px 12px !important;
+  min-height: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.expanded-product-field :deep(.v-field__input) {
+  font-size: 16px !important;
+  padding: 0 !important; 
+  min-height: auto !important; 
+  line-height: 1.5 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.expanded-product-field :deep(.v-field__input input) {
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  height: auto !important;
+  text-align: left !important;
+}
+
+.expanded-product-field :deep(.v-field__prepend-inner) {
+  padding: 16px 8px 16px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.expanded-product-field :deep(.v-field__append-inner) {
+  padding: 16px 12px 16px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ✅ MOBILE RESPONSIVE FOR AUTOCOMPLETE */
+@media (max-width: 768px) {
+  .expanded-product-field :deep(.v-field) {
+    min-height: 70px !important;
+  }
+  
+  .expanded-product-field :deep(.v-field__field) {
+    padding: 20px 16px !important;
+    min-height: 70px !important;
+  }
+  
+  .expanded-product-field :deep(.v-field__input) {
+    font-size: 16px !important;
+    -webkit-appearance: none !important;
+  }
+  
+  .expanded-product-field :deep(.v-field__prepend-inner) {
+    padding: 20px 12px 20px 16px !important;
+  }
+  
+  .expanded-product-field :deep(.v-field__append-inner) {
+    padding: 20px 16px 20px 12px !important;
+  }
+}
+/* ✅ PRODUCT DIALOG STYLES */
+.product-dialog-header {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white !important;
+  padding: 1.5rem 2rem;
+}
+
+.product-dialog-header h3 {
+  color: white !important;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.context-info {
+  background: rgba(33, 150, 243, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.context-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.context-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.context-item i {
+  color: #2196F3;
+  width: 20px;
+}
+
+/* ✅ CLICKABLE PRODUCTS TITLE */
+.products-clickable-title {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 8px;
+  position: relative;
+}
+
+.products-clickable-title:hover {
+  background-color: rgba(var(--v-theme-primary), 0.1);
+  transform: scale(1.02);
+}
+
+.products-clickable-title:active {
+  transform: scale(0.98);
+}
+
+/* ✅ SIMPLE CLICKABLE TITLE STYLES */
+.products-clickable-title {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.products-clickable-title:hover {
+  background-color: rgba(var(--v-theme-primary), 0.1);
+  transform: scale(1.02);
+}
+
+.add-product-hint {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.add-product-hint:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ✅ MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .products-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .vendor-product-filter {
+    width: 100%;
+  }
+  
+  .vendor-filter-wrapper {
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
+
+.products-clickable-title:hover::after {
+  opacity: 0.6;
+  right: -15px;
+}
+
+/* ✅ MOBILE RESPONSIVE FOR DIALOG */
+@media (max-width: 768px) {
+  .product-dialog-header {
+    padding: 1rem;
+  }
+  
+  .product-dialog-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .context-details {
+    gap: 0.75rem;
+  }
+  
+  .context-item {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-clickable-title::after {
+    display: none; /* Hide plus hint on very small screens */
+  }
+  
+  .context-details {
+    gap: 0.5rem;
+  }
+  
+  .context-item {
+    font-size: 0.85rem;
+  }
+}
 /* ✅ VENDOR PRODUCT FILTER STYLES */
 .products-header-content {
   display: flex;
