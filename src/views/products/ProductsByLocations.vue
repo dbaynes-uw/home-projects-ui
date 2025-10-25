@@ -1,8 +1,9 @@
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
 <template>
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
     
-    <!-- ✅ HEADER CARD (unchanged) -->
+    <!-- ✅ HEADER CARD -->
     <v-card class="mx-auto mt-5">
       <v-card-title class="pb-0">
         <h2>
@@ -11,7 +12,7 @@
         </h2>
       </v-card-title>
 
-      <!-- ✅ NAVIGATION (unchanged) -->
+      <!-- ✅ NAVIGATION -->
       <div class="navigation-grid">
         <v-btn 
           variant="outlined" 
@@ -46,8 +47,9 @@
       <p class="mt-2">Loading locations...</p>
     </div>
 
-    <!-- ✅ MAIN CONTENT WITH COMPLETE LOCATION CARDS -->
+    <!-- ✅ MAIN CONTENT -->
     <v-card v-else class="mt-4">
+      <!-- ✅ SWITCH AND VENDOR FILTER -->
       <v-card-title class="switch-container">
         <div class="switch-description-wrapper">
           <span class="switch-description-text">
@@ -61,9 +63,27 @@
             class="switch-control"
           />
         </div>
-      </v-card-title> 
 
+        <!-- ✅ VENDOR FILTER INDICATOR -->
+        <div v-if="selectedVendorFilter" class="vendor-filter-indicator">
+          <v-chip
+            color="success"
+            variant="elevated"
+            size="large"
+            class="vendor-filter-chip"
+            closable
+            @click:close="clearVendorFilter"
+          >
+            <i class="fas fa-filter mr-2"></i>
+            Filtering: {{ vendorFilterName }}
+          </v-chip>
+          <small class="vendor-filter-hint">Double-click any vendor to filter</small>
+        </div>
+      </v-card-title>
+
+      <!-- ✅ MAIN CONTENT AREA -->
       <v-card-text class="content-wrapper">
+        <!-- ✅ TOP SUBMIT BUTTON -->
         <div class="top-submit-section mb-4">
           <v-btn 
             @click="submitChanges"
@@ -80,20 +100,22 @@
             </v-chip>
           </v-btn>
         </div>
+
+        <!-- ✅ CONTENT CONTAINER -->
         <div class="content-container">
-          <!-- ✅ LOCATIONS GRID WITH COMPLETE CONTENT -->
+          <!-- ✅ LOCATIONS GRID -->
           <div class="locations-grid">
             <v-card
-              v-for="(location, locationIndex) in locations"
+              v-for="(location, locationIndex) in filteredLocations"
               :key="locationIndex"
-              :class="{ 'location-expanded': expandedLocations.has(locationIndex) }"
+              :class="{ 'location-expanded': expandedLocations.has(locations.indexOf(location)) }"
               variant="outlined"
               class="location-card"
             >
               <!-- ✅ LOCATION HEADER -->
               <div 
                 class="location-header" 
-                @click="toggleLocation(locationIndex)"
+                @click="toggleLocation(locations.indexOf(location))"
               >
                 <i class="fas fa-map-marker-alt location-marker-icon"></i>
                 <span class="location-name">{{ location }}</span>
@@ -101,7 +123,7 @@
                 <div class="location-controls">
                   <v-chip 
                     size="small" 
-                    :color="expandedLocations.has(locationIndex) ? 'primary' : 'default'"
+                    :color="expandedLocations.has(locations.indexOf(location)) ? 'primary' : 'default'"
                     class="mr-2"
                   >
                     <i class="fas fa-store chip-icon"></i>
@@ -109,7 +131,7 @@
                   </v-chip>
                   
                   <v-btn
-                    v-if="expandedLocations.has(locationIndex)"
+                    v-if="expandedLocations.has(locations.indexOf(location))"
                     @click.stop="toggleAllVendorsForLocation(location)"
                     size="x-small"
                     variant="text"
@@ -123,7 +145,7 @@
                     :class="[
                       'fas', 
                       'chevron-icon',
-                      expandedLocations.has(locationIndex) ? 'fa-chevron-up' : 'fa-chevron-down'
+                      expandedLocations.has(locations.indexOf(location)) ? 'fa-chevron-up' : 'fa-chevron-down'
                     ]"
                   ></i>
                 </div>
@@ -131,7 +153,7 @@
 
               <!-- ✅ LOCATION CONTENT (VENDORS) -->
               <v-expand-transition>
-                <div v-show="expandedLocations.has(locationIndex)" class="pa-4">
+                <div v-show="expandedLocations.has(locations.indexOf(location))" class="pa-4">
                   <div 
                     v-for="vendor in getVendorsForLocation(location)" 
                     :key="vendor.vendor_id || vendor.id"
@@ -142,13 +164,19 @@
                       class="vendor-card"
                       :class="{ 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)) }"
                     >
-                      <!-- ✅ VENDOR HEADER -->
+                      <!-- ✅ VENDOR HEADER WITH DOUBLE-CLICK -->
                       <div 
                         class="vendor-header" 
                         @click="toggleVendor(location, vendor)"
+                        @dblclick="handleVendorDoubleClick(vendor, $event)"
+                        :class="{ 'vendor-filtered': selectedVendorFilter === (vendor.vendor_id || vendor.id) }"
                       >
                         <i class="fas fa-store vendor-store-icon"></i>
                         <span class="vendor-name">{{ vendor.vendor_name }}</span>
+                        
+                        <!-- ✅ FILTER INDICATOR -->
+                        <i v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)" 
+                           class="fas fa-filter vendor-filter-icon mr-2"></i>
                         
                         <div class="vendor-controls">
                           <v-chip 
@@ -181,63 +209,87 @@
                         </div>
                       </div>
 
-                      <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
-                      <v-expand-transition>
-                        <div v-show="expandedVendors.has(getVendorKey(location, vendor))" class="pa-4">
-                          <div class="products-header mb-3">
-                            <h4>
-                              <i class="fas fa-box products-icon"></i>
-                              Products
-                              <v-chip size="small" color="info" class="ml-2">
-                                {{ getFilteredProducts(vendor).length }} items
-                              </v-chip>
-                            </h4>
-                          </div>
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
 
-                          <!-- ✅ PRODUCTS LIST -->
-                          <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
-                            <v-card
-                              v-for="(product, productIndex) in getFilteredProducts(vendor)"
-                              :key="product.id"
-                              variant="outlined"
-                              class="product-card pa-3"
-                              :class="{
-                                'product-selected': product.active,
-                                'product-multi-selected': selectedProducts.has(product.id)
-                              }"
-                              @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
-                            >
-                              <div class="d-flex align-center">
-                                <div class="product-indicators mr-3">
-                                  <i 
-                                    v-if="product.active" 
-                                    class="fas fa-check-circle selected-indicator"
-                                  ></i>
-                                </div>
-                                
-                                <span class="product-name">{{ product.product_name }}</span>
-                                
-                                <v-btn
-                                  @click.stop="editProduct(product)"
-                                  size="x-small"
-                                  variant="text"
-                                  color="info"
-                                  class="ml-auto"
-                                >
-                                  <i class="fas fa-edit"></i>
-                                  <span class="edit-hint ml-1">Edit</span>
-                                </v-btn>
-                              </div>
-                            </v-card>
-                          </div>
+<!-- ✅ VENDOR CONTENT (PRODUCTS) -->
+<v-expand-transition>
+  <div v-show="expandedVendors.has(getVendorKey(location, vendor))" class="pa-4">
+    <!-- ✅ ENHANCED PRODUCTS HEADER WITH VENDOR-SPECIFIC SWITCH -->
+    <div class="products-header mb-3">
+      <div class="products-header-content">
+        <div class="products-title">
+          <h4>
+            <i class="fas fa-box products-icon"></i>
+            Products
+            <v-chip size="small" color="info" class="ml-2">
+              {{ getFilteredProducts(vendor).length }} items
+            </v-chip>
+          </h4>
+        </div>
+        
+        <!-- ✅ NEW: VENDOR-SPECIFIC PRODUCT FILTER SWITCH -->
+        <div class="vendor-product-filter">
+          <div class="vendor-filter-wrapper">
+            <span class="vendor-filter-text">
+              {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
+            </span>
+            <v-switch
+              :model-value="getVendorProductFilter(vendor)"
+              @update:model-value="setVendorProductFilter(vendor, $event)"
+              color="secondary"
+              hide-details
+              density="compact"
+              class="vendor-switch-control"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
 
-                          <!-- ✅ NO PRODUCTS STATE -->
-                          <div v-else class="no-products">
-                            <i class="fas fa-inbox no-products-icon"></i>
-                            <p>{{ showShoppingList ? 'No selected products' : 'No products available' }} for this vendor</p>
-                          </div>
-                        </div>
-                      </v-expand-transition>
+    <!-- ✅ PRODUCTS LIST (UNCHANGED) -->
+    <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
+      <v-card
+        v-for="(product, productIndex) in getFilteredProducts(vendor)"
+        :key="product.id"
+        variant="outlined"
+        class="product-card pa-3"
+        :class="{
+          'product-selected': product.active,
+          'product-multi-selected': selectedProducts.has(product.id)
+        }"
+        @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+      >
+        <div class="d-flex align-center">
+          <div class="product-indicators mr-3">
+            <i 
+              v-if="product.active" 
+              class="fas fa-check-circle selected-indicator"
+            ></i>
+          </div>
+          
+          <span class="product-name">{{ product.product_name }}</span>
+          
+          <v-btn
+            @click.stop="editProduct(product)"
+            size="x-small"
+            variant="text"
+            color="info"
+            class="ml-auto"
+          >
+            <i class="fas fa-edit"></i>
+            <span class="edit-hint ml-1">Edit</span>
+          </v-btn>
+        </div>
+      </v-card>
+    </div>
+
+    <!-- ✅ NO PRODUCTS STATE (UNCHANGED) -->
+    <div v-else class="no-products">
+      <i class="fas fa-inbox no-products-icon"></i>
+      <p>{{ getVendorProductFilter(vendor) ? 'No selected products' : 'No products available' }} for this vendor</p>
+    </div>
+  </div>
+</v-expand-transition>
                     </v-card>
                   </div>
 
@@ -285,7 +337,7 @@
           </div>
         </div>
         
-        <!-- ✅ SAVE BUTTON -->
+        <!-- ✅ BOTTOM SAVE BUTTON -->
         <v-btn 
           @click="submitChanges"
           :loading="isSubmitting"
@@ -302,6 +354,8 @@
   </div>
 </template>
 
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -309,7 +363,6 @@ import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import { VProgressCircular } from 'vuetify/components'
-
 
 const router = useRouter();
 const store = useStore();
@@ -320,9 +373,16 @@ const isLoading = ref(true);
 const isSubmitting = ref(false);
 const confirmDialogue = ref(null);
 
+// ✅ VENDOR FILTER STATE
+const selectedVendorFilter = ref(null);
+const vendorFilterName = ref('');
+
+// ✅ NEW: VENDOR-SPECIFIC PRODUCT FILTER STATE
+const vendorProductFilters = ref(new Map());
+
 // ✅ HIERARCHICAL DROPDOWN STATE
-const expandedLocations = ref(new Set()); // Track which locations are expanded
-const expandedVendors = ref(new Set());   // Track which vendors are expanded
+const expandedLocations = ref(new Set());
+const expandedVendors = ref(new Set());
 const selectedProducts = ref(new Set());
 const lastSelectedIndex = ref(null);
 
@@ -356,7 +416,7 @@ const allVendorsExpanded = computed(() => {
   return totalVendors > 0 && expandedVendorCount === totalVendors;
 });
 
-// ✅ EXISTING COMPUTED PROPERTIES (unchanged)
+// ✅ EXISTING COMPUTED PROPERTIES
 const vendorsProducts = computed(() => {
   const rawData = store.state.vendors_products;
   
@@ -404,8 +464,47 @@ const vendorsLocationsGroup = computed(() => {
 
 const locations = computed(() => vendorsLocationsGroup.value);
 
-// ✅ HIERARCHICAL DROPDOWN FUNCTIONS
+// ✅ FILTERED LOCATIONS
+const filteredLocations = computed(() => {
+  if (!selectedVendorFilter.value) {
+    return locations.value;
+  }
+  
+  return locations.value.filter(location => {
+    const vendors = getVendorsForLocation(location);
+    return vendors.some(vendor => 
+      (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
+    );
+  });
+});
 
+// ✅ VENDOR-SPECIFIC PRODUCT FILTER FUNCTIONS
+function getVendorProductFilter(vendor) {
+  const vendorId = vendor.vendor_id || vendor.id;
+  return vendorProductFilters.value.get(vendorId) ?? showShoppingList.value;
+}
+
+function setVendorProductFilter(vendor, value) {
+  const vendorId = vendor.vendor_id || vendor.id;
+  vendorProductFilters.value.set(vendorId, value);
+}
+
+// ✅ SINGLE getFilteredProducts FUNCTION - USES VENDOR-SPECIFIC FILTER
+function getFilteredProducts(vendor) {
+  if (!vendor || !vendor.products || !Array.isArray(vendor.products)) {
+    console.warn('❌ Invalid vendor products:', vendor);
+    return [];
+  }
+  
+  // Use vendor-specific filter instead of global
+  const showSelectedOnly = getVendorProductFilter(vendor);
+  
+  return showSelectedOnly 
+    ? vendor.products.filter(product => product?.active)
+    : vendor.products;
+}
+
+// ✅ HIERARCHICAL DROPDOWN FUNCTIONS
 function getVendorKey(location, vendor) {
   return `${location}-${vendor.vendor_name}-${vendor.vendor_id || vendor.id}`;
 }
@@ -413,7 +512,6 @@ function getVendorKey(location, vendor) {
 function toggleLocation(locationIndex) {
   if (expandedLocations.value.has(locationIndex)) {
     expandedLocations.value.delete(locationIndex);
-    // Also collapse all vendors in this location
     const location = locations.value[locationIndex];
     const vendors = getVendorsForLocation(location);
     vendors.forEach(vendor => {
@@ -433,30 +531,73 @@ function toggleVendor(location, vendor) {
   }
 }
 
+// ✅ VENDOR DOUBLE-CLICK HANDLER
+function handleVendorDoubleClick(vendor, event) {
+  event.stopPropagation();
+  
+  const vendorId = vendor.vendor_id || vendor.id;
+  
+  if (selectedVendorFilter.value === vendorId) {
+    clearVendorFilter();
+  } else {
+    selectedVendorFilter.value = vendorId;
+    vendorFilterName.value = vendor.vendor_name;
+    console.log(`🎯 Filtering by vendor: ${vendor.vendor_name} (ID: ${vendorId})`);
+    autoExpandLocationsWithVendor(vendorId);
+  }
+}
+
+function clearVendorFilter() {
+  selectedVendorFilter.value = null;
+  vendorFilterName.value = '';
+  console.log('🔄 Cleared vendor filter - showing all vendors');
+}
+
+function autoExpandLocationsWithVendor(vendorId) {
+  expandedLocations.value.clear();
+  expandedVendors.value.clear();
+  
+  filteredLocations.value.forEach((location, index) => {
+    const originalIndex = locations.value.indexOf(location);
+    if (originalIndex !== -1) {
+      expandedLocations.value.add(originalIndex);
+      
+      const vendors = getVendorsForLocation(location);
+      const targetVendor = vendors.find(v => (v.vendor_id || v.id) === vendorId);
+      if (targetVendor) {
+        expandedVendors.value.add(getVendorKey(location, targetVendor));
+      }
+    }
+  });
+}
+
 function toggleAllLocations() {
   if (allLocationsExpanded.value) {
-    // Collapse all locations and vendors
     expandedLocations.value.clear();
     expandedVendors.value.clear();
   } else {
-    // Expand all locations
-    locations.value.forEach((location, index) => {
-      expandedLocations.value.add(index);
+    const locationsToExpand = selectedVendorFilter.value ? filteredLocations.value : locations.value;
+    locationsToExpand.forEach((location, index) => {
+      const originalIndex = locations.value.indexOf(location);
+      if (originalIndex !== -1) {
+        expandedLocations.value.add(originalIndex);
+      }
     });
   }
 }
 
 function toggleAllVendors() {
   if (allVendorsExpanded.value) {
-    // Collapse all vendors
     expandedVendors.value.clear();
   } else {
-    // Expand all vendors in expanded locations
     expandedLocations.value.forEach(locationIndex => {
       const location = locations.value[locationIndex];
       const vendors = getVendorsForLocation(location);
       vendors.forEach(vendor => {
-        expandedVendors.value.add(getVendorKey(location, vendor));
+        if (!selectedVendorFilter.value || 
+            (vendor.vendor_id || vendor.id) === selectedVendorFilter.value) {
+          expandedVendors.value.add(getVendorKey(location, vendor));
+        }
       });
     });
   }
@@ -469,14 +610,15 @@ function toggleAllVendorsForLocation(location) {
   );
   
   if (allExpanded) {
-    // Collapse all vendors for this location
     vendors.forEach(vendor => {
       expandedVendors.value.delete(getVendorKey(location, vendor));
     });
   } else {
-    // Expand all vendors for this location
     vendors.forEach(vendor => {
-      expandedVendors.value.add(getVendorKey(location, vendor));
+      if (!selectedVendorFilter.value || 
+          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value) {
+        expandedVendors.value.add(getVendorKey(location, vendor));
+      }
     });
   }
 }
@@ -488,7 +630,7 @@ function allVendorsExpandedForLocation(location) {
   );
 }
 
-// ✅ EXISTING FUNCTIONS (unchanged)
+// ✅ PRODUCT AND VENDOR FUNCTIONS
 function handleProductClick(product, event, productIndex, vendorProducts) {
   if (event?.shiftKey && lastSelectedIndex.value !== null) {
     const start = Math.min(lastSelectedIndex.value, productIndex);
@@ -522,21 +664,15 @@ function getVendorsForLocation(location) {
     return [];
   }
   
-  return vendors.filter(vendor => vendor?.location === location);
-}
-
-function getFilteredProducts(vendor) {
-  if (!vendor || !vendor.products || !Array.isArray(vendor.products)) {
-    console.warn('❌ Invalid vendor products:', vendor);
-    return [];
+  let locationVendors = vendors.filter(vendor => vendor?.location === location);
+  
+  if (selectedVendorFilter.value) {
+    locationVendors = locationVendors.filter(vendor => 
+      (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
+    );
   }
   
-  // ✅ CORRECTED LOGIC: 
-  // showShoppingList = true → show only ACTIVE (selected) products
-  // showShoppingList = false → show ALL products
-  return showShoppingList.value 
-    ? vendor.products.filter(product => product?.active)  // Only selected items
-    : vendor.products;  // All items
+  return locationVendors;
 }
 
 function editVendor(vendor) {
@@ -560,6 +696,7 @@ function updateProduct(product) {
   }
 }
 
+// ✅ SUBMIT AND DATA FUNCTIONS
 async function submitChanges() {
   try {
     isSubmitting.value = true;
@@ -571,7 +708,6 @@ async function submitChanges() {
       throw new Error('No vendors products to update!');
     }
     
-    // ✅ FLATTEN ALL VENDOR PRODUCTS INTO SINGLE ARRAY (LIKE ProductsByVendors)
     const allProducts = [];
     
     vendorsProducts.value.forEach((vendor, vendorIndex) => {
@@ -589,7 +725,6 @@ async function submitChanges() {
       }
     });
     
-    // ✅ USE SAME LOGIC AS OTHER COMPONENTS
     const changedProducts = allProducts.map(product => {
       const isCurrentlyActive = !!product.active;
       
@@ -615,7 +750,6 @@ async function submitChanges() {
     console.log(`  ✅ Will be marked active: ${activeCount}`);
     console.log(`  ❌ Will be marked inactive: ${inactiveCount}`);
     
-    // ✅ USE SAME SUBMIT DATA STRUCTURE AS OTHER COMPONENTS
     const submitData = {
       products: changedProducts,
       id: uuidv4(),
@@ -624,14 +758,12 @@ async function submitChanges() {
     
     console.log('🚀 Submitting all product states:', submitData);
     
-    // ✅ USE THE SAME STORE ACTION AS OTHER COMPONENTS (PRODUCTS CONTROLLER)
     const result = await store.dispatch('putProducts', submitData);
     
     if (result !== false) {
       console.log('✅ All product states updated successfully');
       alert(`✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`);
       
-      // ✅ REFRESH ALL DATA
       await Promise.all([
         store.dispatch('fetchProducts'),
         store.dispatch('fetchShoppingList'),
@@ -676,8 +808,146 @@ onMounted(() => {
 });
 </script>
 
-
 <style scoped>
+/* ✅ VENDOR PRODUCT FILTER STYLES */
+.products-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.products-title {
+  flex: 1;
+}
+
+.vendor-product-filter {
+  flex-shrink: 0;
+}
+
+.vendor-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(var(--v-theme-secondary), 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(var(--v-theme-secondary), 0.2);
+}
+
+.vendor-filter-text {
+  color: rgb(var(--v-theme-secondary)) !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  white-space: nowrap;
+}
+
+.vendor-switch-control {
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+/* ✅ MOBILE RESPONSIVE FOR VENDOR FILTER */
+@media (max-width: 768px) {
+  .products-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .vendor-product-filter {
+    width: 100%;
+  }
+  
+  .vendor-filter-wrapper {
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem;
+  }
+  
+  .vendor-filter-text {
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .vendor-filter-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .vendor-filter-text {
+    font-size: 0.8rem !important;
+  }
+  
+  .vendor-switch-control {
+    align-self: flex-start;
+    min-width: auto;
+  }
+}
+/* ✅ KEEP ALL YOUR EXISTING CSS EXACTLY AS IS - IT'S PERFECT TOO! */
+.vendor-filter-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.vendor-filter-chip {
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
+}
+
+.vendor-filter-hint {
+  font-style: italic;
+  color: rgb(var(--v-theme-on-surface-variant));
+  font-size: 0.75rem;
+}
+
+.vendor-filtered {
+  background-color: rgba(76, 175, 80, 0.1) !important;
+  border-left: 4px solid #4CAF50 !important;
+}
+
+.vendor-filter-icon {
+  color: #4CAF50 !important;
+  font-size: 1em;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* ✅ MOBILE RESPONSIVE FOR FILTER */
+@media (max-width: 768px) {
+  .vendor-filter-indicator {
+    align-items: flex-start;
+    margin-left: 0;
+    margin-top: 1rem;
+    width: 100%;
+  }
+  
+  .vendor-filter-chip {
+    font-size: 0.8rem !important;
+  }
+  
+  .vendor-filter-hint {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .vendor-filter-hint {
+    display: none; /* Hide hint on very small screens */
+  }
+}
+
 /* ✅ JUST CENTER THE TOP SUBMIT BUTTON */
 .top-submit-section {
   max-width: 25rem;
@@ -749,6 +1019,7 @@ onMounted(() => {
     display: none; /* Hide chip on very small screens */
   }
 }
+
 /* ✅ NEW LAYOUT STYLES */
 .content-wrapper {
   position: relative;
@@ -894,6 +1165,7 @@ onMounted(() => {
     margin-bottom: 1rem;
   }
 }
+
 .switch-container {
   padding: 1.5rem !important;
   display: flex !important;
@@ -1201,6 +1473,34 @@ onMounted(() => {
   .product-name {
     font-size: 1rem !important;
   }
+  
+  .navigation-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .location-controls {
+    flex-wrap: wrap;
+  }
+  
+  .vendor-controls {
+    flex-wrap: wrap;
+  }
+  
+  .products-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .edit-hint {
+    display: none;
+  }
+  
+  .products-location-container {
+    padding-bottom: 140px;
+  }
+  
+  .mb-safe-area {
+    margin-bottom: 100px !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1228,7 +1528,29 @@ onMounted(() => {
   .product-name {
     font-size: 0.95rem !important;
   }
+  
+  .location-header,
+  .vendor-header {
+    padding: 0.5rem;
+  }
+  
+  .vendor-section {
+    padding-left: 0.5rem;
+    margin-left: 0.25rem;
+  }
+  
+  .title-icon,
+  .location-marker-icon,
+  .vendor-store-icon {
+    font-size: 1em;
+  }
+  
+  .products-location-container {
+    padding-bottom: 160px;
+  }
+  
+  .mb-safe-area {
+    margin-bottom: 120px !important;
+  }
 }
 </style>
-  
-  
