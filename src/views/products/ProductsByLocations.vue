@@ -1,135 +1,122 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
 <template>
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
-    
-    <!-- ✅ ADD THE PRODUCT CREATION DIALOG HERE (RIGHT AFTER ConfirmDialogue) -->
-    <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
-
-    <!-- ✅ ENHANCED MOBILE-FRIENDLY PRODUCT CREATION DIALOG -->
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
-
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
-
-<!-- ✅ REPLACE ALL THE COMPLEX DIALOG CODE WITH THIS SIMPLE VERSION -->
-<v-dialog 
-  v-model="showProductDialog" 
-  max-width="500px"
-  persistent
-  :z-index="2000"
->
-  <v-card>
-    <v-card-title class="bg-green-darken-1 text-white">
-      <div class="d-flex align-center w-100">
-        <v-icon class="mr-2">mdi-plus-circle</v-icon>
-        <span>Add New Product</span>
-        <v-spacer></v-spacer>
-        <v-btn 
-          icon 
-          variant="text" 
-          @click="closeProductDialog"
-          color="white"
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </div>
-    </v-card-title>
-
-    <v-card-text class="pa-4">
-      <!-- Context Info -->
-      <v-alert type="info" class="mb-4">
-        <div><strong>Location:</strong> {{ selectedContext.location }}</div>
-        <div><strong>Vendor:</strong> {{ selectedContext.vendorName }}</div>
-      </v-alert>
-
-      <!-- Form -->
-      <v-form ref="productForm" v-model="productFormValid">
-        <!-- Product Autocomplete -->
-<v-autocomplete
-  v-model="newProduct.product_name"
-  v-model:search="productSearch"
-  label="Product Name"
-  :items="getAllProducts"
-  :rules="[requiredProductName]"
-  variant="outlined"
-  class="mb-3"
-  clearable
-  :no-data-text="getNoDataText"
-  :hint="getProductHint"
-  persistent-hint
-  :menu-props="{ 
-    attach: true,
-    closeOnClick: true,
-    closeOnContentClick: true,
-    maxHeight: '250px',
-    zIndex: 2010,
-    contentClass: 'desktop-product-dropdown',
-    offsetY: true,
-    nudgeBottom: 4,
-    transition: 'slide-y-transition'
-  }"
-/>
+    <v-dialog 
+      v-model="showProductDialog" 
+      max-width="500px"
+      persistent
+      :z-index="2000"
+    >
+      <v-card>
+        <v-card-title class="bg-green-darken-1 text-white">
+          <div class="d-flex align-center w-100">
+            <v-icon class="mr-2">mdi-plus-circle</v-icon>
+            <span>Add New Product</span>
+            <v-spacer></v-spacer>
+            <v-btn 
+              icon 
+              variant="text" 
+              @click="closeProductDialog"
+              color="white"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </div>
+        </v-card-title>
+      
+        <v-card-text class="pa-4">
+          <!-- Context Info -->
+          <v-alert type="info" class="mb-4">
+            <div><strong>Location:</strong> {{ selectedContext.location }}</div>
+            <div><strong>Vendor:</strong> {{ selectedContext.vendorName }}</div>
+          </v-alert>
         
-        
-        <!-- Other Product Name -->
-        <v-text-field
-          v-if="newProduct.product_name === 'Other'"
-          v-model="newProduct.other_product_name"
-          label="Other Product Name"
-          :rules="[requiredOtherProductName]"
-          variant="outlined"
-          class="mb-3"
-          clearable
-          autofocus
-        />
-        
-        <!-- Description -->
-        <v-textarea
-          v-model="newProduct.description"
-          label="Description (Optional)"
-          variant="outlined"
-          rows="3"
-          class="mb-3"
-        />
-        
-        <!-- Switch -->
-        <v-switch
-          v-model="newProduct.active"
-          label="Add to shopping list immediately"
-          color="primary"
-          class="mb-3"
-          :disabled="newProduct.product_name === 'Other'"
-        />
-
-        <!-- Hint for Other -->
-        <v-alert 
-          v-if="newProduct.product_name === 'Other'"
-          type="info" 
-          density="compact"
-          class="mb-3"
-        >
-          New products are automatically added to your shopping list
-        </v-alert>
-      </v-form>
-    </v-card-text>
-
-    <v-card-actions class="pa-4">
-      <v-btn @click="closeProductDialog" :disabled="isSubmittingProduct">
-        Cancel
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        @click="submitNewProduct"
-        :loading="isSubmittingProduct"
-        :disabled="!productFormValid"
-      >
-        <v-icon class="mr-1">mdi-plus</v-icon>
-        Add Product
-      </v-btn>
-    </v-card-actions>
-  </v-card>
-</v-dialog>
+          <!-- Form -->
+          <v-form ref="productForm" v-model="productFormValid">
+            <!-- Product Autocomplete -->
+            <v-autocomplete
+              v-model="newProduct.product_name"
+              v-model:search="productSearch"
+              label="Product Name"
+              :items="getAllProducts"
+              :rules="[requiredProductName]"
+              variant="outlined"
+              class="mb-3"
+              clearable
+              :no-data-text="getNoDataText"
+              :hint="getProductHint"
+              persistent-hint
+              :menu-props="{ 
+                attach: true,
+                closeOnClick: true,
+                closeOnContentClick: true,
+                maxHeight: '250px',
+                zIndex: 2010,
+                contentClass: 'desktop-product-dropdown',
+                offsetY: true,
+                nudgeBottom: 4,
+                transition: 'slide-y-transition'
+              }"
+            />
+            <!-- Other Product Name -->
+            <v-text-field
+              v-if="newProduct.product_name === 'Other'"
+              v-model="newProduct.other_product_name"
+              label="Other Product Name"
+              :rules="[requiredOtherProductName]"
+              variant="outlined"
+              class="mb-3"
+              clearable
+              autofocus
+            />
+            
+            <!-- Description -->
+            <v-textarea
+              v-model="newProduct.description"
+              label="Description (Optional)"
+              variant="outlined"
+              rows="3"
+              class="mb-3"
+            />
+            
+            <!-- Switch -->
+            <v-switch
+              v-model="newProduct.active"
+              label="Add to shopping list immediately"
+              color="primary"
+              class="mb-3"
+              :disabled="newProduct.product_name === 'Other'"
+            />
+            
+            <!-- Hint for Other -->
+            <v-alert 
+              v-if="newProduct.product_name === 'Other'"
+              type="info" 
+              density="compact"
+              class="mb-3"
+            >
+              New products are automatically added to your shopping list
+            </v-alert>
+          </v-form>
+        </v-card-text>
+      
+        <v-card-actions class="pa-4">
+          <v-btn @click="closeProductDialog" :disabled="isSubmittingProduct">
+            Cancel
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            @click="submitNewProduct"
+            :loading="isSubmittingProduct"
+            :disabled="!productFormValid"
+          >
+            <v-icon class="mr-1">mdi-plus</v-icon>
+            Add Product
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- ✅ END OF PRODUCT DIALOG -->
     <!-- ✅ HEADER CARD -->
     <v-card class="mx-auto mt-5">
@@ -166,24 +153,13 @@
         >
           Create Vendor/Product
         </v-btn>
-          <!-- ✅ ADD THIS TEMPORARY TEST BUTTON -->
-  <v-btn 
-    variant="elevated" 
-    color="success"
-    @click="testDialogOpen"
-    prepend-icon="mdi-test-tube"
-  >
-    🧪 Test Product Dialog
-  </v-btn>
       </div>
     </v-card>
-
     <!-- ✅ LOADING STATE -->
     <div v-if="isLoading" class="text-center pa-4">
       <v-progress-circular indeterminate color="primary" />
       <p class="mt-2">Loading locations...</p>
     </div>
-
     <!-- ✅ MAIN CONTENT -->
     <v-card v-else class="mt-4">
       <!-- ✅ SWITCH AND VENDOR FILTER -->
@@ -349,57 +325,50 @@
                       <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
                       <v-expand-transition>
                         <div v-show="expandedVendors.has(getVendorKey(location, vendor))" class="pa-4">
-                          <!-- ✅ ENHANCED PRODUCTS HEADER WITH VENDOR-SPECIFIC SWITCH -->
-                          <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductsByLocations.vue -->
-                          <!-- ✅ ENHANCED PRODUCTS HEADER WITH DOUBLE-CLICK -->
+                          <div class="products-header mb-3">
+                            <div class="products-header-content">
+                              <div class="products-title">
+                                <h4 
+                                  class="products-clickable-title"
+                                  @dblclick="openProductDialog(location, vendor)"
+                                >
+                                  <i class="fas fa-box products-icon"></i>
+                                  Products
+                                  <v-chip size="small" color="info" class="ml-2">
+                                    {{ getFilteredProducts(vendor).length }} items
+                                  </v-chip>
 
-<!-- ✅ FIND THIS SECTION AND REPLACE THE PRODUCTS HEADER (Around line 220) -->
-<div class="products-header mb-3">
-  <div class="products-header-content">
-    <div class="products-title">
-      <h4 
-        class="products-clickable-title"
-        @dblclick="openProductDialog(location, vendor)"
-        @click="handleProductTitleClick(location, vendor)"
-      >
-        <i class="fas fa-box products-icon"></i>
-        Products
-        <v-chip size="small" color="info" class="ml-2">
-          {{ getFilteredProducts(vendor).length }} items
-        </v-chip>
-        
-        <!-- ✅ ADD SINGLE CLICK ON PLUS ICON AS BACKUP -->
-        <v-icon 
-          size="small" 
-          color="success"
-          class="ml-2 add-product-hint"
-          title="Double-click to add new product OR click this plus"
-          @click.stop="openProductDialog(location, vendor)"
-        >
-          mdi-plus-circle
-        </v-icon>
-      </h4>
-    </div>
-
-    <!-- Vendor-specific filter switch -->
-    <div class="vendor-product-filter">
-      <div class="vendor-filter-wrapper">
-        <span class="vendor-filter-text">
-          {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
-        </span>
-        <v-switch
-          :model-value="getVendorProductFilter(vendor)"
-          @update:model-value="setVendorProductFilter(vendor, $event)"
-          color="secondary"
-          hide-details
-          density="compact"
-          class="vendor-switch-control"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-                        
+                                  <!-- ✅ ADD SINGLE CLICK ON PLUS ICON AS BACKUP -->
+                                  <v-icon 
+                                    size="small" 
+                                    color="success"
+                                    class="ml-2 add-product-hint"
+                                    title="Double-click to add new product OR click this plus"
+                                    @click.stop="openProductDialog(location, vendor)"
+                                  >
+                                    mdi-plus-circle
+                                  </v-icon>
+                                </h4>
+                              </div>
+                            
+                              <!-- Vendor-specific filter switch -->
+                              <div class="vendor-product-filter">
+                                <div class="vendor-filter-wrapper">
+                                  <span class="vendor-filter-text">
+                                    {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
+                                  </span>
+                                  <v-switch
+                                    :model-value="getVendorProductFilter(vendor)"
+                                    @update:model-value="setVendorProductFilter(vendor, $event)"
+                                    color="secondary"
+                                    hide-details
+                                    density="compact"
+                                    class="vendor-switch-control"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>              
                           <!-- ✅ PRODUCTS LIST (UNCHANGED) -->
                           <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
                             <v-card
@@ -457,7 +426,7 @@
             </v-card>
           </div>
 
-          <!-- ✅ FIXED GLOBAL CONTROLS (RIGHT SIDE) -->
+          <!-- ✅ GLOBAL CONTROLS (RIGHT SIDE) -->
           <div class="global-controls-fixed">
             <div class="global-controls">
               <h4 class="controls-title">
@@ -1029,13 +998,6 @@ function testDialogOpen() {
   console.log('🧪 Calling openProductDialog with test data...');
   openProductDialog(testLocation, testVendor);
 }
-// ✅ DEBUG: Test click handler
-function handleProductTitleClick(location, vendor) {
-  console.log('🎯 SINGLE CLICK detected on Products title');
-  console.log('📍 Location:', location);
-  console.log('🏪 Vendor:', vendor.vendor_name);
-  console.log('🔍 Function exists:', typeof openProductDialog);
-}
 // ✅ PRODUCT AND VENDOR FUNCTIONS
 function handleProductClick(product, event, productIndex, vendorProducts) {
   if (event?.shiftKey && lastSelectedIndex.value !== null) {
@@ -1151,11 +1113,6 @@ async function submitChanges() {
     const activeCount = changedProducts.filter(p => p.active).length;
     const inactiveCount = changedProducts.filter(p => !p.active).length;
     
-    console.log('📊 SUBMISSION SUMMARY:');
-    console.log(`  Total products: ${changedProducts.length}`);
-    console.log(`  ✅ Will be marked active: ${activeCount}`);
-    console.log(`  ❌ Will be marked inactive: ${inactiveCount}`);
-    
     const submitData = {
       products: changedProducts,
       id: uuidv4(),
@@ -1250,20 +1207,6 @@ function debugDesktopDropdown() {
 // ✅ MAKE IT AVAILABLE IN CONSOLE
 onMounted(() => {
   fetchData();
-  
-  setTimeout(() => {
-    window.testDialogOpen = testDialogOpen;
-    window.openProductDialog = openProductDialog;
-    window.debugMobileDialog = debugMobileDialog;
-    window.debugDesktopDropdown = debugDesktopDropdown; // ✅ ADD THIS
-    
-    console.log('🔧 Test functions now available:');
-    console.log('  - testDialogOpen() - Test dialog with sample data');
-    console.log('  - debugDesktopDropdown() - Debug desktop dropdown');
-    console.log('  - openProductDialog(location, vendor) - Open dialog manually');
-    console.log('  - debugMobileDialog() - Check mobile dialog state');
-    console.log('🔧 Or just click the "🧪 Test Product Dialog" button!');
-  }, 1000);
 });
 
 </script>
