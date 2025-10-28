@@ -266,13 +266,8 @@ export default {
 // ✅ UPDATE YOUR EventService.js
 async putProducts(products) {
   try {
-    console.log('🔍 EventService putProducts called with:', products);
-    console.log('🔍 API URL:', api_url + "products/update"); // ✅ OR "products" depending on your route
-    
-    // ✅ USE PATCH METHOD AS COPILOT SUGGESTED
     const response = await axios.patch(api_url + "products/update", products);
     
-    console.log('✅ EventService putProducts success:', response);
     return response;
     
   } catch (error) {

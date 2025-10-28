@@ -946,9 +946,7 @@ export default new Vuex.Store({
     },
     async updatePlant({ commit }, plant) {
       try {
-        console.log('🔍 Store: Updating plant with ID:', plant.id);
         const response = await EventService.putPlant(plant);
-        console.log('✅ Store: API response:', response);
 
         commit('SET_PLANT', response.data);
         return response.data; // ✅ IMPORTANT: Return something truthy!
@@ -1159,7 +1157,6 @@ export default new Vuex.Store({
     },
 
     async createProduct({ commit }, product) {
-      console.log('📝 Create product called with:', product);
       EventService.postProduct(product)
         .then((response) => {
           commit("ADD_PRODUCT", response.data);
@@ -1233,15 +1230,11 @@ export default new Vuex.Store({
     // ✅ UPDATE YOUR store.js putProducts ACTION
     async putProducts({ commit }, products) {
       try {
-        console.log('🔍 Store putProducts called with:', products);
 
         const response = await EventService.putProducts(products);
 
-        console.log('✅ Store putProducts response:', response);
-
         // ✅ RETURN TRUE ON SUCCESS
         if (response && (response.status === 200 || response.status === 201)) {
-          console.log('✅ Store putProducts success');
 
           // ✅ UPDATE STORE STATE IF NEEDED
           if (response.data) {

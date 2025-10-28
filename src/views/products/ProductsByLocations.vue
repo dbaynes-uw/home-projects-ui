@@ -1068,10 +1068,7 @@ function updateProduct(product) {
 async function submitChanges() {
   try {
     isSubmitting.value = true;
-    
-    console.log('🔍 PRE-SUBMIT DEBUG:');
-    console.log('- vendorsProducts.value:', vendorsProducts.value);
-    
+        
     if (!Array.isArray(vendorsProducts.value) || vendorsProducts.value.length === 0) {
       throw new Error('No vendors products to update!');
     }
@@ -1087,8 +1084,6 @@ async function submitChanges() {
             vendor_name: vendor.vendor_name || product.vendor_name,
             location: vendor.location || product.location
           });
-          
-          console.log(`📋 Vendor ${vendorIndex}, Product ${productIndex}: "${product.product_name}" - Active: ${product.active}`);
         });
       }
     });
@@ -1118,13 +1113,10 @@ async function submitChanges() {
       id: uuidv4(),
       created_by: store.state.user?.resource_owner?.email || '',
     };
-    
-    console.log('🚀 Submitting all product states:', submitData);
-    
+        
     const result = await store.dispatch('putProducts', submitData);
     
     if (result !== false) {
-      console.log('✅ All product states updated successfully');
       alert(`✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`);
       
       await Promise.all([
