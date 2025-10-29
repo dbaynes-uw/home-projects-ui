@@ -225,15 +225,31 @@
               variant="outlined"
               class="location-card"
             >
-              <!-- ✅ LOCATION HEADER -->
+              <!-- ✅ UPDATE THE LOCATION HEADER SECTION (Around line 180) -->
               <div 
                 class="location-header" 
                 @click="toggleLocation(locations.indexOf(location))"
               >
                 <i class="fas fa-map-marker-alt location-marker-icon"></i>
                 <span class="location-name">{{ location }}</span>
-                
+                        
                 <div class="location-controls">
+                  <!-- ✅ ADD LOCATION-LEVEL FILTER SWITCH -->
+                  <div class="location-filter-wrapper mr-3">
+                    <span class="location-filter-text">
+                      {{ getLocationFilter(location) ? 'Selected Only:' : 'All Items:' }}
+                    </span>
+                    <v-switch
+                      :model-value="getLocationFilter(location)"
+                      @update:model-value="setLocationFilter(location, $event)"
+                      color="primary"
+                      hide-details
+                      density="compact"
+                      class="location-switch-control ml-2"
+                      @click.stop
+                    />
+                  </div>
+                  
                   <v-chip 
                     size="small" 
                     :color="expandedLocations.has(locations.indexOf(location)) ? 'primary' : 'default'"
@@ -263,7 +279,6 @@
                   ></i>
                 </div>
               </div>
-
               <!-- ✅ LOCATION CONTENT (VENDORS) -->
               <v-expand-transition>
                 <div v-show="expandedLocations.has(locations.indexOf(location))" class="pa-4">
@@ -286,12 +301,28 @@
                       >
                         <i class="fas fa-store vendor-store-icon"></i>
                         <span class="vendor-name">{{ vendor.vendor_name }}</span>
-                        
+
                         <!-- ✅ FILTER INDICATOR -->
                         <i v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)" 
                            class="fas fa-filter vendor-filter-icon mr-2"></i>
-                        
+
                         <div class="vendor-controls">
+                          <!-- ✅ MOVE THE VENDOR PRODUCT FILTER HERE -->
+                          <div class="vendor-filter-wrapper mr-3">
+                            <span class="vendor-filter-text">
+                              {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
+                            </span>
+                            <v-switch
+                              :model-value="getVendorProductFilter(vendor)"
+                              @update:model-value="setVendorProductFilter(vendor, $event)"
+                              color="secondary"
+                              hide-details
+                              density="compact"
+                              class="vendor-switch-control ml-2"
+                              @click.stop
+                            />
+                          </div>
+
                           <v-chip 
                             size="small" 
                             :color="expandedVendors.has(getVendorKey(location, vendor)) ? 'secondary' : 'default'"
@@ -300,7 +331,7 @@
                             <i class="fas fa-box chip-icon"></i>
                             {{ getFilteredProducts(vendor).length }} products
                           </v-chip>
-                          
+
                           <v-btn
                             @click.stop="editVendor(vendor)"
                             size="x-small"
@@ -311,7 +342,7 @@
                             <i class="fas fa-edit"></i>
                             <span class="edit-hint ml-1">Edit</span>
                           </v-btn>
-                          
+
                           <i 
                             :class="[
                               'fas', 
@@ -349,24 +380,7 @@
                                     mdi-plus-circle
                                   </v-icon>
                                 </h4>
-                              </div>
-                            
-                              <!-- Vendor-specific filter switch -->
-                              <div class="vendor-product-filter">
-                                <div class="vendor-filter-wrapper">
-                                  <span class="vendor-filter-text">
-                                    {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
-                                  </span>
-                                  <v-switch
-                                    :model-value="getVendorProductFilter(vendor)"
-                                    @update:model-value="setVendorProductFilter(vendor, $event)"
-                                    color="secondary"
-                                    hide-details
-                                    density="compact"
-                                    class="vendor-switch-control"
-                                  />
-                                </div>
-                              </div>
+                              </div>                           
                             </div>
                           </div>              
                           <!-- ✅ PRODUCTS LIST (UNCHANGED) -->
@@ -499,7 +513,7 @@ const selectedVendorFilter = ref(null);
 const vendorFilterName = ref('');
 // ✅ NEW: VENDOR-SPECIFIC PRODUCT FILTER STATE
 const vendorProductFilters = ref(new Map());
-
+const locationFilters = ref(new Map()); // location -> boolean (true = selected only, false = all items)
 // ✅ HIERARCHICAL DROPDOWN STATE
 const expandedLocations = ref(new Set());
 const expandedVendors = ref(new Set());
@@ -834,10 +848,36 @@ watch(() => newProduct.value.product_name, (newValue) => {
     newProduct.value.other_product_name = '';
   }
 });
+// ✅ ADD LOCATION FILTER FUNCTIONS
+function getLocationFilter(location) {
+  return locationFilters.value.get(location) ?? showShoppingList.value;
+}
+
+function setLocationFilter(location, value) {
+  console.log(`🎯 Setting location filter for ${location}: ${value ? 'Selected Only' : 'All Items'}`);
+  locationFilters.value.set(location, value);
+  
+  // Force reactivity
+  // Note: We don't need refreshKey here since this will filter at computation level
+}
+
 // ✅ VENDOR-SPECIFIC PRODUCT FILTER FUNCTIONS
 function getVendorProductFilter(vendor) {
   const vendorId = vendor.vendor_id || vendor.id;
-  return vendorProductFilters.value.get(vendorId) ?? showShoppingList.value;
+  
+  // Check if vendor has specific filter, otherwise use location filter, otherwise use global
+  if (vendorProductFilters.value.has(vendorId)) {
+    return vendorProductFilters.value.get(vendorId);
+  }
+  
+  // Find the location for this vendor
+  const vendorLocation = getVendorLocation(vendor);
+  if (vendorLocation && locationFilters.value.has(vendorLocation)) {
+    return locationFilters.value.get(vendorLocation);
+  }
+  
+  // Fall back to global filter
+  return showShoppingList.value;
 }
 
 function setVendorProductFilter(vendor, value) {
@@ -1024,6 +1064,19 @@ function handleProductClick(product, event, productIndex, vendorProducts) {
   }
 }
 
+// ✅ HELPER FUNCTION TO GET VENDOR'S LOCATION
+function getVendorLocation(vendor) {
+  // Find which location this vendor belongs to
+  for (const location of locations.value) {
+    const locationVendors = vendorsProducts.value.filter(v => v?.location === location);
+    if (locationVendors.some(v => (v.vendor_id || v.id) === (vendor.vendor_id || vendor.id))) {
+      return location;
+    }
+  }
+  return null;
+}
+
+// ✅ UPDATE getVendorsForLocation TO CONSIDER LOCATION FILTER
 function getVendorsForLocation(location) {
   const vendors = vendorsProducts.value;
   
@@ -1034,10 +1087,21 @@ function getVendorsForLocation(location) {
   
   let locationVendors = vendors.filter(vendor => vendor?.location === location);
   
+  // Apply vendor filter if set
   if (selectedVendorFilter.value) {
     locationVendors = locationVendors.filter(vendor => 
       (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
     );
+  }
+  
+  // ✅ NEW: APPLY LOCATION FILTER
+  const locationFilterValue = getLocationFilter(location);
+  if (locationFilterValue) {
+    // Filter to vendors that have at least one selected product
+    locationVendors = locationVendors.filter(vendor => {
+      if (!vendor.products || !Array.isArray(vendor.products)) return false;
+      return vendor.products.some(product => product?.active);
+    });
   }
   
   return locationVendors;
@@ -2330,6 +2394,85 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vendor-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(var(--v-theme-secondary), 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(var(--v-theme-secondary), 0.2);
+  min-width: 140px;
+}
+
+.vendor-filter-text {
+  color: rgb(var(--v-theme-secondary)) !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  white-space: nowrap;
+}
+
+.vendor-switch-control {
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+/* ✅ SIMPLIFY PRODUCTS HEADER */
+.products-header-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+}
+
+.products-title {
+  flex: 1;
+}
+
+/* ✅ MOBILE RESPONSIVE FOR VENDOR FILTER */
+@media (max-width: 768px) {
+  .vendor-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  
+  .vendor-filter-wrapper {
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    min-width: auto;
+  }
+  
+  .vendor-filter-text {
+    font-size: 0.85rem !important;
+  }
+  
+  .vendor-switch-control {
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vendor-filter-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .vendor-filter-text {
+    font-size: 0.8rem !important;
+  }
+  
+  .vendor-switch-control {
+    align-self: flex-start;
+    min-width: auto;
+  }
 }
 
 .products-header h4 {
