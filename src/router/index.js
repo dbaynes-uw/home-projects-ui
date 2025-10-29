@@ -511,7 +511,15 @@ router.beforeEach((to, from, next) => {
     next()
   }
 });
-
+router.onError((error) => {
+  console.error('Router error:', error);
+  
+  if (error.message.includes('Loading CSS chunk') || 
+      error.message.includes('ChunkLoadError')) {
+    console.log('🔄 Router chunk load failed - reloading...');
+    window.location.reload(true);
+  }
+});
 // ✅ CLEANUP ON UNLOAD
 window.addEventListener('beforeunload', () => {
   const store = router.app?.$store;
