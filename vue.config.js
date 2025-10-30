@@ -1,5 +1,4 @@
 const { defineConfig } = require("@vue/cli-service");
-const webpack = require('webpack')
 
 module.exports = defineConfig({
   devServer: {
@@ -30,11 +29,6 @@ module.exports = defineConfig({
       }
     },
     plugins: [
-      new webpack.DefinePlugin({
-        __VUE_OPTIONS_API__: JSON.stringify(true),
-        __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
-        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false)
-      }),
       new (require("webpack")).ProvidePlugin({
         process: 'process/browser',
         Buffer: ['buffer', 'Buffer'],

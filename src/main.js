@@ -106,23 +106,6 @@ app.use(store);
 app.use(vuetify);
 app.component("v-select", vSelect);
 
-window.addEventListener('unhandledrejection', event => {
-  if (event.reason?.message?.includes('Loading CSS chunk') || 
-      event.reason?.message?.includes('ChunkLoadError')) {
-    console.log('🔄 CSS chunk load failed - reloading page...');
-    
-    // Clear any cached data
-    if ('caches' in window) {
-      caches.keys().then(names => {
-        names.forEach(name => caches.delete(name));
-      });
-    }
-    
-    // Force reload without cache
-    window.location.reload(true);
-    event.preventDefault();
-  }
-});
 // ✅ BASIC USER RESTORATION
 try {
   const userString = localStorage.getItem('user');
