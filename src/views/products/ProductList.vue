@@ -512,17 +512,6 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
-
-// ✅ SEARCH WATCHER
-watch(searchQuery, (newQuery, oldQuery) => {
-  if (newQuery !== oldQuery) {
-    console.log(`🔍 Search query changed: "${oldQuery}" → "${newQuery}"`);
-    if (newQuery) {
-      console.log(`🔍 Found ${filteredProducts.value.length} matching products`);
-      console.log(`🔍 ${activeSearchCount.value} active, ${inactiveSearchCount.value} inactive`);
-    }
-  }
-});
 </script>
 <style scoped>
 /* ✅ SEARCH HIGHLIGHTING */

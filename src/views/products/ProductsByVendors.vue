@@ -283,7 +283,6 @@ const toggleProductActive = (item) => {
 
 const toggleShoppingListDisplay = () => {
   showShoppingList.value = !showShoppingList.value;
-  console.log(`🔄 Shopping list mode: ${showShoppingList.value ? 'Active items only' : 'All items'}`);
 };
 
 const toggleVendor = (index) => {
@@ -326,10 +325,7 @@ const onSubmit = async () => {
     
     // ✅ NOW USE EXACTLY THE SAME LOGIC AS PRODUCTLIST
     const sourceData = allProducts; // This is our flattened product array
-    
-    console.log('🔍 Source data:', sourceData.length, 'items');
-    console.log('🔍 Mode: Vendor Products (flattened)');
-    
+        
     // ✅ TRACK CHANGES EXPLICITLY (IDENTICAL TO PRODUCTLIST)
     const changedProducts = sourceData.map(product => {
       const isCurrentlyActive = !!product.active;
@@ -457,9 +453,7 @@ const debugCurrentState = () => {
 // ✅ LIFECYCLE
 onMounted(async () => {
   try {
-    console.log('🔍 ProductsByVendors mounted, fetching data...');
     await store.dispatch('fetchVendorsProducts');
-    console.log('✅ Vendors products data loaded:', vendorsProducts.value.length, 'items');
   } catch (error) {
     console.error('❌ Error loading vendors products:', error);
   } finally {
@@ -468,17 +462,17 @@ onMounted(async () => {
 });
 
 // ✅ WATCHERS
-watch(vendorsProducts, (newProducts) => {
-  console.log('🔄 Vendors products updated:', newProducts.length, 'items');
-}, { deep: true });
-
-watch(showShoppingList, (newValue) => {
-  console.log(`🔄 Shopping list display mode: ${newValue ? 'Active items only' : 'All items'}`);
-});
-
-watch(displayedVendors, (newVendors) => {
-  console.log(`🔄 Displayed vendors updated: ${newVendors.length} vendors, ${getActiveProductsCount.value} active products`);
-}, { deep: true });
+//watch(vendorsProducts, (newProducts) => {
+//  console.log('🔄 Vendors products updated:', newProducts.length, 'items');
+//}, { deep: true });
+//
+//watch(showShoppingList, (newValue) => {
+//  console.log(`🔄 Shopping list display mode: ${newValue ? 'Active items only' : 'All items'}`);
+//});
+//
+//watch(displayedVendors, (newVendors) => {
+//  console.log(`🔄 Displayed vendors updated: ${newVendors.length} vendors, ${getActiveProductsCount.value} active products`);
+//}, { deep: true });
 </script>
 
 <!-- ✅ STYLES STAY THE SAME -->
