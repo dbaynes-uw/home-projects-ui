@@ -170,6 +170,12 @@ export default new Vuex.Store({
     SET_GOLFS(state, golfs) {
       state.golfs = golfs;
     },
+    ADD_HEALTH_MARKER(state, healthMarker) {
+      state.healthMarkers.push(healthMarker);
+    },
+    SET_HEALTH_MARKERS(state, health_markers) {
+      state.healthMarkers = health_markers;
+    },
     ADD_MED(state, med) {
       state.meds.push(med);
     },
@@ -1031,6 +1037,7 @@ export default new Vuex.Store({
           alert("Golf Post Error: ", error.response.data )
         });
     },
+
     async deleteGolf({ commit }, golf) {
       EventService.deleteGolf(golf)
         .then((response) => {
@@ -1065,6 +1072,48 @@ export default new Vuex.Store({
           alert("Golf Fetch Error: ", error.response.data )
         });
     },
+    // ✅ HealthMarkers ACTIONS
+    async createHealthMarker({ commit }, healthMarker) {
+      EventService.postHealthMarker(healthMarker)
+        .then(() => {
+          commit("ADD_HEALTH_MARKER", healthMarker);
+          alert("Health Marker was successfully added.");
+        })
+        .catch((error) => {
+          alert("Health Marker Post Error: ", error.response.data )
+        });
+    },
+    async fetchHealthMarkers({ commit }) {
+      try {
+        commit('SET_HEALTH_MARKERS', []);
+
+        const response = await EventService.getHealthMarkers();
+
+        // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
+        let healthMarkersArray = [];
+
+        if (Array.isArray(response.data)) {
+          // ✅ NEW FORMAT: Direct array
+          healthMarkersArray = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          // ✅ OLD FORMAT: Paginated (fallback)
+          healthMarkersArray = response.data.data;
+        } else {
+          console.error('❌ Store: Unexpected response format:', response);
+          healthMarkersArray = [];
+        }
+
+        commit('SET_HEALTH_MARKERS', healthMarkersArray);
+
+        return healthMarkersArray;
+
+      } catch (error) {
+        console.error('❌ Store: Error fetching health markers:', error);
+        commit('SET_HEALTH_MARKERS', []);
+        throw error;
+      }
+    },
+
     // ✅ FIXED createMed ACTION (around line 980)
     async createMed({ commit, dispatch }, med) {
       try {

@@ -195,27 +195,27 @@ const routes = [
   {
     path: "/glucose-readings",
     name: "GlucoseReadings",
-    component: () => import('@/views/glucose_readings/GlucoseReadings.vue'),
+    component: () => import('@/views/glucose-readings/GlucoseReadings.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: "/glucose_readings/:id?",
+    path: "/glucose-readings/:id?",
     name: "GlucoseReadingDetails",
     props: true,
-    component: () => import('@/components/glucose_readings/GlucoseReadingDetails.vue'),
+    component: () => import('@/components/glucose-readings/GlucoseReadingDetails.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: "/glucose_reading/create",
+    path: "/glucose-reading/create",
     name: "GlucoseReadingCreate",
-    component: () => import('@/views/glucose_readings/GlucoseReadingCreate.vue'),
+    component: () => import('@/views/glucose-readings/GlucoseReadingCreate.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: "/glucose_reading/:id",
+    path: "/glucose-reading/:id",
     name: "GlucoseReadingEdit",
     props: true,
-    component: () => import('@/views/glucose_readings/GlucoseReadingEdit.vue'),
+    component: () => import('@/views/glucose-readings/GlucoseReadingEdit.vue'),
     meta: { requiresAuth: true },
   },
 
@@ -246,8 +246,41 @@ const routes = [
     component: () => import('@/views/golfs/GolfEdit.vue'),
     meta: { requiresAuth: true}
   },
+  // ✅ MEDS - ROUTES
+  // HEALTH MARKERS:
+    {
+    path: "/health-marker/create",
+    name: "HealthMarkerCreate",
+    component: () => import('@/views/meds/HealthMarkerCreate.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/health-markers",
+    name: "HealthMarkerList",
+    component: () => import('@/views/meds/HealthMarkerList.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/health-markers/category",
+    name: "HealthMarkersByCategory",
+    component: () => import('@/views/meds/HealthMarkersByCategory.vue'),
+    meta: { requiresAuth: true },
+  },
+  /*
+  {
+    path: "/health-marker/:id",
+    name: "HealthMarkerEdit",
+    props: true,
+    component: () => import('@/views/meds/HealthMarkerEdit.vue'),
+    meta: { requiresAuth: true },
+  },
+*/
+  {
+    path: '/test/health-marker-card',
+    name: 'HealthMarkerCardTest',
+    component: () => import('@/components/test/HealthMarkerCardTest.vue')
+  },
 
-  // ✅ MEDS - FIXED ROUTES
   {
     path: "/meds",
     name: "MedList",

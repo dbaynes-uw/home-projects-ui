@@ -41,14 +41,7 @@ export default {
     this.init();
     return axios.put(api_url + "books" + `/${updatedBook.id}`, updatedBook);
   },
-  getGarden(id) {
-    this.init();
-    return axios.get(api_url + "gardens/" + id);
-  },
-  getGardens() {
-    this.init();
-    return axios.get(api_url + "gardens")
-  },
+
   getEvent(id) {
     this.init();
     return axios.get(api_url + "events/" + id);
@@ -134,26 +127,13 @@ export default {
     this.init();
     return axios.post(api_url + 'films', film);
   },
-  deleteGolf(golf) {
+  getGarden(id) {
     this.init();
-    // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "golfs/" + `${golf.id}`);
+    return axios.get(api_url + "gardens/" + id);
   },
-  getGolf(id) {
+  getGardens() {
     this.init();
-    return axios.get(api_url + "golfs/" + id);
-  },
-  getGolfs() {
-    this.init();
-    return axios.get(api_url + "golfs")
-  },
-  async putGolf(updatedGolf) {
-    this.init();
-    return axios.put(api_url + "golfs" + `/${updatedGolf.id}`, updatedGolf);
-  },
-  async postGolf(golf) {
-    this.init();
-    return axios.post(api_url + 'golfs', golf);
+    return axios.get(api_url + "gardens")
   },
   deleteGarden(garden) {
     this.init();
@@ -169,6 +149,28 @@ export default {
     this.init();
     return axios.put(api_url + "gardens" + `/${updatedGarden.id}`, updatedGarden);
   },
+  getGolf(id) {
+    this.init();
+    return axios.get(api_url + "golfs/" + id);
+  },
+  getGolfs() {
+    this.init();
+    return axios.get(api_url + "golfs")
+  },
+  deleteGolf(golf) {
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "golfs/" + `${golf.id}`);
+  },
+  async putGolf(updatedGolf) {
+    this.init();
+    return axios.put(api_url + "golfs" + `/${updatedGolf.id}`, updatedGolf);
+  },
+  async postGolf(golf) {
+    this.init();
+    return axios.post(api_url + 'golfs', golf);
+  },
+
   async putPlant(updatedPlant) {
     this.init();
     return axios.put(api_url + "plants" + `/${updatedPlant.id}`, updatedPlant);
@@ -203,6 +205,23 @@ export default {
     //*  throw new Error("Meal is required");
     //*}
     return axios.post(api_url + 'glucose_readings', glucose_reading);
+  },
+  getHealthMarkers() {
+    this.init();
+    return axios.get(api_url + "health_markers")
+  },
+  postHealthMarker(healthMarker) {
+    this.init();
+    return axios.post(api_url + 'health_markers', healthMarker);
+  },
+  async putHealthMarker(updatedHealthMarker) {
+    this.init();
+    return axios.put(api_url + "health_markers" + `/${updatedHealthMarker.id}`, updatedHealthMarker);
+  },
+  deleteHealthMarker(healthMarker) {
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "health_markers/" + `${healthMarker.id}`);
   },
   deleteMed(med) {
     this.init();

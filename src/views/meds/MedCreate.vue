@@ -254,7 +254,7 @@ const onSubmit = async () => {
     const result = await store.dispatch('createMed', medData);    
     
     if (result !== false) {
-      alert(`✅ Med was successfully added for ${medData.date_of_occurrence}`);
+      alert(`✅ Med submitted for ${medData.date_of_occurrence}`);
       
       // ✅ NAVIGATE TO MED LIST
       await router.push({ name: 'MedList' });
