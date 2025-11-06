@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/meds/HealthMarkerCreate.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/OOBs/HealthMarkerCreate.vue -->
 <template>
   <div class="page-wrapper">
     <div class="health-marker-create-container">
@@ -91,20 +91,19 @@
                     
                     <p><strong>Normal Range:</strong> {{ selectedMarkerInfo.normalRange }}</p>
                     <p><strong>Description:</strong> {{ selectedMarkerInfo.description }}</p>
-                    <p><strong>Test Frequency:</strong> {{ selectedMarkerInfo.testFrequency }}</p>
+                    <p><strong>Marker Frequency:</strong> {{ selectedMarkerInfo.markerFrequency }}</p>
                   </div>
                 </v-card-text>
               </v-card>
-
-              <!-- ✅ TEST DATE -->
+              <!-- ✅ MARKER DATE -->
               <v-text-field 
-                label="Test Date"
-                v-model="healthMarker.test_date"
+                label="Marker Date"
+                v-model="healthMarker.marker_date"
                 type="date"
-                :rules="[requiredTestDate]"
+                :rules="[requiredMarkerDate]"
                 variant="outlined"
                 class="mb-4"
-                :error="!isTestDateValid && hasAttemptedSubmit"
+                :error="!isMarkerDateValid && hasAttemptedSubmit"
               >
                 <template v-slot:prepend-inner>
                   <v-icon class="icon-css">mdi-calendar</v-icon>
@@ -114,19 +113,33 @@
               <!-- ✅ TEST RESULT -->
               <v-text-field 
                 :label="`Test Result ${selectedMarkerInfo ? '(' + selectedMarkerInfo.unit + ')' : ''}`"
-                v-model="healthMarker.test_result"
+                v-model="healthMarker.marker_result"
                 type="number"
                 step="0.01"
-                :rules="[requiredTestResult]"
+                :rules="[requiredMarkerResult]"
                 variant="outlined"
                 class="mb-4"
-                :error="!isTestResultValid && hasAttemptedSubmit"
+                :error="!isMarkerResultValid && hasAttemptedSubmit"
                 @update:model-value="onResultChange"
               >
                 <template v-slot:prepend-inner>
                   <v-icon class="icon-css">mdi-chart-line</v-icon>
                 </template>
               </v-text-field>
+              <!-- ✅ LAB NAME -->
+              <v-text-field 
+                label="Lab Name (Optional)"
+                v-model="healthMarker.lab_name"
+                variant="outlined"
+                class="mb-4"
+              />
+              <!-- ✅ DOCTOR NAME -->
+              <v-text-field 
+                label="Doctor Name (Optional)"
+                v-model="healthMarker.doctor_name"
+                variant="outlined"
+                class="mb-4"
+              />
 
               <!-- ✅ RESULT STATUS INDICATOR -->
               <v-alert
@@ -187,7 +200,7 @@
           <div class="debug-grid">
             <div><strong>Form Valid:</strong> {{ isFormValid }}</div>
             <div><strong>Selected Marker:</strong> {{ healthMarker.marker_name }}</div>
-            <div><strong>Test Result:</strong> {{ healthMarker.test_result }}</div>
+            <div><strong>Marker Result:</strong> {{ healthMarker.marker_result }}</div>
             <div><strong>Result Status:</strong> {{ resultStatus?.type }}</div>
             <div><strong>User Email:</strong> {{ user?.email }}</div>
             <div><strong>Attempted Submit:</strong> {{ hasAttemptedSubmit }}</div>
@@ -227,14 +240,16 @@ const formRef = ref(null);
 const isSubmitting = ref(false);
 const hasAttemptedSubmit = ref(false);
 const isMarkerNameValid = ref(false);
-const isTestDateValid = ref(false);
-const isTestResultValid = ref(false);
+const isMarkerDateValid = ref(false);
+const isMarkerResultValid = ref(false);
 
 // ✅ FORM DATA
 const healthMarker = ref({
   marker_name: '',
-  test_date: '',
-  test_result: '',
+  marker_date: '',
+  marker_result: '',
+  lab_name: '',
+  doctor_name: '',  
   notes: '',
   created_by: '',
 });
@@ -251,12 +266,12 @@ const selectedMarkerInfo = computed(() => {
 });
 
 const resultStatus = computed(() => {
-  if (!selectedMarkerInfo.value || !healthMarker.value.test_result) return null;
-  return getResultStatus(healthMarker.value.marker_name, healthMarker.value.test_result);
+  if (!selectedMarkerInfo.value || !healthMarker.value.marker_result) return null;
+  return getResultStatus(healthMarker.value.marker_name, healthMarker.value.marker_result);
 });
 
 const isFormValid = computed(() => {
-  return isMarkerNameValid.value && isTestDateValid.value && isTestResultValid.value;
+  return isMarkerNameValid.value && isMarkerDateValid.value && isMarkerResultValid.value;
 });
 
 // ✅ VALIDATION RULES
@@ -270,43 +285,43 @@ const requiredMarkerName = (value) => {
   }
 };
 
-const requiredTestDate = (value) => {
+const requiredMarkerDate = (value) => {
   if (value && value.trim()) {
-    const testDate = new Date(value);
+    const markerDate = new Date(value);
     const today = new Date();
     
-    if (testDate > today) {
-      isTestDateValid.value = false;
-      return 'Test date cannot be in the future';
+    if (markerDate > today) {
+      isMarkerDateValid.value = false;
+      return 'Marker date cannot be in the future';
     }
-    
-    isTestDateValid.value = true;
+
+    isMarkerDateValid.value = true;
     return true;
   } else {
-    isTestDateValid.value = false;
-    return 'Please enter test date';
+    isMarkerDateValid.value = false;
+    return 'Please enter marker date';
   }
 };
 
-const requiredTestResult = (value) => {
+const requiredMarkerResult = (value) => {
   if (value && value.toString().trim()) {
     const numValue = parseFloat(value);
     
     if (isNaN(numValue)) {
-      isTestResultValid.value = false;
+      isMarkerResultValid.value = false;
       return 'Please enter a valid number';
     }
     
     if (numValue < 0) {
-      isTestResultValid.value = false;
-      return 'Test result cannot be negative';
+      isMarkerResultValid.value = false;
+      return 'Marker result cannot be negative';
     }
-    
-    isTestResultValid.value = true;
+
+    isMarkerResultValid.value = true;
     return true;
   } else {
-    isTestResultValid.value = false;
-    return 'Please enter test result';
+    isMarkerResultValid.value = false;
+    return 'Please enter marker result';
   }
 };
 
@@ -330,7 +345,7 @@ const onResultChange = (result) => {
   console.log('📊 Test result entered:', result);
   
   if (hasAttemptedSubmit.value) {
-    requiredTestResult(result);
+    requiredMarkerResult(result);
   }
 };
 
@@ -346,8 +361,8 @@ const getStatusIcon = (type) => {
 
 const checkValidations = () => {
   const markerValid = requiredMarkerName(healthMarker.value.marker_name);
-  const dateValid = requiredTestDate(healthMarker.value.test_date);
-  const resultValid = requiredTestResult(healthMarker.value.test_result);
+  const dateValid = requiredMarkerDate(healthMarker.value.marker_date);
+  const resultValid = requiredMarkerResult(healthMarker.value.marker_result);
     
   return markerValid === true && dateValid === true && resultValid === true;
 };
@@ -379,7 +394,7 @@ const onSubmit = async () => {
     const result = await store.dispatch('createHealthMarker', healthMarkerData);    
     
     if (result !== false) {
-      alert(`✅ Health marker ${healthMarkerData.marker_name}  submitted for ${healthMarkerData.test_date}`);
+      alert(`✅ Health marker ${healthMarkerData.marker_name}  submitted for ${healthMarkerData.marker_date}`);
       
       // ✅ NAVIGATE TO HEALTH MARKER LIST (When created)
       // await router.push({ name: 'HealthMarkerList' });
@@ -387,16 +402,17 @@ const onSubmit = async () => {
       // ✅ FOR NOW, CLEAR FORM
       healthMarker.value = {
         marker_name: '',
-        test_date: '',
-        test_result: '',
+        marker_date: '',
+        marker_result: '',
+        lab_name: '',
+        doctor_name: '',
         notes: '',
         created_by: user.value?.email || '',
       };
       
       hasAttemptedSubmit.value = false;
       isMarkerNameValid.value = false;
-      isTestDateValid.value = false;
-      isTestResultValid.value = false;
+      isMarkerResultValid.value = false;
       
     } else {
       console.error('❌ Store returned false');
@@ -420,8 +436,7 @@ const debugFormState = () => {
   console.log('Validations:', {
     isFormValid: isFormValid.value,
     isMarkerNameValid: isMarkerNameValid.value,
-    isTestDateValid: isTestDateValid.value,
-    isTestResultValid: isTestResultValid.value
+    isMarkerResultValid: isMarkerResultValid.value
   });
   console.log('User:', user.value);
 };
@@ -434,7 +449,7 @@ onMounted(() => {
   
   // ✅ SET TODAY'S DATE AS DEFAULT
   const today = new Date().toISOString().split('T')[0];
-  healthMarker.value.test_date = today;
+  healthMarker.value.marker_date = today;
   
   console.log('🏥 HealthMarkerCreate mounted');
   console.log('Available markers:', healthMarkerOptions.value.length);

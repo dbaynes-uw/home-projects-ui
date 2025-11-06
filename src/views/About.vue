@@ -141,8 +141,8 @@ export default {
         },
         {
           name: 'meds_menu',
-          title: 'Medicaments',
-          description: 'Track your medications',
+          title: 'Meds',
+          description: 'Track your Medical History',
           icon: 'fas fa-pills',
           url: '/meds_menu'
         },

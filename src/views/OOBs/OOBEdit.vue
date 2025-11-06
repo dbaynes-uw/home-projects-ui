@@ -71,7 +71,7 @@ export default {
     ConfirmDialogue,
   },
   created() {
-    this.$store.dispatch("fetchMed", this.id);
+    this.$store.dispatch("fetchOOB", this.id);
   },
   computed: {
     med() {

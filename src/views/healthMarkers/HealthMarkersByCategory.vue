@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/meds/HealthMarkersByCategory.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/OOBs/HealthMarkersByCategory.vue -->
 <template>
   <div class="page-wrapper">
     <div class="health-markers-category-container">
@@ -253,7 +253,7 @@ import {
   getHealthMarkersByCategory, 
   getHealthMarkerByName 
 } from '@/services/health-marker-constants';
-import HealthMarkerCard from '@/components/health-markers/HealthMarkerCard.vue';
+import HealthMarkerCard from '@/components/healthMarkers/HealthMarkerCard.vue';
 import DateFormatService from '@/services/DateFormatService';
 
 // ✅ COMPOSITION API SETUP
@@ -288,7 +288,7 @@ const filteredHealthMarkers = computed(() => {
     cutoffDate.setDate(cutoffDate.getDate() - daysBack);
     
     result = result.filter(marker => {
-      const testDate = new Date(marker.test_date);
+      const testDate = new Date(marker.marker_date);
       return testDate >= cutoffDate;
     });
   }
@@ -311,14 +311,14 @@ const filteredHealthMarkers = computed(() => {
         marker.marker_name?.toLowerCase().includes(searchLower) ||
         markerInfo?.label?.toLowerCase().includes(searchLower) ||
         markerInfo?.description?.toLowerCase().includes(searchLower) ||
-        marker.test_result?.toString().includes(searchLower) ||
+        marker.marker_result?.toString().includes(searchLower) ||
         marker.notes?.toLowerCase().includes(searchLower)
       );
     });
   }
   
   // ✅ SORT BY DATE (NEWEST FIRST)
-  return result.sort((a, b) => new Date(b.test_date) - new Date(a.test_date));
+  return result.sort((a, b) => new Date(b.marker_date) - new Date(a.marker_date));
 });
 
 const displayedCategories = computed(() => {
@@ -341,9 +341,9 @@ const categoryStats = computed(() => {
     
     if (categoryMarkers.length === 0) return null;
     
-    const sortedByDate = categoryMarkers.sort((a, b) => new Date(b.test_date) - new Date(a.test_date));
-    const latestDate = sortedByDate[0]?.test_date;
-    const oldestDate = sortedByDate[sortedByDate.length - 1]?.test_date;
+    const sortedByDate = categoryMarkers.sort((a, b) => new Date(b.marker_date) - new Date(a.marker_date));
+    const latestDate = sortedByDate[0]?.marker_date;
+    const oldestDate = sortedByDate[sortedByDate.length - 1]?.marker_date;
     
     return {
       category,
@@ -419,7 +419,7 @@ const getCategoryDateRange = (category) => {
   const markers = getCategoryMarkers(category);
   if (markers.length === 0) return 'No data';
   
-  const dates = markers.map(m => new Date(m.test_date)).sort((a, b) => a - b);
+  const dates = markers.map(m => new Date(m.marker_date)).sort((a, b) => a - b);
   const oldest = DateFormatService.formatDatejs(dates[0]);
   const newest = DateFormatService.formatDatejs(dates[dates.length - 1]);
   

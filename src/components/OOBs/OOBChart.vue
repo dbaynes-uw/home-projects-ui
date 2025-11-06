@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/meds/MedChart.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/OOBs/MedChart.vue -->
 <template>
   <div class="med-chart">
     <h3>Med Chart (Chart temporarily disabled for memory optimization)</h3>

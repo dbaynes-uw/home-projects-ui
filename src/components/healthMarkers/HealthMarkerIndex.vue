@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/health-markers/HealthMarkerIndex.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/healthMarkers/HealthMarkerIndex.vue -->
 <template>
   <div class="health-marker-index">
     <!-- ✅ INDEX HEADER -->
@@ -34,7 +34,7 @@
       :headers="headers"
       :items="tableItems"
       :items-per-page="itemsPerPage"
-      :sort-by="[{ key: 'test_date', order: 'desc' }]"
+      :sort-by="[{ key: 'marker_date', order: 'desc' }]"
       class="health-marker-table"
       density="comfortable"
       hover
@@ -63,9 +63,9 @@
       </template>
 
       <!-- ✅ TEST RESULT COLUMN -->
-      <template v-slot:item.test_result="{ item }">
+      <template v-slot:item.marker_result="{ item }">
         <div class="result-cell">
-          <span class="result-value">{{ item.test_result }}</span>
+          <span class="result-value">{{ item.marker_result }}</span>
           <span class="result-unit">{{ getMarkerUnit(item.marker_name) }}</span>
         </div>
       </template>
@@ -73,23 +73,28 @@
       <!-- ✅ STATUS COLUMN -->
       <template v-slot:item.status="{ item }">
         <v-chip
-          :color="getStatusColor(item.marker_name, item.test_result)"
+          :color="getStatusColor(item.marker_name, item.marker_result)"
           size="small"
-          :prepend-icon="getStatusIcon(item.marker_name, item.test_result)"
+          :prepend-icon="getStatusIcon(item.marker_name, item.marker_result)"
           class="status-chip"
         >
-          {{ getStatusText(item.marker_name, item.test_result) }}
+          {{ getStatusText(item.marker_name, item.marker_result) }}
         </v-chip>
       </template>
 
       <!-- ✅ TEST DATE COLUMN -->
-      <template v-slot:item.test_date="{ item }">
+      <template v-slot:item.marker_date="{ item }">
         <div class="date-cell">
-          <div class="date-value">{{ formatDate(item.test_date) }}</div>
-          <div class="days-ago">{{ getDaysAgo(item.test_date) }}</div>
+          <div class="date-value">{{ formatDate(item.marker_date) }}</div>
+          <div class="days-ago">{{ getDaysAgo(item.marker_date) }}</div>
         </div>
       </template>
-
+      <!-- ✅ LAB NAME COLUMN -->
+      <template v-slot:item.labName="{ item }">
+        <div class="item-cell">
+          <div class="text-value">{{ getLabName(item.lab_name) }}</div>
+        </div>
+      </template>
       <!-- ✅ NOTES COLUMN -->
       <template v-slot:item.notes="{ item }">
         <div class="notes-cell">
@@ -209,7 +214,7 @@ const headers = computed(() => [
   },
   {
     title: 'Result',
-    key: 'test_result',
+    key: 'marker_result',
     align: 'center',
     sortable: true,
     width: '120px'
@@ -223,7 +228,21 @@ const headers = computed(() => [
   },
   {
     title: 'Test Date',
-    key: 'test_date',
+    key: 'marker_date',
+    align: 'center',
+    sortable: true,
+    width: '150px'
+  },
+  {
+    title: 'Lab',
+    key: 'lab_name',
+    align: 'center',
+    sortable: true,
+    width: '150px'
+  },
+  {
+    title: 'Doctor',
+    key: 'lab_name',
     align: 'center',
     sortable: true,
     width: '150px'
@@ -256,7 +275,7 @@ const tableItems = computed(() => {
   return props.healthMarkers.map(item => ({
     ...item,
     // Add computed status for sorting if needed
-    status: getStatusText(item.marker_name, item.test_result)
+    status: getStatusText(item.marker_name, item.marker_result)
   }));
 });
 
@@ -275,7 +294,14 @@ const getMarkerCategory = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
   return marker?.category || 'Other';
 };
-
+const getLabName = (labName) => {
+  const marker = getHealthMarkerByName(labName);
+  return marker?.lab_name || '';
+};
+const getDoctorName = (doctorName) => {
+  const marker = getHealthMarkerByName(doctorName);
+  return marker?.doctor_name || '';
+};
 const getMarkerUnit = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
   return marker?.unit || '';
@@ -376,7 +402,7 @@ const duplicateHealthMarker = (item) => {
     query: { 
       duplicate: item.id,
       marker: item.marker_name,
-      result: item.test_result,
+      result: item.marker_result,
       notes: item.notes 
     } 
   });
@@ -386,10 +412,12 @@ const exportToCsv = () => {
   const csvHeaders = [
     'Health Marker',
     'Category', 
-    'Test Result',
+    'Result',
     'Unit',
     'Status',
     'Test Date',
+    'Lab',
+    'Doctor',
     'Days Ago',
     'Notes',
     'Created By'
@@ -398,11 +426,13 @@ const exportToCsv = () => {
   const csvData = props.healthMarkers.map(item => [
     getMarkerLabel(item.marker_name),
     getMarkerCategory(item.marker_name),
-    item.test_result,
+    item.marker_result,
     getMarkerUnit(item.marker_name),
-    getStatusText(item.marker_name, item.test_result),
-    formatDate(item.test_date),
-    getDaysAgo(item.test_date),
+    getStatusText(item.marker_name, item.marker_result),
+    formatDate(item.marker_date),
+    getLabName(item.lab_name),
+    getDoctorName(item.doctor_name),
+    getDaysAgo(item.marker_date),
     item.notes || '',
     item.created_by || ''
   ]);
@@ -501,7 +531,13 @@ const exportToCsv = () => {
 .status-chip {
   min-width: 100px;
 }
-
+.item-cell {
+  text-align: center;
+}
+.item-value {
+  font-weight: 500;
+  color: #2c3e50;
+}
 .date-cell {
   text-align: center;
 }

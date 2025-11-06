@@ -38,18 +38,18 @@ export default new Vuex.Store({
     glucoseReading: null,
     watering: [],
     waterings: [],
-    med: {},
-    meds: [],
-    medsLoading: false,
-    medsPagination: {
+    oob: {},
+    oobs: [],
+    oobsLoading: false,
+    oobsPagination: {
       current_page: 1,
       per_page: 20,
       total_count: 0,
       total_pages: 0
     },
-    medsPage: 1,
-    medsTotal: 0,
-    medsPerPage: 20,    
+    oobsPage: 1,
+    oobsTotal: 0,
+    oobsPerPage: 20,
     plant: {},
     plants: [],
     location: {},
@@ -173,49 +173,55 @@ export default new Vuex.Store({
     ADD_HEALTH_MARKER(state, healthMarker) {
       state.healthMarkers.push(healthMarker);
     },
+    DELETE_HEALTH_MARKER(state, health_marker) {
+      state.healthMarker = health_marker;
+    },
+    SET_HEALTH_MARKER(state, health_marker) {
+      state.healthMarker = health_marker;
+    },
     SET_HEALTH_MARKERS(state, health_markers) {
       state.healthMarkers = health_markers;
     },
-    ADD_MED(state, med) {
-      state.meds.push(med);
+    ADD_OOB(state, oob) {
+      state.oobs.push(oob);
     },
-    DELETE_MED(state, med) {
-      state.med = med;
+    DELETE_OOB(state, oob) {
+      state.oob = oob;
     },
-    SET_MED(state, med) {
-      state.med = med;
+    SET_OOB(state, oob) {
+      state.oob = oob;
     },
-    // ✅ FIXED SET_MEDS MUTATION
-    SET_MEDS(state, response) {
+    // ✅ FIXED SET_OOBS MUTATION
+    SET_OOBS(state, response) {
       // ✅ HANDLE DIFFERENT RESPONSE FORMATS
       if (Array.isArray(response)) {
         // ✅ DIRECT ARRAY (YOUR CURRENT API FORMAT)
-        state.meds = response;
+        state.oobs = response;
       } else if (response && Array.isArray(response.data)) {
         // ✅ NESTED IN response.data
-        state.meds = response.data;
+        state.oobs = response.data;
       } else if (response && response.data && Array.isArray(response.data.data)) {
         // ✅ DOUBLE NESTED
-        state.meds = response.data.data;
+        state.oobs = response.data.data;
       } else {
         // ✅ FALLBACK FOR UNEXPECTED FORMATS
-        console.error('❌ Unexpected meds response format:', response);
+        console.error('❌ Unexpected oobs response format:', response);
         console.error('❌ Response type:', typeof response);
         console.error('❌ Response keys:', response && typeof response === 'object' ? Object.keys(response) : 'N/A');
-        state.meds = []; // ✅ Fallback to empty array
+        state.oobs = []; // ✅ Fallback to empty array
       }
     },
 
-    SET_MEDS_PAGINATION(state, pagination) {
+    SET_OOBS_PAGINATION(state, pagination) {
       if (pagination && typeof pagination === 'object') {
-        state.medsPagination = {
+        state.oobsPagination = {
           current_page: pagination.current_page || 1,
           per_page: pagination.per_page || 20,
           total_count: pagination.total_count || 0,
           total_pages: pagination.total_pages || 0
         };
       } else {
-        console.warn('⚠️ SET_MEDS_PAGINATION: Invalid pagination data:', pagination);
+        console.warn('⚠️ SET_OOBS_PAGINATION: Invalid pagination data:', pagination);
       }
     },
 
@@ -228,11 +234,11 @@ export default new Vuex.Store({
     CLEAR_FILMS(state) { 
       state.films = [];
     }, 
-    SET_MEDS_TOTAL(state, total) {
-      state.medsTotal = total;
+    SET_OOBS_TOTAL(state, total) {
+      state.oobsTotal = total;
     }, 
-    APPEND_MEDS(state, newMeds) {
-      state.meds = [...state.meds, ...newMeds];
+    APPEND_OOBS(state, newOobs) {
+      state.oobs = [...state.oobs, ...newOobs];
     },    
     DELETE_PLANT(state, plantId) {
       state.plants = state.plants.filter(plant => plant.id !== plantId);
@@ -1083,6 +1089,37 @@ export default new Vuex.Store({
           alert("Health Marker Post Error: ", error.response.data )
         });
     },
+
+    async deleteHealthMarker({ commit, dispatch }, healthMarker) {
+      try {
+        const response = await EventService.deleteHealthMarker(healthMarker);
+        // ✅ REFRESH THE ENTIRE HEALTH MARKERS LIST TO GET UPDATED DATA
+        await dispatch('fetchHealthMarker');
+
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Health Marker delete error:', error);
+        throw error;
+      }
+    },
+
+    async fetchHealthMarker({ commit, state }, id) {
+      console.log("Fetching Health Marker with ID:", id);
+      const existingHealthMarker = state.healthMarkers.find((marker) => marker.id === id);
+      if (existingHealthMarker) {
+        commit("SET_HEALTH_MARKER", existingHealthMarker);
+      } else {
+        EventService.getHealthMarker(id)
+          .then((response) => {
+            commit("SET_HEALTH_MARKER", response.data);
+          })
+          .catch((error) => {
+            alert("Health Marker Get Error: ", error.response.data )
+          });
+      }
+    },
+
     async fetchHealthMarkers({ commit }) {
       try {
         commit('SET_HEALTH_MARKERS', []);
@@ -1113,94 +1150,105 @@ export default new Vuex.Store({
         throw error;
       }
     },
-
-    // ✅ FIXED createMed ACTION (around line 980)
-    async createMed({ commit, dispatch }, med) {
+    async updateHealthMarker({ commit, dispatch }, healthMarker) {
       try {
-        const response = await EventService.postMed(med);
+        const response = await EventService.putHealthMarker(healthMarker);
+        // Commit the updated marker to Vuex state
+        commit("SET_HEALTH_MARKER", response.data);
+        // Optionally fetch the updated list of markers
+        await dispatch("fetchHealthMarkers");
+      } catch (error) {
+        console.error("Error updating health marker:", error.response.data);
+        alert("Failed to update health marker. Please try again.");
+      }
+    },
+    // ✅ FIXED createOOB ACTION (around line 980)
+    async createOOB({ commit, dispatch }, oob) {
+      try {
+        const response = await EventService.postOOB(oob);
 
-        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
-        await dispatch('fetchMeds');
+        // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
+        await dispatch('fetchOOBs');
 
         return response.data; // ✅ RETURN SUCCESS
 
       } catch (error) {
-        console.error('❌ Store: Med create error:', error);
+        console.error('❌ Store: OOB create error:', error);
         throw error;
       }
     },
 
-    // ✅ FIXED deleteMed ACTION (around line 1000)
-    async deleteMed({ commit, dispatch }, med) {
+    // ✅ FIXED deleteOOB ACTION (around line 1000)
+    async deleteOOB({ commit, dispatch }, oob) {
       try {
-        const response = await EventService.deleteMed(med);
-        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
-        await dispatch('fetchMeds');
+        const response = await EventService.deleteOOB(oob);
+        // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
+        await dispatch('fetchOOBs');
 
         return response.data; // ✅ RETURN SUCCESS
 
       } catch (error) {
-        console.error('❌ Store: Med delete error:', error);
+        console.error('❌ Store: OOB delete error:', error);
         throw error;
       }
     },
 
-    async fetchMed({ commit, state }, id) {
-      const existingMed = state.meds.find((med) => med.id === id);
-      if (existingMed) {
-        commit("SET_MED", existingMed);
+    async fetchOOB({ commit, state }, id) {
+      const existingOOB = state.oobs.find((oob) => oob.id === id);
+      if (existingOOB) {
+        commit("SET_OOB", existingOOB);
       } else {
-        EventService.getMed(id)
+        EventService.getOOB(id)
           .then((response) => {
-            commit("SET_MED", response.data);
+            commit("SET_OOB", response.data);
           })
           .catch((error) => {
-            alert("Med Get Error: ", error.response.data )
+            alert("OOB Get Error: ", error.response.data )
           });
       }
     },
-    // ✅ SIMPLIFIED fetchMeds ACTION
-    async fetchMeds({ commit }) {
+    // ✅ SIMPLIFIED fetchOOBs ACTION
+    async fetchOOBs({ commit }) {
       try {
-        commit('SET_MEDS', []);
+        commit('SET_OOBS', []);
 
-        const response = await EventService.getMeds();
+        const response = await EventService.getOOBs();
 
         // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
-        let medsArray = [];
+        let oobsArray = [];
 
         if (Array.isArray(response.data)) {
           // ✅ NEW FORMAT: Direct array
-          medsArray = response.data;
+          oobsArray = response.data;
         } else if (response.data && Array.isArray(response.data.data)) {
           // ✅ OLD FORMAT: Paginated (fallback)
-          medsArray = response.data.data;
+          oobsArray = response.data.data;
         } else {
           console.error('❌ Store: Unexpected response format:', response);
-          medsArray = [];
+          oobsArray = [];
         }
 
-        commit('SET_MEDS', medsArray);
+        commit('SET_OOBS', oobsArray);
 
-        return medsArray;
+        return oobsArray;
 
       } catch (error) {
-        console.error('❌ Store: Error fetching meds:', error);
-        commit('SET_MEDS', []);
+        console.error('❌ Store: Error fetching oobs:', error);
+        commit('SET_OOBS', []);
         throw error;
       }
     },
-    // ✅ ENHANCED updateMed ACTION (around line 1020)
-    async updateMed({ commit, dispatch }, med) {
+    // ✅ ENHANCED updateOOB ACTION (around line 1020)
+    async updateOOB({ commit, dispatch }, oob) {
       try {
-        const response = await EventService.putMed(med);
-        // ✅ REFRESH THE ENTIRE MEDS LIST TO GET UPDATED DATA
-        await dispatch('fetchMeds');
+        const response = await EventService.putOOB(oob);
+        // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
+        await dispatch('fetchOOBs');
 
         return response.data; // ✅ RETURN SUCCESS
 
       } catch (error) {
-        console.error('❌ Store: Med update error:', error);
+        console.error('❌ Store: OOB update error:', error);
         throw error;
       }
     },

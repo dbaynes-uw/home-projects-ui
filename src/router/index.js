@@ -195,27 +195,27 @@ const routes = [
   {
     path: "/glucose-readings",
     name: "GlucoseReadings",
-    component: () => import('@/views/glucose-readings/GlucoseReadings.vue'),
+    component: () => import('@/views/glucoseReadings/GlucoseReadings.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: "/glucose-readings/:id?",
+    path: "/glucoseReadings/:id?",
     name: "GlucoseReadingDetails",
     props: true,
-    component: () => import('@/components/glucose-readings/GlucoseReadingDetails.vue'),
+    component: () => import('@/components/glucoseReadings/GlucoseReadingDetails.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: "/glucose-reading/create",
     name: "GlucoseReadingCreate",
-    component: () => import('@/views/glucose-readings/GlucoseReadingCreate.vue'),
+    component: () => import('@/views/glucoseReadings/GlucoseReadingCreate.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: "/glucose-reading/:id",
     name: "GlucoseReadingEdit",
     props: true,
-    component: () => import('@/views/glucose-readings/GlucoseReadingEdit.vue'),
+    component: () => import('@/views/glucoseReadings/GlucoseReadingEdit.vue'),
     meta: { requiresAuth: true },
   },
 
@@ -252,36 +252,34 @@ const routes = [
     path: "/meds_menu",
     name: "MedsMenu",
     props: true,
-    component: () => import('@/views/MedsMenu.vue'),
+    component: () => import('@/views/MedsDashboard.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: "/health-marker/create",
     name: "HealthMarkerCreate",
-    component: () => import('@/views/meds/HealthMarkerCreate.vue'),
+    component: () => import('@/views/healthMarkers/HealthMarkerCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/health-markers",
     name: "HealthMarkerList",
-    component: () => import('@/views/meds/HealthMarkerList.vue'),
+    component: () => import('@/views/healthMarkers/HealthMarkerList.vue'),
     meta: { requiresAuth: true },
   },
   {
-    path: "/health-markers/category",
+    path: "/healthMarkers/category",
     name: "HealthMarkersByCategory",
-    component: () => import('@/views/meds/HealthMarkersByCategory.vue'),
+    component: () => import('@/views/healthMarkers/HealthMarkersByCategory.vue'),
     meta: { requiresAuth: true },
   },
-  /*
   {
     path: "/health-marker/:id",
     name: "HealthMarkerEdit",
     props: true,
-    component: () => import('@/views/meds/HealthMarkerEdit.vue'),
+    component: () => import('@/views/healthMarkers/HealthMarkerEdit.vue'),
     meta: { requiresAuth: true },
   },
-*/
   {
     path: '/test/health-marker-card',
     name: 'HealthMarkerCardTest',
@@ -291,27 +289,27 @@ const routes = [
   {
     path: "/meds",
     name: "MedList",
-    component: () => import('@/views/meds/MedList.vue'),
+    component: () => import('@/views/OOBs/OOBList.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/med/create",
     name: "MedCreate",
-    component: () => import('@/views/meds/MedCreate.vue'),
+    component: () => import('@/views/OOBs/OOBCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/meds/:id/details",  // ← FIXED: Different path for details
+    path: "/OOBs/:id/details",  // ← FIXED: Different path for details
     name: "MedDetails",
     props: true,
-    component: () => import('@/views/meds/MedDetails.vue'),
+    component: () => import('@/views/OOBs/OOBDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/med/:id",  // ← FIXED: Different path pattern for edit
     name: "MedEdit",
     props: true,
-    component: () => import('@/views/meds/MedEdit.vue'),
+    component: () => import('@/views/OOBs/OOBEdit.vue'),
     meta: { requiresAuth: true}
   },
 

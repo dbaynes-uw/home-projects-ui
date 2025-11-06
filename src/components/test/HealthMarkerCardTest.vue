@@ -42,31 +42,31 @@
 
 <script setup>
 import { ref } from 'vue';
-import HealthMarkerCard from '@/components/health-markers/HealthMarkerCard.vue';
+import HealthMarkerCard from '@/components/healthMarkers/HealthMarkerCard.vue';
 
 // Define mock data directly in the component
 const mockMarkers = ref([
   {
     id: 1,
     marker_name: 'HbA1c',
-    test_result: 6.2,
-    test_date: '2024-10-15',
+    marker_result: 6.2,
+    marker_date: '2024-10-15',
     notes: 'Fasting test taken in the morning. Patient had been following dietary recommendations.',
     created_by: 'Dr. Smith'
   },
   {
     id: 2,
     marker_name: 'Total Cholesterol',
-    test_result: 220,
-    test_date: '2024-09-20',
+    marker_result: 220,
+    marker_date: '2024-09-20',
     notes: 'Annual checkup. Recommend dietary changes and follow-up in 3 months.',
     created_by: 'Dr. Johnson'
   },
   {
     id: 3,
     marker_name: 'TSH',
-    test_result: 2.5,
-    test_date: '2024-11-01',
+    marker_result: 2.5,
+    marker_date: '2024-11-01',
     notes: null,
     created_by: 'Dr. Williams'
   }
@@ -75,8 +75,8 @@ const mockMarkers = ref([
 const singleMarker = ref({
   id: 1,
   marker_name: 'HbA1c',
-  test_result: 6.2,
-  test_date: '2024-10-15',
+  marker_result: 6.2,
+  marker_date: '2024-10-15',
   notes: 'Fasting test taken in the morning. Patient had been following dietary recommendations.',
   created_by: 'Dr. Smith'
 });

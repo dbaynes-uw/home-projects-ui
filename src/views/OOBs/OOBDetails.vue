@@ -22,7 +22,7 @@
 //import { ref, computed } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import MedCard from "@/components/meds/MedCard.vue";
+import MedCard from "@/components/OOBs/OOBCard.vue";
 
 export default {
   props: ["id"],
@@ -60,7 +60,7 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchMed", this.id);
+    this.$store.dispatch("fetchOOB", this.id);
   },
   computed: {
     med() {

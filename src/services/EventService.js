@@ -206,6 +206,13 @@ export default {
     //*}
     return axios.post(api_url + 'glucose_readings', glucose_reading);
   },
+  getHealthMarker(id) {
+    console.log("ES GET Health Marker with ID:", id);
+    this.init();
+    const response = axios.get(api_url + "health_markers/" + id);
+    console.log("ES GET Health Marker response:", response);
+    return response;
+  },
   getHealthMarkers() {
     this.init();
     return axios.get(api_url + "health_markers")
@@ -223,26 +230,26 @@ export default {
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "health_markers/" + `${healthMarker.id}`);
   },
-  deleteMed(med) {
+  deleteOOB(oob) {
     this.init();
        // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "meds/" + `${med.id}`);
+    return axios.delete(api_url + "OOBs/" + `${oob.id}`);
   },
-  getMed(id) {
+  getOOB(id) {
     this.init();
-    return axios.get(api_url + "meds/" + id);
+    return axios.get(api_url + "OOBs/" + id);
   },
-  getMeds() {
+  getOOBs() {
     this.init();
-    return axios.get(api_url + "meds")
+    return axios.get(api_url + "OOBs")
   },
-  async putMed(updatedMed) {
+  async putOOB(updatedOOB) {
     this.init();
-    return axios.put(api_url + "meds" + `/${updatedMed.id}`, updatedMed);
+    return axios.put(api_url + "OOBs" + `/${updatedOOB.id}`, updatedOOB);
   },
-  async postMed(med) {
+  async postOOB(oob) {
     this.init();
-    return axios.post(api_url + 'meds', med);
+    return axios.post(api_url + 'OOBs', oob);
   },
   deletePlant(plant) {
     this.init();

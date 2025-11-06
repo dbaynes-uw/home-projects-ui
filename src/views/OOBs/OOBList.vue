@@ -2,7 +2,7 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <!-- ✅ CHANGED: mdi-pill → fas fa-pills -->
-      <h2><i class="fas fa-pills"></i> Med Dashboard</h2>
+      <h2><i class="fas fa-pills"></i>OOB Tracking</h2>
     </v-card-title>
     
     <!-- ✅ MODERN NAVIGATION -->
@@ -12,7 +12,7 @@
       <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-plus → fas fa-plus -->
         <i class="fas fa-plus"></i>
-        <span style="position: relative; left: 2rem;">Add Med</span>
+        <span style="position: relative; left: 2rem;">Add OOB</span>
       </router-link>
       
       <button @click="toggleIndexView" class="nav-btn" id="button-as-link">
@@ -129,9 +129,9 @@
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import MedCard from "@/components/meds/MedCard.vue";
-import MedChart from "@/components/meds/MedChart.vue";
-import MedIndex from "@/components/meds/MedIndex.vue";
+import MedCard from "@/components/OOBs/OOBCard.vue";
+import MedChart from "@/components/OOBs/OOBChart.vue";
+import MedIndex from "@/components/OOBs/OOBIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { onUnmounted } from 'vue';
 
@@ -314,7 +314,7 @@ const filterByTimeFrame = () => {
 // ✅ ENHANCED MOUNTED DEBUG
 onMounted(async () => {
   try {
-    await store.dispatch('fetchMeds')
+    await store.dispatch('fetchOOBs')
   } catch (error) {
     console.error('❌ Fetch Error details:', error.message, error.stack)
   }

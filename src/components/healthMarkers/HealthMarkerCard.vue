@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/health-markers/HealthMarkerCard.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/healthMarkers/HealthMarkerCard.vue -->
 <template>
   <v-card 
     class="health-marker-card" 
@@ -44,7 +44,7 @@
     <v-card-text class="result-section">
       <div class="result-display">
         <div class="result-value">
-          <span class="value">{{ healthMarker.test_result }}</span>
+          <span class="value">{{ healthMarker.marker_result }}</span>
           <span class="unit">{{ markerInfo?.unit || '' }}</span>
         </div>
         
@@ -65,10 +65,10 @@
 
       <!-- ✅ DATE SECTION -->
       <div class="date-section">
-        <div class="test-date">
+        <div class="result-date">
           <v-icon icon="mdi-calendar" size="small" class="mr-1" />
           <span class="date-label">Test Date:</span>
-          <span class="date-value">{{ formatDate(healthMarker.test_date) }}</span>
+          <span class="date-value">{{ formatDate(healthMarker.marker_date) }}</span>
         </div>
         
         <div v-if="daysAgo" class="days-ago">
@@ -116,7 +116,16 @@
           </div>
         </div>
       </div>
-
+      <div class="lab-name">
+        <v-icon icon="mdi-flask" size="small" class="mr-1" />
+        <span class="item-label">Lab Name:</span>
+        <span class="item-value">{{ healthMarker.lab_name }}</span>
+      </div>
+      <div class="doctor-name">
+        <v-icon icon="mdi-doctor" size="small" class="mr-1" />
+        <span class="item-label">Doctor Name:</span>
+        <span class="item-value">{{ healthMarker.doctor_name }}</span>
+      </div>
       <!-- ✅ NOTES SECTION -->
       <div v-if="healthMarker.notes" class="notes-section">
         <h4 class="notes-title">
@@ -187,8 +196,8 @@ const markerInfo = computed(() => {
 });
 
 const resultStatus = computed(() => {
-  if (!props.healthMarker.marker_name || !props.healthMarker.test_result) return null;
-  return getResultStatus(props.healthMarker.marker_name, props.healthMarker.test_result);
+  if (!props.healthMarker.marker_name || !props.healthMarker.marker_result) return null;
+  return getResultStatus(props.healthMarker.marker_name, props.healthMarker.marker_result);
 });
 
 const statusClass = computed(() => {
@@ -241,11 +250,11 @@ const categoryColor = computed(() => {
 });
 
 const daysAgo = computed(() => {
-  if (!props.healthMarker.test_date) return '';
+  if (!props.healthMarker.marker_date) return '';
   
-  const testDate = new Date(props.healthMarker.test_date);
+  const resultDate = new Date(props.healthMarker.marker_date);
   const today = new Date();
-  const diffTime = today - testDate;
+  const diffTime = today - resultDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
   if (diffDays === 0) return 'Today';
@@ -390,12 +399,22 @@ const editHealthMarker = () => {
   border-radius: 6px;
 }
 
-.test-date {
+.result-date {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
+.item-label {
+  font-weight: 500;
+  color: #666;
+}
+.item-value {
+  position: relative;
+  left: .5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #666;
+}
 .date-label {
   font-weight: 500;
   color: #666;

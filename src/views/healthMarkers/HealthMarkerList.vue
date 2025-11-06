@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/meds/HealthMarkerList.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/OOBs/HealthMarkerList.vue -->
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
@@ -158,9 +158,9 @@ import { ref, computed, onMounted, nextTick, watch, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { HEALTH_MARKER_CATEGORIES, getHealthMarkersByCategory } from '@/services/health-marker-constants';
-import HealthMarkerCard from "@/components/health-markers/HealthMarkerCard.vue";
-//import HealthMarkerChart from "@/components/health-markers/HealthMarkerChart.vue";
-import HealthMarkerIndex from "@/components/health-markers/HealthMarkerIndex.vue";
+import HealthMarkerCard from "@/components/healthMarkers/HealthMarkerCard.vue";
+//import HealthMarkerChart from "@/components/healthMarkers/HealthMarkerChart.vue";
+import HealthMarkerIndex from "@/components/healthMarkers/HealthMarkerIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 
 // ✅ COMPOSITION API SETUP
@@ -231,7 +231,7 @@ const displayedHealthMarkers = computed(() => {
     cutoffDate.setDate(cutoffDate.getDate() - daysBack);
     
     result = result.filter(marker => {
-      const testDate = new Date(marker.test_date);
+      const testDate = new Date(marker.marker_date);
       return testDate >= cutoffDate;
     });
   }
@@ -244,13 +244,13 @@ const displayedHealthMarkers = computed(() => {
       const searchInMarkerName = marker.marker_name && 
         marker.marker_name.toLowerCase().includes(searchLower);
         
-      const searchInTestDate = marker.test_date && 
-        DateFormatService.formatDatejs(marker.test_date)
+      const searchInTestDate = marker.marker_date && 
+        DateFormatService.formatDatejs(marker.marker_date)
           .toLowerCase()
           .includes(searchLower);
           
-      const searchInTestResult = marker.test_result && 
-        marker.test_result.toString().toLowerCase().includes(searchLower);
+      const searchInTestResult = marker.marker_result && 
+        marker.marker_result.toString().toLowerCase().includes(searchLower);
         
       const searchInNotes = marker.notes && 
         marker.notes.toLowerCase().includes(searchLower);
@@ -261,8 +261,8 @@ const displayedHealthMarkers = computed(() => {
   
   // ✅ SORT BY TEST DATE (MOST RECENT FIRST)
   const sortedResult = Array.isArray(result) ? result.sort((a, b) => {
-    const dateA = new Date(a.test_date);
-    const dateB = new Date(b.test_date);
+    const dateA = new Date(a.marker_date);
+    const dateB = new Date(b.marker_date);
     return dateB - dateA;
   }) : [];
   
