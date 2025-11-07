@@ -234,13 +234,6 @@ const headers = computed(() => [
     width: '150px'
   },
   {
-    title: 'Lab',
-    key: 'lab_name',
-    align: 'center',
-    sortable: true,
-    width: '150px'
-  },
-  {
     title: 'Doctor',
     key: 'lab_name',
     align: 'center',

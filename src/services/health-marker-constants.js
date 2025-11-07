@@ -13,6 +13,18 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water-percent'
   },
   {
+    name: 'Fasting_Glucose',
+    label: 'Fasting Glucose',
+    unit: 'mg/dL',
+    normalRange: '70-99 mg/dL',
+    prediabetesRange: '100-125 mg/dL',
+    diabetesRange: '≥ 126 mg/dL',
+    description: 'Blood sugar after fasting',
+    testFrequency: 'Every 3 years',
+    category: 'Diabetes',
+    icon: 'mdi-glucose'
+  },
+  {
     name: 'TSH',
     label: 'Thyroid Stimulating Hormone',
     unit: 'mIU/L',
@@ -37,6 +49,17 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-heart-pulse'
   },
   {
+    name: 'HDL',
+    label: 'HDL Cholesterol',
+    unit: 'mg/dL',
+    normalRange: '≥ 40 mg/dL (men), ≥ 50 mg/dL (women)',
+    lowRange: '< 40 mg/dL (men), < 50 mg/dL (women)',
+    description: 'Good cholesterol',
+    testFrequency: 'Every 4-6 years',
+    category: 'Lipids',
+    icon: 'mdi-arrow-up-circle'
+  },
+  {
     name: 'LDL',
     label: 'LDL Cholesterol',
     unit: 'mg/dL',
@@ -48,17 +71,7 @@ export const HEALTH_MARKERS = [
     category: 'Lipids',
     icon: 'mdi-arrow-down-circle'
   },
-  {
-    name: 'HDL',
-    label: 'HDL Cholesterol',
-    unit: 'mg/dL',
-    normalRange: '≥ 40 mg/dL (men), ≥ 50 mg/dL (women)',
-    lowRange: '< 40 mg/dL (men), < 50 mg/dL (women)',
-    description: 'Good cholesterol',
-    testFrequency: 'Every 4-6 years',
-    category: 'Lipids',
-    icon: 'mdi-arrow-up-circle'
-  },
+
   {
     name: 'Triglycerides',
     label: 'Triglycerides',
@@ -72,17 +85,54 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
-    name: 'Fasting_Glucose',
-    label: 'Fasting Glucose',
-    unit: 'mg/dL',
-    normalRange: '70-99 mg/dL',
-    prediabetesRange: '100-125 mg/dL',
-    diabetesRange: '≥ 126 mg/dL',
-    description: 'Blood sugar after fasting',
-    testFrequency: 'Every 3 years',
-    category: 'Diabetes',
-    icon: 'mdi-glucose'
+    name: 'Cholesterol_Hdl_Ratio',
+    label: 'Chol/HDL Ratio',
+    unit: '',
+    normalRange: '< 6.7',
+    borderlineRange: '?',
+    highRange: '?',
+    description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood',
+    testFrequency: '?',
+    category: 'Lipids',
+    icon: 'mdi-water'
   },
+  {
+    name: 'Non_Cholesterol_Hdl_Calculation',
+    label: 'Non-HDL Calculation',
+    unit: '',
+    normalRange: '',
+    borderlineRange: '?',
+    highRange: '?',
+    description: '?',
+    testFrequency: '?',
+    category: 'Lipids',
+    icon: 'mdi-water'
+  },
+  {
+    name: 'PSA_Serum',
+    label: 'PSA Serum',
+    unit: 'ng/ml',
+    normalRange: '< 4.0 ng/ml',
+    borderlineRange: '4.0- 6.0 ng/ml',
+    highRange: '> 6.0 ng/ml',
+    description: 'The PSA blood test can be used to look for prostate cancer',
+    testFrequency: 'Annually',
+    category: 'Prostate',
+    icon: 'mdi-water'
+  },
+    {
+    name: 'Triglyceride_Cholesterol_Hdl_Calculation',
+    label: 'Trig/HDL Calculation',
+    unit: '',
+    normalRange: '< 6.7',
+    borderlineRange: '?',
+    highRange: '?',
+    description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood',
+    testFrequency: '?',
+    category: 'Lipids',
+    icon: 'mdi-water'
+  },
+  /*
   {
     name: 'Vitamin_D',
     label: 'Vitamin D',
@@ -106,6 +156,7 @@ export const HEALTH_MARKERS = [
     category: 'Vitamins',
     icon: 'mdi-pill'
   },
+  */
   {
     name: 'Blood_Pressure_Systolic',
     label: 'Blood Pressure (Systolic)',
@@ -119,6 +170,8 @@ export const HEALTH_MARKERS = [
     category: 'Heart',
     icon: 'mdi-heart'
   },
+
+  /*
   {
     name: 'Blood_Pressure_Diastolic',
     label: 'Blood Pressure (Diastolic)',
@@ -131,6 +184,7 @@ export const HEALTH_MARKERS = [
     category: 'Heart',
     icon: 'mdi-heart-outline'
   },
+
   {
     name: 'Creatinine',
     label: 'Creatinine',
@@ -151,11 +205,13 @@ export const HEALTH_MARKERS = [
     category: 'Liver',
     icon: 'mdi-liver'
   }
+  */
 ];
 
 // ✅ HEALTH MARKER CATEGORIES
 export const HEALTH_MARKER_CATEGORIES = [
   'Diabetes',
+  'Prostate',
   'Thyroid', 
   'Lipids',
   'Vitamins',
@@ -219,7 +275,27 @@ export const getResultStatus = (markerName, testResult) => {
       message: 'A1c indicates diabetes range' 
     };
   }
-  
+    // ✅ PSA PROSTATE LOGIC
+  if (markerName === 'PSA_Serum') {
+    if (result < 4.0) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'PSA is normal' 
+    };
+    if (result <= 6.0) return { 
+      type: 'warning', 
+      title: 'Borderline High', 
+      range: marker.borderlineRange,
+      message: 'PSA is borderline high' 
+    };
+    return { 
+      type: 'error', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'PSA is high' 
+    };
+  }
   // ✅ CHOLESTEROL LOGIC
   if (markerName === 'Total_Cholesterol') {
     if (result < 200) return { 
@@ -306,6 +382,7 @@ export const getResultStatus = (markerName, testResult) => {
 export const getCategoryColor = (category) => {
   const colorMap = {
     'Diabetes': 'red',
+    'Prostate': 'green',
     'Thyroid': 'purple',
     'Lipids': 'blue',
     'Vitamins': 'orange',

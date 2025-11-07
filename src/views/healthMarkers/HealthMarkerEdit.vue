@@ -491,9 +491,7 @@ const loadHealthMarker = async () => {
       marker.id === id || marker.id === parseInt(id) || marker.id.toString() === id
     );
     
-    if (foundMarker) {
-      console.log('✅ Found health marker in store:', foundMarker);
-      
+    if (foundMarker) {      
       // ✅ SET THE FORM DATA WITH ALL FIELDS
       healthMarker.value = {
         id: foundMarker.id,
@@ -509,7 +507,6 @@ const loadHealthMarker = async () => {
       };
       
       originalHealthMarker.value = { ...healthMarker.value };
-      console.log('✅ Health marker form populated:', healthMarker.value);
     } else {
       console.error('❌ Health marker not found in store');
       console.log('🔍 Searched for ID:', id, typeof id);

@@ -334,7 +334,6 @@ watch(user, (newUser) => {
 
 // ✅ METHODS
 const onMarkerChange = (markerName) => {
-  console.log('🎯 Selected marker:', markerName);
   
   if (hasAttemptedSubmit.value) {
     requiredMarkerName(markerName);
@@ -342,7 +341,6 @@ const onMarkerChange = (markerName) => {
 };
 
 const onResultChange = (result) => {
-  console.log('📊 Test result entered:', result);
   
   if (hasAttemptedSubmit.value) {
     requiredMarkerResult(result);
@@ -387,9 +385,7 @@ const onSubmit = async () => {
       id: uuidv4(),
       created_by: user.value?.email || '',
     };
-    
-    console.log('📊 Submitting health marker:', healthMarkerData);
-    
+        
     // ✅ SUBMIT TO STORE (Will need to create this action)
     const result = await store.dispatch('createHealthMarker', healthMarkerData);    
     
@@ -446,13 +442,9 @@ onMounted(() => {
   if (user.value?.email) {
     healthMarker.value.created_by = user.value.email;
   }
-  
   // ✅ SET TODAY'S DATE AS DEFAULT
   const today = new Date().toISOString().split('T')[0];
-  healthMarker.value.marker_date = today;
-  
-  console.log('🏥 HealthMarkerCreate mounted');
-  console.log('Available markers:', healthMarkerOptions.value.length);
+  healthMarker.value.marker_date = today;  
 });
 </script>
 

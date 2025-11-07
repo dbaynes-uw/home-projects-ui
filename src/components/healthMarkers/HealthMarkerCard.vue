@@ -153,7 +153,7 @@
     <v-card-actions class="card-footer">
       <v-chip size="small" variant="outlined" class="created-chip">
         <v-icon icon="mdi-account" size="small" class="mr-1" />
-        {{ healthMarker.created_by || 'Unknown' }}
+        {{ healthMarker.created_by || 'DLB' }}
       </v-chip>
       
       <v-spacer />

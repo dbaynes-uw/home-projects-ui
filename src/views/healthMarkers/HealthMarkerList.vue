@@ -94,7 +94,7 @@
   <div class="results-section">
     <h3 class="results-count">
       <i class="fas fa-hashtag"></i>
-      Results Total: {{ displayedHealthMarkers.length }}
+      Results New {{ displayedHealthMarkers.length }}
     </h3>
     
     <!-- ✅ CATEGORY BREAKDOWN -->
@@ -134,11 +134,6 @@
       
       <!-- ✅ CARD VIEW -->
       <div v-else class="cards-container">
-        <p class="edit-hint">
-          <i class="fas fa-hand-pointer"></i>
-          Double click any card to edit
-        </p>
-        
         <div class="cards-grid">
           <HealthMarkerCard
             v-for="healthMarker in displayedHealthMarkers"
@@ -172,7 +167,7 @@ const showIndexView = ref(false);
 const showChart = ref(false);
 const searchText = ref('');
 const selectedCategory = ref('');
-const selectedTimeFrame = ref('90'); // Default to 90 days
+const selectedTimeFrame = ref(''); // Default to 90 days
 const chartKey = ref(0); // Force chart re-render
 
 // ✅ CLEANUP ON UNMOUNT
@@ -190,7 +185,6 @@ onUnmounted(() => {
 // ✅ COMPUTED PROPERTIES
 const healthMarkers = computed(() => {
   const storeState = store.state.healthMarkers;
-  
   if (Array.isArray(storeState)) {
     return storeState;
   } else if (storeState === 0 || storeState === null || storeState === undefined) {
@@ -260,10 +254,10 @@ const displayedHealthMarkers = computed(() => {
   }
   
   // ✅ SORT BY TEST DATE (MOST RECENT FIRST)
-  const sortedResult = Array.isArray(result) ? result.sort((a, b) => {
-    const dateA = new Date(a.marker_date);
-    const dateB = new Date(b.marker_date);
-    return dateB - dateA;
+const sortedResult = Array.isArray(result) ? result.sort((a, b) => {
+  const dateA = new Date(a.marker_date);
+  const dateB = new Date(b.marker_date);
+  return dateB - dateA;
   }) : [];
   
   if (sortedResult.length > 200) {
@@ -343,9 +337,8 @@ const selectCategory = (category) => {
 // ✅ LIFECYCLE
 onMounted(async () => {
   try {
-    console.log('🏥 Loading health markers...');
     await store.dispatch('fetchHealthMarkers');
-    console.log('✅ Health markers loaded:', healthMarkers.value.length);
+
   } catch (error) {
     console.error('❌ Fetch Health Markers Error:', error.message, error.stack);
   }

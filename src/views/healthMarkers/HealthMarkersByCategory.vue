@@ -23,7 +23,7 @@
             >
               Add Health Marker
             </v-btn>
-            
+
             <v-btn
               variant="outlined"
               :to="{ name: 'HealthMarkerList' }"
@@ -32,23 +32,16 @@
             >
               View All Results
             </v-btn>
-            
+
+            <!-- ✅ ADD INDEX VIEW TOGGLE BUTTON -->
             <v-btn
               variant="outlined"
-              :to="{ name: 'MedList' }"
-              prepend-icon="fas fa-pills"
+              @click="toggleIndexView"
+              :prepend-icon="showIndexView ? 'fas fa-th' : 'fas fa-list'"
               class="nav-button"
+              color="primary"
             >
-              Medications
-            </v-btn>
-            
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'GlucoseReadings' }"
-              prepend-icon="fas fa-heartbeat"
-              class="nav-button glucose-btn"
-            >
-              Glucose Readings
+              {{ showIndexView ? 'Category View' : 'Index View' }}
             </v-btn>
           </div>
         </v-card-text>
@@ -134,6 +127,35 @@
           </div>
         </v-card-text>
       </v-card>
+      <!-- ✅ AFTER YOUR FILTERS SECTION: -->
+      <v-card class="mt-2" v-if="filteredHealthMarkers.length > 0">
+        <v-card-text class="py-2">
+          <div class="view-status">
+            <div class="view-indicator">
+              <v-icon 
+                :icon="showIndexView ? 'fas fa-table' : 'fas fa-layer-group'" 
+                size="small" 
+                class="mr-2"
+              />
+              <span class="view-text">
+                {{ showIndexView ? 'Index View' : 'Category View' }} - 
+                {{ filteredHealthMarkers.length }} health markers
+              </span>
+            </div>
+
+            <div class="quick-stats" v-if="!showIndexView">
+              <span class="stat-item">
+                <i class="fas fa-tags"></i>
+                {{ displayedCategories.length }} categories
+              </span>
+              <span class="stat-item">
+                <i class="fas fa-expand-arrows-alt"></i>
+                {{ Array.from(expandedCategories).length }} expanded
+              </span>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
 
       <!-- ✅ NO RESULTS MESSAGE -->
       <div v-if="filteredHealthMarkers.length === 0" class="no-results-container">
@@ -155,6 +177,35 @@
       </div>
 
       <!-- ✅ CATEGORY SECTIONS -->
+      <!-- ✅ INDEX VIEW -->
+      <div v-if="showIndexView" class="index-view-container">
+        <v-card class="mt-4">
+          <v-card-title>
+            <div class="index-header">
+              <h3>
+                <i class="fas fa-table"></i>
+                Health Markers Index View
+              </h3>
+              <v-chip 
+                color="primary" 
+                prepend-icon="mdi-format-list-numbered"
+                size="small"
+              >
+                {{ filteredHealthMarkers.length }} results
+              </v-chip>
+            </div>
+          </v-card-title>
+
+          <v-card-text class="pa-0">
+            <HealthMarkerIndex 
+              :healthMarkers="filteredHealthMarkers"
+              class="category-index-table"
+            />
+          </v-card-text>
+        </v-card>
+      </div>
+
+      <!-- ✅ CATEGORY VIEW (EXISTING) -->
       <div v-else class="category-sections">
         <div 
           v-for="category in displayedCategories" 
@@ -180,7 +231,7 @@
                   {{ getCategoryMarkers(category).length }} results
                 </v-chip>
               </div>
-              
+
               <v-btn
                 variant="outlined"
                 size="small"
@@ -190,7 +241,7 @@
                 {{ isCategoryExpanded(category) ? 'Collapse' : 'Expand' }}
               </v-btn>
             </v-card-title>
-
+          
             <!-- ✅ CATEGORY DESCRIPTION -->
             <v-card-text v-if="isCategoryExpanded(category)">
               <div class="category-description">
@@ -210,7 +261,7 @@
                   </span>
                 </div>
               </div>
-
+            
               <!-- ✅ MARKERS GRID FOR THIS CATEGORY -->
               <div class="markers-grid">
                 <HealthMarkerCard
@@ -236,6 +287,7 @@
         size="large"
         :to="{ name: 'HealthMarkerCreate' }"
         class="fab-button"
+        :class="{ 'fab-hidden': showIndexView }"
         elevation="8"
       >
         <v-icon size="large">mdi-plus</v-icon>
@@ -254,6 +306,7 @@ import {
   getHealthMarkerByName 
 } from '@/services/health-marker-constants';
 import HealthMarkerCard from '@/components/healthMarkers/HealthMarkerCard.vue';
+import HealthMarkerIndex from '@/components/healthMarkers/HealthMarkerIndex.vue'; // ✅ ADD THIS
 import DateFormatService from '@/services/DateFormatService';
 
 // ✅ COMPOSITION API SETUP
@@ -264,7 +317,8 @@ const router = useRouter();
 const searchText = ref('');
 const selectedTimeFrame = ref('');
 const selectedCategory = ref('');
-const expandedCategories = ref(new Set(['Diabetes', 'Lipids', 'Heart'])); // Default expanded
+const showIndexView = ref(false); // ✅ ADD THIS
+const expandedCategories = ref(new Set(['Diabetes', 'Lipids', 'Heart']));
 
 // ✅ COMPUTED PROPERTIES
 const healthMarkers = computed(() => {
@@ -355,6 +409,11 @@ const categoryStats = computed(() => {
     };
   }).filter(Boolean).sort((a, b) => b.count - a.count);
 });
+
+const toggleIndexView = () => {
+  showIndexView.value = !showIndexView.value;
+  console.log('🔄 Toggled index view:', showIndexView.value ? 'INDEX' : 'CATEGORY');
+};
 
 const totalResults = computed(() => filteredHealthMarkers.value.length);
 
@@ -494,6 +553,118 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ✅ ADD FAB TRANSITION: */
+.fab-button {
+  position: fixed !important;
+  bottom: 2rem !important;
+  right: 2rem !important;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.fab-hidden {
+  opacity: 0.7;
+  transform: scale(0.9);
+}
+/* ✅ ADD TO YOUR STYLES: */
+.view-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.view-indicator {
+  display: flex;
+  align-items: center;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.view-text {
+  font-size: 0.9rem;
+}
+
+.quick-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .view-status {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .quick-stats {
+    justify-content: center;
+  }
+}
+/* ✅ INDEX VIEW STYLES */
+.index-view-container {
+  margin-top: 1rem;
+}
+
+.index-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.index-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.category-index-table {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ✅ ENHANCED NAVIGATION BUTTONS */
+.nav-button {
+  min-width: 160px !important; /* ✅ SLIGHTLY SMALLER FOR 3 BUTTONS */
+  height: 40px !important;
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ INDEX VIEW RESPONSIVE */
+@media (max-width: 768px) {
+  .navigation-flex {
+    flex-direction: column;
+  }
+  
+  .nav-button {
+    min-width: 100% !important;
+  }
+  
+  .index-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    text-align: center;
+  }
+}
 /* ✅ PAGE LAYOUT */
 .page-wrapper {
   width: 100%;
