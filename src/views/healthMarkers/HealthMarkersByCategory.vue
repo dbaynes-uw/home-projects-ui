@@ -40,11 +40,23 @@
               :prepend-icon="showIndexView ? 'fas fa-th' : 'fas fa-list'"
               class="nav-button"
               color="primary"
+              :disabled="showChartView"
             >
               {{ showIndexView ? 'Category View' : 'Index View' }}
             </v-btn>
+
+            <!-- ✅ ADD CHART VIEW TOGGLE BUTTON -->
+            <v-btn
+              variant="outlined"
+              @click="toggleChartView"
+              :prepend-icon="showChartView ? 'fas fa-th' : 'fas fa-chart-line'"
+              class="nav-button"
+              color="deep-purple"
+            >
+              {{ showChartView ? 'Category View' : 'Chart View' }}
+            </v-btn>
           </div>
-        </v-card-text>
+</v-card-text>
       </v-card>
 
       <!-- ✅ CATEGORY OVERVIEW STATS -->
@@ -127,23 +139,23 @@
           </div>
         </v-card-text>
       </v-card>
-      <!-- ✅ AFTER YOUR FILTERS SECTION: -->
+      <!-- ✅ UPDATE YOUR VIEW STATUS: -->
       <v-card class="mt-2" v-if="filteredHealthMarkers.length > 0">
         <v-card-text class="py-2">
           <div class="view-status">
             <div class="view-indicator">
               <v-icon 
-                :icon="showIndexView ? 'fas fa-table' : 'fas fa-layer-group'" 
+                :icon="showChartView ? 'fas fa-chart-line' : showIndexView ? 'fas fa-table' : 'fas fa-layer-group'" 
                 size="small" 
                 class="mr-2"
               />
               <span class="view-text">
-                {{ showIndexView ? 'Index View' : 'Category View' }} - 
+                {{ showChartView ? 'Chart View' : showIndexView ? 'Index View' : 'Category View' }} - 
                 {{ filteredHealthMarkers.length }} health markers
               </span>
-            </div>
+              </div>
 
-            <div class="quick-stats" v-if="!showIndexView">
+            <div class="quick-stats" v-if="!showIndexView && !showChartView">
               <span class="stat-item">
                 <i class="fas fa-tags"></i>
                 {{ displayedCategories.length }} categories
@@ -152,11 +164,21 @@
                 <i class="fas fa-expand-arrows-alt"></i>
                 {{ Array.from(expandedCategories).length }} expanded
               </span>
+              </div>
+
+            <div class="quick-stats" v-if="showChartView">
+              <span class="stat-item">
+                <i class="fas fa-chart-area"></i>
+                {{ getCategoriesWithData.length }} charts
+              </span>
+              <span class="stat-item">
+                <i class="fas fa-calendar-alt"></i>
+                Trends over time
+              </span>
             </div>
           </div>
         </v-card-text>
       </v-card>
-
       <!-- ✅ NO RESULTS MESSAGE -->
       <div v-if="filteredHealthMarkers.length === 0" class="no-results-container">
         <v-card class="no-results-card">
@@ -201,6 +223,66 @@
               :healthMarkers="filteredHealthMarkers"
               class="category-index-table"
             />
+          </v-card-text>
+        </v-card>
+      </div>
+      <!-- ✅ ADD THIS CHART VIEW AFTER INDEX VIEW: -->
+          
+      <!-- ✅ CHART VIEW -->
+      <!-- ✅ REPLACE YOUR ENTIRE CHART VIEW SECTION WITH THIS: -->
+
+      <!-- ✅ SIMPLE CHART VIEW -->
+      <div v-if="showChartView" class="simple-chart-view-container">
+        <v-card class="mt-4">
+          <v-card-title>
+            <div class="chart-header">
+              <h3>
+                <i class="fas fa-chart-line"></i>
+                Health Marker Trends by Category
+              </h3>
+              <v-chip 
+                color="deep-purple" 
+                prepend-icon="mdi-chart-timeline-variant"
+                size="small"
+              >
+                {{ getCategoriesWithData.length }} categories
+              </v-chip>
+            </div>
+          </v-card-title>
+        </v-card>
+      
+        <!-- ✅ SIMPLE CHARTS FOR EACH CATEGORY -->
+        <div class="simple-charts-container">
+          <HealthMarkerCategoryChart
+            v-for="category in getCategoriesWithData" 
+            :key="`simple-chart-${category}`"
+            :category="category"
+            :healthMarkers="getCategoryMarkers(category)"
+            class="category-chart"
+          />
+        </div>
+      
+        <!-- ✅ SUMMARY CARD -->
+        <v-card class="mt-4 simple-chart-summary">
+          <v-card-title>
+            <i class="fas fa-chart-pie mr-2"></i>
+            Chart Summary
+          </v-card-title>
+          <v-card-text>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-number">{{ getCategoriesWithData.length }}</div>
+                <div class="summary-label">Categories</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-number">{{ filteredHealthMarkers.length }}</div>
+                <div class="summary-label">Data Points</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-number">{{ [...new Set(filteredHealthMarkers.map(m => m.marker_name))].length }}</div>
+                <div class="summary-label">Markers</div>
+              </div>
+            </div>
           </v-card-text>
         </v-card>
       </div>
@@ -297,6 +379,7 @@
 </template>
 
 <script setup>
+// ✅ UPDATE YOUR IMPORTS:
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -306,9 +389,37 @@ import {
   getHealthMarkerByName 
 } from '@/services/health-marker-constants';
 import HealthMarkerCard from '@/components/healthMarkers/HealthMarkerCard.vue';
-import HealthMarkerIndex from '@/components/healthMarkers/HealthMarkerIndex.vue'; // ✅ ADD THIS
+import HealthMarkerIndex from '@/components/healthMarkers/HealthMarkerIndex.vue';
 import DateFormatService from '@/services/DateFormatService';
+import HealthMarkerCategoryChart from '@/components/healthMarkers/HealthMarkerCategoryChart.vue';
 
+// ✅ ADD CHART.JS IMPORTS
+/*import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
+} from 'chart.js';
+import { Line } from 'vue-chartjs';
+import 'chartjs-adapter-date-fns';
+
+// ✅ REGISTER CHART COMPONENTS
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
+);
+*/
 // ✅ COMPOSITION API SETUP
 const store = useStore();
 const router = useRouter();
@@ -317,7 +428,8 @@ const router = useRouter();
 const searchText = ref('');
 const selectedTimeFrame = ref('');
 const selectedCategory = ref('');
-const showIndexView = ref(false); // ✅ ADD THIS
+const showIndexView = ref(false); 
+const showChartView = ref(false);
 const expandedCategories = ref(new Set(['Diabetes', 'Lipids', 'Heart']));
 
 // ✅ COMPUTED PROPERTIES
@@ -414,7 +526,136 @@ const toggleIndexView = () => {
   showIndexView.value = !showIndexView.value;
   console.log('🔄 Toggled index view:', showIndexView.value ? 'INDEX' : 'CATEGORY');
 };
+// ✅ ADD THESE METHODS TO YOUR SCRIPT:
 
+const toggleChartView = () => {
+  showChartView.value = !showChartView.value;
+  if (showChartView.value) {
+    showIndexView.value = false; // Can't show both at once
+  }
+  console.log('📊 Toggled chart view:', showChartView.value ? 'CHART' : 'CATEGORY');
+};
+
+const getCategoryChartData = (category) => {
+  const markers = filteredHealthMarkers.value.filter(marker => 
+    getMarkerCategory(marker.marker_name) === category
+  );
+  
+  if (markers.length === 0) return null;
+  
+  // Group by marker type and sort by date
+  const markerGroups = {};
+  
+  markers.forEach(marker => {
+    if (!markerGroups[marker.marker_name]) {
+      markerGroups[marker.marker_name] = [];
+    }
+    
+    markerGroups[marker.marker_name].push({
+      x: marker.marker_date,
+      y: parseFloat(marker.marker_result),
+      label: `${marker.marker_result} on ${DateFormatService.formatDatejs(marker.marker_date)}`
+    });
+  });
+  
+  // Sort each group by date
+  Object.keys(markerGroups).forEach(markerName => {
+    markerGroups[markerName].sort((a, b) => new Date(a.x) - new Date(b.x));
+  });
+  
+  // Create chart datasets
+  const datasets = Object.keys(markerGroups).map((markerName, index) => {
+    const colors = [
+      '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+      '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+    ];
+    
+    return {
+      label: getHealthMarkerByName(markerName)?.label || markerName,
+      data: markerGroups[markerName],
+      borderColor: colors[index % colors.length],
+      backgroundColor: colors[index % colors.length] + '20',
+      fill: false,
+      tension: 0.1,
+      pointRadius: 6,
+      pointHoverRadius: 8,
+      pointBorderWidth: 2,
+      pointBackgroundColor: '#fff'
+    };
+  });
+  
+  return {
+    datasets,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: `${category} Trends Over Time`,
+          font: {
+            size: 16,
+            weight: 'bold'
+          }
+        },
+        legend: {
+          display: true,
+          position: 'top'
+        },
+        tooltip: {
+          callbacks: {
+            title: function(context) {
+              return DateFormatService.formatDatejs(context[0].parsed.x);
+            },
+            label: function(context) {
+              const markerInfo = getHealthMarkerByName(context.dataset.label);
+              const unit = markerInfo?.unit || '';
+              return `${context.dataset.label}: ${context.parsed.y}${unit}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: 'month',
+            displayFormats: {
+              month: 'MMM yyyy'
+            }
+          },
+          title: {
+            display: true,
+            text: 'Date'
+          }
+        },
+        y: {
+          beginAtZero: false,
+          title: {
+            display: true,
+            text: 'Result Value'
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          }
+        }
+      }
+    }
+  };
+};
+
+const getCategoriesWithData = computed(() => {
+  return displayedCategories.value.filter(category => {
+    const markers = filteredHealthMarkers.value.filter(marker => 
+      getMarkerCategory(marker.marker_name) === category
+    );
+    return markers.length > 0;
+  });
+});
 const totalResults = computed(() => filteredHealthMarkers.value.length);
 
 // ✅ HELPER METHODS
@@ -553,6 +794,94 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ✅ REPLACE ALL CHART STYLES WITH THESE SIMPLE ONES: */
+
+/* ✅ SIMPLE CHART VIEW STYLES */
+.simple-chart-view-container {
+  margin-top: 1rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.chart-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.simple-charts-container {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.category-chart {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.simple-chart-summary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.simple-chart-summary .v-card-title {
+  color: white;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  text-align: center;
+}
+
+.summary-item {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.summary-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.5rem;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .chart-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
 /* ✅ ADD FAB TRANSITION: */
 .fab-button {
   position: fixed !important;
