@@ -1163,12 +1163,12 @@ export default new Vuex.Store({
       }
     },
     // ✅ FIXED createOOB ACTION (around line 980)
-    async createOOB({ commit, dispatch }, oob) {
+    async createOob({ commit, dispatch }, oob) {
       try {
-        const response = await EventService.postOOB(oob);
+        const response = await EventService.postOob(oob);
 
         // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
-        await dispatch('fetchOOBs');
+        await dispatch('fetchOobs');
         console.log('✅ Store: OOB created successfully:', response.data);
         return response.data; // ✅ RETURN SUCCESS
 
@@ -1179,11 +1179,11 @@ export default new Vuex.Store({
     },
 
     // ✅ FIXED deleteOOB ACTION (around line 1000)
-    async deleteOOB({ commit, dispatch }, oob) {
+    async deleteOob({ commit, dispatch }, oob) {
       try {
-        const response = await EventService.deleteOOB(oob);
+        const response = await EventService.deleteOob(oob);
         // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
-        await dispatch('fetchOOBs');
+        await dispatch('fetchOobs');
 
         return response.data; // ✅ RETURN SUCCESS
 
@@ -1193,12 +1193,12 @@ export default new Vuex.Store({
       }
     },
 
-    async fetchOOB({ commit, state }, id) {
-      const existingOOB = state.oobs.find((oob) => oob.id === id);
+    async fetchOob({ commit, state }, id) {
+      const existingOob = state.oobs.find((oob) => oob.id === id);
       if (existingOOB) {
         commit("SET_OOB", existingOOB);
       } else {
-        EventService.getOOB(id)
+        EventService.getOob(id)
           .then((response) => {
             commit("SET_OOB", response.data);
           })
@@ -1207,12 +1207,12 @@ export default new Vuex.Store({
           });
       }
     },
-    // ✅ SIMPLIFIED fetchOOBs ACTION
-    async fetchOOBs({ commit }) {
+    // ✅ SIMPLIFIED fetchOobs ACTION
+    async fetchOobs({ commit }) {
       try {
         commit('SET_OOBS', []);
 
-        const response = await EventService.getOOBs();
+        const response = await EventService.getOobs();
         // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
         let oobsArray = [];
 
@@ -1237,12 +1237,12 @@ export default new Vuex.Store({
         throw error;
       }
     },
-    // ✅ ENHANCED updateOOB ACTION (around line 1020)
-    async updateOOB({ commit, dispatch }, oob) {
+    // ✅ ENHANCED updateOob ACTION (around line 1020)
+    async updateOob({ commit, dispatch }, oob) {
       try {
-        const response = await EventService.putOOB(oob);
+        const response = await EventService.putOob(oob);
         // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
-        await dispatch('fetchOOBs');
+        await dispatch('fetchOobs');
 
         return response.data; // ✅ RETURN SUCCESS
 

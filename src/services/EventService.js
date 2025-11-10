@@ -230,31 +230,31 @@ export default {
     // For Testing: setTimeout(5000);
     return axios.delete(api_url + "health_markers/" + `${healthMarker.id}`);
   },
-  deleteOOB(oob) {
+  deleteOob(oob) {
     this.init();
        // For Testing: setTimeout(5000);
-    //return axios.delete(api_url + "OOBs/" + `${oob.id}`);
+    //return axios.delete(api_url + "Oobs/" + `${oob.id}`);
     return axios.delete(api_url + "meds/" + `${oob.id}`);
   },
-  getOOB(id) {
+  getOob(id) {
     this.init();
-    //return axios.get(api_url + "OOBs/" + id);
+    //return axios.get(api_url + "Oobs/" + id);
     return axios.get(api_url + "meds/" + id);
   },
-  getOOBs() {
+  getOobs() {
     this.init();
-    //return axios.get(api_url + "OOBs")
+    //return axios.get(api_url + "Oobs")
     return axios.get(api_url + "meds")
 
   },
-  async putOOB(updatedOOB) {
+  async putOob(updatedOob) {
     this.init();
-    //return axios.put(api_url + "OOBs" + `/${updatedOOB.id}`, updatedOOB);
-    return axios.put(api_url + "meds" + `/${updatedOOB.id}`, updatedOOB);
+    //return axios.put(api_url + "Oobs" + `/${updatedOob.id}`, updatedOob);
+    return axios.put(api_url + "meds" + `/${updatedOob.id}`, updatedOob);
   },
-  async postOOB(oob) {
+  async postOob(oob) {
     this.init();
-    //return axios.post(api_url + 'OOBs', oob);
+    //return axios.post(api_url + 'Oobs', oob);
     return axios.post(api_url + 'meds', oob);
 
   },
