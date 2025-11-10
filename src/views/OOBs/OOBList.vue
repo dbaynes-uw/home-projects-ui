@@ -128,9 +128,9 @@
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import MedCard from "@/components/OOBs/OOBCard.vue";
-import MedChart from "@/components/OOBs/OOBChart.vue";
-import MedIndex from "@/components/OOBs/OOBIndex.vue";
+import MedCard from "@/components/oobs/OobCard.vue";
+import MedChart from "@/components/oobs/OobChart.vue";
+import MedIndex from "@/components/oobs/OOBIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { onUnmounted } from 'vue';
 

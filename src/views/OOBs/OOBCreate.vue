@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/OOBs/MedCreate.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/MedCreate.vue -->
 <template>
   <div class="page-wrapper">
     <div class="med-create-container">
