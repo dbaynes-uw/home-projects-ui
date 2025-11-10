@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/Oobs/MedCreate.vue -->
+=======
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/MedCreate.vue -->
+>>>>>>> HealthMarker
 <template>
   <div class="page-wrapper">
     <div class="med-create-container">
