@@ -36,7 +36,6 @@
       MyHealthChart Portal
     </a>
   </div>
-
   <!-- ✅ FILTERS SECTION (already FontAwesome) -->
   <div class="filters-section">
     <div class="time-frame-filter">
@@ -159,7 +158,7 @@ const chartKey = ref(0); // Force chart re-render
 
 // ✅ COMPUTED PROPERTIES
 const meds = computed(() => {
-  const storeState = store.state.meds;
+  const storeState = store.state.oobs;
   
   // ✅ HANDLE BOTH ARRAY AND NON-ARRAY STATES
   if (Array.isArray(storeState)) {
@@ -258,21 +257,6 @@ const displayedMeds = computed(() => {
   return sortedResult;
 });
 
-// ✅ ENHANCED DEBUG WATCHERS
-//watch(meds, (newMeds) => {
-//  console.log('🔍 Meds changed:', newMeds)
-//  console.log('🔍 Is array?', Array.isArray(newMeds))
-//  console.log('🔍 Length:', newMeds?.length || 0)
-//  if (newMeds && newMeds.length > 0) {
-//    console.log('🔍 First med:', newMeds[0])
-//  }
-//}, { immediate: true })
-
-//?watch(displayedMeds, (newDisplayed) => {
-//?  console.log('📊 DisplayedMeds changed:', newDisplayed)
-//?  console.log('📊 Count:', newDisplayed?.length || 0)
-//?}, { immediate: true })
-
 // ✅ WATCHER TO FORCE CHART UPDATE (NO SIDE EFFECTS)
 watch(
   [selectedTimeFrame, displayedMeds], 
@@ -313,6 +297,7 @@ const filterByTimeFrame = () => {
 
 // ✅ ENHANCED MOUNTED DEBUG
 onMounted(async () => {
+
   try {
     await store.dispatch('fetchOOBs')
   } catch (error) {

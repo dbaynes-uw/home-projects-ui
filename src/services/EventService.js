@@ -233,23 +233,30 @@ export default {
   deleteOOB(oob) {
     this.init();
        // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "OOBs/" + `${oob.id}`);
+    //return axios.delete(api_url + "OOBs/" + `${oob.id}`);
+    return axios.delete(api_url + "meds/" + `${oob.id}`);
   },
   getOOB(id) {
     this.init();
-    return axios.get(api_url + "OOBs/" + id);
+    //return axios.get(api_url + "OOBs/" + id);
+    return axios.get(api_url + "meds/" + id);
   },
   getOOBs() {
     this.init();
-    return axios.get(api_url + "OOBs")
+    //return axios.get(api_url + "OOBs")
+    return axios.get(api_url + "meds")
+
   },
   async putOOB(updatedOOB) {
     this.init();
-    return axios.put(api_url + "OOBs" + `/${updatedOOB.id}`, updatedOOB);
+    //return axios.put(api_url + "OOBs" + `/${updatedOOB.id}`, updatedOOB);
+    return axios.put(api_url + "meds" + `/${updatedOOB.id}`, updatedOOB);
   },
   async postOOB(oob) {
     this.init();
-    return axios.post(api_url + 'OOBs', oob);
+    //return axios.post(api_url + 'OOBs', oob);
+    return axios.post(api_url + 'meds', oob);
+
   },
   deletePlant(plant) {
     this.init();

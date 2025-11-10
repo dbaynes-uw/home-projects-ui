@@ -251,16 +251,16 @@ const onSubmit = async () => {
     }
     
     // ✅ SUBMIT TO STORE
-    const result = await store.dispatch('createMed', medData);    
+    const result = await store.dispatch('createOOB', medData);    
     
     if (result !== false) {
-      alert(`✅ Med submitted for ${medData.date_of_occurrence}`);
+      alert(`✅ OOB submitted for ${medData.date_of_occurrence}`);
       
       // ✅ NAVIGATE TO MED LIST
       await router.push({ name: 'MedList' });
     } else {
       console.error('❌ Store returned false');
-      alert('❌ Error adding Med - please try again');
+      alert('❌ Error adding OOB - please try again');
     }
     
   } catch (error) {

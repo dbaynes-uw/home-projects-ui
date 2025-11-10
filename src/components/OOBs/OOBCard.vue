@@ -135,29 +135,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- ✅ DEBUG INFO (DEV ONLY) -->
-    <v-card v-if="isDev" class="mt-2" color="info" variant="tonal">
-      <v-card-title>
-        <v-icon size="small">mdi-bug</v-icon>
-        Debug Info (Dev Only)
-      </v-card-title>
-      <v-card-text>
-        <p><strong>Med ID:</strong> {{ med.id }}</p>
-        <p><strong>Circumstances Length:</strong> {{ med.circumstances?.length || 0 }}</p>
-        <p><strong>Split Length:</strong> {{ splitLength }}</p>
-        <p><strong>Split Lines:</strong> {{ splitCircumstances.length }}</p>
-        
-        <v-btn 
-          @click="debugMedData"
-          variant="outlined"
-          size="small"
-          class="mt-2"
-        >
-          Debug Med Data
-        </v-btn>
-      </v-card-text>
-    </v-card>
   </div>
 </template>
 

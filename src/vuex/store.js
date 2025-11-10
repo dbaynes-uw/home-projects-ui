@@ -1169,7 +1169,7 @@ export default new Vuex.Store({
 
         // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
         await dispatch('fetchOOBs');
-
+        console.log('✅ Store: OOB created successfully:', response.data);
         return response.data; // ✅ RETURN SUCCESS
 
       } catch (error) {
@@ -1213,7 +1213,6 @@ export default new Vuex.Store({
         commit('SET_OOBS', []);
 
         const response = await EventService.getOOBs();
-
         // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
         let oobsArray = [];
 

@@ -290,6 +290,7 @@ const routes = [
     path: "/meds",
     name: "MedList",
     component: () => import('@/views/OOBs/OOBList.vue'),
+    //component: () => import('@/views/meds/MedList.vue'),
     meta: { requiresAuth: true}
   },
   {
