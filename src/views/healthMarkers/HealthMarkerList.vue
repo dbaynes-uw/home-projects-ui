@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/OOBs/HealthMarkerList.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/Oobs/HealthMarkerList.vue -->
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">

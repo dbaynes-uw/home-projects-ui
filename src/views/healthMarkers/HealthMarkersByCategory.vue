@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/OOBs/HealthMarkersByCategory.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/Oobs/HealthMarkersByCategory.vue -->
 <template>
   <div class="page-wrapper">
     <div class="health-markers-category-container">

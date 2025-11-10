@@ -25,7 +25,7 @@
       <router-link :to="{ name: 'MedList' }" class="nav-btn glucose-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
         <i class="fas fa-heartbeat heart-icon"></i>
-        <span>OOBs</span>
+        <span>Oobs</span>
       </router-link>
 
     </div>

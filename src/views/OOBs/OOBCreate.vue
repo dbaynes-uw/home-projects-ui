@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/OOBs/MedCreate.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/Oobs/MedCreate.vue -->
 <template>
   <div class="page-wrapper">
     <div class="med-create-container">
@@ -251,16 +251,16 @@ const onSubmit = async () => {
     }
     
     // ✅ SUBMIT TO STORE
-    const result = await store.dispatch('createOOB', medData);    
+    const result = await store.dispatch('createOob', medData);    
     
     if (result !== false) {
-      alert(`✅ OOB submitted for ${medData.date_of_occurrence}`);
+      alert(`✅ Oob submitted for ${medData.date_of_occurrence}`);
       
       // ✅ NAVIGATE TO MED LIST
       await router.push({ name: 'MedList' });
     } else {
       console.error('❌ Store returned false');
-      alert('❌ Error adding OOB - please try again');
+      alert('❌ Error adding Oob - please try again');
     }
     
   } catch (error) {
