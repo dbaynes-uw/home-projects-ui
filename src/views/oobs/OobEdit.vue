@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <br/>
   <div class="edit">
-    <h2>Edit Med</h2>
+    <h2>Edit OOB id: {{ med.id }}</h2>
     <button id="link-as-button">
       <router-link  :to="{ name: 'OobList' }">Back to Med List</router-link>
     </button>
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     med() {
-      return this.$store.state.med;
+      return this.$store.state.oob;
     },
   },
   data() {

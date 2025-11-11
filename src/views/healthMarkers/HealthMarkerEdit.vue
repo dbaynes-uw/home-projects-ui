@@ -663,8 +663,6 @@ const debugFormState = () => {
 
 // ✅ SINGLE LIFECYCLE HOOK
 onMounted(() => {
-  console.log('🏥 HealthMarkerEdit mounted');
-  console.log('Route params:', route.params);
   loadHealthMarker();
 });
 </script>

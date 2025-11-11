@@ -184,6 +184,7 @@ onUnmounted(() => {
 // ✅ COMPUTED PROPERTIES
 const healthMarkers = computed(() => {
   const storeState = store.state.healthMarkers;
+  console.log('🩺 HealthMarkers store state:', storeState.length);
   if (Array.isArray(storeState)) {
     return storeState;
   } else if (storeState === 0 || storeState === null || storeState === undefined) {
@@ -337,7 +338,6 @@ const selectCategory = (category) => {
 onMounted(async () => {
   try {
     await store.dispatch('fetchHealthMarkers');
-
   } catch (error) {
     console.error('❌ Fetch Health Markers Error:', error.message, error.stack);
   }

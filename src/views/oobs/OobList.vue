@@ -159,7 +159,6 @@ const chartKey = ref(0); // Force chart re-render
 // ✅ COMPUTED PROPERTIES
 const meds = computed(() => {
   const storeState = store.state.oobs;
-  
   // ✅ HANDLE BOTH ARRAY AND NON-ARRAY STATES
   if (Array.isArray(storeState)) {
     return storeState;
