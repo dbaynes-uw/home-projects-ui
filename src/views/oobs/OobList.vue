@@ -21,10 +21,10 @@
         <span>{{ showIndexView ? 'Card View' : 'Index View' }}</span>
       </button>
       
-      <button @click="toggleMedChart" class="nav-btn" id="button-as-link">
+      <button @click="toggleOobChart" class="nav-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-chart-bar → fas fa-chart-bar -->
         <i class="fas fa-chart-bar"></i>
-        <span>{{ showMedChart ? 'Hide Chart' : 'Show Chart' }}</span>
+        <span>{{ showOobChart ? 'Hide Chart' : 'Show Chart' }}</span>
       </button>
     </div>
   </v-card>
@@ -68,14 +68,14 @@
   </div>
 
   <!-- ✅ ENHANCED CHART SECTION (no icon changes needed) -->
-  <div v-if="showMedChart && displayedMeds.length > 0" class="chart-section">
+  <div v-if="showOobChart && displayedMeds.length > 0" class="chart-section">
     <div class="chart-debug mb-3">
       <p><strong>Debug Info:</strong></p>
       <p>📊 Displaying {{ displayedMeds.length }} meds</p>
       <p>📅 Time Frame: {{ selectedTimeFrame || 'All Time' }} days</p>
     </div>
     
-    <MedChart 
+    <OobChart 
       :key="chartKey"
       :meds="displayedMeds" 
       :timeFrame="parseInt(selectedTimeFrame) || 365"
@@ -150,7 +150,7 @@ const router = useRouter(); // For navigation
 
 // ✅ REACTIVE STATE
 const showIndexView = ref(false);
-const showMedChart = ref(false);
+const showOobChart = ref(false);
 const searchText = ref('');
 const selectedTimeFrame = ref('30'); // Default to 30 days
 const chartKey = ref(0); // Force chart re-render
@@ -271,8 +271,8 @@ const toggleIndexView = () => {
   showIndexView.value = !showIndexView.value;
 };
 
-const toggleMedChart = () => {
-  showMedChart.value = !showMedChart.value;
+const toggleOobChart = () => {
+  showOobChart.value = !showOobChart.value;
 };
 
 const editMed = (med) => {
