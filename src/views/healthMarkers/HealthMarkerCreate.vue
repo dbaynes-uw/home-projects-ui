@@ -1,4 +1,7 @@
+<<<<<<< Updated upstream
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/HealthMarkerCreate.vue -->
+=======
+>>>>>>> Stashed changes
 <template>
   <div class="page-wrapper">
     <div class="health-marker-create-container">

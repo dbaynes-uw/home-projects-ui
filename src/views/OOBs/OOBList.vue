@@ -130,7 +130,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import MedCard from "@/components/oobs/OobCard.vue";
 import MedChart from "@/components/oobs/OobChart.vue";
-import MedIndex from "@/components/oobs/OOBIndex.vue";
+import MedIndex from "@/components/oobs/OobIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { onUnmounted } from 'vue';
 
@@ -299,7 +299,7 @@ const filterByTimeFrame = () => {
 onMounted(async () => {
 
   try {
-    await store.dispatch('fetchOOBs')
+    await store.dispatch('fetchOobs')
   } catch (error) {
     console.error('❌ Fetch Error details:', error.message, error.stack)
   }
