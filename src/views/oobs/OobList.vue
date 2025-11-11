@@ -99,7 +99,7 @@
     <div v-else>
       <!-- ✅ INDEX VIEW -->
       <div v-if="showIndexView">
-        <MedIndex :meds="displayedMeds" />
+        <OobIndex :meds="displayedMeds" />
       </div>
       
       <!-- ✅ CARD VIEW -->
@@ -110,7 +110,7 @@
         </p>
         
         <div class="cards-grid">
-          <MedCard
+          <OobCard
             v-for="med in displayedMeds"
             :key="med.id"
             :med="med"
@@ -128,7 +128,7 @@
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import MedCard from "@/components/oobs/OobCard.vue";
+import OobCard from "@/components/oobs/OobCard.vue";
 import OobChart from "@/components/oobs/OobChart.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { onUnmounted } from 'vue';
