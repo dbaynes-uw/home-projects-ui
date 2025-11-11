@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/MedCreate.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/OobCreate.vue -->
 <template>
   <div class="page-wrapper">
     <div class="med-create-container">
@@ -16,7 +16,7 @@
           <div class="navigation-flex">
             <v-btn
               variant="outlined"
-              :to="{ name: 'MedList' }"
+              :to="{ name: 'OobList' }"
               prepend-icon="fas fa-list"
               class="nav-button"
             >
@@ -257,7 +257,7 @@ const onSubmit = async () => {
       alert(`✅ OOB submitted for ${medData.date_of_occurrence}`);
       
       // ✅ NAVIGATE TO MED LIST
-      await router.push({ name: 'MedList' });
+      await router.push({ name: 'OobList' });
     } else {
       console.error('❌ Store returned false');
       alert('❌ Error adding OOB - please try again');

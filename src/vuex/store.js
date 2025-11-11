@@ -1195,7 +1195,7 @@ export default new Vuex.Store({
 
     async fetchOob({ commit, state }, id) {
       const existingOob = state.oobs.find((oob) => oob.id === id);
-      if (existingOOB) {
+      if (existingOob) {
         commit("SET_OOB", existingOOB);
       } else {
         EventService.getOob(id)

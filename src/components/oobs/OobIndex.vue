@@ -152,7 +152,7 @@
             <div class="action-buttons">
               <!-- ✅ EDIT BUTTON -->
               <router-link
-                :to="{ name: 'MedEdit', params: { id: `${med.id}` } }"
+                :to="{ name: 'OobEdit', params: { id: `${med.id}` } }"
                 class="action-btn edit-btn"
                 title="Edit Med"
               >
@@ -161,7 +161,7 @@
               
               <!-- ✅ VIEW DETAILS BUTTON -->
               <router-link
-                :to="{ name: 'MedDetails', params: { id: `${med.id}` } }"
+                :to="{ name: 'OobDetails', params: { id: `${med.id}` } }"
                 class="action-btn view-btn"
                 title="View Details"
               >

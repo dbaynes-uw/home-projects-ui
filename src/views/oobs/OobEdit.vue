@@ -4,7 +4,7 @@
   <div class="edit">
     <h2>Edit Med</h2>
     <button id="link-as-button">
-      <router-link  :to="{ name: 'MedList' }">Back to Med List</router-link>
+      <router-link  :to="{ name: 'OobList' }">Back to Med List</router-link>
     </button>
     <br/>
     <form class="card-display" @submit.prevent="updateMed">
@@ -99,8 +99,8 @@ export default {
           ...this.med,
           updated_by: this.$store.state.created_by,
         };
-        if (this.$store.dispatch("updateMed", med)) {
-          this.$router.push({ name: "MedDetails", params: { id: med.id } });
+        if (this.$store.dispatch("updateOob", med)) {
+          this.$router.push({ name: "OobDetails", params: { id: med.id } });
         }
       } else {
         alert("ERROR in Update Med")

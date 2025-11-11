@@ -9,7 +9,7 @@
      
     <div class="navigation-buttons">
 
-      <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
+      <router-link :to="{ name: 'OobCreate' }" class="nav-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-plus → fas fa-plus -->
         <i class="fas fa-plus"></i>
         <span style="position: relative; left: 2rem;">Add OOB</span>
@@ -277,7 +277,7 @@ const toggleMedChart = () => {
 };
 
 const editMed = (med) => {
-  router.push({ name: 'MedEdit', params: { id: med.id } });
+  router.push({ name: 'OobEdit', params: { id: med.id } });
 };
 
 const clearSearch = () => {
