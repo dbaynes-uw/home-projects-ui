@@ -130,6 +130,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import OobCard from "@/components/oobs/OobCard.vue";
 import OobChart from "@/components/oobs/OobChart.vue";
+import OobIndex from "@/components/oobs/OobIndex.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { onUnmounted } from 'vue';
 
