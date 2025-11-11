@@ -3,7 +3,7 @@
   <div>
     <h1>Med Details</h1>
     <button id="link-as-button">
-      <router-link  :to="{ name: 'MedList' }">Back to Med List</router-link>
+      <router-link  :to="{ name: 'OobList' }">Back to Med List</router-link>
     </button>
     <span class="h3-left-total-child">Double click Item Below to Edit</span>
     <br/><br/>
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     editMed(med) {
-      this.$router.push({ name: 'MedEdit', params: { id: `${med.id}` } });
+      this.$router.push({ name: 'OobEdit', params: { id: `${med.id}` } });
     },
     async deleteMed(med) {
       const ok = await this.$refs.confirmDialogue.show({
@@ -52,7 +52,7 @@ export default {
       if (ok) {
         this.$store.dispatch("deleteMed", med);
         alert("Med was Deleted for " + med.title);
-        this.$router.push({ name: "MedList" });
+        this.$router.push({ name: "OobList" });
       }
     },
     formatStandardDateTime(value) {

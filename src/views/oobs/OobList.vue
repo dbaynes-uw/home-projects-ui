@@ -9,7 +9,7 @@
      
     <div class="navigation-buttons">
 
-      <router-link :to="{ name: 'MedCreate' }" class="nav-btn" id="button-as-link">
+      <router-link :to="{ name: 'OobCreate' }" class="nav-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-plus → fas fa-plus -->
         <i class="fas fa-plus"></i>
         <span style="position: relative; left: 2rem;">Add OOB</span>
@@ -129,12 +129,7 @@ import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import MedCard from "@/components/oobs/OobCard.vue";
-import MedChart from "@/components/oobs/OobChart.vue";
-<<<<<<< HEAD
-import MedIndex from "@/components/oobs/OobIndex.vue";
-=======
-import MedIndex from "@/components/oobs/OOBIndex.vue";
->>>>>>> HealthMarker
+import OobChart from "@/components/oobs/OobChart.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { onUnmounted } from 'vue';
 
@@ -281,7 +276,7 @@ const toggleMedChart = () => {
 };
 
 const editMed = (med) => {
-  router.push({ name: 'MedEdit', params: { id: med.id } });
+  router.push({ name: 'OobEdit', params: { id: med.id } });
 };
 
 const clearSearch = () => {

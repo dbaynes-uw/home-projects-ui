@@ -453,7 +453,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ✅ CONSISTENT STYLES WITH MedCreate */
+/* ✅ CONSISTENT STYLES WITH OobCreate */
 .page-wrapper {
   width: 100%;
   display: flex;

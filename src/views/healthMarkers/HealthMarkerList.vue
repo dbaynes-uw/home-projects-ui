@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/Oobs/HealthMarkerList.vue -->
-=======
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/HealthMarkerList.vue -->
->>>>>>> HealthMarker
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">

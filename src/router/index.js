@@ -287,28 +287,28 @@ const routes = [
   },
 
   {
-    path: "/meds",
-    name: "MedList",
+    path: "/oobs",
+    name: "OobList",
     component: () => import('@/views/oobs/OobList.vue'),
     //component: () => import('@/views/meds/MedList.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/med/create",
-    name: "MedCreate",
+    path: "/oob/create",
+    name: "OobCreate",
     component: () => import('@/views/oobs/OobCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/Oobs/:id/details",  // ← FIXED: Different path for details
-    name: "MedDetails",
+    path: "/oobs/:id/details",  // ← FIXED: Different path for details
+    name: "OobDetails",
     props: true,
     component: () => import('@/views/oobs/OobDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/med/:id",  // ← FIXED: Different path pattern for edit
-    name: "MedEdit",
+    path: "/oobs/:id",  // ← FIXED: Different path pattern for edit
+    name: "OobEdit",
     props: true,
     component: () => import('@/views/oobs/OobEdit.vue'),
     meta: { requiresAuth: true}

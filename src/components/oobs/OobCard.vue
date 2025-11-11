@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/OOBs/MedCard.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/oobs/MedCard.vue -->
 <template>
   <div class="med-card">
     <!-- ✅ MODERN CARD LAYOUT -->
@@ -63,7 +63,7 @@
           <v-btn 
             variant="outlined"
             size="small"
-            :to="{ name: 'MedList' }"
+            :to="{ name: 'OobList' }"
             prepend-icon="mdi-arrow-left"
           >
             Back to List
@@ -76,7 +76,7 @@
             variant="outlined"
             color="primary"
             size="small"
-            :to="{ name: 'MedEdit', params: { id: med.id } }"
+            :to="{ name: 'OobEdit', params: { id: med.id } }"
             prepend-icon="mdi-pencil"
           >
             Edit
@@ -202,7 +202,7 @@ const handleDeleteMed = async () => {
       alert(`✅ Med was deleted for ${formattedDate}`);
       
       // ✅ NAVIGATE BACK TO LIST
-      await router.push({ name: 'MedList' });
+      await router.push({ name: 'OobList' });
     } else {
       console.error('❌ Delete failed');
       alert('❌ Error deleting med - please try again');
