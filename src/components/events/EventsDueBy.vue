@@ -6,6 +6,7 @@
       class="native-select"
     >
       <option value="">By Due Date</option>
+      <option value="all">All Due Items</option>
       <option value="7">Next 7 days</option>
       <option value="14">Next 14 days</option>
       <option value="30">Next 30 days</option>
@@ -47,19 +48,6 @@ const emit = defineEmits(['events-due-by', 'clear-due-by']);
 // ✅ REACTIVE STATE
 const internalValue = ref(props.selectedDueByValue);
 
-// ✅ OPTIONS DATA
-const dueByOptions = [
-  { title: '7 days', value: '7' },
-  { title: '10 days', value: '10' },
-  { title: '14 days', value: '14' },
-  { title: '21 days', value: '21' },
-  { title: '30 days', value: '30' },
-  { title: '60 days', value: '60' },
-  { title: '90 days', value: '90' },
-  { title: '120 days', value: '120' },
-  { title: '180 days', value: '180' },
-  { title: '360 days', value: '360' }
-];
 onMounted(() => {
   const vuetifyStyles = document.querySelector('style[data-vite-dev-id*="vuetify"]') || 
                        document.querySelector('link[href*="vuetify"]');

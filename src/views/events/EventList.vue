@@ -358,86 +358,69 @@ const pastDueCount = computed(() => {
 });
 
 // ✅ NOW displayEvents CAN ACCESS showActiveEvents
-const displayEvents = computed(() => {  
-  // ✅ CHECK WHAT STATUS VALUES WE ACTUALLY HAVE
-  //if (events.value?.length > 0) {
-  //  const statusCounts = events.value.reduce((acc, event) => {
-  //    acc[event.status] = (acc[event.status] || 0) + 1;
-  //    return acc;
-  //  }, {});
-  //  console.log('🔍 Status breakdown:', statusCounts);
-  //}
+const displayEvents = computed(() => {
   
-  // ✅ DETERMINE TARGET STATUS
-  const targetStatus = showActiveEvents.value ? 'active' : 'inactive';
-  // Start with all events filtered by current status
-  let statusFiltered = events.value.filter(event => {
-    return event.status === targetStatus;
-  });
-  // ✅ APPLY LOCATION FILTER if selected
-  if (selectedLocationValue.value && selectedLocationValue.value !== '') {
-    statusFiltered = statusFiltered.filter(event => 
-      event.location === selectedLocationValue.value
-    );
+  let filtered = events.value;
+  
+  // Status filter
+  if (showActiveEvents.value) {
+    filtered = filtered.filter(event => event.status === 'active');
+  } else {
+    filtered = filtered.filter(event => event.status === 'inactive');
   }
+  if (selectedDueByValue.value && selectedDueByValue.value !== '' && selectedDueByValue.value !== null) {
 
-  // ✅ APPLY DUE BY FILTER if selected
-  if (selectedDueByValue.value && selectedDueByValue.value !== '') {
-    const daysAhead = parseInt(selectedDueByValue.value);
-    const targetDate = dayjs().add(daysAhead, 'day').format('YYYY-MM-DD');
-    statusFiltered = statusFiltered.filter(event => 
-      event.action_due_date <= targetDate
-    );
-  }
-  
-  // If there are search results, apply same filters
-  if (filteredResults.value.length > 0) {
-    let searchFiltered = filteredResults.value.filter(event => 
-      event.status === targetStatus
-    );
-    
-    // Apply location filter to search results
-    if (selectedLocationValue.value && selectedLocationValue.value !== '') {
-      searchFiltered = searchFiltered.filter(event => 
-        event.location === selectedLocationValue.value
+    if (selectedDueByValue.value === 'all') {
+      filtered = filtered.filter(event => 
+        event.action_due_date && event.action_due_date !== ''
       );
-    }
-    
-    // Apply due by filter to search results
-    if (selectedDueByValue.value && selectedDueByValue.value !== '') {
+    } else {
+      // ✅ FIXED: Use 'filtered' not 'dueByFiltered'
       const daysAhead = parseInt(selectedDueByValue.value);
       const targetDate = dayjs().add(daysAhead, 'day').format('YYYY-MM-DD');
-      searchFiltered = searchFiltered.filter(event => 
-        event.action_due_date <= targetDate
+
+      filtered = filtered.filter(event => 
+        event.action_due_date && event.action_due_date <= targetDate
       );
     }
-    
-    return searchFiltered;
   }
-  
-  return statusFiltered;
+  // Location filter debug
+  if (selectedLocationValue.value && selectedLocationValue.value !== '' && selectedLocationValue.value !== 'all') {
+    const uniqueLocations = [...new Set(filtered.map(e => e.location))];
+    
+    const beforeCount = filtered.length;
+    filtered = filtered.filter(event => {
+      const match = event.location === selectedLocationValue.value;
+      if (!match) {
+        console.log('❌ No match:', event.location, '!==', selectedLocationValue.value);
+      } else {
+        console.log('✅ Match found:', event.location, '===', selectedLocationValue.value);
+      }
+      return match;
+    });    
+  }  
+  return filtered;
 });
-
 
 // ✅ FUNCTIONS
 
 function handleDueByFilter(daysValue) {
   selectedDueByValue.value = daysValue;
 }
-// ✅ ADD THIS MISSING LOCATION HANDLER
-function handleLocationFilter(locationValue) {
-  selectedLocationValue.value = locationValue;
-}
 function handleClearDueBy() {
   selectedDueByValue.value = '';
 }
+function handleLocationFilter(locationValue) {
+  selectedLocationValue.value = locationValue;
+}
+
 function handleClearLocation() {
   selectedLocationValue.value = '';
 }
+
 function handleStatusToggle(newActiveState) {
   showActiveEvents.value = newActiveState;
-  
-  // Clear all filters when switching status
+
   filteredResults.value = [];
   inputSearchText.value = '';
   selectedLocationValue.value = '';
