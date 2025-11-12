@@ -1,28 +1,26 @@
 <template>
   <div class="due-by-wrapper">
-    <v-select
+    <select
       v-model="internalValue"
-      :items="dueByOptions"
-      item-title="title"
-      item-value="value"
-      variant="outlined"
-      hide-details
-      density="comfortable"
-      class="custom-styled-select"
-      @update:model-value="handleChange"
-      clearable
-      placeholder="By Due Date"
+      @change="handleNativeChange"
+      class="native-select"
     >
-      <!-- ✅ FIXED SELECTION SLOT - SHOWS ACTUAL SELECTED ITEM -->
-      <template v-slot:selection="{ item }">
-        <span class="selection-text">Due in: {{ item.title }}</span>
-      </template>
-    </v-select>
+      <option value="">By Due Date</option>
+      <option value="7">Next 7 days</option>
+      <option value="14">Next 14 days</option>
+      <option value="30">Next 30 days</option>
+      <option value="60">Next 60 days</option>
+      <option value="90">Next 90 days</option>
+      <option value="120">Next 120 days</option>
+      <option value="180">Next 180 days</option>
+      <option value="360">Next 360 days</option>
+    </select>
   </div>
 </template>
 
+
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 
 // ✅ DEFINE PROPS AND EMITS
 const props = defineProps({
@@ -32,6 +30,18 @@ const props = defineProps({
   }
 });
 
+const selectRef = ref(null);
+function handleNativeChange(event) {
+  const newValue = event.target.value;
+  handleChange(newValue);
+}
+function handleDropdownClick() {
+  nextTick(() => {
+    // Check if menu exists after click
+    const menus = document.querySelectorAll('.v-menu');
+    const overlays = document.querySelectorAll('.v-overlay__content');
+  });
+}
 const emit = defineEmits(['events-due-by', 'clear-due-by']);
 
 // ✅ REACTIVE STATE
@@ -50,38 +60,25 @@ const dueByOptions = [
   { title: '180 days', value: '180' },
   { title: '360 days', value: '360' }
 ];
-
+onMounted(() => {
+  const vuetifyStyles = document.querySelector('style[data-vite-dev-id*="vuetify"]') || 
+                       document.querySelector('link[href*="vuetify"]');
+});
 // ✅ ENHANCED HANDLE CHANGES WITH MORE LOGGING
 function handleChange(newValue) {
-  console.log('📅 Due By handleChange called with:', newValue);
-  console.log('📅 Type of newValue:', typeof newValue);
-  console.log('📅 Previous internalValue:', internalValue.value);
-  
   internalValue.value = newValue;
   
   if (newValue && newValue !== '' && newValue !== null) {
-    console.log('✅ Emitting events-due-by with value:', newValue);
     emit('events-due-by', newValue);
   } else {
-    console.log('🗑️ Emitting clear-due-by');
     emit('clear-due-by');
   }
 }
 
-// ✅ WATCH FOR PROP CHANGES
-watch(() => props.selectedDueByValue, (newVal) => {
-  console.log('👁️ Prop selectedDueByValue changed to:', newVal);
-  internalValue.value = newVal;
-});
-
-// ✅ WATCH INTERNAL VALUE CHANGES
-watch(internalValue, (newVal, oldVal) => {
-  console.log('🔄 internalValue changed from:', oldVal, 'to:', newVal);
-});
 </script>
 
 <style scoped>
-.due-by-wrapper {
+/*.due-by-wrapper {
   position: relative;
   top: 0.5rem;
   left: 2.5rem !important;
@@ -89,12 +86,48 @@ watch(internalValue, (newVal, oldVal) => {
   max-width: 15.8rem !important;
   height: 48px;
 }
-
+*/
+.due-by-wrapper {
+  position: relative;
+  width: 200px;
+  height: 48px;
+}
 /* ✅ REMOVE THIS HARDCODED STYLING */
 /* #due-by-label {
   margin-left: 1rem;
 } */
+.native-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: linear-gradient(to right, #16c0b0, #84cf6a);
+  color: black;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
+.native-select:hover {
+  background: linear-gradient(to right, #14a89a, #72b558);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4);
+}
+
+.native-select:focus {
+  outline: none;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: white;
+}
+
+.native-select option {
+  background: white;
+  color: black;
+  font-weight: 600;
+  padding: 8px;
+}
 /* ✅ STYLE THE V-SELECT TO LOOK LIKE YOUR CUSTOM BUTTON */
 :deep(.custom-styled-select .v-field) {
   background: linear-gradient(to right, #16c0b0, #84cf6a) !important;

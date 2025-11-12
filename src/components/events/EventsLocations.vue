@@ -1,41 +1,33 @@
 <template>
-  <div class="locations-wrapper">
+  <div class="stealth-select-wrapper">
+    <div class="stealth-label">Filter By Location</div>
     <v-select
-      v-model="internalValue"
+      v-model="selectedLocationValue"
       :items="locationOptions"
-      item-title="title"
-      item-value="value"
       variant="outlined"
       hide-details
       density="comfortable"
-      class="custom-styled-select"
-      @update:model-value="handleChange"
+      class="location-select"
+      :class="{ 'has-selection': selectedLocationValue }"
+      @update:model-value="eventsLocations"
       clearable
-      placeholder="By Due Date"
+      placeholder="Filter by Location"
     >
-      <!-- ✅ FIXED SELECTION SLOT - SHOWS ACTUAL SELECTED ITEM -->
-      <template v-slot:selection="{ item }">
-        <span class="selection-text">Locations: {{ item.title }}</span>
+      <template v-slot:prepend-inner>
+        <v-icon>mdi-map-marker-outline</v-icon>
       </template>
     </v-select>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 
-// ✅ DEFINE PROPS AND EMITS
-const props = defineProps({
-  selectedLocationValue: {
-    type: [String, Number],
-    default: ''
-  }
-});
+const store = useStore();
 
-const emit = defineEmits(['events-location', 'clear-location']);
-
-// ✅ REACTIVE STATE
-const internalValue = ref(props.selectedLocationValue);
+// ✅ REACTIVE STATE - USING YOUR WORKING LOGIC
+const selectedLocationValue = ref('');
 
 // ✅ LOCATION OPTIONS - SAME AS YOUR WORKING VERSION BUT AS ARRAY
 const locationOptions = [
@@ -44,188 +36,122 @@ const locationOptions = [
   'Birch Bay',
   'Seattle'
 ];
-// ✅ ENHANCED HANDLE CHANGES WITH MORE LOGGING
-function handleChange(newValue) {
-  console.log('📅 Due By handleChange called with:', newValue);
-  console.log('📅 Type of newValue:', typeof newValue);
-  console.log('📅 Previous internalValue:', internalValue.value);
+
+// ✅ EVENTS LOCATIONS FUNCTION - SAME AS YOUR WORKING VERSION
+function eventsLocations(newValue) {
+  console.log('📍 Location selected:', newValue);
   
-  internalValue.value = newValue;
+  // ✅ DISPATCH TO STORE - SAME AS YOUR WORKING VERSION
+  store.dispatch('eventsLocations', { location: newValue });
   
-  if (newValue && newValue !== '' && newValue !== null) {
-    console.log('✅ Emitting events-location with value:', newValue);
-    emit('events-location', newValue);
-  } else {
-    console.log('🗑️ Emitting clear-location');
-    emit('clear-location');
-  }
+  // Update local state
+  selectedLocationValue.value = newValue;
 }
-
-// ✅ WATCH FOR PROP CHANGES
-watch(() => props.selectedLocationValue, (newVal) => {
-  console.log('👁️ Prop selectedLocationValue changed to:', newVal);
-  internalValue.value = newVal;
-});
-
-// ✅ WATCH INTERNAL VALUE CHANGES
-watch(internalValue, (newVal, oldVal) => {
-  console.log('🔄 internalValue changed from:', oldVal, 'to:', newVal);
-});
 </script>
 
 <style scoped>
-.locations-wrapper {
-  position: relative;
-  top: 0.5rem;
-  left: 2.5rem;
+/* ✅ BEAUTIFUL FILTER COMPONENT STYLING */
+.stealth-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
-  max-width: 15.8rem !important;
-  height: 48px;
+  max-width: 250px;
 }
 
-/* ✅ REMOVE THIS HARDCODED STYLING */
-/* #locations-label {
-  margin-left: 1rem;
-} */
-/* ✅ FIX CLEAR ICON POSITION - ADD THIS */
-:deep(.custom-styled-select .v-field__clearable) {
-  margin-right: 4px !important; /* ✅ MOVE CLOSER TO DROPDOWN ARROW */
-  margin-left: auto !important; /* ✅ PUSH TO RIGHT SIDE */
+.stealth-label {
+  color: #1a1a1a !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  text-align: center !important;
+  margin-bottom: 6px !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
 }
 
-:deep(.custom-styled-select .v-field__append-inner) {
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important; /* ✅ SMALL GAP BETWEEN CLEAR AND DROPDOWN */
+.stealth-select-wrapper:hover .stealth-label {
+  color: #16c0b0 !important;
+  transform: translateY(-1px);
 }
 
-/* ✅ STYLE THE CLEAR ICON */
-:deep(.custom-styled-select .v-field__clearable .v-icon) {
-  position: relative !important;
-  left: .5rem !important; /* ✅ ADJUST POSITION */
-  color: black !important;
-  font-size: 18px !important;
-  opacity: 0.7 !important;
-  transition: all 0.3s ease !important;
-}
-
-:deep(.custom-styled-select .v-field__clearable:hover .v-icon) {
-  opacity: 1 !important;
-  transform: scale(1.1) !important;
-}
-
-
-/* ✅ STYLE THE V-SELECT TO LOOK LIKE YOUR CUSTOM BUTTON */
-:deep(.custom-styled-select .v-field) {
+/* ✅ MATCH YOUR OTHER BEAUTIFUL DROPDOWNS */
+:deep(.location-select .v-field) {
   background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
   border-radius: 12px !important;
   border: none !important;
+  height: 48px !important;
   box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
   transition: all 0.3s ease !important;
-  height: 48px !important;
-  min-height: 48px !important;
 }
 
-:deep(.custom-styled-select .v-field:hover) {
+:deep(.location-select .v-field:hover) {
   background: linear-gradient(to right, #14a89a, #72b558) !important;
-  transform: translateY(-2px) !important;
+  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
 }
 
-/* ✅ SELECTED STATE - PURPLE GRADIENT */
-:deep(.custom-styled-select.v-field--dirty .v-field) {
+/* ✅ SELECTION STATE - PURPLE GRADIENT */
+:deep(.location-select.has-selection .v-field) {
   background: linear-gradient(to right, #667eea, #764ba2) !important;
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
 }
 
-:deep(.custom-styled-select.v-field--dirty .v-field:hover) {
+:deep(.location-select.has-selection .v-field:hover) {
   background: linear-gradient(to right, #5a6fd8, #6a42a0) !important;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
 }
 
-/* ✅ FIELD CONTENT STYLING */
-:deep(.custom-styled-select .v-field__field) {
-  padding: 0 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  height: 48px !important;
-}
-
-:deep(.custom-styled-select .v-field__input) {
-  font-size: 1.25rem !important;
+/* ✅ TEXT STYLING */
+:deep(.location-select .v-field__input) {
+  color: black !important;
   font-weight: 800 !important;
-  color: black !important;
+  font-size: 1.25rem !important;
   text-align: center !important;
-  padding: 0 !important;
-  min-height: auto !important;
+  padding: 0 16px !important;
 }
 
-/* ✅ SELECTED STATE TEXT COLOR */
-:deep(.custom-styled-select.v-field--dirty .v-field__input) {
-  color: white !important;
-}
-
-/* ✅ REMOVE UNUSED PREPEND ICON STYLES */
-/* :deep(.custom-styled-select .prepend-icon) {
-  color: black !important;
-  font-size: 18px !important;
-  margin-right: 8px !important;
-}
-
-:deep(.custom-styled-select.v-field--dirty .prepend-icon) {
-  color: white !important;
-} */
-
-/* ✅ DROPDOWN ARROW */
-:deep(.custom-styled-select .v-field__append-inner .v-icon) {
-  color: black !important;
-  font-size: 16px !important;
-}
-
-:deep(.custom-styled-select.v-field--dirty .v-field__append-inner .v-icon) {
+:deep(.location-select.has-selection .v-field__input) {
   color: white !important;
 }
 
 /* ✅ PLACEHOLDER STYLING */
-:deep(.custom-styled-select .v-field__input input::placeholder) {
+:deep(.location-select .v-field__input input::placeholder) {
   color: black !important;
   font-weight: 800 !important;
   font-size: 1.25rem !important;
   text-align: center !important;
 }
 
-/* ✅ SELECTION CONTENT - ENSURE LINEAR LAYOUT */
-.selection-content {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  flex-direction: row !important;
-}
-
-.selection-icon {
-  color: inherit !important;
-  font-size: 18px !important;
-  margin-right: 8px !important;
-  flex-shrink: 0 !important;
-}
-
-.selection-text {
-  color: inherit !important;
-  font-weight: 800 !important;
-  font-size: 1.25rem !important;
-  flex: 1 !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-}
-
-/* ✅ REMOVE VUETIFY OUTLINE */
-:deep(.custom-styled-select .v-field__outline) {
+/* ✅ REMOVE OUTLINE */
+:deep(.location-select .v-field__outline) {
   display: none !important;
 }
 
-/* ✅ SHINE EFFECT */
-:deep(.custom-styled-select .v-field::before) {
+/* ✅ DROPDOWN ARROW */
+:deep(.location-select .v-field__append-inner) {
+  color: black !important;
+}
+
+:deep(.location-select.has-selection .v-field__append-inner) {
+  color: white !important;
+}
+
+/* ✅ ICON STYLING */
+:deep(.location-select .v-field__prepend-inner) {
+  margin-right: 8px !important;
+}
+
+:deep(.location-select .v-field__prepend-inner .v-icon) {
+  color: black !important;
+}
+
+:deep(.location-select.has-selection .v-field__prepend-inner .v-icon) {
+  color: white !important;
+}
+
+/* ✅ ANIMATED SHINE EFFECT */
+:deep(.location-select .v-field::before) {
   content: '';
   position: absolute;
   top: 0;
@@ -239,22 +165,28 @@ watch(internalValue, (newVal, oldVal) => {
   border-radius: 12px;
 }
 
-:deep(.custom-styled-select .v-field:hover::before) {
+:deep(.location-select .v-field:hover::before) {
   left: 100%;
 }
 
 /* ✅ RESPONSIVE */
 @media (max-width: 768px) {
-  .locations-wrapper {
+  .stealth-select-wrapper {
     max-width: 100%;
   }
   
-  :deep(.custom-styled-select .v-field__input) {
-    font-size: 1.25rem !important;
+  .stealth-label {
+    font-size: 12px !important;
   }
   
-  .selection-text {
-    font-size: 1.25rem !important;
+  :deep(.location-select .v-field__input) {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  :deep(.location-select .v-field__input) {
+    font-size: 1rem !important;
   }
 }
 </style>

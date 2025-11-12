@@ -82,7 +82,6 @@
                     :class="getStatusBadgeClass()" 
                     class="counter-badge-green">{{ displayEvents.length }}</div>
                 </div>
-                
                 <!-- ✅ DUE BY FILTER -->
                 <EventsDueBy 
                   :selectedDueByValue="selectedDueByValue"
@@ -319,7 +318,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, mounted, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';
@@ -375,14 +374,13 @@ const displayEvents = computed(() => {
   let statusFiltered = events.value.filter(event => {
     return event.status === targetStatus;
   });
-    
   // ✅ APPLY LOCATION FILTER if selected
   if (selectedLocationValue.value && selectedLocationValue.value !== '') {
     statusFiltered = statusFiltered.filter(event => 
       event.location === selectedLocationValue.value
     );
   }
-  
+
   // ✅ APPLY DUE BY FILTER if selected
   if (selectedDueByValue.value && selectedDueByValue.value !== '') {
     const daysAhead = parseInt(selectedDueByValue.value);
@@ -424,27 +422,17 @@ const displayEvents = computed(() => {
 // ✅ FUNCTIONS
 
 function handleDueByFilter(daysValue) {
-  console.log('🎯 EventList received due-by filter:', daysValue);
   selectedDueByValue.value = daysValue;
-  console.log('✅ Due by filter applied:', selectedDueByValue.value);
 }
 // ✅ ADD THIS MISSING LOCATION HANDLER
 function handleLocationFilter(locationValue) {
-  console.log('📍 EventList received location filter:', locationValue);
-  console.log('📍 Type:', typeof locationValue);
-  
   selectedLocationValue.value = locationValue;
-  console.log('✅ Location filter applied:', selectedLocationValue.value);
 }
 function handleClearDueBy() {
-  console.log('🗑️ EventList received clear due-by filter');
   selectedDueByValue.value = '';
-  console.log('✅ Due by filter cleared');
 }
 function handleClearLocation() {
-  console.log('🗑️ EventList received clear location filter');
   selectedLocationValue.value = '';
-  console.log('✅ Location filter cleared');
 }
 function handleStatusToggle(newActiveState) {
   showActiveEvents.value = newActiveState;
@@ -569,7 +557,8 @@ function formatStandardDate(value) {
 }
 
 // ✅ ONMOUNTED
-onMounted(async () => {
+onMounted(async () => {  
+  // Set API URL based on environment
   if (window.location.port === "8080") {
     apiUrl.value = "http://localhost:3000/api/v1/events/";
   } else {
@@ -579,7 +568,6 @@ onMounted(async () => {
   try {
     await store.dispatch("fetchEvents");
   } catch (error) {
-    console.error("❌ Error fetching events:", error);
   } finally {
     isLoading.value = false;
   }
