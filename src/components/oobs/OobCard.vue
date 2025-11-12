@@ -8,7 +8,7 @@
         <div class="header-content">
           <v-icon class="header-icon">mdi-pill</v-icon>
           <div class="header-text">
-            <h3 class="med-date">{{ formatStandardDateTime(med.date_of_occurrence) }}</h3>
+            <h3 class="med-date">{{ formatStandardDateTime(med.date_of_occurrence) }} {{ formatDayOfWeek(med.date_of_occurrence) }}</h3>
             <p class="med-duration">{{ med.duration }}</p>
           </div>
         </div>
@@ -184,7 +184,10 @@ const formatStandardDateTime = (value) => {
   if (!value) return 'No date';
   return DateFormatService.formatStandardDateTimejs(value);
 };
-
+const formatDayOfWeek = (value) => {
+  if (!value) return '';
+  return DateFormatService.formatDayOfWeekjs(value);
+};
 const handleDeleteMed = async () => {
   try {
     isDeleting.value = true;
