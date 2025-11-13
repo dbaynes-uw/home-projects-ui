@@ -101,31 +101,6 @@ watch(() => props.selectedLocationValue, (newVal) => {
   padding: 8px;
 }
 
-/* ✅ BEAUTIFUL FILTER COMPONENT STYLING */
-.stealth-select-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  max-width: 250px;
-}
-
-.stealth-label {
-  color: #1a1a1a !important;
-  font-weight: 800 !important;
-  font-size: 15px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.8px !important;
-  text-align: center !important;
-  margin-bottom: 6px !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
-}
-
-.stealth-select-wrapper:hover .stealth-label {
-  color: #16c0b0 !important;
-  transform: translateY(-1px);
-}
-
 /* ✅ MATCH YOUR OTHER BEAUTIFUL DROPDOWNS */
 :deep(.location-select .v-field) {
   background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
@@ -222,13 +197,6 @@ watch(() => props.selectedLocationValue, (newVal) => {
 
 /* ✅ RESPONSIVE */
 @media (max-width: 768px) {
-  .stealth-select-wrapper {
-    max-width: 100%;
-  }
-  
-  .stealth-label {
-    font-size: 12px !important;
-  }
   
   :deep(.location-select .v-field__input) {
     font-size: 1.1rem !important;

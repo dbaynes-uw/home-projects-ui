@@ -68,7 +68,7 @@ function toggleEventsStatus() {
 
 // ✅ DYNAMIC LABEL BASED ON PROPS
 function getStatusLabel() {
-  return isShowingActive.value ? 'Showing Active' : 'Showing Inactive';
+  return isShowingActive.value ? 'Now Active' : 'Now Inactive';
 }
 
 // ✅ DYNAMIC ICON BASED ON PROPS  
@@ -79,14 +79,17 @@ function getStatusIcon() {
 
 <style scoped>
 .action-button-wrapper {
-  position: relative; 
+  /*position: relative; 
   left: 2rem;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
   max-width: 250px;
-  height: 56px;
+  height: 56px;*/
+  position: relative;
+  width: 200px !important;
+  height: 48px !important;
 }
 /* ✅ FORCE FILTER BUTTON ALIGNMENT */
 .filters-grid {

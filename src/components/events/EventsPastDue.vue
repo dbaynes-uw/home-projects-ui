@@ -7,7 +7,7 @@
       block
     >
       <i class="fas fa-exclamation-triangle"></i>
-      Showing Past Due
+      Past Due
     </v-btn>
   </div>
 </template>
@@ -25,7 +25,7 @@ function eventsPastDue() {
 
 <style scoped>
 .action-button-wrapper {
-  position: relative; 
+  /*position: relative; 
   left: 2rem;
   display: flex;
   flex-direction: column;
@@ -33,6 +33,10 @@ function eventsPastDue() {
   width: 100%;
   max-width: 250px;
   height: 56px;
+  */
+  position: relative;
+  width: 200px !important;
+  height: 48px !important;
 }
 
 .action-label {
