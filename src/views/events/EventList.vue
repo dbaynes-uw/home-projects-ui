@@ -890,7 +890,7 @@ onMounted(async () => {
 .counter-badge-purple {
   position: absolute;
   top: -8px;
-  right: -8px;
+  left: 10rem;
   color: white;
   border-radius: 50%;
   width: 32px;
