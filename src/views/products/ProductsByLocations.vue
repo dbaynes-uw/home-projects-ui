@@ -592,7 +592,7 @@ const hasAnyExpandedLocations = computed(() => {
 });
 
 const allVendorsExpanded = computed(() => {
-  if (expandedLocations.value.size === 0) return false;
+  if (expandedLocations.value.size === 0) return true;
   
   let totalVendors = 0;
   let expandedVendorCount = 0;
@@ -915,6 +915,23 @@ function toggleLocation(locationIndex) {
     });
   } else {
     expandedLocations.value.add(locationIndex);
+    
+    const location = locations.value[locationIndex];
+    const vendors = getVendorsForLocation(location);
+    let autoExpandedCount = 0;
+    
+    vendors.forEach(vendor => {
+      // ✅ ONLY AUTO-EXPAND VENDORS THAT HAVE PRODUCTS TO SHOW
+      const hasProducts = getFilteredProducts(vendor).length > 0;
+      
+      if (hasProducts && (!selectedVendorFilter.value || 
+          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value)) {
+        expandedVendors.value.add(getVendorKey(location, vendor));
+        autoExpandedCount++;
+      }
+    });
+    
+    console.log(`🎯 Auto-expanded ${autoExpandedCount}/${vendors.length} vendors with products for location: ${location}`);
   }
 }
 
@@ -983,9 +1000,11 @@ function toggleAllLocations() {
 }
 
 function toggleAllVendors() {
-  if (allVendorsExpanded.value) {
+  if (allVendorsExpanded.value && expandedLocations.value.size > 0) {
+    // ✅ UPDATED: Only collapse if we actually have expanded locations
     expandedVendors.value.clear();
   } else {
+    // ✅ EXPAND ALL VENDORS IN EXPANDED LOCATIONS
     expandedLocations.value.forEach(locationIndex => {
       const location = locations.value[locationIndex];
       const vendors = getVendorsForLocation(location);

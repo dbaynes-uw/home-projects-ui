@@ -365,12 +365,6 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/products_by_location/:location",
-    component: () => import('../views/products/ProductsLocationList.vue'),
-    name: "ProductsLocationList",
-    meta: { requiresAuth: true}
-  },
-  {
     path: "/product/:id",
     name: "ProductEdit",
     props: true,
