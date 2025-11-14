@@ -115,15 +115,6 @@
         <p><strong>Form Valid:</strong> {{ isFormValid }}</p>
         <p><strong>Is Loading:</strong> {{ isLoading }}</p>
         <p><strong>Route ID:</strong> {{ $route.params.id }}</p>
-        
-        <v-btn 
-          @click="debugVendorState"
-          variant="outlined"
-          size="small"
-          class="mt-2"
-        >
-          Debug Vendor State
-        </v-btn>
       </v-card-text>
     </v-card>
   </div>
@@ -189,7 +180,6 @@ const requiredVendorName = (value) => {
 // ✅ FORM VALIDATION WATCHER
 watch([isVendorNameValid], () => {
   isFormValid.value = isVendorNameValid.value;
-  console.log(`🔍 Form validation: VendorName(${isVendorNameValid.value}) = Valid(${isFormValid.value})`);
 });
 
 // ✅ WATCH VENDOR NAME FOR VALIDATION
@@ -203,7 +193,6 @@ watch(() => vendor.value.vendor_name, (newValue) => {
 watch(user, (newUser) => {
   if (newUser?.email) {
     vendor.value.created_by = newUser.email;
-    console.log('✅ User loaded, set created_by:', newUser.email);
   }
 }, { immediate: true });
 
@@ -213,7 +202,6 @@ const loadVendor = async () => {
     isLoading.value = true;
     
     const vendorId = route.params.id;
-    console.log('🔍 Loading vendor with ID:', vendorId);
     
     if (!vendorId) {
       throw new Error('Vendor ID is required');
@@ -221,9 +209,7 @@ const loadVendor = async () => {
     
     // ✅ USE STORE ACTION INSTEAD OF DIRECT AXIOS
     const result = await store.dispatch('fetchVendor', vendorId);
-    
-    console.log('🔍 Store fetchVendor result:', result); // ✅ DEBUG THE RESULT
-    
+        
     if (result && typeof result === 'object') {
       vendor.value = {
         ...result,
@@ -231,7 +217,6 @@ const loadVendor = async () => {
         updated_by: user.value?.email || ''
       };
       
-      console.log('✅ Vendor loaded successfully:', vendor.value);
     } else {
       console.error('❌ Invalid vendor result:', result);
       throw new Error('Vendor data is invalid');
@@ -254,12 +239,9 @@ const loadVendor = async () => {
 };
 
 const checkValidations = () => {
-  console.log('🔍 Checking validations...');
   
   const vendorNameValid = requiredVendorName(vendor.value.vendor_name);
-  
-  console.log(`🔍 Validation results: VendorName(${vendorNameValid === true})`);
-  
+    
   isFormValid.value = vendorNameValid === true;
   return isFormValid.value;
 };
@@ -268,11 +250,7 @@ const handleUpdateVendor = async () => {
   try {
     isUpdating.value = true;
     hasAttemptedSubmit.value = true;
-    
-    console.log('🔍 PRE-UPDATE DEBUG:');
-    console.log('- vendor.value:', vendor.value);
-    console.log('- user email:', user.value?.email);
-    
+        
     // ✅ VALIDATE FORM
     const isValid = checkValidations();
     
@@ -290,7 +268,6 @@ const handleUpdateVendor = async () => {
     });
     
     if (!ok) {
-      console.log('🔄 User cancelled update');
       return;
     }
     
@@ -302,9 +279,7 @@ const handleUpdateVendor = async () => {
       updated_by: user.value?.email || '',
       updated_at_client: new Date().toISOString()
     };
-    
-    console.log('🚀 Updating vendor:', updateData);
-    
+        
     // ✅ VALIDATE REQUIRED FIELDS
     if (!updateData.vendor_name) {
       throw new Error('Vendor name is required');
@@ -318,7 +293,6 @@ const handleUpdateVendor = async () => {
     const result = await store.dispatch('updateVendor', updateData);
     
     if (result !== false) {
-      console.log('✅ Vendor updated successfully');
       statusMessage.value = `Vendor has been updated for ${updateData.vendor_name}`;
       
       // ✅ REFRESH RELATED DATA
@@ -369,17 +343,12 @@ const handleDeleteVendor = async () => {
     });
     
     if (!ok) {
-      console.log('🔄 User cancelled deletion');
       return;
-    }
-    
-    console.log('🗑️ Deleting vendor:', vendor.value);
-    
+    }    
     // ✅ DELETE VIA STORE
     const result = await store.dispatch('deleteVendor', vendor.value);
     
     if (result !== false) {
-      console.log('✅ Vendor deleted successfully');
       statusMessage.value = `Vendor and all its products were deleted for ${vendor.value.vendor_name}! Redirecting...`;
       
       // ✅ REFRESH RELATED DATA
@@ -415,27 +384,8 @@ const handleDeleteVendor = async () => {
   }
 };
 
-const debugVendorState = () => {
-  console.log('🔍 VENDOR STATE DEBUG:');
-  console.log('='.repeat(50));
-  
-  console.log('Vendor object:', vendor.value);
-  console.log('User:', user.value);
-  console.log('Route params:', route.params);
-  console.log('Validations:', {
-    isFormValid: isFormValid.value,
-    isVendorNameValid: isVendorNameValid.value,
-    hasAttemptedSubmit: hasAttemptedSubmit.value,
-    isLoading: isLoading.value,
-    isUpdating: isUpdating.value
-  });
-  
-  console.log('='.repeat(50));
-};
-
 // ✅ LIFECYCLE
 onMounted(async () => {
-  console.log('🔍 VendorEdit mounted');
   await loadVendor();
 });
 </script>

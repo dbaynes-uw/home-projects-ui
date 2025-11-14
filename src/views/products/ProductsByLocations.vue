@@ -293,65 +293,64 @@
                       :class="{ 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)) }"
                     >
                       <!-- ✅ VENDOR HEADER WITH DOUBLE-CLICK -->
-                      <div 
-                        class="vendor-header" 
-                        @click="toggleVendor(location, vendor)"
-                        @dblclick="handleVendorDoubleClick(vendor, $event)"
-                        :class="{ 'vendor-filtered': selectedVendorFilter === (vendor.vendor_id || vendor.id) }"
-                      >
-                        <i class="fas fa-store vendor-store-icon"></i>
+                      <!-- ✅ UPDATE THE VENDOR HEADER SECTION -->
+                    <div 
+                      class="vendor-header" 
+                      @click="toggleVendor(location, vendor)"
+                      @dblclick="handleVendorDoubleClick(vendor, $event)"
+                      :class="{ 'vendor-filtered': selectedVendorFilter === (vendor.vendor_id || vendor.id) }"
+                    >
+                      <i class="fas fa-store vendor-store-icon"></i>
+                      
+                      <!-- ✅ NEW: VENDOR NAME AND EDIT GROUP -->
+                      <div class="vendor-name-group">
                         <span class="vendor-name">{{ vendor.vendor_name }}</span>
-
-                        <!-- ✅ FILTER INDICATOR -->
-                        <i v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)" 
-                           class="fas fa-filter vendor-filter-icon mr-2"></i>
-
-                        <div class="vendor-controls">
-                          <!-- ✅ MOVE THE VENDOR PRODUCT FILTER HERE -->
-                          <div class="vendor-filter-wrapper mr-3">
-                            <span class="vendor-filter-text">
-                              {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
-                            </span>
-                            <v-switch
-                              :model-value="getVendorProductFilter(vendor)"
-                              @update:model-value="setVendorProductFilter(vendor, $event)"
-                              color="secondary"
-                              hide-details
-                              density="compact"
-                              class="vendor-switch-control ml-2"
-                              @click.stop
-                            />
-                          </div>
-
-                          <v-chip 
-                            size="small" 
-                            :color="expandedVendors.has(getVendorKey(location, vendor)) ? 'secondary' : 'default'"
-                            class="mr-2"
-                          >
-                            <i class="fas fa-box chip-icon"></i>
-                            {{ getFilteredProducts(vendor).length }} products
-                          </v-chip>
-
-                          <v-btn
-                            @click.stop="editVendor(vendor)"
-                            size="x-small"
-                            variant="text"
-                            color="info"
-                            class="mr-2"
-                          >
-                            <i class="fas fa-edit"></i>
-                            <span class="edit-hint ml-1">Edit</span>
-                          </v-btn>
-
-                          <i 
-                            :class="[
-                              'fas', 
-                              'chevron-icon',
-                              expandedVendors.has(getVendorKey(location, vendor)) ? 'fa-chevron-up' : 'fa-chevron-down'
-                            ]"
-                          ></i>
-                        </div>
+                        
+                        <!-- ✅ EDIT BUTTON RIGHT NEXT TO NAME -->
+                        <v-btn
+                          @click.stop="editVendor(vendor)"
+                          size="x-small"
+                          variant="text"
+                          color="info"
+                          class="edit-vendor-btn ml-2"
+                        >
+                          <i class="fas fa-edit"></i>
+                          <span class="edit-hint ml-1">Edit</span>
+                        </v-btn>
+                        
+                        <!-- ✅ NEW: PRODUCT COUNT CHIP NEXT TO EDIT -->
                       </div>
+
+                      <!-- ✅ FILTER INDICATOR -->
+                      <i v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)" 
+                        class="fas fa-filter vendor-filter-icon mr-2"></i>
+
+                      <!-- ✅ VENDOR CONTROLS (MOVED TO RIGHT) -->
+                      <div class="vendor-controls">
+                        <div class="vendor-filter-wrapper mr-3">
+                          <span class="vendor-filter-text">
+                            {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
+                          </span>
+                          <v-switch
+                            :model-value="getVendorProductFilter(vendor)"
+                            @update:model-value="setVendorProductFilter(vendor, $event)"
+                            color="secondary"
+                            hide-details
+                            density="compact"
+                            class="vendor-switch-control ml-2"
+                            @click.stop
+                          />
+                        </div>
+                        
+                        <i 
+                          :class="[
+                            'fas', 
+                            'chevron-icon',
+                            expandedVendors.has(getVendorKey(location, vendor)) ? 'fa-chevron-up' : 'fa-chevron-down'
+                          ]"
+                        ></i>
+                      </div>
+                    </div>
 
                       <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
                       <v-expand-transition>
@@ -363,9 +362,10 @@
                                   class="products-clickable-title"
                                   @dblclick="openProductDialog(location, vendor)"
                                 >
-                                  <i class="fas fa-box products-icon"></i>
-                                  Products
-                                  <v-chip size="small" color="info" class="ml-2">
+                                  <!--i class="fas fa-box products-icon"></!--i-->
+                                  <v-chip size="small" color="info" class="ml-2"
+                                  @click.stop="openProductDialog(location, vendor)"
+                                  >
                                     {{ getFilteredProducts(vendor).length }} items
                                   </v-chip>
 
@@ -675,13 +675,7 @@ const filteredLocations = computed(() => {
 });
 
 // ✅ ENHANCED: OPEN DIALOG FUNCTION WITH BETTER DEBUG
-function openProductDialog(location, vendor) {
-  console.log('🎯 🎯 🎯 DOUBLE CLICK DETECTED! 🎯 🎯 🎯');
-  console.log('📍 Location:', location);
-  console.log('🏪 Vendor:', vendor.vendor_name, vendor);
-  console.log('📱 User agent:', navigator.userAgent);
-  console.log('📱 Is mobile:', /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
-  
+function openProductDialog(location, vendor) {  
   // Check if we have the required data
   if (!vendor || !vendor.vendor_name) {
     console.error('❌ Invalid vendor data:', vendor);
@@ -706,26 +700,13 @@ function openProductDialog(location, vendor) {
   productSearch.value = '';
   showProductDialog.value = true;
   
-  console.log('📱 Dialog state set to:', showProductDialog.value);
-  console.log('📱 Products available:', getAllProducts.value.length);
-  console.log('📱 Selected context:', selectedContext.value);
-
   // Force dialog visibility with timeout
   setTimeout(() => {
     const dialogs = document.querySelectorAll('.v-dialog');
-    console.log('📱 Found dialogs after timeout:', dialogs.length);
     
     if (dialogs.length === 0) {
       console.error('❌ No dialog found in DOM!');
       alert('❌ Dialog not found - there may be a template issue');
-    } else {
-      dialogs.forEach((dialog, i) => {
-        console.log(`📱 Dialog ${i}:`, dialog);
-        dialog.style.zIndex = '9999';
-        dialog.style.display = 'flex';
-        dialog.style.visibility = 'visible';
-        dialog.style.opacity = '1';
-      });
     }
   }, 500);
 }
@@ -798,16 +779,12 @@ async function submitNewProduct() {
       updated_at: new Date().toISOString()
     };
     
-    console.log('🚀 Creating new product:', productData);
-    
     // ✅ New: Dispatch createProduct action
     const result = await store.dispatch('createProduct', productData);
-    
-    console.log('📝 Create product result:', result);
+
+    // console.log('📝 Create product result:', result);
     // && result !== null && result !== undefined)
     if (result !== false) {
-      console.log('✅ Product created successfully');
-
       // Show success message with final product name
       alert(`✅ Successfully added "${finalProductName}" to ${selectedContext.value.vendorName} at ${selectedContext.value.location}!`);
       
@@ -854,7 +831,6 @@ function getLocationFilter(location) {
 }
 
 function setLocationFilter(location, value) {
-  console.log(`🎯 Setting location filter for ${location}: ${value ? 'Selected Only' : 'All Items'}`);
   locationFilters.value.set(location, value);
   
   // Force reactivity
@@ -931,7 +907,7 @@ function toggleLocation(locationIndex) {
       }
     });
     
-    console.log(`🎯 Auto-expanded ${autoExpandedCount}/${vendors.length} vendors with products for location: ${location}`);
+    //console.log(`🎯 Auto-expanded ${autoExpandedCount}/${vendors.length} vendors with products for location: ${location}`);
   }
 }
 
@@ -955,7 +931,6 @@ function handleVendorDoubleClick(vendor, event) {
   } else {
     selectedVendorFilter.value = vendorId;
     vendorFilterName.value = vendor.vendor_name;
-    console.log(`🎯 Filtering by vendor: ${vendor.vendor_name} (ID: ${vendorId})`);
     autoExpandLocationsWithVendor(vendorId);
   }
 }
@@ -963,7 +938,6 @@ function handleVendorDoubleClick(vendor, event) {
 function clearVendorFilter() {
   selectedVendorFilter.value = null;
   vendorFilterName.value = '';
-  console.log('🔄 Cleared vendor filter - showing all vendors');
 }
 
 function autoExpandLocationsWithVendor(vendorId) {
@@ -1044,19 +1018,7 @@ function allVendorsExpandedForLocation(location) {
     expandedVendors.value.has(getVendorKey(location, vendor))
   );
 }
-function testDialogOpen() {
-  console.log('🧪 TESTING DIALOG OPEN');
-  
-  const testLocation = 'Austin';
-  const testVendor = {
-    vendor_name: 'Test Vendor',
-    vendor_id: 1,
-    id: 1
-  };
-  
-  console.log('🧪 Calling openProductDialog with test data...');
-  openProductDialog(testLocation, testVendor);
-}
+
 // ✅ PRODUCT AND VENDOR FUNCTIONS
 function handleProductClick(product, event, productIndex, vendorProducts) {
   if (event?.shiftKey && lastSelectedIndex.value !== null) {
@@ -1240,42 +1202,6 @@ async function fetchData() {
     console.error('❌ Error fetching data:', error);
   } finally {
     isLoading.value = false;
-  }
-}
-
-function debugDesktopDropdown() {
-  console.log('🔍 DESKTOP DROPDOWN DEBUG:');
-  console.log('- Window width:', window.innerWidth);
-  console.log('- Is mobile detected:', /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
-  console.log('- Products available:', getAllProducts.value);
-  console.log('- Dialog visible:', showProductDialog.value);
-  
-  // Check autocomplete elements
-  const autocomplete = document.querySelector('.v-autocomplete');
-  const menu = document.querySelector('.v-menu');
-  const dropdown = document.querySelector('.desktop-product-dropdown');
-  
-  console.log('- Autocomplete found:', !!autocomplete);
-  console.log('- Menu found:', !!menu);
-  console.log('- Dropdown found:', !!dropdown);
-  
-  if (autocomplete) {
-    const field = autocomplete.querySelector('.v-field');
-    const input = autocomplete.querySelector('input');
-    console.log('- Field found:', !!field);
-    console.log('- Input found:', !!input);
-    
-    if (input) {
-      console.log('- Input value:', input.value);
-      console.log('- Input focused:', document.activeElement === input);
-    }
-  }
-  
-  if (menu) {
-    const computed = window.getComputedStyle(menu);
-    console.log('- Menu display:', computed.display);
-    console.log('- Menu z-index:', computed.zIndex);
-    console.log('- Menu position:', computed.position);
   }
 }
 

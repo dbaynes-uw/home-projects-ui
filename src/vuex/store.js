@@ -1632,12 +1632,8 @@ export default new Vuex.Store({
 
         const response = await EventService.getVendor(vendorId);
 
-        console.log('✅ Store fetchVendor response:', response);
-        console.log('✅ Store fetchVendor response.data:', response.data);
-
         // ✅ THIS IS THE MISSING LINE - RETURN THE DATA!
         if (response && response.data) {
-          console.log('✅ Store fetchVendor returning vendor data:', response.data);
           return response.data; // ✅ ADD THIS RETURN STATEMENT!
         } else {
           console.error('❌ Store fetchVendor: No data in response');
