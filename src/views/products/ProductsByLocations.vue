@@ -591,8 +591,9 @@ const hasAnyExpandedLocations = computed(() => {
   return expandedLocations.value.size > 0;
 });
 
+// ✅ UPDATE THIS COMPUTED PROPERTY - CHANGE THE DEFAULT
 const allVendorsExpanded = computed(() => {
-  if (expandedLocations.value.size === 0) return true;
+  if (expandedLocations.value.size === 0) return true; // ✅ Already correct - defaults to true
   
   let totalVendors = 0;
   let expandedVendorCount = 0;
@@ -861,19 +862,24 @@ function setVendorProductFilter(vendor, value) {
   vendorProductFilters.value.set(vendorId, value);
 }
 
-// ✅ SINGLE getFilteredProducts FUNCTION - USES VENDOR-SPECIFIC FILTER
+// ✅ ENHANCED: getFilteredProducts WITH LOCATION-AWARE FILTERING
 function getFilteredProducts(vendor) {
   if (!vendor || !vendor.products || !Array.isArray(vendor.products)) {
     console.warn('❌ Invalid vendor products:', vendor);
     return [];
   }
   
-  // Use vendor-specific filter instead of global
+  // Use vendor-specific filter (which considers hierarchy)
   const showSelectedOnly = getVendorProductFilter(vendor);
   
-  return showSelectedOnly 
-    ? vendor.products.filter(product => product?.active)
-    : vendor.products;
+  if (showSelectedOnly) {
+    // Filter to only selected products
+    const selectedProducts = vendor.products.filter(product => product?.active);
+    return selectedProducts;
+  } else {
+    // Show all products
+    return vendor.products;
+  }
 }
 
 // ✅ HIERARCHICAL DROPDOWN FUNCTIONS
@@ -883,6 +889,7 @@ function getVendorKey(location, vendor) {
 
 function toggleLocation(locationIndex) {
   if (expandedLocations.value.has(locationIndex)) {
+    // ✅ CLOSING LOCATION - COLLAPSE ALL ITS VENDORS
     expandedLocations.value.delete(locationIndex);
     const location = locations.value[locationIndex];
     const vendors = getVendorsForLocation(location);
@@ -890,24 +897,19 @@ function toggleLocation(locationIndex) {
       expandedVendors.value.delete(getVendorKey(location, vendor));
     });
   } else {
+    // ✅ OPENING LOCATION - EXPAND LOCATION AND AUTO-EXPAND ALL VENDORS
     expandedLocations.value.add(locationIndex);
     
     const location = locations.value[locationIndex];
     const vendors = getVendorsForLocation(location);
-    let autoExpandedCount = 0;
     
+    // ✅ AUTO-EXPAND ALL VENDORS BY DEFAULT
     vendors.forEach(vendor => {
-      // ✅ ONLY AUTO-EXPAND VENDORS THAT HAVE PRODUCTS TO SHOW
-      const hasProducts = getFilteredProducts(vendor).length > 0;
-      
-      if (hasProducts && (!selectedVendorFilter.value || 
-          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value)) {
+      if (!selectedVendorFilter.value || 
+          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value) {
         expandedVendors.value.add(getVendorKey(location, vendor));
-        autoExpandedCount++;
       }
-    });
-    
-    //console.log(`🎯 Auto-expanded ${autoExpandedCount}/${vendors.length} vendors with products for location: ${location}`);
+    });    
   }
 }
 
@@ -975,10 +977,10 @@ function toggleAllLocations() {
 
 function toggleAllVendors() {
   if (allVendorsExpanded.value && expandedLocations.value.size > 0) {
-    // ✅ UPDATED: Only collapse if we actually have expanded locations
+    // ✅ COLLAPSE ALL VENDORS (since they're expanded by default)
     expandedVendors.value.clear();
   } else {
-    // ✅ EXPAND ALL VENDORS IN EXPANDED LOCATIONS
+    // ✅ EXPAND ALL VENDORS IN ALL EXPANDED LOCATIONS  
     expandedLocations.value.forEach(locationIndex => {
       const location = locations.value[locationIndex];
       const vendors = getVendorsForLocation(location);
@@ -988,26 +990,6 @@ function toggleAllVendors() {
           expandedVendors.value.add(getVendorKey(location, vendor));
         }
       });
-    });
-  }
-}
-
-function toggleAllVendorsForLocation(location) {
-  const vendors = getVendorsForLocation(location);
-  const allExpanded = vendors.every(vendor => 
-    expandedVendors.value.has(getVendorKey(location, vendor))
-  );
-  
-  if (allExpanded) {
-    vendors.forEach(vendor => {
-      expandedVendors.value.delete(getVendorKey(location, vendor));
-    });
-  } else {
-    vendors.forEach(vendor => {
-      if (!selectedVendorFilter.value || 
-          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value) {
-        expandedVendors.value.add(getVendorKey(location, vendor));
-      }
     });
   }
 }
@@ -1057,7 +1039,7 @@ function getVendorLocation(vendor) {
   return null;
 }
 
-// ✅ UPDATE getVendorsForLocation TO CONSIDER LOCATION FILTER
+// ✅ UPDATED: getVendorsForLocation TO ALWAYS SHOW VENDORS
 function getVendorsForLocation(location) {
   const vendors = vendorsProducts.value;
   
@@ -1075,15 +1057,8 @@ function getVendorsForLocation(location) {
     );
   }
   
-  // ✅ NEW: APPLY LOCATION FILTER
-  const locationFilterValue = getLocationFilter(location);
-  if (locationFilterValue) {
-    // Filter to vendors that have at least one selected product
-    locationVendors = locationVendors.filter(vendor => {
-      if (!vendor.products || !Array.isArray(vendor.products)) return false;
-      return vendor.products.some(product => product?.active);
-    });
-  }
+  // ✅ REMOVED: Location filter logic - vendors always show
+  // We'll filter products at the product level instead
   
   return locationVendors;
 }
@@ -1184,7 +1159,7 @@ async function submitChanges() {
   }
 }
 
-// ✅ ENHANCED: FETCH DATA TO INCLUDE PRODUCTS GROUP
+// ✅ ENHANCED: FETCH DATA WITH SMART DEFAULTS
 async function fetchData() {
   isLoading.value = true;
   
@@ -1193,16 +1168,65 @@ async function fetchData() {
       store.dispatch('fetchVendorsProducts'),
       store.dispatch('fetchVendorsLocationsGroup'),
       store.dispatch('fetchShoppingList'),
-      store.dispatch('fetchVendorsProductsGroup') // ✅ ADD THIS FOR AUTOCOMPLETE
+      store.dispatch('fetchVendorsProductsGroup')
     ];
     
     await Promise.all(promises);
+    
+    // ✅ NEW: SET SMART DEFAULTS AFTER DATA IS LOADED
+    setSmartDefaults();
     
   } catch (error) {
     console.error('❌ Error fetching data:', error);
   } finally {
     isLoading.value = false;
   }
+}
+// ✅ UPDATED: SMARTER DEFAULTS FUNCTION - ONLY EXPAND VENDORS WITH SELECTED PRODUCTS
+function setSmartDefaults() {
+  
+  // 1. ✅ EXPAND ALL LOCATIONS
+  locations.value.forEach((location, index) => {
+    expandedLocations.value.add(index);
+  });
+  
+  // 2. ✅ ONLY EXPAND VENDORS THAT HAVE SELECTED PRODUCTS
+  let expandedVendorCount = 0;
+  let collapsedVendorCount = 0;
+  
+  locations.value.forEach((location, locationIndex) => {
+    const vendors = getVendorsForLocation(location);
+    
+    vendors.forEach(vendor => {
+      const hasSelectedProducts = vendor.products && vendor.products.some(p => p.active);
+      
+      if (hasSelectedProducts) {
+        // ✅ HAS SELECTED PRODUCTS - EXPAND AND SHOW SELECTED ONLY
+        expandedVendors.value.add(getVendorKey(location, vendor));
+        const vendorId = vendor.vendor_id || vendor.id;
+        vendorProductFilters.value.set(vendorId, true); // Show "Selected Only"
+        expandedVendorCount++;
+      } else {
+        // ✅ NO SELECTED PRODUCTS - KEEP COLLAPSED
+        const vendorId = vendor.vendor_id || vendor.id;
+        vendorProductFilters.value.set(vendorId, false); // Show "All Items" when expanded
+        collapsedVendorCount++;
+      }
+    });
+  });
+  
+  // 3. ✅ SET LOCATION FILTERS BASED ON VENDOR CONTENT
+  locations.value.forEach(location => {
+    const vendors = getVendorsForLocation(location);
+    const vendorsWithSelected = vendors.filter(v => v.products && v.products.some(p => p.active));
+    const hasAnySelected = vendorsWithSelected.length > 0;
+    
+    locationFilters.value.set(location, hasAnySelected);
+  });
+  
+  // 4. ✅ SET GLOBAL FILTER BASED ON OVERALL ACTIVITY
+  const hasAnySelectedGlobally = expandedVendorCount > 0;
+  showShoppingList.value = hasAnySelectedGlobally;
 }
 
 // ✅ MAKE IT AVAILABLE IN CONSOLE
