@@ -91,31 +91,6 @@
           </v-form>
         </v-card-text>
       </v-card>
-
-      <!-- ✅ DEBUG INFO (DEV ONLY) -->
-      <v-card v-if="isDev" class="mt-4" color="info" variant="tonal">
-        <v-card-title>
-          <i class="fas fa-bug"></i>
-          Debug Info
-        </v-card-title>
-        <v-card-text>
-          <p><strong>Form Valid:</strong> {{ isFormValid }}</p>
-          <p><strong>Date Valid:</strong> {{ isDateOccurrenceValid }}</p>
-          <p><strong>Duration Valid:</strong> {{ isDurationValid }}</p>
-          <p><strong>Has Attempted Submit:</strong> {{ hasAttemptedSubmit }}</p>
-          <p><strong>Is Submitting:</strong> {{ isSubmitting }}</p>
-          <p><strong>User Email:</strong> {{ user?.email }}</p>
-          
-          <v-btn 
-            @click="debugFormState"
-            variant="outlined"
-            size="small"
-            class="mt-2"
-          >
-            Debug Form State
-          </v-btn>
-        </v-card-text>
-      </v-card>
     </div>
   </div>
 </template>

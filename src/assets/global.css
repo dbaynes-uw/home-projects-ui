@@ -13,6 +13,36 @@
   width: 78%;
   text-align: center;
 }
+/* V-APP-BAR OVERRIDES (you already have these) */
+.v-app-bar,
+.v-app-bar .v-toolbar__content,
+.v-app-bar.v-toolbar,
+.v-app-bar.bg-teal-darken-2 {
+  background-color: #1972AE !important;
+  background: #1972AE !important;
+  color: white !important;
+}
+
+/* ✅ NEW: V-FOOTER OVERRIDES */
+.v-footer,
+.v-footer.bg-teal-darken-2,
+.v-footer .v-footer__content {
+  background-color: #1972AE !important;
+  background: #1972AE !important;
+  color: white !important;
+}
+
+/* ✅ ENSURE CONSISTENT THEMING FOR FOOTER */
+.v-footer {
+  --v-theme-primary: #1972AE !important;
+  --v-theme-surface: #1972AE !important;
+}
+
+/* ✅ OVERRIDE ANY FOOTER GRADIENTS OR PATTERNS */
+.v-footer::before,
+.v-footer::after {
+  background: none !important;
+}
 .menu-base {
   width: 10%;
   height: 3.1rem;

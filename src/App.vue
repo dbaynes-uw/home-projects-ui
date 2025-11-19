@@ -33,7 +33,7 @@
     <!-- ✅ MAIN APP LAYOUT WITH NAVIGATION -->
     <v-app v-else>
       <!-- ✅ TOP HEADER WITH DROPDOWN MENU -->
-      <v-app-bar color="teal-darken-2" app>
+      <v-app-bar color="teal-darken-2">
         <!-- ✅ DROPDOWN MENU BUTTON -->
         <v-menu offset-y>
           <template v-slot:activator="{ props }">
@@ -316,6 +316,7 @@ export default {
 </script>
 
 <style scoped>
+
 /* ✅ APP TITLE STYLING */
 .app-title {
   margin-left: 1rem;
