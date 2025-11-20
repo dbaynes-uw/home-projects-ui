@@ -354,23 +354,42 @@
   margin: auto !important;
   width: 12rem;
   height: 2rem;
-  /*background-color: #7ba8bd; */
-  /*background-color: #adb4b7;*/
-  background-color: #adb4b7;
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
+  /* ✅ UPDATED: Blue gradient matching header/footer */
+  background: linear-gradient(to right, #1972AE, #4A9FD8) !important;
   border-radius: 5px;
   font-size: 18px;
   font-weight: bold;
-  color: #000 !important;
+  color: white !important; /* ✅ UPDATED: White text */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-#button-as-link-wide { @extend #button-as-link;
-  margin: auto;
-  width: 20rem !important;
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
 
+#button-as-link:hover {
+  background: linear-gradient(to right, #145A8E, #3A8FC8) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 114, 174, 0.4);
+}
+
+#button-as-link {
+  margin: auto !important;
+  width: 12rem;
+  height: 2rem;
+  /* ✅ SOPHISTICATED BLUE GRADIENT */
+  background: linear-gradient(to right, #145A8E, #1972AE, #2A84C0) !important;
+  border-radius: 5px;
   font-size: 18px;
   font-weight: bold;
-  color: #000 !important;
+  color: white !important;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#button-as-link:hover {
+  background: linear-gradient(to right, #0F4670, #145A8E, #1972AE) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 114, 174, 0.5);
 }
 #link-as-button {
   margin: auto;
