@@ -24,14 +24,16 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/)
 
 PROJECTS:
-* Furnace Filter 20 x 25 x 1
-* Clean Furnace Hallway Filters
-* Clean Bathroom Filters
-* Feeding Fridays
-* Review Passwords
-
-TBD
-* User Login - (Devise?)
-* Finish out EventStats to link to PastDues
-* Combine Assigned with PastDues
-* Migrate to views/events/ for all views
+src/
+├── components/
+│   └── sleepmarkers/
+│       ├── SleepMarkerCard.vue          # Display individual sleep entry
+│       ├── SleepMarkerForm.vue          # Add/Edit sleep data
+│       └── SleepMarkerChart.vue         # Sleep analytics/charts
+├── views/
+│   └── sleepmarkers/
+│       ├── SleepMarkerList.vue          # Main list view
+│       └── SleepMarkerView.vue          # Single entry detail view
+└── store/
+    └── modules/
+        └── sleepmarkers.js              # Vuex store module

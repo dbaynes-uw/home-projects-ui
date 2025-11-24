@@ -11,21 +11,25 @@
 
       <router-link :to="{ name: 'HealthMarkerList' }" class="nav-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
-        <i class="fas fa-heartbeat heart-icon"></i>
-        <span>Health Markers</span>
+        <i class="fas fa-heartbeat"></i>
+        <span>&nbsp;Health Markers</span>
       </router-link>
       
+      <router-link :to="{ name: 'SleepMarkerList' }" class="nav-btn" id="button-as-link">
+        <i class="fas fa-bed" aria-hidden="true"></i>
+        <span>&nbsp;&nbsp;Sleep Markers</span>
+      </router-link>
 
       <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
-        <i class="fas fa-heartbeat heart-icon"></i>
-        <span>Glucose</span>
+        <i class="fa fa-heart" aria-hidden="true"></i>
+        <span>&nbsp;Glucose</span>
       </router-link>
 
       <router-link :to="{ name: 'OobList' }" class="nav-btn glucose-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
-        <i class="fas fa-heartbeat heart-icon"></i>
-        <span>Oobs</span>
+        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+        <span>&nbsp;Oobs</span>
       </router-link>
 
     </div>
@@ -41,5 +45,17 @@
   background: #f8f9fa;
   border-radius: 8px;
   margin: 1rem;
+}
+.fa-heartbeat {
+  color: lightblue;
+}
+.fa-heart {
+  color: red;
+}
+.fa-bed {
+  color: lightgreen;
+}
+.fa-thumbs-down {
+  color: yellow;
 }
 </style>

@@ -57,6 +57,8 @@ export default new Vuex.Store({
     products: [],
     products_by_location: [],
     shopping_list: [],
+    sleepMarkers: [],
+    sleepMarker: {},
     trail: {},
     trails: [],
     travel: [],
@@ -223,6 +225,19 @@ export default new Vuex.Store({
       } else {
         console.warn('⚠️ SET_OOBS_PAGINATION: Invalid pagination data:', pagination);
       }
+    },
+    // ✅ SLEEP_MARKER MUTATIONS
+    ADD_SLEEP_MARKER(state, sleepMarker) {
+      state.sleepMarkers.push(sleepMarker);
+    },
+    DELETE_SLEEP_MARKER(state, sleepMarker) {
+      state.sleepMarkers = state.sleepMarkers.filter(marker => marker.id !== sleepMarker.id);
+    },
+    SET_SLEEP_MARKER(state, sleepMarker) {
+      state.sleepMarker = sleepMarker;
+    },
+    SET_SLEEP_MARKERS(state, sleepMarkers) {
+      state.sleepMarkers = sleepMarkers;
     },
 
     CLEAR_BOOKS(state) {
@@ -1368,6 +1383,93 @@ export default new Vuex.Store({
           alert("ProductsVendors Put Error: ", error.response.data )
         });
     },
+
+    // ✅ SleepMarkers ACTIONS
+    async createSleepMarker({ commit }, sleepMarker) {
+      EventService.postSleepMarker(sleepMarker)
+        .then(() => {
+          commit("ADD_SLEEP_MARKER", sleepMarker);
+          alert("Sleep Marker was successfully added.");
+        })
+        .catch((error) => {
+          alert("Sleep Marker Post Error: ", error.response.data )
+        });
+    },
+
+    async deleteSleepMarker({ commit, dispatch }, sleepMarker) {
+      try {
+        const response = await EventService.deleteSleepMarker(sleepMarker);
+        // ✅ REFRESH THE ENTIRE SLEEP MARKERS LIST TO GET UPDATED DATA
+        await dispatch('fetchSleepMarkers');
+
+        return response.data; // ✅ RETURN SUCCESS
+
+      } catch (error) {
+        console.error('❌ Store: Sleep Marker delete error:', error);
+        throw error;
+      }
+    },
+
+    async fetchSleepMarker({ commit, state }, id) {
+      console.log("Fetching Sleep Marker with ID:", id);
+      const existingSleepMarker = state.sleepMarkers.find((marker) => marker.id === id);
+      if (existingSleepMarker) {
+        commit("SET_SLEEP_MARKER", existingSleepMarker);
+      } else {
+        EventService.getSleepMarker(id)
+          .then((response) => {
+            commit("SET_SLEEP_MARKER", response.data);
+          })
+          .catch((error) => {
+            alert("Sleep Marker Get Error: ", error.response.data )
+          });
+      }
+    },
+
+    async fetchSleepMarkers({ commit }) {
+      try {
+        commit('SET_SLEEP_MARKERS', []);
+
+        const response = await EventService.getSleepMarkers();
+
+        // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
+        let sleepMarkersArray = [];
+
+        if (Array.isArray(response.data)) {
+          // ✅ NEW FORMAT: Direct array
+          sleepMarkersArray = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+          // ✅ OLD FORMAT: Paginated (fallback)
+          sleepMarkersArray = response.data.data;
+        } else {
+          console.error('❌ Store: Unexpected response format:', response);
+          sleepMarkersArray = [];
+        }
+
+        commit('SET_SLEEP_MARKERS', sleepMarkersArray);
+
+        return sleepMarkersArray;
+
+      } catch (error) {
+        console.error('❌ Store: Error fetching sleep markers:', error);
+        commit('SET_SLEEP_MARKERS', []);
+        throw error;
+      }
+    },
+    async updateSleepMarker({ commit, dispatch }, sleepMarker) {
+      try {
+        const response = await EventService.putSleepMarker(sleepMarker);
+        // Commit the updated marker to Vuex state
+        commit("SET_SLEEP_MARKER", response.data);
+        // Optionally fetch the updated list of markers
+        await dispatch("fetchSleepMarkers");
+      } catch (error) {
+        console.error("Error updating sleep marker:", error.response.data);
+        alert("Failed to update sleep marker. Please try again.");
+      }
+    },
+
+
     async createTrail({ commit }, trail) {
       EventService.postTrail(trail)
         .then(() => {

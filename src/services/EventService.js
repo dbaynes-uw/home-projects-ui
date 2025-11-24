@@ -296,24 +296,49 @@ export default {
     this.init();
     return axios.put(api_url + "products" + `/${updatedProduct.id}`, updatedProduct);
   },
-// ✅ UPDATE YOUR EventService.js
-async putProducts(products) {
-  try {
-    const response = await axios.patch(api_url + "products/update", products);
-    
+  // ✅ UPDATE YOUR EventService.js
+  async putProducts(products) {
+    try {
+      const response = await axios.patch(api_url + "products/update", products);
+
+      return response;
+
+    } catch (error) {
+      console.error('❌ EventService putProducts error:', error);
+      console.error('❌ Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
+
+      throw error;
+    }
+  },
+  getSleepMarker(id) {
+    console.log("ES GET Sleep Marker with ID:", id);
+    this.init();
+    const response = axios.get(api_url + "sleep_markers/" + id);
+    console.log("ES GET Sleep Marker response:", response);
     return response;
-    
-  } catch (error) {
-    console.error('❌ EventService putProducts error:', error);
-    console.error('❌ Error details:', {
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data
-    });
-    
-    throw error;
-  }
-},
+  },
+  getSleepMarkers() {
+    this.init();
+    return axios.get(api_url + "sleep_markers")
+  },
+  postSleepMarker(sleepMarker) {
+    this.init();
+    return axios.post(api_url + 'sleep_markers', sleepMarker);
+  },
+  async putSleepMarker(updatedSleepMarker) {
+    this.init();
+    return axios.put(api_url + "sleep_markers" + `/${updatedSleepMarker.id}`, updatedSleepMarker);
+  },
+  deleteSleepMarker(sleepMarker) {
+    this.init();
+    // For Testing: setTimeout(5000);
+    return axios.delete(api_url + "sleep_markers/" + `${sleepMarker.id}`);
+  },
+
   async postTrail(trail) {
     this.init();
     return axios.post(api_url + "trails", trail);

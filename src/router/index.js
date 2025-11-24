@@ -313,7 +313,35 @@ const routes = [
     component: () => import('@/views/oobs/OobEdit.vue'),
     meta: { requiresAuth: true}
   },
+  // SLEEP MARKERS:
 
+  {
+    path: "/sleep-marker/create",
+    name: "SleepMarkerCreate",
+    component: () => import('@/views/sleepMarkers/SleepMarkerCreate.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/sleep-markers",
+    name: "SleepMarkerList",
+    component: () => import('@/views/sleepMarkers/SleepMarkerList.vue'),
+    meta: { requiresAuth: true },
+  },
+  /*
+  {
+    path: "/sleepMarkers/category",
+    name: "SleepMarkersByCategory",
+    component: () => import('@/views/sleepMarkers/SleepMarkersByCategory.vue'),
+    meta: { requiresAuth: true },
+  },
+  */
+  {
+    path: "/sleep-marker/:id",
+    name: "SleepMarkerEdit",
+    props: true,
+    component: () => import('@/views/sleepMarkers/SleepMarkerEdit.vue'),
+    meta: { requiresAuth: true },
+  },
   // ✅ PLANTS
   {
     path: "/plants",
