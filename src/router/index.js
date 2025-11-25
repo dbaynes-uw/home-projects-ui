@@ -315,14 +315,6 @@ const routes = [
   },
 
   // SLEEP MARKERS:
-  /*
-  {
-    path: "/sleep-marker/create",
-    name: "SleepMarkerCreate",
-    component: () => import('@/views/sleepmarkers/SleepMarkerCreate.vue'),
-    meta: { requiresAuth: true}
-  },
-  */
   // ✅ SLEEP MARKERS (lowercase folder)
   {
     path: "/sleep-markers",
@@ -335,7 +327,7 @@ const routes = [
   {
     path: "/sleepMarkers/category",
     name: "SleepMarkersByCategory",
-    component: () => import('@/views/sleepmarkers/SleepMarkersByCategory.vue'),
+    component: () => import('@/views/sleepMarkers/SleepMarkersByCategory.vue'),
     meta: { requiresAuth: true },
   },
   */
@@ -344,7 +336,7 @@ const routes = [
     path: "/sleep-marker/:id",
     name: "SleepMarkerEdit",
     props: true,
-    component: () => import('@/views/sleepmarkers/SleepMarkerEdit.vue'),
+    component: () => import('@/views/sleepMarkers/SleepMarkerEdit.vue'),
     meta: { requiresAuth: true },
   },
   */

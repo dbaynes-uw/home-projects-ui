@@ -1,85 +1,80 @@
 <template>
-  <v-card class="sleep-card" elevation="3">
-    <v-card-title class="card-header">
-      <div class="date-section">
+  <BaseCard class="sleep-marker-card" hover clickable @click="$emit('edit', marker)">
+    <div class="card-header">
+      <div class="date-badge">
         <i class="fas fa-calendar-day"></i>
-        <span class="date-text">{{ formattedDate }}</span>
+        {{ formattedDate }}
       </div>
-      <v-chip
-        :color="qualityColor"
-        size="small"
-        class="quality-chip"
-      >
-        <i class="fas fa-star"></i>
-        {{ marker.sleep_quality }}/10
-      </v-chip>
-    </v-card-title>
-
-    <v-card-text class="card-content">
-      <!-- Sleep Duration -->
-      <div class="info-row">
-        <i class="fas fa-moon info-icon"></i>
-        <span class="info-label">Total Sleep:</span>
-        <span class="info-value">{{ marker.total_sleep_hours }}h</span>
+      <div class="actions">
+        <button class="action-btn edit-btn" @click.stop="$emit('edit', marker)" title="Edit">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="action-btn delete-btn" @click.stop="$emit('delete', marker)" title="Delete">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
+    </div>
 
+    <div class="card-body">
       <!-- Sleep Times -->
-      <div class="info-row">
-        <i class="fas fa-clock info-icon"></i>
-        <span class="info-label">Sleep Time:</span>
-        <span class="info-value">{{ marker.bed_time }} - {{ marker.wake_time }}</span>
-      </div>
-
-      <!-- Sleep Stages -->
-      <div class="sleep-stages">
-        <div class="stage-item" v-if="marker.deep_sleep">
-          <span class="stage-label">Deep:</span>
-          <span class="stage-value">{{ marker.deep_sleep }}h</span>
+      <div class="time-row">
+        <div class="time-item">
+          <i class="fas fa-bed"></i>
+          <span class="time-label">Bed Time</span>
+          <span class="time-value">{{ marker.bed_time }}</span>
         </div>
-        <div class="stage-item" v-if="marker.rem_sleep">
-          <span class="stage-label">REM:</span>
-          <span class="stage-value">{{ marker.rem_sleep }}h</span>
-        </div>
-        <div class="stage-item" v-if="marker.core_sleep">
-          <span class="stage-label">Core:</span>
-          <span class="stage-value">{{ marker.core_sleep }}h</span>
+        <div class="time-item">
+          <i class="fas fa-sun"></i>
+          <span class="time-label">Wake Time</span>
+          <span class="time-value">{{ marker.wake_time }}</span>
         </div>
       </div>
 
-      <!-- Awakenings -->
-      <div class="info-row" v-if="marker.awakenings">
-        <i class="fas fa-eye info-icon"></i>
-        <span class="info-label">Awakenings:</span>
-        <span class="info-value">{{ marker.awakenings }}</span>
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-item">
+          <i class="fas fa-moon stat-icon"></i>
+          <span class="stat-value">{{ marker.total_sleep_hours }}h</span>
+          <span class="stat-label">Total Sleep</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-star stat-icon"></i>
+          <span class="stat-value">{{ marker.sleep_quality }}/10</span>
+          <span class="stat-label">Quality</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ marker.awake_sleep }}</span>
+          <span class="stat-label">Awake Sleep</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ marker.rem_sleep }}</span>
+          <span class="stat-label">REM Sleep</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ marker.core_sleep }}</span>
+          <span class="stat-label">Core Sleep</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ marker.deep_sleep }}</span>
+          <span class="stat-label">Deep Sleep</span>
+        </div>        
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ marker.awakenings }}</span>
+          <span class="stat-label">Awakenings</span>
+        </div>
       </div>
-    </v-card-text>
-
-    <v-card-actions class="card-actions">
-      <v-btn
-        size="small"
-        color="info"
-        variant="text"
-        @click="$emit('edit', marker)"
-      >
-        <i class="fas fa-edit"></i>
-        Edit
-      </v-btn>
-      <v-btn
-        size="small"
-        color="error"
-        variant="text"
-        @click="$emit('delete', marker)"
-      >
-        <i class="fas fa-trash"></i>
-        Delete
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+    </div>
+  </BaseCard>
 </template>
 
 <script setup>
 import { computed } from 'vue';
-import dayjs from 'dayjs';
+import BaseCard from '@/components/ui/BaseCard.vue';
 
 const props = defineProps({
   marker: {
@@ -91,114 +86,167 @@ const props = defineProps({
 defineEmits(['edit', 'delete']);
 
 const formattedDate = computed(() => {
-  return dayjs(props.marker.sleep_date).format('MMM DD, YYYY');
-});
-
-const qualityColor = computed(() => {
-  const quality = parseFloat(props.marker.sleep_quality);
-  if (quality >= 8) return 'success';
-  if (quality >= 6) return 'warning';
-  return 'error';
+  const date = new Date(props.marker.sleep_date);
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'short', 
+    day: 'numeric' 
+  });
 });
 </script>
 
 <style scoped>
-.sleep-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+.sleep-marker-card {
+  background: white;
+  transition: all 0.3s ease;
 }
 
-.sleep-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
+.sleep-marker-card:hover {
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.2);
 }
 
 .card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: 16px 20px;
+  border-bottom: 2px solid #f0f0f0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
 }
 
-.date-section {
+.date-badge {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.date-text {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.quality-chip {
+  gap: 8px;
   font-weight: 700;
+  font-size: 16px;
+  color: #667eea;
 }
 
-.card-content {
-  flex: 1;
-  padding: 1rem;
+.date-badge i {
+  font-size: 18px;
 }
 
-.info-row {
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  padding: 0.5rem;
-  background: #f5f5f5;
-  border-radius: 8px;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 14px;
 }
 
-.info-icon {
+.edit-btn {
+  background: rgba(102, 126, 234, 0.1);
   color: #667eea;
-  width: 20px;
 }
 
-.info-label {
+.edit-btn:hover {
+  background: #667eea;
+  color: white;
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+.delete-btn:hover {
+  background: #f44336;
+  color: white;
+  transform: scale(1.1);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.time-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.time-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+  padding: 12px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12px;
+}
+
+.time-item i {
+  font-size: 24px;
+  color: #667eea;
+  margin-bottom: 4px;
+}
+
+.time-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   font-weight: 600;
-  color: #666;
-  flex: 1;
 }
 
-.info-value {
+.time-value {
+  font-size: 20px;
   font-weight: 700;
   color: #333;
 }
 
-.sleep-stages {
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.stat-item {
   display: flex;
-  gap: 0.5rem;
-  margin: 1rem 0;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 12px;
+  transition: all 0.2s;
 }
 
-.stage-item {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 600;
+.stat-item:hover {
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-2px);
 }
 
-.stage-label {
-  opacity: 0.9;
-  margin-right: 0.25rem;
+.stat-icon {
+  font-size: 24px;
+  color: #667eea;
 }
 
-.stage-value {
+.stat-value {
+  font-size: 20px;
   font-weight: 700;
+  color: #333;
 }
 
-.card-actions {
-  border-top: 1px solid #e0e0e0;
-  padding: 0.5rem 1rem;
-  justify-content: flex-end;
-  gap: 0.5rem;
+.stat-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 </style>
