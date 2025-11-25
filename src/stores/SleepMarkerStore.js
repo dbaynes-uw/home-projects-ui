@@ -1,6 +1,41 @@
 import { defineStore } from 'pinia';
 import EventService from '@/services/EventService';
 
+// ✅ HELPER FUNCTION OUTSIDE STORE (NO 'this' needed)
+function extractTime(isoString) {
+  if (!isoString) return '';
+  
+  try {
+    // Check if it's already HH:MM format
+    if (/^\d{2}:\d{2}(:\d{2})?$/.test(isoString)) {
+      return isoString.substring(0, 5); // Return just HH:MM
+    }
+    
+    // Extract from ISO format: "2000-01-01T17:50:00.000-08:00" → "17:50"
+    if (isoString.includes('T')) {
+      const date = new Date(isoString);
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+    
+    return isoString;
+    
+  } catch (error) {
+    console.error('❌ Error extracting time from:', isoString, error);
+    return '';
+  }
+}
+
+// ✅ HELPER FUNCTION OUTSIDE STORE
+function formatSleepMarker(marker) {
+  return {
+    ...marker,
+    bed_time: extractTime(marker.bed_time),
+    wake_time: extractTime(marker.wake_time)
+  };
+}
+
 export const useSleepMarkerStore = defineStore('sleepMarker', {
   state: () => ({
     sleepMarkers: [],
@@ -53,7 +88,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
   },
 
   actions: {
-    // ✅ FETCH ALL SLEEP MARKERS - NO FORMATTING NEEDED!
+    // ✅ FETCH ALL SLEEP MARKERS
     async fetchSleepMarkers() {
       this.loading = true;
       this.error = null;
@@ -63,6 +98,8 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         const response = await EventService.getSleepMarkers();
         
+        console.log('📦 Raw API Response:', response.data);
+        
         let sleepMarkersArray = [];
         if (Array.isArray(response.data)) {
           sleepMarkersArray = response.data;
@@ -70,11 +107,13 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
           sleepMarkersArray = response.data.data;
         }
         
-        // ✅ NO FORMATTING - API ALREADY RETURNS HH:MM
-        this.sleepMarkers = sleepMarkersArray;
+        // ✅ FORMAT EACH MARKER (USE EXTERNAL FUNCTION)
+        this.sleepMarkers = sleepMarkersArray.map(marker => formatSleepMarker(marker));
         
         console.log('✅ SleepMarkerStore: Fetched', this.sleepMarkers.length, 'markers');
-        console.log('📊 SleepMarkerStore: Sample marker:', this.sleepMarkers[0]);
+        console.log('📊 SleepMarkerStore: First marker AFTER formatting:', this.sleepMarkers[0]);
+        console.log('🕐 SleepMarkerStore: bed_time AFTER formatting:', this.sleepMarkers[0]?.bed_time);
+        console.log('🕐 SleepMarkerStore: wake_time AFTER formatting:', this.sleepMarkers[0]?.wake_time);
         
         return this.sleepMarkers;
         
@@ -89,7 +128,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       }
     },
 
-    // ✅ FETCH SINGLE SLEEP MARKER - NO FORMATTING NEEDED!
+    // ✅ FETCH SINGLE SLEEP MARKER
     async fetchSleepMarker(id) {
       this.loading = true;
       this.error = null;
@@ -103,8 +142,8 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         const response = await EventService.getSleepMarker(id);
         
-        // ✅ NO FORMATTING - API ALREADY RETURNS HH:MM
-        this.sleepMarker = response.data;
+        // ✅ FORMAT THE MARKER (USE EXTERNAL FUNCTION)
+        this.sleepMarker = formatSleepMarker(response.data);
         
         return this.sleepMarker;
         
@@ -128,6 +167,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         const response = await EventService.postSleepMarker(sleepMarkerData);
         
+        // Refresh list to get updated data
         await this.fetchSleepMarkers();
         
         console.log('✅ SleepMarkerStore: Created successfully');
@@ -154,6 +194,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         const response = await EventService.putSleepMarker(sleepMarkerData);
         
+        // Refresh list to get updated data
         await this.fetchSleepMarkers();
         
         console.log('✅ SleepMarkerStore: Updated successfully');
@@ -180,6 +221,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         await EventService.deleteSleepMarker(id);
         
+        // Refresh list to get updated data
         await this.fetchSleepMarkers();
         
         console.log('✅ SleepMarkerStore: Deleted successfully');
@@ -196,6 +238,12 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       }
     },
 
+    // ✅ CLEANUP METHOD
+    cleanup() {
+      this.$reset();
+      console.log('🧹 SleepMarkerStore cleaned up');
+    },
+
     clearError() {
       this.error = null;
     },
@@ -205,49 +253,6 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       this.sleepMarker = null;
       this.loading = false;
       this.error = null;
-    },
-       // ✅ NEW: AUTO CLEANUP OLD DATA
-    async fetchSleepMarkers() {
-      this.loading = true;
-      this.error = null;
-      
-      try {
-        // ✅ CLEAR OLD DATA FIRST
-        this.sleepMarkers = [];
-        
-        const response = await EventService.getSleepMarkers();
-        
-        let sleepMarkersArray = [];
-        if (Array.isArray(response.data)) {
-          sleepMarkersArray = response.data;
-        } else if (response.data?.data && Array.isArray(response.data.data)) {
-          sleepMarkersArray = response.data.data;
-        }
-        
-        // ✅ LIMIT TO LAST 100 ENTRIES (MEMORY OPTIMIZATION)
-        const limitedArray = sleepMarkersArray.slice(-100);
-        
-        this.sleepMarkers = limitedArray.map(marker => this.formatSleepMarker(marker));
-        
-        console.log('✅ Fetched', this.sleepMarkers.length, 'sleep markers');
-        
-        return this.sleepMarkers;
-        
-      } catch (error) {
-        console.error('❌ Fetch error:', error);
-        this.error = error.message;
-        this.sleepMarkers = [];
-        throw error;
-        
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    // ✅ NEW: CLEANUP METHOD
-    cleanup() {
-      this.$reset();
-      console.log('🧹 SleepMarkerStore cleaned up');
     }
   }
 });
