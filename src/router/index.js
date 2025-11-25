@@ -323,10 +323,11 @@ const routes = [
     meta: { requiresAuth: true}
   },
   */
+  // ✅ SLEEP MARKERS (lowercase folder)
   {
     path: "/sleep-markers",
     name: "SleepMarkerList",
-    component: () => import('@/views/sleepmarkers/SleepMarkerList.vue'),
+    component: () => import('@/views/sleepMarkers/SleepMarkerList.vue'), // ✅ lowercase
     meta: { requiresAuth: true },
   },
   /* Later */
