@@ -205,6 +205,49 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       this.sleepMarker = null;
       this.loading = false;
       this.error = null;
+    },
+       // ✅ NEW: AUTO CLEANUP OLD DATA
+    async fetchSleepMarkers() {
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        // ✅ CLEAR OLD DATA FIRST
+        this.sleepMarkers = [];
+        
+        const response = await EventService.getSleepMarkers();
+        
+        let sleepMarkersArray = [];
+        if (Array.isArray(response.data)) {
+          sleepMarkersArray = response.data;
+        } else if (response.data?.data && Array.isArray(response.data.data)) {
+          sleepMarkersArray = response.data.data;
+        }
+        
+        // ✅ LIMIT TO LAST 100 ENTRIES (MEMORY OPTIMIZATION)
+        const limitedArray = sleepMarkersArray.slice(-100);
+        
+        this.sleepMarkers = limitedArray.map(marker => this.formatSleepMarker(marker));
+        
+        console.log('✅ Fetched', this.sleepMarkers.length, 'sleep markers');
+        
+        return this.sleepMarkers;
+        
+      } catch (error) {
+        console.error('❌ Fetch error:', error);
+        this.error = error.message;
+        this.sleepMarkers = [];
+        throw error;
+        
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // ✅ NEW: CLEANUP METHOD
+    cleanup() {
+      this.$reset();
+      console.log('🧹 SleepMarkerStore cleaned up');
     }
   }
 });

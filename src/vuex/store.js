@@ -416,6 +416,20 @@ export default new Vuex.Store({
     ADD_WATERING(state, watering) {
       state.waterings.push(watering);
     },
+    
+    RESET_STATE(state) {
+      state.books = [];
+      state.films = [];
+      state.events = [];
+      state.oobs = [];
+      state.plants = [];
+      state.products = [];
+      state.trails = [];
+      state.travels = [];
+      state.glucoseReadings = [];
+      state.waterings = [];
+    }
+  
   },
   actions: {
     async register ({ commit }, credentials) {
@@ -1879,7 +1893,35 @@ export default new Vuex.Store({
         .catch((error) => {
           alert("Waterings Fetch Error: ", error.response.data)
         });
-    }
+    },  
+    // ✅ NEW: CLEAR LARGE DATASETS WHEN CHANGING ROUTES
+    clearLargeDatasets({ commit }) {
+      console.log('🧹 Clearing large datasets from memory...');
+      
+      // Clear arrays but keep essential data
+      commit('SET_BOOKS', []);
+      commit('SET_FILMS', []);
+      commit('SET_EVENTS', []);
+      commit('SET_OOBS', []);
+      commit('SET_PLANTS', []);
+      commit('SET_PRODUCTS', []);
+      commit('SET_TRAILS', []);
+      commit('SET_TRAVELS', []);
+      commit('SET_GLUCOSE_READINGS', []);
+      commit('SET_WATERINGS', []);
+      
+      // Force garbage collection hint
+      if (global.gc) {
+        global.gc();
+      }
+    },
+
+    // ✅ NEW: FORCE CLEANUP ON PAGE UNLOAD
+    forceCleanup({ commit }) {
+      console.log('🧹 Force cleanup on unload...');
+      commit('RESET_STATE');
+    },
+
   },
   getters: {
     gardens(state) {

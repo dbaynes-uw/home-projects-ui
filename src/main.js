@@ -9,7 +9,6 @@ import store from "./vuex/store.js";
 // ✅ FIXED VUETIFY IMPORTS
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
-import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 // ✅ IMPORT SPECIFIC COMPONENTS
@@ -114,6 +113,11 @@ const app = createApp(App);
 
 const pinia = createPinia(); // ✅ CREATE PINIA INSTANCE
 
+// ✅ DISABLE VUE DEVTOOLS IN PRODUCTION
+if (process.env.NODE_ENV === 'production') {
+  app.config.devtools = false;
+  app.config.performance = false;
+}
 app.use(pinia); // ✅ USE PINIA IN APP
 app.use(router);
 app.use(store);
