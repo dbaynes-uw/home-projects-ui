@@ -174,11 +174,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useSleepMarkerStore } from '@/stores/SleepMarkerStore'; // ✅ NEW IMPORT
-import SleepMarkerCard from '@/components/sleepmarkers/SleepMarkerCard.vue';
-import SleepMarkerTable from '@/components/sleepmarkers/SleepMarkerTable.vue';
-import SleepMarkerCalendar from '@/components/sleepmarkers/SleepMarkerCalendar.vue';
-import SleepMarkerCharts from '@/components/sleepmarkers/SleepMarkerCharts.vue';
-import SleepMarkerForm from '@/components/sleepmarkers/SleepMarkerForm.vue';
+import SleepMarkerCard from '@/components/sleepMarkers/SleepMarkerCard.vue';
+import SleepMarkerTable from '@/components/sleepMarkers/SleepMarkerTable.vue';
+import SleepMarkerCalendar from '@/components/sleepMarkers/SleepMarkerCalendar.vue';
+import SleepMarkerCharts from '@/components/sleepMarkers/SleepMarkerCharts.vue';
+import SleepMarkerForm from '@/components/sleepMarkers/SleepMarkerForm.vue';
 
 // ✅ USE NEW PINIA STORE
 const sleepMarkerStore = useSleepMarkerStore();
