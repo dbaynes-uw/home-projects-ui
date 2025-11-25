@@ -315,12 +315,14 @@ const routes = [
   },
 
   // SLEEP MARKERS:
+  /*
   {
     path: "/sleep-marker/create",
     name: "SleepMarkerCreate",
     component: () => import('@/views/sleepmarkers/SleepMarkerCreate.vue'),
     meta: { requiresAuth: true}
   },
+  */
   {
     path: "/sleep-markers",
     name: "SleepMarkerList",
@@ -336,6 +338,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   */
+  /* ERROR
   {
     path: "/sleep-marker/:id",
     name: "SleepMarkerEdit",
@@ -343,6 +346,7 @@ const routes = [
     component: () => import('@/views/sleepmarkers/SleepMarkerEdit.vue'),
     meta: { requiresAuth: true },
   },
+  */
   // ✅ PLANTS
   {
     path: "/plants",
