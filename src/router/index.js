@@ -327,6 +327,7 @@ const routes = [
     component: () => import('@/views/sleepmarkers/SleepMarkerList.vue'),
     meta: { requiresAuth: true },
   },
+  /* Later */
   /*
   {
     path: "/sleepMarkers/category",
