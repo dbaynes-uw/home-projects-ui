@@ -323,6 +323,7 @@ export default {
   },
   getSleepMarkers() {
     this.init();
+    console.log("ES GET Sleep Markers");
     return axios.get(api_url + "sleep_markers")
   },
   postSleepMarker(sleepMarker) {

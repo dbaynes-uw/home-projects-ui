@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/Oobs/HealthMarkerCreate.vue -->
-=======
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/HealthMarkerCreate.vue -->
->>>>>>> HealthMarker
 <template>
   <div class="page-wrapper">
     <div class="health-marker-create-container">

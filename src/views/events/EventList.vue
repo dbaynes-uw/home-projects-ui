@@ -318,7 +318,7 @@
 </template>
 
 <script setup>
-import { ref, computed, mounted, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import dayjs from 'dayjs';

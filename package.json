@@ -15,13 +15,14 @@
     "axios": "^1.2.2",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.10",
+    "pinia": "^3.0.4",
+    "serve": "^14.0.0",
     "vue": "^3.2.47",
     "vue-router": "^4.2.5",
     "vue-select": "^4.0.0-beta.6",
     "vuetify": "^3.0.0-beta.0",
     "vuex": "^4.0.0",
-    "vuex-persistedstate": "^4.1.0",
-    "serve": "^14.0.0"
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

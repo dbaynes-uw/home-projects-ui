@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import { createPinia } from 'pinia';
 import axios from "axios";
 import App from "./App.vue";
 import "./assets/global.css";
@@ -111,6 +112,9 @@ import "vue-select/dist/vue-select.css";
 // ✅ CREATE APP
 const app = createApp(App);
 
+const pinia = createPinia(); // ✅ CREATE PINIA INSTANCE
+
+app.use(pinia); // ✅ USE PINIA IN APP
 app.use(router);
 app.use(store);
 app.use(vuetify);

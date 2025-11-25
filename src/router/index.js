@@ -313,25 +313,25 @@ const routes = [
     component: () => import('@/views/oobs/OobEdit.vue'),
     meta: { requiresAuth: true}
   },
-  // SLEEP MARKERS:
 
+  // SLEEP MARKERS:
   {
     path: "/sleep-marker/create",
     name: "SleepMarkerCreate",
-    component: () => import('@/views/sleepMarkers/SleepMarkerCreate.vue'),
+    component: () => import('@/views/sleepmarkers/SleepMarkerCreate.vue'),
     meta: { requiresAuth: true}
   },
   {
     path: "/sleep-markers",
     name: "SleepMarkerList",
-    component: () => import('@/views/sleepMarkers/SleepMarkerList.vue'),
+    component: () => import('@/views/sleepmarkers/SleepMarkerList.vue'),
     meta: { requiresAuth: true },
   },
   /*
   {
     path: "/sleepMarkers/category",
     name: "SleepMarkersByCategory",
-    component: () => import('@/views/sleepMarkers/SleepMarkersByCategory.vue'),
+    component: () => import('@/views/sleepmarkers/SleepMarkersByCategory.vue'),
     meta: { requiresAuth: true },
   },
   */
@@ -339,7 +339,7 @@ const routes = [
     path: "/sleep-marker/:id",
     name: "SleepMarkerEdit",
     props: true,
-    component: () => import('@/views/sleepMarkers/SleepMarkerEdit.vue'),
+    component: () => import('@/views/sleepmarkers/SleepMarkerEdit.vue'),
     meta: { requiresAuth: true },
   },
   // ✅ PLANTS

@@ -57,8 +57,8 @@ export default new Vuex.Store({
     products: [],
     products_by_location: [],
     shopping_list: [],
-    sleepMarkers: [],
-    sleepMarker: {},
+    //sleepMarkers: [],
+    //sleepMarker: {},
     trail: {},
     trails: [],
     travel: [],
@@ -227,6 +227,7 @@ export default new Vuex.Store({
       }
     },
     // ✅ SLEEP_MARKER MUTATIONS
+    /*
     ADD_SLEEP_MARKER(state, sleepMarker) {
       state.sleepMarkers.push(sleepMarker);
     },
@@ -239,7 +240,7 @@ export default new Vuex.Store({
     SET_SLEEP_MARKERS(state, sleepMarkers) {
       state.sleepMarkers = sleepMarkers;
     },
-
+    */
     CLEAR_BOOKS(state) {
       state.books = [];
     },
@@ -1385,6 +1386,7 @@ export default new Vuex.Store({
     },
 
     // ✅ SleepMarkers ACTIONS
+    /*
     async createSleepMarker({ commit }, sleepMarker) {
       EventService.postSleepMarker(sleepMarker)
         .then(() => {
@@ -1427,25 +1429,29 @@ export default new Vuex.Store({
     },
 
     async fetchSleepMarkers({ commit }) {
+      console.log("Fetching Sleep Markers");
       try {
         commit('SET_SLEEP_MARKERS', []);
 
         const response = await EventService.getSleepMarkers();
-
+        console.log("Sleep Markers Response:", response); 
         // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
         let sleepMarkersArray = [];
 
         if (Array.isArray(response.data)) {
           // ✅ NEW FORMAT: Direct array
+          console.log("Response Data is an array");
           sleepMarkersArray = response.data;
+          console.log("Sleep Markers Array:", sleepMarkersArray);
         } else if (response.data && Array.isArray(response.data.data)) {
           // ✅ OLD FORMAT: Paginated (fallback)
+          console.log("Response Data has data array");  
           sleepMarkersArray = response.data.data;
         } else {
           console.error('❌ Store: Unexpected response format:', response);
           sleepMarkersArray = [];
         }
-
+        console.log("Sleep Markers Array to return:", sleepMarkersArray); 
         commit('SET_SLEEP_MARKERS', sleepMarkersArray);
 
         return sleepMarkersArray;
@@ -1468,7 +1474,7 @@ export default new Vuex.Store({
         alert("Failed to update sleep marker. Please try again.");
       }
     },
-
+    */
 
     async createTrail({ commit }, trail) {
       EventService.postTrail(trail)
