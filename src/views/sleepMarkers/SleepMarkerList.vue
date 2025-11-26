@@ -43,7 +43,7 @@
           <div class="stat-icon">
             <i class="fas fa-moon"></i>
           </div>
-          <div class="stat-value">{{ averageSleepHours }}h</div>
+          <div class="stat-value">{{ averageSleepHours }}</div>
           <div class="stat-label">Avg Sleep/Night</div>
         </div>
         

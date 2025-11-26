@@ -134,6 +134,7 @@ function hoursMinutesToDecimal(value) {
   
   return 0;
 }
+
 export const useSleepMarkerStore = defineStore('sleepMarker', {
   state: () => ({
     sleepMarkers: [],
@@ -149,12 +150,15 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       return state.sleepMarkers.find(marker => marker.id === id);
     },
 
+    // ✅ UPDATED: Use time_asleep and return "Xh Ym" format
     averageSleepHours: (state) => {
-      if (!state.sleepMarkers.length) return '0.0';
-      const total = state.sleepMarkers.reduce((sum, m) => 
-        sum + (parseFloat(m.total_sleep_hours) || 0), 0
-      );
-      return (total / state.sleepMarkers.length).toFixed(1);
+      if (state.sleepMarkers.length === 0) return '0m';
+      const total = state.sleepMarkers.reduce((sum, m) => {
+        // Convert "1h 30m" string to decimal for averaging
+        return sum + hoursMinutesToDecimal(m.time_asleep);
+      }, 0);
+      const average = total / state.sleepMarkers.length;
+      return decimalHoursToHoursMinutes(average);
     },
 
     averageSleepQuality: (state) => {
@@ -164,6 +168,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       );
       return (total / state.sleepMarkers.length).toFixed(1);
     },
+    
     averageAwakeSleep: (state) => {
       if (state.sleepMarkers.length === 0) return '0m';
       const total = state.sleepMarkers.reduce((sum, m) => {
@@ -202,11 +207,10 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       return decimalHoursToHoursMinutes(average);
     },
 
-    // ✅ NEW: Add this if you have awake time
     averageAwakeTime: (state) => {
       if (state.sleepMarkers.length === 0) return '0m';
       const total = state.sleepMarkers.reduce((sum, m) => {
-        return sum + hoursMinutesToDecimal(m.awake_time);
+        return sum + hoursMinutesToDecimal(m.time_awake);
       }, 0);
       const average = total / state.sleepMarkers.length;
       return decimalHoursToHoursMinutes(average);

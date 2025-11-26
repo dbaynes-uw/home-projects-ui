@@ -28,15 +28,20 @@
           <span class="time-label">Wake Time</span>
           <span class="time-value">{{ marker.wake_time }}</span>
         </div>
+        <div class="time-item">
+          <i class="fas fa-sun"></i>
+          <span class="time-label">Time in Bed</span>
+          <span class="time-value">{{ marker.time_in_bed }}</span>
+        </div>    
+        <div class="time-item">
+          <i class="fas fa-sun"></i>
+          <span class="time-label">Time Asleep</span>
+          <span class="time-value">{{ marker.time_asleep }}</span>
+        </div>        
       </div>
 
       <!-- Stats Grid -->
       <div class="stats-grid">
-        <div class="stat-item">
-          <i class="fas fa-moon stat-icon"></i>
-          <span class="stat-value">{{ marker.total_sleep_hours }}h</span>
-          <span class="stat-label">Total Sleep</span>
-        </div>
         <div class="stat-item">
           <i class="fas fa-star stat-icon"></i>
           <span class="stat-value">{{ marker.sleep_quality }}/10</span>
