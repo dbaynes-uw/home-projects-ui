@@ -65,8 +65,17 @@
         </div>
       </div>
 
+      <!-- Awakenings -->
+      <BaseInput
+        v-model.number="formData.awakenings"
+        label="Number of Awakenings"
+        type="number"
+        min="0"
+        prepend-icon="eye-off"
+        :error="errors.awakenings"
+      />
+
       <!-- ✅ HOURS/MINUTES INPUTS -->
-      
       <HoursMinutesInput
         v-model="formData.awake_sleep"
         label="Awake Sleep"
@@ -89,16 +98,6 @@
         v-model="formData.deep_sleep"
         label="Deep Sleep"
         :error="errors.deep_sleep"
-      />
-      
-      <!-- Awakenings -->
-      <BaseInput
-        v-model.number="formData.awakenings"
-        label="Number of Awakenings"
-        type="number"
-        min="0"
-        prepend-icon="eye-off"
-        :error="errors.awakenings"
       />
 
       <HoursMinutesInput
@@ -230,7 +229,6 @@ async function handleSubmit() {
   isSubmitting.value = true;
   
   try {
-    // Data is already in "1h 30m" format - send as-is
     emit('save', { ...formData.value });
     resetForm();
   } catch (error) {

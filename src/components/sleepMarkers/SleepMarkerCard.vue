@@ -68,6 +68,21 @@
           <span class="stat-label">Awakenings</span>
         </div>
       </div>
+      <div v-if="marker.had_oob" class="oob-details">
+        <div class="oob-header">
+          <i class="fas fa-ghost"></i>
+          <span>OOB Experience</span>
+        </div>
+        <div class="oob-info">
+          <div class="oob-duration">
+            <strong>Duration:</strong> {{ oobDurationLabel }}
+          </div>
+          <div v-if="marker.oob_circumstances" class="oob-circumstances">
+            <strong>Details:</strong>
+            <p>{{ marker.oob_circumstances }}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </BaseCard>
 </template>
@@ -93,8 +108,17 @@ const formattedDate = computed(() => {
     day: 'numeric' 
   });
 });
-</script>
 
+// ✅ Format OOB duration for display
+const oobDurationLabel = computed(() => {
+  const durations = {
+    'short': 'Short (< 1 min)',
+    'medium': 'Medium (1-2 mins)',
+    'long': 'Long (> 2 mins)'
+  };
+  return durations[props.marker.oob_duration] || props.marker.oob_duration;
+});
+</script>
 <style scoped>
 .sleep-marker-card {
   background: white;
@@ -248,5 +272,41 @@ const formattedDate = computed(() => {
   color: #999;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+.oob-details {
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.oob-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.oob-header i {
+  font-size: 16px;
+}
+
+.oob-info {
+  font-size: 13px;
+  color: #666;
+}
+
+.oob-duration {
+  margin-bottom: 8px;
+}
+
+.oob-circumstances p {
+  margin: 4px 0 0 0;
+  line-height: 1.5;
+  font-style: italic;
 }
 </style>

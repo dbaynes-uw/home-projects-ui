@@ -62,26 +62,32 @@
           <div class="stat-value">{{ averageAwakenings }}</div>
           <div class="stat-label">Avg Awakenings</div>
         </div>
-        
         <div class="stat-card stat-card-warning">
           <div class="stat-icon">
             <i class="fas fa-brain"></i>
           </div>
-          <div class="stat-value">{{ averageRemSleep }}h</div>
+          <div class="stat-value">{{ averageAwakeSleep }}</div>
+          <div class="stat-label">Avg Awake Sleep</div>
+        </div>
+        <div class="stat-card stat-card-warning">
+          <div class="stat-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <div class="stat-value">{{ averageRemSleep }}</div>
           <div class="stat-label">Avg Rem Sleep</div>
         </div>
         <div class="stat-card stat-card-warning">
           <div class="stat-icon">
             <i class="fas fa-brain"></i>
           </div>
-          <div class="stat-value">{{ averageCoreSleep }}h</div>
+          <div class="stat-value">{{ averageCoreSleep }}</div>
           <div class="stat-label">Avg Core Sleep</div>
         </div>
         <div class="stat-card stat-card-warning">
           <div class="stat-icon">
             <i class="fas fa-brain"></i>
           </div>
-          <div class="stat-value">{{ averageDeepSleep }}h</div>
+          <div class="stat-value">{{ averageDeepSleep }}</div>
           <div class="stat-label">Avg Deep Sleep</div>
         </div>        
       </div>
@@ -190,6 +196,7 @@ const sleepMarkers = computed(() => sleepMarkerStore.allSleepMarkers);
 const isLoading = computed(() => sleepMarkerStore.isLoading);
 const averageSleepHours = computed(() => sleepMarkerStore.averageSleepHours);
 const averageSleepQuality = computed(() => sleepMarkerStore.averageSleepQuality);
+const averageAwakeSleep = computed(() => sleepMarkerStore.averageAwakeSleep);
 const averageRemSleep = computed(() => sleepMarkerStore.averageRemSleep);
 const averageCoreSleep = computed(() => sleepMarkerStore.averageCoreSleep);
 const averageDeepSleep = computed(() => sleepMarkerStore.averageDeepSleep);
@@ -215,9 +222,7 @@ async function deleteMarker(marker) {
   if (confirm(`Delete sleep entry for ${marker.sleep_date}?`)) {
     try {
       await sleepMarkerStore.deleteSleepMarker(marker.id);
-      console.log('✅ Sleep marker deleted successfully');
     } catch (error) {
-      console.error('❌ Error deleting sleep marker:', error);
       alert('Failed to delete sleep entry. Please try again.');
     }
   }
@@ -227,14 +232,11 @@ async function handleSave(markerData) {
   try {
     if (markerData.id) {
       await sleepMarkerStore.updateSleepMarker(markerData);
-      console.log('✅ Sleep marker updated successfully');
     } else {
       await sleepMarkerStore.createSleepMarker(markerData);
-      console.log('✅ Sleep marker created successfully');
     }
     closeDialog();
   } catch (error) {
-    console.error('❌ Error saving sleep marker:', error);
     alert('Failed to save sleep entry. Please try again.');
   }
 }
@@ -246,13 +248,10 @@ function closeDialog() {
 
 // ✅ LIFECYCLE
 onMounted(async () => {
-  console.log('🚀 SleepMarkerList mounted, fetching data...');
   try {
     await sleepMarkerStore.fetchSleepMarkers();
-    console.log('✅ Sleep markers fetched successfully');
   } catch (error) {
-    console.error('❌ Error fetching sleep markers:', error);
-  }
+    alert('Failed to load sleep data. Please refresh the page.');}
 });
 </script>
 

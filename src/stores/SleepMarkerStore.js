@@ -71,7 +71,7 @@ function prepareForApi(markerData) {
     awake_sleep: hoursMinutesToMinutes(markerData.awake_sleep),
     time_in_bed: hoursMinutesToMinutes(markerData.time_in_bed),
     time_awake: hoursMinutesToMinutes(markerData.time_awake),
-    time_asleep: hoursMinutesToMinutes(markerData.time_asleep)
+    time_asleep: hoursMinutesToMinutes(markerData.time_asleep),
   };
 }
 // ✅ UPDATED: Format sleep marker to convert minutes to hours/minutes
@@ -164,6 +164,16 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       );
       return (total / state.sleepMarkers.length).toFixed(1);
     },
+    averageAwakeSleep: (state) => {
+      if (state.sleepMarkers.length === 0) return '0m';
+      const total = state.sleepMarkers.reduce((sum, m) => {
+        // Convert "1h 30m" string to decimal for averaging
+        return sum + hoursMinutesToDecimal(m.awake_sleep);
+      }, 0);
+      const average = total / state.sleepMarkers.length;
+      return decimalHoursToHoursMinutes(average);
+    },
+    
     averageRemSleep: (state) => {
       if (state.sleepMarkers.length === 0) return '0m';
       const total = state.sleepMarkers.reduce((sum, m) => {
@@ -221,34 +231,22 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       this.error = null;
   
       try {
-        console.log('🔍 SleepMarkerStore: Fetching sleep markers...');
         
         const response = await EventService.getSleepMarkers();
-        
-        console.log('📦 Raw API Response:', response.data);
-        
+        // ✅ HANDLE DIFFERENT RESPONSE FORMATS
         let sleepMarkersArray = [];
         if (Array.isArray(response.data)) {
           sleepMarkersArray = response.data;
         } else if (response.data?.data && Array.isArray(response.data.data)) {
           sleepMarkersArray = response.data.data;
         }
-        
+
         // ✅ FORMAT EACH MARKER (USE EXTERNAL FUNCTION)
         this.sleepMarkers = sleepMarkersArray.map(marker => formatSleepMarker(marker));
         
-        console.log('✅ SleepMarkerStore: Fetched', this.sleepMarkers.length, 'markers');
-        console.log('📊 SleepMarkerStore: First marker AFTER formatting:', this.sleepMarkers[0]);
-        console.log('🕐 SleepMarkerStore: bed_time AFTER formatting:', this.sleepMarkers[0]?.bed_time);
-        console.log('🕐 SleepMarkerStore: wake_time AFTER formatting:', this.sleepMarkers[0]?.wake_time);
-        console.log('🧪 rem_sleep format:', typeof this.sleepMarkers[0]?.rem_sleep, this.sleepMarkers[0]?.rem_sleep);
-        console.log('🧪 core_sleep format:', typeof this.sleepMarkers[0]?.core_sleep, this.sleepMarkers[0]?.core_sleep);
-        console.log('🧪 deep_sleep format:', typeof this.sleepMarkers[0]?.deep_sleep, this.sleepMarkers[0]?.deep_sleep);
-  
         return this.sleepMarkers;
         
       } catch (error) {
-        console.error('❌ SleepMarkerStore: Fetch error:', error);
         this.error = error.message;
         this.sleepMarkers = [];
         throw error;
@@ -278,7 +276,6 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         return this.sleepMarker;
         
       } catch (error) {
-        console.error('❌ SleepMarkerStore: Fetch single error:', error);
         this.error = error.message;
         throw error;
         
@@ -292,24 +289,19 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       this.loading = true;
       this.error = null;
       
-      try {
-        console.log('🔍 SleepMarkerStore: Creating sleep marker:', sleepMarkerData);
-        
+      try {        
         // ✅ Convert hours/minutes to minutes for API
         const apiData = prepareForApi(sleepMarkerData);
-        console.log('📤 Sending to API (minutes format):', apiData);
         
         const response = await EventService.postSleepMarker(apiData);
         
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
         
-        console.log('✅ SleepMarkerStore: Created successfully');
-        
         return response.data;
         
       } catch (error) {
-        console.error('❌ SleepMarkerStore: Create error:', error);
+        alert('Failed to create sleep entry. Please try again.');
         this.error = error.message;
         throw error;
         
@@ -324,23 +316,19 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       this.error = null;
       
       try {
-        console.log('🔍 SleepMarkerStore: Updating sleep marker:', sleepMarkerData.id);
         
         // ✅ Convert hours/minutes to minutes for API
         const apiData = prepareForApi(sleepMarkerData);
-        console.log('📤 Sending to API (minutes format):', apiData);
         
         const response = await EventService.putSleepMarker(apiData);
         
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
-        
-        console.log('✅ SleepMarkerStore: Updated successfully');
-        
+                
         return response.data;
         
       } catch (error) {
-        console.error('❌ SleepMarkerStore: Update error:', error);
+        alert('Failed to update sleep entry. Please try again.');
         this.error = error.message;
         throw error;
         
@@ -354,20 +342,16 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       this.loading = true;
       this.error = null;
       
-      try {
-        console.log('🔍 SleepMarkerStore: Deleting sleep marker:', id);
-        
+      try {        
         await EventService.deleteSleepMarker(id);
         
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
-        
-        console.log('✅ SleepMarkerStore: Deleted successfully');
-        
+                
         return true;
         
       } catch (error) {
-        console.error('❌ SleepMarkerStore: Delete error:', error);
+        alert('Failed to delete sleep entry. Please try again.');
         this.error = error.message;
         throw error;
         

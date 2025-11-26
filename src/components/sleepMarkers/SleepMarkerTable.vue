@@ -74,6 +74,7 @@ const headers = [
   { title: 'Deep Sleep', key: 'deep_sleep', sortable: true },
   { title: 'REM Sleep', key: 'rem_sleep', sortable: true },
   { title: 'Awakenings', key: 'awakenings', sortable: true },
+  { title: 'OOBs', key: 'oob_duration', sortable: true }, 
   { title: 'Actions', key: 'actions', sortable: false }
 ];
 
