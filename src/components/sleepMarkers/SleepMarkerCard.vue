@@ -41,6 +41,17 @@
         </div>        
       </div>
 
+      <!-- ✅ FASTING GLUCOSE BANNER with dynamic color -->
+      <div v-if="marker.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
+        <div class="glucose-content">
+          <i class="fas fa-tint"></i>
+          <div class="glucose-info">
+            <span class="glucose-label">Morning Fasting Glucose</span>
+            <span class="glucose-value">{{ marker.am_fasting_glucose_value }} mg/dL</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Stats Grid -->
       <div class="stats-grid">
         <div class="stat-item">
@@ -76,7 +87,7 @@
       </div>
 
       <!-- ✅ DREAMS SECTION -->
-      <div v-if="marker.dreams" class="dreams-section">
+      <div v-if="marker.had_dreams" class="dreams-section">
         <div class="dreams-header">
           <i class="fas fa-cloud"></i>
           <span>Dreams Recorded</span>
@@ -133,12 +144,18 @@ const props = defineProps({
 
 defineEmits(['edit', 'delete']);
 
+// ✅ FIXED: Parse date as local, not UTC
 const formattedDate = computed(() => {
-  const date = new Date(props.marker.sleep_date);
+  if (!props.marker.sleep_date) return '';
+  
+  // Parse YYYY-MM-DD as local date (not UTC)
+  const [year, month, day] = props.marker.sleep_date.split('-');
+  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  
   return date.toLocaleDateString('en-US', { 
     weekday: 'short', 
     month: 'short', 
-    day: 'numeric' 
+    day: 'numeric'
   });
 });
 
@@ -150,6 +167,19 @@ const oobDurationLabel = computed(() => {
     'long': 'Long (> 2 mins)'
   };
   return durations[props.marker.oob_duration] || props.marker.oob_duration;
+});
+
+// ✅ Dynamic glucose color based on value
+const glucoseColorClass = computed(() => {
+  const value = parseFloat(props.marker.am_fasting_glucose_value);
+  
+  if (value < 100) {
+    return 'glucose-good'; // Green
+  } else if (value >= 100 && value <= 125) {
+    return 'glucose-warning'; // Yellow
+  } else {
+    return 'glucose-high'; // Red
+  }
 });
 </script>
 
@@ -266,6 +296,98 @@ const oobDurationLabel = computed(() => {
   font-size: 20px;
   font-weight: 700;
   color: #333;
+}
+
+/* ✅ GLUCOSE BANNER BASE STYLING */
+.glucose-banner {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid;
+  transition: all 0.3s ease;
+}
+
+.glucose-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.glucose-content i {
+  font-size: 28px;
+}
+
+.glucose-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.glucose-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.glucose-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* ✅ GLUCOSE COLOR VARIANTS */
+/* Good: < 100 mg/dL (Green) */
+.glucose-good {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.glucose-good .glucose-content i {
+  color: #16a34a;
+}
+
+.glucose-good .glucose-label {
+  color: #166534;
+}
+
+.glucose-good .glucose-value {
+  color: #16a34a;
+}
+
+/* Warning: 100-125 mg/dL (Yellow) */
+.glucose-warning {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(202, 138, 4, 0.1) 100%);
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+.glucose-warning .glucose-content i {
+  color: #ca8a04;
+}
+
+.glucose-warning .glucose-label {
+  color: #854d0e;
+}
+
+.glucose-warning .glucose-value {
+  color: #ca8a04;
+}
+
+/* High: > 125 mg/dL (Red) */
+.glucose-high {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.glucose-high .glucose-content i {
+  color: #dc2626;
+}
+
+.glucose-high .glucose-label {
+  color: #991b1b;
+}
+
+.glucose-high .glucose-value {
+  color: #dc2626;
 }
 
 .stats-grid {

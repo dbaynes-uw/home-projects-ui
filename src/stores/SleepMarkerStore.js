@@ -74,10 +74,28 @@ function prepareForApi(markerData) {
     time_asleep: hoursMinutesToMinutes(markerData.time_asleep),
   };
 }
-// ✅ UPDATED: Format sleep marker to convert minutes to hours/minutes
+
+function normalizeDate(dateString) {
+  if (!dateString) return dateString;
+  
+  // If it's already YYYY-MM-DD format, return as-is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    return dateString;
+  }
+  
+  // If it's an ISO timestamp, extract just the date part
+  if (dateString.includes('T')) {
+    return dateString.split('T')[0];
+  }
+  
+  return dateString;
+}
+
+// ✅ UPDATE formatSleepMarker to use normalizeDate:
 function formatSleepMarker(marker) {
   return {
     ...marker,
+    sleep_date: normalizeDate(marker.sleep_date), // ✅ Just normalize, don't convert
     bed_time: extractTime(marker.bed_time),
     wake_time: extractTime(marker.wake_time),
     // ✅ Convert all sleep duration fields from minutes to "Xh Ym" format
@@ -90,6 +108,7 @@ function formatSleepMarker(marker) {
     time_asleep: minutesToHoursMinutes(marker.time_asleep)
   };
 }
+
 function decimalHoursToHoursMinutes(decimalHours) {
   const hours = Math.floor(decimalHours);
   const minutes = Math.round((decimalHours - hours) * 60);
