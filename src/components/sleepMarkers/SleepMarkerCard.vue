@@ -1,3 +1,4 @@
+<!-- filepath: src/components/sleepMarkers/SleepMarkerCard.vue -->
 <template>
   <BaseCard class="sleep-marker-card" hover clickable @click="$emit('edit', marker)">
     <div class="card-header">
@@ -29,12 +30,12 @@
           <span class="time-value">{{ marker.wake_time }}</span>
         </div>
         <div class="time-item">
-          <i class="fas fa-sun"></i>
+          <i class="fas fa-clock"></i>
           <span class="time-label">Time in Bed</span>
           <span class="time-value">{{ marker.time_in_bed }}</span>
         </div>    
         <div class="time-item">
-          <i class="fas fa-sun"></i>
+          <i class="fas fa-moon"></i>
           <span class="time-label">Time Asleep</span>
           <span class="time-value">{{ marker.time_asleep }}</span>
         </div>        
@@ -73,6 +74,33 @@
           <span class="stat-label">Awakenings</span>
         </div>
       </div>
+
+      <!-- ✅ DREAMS SECTION -->
+      <div v-if="marker.dreams" class="dreams-section">
+        <div class="dreams-header">
+          <i class="fas fa-cloud"></i>
+          <span>Dreams Recorded</span>
+        </div>
+        <div v-if="marker.dream_notes" class="dreams-notes">
+          <p>{{ marker.dream_notes }}</p>
+        </div>
+        <div v-else class="dreams-indicator">
+          <span>Dreams occurred (no notes)</span>
+        </div>
+      </div>
+
+      <!-- ✅ SLEEP NOTES SECTION -->
+      <div v-if="marker.sleep_notes" class="sleep-notes-section">
+        <div class="notes-header">
+          <i class="fas fa-sticky-note"></i>
+          <span>Sleep Notes</span>
+        </div>
+        <div class="notes-content">
+          <p>{{ marker.sleep_notes }}</p>
+        </div>
+      </div>
+
+      <!-- ✅ OOB SECTION -->
       <div v-if="marker.had_oob" class="oob-details">
         <div class="oob-header">
           <i class="fas fa-ghost"></i>
@@ -124,6 +152,7 @@ const oobDurationLabel = computed(() => {
   return durations[props.marker.oob_duration] || props.marker.oob_duration;
 });
 </script>
+
 <style scoped>
 .sleep-marker-card {
   background: white;
@@ -278,6 +307,76 @@ const oobDurationLabel = computed(() => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+/* ✅ DREAMS SECTION STYLING */
+.dreams-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.15) 0%, rgba(196, 181, 253, 0.15) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+}
+
+.dreams-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.dreams-header i {
+  font-size: 16px;
+}
+
+.dreams-notes p {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.dreams-indicator {
+  font-size: 13px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ✅ SLEEP NOTES SECTION STYLING */
+.sleep-notes-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.notes-header i {
+  font-size: 16px;
+}
+
+.notes-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ✅ OOB SECTION STYLING */
 .oob-details {
   margin-top: 16px;
   padding: 12px;
