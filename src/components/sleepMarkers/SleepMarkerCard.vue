@@ -87,7 +87,7 @@
       </div>
 
       <!-- ✅ DREAMS SECTION -->
-      <div v-if="marker.had_dreams" class="dreams-section">
+      <div v-if="marker.dreams" class="dreams-section">
         <div class="dreams-header">
           <i class="fas fa-cloud"></i>
           <span>Dreams Recorded</span>
