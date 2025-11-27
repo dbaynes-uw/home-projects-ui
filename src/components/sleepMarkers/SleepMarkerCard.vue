@@ -104,7 +104,7 @@
       <div v-if="marker.sleep_notes" class="sleep-notes-section">
         <div class="notes-header">
           <i class="fas fa-sticky-note"></i>
-          <span>Sleep Notes</span>
+          <span>Noted</span>
         </div>
         <div class="notes-content">
           <p>{{ marker.sleep_notes }}</p>

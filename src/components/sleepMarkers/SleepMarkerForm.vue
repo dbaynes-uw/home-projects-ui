@@ -130,7 +130,7 @@
     <div class="notes-section">
       <label class="form-label">
         <i class="fas fa-pen"></i>
-        Other Sleep Notes like diet, exercise, stress, etc.
+        Relevant Factors like diet, exercise, stress, etc.
       </label>
       <textarea
         v-model="formData.sleep_notes"
