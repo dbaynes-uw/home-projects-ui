@@ -389,7 +389,7 @@ export default new Vuex.Store({
       state.vendors_group = data;
     },
 
-    // ✅ FIXED - PARAMETER NAME MISMATCH
+    // ✅ FIXED - PARAdeleteTER NAME MISMATCH
     SET_VENDORS_LOCATIONS_GROUP(state, data) {
       state.vendors_locations_group = data;
     },
@@ -1208,7 +1208,6 @@ export default new Vuex.Store({
       }
     },
 
-    // ✅ FIXED deleteOOB ACTION (around line 1000)
     async deleteOob({ commit, dispatch }, oob) {
       try {
         const response = await EventService.deleteOob(oob);

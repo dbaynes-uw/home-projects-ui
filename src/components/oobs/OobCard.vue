@@ -197,7 +197,7 @@ const handleDeleteMed = async () => {
     }
     
     // ✅ DISPATCH DELETE ACTION
-    const result = await store.dispatch('deleteMed', props.med);
+    const result = await store.dispatch('deleteOob', props.med);
     
     if (result !== false) {      
       // ✅ SHOW SUCCESS MESSAGE
