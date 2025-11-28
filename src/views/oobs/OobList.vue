@@ -1,12 +1,12 @@
 <template>
   <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <!-- ✅ CHANGED: mdi-pill → fas fa-pills -->
-      <h2><i class="fas fa-pills"></i>OOB Tracking</h2>
-    </v-card-title>
-    
-    <!-- ✅ MODERN NAVIGATION -->
-     
+    <div class="title-section">
+      <h2>
+        <i class="fas fa-pills"></i>
+        <router-link :to="{ name: 'MedsMenu' }" class="meds-menu-link">OOBs Dashboard</router-link>
+      </h2>           
+    </div>      
+    <!-- ✅ MODERN NAVIGATION -->    
     <div class="navigation-buttons">
 
       <router-link :to="{ name: 'OobCreate' }" class="nav-btn" id="button-as-link">
@@ -305,6 +305,22 @@ onMounted(async () => {
 })
 </script>
 <style scoped>
+.title-section h2 {
+  margin: 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.meds-menu-link {
+  color: #000;
+  text-decoration: none;
+}
+.meds-menu-link:hover {
+  text-decoration: underline;
+}
 /* ✅ FONT AWESOME GLUCOSE BUTTON WITH HEART ICON */
 .glucose-btn {
   display: flex;

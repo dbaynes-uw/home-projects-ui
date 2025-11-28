@@ -7,8 +7,8 @@
           <div class="title-section">
             <h2>
               <i class="fas fa-bed bed-icon"></i>
-              Sleep Markers Dashboard
-            </h2>
+              <router-link :to="{ name: 'MedsMenu' }" class="meds-menu-link">Sleep Markers Dashboard</router-link>
+            </h2>           
           </div>
           
           <div class="controls-section">
@@ -295,7 +295,13 @@ onMounted(async () => {
   align-items: center;
   gap: 12px;
 }
-
+.meds-menu-link {
+  color: white;
+  text-decoration: none;
+}
+.meds-menu-link:hover {
+  text-decoration: underline;
+}
 .bed-icon {
   color: #FFD700;
   font-size: 1.5em;
