@@ -96,18 +96,6 @@
           <span class="stat-label">Awakenings</span>
         </div>
       </div>
-      <!-- ✅ NEW: Diet SECTION -->
-      
-      <div class="info-section sugar-section">
-        <div class="info-header">
-          <i class="fas fa-candy-cane"></i>
-          <span>Diet</span>
-        </div>
-        <div v-if="marker.diet_notes" class="info-content">
-          <p>{{ marker.sugar_notes }}</p>
-        </div>
-      </div>
-
       <!-- ✅ DREAMS SECTION -->
       <div class="dreams-section">
         <div class="dreams-header">
@@ -117,9 +105,23 @@
         <div v-if="marker.dream_notes" class="dreams-notes">
           <p>{{ marker.dream_notes }}</p>
         </div>
-        <div v-else class="dreams-indicator">
+        <div v-else class="notes-indicator">
           <span>Dreams occurred (no notes)</span>
         </div>
+      </div>      
+      <!-- ✅ NEW: Diet SECTION -->
+      
+      <div class="info-section sugar-section">
+        <div class="info-header">
+          <i class="fas fa-candy-cane"></i>
+          <span>Diet</span>
+        </div>
+        <div v-if="marker.diet_notes" class="info-content">
+          <p>{{ marker.diet_notes }}</p>
+        </div>
+        <div v-else class="notes-indicator">
+          <span>Diet (no notes)</span>
+        </div>        
       </div>
 
       <!-- ✅ NEW: EXERCISE SECTION -->
@@ -131,6 +133,9 @@
         <div v-if="marker.exercise_notes" class="info-content">
           <p>{{ marker.exercise_notes }}</p>
         </div>
+        <div v-else class="notes-indicator">
+          <span>Exercise (no notes)</span>
+        </div>             
       </div>
 
       <!-- ✅ NEW: ALCOHOL SECTION -->
@@ -142,6 +147,9 @@
         <div v-if="marker.alcohol_notes" class="info-content">
           <p>{{ marker.alcohol_notes }}</p>
         </div>
+        <div v-else class="notes-indicator">
+          <span>Alcohol (none)</span>
+        </div>  
       </div>
 
       <!-- ✅ NEW: SUGAR SECTION -->
@@ -153,19 +161,24 @@
         <div v-if="marker.sugar_notes" class="info-content">
           <p>{{ marker.sugar_notes }}</p>
         </div>
+        <div v-else class="notes-indicator">
+          <span>Sugar (no notes)</span>
+        </div>        
       </div>
 
       <!-- ✅ SLEEP NOTES SECTION -->
       <div  class="sleep-notes-section">
         <div class="notes-header">
           <i class="fas fa-sticky-note"></i>
-          <span>Notes</span>
+          <span>Sleep Notes</span>
         </div>
         <div v-if="marker.sleep_notes" class="notes-content">
           <p>{{ marker.sleep_notes }}</p>
         </div>
+        <div v-else class="notes-indicator">
+          <span>Sleep (no notes)</span>
+        </div>  
       </div>
-
       <!-- ✅ OOB SECTION -->
       <div v-if="marker.had_oob" class="oob-details">
         <div class="oob-header">
@@ -182,6 +195,9 @@
             <strong>Details:</strong>
             <p>{{ marker.oob_circumstances }}</p>
           </div>
+          <div v-else class="notes-indicator">
+          <span>OOB (no notes)</span>
+          </div>            
         </div>
       </div>
     </div>
@@ -570,7 +586,7 @@ const formattedWeight = computed(() => {
   white-space: pre-wrap;
 }
 
-.dreams-indicator {
+.notes-indicator {
   font-size: 13px;
   color: #6b7280;
   font-style: italic;

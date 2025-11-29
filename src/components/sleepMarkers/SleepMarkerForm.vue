@@ -127,8 +127,23 @@
           <span class="weight-separator">oz</span>
         </div>
       </div> 
-    </div>   
-    <!-- ✅ NEW: EXERCISE NOTES -->
+    </div>  
+
+    <!-- ✅ DREAM NOTES TEXTAREA (Conditional, Full Width) -->
+    <div class="dream-notes-section">
+      <label class="form-label">
+        <i class="fas fa-cloud"></i>
+        Dream Notes
+      </label>
+      <textarea
+        v-model="formData.dream_notes"
+        class="dream-textarea"
+        rows="4"
+        placeholder="Describe your dreams..."
+      ></textarea>
+    </div>
+         
+    <!-- ✅ NEW: DIET NOTES -->
     <div class="diet-section">
       <label class="form-label">
         <i class="fas fa-candy-cane"></i>
@@ -183,21 +198,6 @@
         placeholder="Sugar intake before bed? Desserts, candy, drinks..."
       ></textarea>
     </div>
-
-    <!-- ✅ DREAM NOTES TEXTAREA (Conditional, Full Width) -->
-    <div v-if="formData.dream_notes" class="dream-notes-section">
-      <label class="form-label">
-        <i class="fas fa-cloud"></i>
-        Dream Notes
-      </label>
-      <textarea
-        v-model="formData.dream_notes"
-        class="dream-textarea"
-        rows="4"
-        placeholder="Describe your dreams..."
-      ></textarea>
-    </div>
-
 
     <!-- ✅ SLEEP NOTES (General) -->
     <div class="notes-section">
