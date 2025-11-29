@@ -52,6 +52,17 @@
         </div>
       </div>
 
+      <!-- ✅ NEW: FASTING WEIGHT BANNER -->
+      <div class="weight-banner">
+        <div class="weight-content">
+          <i class="fas fa-weight"></i>
+          <div class="weight-info">
+            <span class="weight-label">Morning Fasting Weight</span>
+            <span v-if="marker.fasting_weight" class="weight-value"> {{ formattedWeight }} lbs</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Stats Grid -->
       <div class="stats-grid">
         <div class="stat-item">
@@ -85,9 +96,20 @@
           <span class="stat-label">Awakenings</span>
         </div>
       </div>
+      <!-- ✅ NEW: Diet SECTION -->
+      
+      <div class="info-section sugar-section">
+        <div class="info-header">
+          <i class="fas fa-candy-cane"></i>
+          <span>Diet</span>
+        </div>
+        <div v-if="marker.diet_notes" class="info-content">
+          <p>{{ marker.sugar_notes }}</p>
+        </div>
+      </div>
 
       <!-- ✅ DREAMS SECTION -->
-      <div v-if="marker.dreams" class="dreams-section">
+      <div class="dreams-section">
         <div class="dreams-header">
           <i class="fas fa-cloud"></i>
           <span>Dreams Recorded</span>
@@ -100,13 +122,46 @@
         </div>
       </div>
 
+      <!-- ✅ NEW: EXERCISE SECTION -->
+      <div class="info-section exercise-section">
+        <div class="info-header">
+          <i class="fas fa-dumbbell"></i>
+          <span>Exercise</span>
+        </div>
+        <div v-if="marker.exercise_notes" class="info-content">
+          <p>{{ marker.exercise_notes }}</p>
+        </div>
+      </div>
+
+      <!-- ✅ NEW: ALCOHOL SECTION -->
+      <div class="info-section alcohol-section">
+        <div class="info-header">
+          <i class="fas fa-wine-glass"></i>
+          <span>Alcohol</span>
+        </div>
+        <div v-if="marker.alcohol_notes" class="info-content">
+          <p>{{ marker.alcohol_notes }}</p>
+        </div>
+      </div>
+
+      <!-- ✅ NEW: SUGAR SECTION -->
+      <div class="info-section sugar-section">
+        <div class="info-header">
+          <i class="fas fa-candy-cane"></i>
+          <span>Sugar</span>
+        </div>
+        <div v-if="marker.sugar_notes" class="info-content">
+          <p>{{ marker.sugar_notes }}</p>
+        </div>
+      </div>
+
       <!-- ✅ SLEEP NOTES SECTION -->
-      <div v-if="marker.sleep_notes" class="sleep-notes-section">
+      <div  class="sleep-notes-section">
         <div class="notes-header">
           <i class="fas fa-sticky-note"></i>
-          <span>Noted</span>
+          <span>Notes</span>
         </div>
-        <div class="notes-content">
+        <div v-if="marker.sleep_notes" class="notes-content">
           <p>{{ marker.sleep_notes }}</p>
         </div>
       </div>
@@ -115,7 +170,9 @@
       <div v-if="marker.had_oob" class="oob-details">
         <div class="oob-header">
           <i class="fas fa-ghost"></i>
-          <span>OOB Experience</span>
+          <router-link :to="{ name: 'OobDetails', params: { id: marker.oob_id } }" class="oob-link">
+            <span>OOB Experience</span>
+          </router-link>
         </div>
         <div class="oob-info">
           <div class="oob-duration">
@@ -180,6 +237,20 @@ const glucoseColorClass = computed(() => {
   } else {
     return 'glucose-high'; // Red
   }
+});
+
+// ✅ NEW: Convert decimal weight to lbs/oz for display
+const formattedWeight = computed(() => {
+  if (!props.marker.fasting_weight) return '';
+  
+  const lbs = Math.floor(props.marker.fasting_weight);
+  const oz = Math.round((props.marker.fasting_weight - lbs) * 16);
+  
+  if (oz === 0) {
+    return `${lbs} lbs`;
+  }
+  
+  return `${lbs} lbs ${oz} oz`;
 });
 </script>
 
@@ -336,7 +407,6 @@ const glucoseColorClass = computed(() => {
 }
 
 /* ✅ GLUCOSE COLOR VARIANTS */
-/* Good: < 100 mg/dL (Green) */
 .glucose-good {
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%);
   border-color: rgba(34, 197, 94, 0.3);
@@ -354,7 +424,6 @@ const glucoseColorClass = computed(() => {
   color: #16a34a;
 }
 
-/* Warning: 100-125 mg/dL (Yellow) */
 .glucose-warning {
   background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(202, 138, 4, 0.1) 100%);
   border-color: rgba(234, 179, 8, 0.3);
@@ -372,7 +441,6 @@ const glucoseColorClass = computed(() => {
   color: #ca8a04;
 }
 
-/* High: > 125 mg/dL (Red) */
 .glucose-high {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
   border-color: rgba(239, 68, 68, 0.3);
@@ -388,6 +456,47 @@ const glucoseColorClass = computed(() => {
 
 .glucose-high .glucose-value {
   color: #dc2626;
+}
+
+/* ✅ NEW: WEIGHT BANNER STYLING */
+.weight-banner {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+  transition: all 0.3s ease;
+}
+
+.weight-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weight-content i {
+  font-size: 28px;
+  color: #2563eb;
+}
+
+.weight-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weight-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.weight-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2563eb;
 }
 
 .stats-grid {
@@ -467,6 +576,65 @@ const glucoseColorClass = computed(() => {
   font-style: italic;
 }
 
+/* ✅ NEW: GENERIC INFO SECTIONS (Exercise, Alcohol, Sugar) */
+.info-section {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.info-header i {
+  font-size: 16px;
+}
+
+.info-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* Exercise - Green theme */
+.exercise-section {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.exercise-section .info-header {
+  color: #16a34a;
+}
+
+/* Alcohol - Amber theme */
+.alcohol-section {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.alcohol-section .info-header {
+  color: #d97706;
+}
+
+/* Sugar - Pink theme */
+.sugar-section {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+  border-color: rgba(236, 72, 153, 0.3);
+}
+
+.sugar-section .info-header {
+  color: #db2777;
+}
+
 /* ✅ SLEEP NOTES SECTION STYLING */
 .sleep-notes-section {
   margin-top: 16px;
@@ -519,6 +687,17 @@ const glucoseColorClass = computed(() => {
 
 .oob-header i {
   font-size: 16px;
+}
+
+.oob-link {
+  color: #667eea;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.oob-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
 }
 
 .oob-info {
