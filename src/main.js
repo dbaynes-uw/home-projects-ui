@@ -11,6 +11,8 @@ import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 import * as directives from 'vuetify/directives'
 
+import './assets/styles/card-components.css';
+
 // ✅ IMPORT SPECIFIC COMPONENTS
 // ✅ ADD THE MISSING COMPONENTS TO YOUR IMPORTS
 import { 

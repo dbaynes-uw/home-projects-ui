@@ -1,0 +1,720 @@
+/* ============================================
+   SHARED CARD COMPONENT STYLES
+   Used by: HealthMarkerCard, GlucoseReadingCard, SleepMarkerCard
+   ============================================ */
+
+/* ✅ CARD BASE */
+.card-hover-effect {
+  transition: all 0.3s ease;
+}
+
+.card-hover-effect:hover {
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.2);
+}
+
+/* ✅ CARD HEADER */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 2px solid #f0f0f0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+.date-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #667eea;
+}
+
+.date-badge i {
+  font-size: 18px;
+}
+
+.marker-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.marker-icon {
+  font-size: 28px;
+  color: #667eea;
+}
+
+.title-text h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* ✅ ACTION BUTTONS */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.edit-btn:hover {
+  background: #667eea;
+  color: white;
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+.delete-btn:hover {
+  background: #f44336;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ✅ CARD BODY */
+.card-body {
+  padding: 20px;
+}
+
+/* ✅ RESULT/GLUCOSE BANNER BASE */
+.result-banner,
+.glucose-banner {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid;
+  transition: all 0.3s ease;
+}
+
+.result-content,
+.glucose-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.result-content i,
+.glucose-content i {
+  font-size: 32px;
+}
+
+.result-info,
+.glucose-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.result-label,
+.glucose-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.result-value,
+.glucose-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* ✅ STATUS SECTION */
+.status-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid;
+}
+
+.status-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-content i {
+  font-size: 24px;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.status-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.status-message,
+.status-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ✅ STATUS COLOR VARIANTS - SUCCESS/GOOD */
+.status-success,
+.glucose-good {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(56, 142, 60, 0.1) 100%);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.status-success .result-content i,
+.status-success .glucose-content i,
+.glucose-good .glucose-content i,
+.status-success .result-value,
+.status-success .glucose-value,
+.glucose-good .glucose-value,
+.status-success .status-value,
+.glucose-good .status-value,
+.status-success .status-info span,
+.glucose-good .status-info span {
+  color: #388e3c;
+}
+
+.status-success .result-label,
+.status-success .glucose-label,
+.glucose-good .glucose-label,
+.status-success .status-label,
+.glucose-good .status-label {
+  color: #2e7d32;
+}
+
+/* ✅ STATUS COLOR VARIANTS - WARNING */
+.status-warning,
+.glucose-warning {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(245, 124, 0, 0.1) 100%);
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+.status-warning .result-content i,
+.status-warning .glucose-content i,
+.glucose-warning .glucose-content i,
+.status-warning .result-value,
+.status-warning .glucose-value,
+.glucose-warning .glucose-value,
+.status-warning .status-value,
+.glucose-warning .status-value,
+.status-warning .status-info span,
+.glucose-warning .status-info span {
+  color: #f57c00;
+}
+
+.status-warning .result-label,
+.status-warning .glucose-label,
+.glucose-warning .glucose-label,
+.status-warning .status-label,
+.glucose-warning .status-label {
+  color: #ef6c00;
+}
+
+/* ✅ STATUS COLOR VARIANTS - ERROR/HIGH */
+.status-error,
+.glucose-high {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(229, 57, 53, 0.1) 100%);
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.status-error .result-content i,
+.status-error .glucose-content i,
+.glucose-high .glucose-content i,
+.status-error .result-value,
+.status-error .glucose-value,
+.glucose-high .glucose-value,
+.status-error .status-value,
+.glucose-high .status-value,
+.status-error .status-info span,
+.glucose-high .status-info span {
+  color: #d32f2f;
+}
+
+.status-error .result-label,
+.status-error .glucose-label,
+.glucose-high .glucose-label,
+.status-error .status-label,
+.glucose-high .status-label {
+  color: #c62828;
+}
+
+/* ✅ STATUS COLOR VARIANTS - INFO */
+.status-info {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(25, 118, 210, 0.1) 100%);
+  border-color: rgba(33, 150, 243, 0.3);
+}
+
+.status-info .result-content i,
+.status-info .glucose-content i,
+.status-info .result-value,
+.status-info .glucose-value,
+.status-info .status-value,
+.status-info .status-info span {
+  color: #1976d2;
+}
+
+.status-info .result-label,
+.status-info .glucose-label,
+.status-info .status-label {
+  color: #1565c0;
+}
+
+/* ✅ BORDER COLORS (for left border indicators) */
+.border-success {
+  border-left-color: #4caf50 !important;
+}
+
+.border-warning {
+  border-left-color: #ff9800 !important;
+}
+
+.border-error {
+  border-left-color: #f44336 !important;
+}
+
+.border-info {
+  border-left-color: #2196f3 !important;
+}
+
+/* ✅ INFO ROW */
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+}
+
+.info-item i {
+  font-size: 18px;
+  color: #667eea;
+  margin-bottom: 4px;
+}
+
+.info-label {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ✅ TIME ROW (Sleep Markers) */
+.time-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.time-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+  padding: 12px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12px;
+}
+
+.time-item i {
+  font-size: 24px;
+  color: #667eea;
+  margin-bottom: 4px;
+}
+
+.time-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.time-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* ✅ STATS GRID (Sleep Markers) */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.stat-item:hover {
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  font-size: 24px;
+  color: #667eea;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ✅ NOTES SECTIONS */
+.notes-section,
+.sleep-notes-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.notes-header i {
+  font-size: 16px;
+}
+
+.notes-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ✅ DREAMS SECTION (Sleep Markers) */
+.dreams-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.15) 0%, rgba(196, 181, 253, 0.15) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+}
+
+.dreams-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.dreams-header i {
+  font-size: 16px;
+}
+
+.dreams-notes p {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.dreams-indicator {
+  font-size: 13px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ✅ GENERIC INFO SECTIONS */
+.info-section {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.info-header i {
+  font-size: 16px;
+}
+
+.info-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* Exercise - Green theme */
+.exercise-section {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.1) 100%);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.exercise-section .info-header {
+  color: #16a34a;
+}
+
+/* Alcohol - Amber theme */
+.alcohol-section {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.alcohol-section .info-header {
+  color: #d97706;
+}
+
+/* Sugar - Pink theme */
+.sugar-section {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+  border-color: rgba(236, 72, 153, 0.3);
+}
+
+.sugar-section .info-header {
+  color: #db2777;
+}
+
+/* Diet - Pink theme */
+.diet-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(236, 72, 153, 0.2);
+}
+
+.diet-section .form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #ec4899;
+  font-weight: 600;
+}
+
+/* ✅ WEIGHT BANNER (Sleep Markers) */
+.weight-banner {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+  transition: all 0.3s ease;
+}
+
+.weight-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weight-content i {
+  font-size: 28px;
+  color: #2563eb;
+}
+
+.weight-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weight-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.weight-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* ✅ CARD FOOTER */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.created-by {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #999;
+}
+
+.created-by i {
+  font-size: 14px;
+}
+
+.footer-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #667eea;
+  background: transparent;
+  color: #667eea;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.footer-btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.footer-btn i {
+  font-size: 12px;
+}
+
+/* ✅ CATEGORY BADGES (Health Markers) */
+.category-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success { background: #e8f5e9; color: #2e7d32; }
+.badge-warning { background: #fff3e0; color: #f57c00; }
+.badge-error { background: #ffebee; color: #c62828; }
+.badge-info { background: #e3f2fd; color: #1976d2; }
+.badge-purple { background: #f3e5f5; color: #7b1fa2; }
+.badge-blue-grey { background: #eceff1; color: #455a64; }
+.badge-default { background: #f5f5f5; color: #616161; }
+
+/* ✅ METADATA ROW (Health Markers) */
+.metadata-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.metadata-item i {
+  font-size: 16px;
+  color: #667eea;
+}
+
+.metadata-label {
+  font-weight: 600;
+}
+
+.metadata-value {
+  color: #333;
+}
+
+/* ✅ RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .info-row,
+  .time-row,
+  .metadata-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .result-value,
+  .glucose-value {
+    font-size: 24px;
+  }
+  
+  .marker-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

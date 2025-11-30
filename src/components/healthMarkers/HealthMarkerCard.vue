@@ -1,182 +1,140 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/healthMarkers/HealthMarkerCard.vue -->
 <template>
-  <v-card 
-    class="health-marker-card" 
-    :class="statusClass"
-    elevation="3"
-    @dblclick="$emit('dblclick', healthMarker)"
-  >
-    <!-- ✅ CARD HEADER -->
-    <v-card-title class="card-header">
+  <BaseCard class="health-marker-card" :class="statusBorderClass" hover clickable @click="editHealthMarker">
+    <div class="card-header">
       <div class="marker-title">
-        <v-icon 
-          :icon="markerInfo?.icon || 'mdi-heart-pulse'" 
-          size="large" 
-          :color="statusColor"
-          class="marker-icon"
-        />
+        <i :class="`fas ${markerIcon}`" class="marker-icon"></i>
         <div class="title-text">
           <h3>{{ markerInfo?.label || healthMarker.marker_name }}</h3>
-          <v-chip 
-            size="small" 
-            :color="categoryColor" 
-            class="category-chip"
-          >
+          <span class="category-badge" :class="categoryBadgeClass">
             {{ markerInfo?.category || 'Other' }}
-          </v-chip>
+          </span>
         </div>
       </div>
-      
       <div class="actions">
-        <v-btn
-          icon
-          size="small"
-          variant="text"
-          @click="editHealthMarker"
-          title="Edit Health Marker"
-        >
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
+        <button class="action-btn edit-btn" @click.stop="editHealthMarker" title="Edit">
+          <i class="fas fa-edit"></i>
+        </button>
       </div>
-    </v-card-title>
+    </div>
 
-    <!-- ✅ RESULT SECTION -->
-    <v-card-text class="result-section">
-      <div class="result-display">
-        <div class="result-value">
-          <span class="value">{{ healthMarker.marker_result }}</span>
-          <span class="unit">{{ markerInfo?.unit || '' }}</span>
-        </div>
-        
-        <div class="result-status">
-          <v-alert
-            :type="resultStatus?.type || 'info'"
-            density="compact"
-            variant="tonal"
-            class="status-alert"
-          >
-            <template v-slot:prepend>
-              <v-icon :icon="statusIcon" />
-            </template>
-            <strong>{{ resultStatus?.title || 'Result' }}</strong>
-          </v-alert>
+    <div class="card-body">
+      <!-- ✅ RESULT BANNER -->
+      <div class="result-banner" :class="statusColorClass">
+        <div class="result-content">
+          <i class="fas fa-chart-line"></i>
+          <div class="result-info">
+            <span class="result-label">Test Result</span>
+            <span class="result-value">{{ healthMarker.marker_result }} {{ markerInfo?.unit || '' }}</span>
+          </div>
         </div>
       </div>
 
-      <!-- ✅ DATE SECTION -->
-      <div class="date-section">
-        <div class="result-date">
-          <v-icon icon="mdi-calendar" size="small" class="mr-1" />
-          <span class="date-label">Test Date:</span>
-          <span class="date-value">{{ formatDate(healthMarker.marker_date) }}</span>
-        </div>
-        
-        <div v-if="daysAgo" class="days-ago">
-          <v-icon icon="mdi-clock-outline" size="small" class="mr-1" />
-          <span class="days-text">{{ daysAgo }}</span>
+      <!-- ✅ STATUS SECTION -->
+      <div class="status-section" :class="statusColorClass">
+        <div class="status-content">
+          <i :class="`fas ${statusIconClass}`"></i>
+          <div class="status-info">
+            <span class="status-label">{{ resultStatus?.title || 'Result' }}</span>
+            <span class="status-message">{{ resultStatus?.message || 'No status available' }}</span>
+          </div>
         </div>
       </div>
 
-      <!-- ✅ REFERENCE RANGES -->
-      <div v-if="markerInfo" class="reference-section">
-        <h4 class="reference-title">
-          <v-icon icon="mdi-chart-box-outline" size="small" class="mr-1" />
-          Reference Ranges
-        </h4>
-        
-        <div class="ranges">
-          <div v-if="markerInfo.normalRange" class="range-item normal">
-            <v-icon icon="mdi-check-circle" size="small" color="success" />
+      <!-- ✅ INFO ROW -->
+      <div class="info-row">
+        <div class="info-item">
+          <i class="fas fa-calendar-day"></i>
+          <span class="info-label">Test Date</span>
+          <span class="info-value">{{ formattedDate }}</span>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-clock"></i>
+          <span class="info-label">Recorded</span>
+          <span class="info-value">{{ daysAgo }}</span>
+        </div>
+      </div>
+
+      <!-- ✅ RANGES SECTION -->
+      <div v-if="markerInfo" class="ranges-section">
+        <div class="ranges-header">
+          <i class="fas fa-ruler-horizontal"></i>
+          <span>Reference Ranges</span>
+        </div>
+        <div class="ranges-content">
+          <div class="range-item normal">
+            <i class="fas fa-check-circle"></i>
             <span><strong>Normal:</strong> {{ markerInfo.normalRange }}</span>
           </div>
-          
-          <div v-if="markerInfo.prediabetesRange" class="range-item warning">
-            <v-icon icon="mdi-alert-circle" size="small" color="warning" />
-            <span><strong>Prediabetes:</strong> {{ markerInfo.prediabetesRange }}</span>
-          </div>
-          
-          <div v-if="markerInfo.diabetesRange" class="range-item danger">
-            <v-icon icon="mdi-close-circle" size="small" color="error" />
-            <span><strong>Diabetes:</strong> {{ markerInfo.diabetesRange }}</span>
-          </div>
-          
-          <div v-if="markerInfo.borderlineRange" class="range-item warning">
-            <v-icon icon="mdi-alert-circle" size="small" color="warning" />
-            <span><strong>Borderline:</strong> {{ markerInfo.borderlineRange }}</span>
-          </div>
-          
-          <div v-if="markerInfo.highRange" class="range-item danger">
-            <v-icon icon="mdi-trending-up" size="small" color="error" />
+          <div v-if="markerInfo.highRange" class="range-item high">
+            <i class="fas fa-arrow-up"></i>
             <span><strong>High:</strong> {{ markerInfo.highRange }}</span>
           </div>
-          
-          <div v-if="markerInfo.lowRange" class="range-item danger">
-            <v-icon icon="mdi-trending-down" size="small" color="error" />
+          <div v-if="markerInfo.lowRange" class="range-item low">
+            <i class="fas fa-arrow-down"></i>
             <span><strong>Low:</strong> {{ markerInfo.lowRange }}</span>
           </div>
         </div>
       </div>
-      <div class="lab-name">
-        <v-icon icon="mdi-flask" size="small" class="mr-1" />
-        <span class="item-label">Lab Name:</span>
-        <span class="item-value">{{ healthMarker.lab_name }}</span>
+
+      <!-- ✅ LAB & DOCTOR INFO -->
+      <div class="metadata-row">
+        <div v-if="healthMarker.lab_name" class="metadata-item">
+          <i class="fas fa-flask"></i>
+          <span class="metadata-label">Lab:</span>
+          <span class="metadata-value">{{ healthMarker.lab_name }}</span>
+        </div>
+        <div v-if="healthMarker.doctor_name" class="metadata-item">
+          <i class="fas fa-user-md"></i>
+          <span class="metadata-label">Doctor:</span>
+          <span class="metadata-value">{{ healthMarker.doctor_name }}</span>
+        </div>
       </div>
-      <div class="doctor-name">
-        <v-icon icon="mdi-doctor" size="small" class="mr-1" />
-        <span class="item-label">Doctor Name:</span>
-        <span class="item-value">{{ healthMarker.doctor_name }}</span>
-      </div>
+
       <!-- ✅ NOTES SECTION -->
       <div v-if="healthMarker.notes" class="notes-section">
-        <h4 class="notes-title">
-          <v-icon icon="mdi-note-text" size="small" class="mr-1" />
-          Notes
-        </h4>
-        <p class="notes-text">{{ healthMarker.notes }}</p>
+        <div class="notes-header">
+          <i class="fas fa-sticky-note"></i>
+          <span>Notes</span>
+        </div>
+        <div class="notes-content">
+          <p>{{ healthMarker.notes }}</p>
+        </div>
       </div>
 
       <!-- ✅ ADDITIONAL INFO -->
       <div v-if="markerInfo" class="info-section">
-        <div class="info-item">
-          <v-icon icon="mdi-information" size="small" class="mr-1" />
-          <span class="info-text">{{ markerInfo.description }}</span>
+        <div class="info-text">
+          <i class="fas fa-info-circle"></i>
+          <span>{{ markerInfo.description }}</span>
         </div>
-        
-        <div class="info-item">
-          <v-icon icon="mdi-clock-check" size="small" class="mr-1" />
-          <span class="info-text"><strong>Test Frequency:</strong> {{ markerInfo.testFrequency }}</span>
+        <div class="info-text">
+          <i class="fas fa-calendar-check"></i>
+          <span><strong>Test Frequency:</strong> {{ markerInfo.testFrequency }}</span>
         </div>
       </div>
-    </v-card-text>
 
-    <!-- ✅ CARD FOOTER -->
-    <v-card-actions class="card-footer">
-      <v-chip size="small" variant="outlined" class="created-chip">
-        <v-icon icon="mdi-account" size="small" class="mr-1" />
-        {{ healthMarker.created_by || 'DLB' }}
-      </v-chip>
-      
-      <v-spacer />
-      
-      <v-btn
-        size="small"
-        variant="outlined"
-        @click="editHealthMarker"
-        prepend-icon="mdi-pencil"
-      >
-        Edit
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+      <!-- ✅ FOOTER -->
+      <div class="card-footer">
+        <span class="created-by">
+          <i class="fas fa-user"></i>
+          {{ healthMarker.created_by || 'DLB' }}
+        </span>
+        <button class="footer-btn" @click.stop="editHealthMarker">
+          <i class="fas fa-pencil-alt"></i>
+          Edit
+        </button>
+      </div>
+    </div>
+  </BaseCard>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import BaseCard from '@/components/ui/BaseCard.vue';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 import DateFormatService from '@/services/DateFormatService';
 
-// ✅ PROPS
 const props = defineProps({
   healthMarker: {
     type: Object,
@@ -184,10 +142,7 @@ const props = defineProps({
   }
 });
 
-// ✅ EMITS
 const emit = defineEmits(['dblclick']);
-
-// ✅ ROUTER
 const router = useRouter();
 
 // ✅ COMPUTED PROPERTIES
@@ -200,53 +155,81 @@ const resultStatus = computed(() => {
   return getResultStatus(props.healthMarker.marker_name, props.healthMarker.marker_result);
 });
 
-const statusClass = computed(() => {
-  if (!resultStatus.value) return '';
-  
-  return {
-    'status-success': resultStatus.value.type === 'success',
-    'status-warning': resultStatus.value.type === 'warning',
-    'status-error': resultStatus.value.type === 'error',
-    'status-info': resultStatus.value.type === 'info'
-  };
-});
-
-const statusColor = computed(() => {
-  if (!resultStatus.value) return 'primary';
+const statusColorClass = computed(() => {
+  if (!resultStatus.value) return 'status-info';
   
   switch (resultStatus.value.type) {
-    case 'success': return 'success';
-    case 'warning': return 'warning';
-    case 'error': return 'error';
-    case 'info':
-    default: return 'info';
+    case 'success': return 'status-success';
+    case 'warning': return 'status-warning';
+    case 'error': return 'status-error';
+    default: return 'status-info';
   }
 });
 
-const statusIcon = computed(() => {
-  if (!resultStatus.value) return 'mdi-information-circle';
+const statusBorderClass = computed(() => {
+  if (!resultStatus.value) return 'border-info';
   
   switch (resultStatus.value.type) {
-    case 'success': return 'mdi-check-circle';
-    case 'warning': return 'mdi-alert-circle';
-    case 'error': return 'mdi-close-circle';
-    case 'info':
-    default: return 'mdi-information-circle';
+    case 'success': return 'border-success';
+    case 'warning': return 'border-warning';
+    case 'error': return 'border-error';
+    default: return 'border-info';
   }
 });
 
-const categoryColor = computed(() => {
-  if (!markerInfo.value) return 'default';
+const statusIconClass = computed(() => {
+  if (!resultStatus.value) return 'fa-info-circle';
+  
+  switch (resultStatus.value.type) {
+    case 'success': return 'fa-check-circle';
+    case 'warning': return 'fa-exclamation-triangle';
+    case 'error': return 'fa-times-circle';
+    default: return 'fa-info-circle';
+  }
+});
+
+const categoryBadgeClass = computed(() => {
+  if (!markerInfo.value) return 'badge-default';
   
   switch (markerInfo.value.category) {
-    case 'Diabetes': return 'error';
-    case 'Thyroid': return 'warning';
-    case 'Lipids': return 'info';
-    case 'Vitamins': return 'success';
-    case 'Heart': return 'deep-purple';
-    case 'General': return 'blue-grey';
-    default: return 'default';
+    case 'Diabetes': return 'badge-error';
+    case 'Thyroid': return 'badge-warning';
+    case 'Lipids': return 'badge-info';
+    case 'Vitamins': return 'badge-success';
+    case 'Heart': return 'badge-purple';
+    case 'General': return 'badge-blue-grey';
+    default: return 'badge-default';
   }
+});
+
+const markerIcon = computed(() => {
+  if (!markerInfo.value) return 'fa-heart-pulse';
+  
+  // Convert mdi icons to Font Awesome
+  const iconMap = {
+    'mdi-water': 'fa-tint',
+    'mdi-food-apple': 'fa-apple-alt',
+    'mdi-pill': 'fa-pills',
+    'mdi-heart-pulse': 'fa-heartbeat',
+    'mdi-weight': 'fa-weight',
+    'mdi-bone': 'fa-bone',
+    'mdi-chart-line': 'fa-chart-line',
+    'mdi-sun-thermometer': 'fa-thermometer-half',
+    'mdi-blood-bag': 'fa-tint',
+    'mdi-alpha-a': 'fa-font',
+    'mdi-water-percent': 'fa-tint',
+    'mdi-fire': 'fa-fire',
+    'mdi-atom': 'fa-atom',
+    'mdi-flask': 'fa-flask',
+    'mdi-leaf': 'fa-leaf'
+  };
+  
+  return iconMap[markerInfo.value.icon] || 'fa-heartbeat';
+});
+
+const formattedDate = computed(() => {
+  if (!props.healthMarker.marker_date) return 'No date';
+  return DateFormatService.formatDatejs(props.healthMarker.marker_date);
 });
 
 const daysAgo = computed(() => {
@@ -270,304 +253,91 @@ const daysAgo = computed(() => {
 });
 
 // ✅ METHODS
-const formatDate = (dateString) => {
-  if (!dateString) return 'No date';
-  return DateFormatService.formatDatejs(dateString);
-};
-
 const editHealthMarker = () => {
   router.push({ name: 'HealthMarkerEdit', params: { id: props.healthMarker.id } });
 };
 </script>
 
+// ...template stays the same...
+
 <style scoped>
-/* ✅ CARD BASE STYLES */
+/* ✅ HEALTH MARKER SPECIFIC STYLES ONLY */
 .health-marker-card {
-  border-radius: 12px !important;
-  transition: all 0.3s ease;
+  background: white;
   border-left: 4px solid #e0e0e0;
-  cursor: pointer;
 }
 
-.health-marker-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* ✅ STATUS BORDER COLORS */
-.status-success {
-  border-left-color: #4caf50 !important;
-}
-
-.status-warning {
-  border-left-color: #ff9800 !important;
-}
-
-.status-error {
-  border-left-color: #f44336 !important;
-}
-
-.status-info {
-  border-left-color: #2196f3 !important;
-}
-
-/* ✅ HEADER STYLES */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 1rem 1rem 0.5rem 1rem !important;
-}
-
-.marker-title {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  flex: 1;
-}
-
-.marker-icon {
-  margin-top: 0.25rem;
-}
-
-.title-text h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.category-chip {
-  margin-bottom: 0.5rem;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* ✅ RESULT SECTION */
-.result-section {
-  padding: 0.5rem 1rem 1rem 1rem !important;
-}
-
-.result-display {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
+/* ✅ RANGES SECTION (unique to health markers) */
+.ranges-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(158, 158, 158, 0.05) 0%, rgba(117, 117, 117, 0.05) 100%);
   border-radius: 8px;
+  border: 1px solid rgba(158, 158, 158, 0.2);
 }
 
-.result-value {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.unit {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #666;
-}
-
-.result-status {
-  flex: 1;
-  max-width: 200px;
-}
-
-.status-alert {
-  margin: 0 !important;
-}
-
-/* ✅ DATE SECTION */
-.date-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 6px;
-}
-
-.result-date {
+.ranges-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-.item-label {
-  font-weight: 500;
-  color: #666;
-}
-.item-value {
-  position: relative;
-  left: .5rem;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #666;
-}
-.date-label {
-  font-weight: 500;
-  color: #666;
+  gap: 8px;
+  font-weight: 700;
+  color: #616161;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 
-.date-value {
-  font-weight: 600;
-  color: #2c3e50;
+.ranges-header i {
+  font-size: 16px;
 }
 
-.days-ago {
+.ranges-content {
   display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: #666;
-  font-style: italic;
-}
-
-/* ✅ REFERENCE RANGES */
-.reference-section {
-  margin-bottom: 1rem;
-}
-
-.reference-title {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.ranges {
-  display: grid;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .range-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
+  gap: 8px;
+  font-size: 13px;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.range-item i {
+  font-size: 14px;
 }
 
 .range-item.normal {
   background: rgba(76, 175, 80, 0.1);
+  color: #2e7d32;
 }
 
-.range-item.warning {
-  background: rgba(255, 152, 0, 0.1);
+.range-item.high {
+  background: rgba(239, 68, 68, 0.1);
+  color: #c62828;
 }
 
-.range-item.danger {
-  background: rgba(244, 67, 54, 0.1);
+.range-item.low {
+  background: rgba(33, 150, 243, 0.1);
+  color: #1565c0;
 }
 
-/* ✅ NOTES SECTION */
-.notes-section {
-  margin-bottom: 1rem;
-}
-
-.notes-title {
+/* ✅ INFO TEXT (unique to health markers) */
+.info-text {
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.notes-text {
-  padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 6px;
-  font-style: italic;
-  color: #555;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* ✅ INFO SECTION */
-.info-section {
-  display: grid;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.info-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  font-size: 0.875rem;
+  gap: 8px;
+  font-size: 12px;
   color: #666;
+  line-height: 1.6;
 }
 
-.info-text {
-  line-height: 1.4;
+.info-text i {
+  font-size: 14px;
+  color: #667eea;
 }
 
-/* ✅ FOOTER STYLES */
-.card-footer {
-  padding: 0.5rem 1rem 1rem 1rem !important;
-  background: rgba(0, 0, 0, 0.02);
-  border-top: 1px solid #e0e0e0;
-}
-
-.created-chip {
-  color: #666 !important;
-}
-
-/* ✅ RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .marker-title {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .result-display {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .result-status {
-    max-width: 100%;
-    width: 100%;
-  }
-  
-  .date-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .value {
-    font-size: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .card-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .actions {
-    align-self: flex-end;
-  }
-  
-  .ranges {
-    grid-template-columns: 1fr;
-  }
-}
+/* All other styles now come from card-components.css! */
 </style>
