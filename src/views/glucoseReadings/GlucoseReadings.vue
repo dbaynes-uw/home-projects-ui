@@ -1,9 +1,10 @@
 <template>
   <v-container>
     <v-card class="mx-auto mt-5">
-      <v-card-title>
-        <h2>Glucose Readings</h2>
-        <router-link :to="{ name: 'GlucoseReadingCreate' }">Create New Glucose Reading</router-link>
+      <v-card-title class="pb-0">
+        <h2><i class="fas fa-heartbeat"></i> 
+          <router-link :to="{ name: 'MedsMenu' }" class="meds-menu-link">Health Dashboard</router-link>
+        </h2>
       </v-card-title>
     </v-card>
     <div class="glucose-reading-details">
@@ -12,8 +13,12 @@
         <p>Loading glucose readings...</p>
       </template>
       <template v-else>
+        <br/>
+        <h2><router-link :to="{ name: 'GlucoseReadingCreate' }">
+          Create New Glucose Reading</router-link>
+        </h2>
         <v-card-actions>
-          <v-btn id="indent-primary-button" color="primary" @click="showSummary = !showSummary">
+          <v-btn id="indent-secondary-button" color="primary" @click="showSummary = !showSummary">
             {{ showSummary ? 'Hide Summary/Averages' : 'Show Summary and Averages' }}
           </v-btn>
         </v-card-actions>

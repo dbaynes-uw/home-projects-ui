@@ -174,6 +174,7 @@ import { useRouter } from 'vue-router';
 .v-container {
   max-width: 800px;
   margin: 0 auto;
+  padding-bottom: 100px; /* ✅ Add padding to prevent footer overlap */
 }
 
 h1 {
@@ -184,23 +185,26 @@ h1 {
 .v-btn {
   margin-right: 10px;
 }
+
 #bullet-style{
   margin-top: -25px;
   text-align: left;
 }
+
 .text-green {
   color: #0a5a36 !important;
   font-weight: bold;
   font-size: 1rem;
 }
+
 .text-blue {
   color: #0000ff !important;
   font-size: 1rem;
 }
+
 .text-red {
   color: #e31b1b !important;
   font-weight: bold;
   font-size: 1rem;
 }
-
 </style>

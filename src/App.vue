@@ -81,7 +81,7 @@
 
         <!-- ✅ APP TITLE -->
         <v-toolbar-title class="app-title">
-          <router-link to="/events" class="title-link">
+          <router-link to="/about" class="title-link">
             Home Projects
           </router-link>
         </v-toolbar-title>
