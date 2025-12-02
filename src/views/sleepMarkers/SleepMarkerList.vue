@@ -1,13 +1,19 @@
 <template>
   <div class="sleep-markers-container">
     <!-- ✅ HEADER WITH CONTROLS -->
+    <v-card-title class="pb-0">
+      <h2><i class="fas fa-pills"></i> 
+        <router-link :to="{ name: 'HealthDashboard' }"> Health Dashboard</router-link>
+      </h2>
+    </v-card-title>
+    <br/>
     <BaseCard class="header-card">
       <template #header>
         <div class="header-content">
           <div class="title-section">
             <h2>
               <i class="fas fa-bed bed-icon"></i>
-              <router-link :to="{ name: 'MedsMenu' }" class="meds-menu-link">Sleep Markers Dashboard</router-link>
+              Sleep Markers
             </h2>           
           </div>
           

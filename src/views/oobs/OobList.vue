@@ -1,11 +1,15 @@
 <template>
   <v-card class="mx-auto mt-5">
-    <div class="title-section">
-      <h2>
-        <i class="fas fa-pills"></i>
-        <router-link :to="{ name: 'MedsMenu' }" class="meds-menu-link">OOBs Dashboard</router-link>
-      </h2>           
-    </div>      
+    <v-card-title class="pb-0">
+      <h2><i class="fas fa-pills"></i> 
+        <router-link :to="{ name: 'HealthDashboard' }" class="meds-menu-link"> Health Dashboard</router-link>
+      </h2>
+    </v-card-title>
+    <v-card-title class="pb-0">
+      <h2><i class="fa fa-thumbs-down" aria-hidden="true"></i>
+        OOBs Dashboard
+      </h2>
+    </v-card-title>    
     <!-- ✅ MODERN NAVIGATION -->    
     <div class="navigation-buttons">
 

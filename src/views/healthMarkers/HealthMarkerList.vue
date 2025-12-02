@@ -1,8 +1,13 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
+      <h2><i class="fas fa-pills"></i> 
+        <router-link :to="{ name: 'HealthDashboard' }"> Health Dashboard</router-link>
+      </h2>
+    </v-card-title>
+    <v-card-title class="pb-0">
       <h2><i class="fas fa-heartbeat"></i> 
-        <router-link :to="{ name: 'MedsMenu' }" class="meds-menu-link">Health Markers Dashboard</router-link>
+        Health Markers
       </h2>
     </v-card-title>   
     <!-- ✅ NAVIGATION BUTTONS -->
@@ -11,7 +16,6 @@
         <i class="fas fa-plus"></i>
         <span>Add Marker</span>
       </router-link>
-      
       <router-link :to="{ name: 'HealthMarkersByCategory' }" class="nav-btn" id="button-as-link">
         <i class="fas fa-layer-group"></i>
         <span>View Category</span>

@@ -255,9 +255,9 @@ export default {
           icon: "fas fa-golf-ball-tee"  // ✅ CORRECT FONTAWESOME ICON
         },
         {
-          label: "MedsMenu",
-          url: "/meds_menu", 
-          title: "Meds Menu",
+          label: "HealthDashboard",
+          url: "/health_dashboard", 
+          title: "Health Dashboard",
           icon: "fas fa-pills"
         },
         {

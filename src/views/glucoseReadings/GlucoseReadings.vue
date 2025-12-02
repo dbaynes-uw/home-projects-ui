@@ -2,10 +2,15 @@
   <v-container>
     <v-card class="mx-auto mt-5">
       <v-card-title class="pb-0">
-        <h2><i class="fas fa-heartbeat"></i> 
-          <router-link :to="{ name: 'MedsMenu' }" class="meds-menu-link">Health Dashboard</router-link>
+        <h2><i class="fas fa-pills"></i>
+          <router-link :to="{ name: 'HealthDashboard' }" class="meds-menu-link"> Health Dashboard</router-link>
         </h2>
       </v-card-title>
+        <v-card-title class="pb-0">
+          <h2><i class="fa fa-heart" aria-hidden="true"></i>
+            Glucose Dashboard
+          </h2>
+    </v-card-title>  
     </v-card>
     <div class="glucose-reading-details">
       <template v-if="isLoading">
@@ -91,6 +96,12 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.fa-heartbeat {
+  color: red;
+} 
+.fa-heart {
+  color: red;
+} 
 #indent-primary-button {
   margin-left: 5.8rem;
 }

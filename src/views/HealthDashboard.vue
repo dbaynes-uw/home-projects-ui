@@ -1,16 +1,12 @@
 <template>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <!-- ✅ CHANGED: mdi-pill → fas fa-pills -->
       <h2><i class="fas fa-pills"></i> Health Dashboard</h2>
     </v-card-title>
-    
-    <!-- ✅ MODERN NAVIGATION -->
      
     <div class="navigation-buttons">
 
       <router-link :to="{ name: 'HealthMarkerList' }" class="nav-btn" id="button-as-link">
-        <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
         <i class="fas fa-heartbeat"></i>
         <span>&nbsp;Health Markers</span>
       </router-link>

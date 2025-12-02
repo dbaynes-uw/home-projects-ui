@@ -249,10 +249,10 @@ const routes = [
   // ✅ MEDS - ROUTES
   // HEALTH MARKERS:
   {
-    path: "/meds_menu",
-    name: "MedsMenu",
+    path: "/health_dashboard",
+    name: "HealthDashboard",
     props: true,
-    component: () => import('@/views/MedsDashboard.vue'),
+    component: () => import('@/views/HealthDashboard.vue'),
     meta: { requiresAuth: true },
   },
   {
