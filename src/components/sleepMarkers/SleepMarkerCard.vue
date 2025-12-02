@@ -96,6 +96,28 @@
         </div>
       </div>
 
+      <!-- OOB Section -->
+      <div v-if="marker.had_oob" class="oob-details">
+        <div class="oob-header">
+          <i class="fas fa-ghost"></i>
+          <router-link :to="{ name: 'OobDetails', params: { id: marker.oob_id } }" class="oob-link">
+            <span>OOB Experience</span>
+          </router-link>
+        </div>
+        <div class="oob-info">
+          <div class="oob-duration">
+            <strong>Duration:</strong> {{ oobDurationLabel }}
+          </div>
+          <div v-if="marker.oob_circumstances" class="oob-circumstances">
+            <strong>Details:</strong>
+            <p>{{ marker.oob_circumstances }}</p>
+          </div>
+          <div v-else class="notes-indicator">
+            <span>OOB (no notes)</span>
+          </div>            
+        </div>
+      </div>
+
       <!-- Dreams Section -->
       <div class="dreams-section">
         <div class="dreams-header">
@@ -178,28 +200,6 @@
         <div v-else class="notes-indicator">
           <span>Sleep (no notes)</span>
         </div>  
-      </div>
-
-      <!-- OOB Section -->
-      <div v-if="marker.had_oob" class="oob-details">
-        <div class="oob-header">
-          <i class="fas fa-ghost"></i>
-          <router-link :to="{ name: 'OobDetails', params: { id: marker.oob_id } }" class="oob-link">
-            <span>OOB Experience</span>
-          </router-link>
-        </div>
-        <div class="oob-info">
-          <div class="oob-duration">
-            <strong>Duration:</strong> {{ oobDurationLabel }}
-          </div>
-          <div v-if="marker.oob_circumstances" class="oob-circumstances">
-            <strong>Details:</strong>
-            <p>{{ marker.oob_circumstances }}</p>
-          </div>
-          <div v-else class="notes-indicator">
-            <span>OOB (no notes)</span>
-          </div>            
-        </div>
       </div>
     </div>
   </BaseCard>

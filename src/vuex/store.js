@@ -1199,8 +1199,7 @@ export default new Vuex.Store({
 
         // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
         await dispatch('fetchOobs');
-        console.log('✅ Store: OOB created successfully:', response.data);
-        return response.data; // ✅ RETURN SUCCESS
+\        return response.data; // ✅ RETURN SUCCESS
 
       } catch (error) {
         console.error('❌ Store: OOB create error:', error);
