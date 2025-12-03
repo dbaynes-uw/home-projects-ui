@@ -1,67 +1,137 @@
 <template>
-  <v-card class="table-card">
-    <v-card-title class="table-header">
+  <div class="table-container">
+    <div class="table-header">
       <h3>
-        <i class="fas fa-table"></i>
+        <i class="fas fa-table header-icon"></i>
         Sleep Entries Table
       </h3>
-    </v-card-title>
+      
+      <div class="table-controls">
+        <div class="table-count">
+          <i class="fas fa-list-ol"></i>
+          {{ markers.length }} entr{{ markers.length === 1 ? 'y' : 'ies' }}
+        </div>
+      </div>
+    </div>
     
-    <v-card-text>
-      <v-data-table
-        :headers="headers"
-        :items="markers"
-        :items-per-page="10"
-        class="sleep-table"
-      >
-        <!-- Date Column -->
-        <template v-slot:item.sleep_date="{ item }">
-          <strong>{{ formatDate(item.sleep_date) }}</strong>
-        </template>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th @click="sortBy('sleep_date')" class="sortable">
+              Date 
+              <i v-if="sortKey === 'sleep_date'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('bed_time')" class="sortable">
+              Bed Time
+              <i v-if="sortKey === 'bed_time'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('wake_time')" class="sortable">
+              Wake Time
+              <i v-if="sortKey === 'wake_time'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('time_in_bed')" class="sortable">
+              Time in Bed
+              <i v-if="sortKey === 'time_in_bed'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('time_asleep')" class="sortable">
+              Time Asleep
+              <i v-if="sortKey === 'time_asleep'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('awakenings')" class="sortable center">
+              Ups
+              <i v-if="sortKey === 'awakenings'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('sleep_quality')" class="sortable center">
+              Quality
+              <i v-if="sortKey === 'sleep_quality'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('awake_sleep')" class="sortable">
+              Awake Sleep
+              <i v-if="sortKey === 'awake_sleep'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('rem_sleep')" class="sortable">
+              REM Sleep
+              <i v-if="sortKey === 'rem_sleep'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('core_sleep')" class="sortable">
+              Core Sleep
+              <i v-if="sortKey === 'core_sleep'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('deep_sleep')" class="sortable">
+              Deep Sleep
+              <i v-if="sortKey === 'deep_sleep'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('had_oob')" class="sortable center">
+              OOBs
+              <i v-if="sortKey === 'had_oob'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th class="center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="marker in sortedMarkers" :key="marker.id" @click="$emit('edit', marker)">
+            <td>
+              <div class="date-cell">
+                <div class="date-value">{{ formatDate(marker.sleep_date) }}</div>
+              </div>
+            </td>
+            <td>{{ marker.bed_time }}</td>
+            <td>{{ marker.wake_time }}</td>
+            <td>{{ marker.time_in_bed }}</td>
+            <td>{{ marker.time_asleep }}</td>
+            <td class="center">{{ marker.awakenings }}</td>
+            <td class="center">
+              <span class="quality-badge" :class="getQualityClass(marker.sleep_quality)">
+                {{ marker.sleep_quality }}/10
+              </span>
+            </td>
+            <td>{{ marker.awake_sleep }}</td>
+            <td>{{ marker.rem_sleep }}</td>
+            <td>{{ marker.core_sleep }}</td>
+            <td>{{ marker.deep_sleep }}</td>
+            <td class="center">{{ marker.had_oob ? 'Yes' : 'No' }}</td>
+            <td>
+              <div class="actions-cell">
+                <button 
+                  class="table-action-btn edit" 
+                  @click.stop="$emit('edit', marker)"
+                  title="Edit"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  class="table-action-btn delete" 
+                  @click.stop="$emit('delete', marker)"
+                  title="Delete"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        <!-- Quality Column with Color -->
-        <template v-slot:item.sleep_quality="{ item }">
-          <v-chip
-            :color="getQualityColor(item.sleep_quality)"
-            size="small"
-          >
-            {{ item.sleep_quality }}/10
-          </v-chip>
-        </template>
-
-        <!-- ✅ OOB Column - Convert boolean to Yes/No -->
-        <template v-slot:item.had_oob="{ item }">
-          {{ item.had_oob ? 'Yes' : 'No' }}
-        </template>
-
-        <!-- Actions Column -->
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            size="small"
-            color="info"
-            variant="text"
-            @click="$emit('edit', item)"
-          >
-            <i class="fas fa-edit"></i>
-          </v-btn>
-          <v-btn
-            size="small"
-            color="error"
-            variant="text"
-            @click="$emit('delete', item)"
-          >
-            <i class="fas fa-trash"></i>
-          </v-btn>
-        </template>
-      </v-data-table>
-    </v-card-text>
-  </v-card>
+    <div class="table-footer">
+      <div class="footer-info">
+        <i class="fas fa-info-circle"></i>
+        <span>Click any row to edit • Click column headers to sort</span>
+      </div>
+      
+      <div class="pagination-info">
+        Showing {{ sortedMarkers.length }} of {{ markers.length }} results
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
 import dayjs from 'dayjs';
 
-defineProps({
+const props = defineProps({
   markers: {
     type: Array,
     required: true
@@ -70,53 +140,53 @@ defineProps({
 
 defineEmits(['edit', 'delete']);
 
-const headers = [
-  { title: 'Date', key: 'sleep_date', sortable: true },
-  { title: 'Bed Time', key: 'bed_time', sortable: true },
-  { title: 'Wake Time', key: 'wake_time', sortable: true },
-  { title: 'Total Sleep', key: 'total_sleep_hours', sortable: true },
-  { title: 'Ups', key: 'awakenings', sortable: true },
-  { title: 'Quality', key: 'sleep_quality', sortable: true },
-  { title: 'Awake Sleep', key: 'awake_sleep', sortable: true },
-  { title: 'REM Sleep', key: 'rem_sleep', sortable: true },
-  { title: 'Core Sleep', key: 'core_sleep', sortable: true },  
-  { title: 'Deep Sleep', key: 'deep_sleep', sortable: true },    
-  { title: 'OOBs', key: 'had_oob', sortable: true }, 
-  { title: 'Actions', key: 'actions', sortable: false }
-];
+const sortKey = ref('sleep_date');
+const sortAsc = ref(false);
+
+const sortedMarkers = computed(() => {
+  const sorted = [...props.markers];
+  sorted.sort((a, b) => {
+    let aVal = a[sortKey.value];
+    let bVal = b[sortKey.value];
+    
+    // Handle null/undefined
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    
+    // Compare values
+    if (aVal < bVal) return sortAsc.value ? -1 : 1;
+    if (aVal > bVal) return sortAsc.value ? 1 : -1;
+    return 0;
+  });
+  return sorted;
+});
+
+const sortIcon = computed(() => {
+  return sortAsc.value ? 'fas fa-sort-up' : 'fas fa-sort-down';
+});
+
+function sortBy(key) {
+  if (sortKey.value === key) {
+    sortAsc.value = !sortAsc.value;
+  } else {
+    sortKey.value = key;
+    sortAsc.value = false; // Default to descending
+  }
+}
 
 function formatDate(date) {
   return dayjs(date).format('MMM DD, YYYY');
 }
 
-function getQualityColor(quality) {
+function getQualityClass(quality) {
   const q = parseFloat(quality);
-  if (q >= 8) return 'success';
-  if (q >= 6) return 'warning';
-  return 'error';
+  if (q >= 8) return 'quality-good';
+  if (q >= 6) return 'quality-medium';
+  return 'quality-poor';
 }
 </script>
 
 <style scoped>
-.table-card {
-  margin-top: 1rem;
-}
-
-.table-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 1rem 1.5rem;
-}
-
-.table-header h3 {
-  color: white;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.sleep-table {
-  margin-top: 1rem;
-}
+/* ✅ All shared table styles now come from table-components.css */
+/* Only component-specific overrides if needed */
 </style>

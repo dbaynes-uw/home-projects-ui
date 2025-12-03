@@ -1,194 +1,178 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/healthMarkers/HealthMarkerIndex.vue -->
 <template>
-  <div class="health-marker-index">
-    <!-- ✅ INDEX HEADER -->
-    <div class="index-header">
-      <h3 class="index-title">
-        <v-icon icon="mdi-table" class="mr-2" />
-        Health Markers Index View
+  <div class="table-container">
+    <!-- ✅ TABLE HEADER -->
+    <div class="table-header">
+      <h3>
+        <i class="fas fa-table header-icon"></i>
+        Health Markers Index
       </h3>
       
-      <div class="index-controls">
-        <v-chip 
-          size="small" 
-          color="primary" 
-          prepend-icon="mdi-format-list-numbered"
-        >
-          {{ healthMarkers.length }} results
-        </v-chip>
+      <div class="table-controls">
+        <div class="table-count">
+          <i class="fas fa-list-ol"></i>
+          {{ healthMarkers.length }} result{{ healthMarkers.length === 1 ? '' : 's' }}
+        </div>
         
-        <v-btn
-          size="small"
-          variant="outlined"
-          @click="exportToCsv"
-          prepend-icon="mdi-download"
-          class="ml-2"
-        >
+        <button class="export-btn" @click="exportToCsv">
+          <i class="fas fa-download"></i>
           Export CSV
-        </v-btn>
+        </button>
       </div>
     </div>
 
-    <!-- ✅ DATA TABLE -->
-    <v-data-table
-      :headers="headers"
-      :items="tableItems"
-      :items-per-page="itemsPerPage"
-      :sort-by="[{ key: 'marker_date', order: 'desc' }]"
-      class="health-marker-table"
-      density="comfortable"
-      hover
-      @click:row="editHealthMarker"
-    >
-      <!-- ✅ MARKER NAME COLUMN -->
-      <template v-slot:item.marker_name="{ item }">
-        <div class="marker-cell">
-          <v-icon 
-            :icon="getMarkerIcon(item.marker_name)" 
-            size="small" 
-            :color="getMarkerColor(item.marker_name)"
-            class="mr-2"
-          />
-          <div class="marker-info">
-            <div class="marker-label">{{ getMarkerLabel(item.marker_name) }}</div>
-            <v-chip 
-              size="x-small" 
-              :color="getCategoryColor(item.marker_name)"
-              class="category-mini-chip"
-            >
-              {{ getMarkerCategory(item.marker_name) }}
-            </v-chip>
-          </div>
-        </div>
-      </template>
-
-      <!-- ✅ TEST RESULT COLUMN -->
-      <template v-slot:item.marker_result="{ item }">
-        <div class="result-cell">
-          <span class="result-value">{{ item.marker_result }}</span>
-          <span class="result-unit">{{ getMarkerUnit(item.marker_name) }}</span>
-        </div>
-      </template>
-
-      <!-- ✅ STATUS COLUMN -->
-      <template v-slot:item.status="{ item }">
-        <v-chip
-          :color="getStatusColor(item.marker_name, item.marker_result)"
-          size="small"
-          :prepend-icon="getStatusIcon(item.marker_name, item.marker_result)"
-          class="status-chip"
-        >
-          {{ getStatusText(item.marker_name, item.marker_result) }}
-        </v-chip>
-      </template>
-
-      <!-- ✅ TEST DATE COLUMN -->
-      <template v-slot:item.marker_date="{ item }">
-        <div class="date-cell">
-          <div class="date-value">{{ formatDate(item.marker_date) }}</div>
-          <div class="days-ago">{{ getDaysAgo(item.marker_date) }}</div>
-        </div>
-      </template>
-      <!-- ✅ LAB NAME COLUMN -->
-      <template v-slot:item.labName="{ item }">
-        <div class="item-cell">
-          <div class="text-value">{{ getLabName(item.lab_name) }}</div>
-        </div>
-      </template>
-      <!-- ✅ NOTES COLUMN -->
-      <template v-slot:item.notes="{ item }">
-        <div class="notes-cell">
-          <span 
-            v-if="item.notes" 
-            class="notes-preview"
-            :title="item.notes"
+    <!-- ✅ TABLE WRAPPER -->
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th @click="sortBy('marker_name')" class="sortable">
+              Health Marker
+              <i v-if="sortKey === 'marker_name'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('marker_result')" class="sortable center">
+              Result
+              <i v-if="sortKey === 'marker_result'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th class="center">Status</th>
+            <th @click="sortBy('marker_date')" class="sortable center">
+              Test Date
+              <i v-if="sortKey === 'marker_date'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('lab_name')" class="sortable center">
+              Lab
+              <i v-if="sortKey === 'lab_name'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th>Notes</th>
+            <th @click="sortBy('created_by')" class="sortable center">
+              Created By
+              <i v-if="sortKey === 'created_by'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th class="center">Actions</th>
+          </tr>
+        </thead>
+        <tbody v-if="sortedMarkers.length > 0">
+          <tr 
+            v-for="marker in sortedMarkers" 
+            :key="marker.id"
+            @click="editHealthMarker(marker)"
           >
-            <v-icon icon="mdi-note-text" size="small" class="mr-1" />
-            {{ truncateNotes(item.notes) }}
-          </span>
-          <span v-else class="no-notes">—</span>
-        </div>
-      </template>
+            <!-- Marker Name -->
+            <td>
+              <div class="marker-cell">
+                <i :class="getMarkerIconClass(marker.marker_name)" class="marker-icon" :style="{ color: getMarkerColor(marker.marker_name) }"></i>
+                <div class="marker-info">
+                  <div class="marker-label">{{ getMarkerLabel(marker.marker_name) }}</div>
+                  <span class="marker-category" :class="getCategoryClass(marker.marker_name)">
+                    {{ getMarkerCategory(marker.marker_name) }}
+                  </span>
+                </div>
+              </div>
+            </td>
+            
+            <!-- Result -->
+            <td class="center">
+              <div class="result-cell">
+                <span class="result-value">{{ marker.marker_result }}</span>
+                <span class="result-unit">{{ getMarkerUnit(marker.marker_name) }}</span>
+              </div>
+            </td>
+            
+            <!-- Status -->
+            <td class="center">
+              <span class="status-badge" :class="getStatusClass(marker.marker_name, marker.marker_result)">
+                <i :class="getStatusIconClass(marker.marker_name, marker.marker_result)"></i>
+                {{ getStatusText(marker.marker_name, marker.marker_result) }}
+              </span>
+            </td>
+            
+            <!-- Test Date -->
+            <td class="center">
+              <div class="date-cell">
+                <div class="date-value">{{ formatDate(marker.marker_date) }}</div>
+                <div class="days-ago">{{ getDaysAgo(marker.marker_date) }}</div>
+              </div>
+            </td>
+            
+            <!-- Lab Name -->
+            <td class="center">{{ marker.lab_name || '—' }}</td>
+            
+            <!-- Notes -->
+            <td>
+              <div class="notes-cell">
+                <span v-if="marker.notes" class="notes-preview" :title="marker.notes">
+                  <i class="fas fa-sticky-note"></i>
+                  {{ truncateNotes(marker.notes) }}
+                </span>
+                <span v-else class="no-notes">—</span>
+              </div>
+            </td>
+            
+            <!-- Created By -->
+            <td class="center">
+              <span class="user-badge">
+                <i class="fas fa-user"></i>
+                {{ marker.created_by || 'Unknown' }}
+              </span>
+            </td>
+            
+            <!-- Actions -->
+            <td>
+              <div class="actions-cell">
+                <button 
+                  class="table-action-btn edit" 
+                  @click.stop="editHealthMarker(marker)"
+                  title="Edit"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  class="table-action-btn duplicate" 
+                  @click.stop="duplicateHealthMarker(marker)"
+                  title="Duplicate"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <!-- Empty State -->
+      <div v-if="sortedMarkers.length === 0" class="table-empty">
+        <i class="fas fa-database"></i>
+        <h3>No Health Markers Found</h3>
+        <p>Try adjusting your filters or add your first health marker.</p>
+        <button class="table-empty-btn" @click="$router.push({ name: 'HealthMarkerCreate' })">
+          <i class="fas fa-plus"></i>
+          Add Health Marker
+        </button>
+      </div>
+    </div>
 
-      <!-- ✅ CREATED BY COLUMN -->
-      <template v-slot:item.created_by="{ item }">
-        <v-chip 
-          size="small" 
-          variant="outlined"
-          prepend-icon="mdi-account"
-        >
-          {{ item.created_by || 'Unknown' }}
-        </v-chip>
-      </template>
-
-      <!-- ✅ ACTIONS COLUMN -->
-      <template v-slot:item.actions="{ item }">
-        <div class="actions-cell">
-          <v-btn
-            icon
-            size="small"
-            variant="text"
-            @click.stop="editHealthMarker(null, item)"
-            title="Edit Health Marker"
-          >
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          
-          <v-btn
-            icon
-            size="small"
-            variant="text"
-            @click.stop="duplicateHealthMarker(item)"
-            title="Duplicate Health Marker"
-          >
-            <v-icon>mdi-content-copy</v-icon>
-          </v-btn>
-        </div>
-      </template>
-
-      <!-- ✅ NO DATA SLOT -->
-      <template v-slot:no-data>
-        <div class="no-data">
-          <v-icon icon="mdi-database-off" size="x-large" color="grey" class="mb-4" />
-          <h3>No Health Markers Found</h3>
-          <p>Try adjusting your filters or add your first health marker.</p>
-          <v-btn 
-            color="primary" 
-            :to="{ name: 'HealthMarkerCreate' }"
-            prepend-icon="mdi-plus"
-            class="mt-3"
-          >
-            Add Health Marker
-          </v-btn>
-        </div>
-      </template>
-    </v-data-table>
-
-    <!-- ✅ TABLE FOOTER INFO -->
+    <!-- ✅ TABLE FOOTER -->
     <div class="table-footer">
       <div class="footer-info">
-        <v-icon icon="mdi-information" size="small" class="mr-1" />
-        <span>Click any row to edit • Use filters above to narrow results</span>
+        <i class="fas fa-info-circle"></i>
+        <span>Click any row to edit • Use column headers to sort</span>
       </div>
       
       <div class="pagination-info">
-        <span>Showing {{ Math.min(itemsPerPage, healthMarkers.length) }} of {{ healthMarkers.length }} results</span>
+        Showing {{ sortedMarkers.length }} of {{ healthMarkers.length }} results
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
   getHealthMarkerByName, 
-  getResultStatus, 
-  HEALTH_MARKER_CATEGORIES 
+  getResultStatus 
 } from '@/services/health-marker-constants';
 import DateFormatService from '@/services/DateFormatService';
 
-// ✅ PROPS
 const props = defineProps({
   healthMarkers: {
     type: Array,
@@ -197,85 +181,55 @@ const props = defineProps({
   }
 });
 
-// ✅ ROUTER
 const router = useRouter();
 
-// ✅ REACTIVE STATE
-const itemsPerPage = ref(25);
+// ✅ SORTING STATE
+const sortKey = ref('marker_date');
+const sortAsc = ref(false);
 
-// ✅ TABLE HEADERS
-const headers = computed(() => [
-  {
-    title: 'Health Marker',
-    key: 'marker_name',
-    align: 'start',
-    sortable: true,
-    width: '200px'
-  },
-  {
-    title: 'Result',
-    key: 'marker_result',
-    align: 'center',
-    sortable: true,
-    width: '120px'
-  },
-  {
-    title: 'Status',
-    key: 'status',
-    align: 'center',
-    sortable: false,
-    width: '130px'
-  },
-  {
-    title: 'Test Date',
-    key: 'marker_date',
-    align: 'center',
-    sortable: true,
-    width: '150px'
-  },
-  {
-    title: 'Doctor',
-    key: 'lab_name',
-    align: 'center',
-    sortable: true,
-    width: '150px'
-  },
-  {
-    title: 'Notes',
-    key: 'notes',
-    align: 'start',
-    sortable: false,
-    width: '200px'
-  },
-  {
-    title: 'Created By',
-    key: 'created_by',
-    align: 'center',
-    sortable: true,
-    width: '120px'
-  },
-  {
-    title: 'Actions',
-    key: 'actions',
-    align: 'center',
-    sortable: false,
-    width: '100px'
-  }
-]);
-
-// ✅ TABLE ITEMS
-const tableItems = computed(() => {
-  return props.healthMarkers.map(item => ({
-    ...item,
-    // Add computed status for sorting if needed
-    status: getStatusText(item.marker_name, item.marker_result)
-  }));
+const sortedMarkers = computed(() => {
+  const sorted = [...props.healthMarkers];
+  sorted.sort((a, b) => {
+    let aVal = a[sortKey.value];
+    let bVal = b[sortKey.value];
+    
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    
+    if (aVal < bVal) return sortAsc.value ? -1 : 1;
+    if (aVal > bVal) return sortAsc.value ? 1 : -1;
+    return 0;
+  });
+  return sorted;
 });
 
+const sortIcon = computed(() => {
+  return sortAsc.value ? 'fas fa-sort-up' : 'fas fa-sort-down';
+});
+
+function sortBy(key) {
+  if (sortKey.value === key) {
+    sortAsc.value = !sortAsc.value;
+  } else {
+    sortKey.value = key;
+    sortAsc.value = false;
+  }
+}
+
 // ✅ HELPER METHODS
-const getMarkerIcon = (markerName) => {
+const getMarkerIconClass = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
-  return marker?.icon || 'mdi-heart-pulse';
+  // Convert MDI icons to Font Awesome
+  const iconMap = {
+    'mdi-water': 'fas fa-tint',
+    'mdi-heart-pulse': 'fas fa-heartbeat',
+    'mdi-pill': 'fas fa-pills',
+    'mdi-molecule': 'fas fa-atom',
+    'mdi-test-tube': 'fas fa-vial',
+    'mdi-needle': 'fas fa-syringe',
+    'mdi-shield-check': 'fas fa-shield-alt'
+  };
+  return iconMap[marker?.icon] || 'fas fa-heartbeat';
 };
 
 const getMarkerLabel = (markerName) => {
@@ -287,14 +241,12 @@ const getMarkerCategory = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
   return marker?.category || 'Other';
 };
-const getLabName = (labName) => {
-  const marker = getHealthMarkerByName(labName);
-  return marker?.lab_name || '';
+
+const getCategoryClass = (markerName) => {
+  const category = getMarkerCategory(markerName).toLowerCase();
+  return `category-${category}`;
 };
-const getDoctorName = (doctorName) => {
-  const marker = getHealthMarkerByName(doctorName);
-  return marker?.doctor_name || '';
-};
+
 const getMarkerUnit = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
   return marker?.unit || '';
@@ -302,47 +254,37 @@ const getMarkerUnit = (markerName) => {
 
 const getMarkerColor = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
-  if (!marker) return 'primary';
+  if (!marker) return '#667eea';
   
-  switch (marker.category) {
-    case 'Diabetes': return 'error';
-    case 'Thyroid': return 'warning';
-    case 'Lipids': return 'info';
-    case 'Vitamins': return 'success';
-    case 'Heart': return 'deep-purple';
-    case 'General': return 'blue-grey';
-    default: return 'primary';
-  }
+  const colorMap = {
+    'Diabetes': '#dc2626',
+    'Thyroid': '#ca8a04',
+    'Lipids': '#2563eb',
+    'Vitamins': '#16a34a',
+    'Heart': '#7c3aed',
+    'General': '#4b5563'
+  };
+  return colorMap[marker.category] || '#667eea';
 };
 
-const getCategoryColor = (markerName) => {
-  return getMarkerColor(markerName);
-};
-
-const getStatusColor = (markerName, testResult) => {
+const getStatusClass = (markerName, testResult) => {
   const status = getResultStatus(markerName, testResult);
-  if (!status) return 'default';
+  if (!status) return 'status-info';
   
-  switch (status.type) {
-    case 'success': return 'success';
-    case 'warning': return 'warning';
-    case 'error': return 'error';
-    case 'info':
-    default: return 'info';
-  }
+  return `status-${status.type}`;
 };
 
-const getStatusIcon = (markerName, testResult) => {
+const getStatusIconClass = (markerName, testResult) => {
   const status = getResultStatus(markerName, testResult);
-  if (!status) return 'mdi-information-circle';
+  if (!status) return 'fas fa-info-circle';
   
-  switch (status.type) {
-    case 'success': return 'mdi-check-circle';
-    case 'warning': return 'mdi-alert-circle';
-    case 'error': return 'mdi-close-circle';
-    case 'info':
-    default: return 'mdi-information-circle';
-  }
+  const iconMap = {
+    'success': 'fas fa-check-circle',
+    'warning': 'fas fa-exclamation-circle',
+    'error': 'fas fa-times-circle',
+    'info': 'fas fa-info-circle'
+  };
+  return iconMap[status.type] || 'fas fa-info-circle';
 };
 
 const getStatusText = (markerName, testResult) => {
@@ -377,26 +319,24 @@ const getDaysAgo = (dateString) => {
 
 const truncateNotes = (notes) => {
   if (!notes) return '';
-  return notes.length > 50 ? notes.substring(0, 50) + '...' : notes;
+  return notes.length > 40 ? notes.substring(0, 40) + '...' : notes;
 };
 
 // ✅ ACTION METHODS
-const editHealthMarker = (event, item) => {
-  const healthMarker = item || event;
-  if (healthMarker?.id) {
-    router.push({ name: 'HealthMarkerEdit', params: { id: healthMarker.id } });
+const editHealthMarker = (marker) => {
+  if (marker?.id) {
+    router.push({ name: 'HealthMarkerEdit', params: { id: marker.id } });
   }
 };
 
-const duplicateHealthMarker = (item) => {
-  // Navigate to create with pre-filled data
+const duplicateHealthMarker = (marker) => {
   router.push({ 
     name: 'HealthMarkerCreate', 
     query: { 
-      duplicate: item.id,
-      marker: item.marker_name,
-      result: item.marker_result,
-      notes: item.notes 
+      duplicate: marker.id,
+      marker: marker.marker_name,
+      result: marker.marker_result,
+      notes: marker.notes 
     } 
   });
 };
@@ -410,7 +350,6 @@ const exportToCsv = () => {
     'Status',
     'Test Date',
     'Lab',
-    'Doctor',
     'Days Ago',
     'Notes',
     'Created By'
@@ -423,8 +362,7 @@ const exportToCsv = () => {
     getMarkerUnit(item.marker_name),
     getStatusText(item.marker_name, item.marker_result),
     formatDate(item.marker_date),
-    getLabName(item.lab_name),
-    getDoctorName(item.doctor_name),
+    item.lab_name || '',
     getDaysAgo(item.marker_date),
     item.notes || '',
     item.created_by || ''
@@ -446,191 +384,6 @@ const exportToCsv = () => {
 </script>
 
 <style scoped>
-/* ✅ INDEX CONTAINER */
-.health-marker-index {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* ✅ HEADER STYLES */
-.index-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.index-title {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  color: #2c3e50;
-  font-weight: 600;
-}
-
-.index-controls {
-  display: flex;
-  align-items: center;
-}
-
-/* ✅ TABLE STYLES */
-.health-marker-table {
-  background: white !important;
-}
-
-/* ✅ CELL STYLES */
-.marker-cell {
-  display: flex;
-  align-items: center;
-}
-
-.marker-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.marker-label {
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-.category-mini-chip {
-  align-self: flex-start;
-}
-
-.result-cell {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 0.25rem;
-}
-
-.result-value {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #2c3e50;
-}
-
-.result-unit {
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.status-chip {
-  min-width: 100px;
-}
-.item-cell {
-  text-align: center;
-}
-.item-value {
-  font-weight: 500;
-  color: #2c3e50;
-}
-.date-cell {
-  text-align: center;
-}
-
-.date-value {
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-.days-ago {
-  font-size: 0.75rem;
-  color: #666;
-  font-style: italic;
-}
-
-.notes-cell {
-  max-width: 200px;
-}
-
-.notes-preview {
-  display: flex;
-  align-items: center;
-  color: #666;
-  font-style: italic;
-  cursor: help;
-}
-
-.no-notes {
-  color: #ccc;
-  text-align: center;
-}
-
-.actions-cell {
-  display: flex;
-  gap: 0.25rem;
-  justify-content: center;
-}
-
-/* ✅ NO DATA STYLES */
-.no-data {
-  text-align: center;
-  padding: 3rem;
-  color: #666;
-}
-
-/* ✅ FOOTER STYLES */
-.table-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-top: 1px solid #e0e0e0;
-  font-size: 0.875rem;
-  color: #666;
-}
-
-.footer-info {
-  display: flex;
-  align-items: center;
-}
-
-/* ✅ HOVER EFFECTS */
-.health-marker-table :deep(.v-data-table__tbody tr:hover) {
-  background-color: rgba(65, 184, 131, 0.05) !important;
-  cursor: pointer;
-}
-
-/* ✅ RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .index-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-  
-  .index-controls {
-    justify-content: space-between;
-  }
-  
-  .table-footer {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
-  }
-  
-  /* Hide some columns on mobile */
-  .health-marker-table :deep(.v-data-table__thead th:nth-child(5)),
-  .health-marker-table :deep(.v-data-table__tbody td:nth-child(5)),
-  .health-marker-table :deep(.v-data-table__thead th:nth-child(6)),
-  .health-marker-table :deep(.v-data-table__tbody td:nth-child(6)) {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Hide more columns on very small screens */
-  .health-marker-table :deep(.v-data-table__thead th:nth-child(3)),
-  .health-marker-table :deep(.v-data-table__tbody td:nth-child(3)) {
-    display: none;
-  }
-}
+/* ✅ All shared table styles now come from table-components.css */
+/* Only component-specific overrides if needed */
 </style>

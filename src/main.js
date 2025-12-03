@@ -3,6 +3,8 @@ import { createPinia } from 'pinia';
 import axios from "axios";
 import App from "./App.vue";
 import "./assets/global.css";
+import './assets/styles/card-components.css';
+import './assets/styles/table-components.css';
 import router from "./router";
 import store from "./vuex/store.js";
 
@@ -11,7 +13,7 @@ import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 import * as directives from 'vuetify/directives'
 
-import './assets/styles/card-components.css';
+
 
 // ✅ IMPORT SPECIFIC COMPONENTS
 // ✅ ADD THE MISSING COMPONENTS TO YOUR IMPORTS
