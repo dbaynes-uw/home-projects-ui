@@ -29,6 +29,11 @@
           </v-chip>
         </template>
 
+        <!-- ✅ OOB Column - Convert boolean to Yes/No -->
+        <template v-slot:item.had_oob="{ item }">
+          {{ item.had_oob ? 'Yes' : 'No' }}
+        </template>
+
         <!-- Actions Column -->
         <template v-slot:item.actions="{ item }">
           <v-btn
@@ -70,11 +75,13 @@ const headers = [
   { title: 'Bed Time', key: 'bed_time', sortable: true },
   { title: 'Wake Time', key: 'wake_time', sortable: true },
   { title: 'Total Sleep', key: 'total_sleep_hours', sortable: true },
+  { title: 'Ups', key: 'awakenings', sortable: true },
   { title: 'Quality', key: 'sleep_quality', sortable: true },
-  { title: 'Deep Sleep', key: 'deep_sleep', sortable: true },
+  { title: 'Awake Sleep', key: 'awake_sleep', sortable: true },
   { title: 'REM Sleep', key: 'rem_sleep', sortable: true },
-  { title: 'Awakenings', key: 'awakenings', sortable: true },
-  { title: 'OOBs', key: 'oob_duration', sortable: true }, 
+  { title: 'Core Sleep', key: 'core_sleep', sortable: true },  
+  { title: 'Deep Sleep', key: 'deep_sleep', sortable: true },    
+  { title: 'OOBs', key: 'had_oob', sortable: true }, 
   { title: 'Actions', key: 'actions', sortable: false }
 ];
 
