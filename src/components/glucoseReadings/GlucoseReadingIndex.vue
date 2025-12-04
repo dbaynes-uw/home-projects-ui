@@ -1,140 +1,153 @@
 <template>
-  <div id="index-count-display">
-    <span class="filtered-count">
-      Showing {{ sortedReadings.length }} Glucose Reading{{ sortedReadings.length === 1 ? '' : 's' }}
-    </span>
-    <br/>
+  <div class="table-container">
+    <div class="table-header">
+      <h3>
+        <i class="fas fa-table header-icon"></i>
+        Glucose Readings Table
+      </h3>
+      <div class="table-controls">
+        <div class="table-count">
+          <i class="fas fa-list-ol"></i>
+          {{ glucose_readings.length }} entr{{ glucose_readings.length === 1 ? 'y' : 'ies' }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th @click="sortBy('reading_date')" class="sortable">
+              Date 
+              <i v-if="sortKey === 'reading_date'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('reading')" class="sortable">
+              Reading
+              <i v-if="sortKey === 'reading'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('reading_type')" class="sortable">
+              Type
+              <i v-if="sortKey === 'reading_type'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('status')" class="sortable">
+              Status
+              <i v-if="sortKey === 'status'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th @click="sortBy('notes')" class="sortable">
+              Notes
+              <i v-if="sortKey === 'notes'" :class="sortIcon" class="sort-icon"></i>
+            </th>
+            <th class="center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="glucose_reading in sortedGlucoseReadings" :key="glucose_reading.id" @click="$emit('edit', glucose_reading)">
+            <td>
+              <div class="date-cell">
+                <div class="date-value">{{ formatDate(glucose_reading.reading_date) }}</div>
+              </div>
+            </td>
+            <td>{{ glucose_reading.reading }}</td>
+            <td>{{ glucose_reading.reading_type }}</td>
+            <td>{{ glucose_reading.status }}</td>
+            <td>{{ glucose_reading.notes }}</td>
+            <td>
+              <div class="actions-cell">
+                <button 
+                  class="table-action-btn edit" 
+                  @click.stop="$emit('edit', glucose_reading)"
+                  title="Edit"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  class="table-action-btn delete" 
+                  @click.stop="$emit('delete', glucose_reading)"
+                  title="Delete"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <div class="footer-info">
+        <i class="fas fa-info-circle"></i>
+        <span>Click any row to edit • Click column headers to sort</span>
+      </div>
+      
+      <div class="pagination-info">
+        Showing {{ sortedGlucoseReadings.length }} of {{ sortedGlucoseReadings.length }} results
+      </div>    
+    </div>
+
   </div>
-  <v-table density="compact">
-    <tr>
-      <th id="background-blue" @click="sortList('reading_date')">Date</th>
-      <th id="background-blue" @click="sortList('reading')">Reading</th>
-      <th id="background-blue" @click="sortList('reading_type')">Reading Type</th>
-      <th id="background-blue" @click="sortList('status')">Result</th>
-      <th id="background-blue">Notes</th>
-      <th class="th-center" id="background-blue">Actions</th>
-    </tr>
-    <tr v-for="reading in sortedReadings"
-      :key="reading.id"
-    >
-      <td class="td-center">{{ formatStandardDateTime(reading.reading_date) }}</td>
-      <td :class="readingColorClass(reading.reading, reading.reading_type)">
-        {{ reading.reading }} {{ reading.unit }}
-        {{ reading.reading }} mg/dl
-      </td>
-      <td>{{ reading.reading_type }}</td>
-      <td>{{ reading.status }}</td>
-      <td>{{ reading.notes }}</td>
-      <td class="td-center" width="150px">
-        <span v-if="onlineStatus">
-          <span class="fa-stack" style="text-align: center">
-            <router-link :to="{ name: 'GlucoseReadingEdit', params: { id: `${reading.id}` } }">
-              <i id="medium-icon-edit" class="fa-solid fa-pen-to-square fa-stack-1x"></i>
-            </router-link>
-            <span class="fa-stack fa-table-stack">
-              <router-link :to="{ name: 'GlucoseReadingDetails', params: { id: `${reading.id}` } }">
-                <i id="booklist-icon-eye" class="fa fa-eye"></i>
-              </router-link>
-            </span>
-            <span class="fa-table-stack">
-              <i
-                @click="deleteGlucoseReading(reading)"
-                class="fas fa-trash-alt fa-stack-1x"
-                id="booklist-icon-delete"
-              ></i>
-            </span>
-          </span>
-        </span>
-        <span v-else>
-          <router-link :to="{ name: 'GlucoseReadingDetails', params: { id: `${reading.id}` } }">View |</router-link>
-          <router-link :to="{ name: 'GlucoseReadingEdit', params: { id: `${reading.id}` } }">Edit |</router-link>
-          <span class="ok-btn" @click="deleteGlucoseReading(reading)"><u>Delete</u></span>
-        </span>
-      </td>
-    </tr>
-  </v-table>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import dayjs from 'dayjs';
 
-// Props
 const props = defineProps({
-  glucose_readings: { type: Array, required: true }
+  glucose_readings: {
+    type: Array,
+    required: true
+  }
 });
 
-// Emits
-const emit = defineEmits(['edit','delete']);
-
-// State
-const onlineStatus = ref(navigator.onLine);
+defineEmits(['edit', 'delete']);
 
 const sortKey = ref('reading_date');
 const sortAsc = ref(false);
 
-// Computed sorted readings
-const sortedReadings = computed(() => {
-  const arr = [...props.glucose_readings];
-  arr.sort((a, b) => {
-    if (a[sortKey.value] < b[sortKey.value]) return sortAsc.value ? -1 : 1;
-    if (a[sortKey.value] > b[sortKey.value]) return sortAsc.value ? 1 : -1;
+const sortedGlucoseReadings = computed(() => {
+  const sorted = [...props.glucose_readings];
+  sorted.sort((a, b) => {
+    let aVal = a[sortKey.value];
+    let bVal = b[sortKey.value];
+    
+    // Handle null/undefined
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    
+    // Compare values
+    if (aVal < bVal) return sortAsc.value ? -1 : 1;
+    if (aVal > bVal) return sortAsc.value ? 1 : -1;
     return 0;
   });
-  return arr;
+  return sorted;
 });
-// Methods
-function readingColorClass(readingValue, readingType) {
-  if (readingType === 'AM-Fasting') {
-    if (readingValue >= 70 && readingValue <= 99) return 'reading-normal';
-    if (readingValue >= 100 && readingValue <= 125) return 'reading-prediabetes';
-    if (readingValue >= 126) return 'reading-diabetes';
-  } else if (readingType === 'Post-Meal') {
-    if (readingValue >= 80 && readingValue <= 140) return 'reading-normal';
-    if (readingValue >= 141 && readingValue <= 200) return 'reading-prediabetes';
-    if (readingValue >= 201) return 'reading-diabetes';
-  }
-  return '';
-}
 
-function formatStandardDateTime(date) {
-  return new Date(date).toLocaleString();
-}
+const sortIcon = computed(() => {
+  return sortAsc.value ? 'fas fa-sort-up' : 'fas fa-sort-down';
+});
 
-function deleteGlucoseReading(reading) {
-  emit('delete', reading);
-}
-
-function sortList(key) {
+function sortBy(key) {
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;
   } else {
     sortKey.value = key;
-    sortAsc.value = true;
+    sortAsc.value = false; // Default to descending
   }
 }
+
+function formatDate(date) {
+  return dayjs(date).format('MMM DD, YYYY');
+}
+
+function getQualityClass(quality) {
+  const q = parseFloat(quality);
+  if (q >= 8) return 'quality-good';
+  if (q >= 6) return 'quality-medium';
+  return 'quality-poor';
+}
 </script>
+
 <style scoped>
-#index-count-display {
-  font-weight: bold;
-  font-size: 1.25rem;
-}
-.reading-normal {
-  /* background-color: #e0ffe0; 
-  color: #388e3c;
-  */
-  font-weight: bold;
-  color: darkgreen
-}
-.reading-prediabetes {
-  /*background-color: #fffbe0;
-  color: #fbc02d;
-  */
-  font-weight: bold;
-  color: #00f
-}
-.reading-diabetes {
-  font-weight: bold;
-  /*background-color: #ffe0ff;*/
-  color: #e31b1b;
-}
+/* ✅ All shared table styles now come from table-components.css */
+/* Only component-specific overrides if needed */
 </style>
