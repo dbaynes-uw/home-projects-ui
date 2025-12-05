@@ -277,6 +277,30 @@ export default new Vuex.Store({
     SET_PRODUCTS(state, products) {
       state.products = products;
     },
+    UPDATE_PRODUCT_ACTIVE(state, updatedProduct) {
+      console.log('📝 Mutation: Updating product active state', updatedProduct);
+    
+    // Update in products array
+    const productIndex = state.products.findIndex(p => p.id === updatedProduct.id);
+    if (productIndex !== -1) {
+      state.products[productIndex] = {
+        ...state.products[productIndex],
+        active: updatedProduct.active
+      };
+      console.log(`✅ Updated products[${productIndex}]:`, state.products[productIndex]);
+    }
+    
+    // Update in shopping_list array if exists
+    const shoppingListIndex = state.shopping_list.findIndex(p => p.id === updatedProduct.id);
+    if (shoppingListIndex !== -1) {
+      state.shopping_list[shoppingListIndex] = {
+        ...state.shopping_list[shoppingListIndex],
+        active: updatedProduct.active
+      };
+      console.log(`✅ Updated shopping_list[${shoppingListIndex}]:`, state.shopping_list[shoppingListIndex]);
+      }
+    },
+
     SET_LOCATION_PRODUCTS(state, location_products_list) {
       state.location_products_list = location_products_list;
     },

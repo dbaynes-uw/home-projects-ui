@@ -5,6 +5,7 @@ import App from "./App.vue";
 import "./assets/global.css";
 import './assets/styles/card-components.css';
 import './assets/styles/table-components.css';
+import './assets/styles/ui-components.css';
 import router from "./router";
 import store from "./vuex/store.js";
 

@@ -1,248 +1,182 @@
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductList.vue -->
+
 <template>
   <div class="page-wrapper">
     <div class="product-list-container">
-      <!-- ✅ HEADER CARD -->
-      <v-card class="mx-auto mt-5">
-        <v-card-title class="pb-0">
-          <h2>
+      <!-- ✅ HEADER CARD (NO VUETIFY) -->
+      <div class="card mt-5">
+        <div class="card-header">
+          <h2 class="card-title">
             <i class="fas fa-shopping-basket"></i>
             Product Shopping List
           </h2>
-        </v-card-title>
+        </div>
         
-        <!-- ✅ NAVIGATION BUTTONS -->
-        <v-card-text>
+        <!-- ✅ NAVIGATION BUTTONS (NO VUETIFY) -->
+        <div class="card-body">
           <div class="navigation-flex">
-            <v-btn
-              variant="outlined"
+            <router-link 
               :to="{ name: 'ProductsByLocations' }"
-              prepend-icon="fas fa-map-marker-alt"
-              class="nav-button"
+              class="btn btn-outlined"
             >
+              <i class="fas fa-map-marker-alt"></i>
               Products By Locations
-            </v-btn>
+            </router-link>
             
-            <v-btn
-              variant="outlined"
+            <router-link 
               :to="{ name: 'ProductsByVendors' }"
-              prepend-icon="fas fa-store"
-              class="nav-button"
+              class="btn btn-outlined"
             >
+              <i class="fas fa-store"></i>
               Product List By Vendor
-            </v-btn>
+            </router-link>
             
-            <v-btn
-              variant="outlined"
+            <router-link 
               :to="{ name: 'ProductVendorCreate' }"
-              prepend-icon="fas fa-plus-circle"
-              class="nav-button"
+              class="btn btn-outlined"
             >
+              <i class="fas fa-plus-circle"></i>
               Create Vendor/Product
-            </v-btn>
+            </router-link>
           </div>
-        </v-card-text>
-      </v-card>
+        </div>
+      </div>
 
-      <!-- ✅ MAIN CONTENT CARD -->
-      <v-card class="mt-4">
-        <v-card-text>
-          <v-form @submit.prevent="onSubmit">
-            <!-- ✅ SEARCH AND TOGGLE SECTION -->
+      <!-- ✅ MAIN CONTENT CARD (NO VUETIFY) -->
+      <div class="card mt-4">
+        <div class="card-body">
+          <form @submit.prevent="onSubmit">
+            <!-- ✅ SEARCH AND TOGGLE SECTION (NO VUETIFY) -->
             <div class="controls-section mb-4">
-              <!-- ✅ PRODUCT SEARCH BAR -->
+              <!-- ✅ PRODUCT SEARCH BAR (NO VUETIFY) -->
               <div class="search-section mb-3">
-                <v-text-field
-                  v-model="searchQuery"
-                  label="Search Products by Name..."
-                  variant="outlined"
-                  clearable
-                  class="search-field"
-                  placeholder="Type product name to search..."
-                >
-                  <template v-slot:prepend-inner>
-                    <v-icon color="primary">fas fa-search</v-icon>
-                  </template>
-                  <template v-slot:append-inner>
-                    <v-chip 
-                      v-if="searchQuery"
-                      size="small" 
-                      color="primary" 
-                      class="search-results-chip"
-                    >
+                <div class="form-group">
+                  <div class="input-wrapper">
+                    <i class="fas fa-search input-icon"></i>
+                    <input
+                      v-model="searchQuery"
+                      type="text"
+                      class="form-input has-icon"
+                      placeholder="Search Products by Name..."
+                    />
+                    <span v-if="searchQuery" class="chip chip-primary chip-small input-badge">
                       {{ filteredProducts.length }} found
-                    </v-chip>
-                  </template>
-                </v-text-field>
+                    </span>
+                  </div>
+                </div>
               </div>
               
-              <!-- ✅ SHOPPING LIST TOGGLE -->
+              <!-- ✅ SHOPPING LIST TOGGLE (NO VUETIFY) -->
               <div class="toggle-section">
                 <h2>
-                  <u @click="toggleShoppingListDisplay" class="toggle-link">
+                  <span @click="toggleShoppingListDisplay" class="toggle-link">
                     <i class="fas fa-list"></i>
                     Toggle Shopping List
-                    <v-chip 
-                      :color="showShoppingList ? 'success' : 'primary'" 
-                      size="small" 
-                      class="ml-2"
+                    <span 
+                      :class="['chip', 'chip-small', 'ml-2', showShoppingList ? 'chip-success' : 'chip-primary']"
                     >
                       {{ showShoppingList ? 'Active Items Only' : 'All Items' }}
-                    </v-chip>
-                  </u>
+                    </span>
+                  </span>
                 </h2>
               </div>
             </div>
 
             <!-- ✅ PRODUCTS CONTAINER -->
-            <v-container id="form-container">
-              <!-- ✅ LOADING STATE -->
-              <div v-if="isLoading" class="loading-state">
-                <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
-                <p class="mt-4">Loading products...</p>
+            <div id="form-container">
+              <!-- ✅ LOADING STATE (NO VUETIFY) -->
+              <div v-if="isLoading" class="loading-container">
+                <div class="spinner"></div>
+                <p class="loading-text">Loading products...</p>
               </div>
 
-              <!-- ✅ SEARCH RESULTS SUMMARY -->
+              <!-- ✅ SEARCH RESULTS SUMMARY (NO VUETIFY) -->
               <div v-else-if="searchQuery" class="search-summary mb-4">
-                <v-alert
-                  :color="filteredProducts.length > 0 ? 'success' : 'info'"
-                  variant="tonal"
-                  icon="fas fa-search"
-                >
-                  <strong>Search Results:</strong> 
-                  Found {{ filteredProducts.length }} products matching "{{ searchQuery }}"
-                  <div v-if="filteredProducts.length > 0" class="mt-2">
-                    <v-chip size="small" color="success" class="mr-2">
-                      {{ activeSearchCount }} Active
-                    </v-chip>
-                    <v-chip size="small" color="grey">
-                      {{ inactiveSearchCount }} Inactive
-                    </v-chip>
+                <div :class="['alert', filteredProducts.length > 0 ? 'alert-success' : 'alert-info']">
+                  <i :class="['alert-icon', 'fas', 'fa-search']"></i>
+                  <div class="alert-content">
+                    <strong>Search Results:</strong> 
+                    Found {{ filteredProducts.length }} products matching "{{ searchQuery }}"
+                    <div v-if="filteredProducts.length > 0" class="mt-2">
+                      <span class="chip chip-success chip-small mr-2">
+                        {{ activeSearchCount }} Active
+                      </span>
+                      <span class="chip chip-grey chip-small">
+                        {{ inactiveSearchCount }} Inactive
+                      </span>
+                    </div>
                   </div>
-                </v-alert>
+                </div>
               </div>
 
               <!-- ✅ PRODUCTS LIST -->
               <div class="products-wrapper">
-                <!-- ✅ SEARCH RESULTS -->
-                <div v-if="searchQuery && filteredProducts.length > 0">
-                  <div 
-                    v-for="(product, index) in filteredProducts" 
-                    :key="`search-${product.id}-${index}`"
-                    class="product-group"
-                  >
-                    <div class="product-section">
-                      <h2 class="product-name">
-                        <i class="fas fa-box"></i>
-                        <!-- ✅ HIGHLIGHT SEARCH MATCHES -->
-                        <span v-html="highlightSearchTerm(product.product_name)"></span>
-                      </h2>
-                      <div class="vendor-option">
-                        <input
-                          type="checkbox"
-                          :checked="product.active"
-                          @change="toggleProductActive(product)"
-                          class="product-checkbox"
-                          :id="`search-product-${index}`"
-                        />
-                        <label 
-                          :for="`search-product-${index}`"
-                          class="checkbox-label"
-                        >
+                <!-- ✅ SEARCH RESULTS MODE -->
+                <template v-if="searchQuery && filteredProducts.length > 0">
+                  <div v-for="product in filteredProducts" :key="product.id" class="product-section">
+                    <h3 class="product-name">
+                      <i class="fas fa-box"></i>
+                      <span v-html="highlightSearchTerm(product.product_name)"></span>
+                    </h3>
+                    
+                    <div class="vendor-option">
+                      <input
+                        :id="`product-${product.id}`"
+                        type="checkbox"
+                        :checked="product.active"
+                        @change="toggleProductActive(product)"
+                        class="product-checkbox"
+                      />
+                      <label 
+                        :for="`product-${product.id}`"
+                        class="checkbox-label"
+                      >
+                        <i class="fas fa-store"></i>
+                        {{ getProductVendor(product.vendor_id) }}
+                        <span class="chip chip-small chip-grey ml-2">
                           <i class="fas fa-map-marker-alt"></i>
-                          {{ getProductLocation(product.vendor_id) }} - 
-                          <i class="fas fa-store"></i>
-                          {{ getProductVendor(product.vendor_id) }}
-                          <v-chip 
-                            :color="product.active ? 'success' : 'grey'" 
-                            size="small" 
-                            class="ml-2"
-                          >
-                            {{ product.active ? 'Active' : 'Inactive' }}
-                          </v-chip>
-                        </label>
-                      </div>
+                          {{ getProductLocation(product.vendor_id) }}
+                        </span>
+                      </label>
                     </div>
                   </div>
-                </div>
+                </template>
 
                 <!-- ✅ NORMAL MODE (NO SEARCH) -->
-                <div v-else-if="!searchQuery">
-                  <div 
-                    id="group" 
-                    v-for="(product, groupIndex) in displayedProducts" 
-                    :key="`product-${groupIndex}`"
-                    class="product-group"
-                  >
-                    <div 
-                      v-for="(vendor, vendorIndex) in vendors" 
-                      :key="`vendor-${vendorIndex}`"
-                    >
-                      <!-- ✅ SHOPPING LIST MODE (Active items only) -->
-                      <div v-if="showShoppingList && product.vendor_id === vendor.id && product.active">
-                        <div class="product-section">
-                          <h2 class="product-name">
-                            <i class="fas fa-box"></i>
-                            {{ product.product_name }}
-                          </h2>
-                          <div class="vendor-option">
-                            <input
-                              type="checkbox"
-                              :checked="product.active"
-                              @change="toggleProductActive(product)"
-                              class="product-checkbox"
-                              :id="`active-${groupIndex}-${vendorIndex}`"
-                            />
-                            <label 
-                              :for="`active-${groupIndex}-${vendorIndex}`"
-                              class="checkbox-label"
-                            >
-                              <i class="fas fa-map-marker-alt"></i>
-                              {{ vendor.location }} - 
-                              <i class="fas fa-store"></i>
-                              {{ vendor.vendor_name }}
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <!-- ✅ ALL PRODUCTS MODE -->
-                      <div v-else-if="!showShoppingList && product.vendor_id === vendor.id">
-                        <div class="product-section">
-                          <h2 class="product-name">
-                            <i class="fas fa-box"></i>
-                            {{ product.product_name }}
-                          </h2>
-                          <div class="vendor-option">
-                            <input
-                              type="checkbox"
-                              :checked="product.active"
-                              @change="toggleProductActive(product)"
-                              class="product-checkbox"
-                              :id="`all-${groupIndex}-${vendorIndex}`"
-                            />
-                            <label 
-                              :for="`all-${groupIndex}-${vendorIndex}`"
-                              class="checkbox-label"
-                            >
-                              <i class="fas fa-map-marker-alt"></i>
-                              {{ vendor.location }} - 
-                              <i class="fas fa-store"></i>
-                              {{ vendor.vendor_name }}
-                            </label>
-                          </div>
-                        </div>
-                      </div>
+                <template v-else-if="!searchQuery && displayedProducts.length > 0">
+                  <div v-for="product in displayedProducts" :key="product.id" class="product-section">
+                    <h3 class="product-name">
+                      <i class="fas fa-box"></i>
+                      {{ product.product_name }}
+                    </h3>
+                    
+                    <div class="vendor-option">
+                      <input
+                        :id="`product-${product.id}`"
+                        type="checkbox"
+                        :checked="product.active"
+                        @change="toggleProductActive(product)"
+                        class="product-checkbox"
+                      />
+                      <label 
+                        :for="`product-${product.id}`"
+                        class="checkbox-label"
+                      >
+                        <i class="fas fa-store"></i>
+                        {{ getProductVendor(product.vendor_id) }}
+                        <span class="chip chip-small chip-grey ml-2">
+                          <i class="fas fa-map-marker-alt"></i>
+                          {{ getProductLocation(product.vendor_id) }}
+                        </span>
+                      </label>
                     </div>
                   </div>
-                </div>
-
-                <!-- ✅ EMPTY STATE -->
-                <div v-if="(searchQuery && filteredProducts.length === 0) || (!searchQuery && displayedProducts.length === 0)" class="empty-state">
-                  <v-icon size="64" color="grey">
-                    {{ searchQuery ? 'fas fa-search-minus' : 'fas fa-inbox' }}
-                  </v-icon>
-                  <h3 class="mt-4">
+                </template>
+                
+                <!-- ✅ EMPTY STATE (NO VUETIFY) -->
+                <div v-else class="empty-state">
+                  <i :class="['empty-state-icon', 'fas', searchQuery ? 'fa-search-minus' : 'fa-inbox']"></i>
+                  <h3>
                     {{ searchQuery ? 'No matching products found' : 'No products found' }}
                   </h3>
                   <p v-if="searchQuery">
@@ -252,51 +186,50 @@
                     {{ showShoppingList ? 'No active items in your shopping list' : 'No products available' }}
                   </p>
                   
-                  <!-- ✅ SEARCH SUGGESTIONS -->
-                  <div v-if="searchQuery" class="search-suggestions mt-3">
-                    <v-btn 
+                  <div v-if="searchQuery" class="search-suggestions">
+                    <button 
                       @click="clearSearch"
-                      variant="outlined"
-                      size="small"
-                      prepend-icon="fas fa-times"
+                      type="button"
+                      class="btn btn-outlined btn-small"
                     >
+                      <i class="fas fa-times"></i>
                       Clear Search
-                    </v-btn>
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <!-- ✅ SUBMIT BUTTON -->
-              <v-btn 
-                type="submit" 
-                color="primary"
-                size="large"
-                block 
-                class="mt-4 submit-button"
-                :loading="isSubmitting"
-                :disabled="(searchQuery ? filteredProducts.length === 0 : displayedProducts.length === 0)"
+              <!-- ✅ SUBMIT BUTTON (NO VUETIFY) -->
+              <button 
+                type="submit"
+                :class="['btn', 'btn-primary', 'btn-large', 'btn-block', 'mt-4', 'submit-button', { 'btn-loading': isSubmitting }]"
+                :disabled="(searchQuery ? filteredProducts.length === 0 : displayedProducts.length === 0) || isSubmitting"
               >
-                <i class="fas fa-save"></i>
-                Update Products List
-                <v-chip size="small" class="ml-2">
-                  {{ getActiveProductsCount }} active
-                </v-chip>
-                <span v-if="searchQuery" class="ml-2">
-                  ({{ filteredProducts.length }} shown)
-                </span>
-              </v-btn>
-            </v-container>
-          </v-form>
-        </v-card-text>
-      </v-card>
+                <template v-if="!isSubmitting">
+                  <i class="fas fa-save"></i>
+                  Update Products List
+                  <span class="chip chip-small ml-2" style="background: rgba(255,255,255,0.2); color: white; border: none;">
+                    {{ getActiveProductsCount }} active
+                  </span>
+                  <span v-if="searchQuery" class="ml-2">
+                    ({{ filteredProducts.length }} shown)
+                  </span>
+                </template>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-      <!-- ✅ DEBUG INFO (DEV ONLY) -->
-      <v-card v-if="isDev" class="mt-4" color="info" variant="tonal">
-        <v-card-title>
-          <i class="fas fa-bug"></i>
-          Debug Info
-        </v-card-title>
-        <v-card-text>
+      <!-- ✅ DEBUG INFO (NO VUETIFY) -->
+      <div v-if="isDev" class="card mt-4 alert alert-info">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-bug"></i>
+            Debug Info
+          </h3>
+        </div>
+        <div class="card-body">
           <p><strong>Search Query:</strong> "{{ searchQuery }}"</p>
           <p><strong>Show Shopping List:</strong> {{ showShoppingList }}</p>
           <p><strong>Products:</strong> {{ products.length }} total</p>
@@ -305,8 +238,8 @@
           <p><strong>Displayed Products:</strong> {{ displayedProducts.length }} items</p>
           <p><strong>Filtered Products:</strong> {{ filteredProducts.length }} items</p>
           <p><strong>Active Products:</strong> {{ getActiveProductsCount }}</p>
-        </v-card-text>
-      </v-card>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -324,7 +257,8 @@ const showShoppingList = ref(false);
 const isProductToggled = ref(null);
 const isSubmitting = ref(false);
 const isLoading = ref(true);
-const searchQuery = ref(''); // ✅ SEARCH STATE
+const searchQuery = ref('');
+const changedProductIds = ref(new Set()); // ✅ TRACK CHANGED PRODUCTS
 
 // ✅ COMPUTED PROPERTIES
 const products = computed(() => store.state.products || []);
@@ -352,7 +286,6 @@ const filteredProducts = computed(() => {
   
   const query = searchQuery.value.toLowerCase().trim();
   
-  // ✅ SEARCH ALL PRODUCTS (REGARDLESS OF ACTIVE/INACTIVE)
   return products.value.filter(product => {
     return product.product_name?.toLowerCase().includes(query);
   });
@@ -378,8 +311,22 @@ const getActiveProductsCount = computed(() => {
 
 // ✅ METHODS
 const toggleProductActive = (product) => {
-  product.active = !product.active;
-  console.log(`🔄 Product "${product.product_name}" active: ${product.active}`);
+  const productIndex = products.value.findIndex(p => p.id === product.id);
+  
+  if (productIndex !== -1) {
+    const updatedProduct = {
+      ...products.value[productIndex],
+      active: !products.value[productIndex].active
+    };
+    
+    // ✅ TRACK THAT THIS PRODUCT WAS CHANGED
+    changedProductIds.value.add(updatedProduct.id);
+    
+    console.log(`🔄 Toggling product ID ${updatedProduct.id} active state to ${updatedProduct.active}`);
+    store.commit('UPDATE_PRODUCT_ACTIVE', updatedProduct);
+    
+    console.log(`✅ Product "${updatedProduct.product_name}" active: ${updatedProduct.active} (tracked as changed)`);
+  }
 };
 
 const toggleShoppingListDisplay = () => {
@@ -422,45 +369,36 @@ const onSubmit = async () => {
   try {
     isSubmitting.value = true;
     
-    // ✅ USE CORRECT DATA SOURCE BASED ON MODE
-    let sourceData;
-    if (searchQuery.value) {
-      sourceData = filteredProducts.value;
-      console.log(`🔍 Submitting search results: ${sourceData.length} products`);
-    } else {
-      sourceData = displayedProducts.value;
-      console.log(`🔍 Submitting ${showShoppingList.value ? 'shopping list' : 'all products'}: ${sourceData.length} products`);
-    }
-    
-    console.log(`🔍 Search: ${searchQuery.value ? `"${searchQuery.value}"` : 'None'}`);
-    
-    const changedProducts = sourceData.map(product => {
-      const isCurrentlyActive = !!product.active;
-      
-      console.log(`📋 "${product.product_name}" - Active: ${isCurrentlyActive}`);
-      
-      return {
+    // ✅ ONLY SUBMIT PRODUCTS THAT WERE ACTUALLY CHANGED
+    const changedProducts = products.value
+      .filter(product => changedProductIds.value.has(product.id))
+      .map(product => ({
         id: product.id,
         vendor_id: product.vendor_id || 1,
         product_name: product.product_name || product.name || 'Unknown Product',
         location: product.location,
         vendor_name: product.vendor_name,
-        active: isCurrentlyActive,
+        active: !!product.active,
         created_at: product.created_at,
         updated_at: product.updated_at,
         updated_by: user.value?.email || '',
         updated_at_client: new Date().toISOString()
-      };
-    });
+      }));
+    
+    if (changedProducts.length === 0) {
+      console.log('⚠️ No products were changed, skipping submission');
+      alert('ℹ️ No changes to submit');
+      return;
+    }
     
     const activeCount = changedProducts.filter(p => p.active).length;
     const inactiveCount = changedProducts.filter(p => !p.active).length;
     
     console.log('📊 SUBMISSION SUMMARY:');
-    console.log(`  Total products: ${changedProducts.length}`);
-    console.log(`  ✅ Will be marked active: ${activeCount}`);
-    console.log(`  ❌ Will be marked inactive: ${inactiveCount}`);
-    console.log(`  🔍 Search filter: ${searchQuery.value || 'None'}`);
+    console.log(`  Changed products: ${changedProducts.length}`);
+    console.log(`  ✅ Active: ${activeCount}`);
+    console.log(`  ❌ Inactive: ${inactiveCount}`);
+    console.log('📦 Products being submitted:', changedProducts);
     
     const submitData = {
       products: changedProducts,
@@ -473,9 +411,11 @@ const onSubmit = async () => {
     const result = await store.dispatch('putProducts', submitData);
     
     if (result !== false) {
-      const searchInfo = searchQuery.value ? ` (filtered by "${searchQuery.value}")` : '';
       console.log('✅ All product states updated successfully');
-      alert(`✅ Updated ${changedProducts.length} products${searchInfo} (${activeCount} active, ${inactiveCount} inactive)`);
+      alert(`✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`);
+      
+      // ✅ CLEAR CHANGED TRACKING
+      changedProductIds.value.clear();
       
       await Promise.all([
         store.dispatch('fetchProducts'),
@@ -513,30 +453,14 @@ onMounted(async () => {
   }
 });
 </script>
+
 <style scoped>
-/* ✅ SEARCH HIGHLIGHTING */
-.search-highlight {
-  background-color: #fff3cd;
-  color: #856404;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-weight: bold;
-}
-
-/* ✅ EXISTING STYLES STAY THE SAME */
-.page-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
-}
-
-.product-list-container {
-  width: 100%;
-  max-width: 1200px;
-  padding: 1rem;
-  margin: 0 auto;
+/* ✅ Component-specific overrides */
+.input-badge {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .navigation-flex {
@@ -547,51 +471,49 @@ onMounted(async () => {
   flex-wrap: wrap;
 }
 
-.nav-button {
-  min-width: 200px !important;
-  height: 40px !important;
+.navigation-flex .btn {
+  min-width: 200px;
 }
 
-/* ✅ NEW SEARCH STYLES */
+/* ✅ SEARCH HIGHLIGHTING */
+.search-highlight {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 152, 0, 0.3) 100%);
+  color: #f57c00;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* ✅ PAGE WRAPPER */
+.page-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+.product-list-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+/* ✅ CONTROLS SECTION - Updated to match card style */
 .controls-section {
-  background-color: #f8f9fa;
+  background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
 }
 
 .search-section {
   max-width: 600px;
   margin: 0 auto;
-}
-
-.search-field {
-  font-size: 1.1rem;
-}
-
-.search-results-chip {
-  font-weight: bold;
-}
-
-.search-summary {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.search-suggestions {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-/* ✅ SEARCH HIGHLIGHTING */
-.search-highlight {
-  background-color: #fff3cd;
-  color: #856404;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-weight: bold;
 }
 
 .toggle-section {
@@ -600,93 +522,116 @@ onMounted(async () => {
 }
 
 .toggle-link {
-  color: #1976d2;
+  color: #667eea;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
 }
 
 .toggle-link:hover {
-  color: #1565c0;
+  color: #764ba2;
+  transform: translateY(-1px);
 }
 
-.loading-state {
-  text-align: center;
-  padding: 3rem 1rem;
-}
-
+/* ✅ PRODUCTS WRAPPER */
 .products-wrapper {
   min-height: 200px;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.product-group {
-  margin-bottom: 1rem;
-}
-
+/* ✅ PRODUCT SECTION - Updated styling */
 .product-section {
-  background: #f8f9fa;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  border-left: 4px solid #1976d2;
-  transition: all 0.3s ease;
+  border-left: 4px solid #667eea;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .product-section:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-left-color: #764ba2;
 }
 
 .product-name {
-  color: #1976d2;
-  font-size: 1.5rem;
-  margin: 0 0 1rem 0;
+  color: #667eea;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+.product-name i {
+  color: #764ba2;
+}
+
+/* ✅ VENDOR OPTION */
 .vendor-option {
   display: flex;
   align-items: center;
   padding: 0.5rem 0;
+  gap: 0.75rem;
 }
 
 .product-checkbox {
-  width: 20px !important;
-  height: 20px !important;
-  margin-right: 1rem !important;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
+  accent-color: #667eea;
+  flex-shrink: 0;
 }
 
 .checkbox-label {
-  font-size: 1.25rem;
+  font-size: 1rem;
   cursor: pointer;
   user-select: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #666;
-  transition: color 0.3s ease;
+  color: #333;
+  transition: color 0.2s ease;
+  flex: 1;
 }
 
 .checkbox-label:hover {
-  color: #1976d2;
+  color: #667eea;
 }
 
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #666;
+.checkbox-label i {
+  color: #667eea;
 }
 
+/* ✅ SUBMIT BUTTON */
 .submit-button {
   position: sticky;
   bottom: 20px;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
+
+.submit-button:hover:not(:disabled) {
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+/* ✅ UTILITY CLASSES */
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-5 { margin-top: 1.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; }
+.mr-2 { margin-right: 0.5rem; }
 
 /* ✅ RESPONSIVE DESIGN */
 @media (max-width: 768px) {
@@ -694,16 +639,16 @@ onMounted(async () => {
     flex-direction: column;
   }
   
-  .nav-button {
-    min-width: 100% !important;
+  .navigation-flex .btn {
+    min-width: 100%;
   }
   
   .checkbox-label {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   
   .product-name {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
   }
   
   .product-section {
@@ -714,41 +659,22 @@ onMounted(async () => {
     padding: 1rem;
   }
   
-  .search-suggestions {
-    flex-direction: column;
-    align-items: center;
+  .products-wrapper {
+    padding: 1rem;
   }
 }
 
 /* ✅ ACCESSIBILITY */
 .toggle-link:focus,
-.checkbox-label:focus {
-  outline: 2px solid #1976d2;
-  outline-offset: 2px;
-}
-
+.checkbox-label:focus,
 .product-checkbox:focus {
-  outline: 2px solid #1976d2;
+  outline: 2px solid #667eea;
   outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* ✅ KEEP ESSENTIAL LEGACY STYLES */
-.column {
-  float: left;
-  width: 90%;
-  padding: 2px;
-  margin-bottom: 2rem;
-}
-
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
+/* ✅ REMOVE OLD LEGACY STYLES */
 #form-container {
-  text-align: left;
-  width: 100% !important;
-  padding: 1rem;
+  width: 100%;
 }
 </style>
