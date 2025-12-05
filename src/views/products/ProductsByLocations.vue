@@ -1,231 +1,261 @@
 <template>
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
-    <v-dialog 
-      v-model="showProductDialog" 
-      max-width="500px"
-      persistent
-      :z-index="2000"
-    >
-      <v-card>
-        <v-card-title class="bg-green-darken-1 text-white">
-          <div class="d-flex align-center w-100">
-            <v-icon class="mr-2">mdi-plus-circle</v-icon>
+    <!-- ✅ CUSTOM PRODUCT DIALOG (NO VUETIFY) -->
+    <div v-if="showProductDialog" class="custom-dialog-overlay" @click.self="closeProductDialog">
+      <div class="custom-dialog">
+        <!-- Dialog Header -->
+        <div class="dialog-header">
+          <div class="dialog-header-content">
+            <i class="fas fa-plus-circle"></i>
             <span>Add New Product</span>
-            <v-spacer></v-spacer>
-            <v-btn 
-              icon 
-              variant="text" 
-              @click="closeProductDialog"
-              color="white"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
           </div>
-        </v-card-title>
-      
-        <v-card-text class="pa-4">
-          <!-- Context Info -->
-          <v-alert type="info" class="mb-4">
-            <div><strong>Location:</strong> {{ selectedContext.location }}</div>
-            <div><strong>Vendor:</strong> {{ selectedContext.vendorName }}</div>
-          </v-alert>
+          <button class="dialog-close-btn" @click="closeProductDialog">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
         
+        <!-- Dialog Body -->
+        <div class="dialog-body">
+          <!-- Context Info -->
+          <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle alert-icon"></i>
+            <div class="alert-content">
+              <div><strong>Location:</strong> {{ selectedContext.location }}</div>
+              <div><strong>Vendor:</strong> {{ selectedContext.vendorName }}</div>
+            </div>
+          </div>
+          
           <!-- Form -->
-          <v-form ref="productForm" v-model="productFormValid">
-            <!-- Product Autocomplete -->
-            <v-autocomplete
-              v-model="newProduct.product_name"
-              v-model:search="productSearch"
-              label="Product Name"
-              :items="getAllProducts"
-              :rules="[requiredProductName]"
-              variant="outlined"
-              class="mb-3"
-              clearable
-              :no-data-text="getNoDataText"
-              :hint="getProductHint"
-              persistent-hint
-              :menu-props="{ 
-                attach: true,
-                closeOnClick: true,
-                closeOnContentClick: true,
-                maxHeight: '250px',
-                zIndex: 2010,
-                contentClass: 'desktop-product-dropdown',
-                offsetY: true,
-                nudgeBottom: 4,
-                transition: 'slide-y-transition'
-              }"
-            />
-            <!-- Other Product Name -->
-            <v-text-field
-              v-if="newProduct.product_name === 'Other'"
-              v-model="newProduct.other_product_name"
-              label="Other Product Name"
-              :rules="[requiredOtherProductName]"
-              variant="outlined"
-              class="mb-3"
-              clearable
-              autofocus
-            />
+          <form @submit.prevent="submitNewProduct" ref="productForm">
+            <!-- Product Autocomplete (Custom) -->
+            <div class="form-group">
+              <label class="form-label">Product Name *</label>
+              <div class="autocomplete-wrapper">
+                <div class="input-wrapper">
+                  <i class="fas fa-search input-icon"></i>
+                  <input
+                    v-model="productSearch"
+                    @input="handleProductSearch"
+                    @focus="showProductDropdown = true"
+                    @blur="handleProductBlur"
+                    type="text"
+                    class="form-input has-icon"
+                    placeholder="Search for a product..."
+                    required
+                  />
+                  <button
+                    v-if="productSearch"
+                    type="button"
+                    class="input-clear-btn"
+                    @click="clearProductSearch"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                
+                <!-- Custom Dropdown -->
+                <div v-if="showProductDropdown && filteredProductOptions.length > 0" class="autocomplete-dropdown">
+                  <div
+                    v-for="(product, index) in filteredProductOptions"
+                    :key="index"
+                    class="autocomplete-item"
+                    @mousedown.prevent="selectProduct(product)"
+                  >
+                    {{ product }}
+                  </div>
+                </div>
+                
+                <!-- Hint -->
+                <small class="form-hint">
+                  {{ getProductHint }}
+                </small>
+              </div>
+            </div>
+            
+            <!-- Other Product Name (if "Other" selected) -->
+            <div v-if="newProduct.product_name === 'Other'" class="form-group">
+              <label class="form-label">Other Product Name *</label>
+              <input
+                v-model="newProduct.other_product_name"
+                type="text"
+                class="form-input"
+                placeholder="Enter product name..."
+                required
+              />
+            </div>
             
             <!-- Description -->
-            <v-textarea
-              v-model="newProduct.description"
-              label="Description (Optional)"
-              variant="outlined"
-              rows="3"
-              class="mb-3"
-            />
+            <div class="form-group">
+              <label class="form-label">Description (Optional)</label>
+              <textarea
+                v-model="newProduct.description"
+                class="form-input"
+                rows="3"
+                placeholder="Add any notes..."
+              ></textarea>
+            </div>
             
-            <!-- Switch -->
-            <v-switch
-              v-model="newProduct.active"
-              label="Add to shopping list immediately"
-              color="primary"
-              class="mb-3"
-              :disabled="newProduct.product_name === 'Other'"
-            />
+            <!-- Active Switch -->
+            <div class="form-group">
+              <label class="switch-label">
+                <input
+                  v-model="newProduct.active"
+                  type="checkbox"
+                  class="switch-input"
+                  :disabled="newProduct.product_name === 'Other'"
+                />
+                <span class="switch-slider"></span>
+                <span class="switch-text">Add to shopping list immediately</span>
+              </label>
+            </div>
             
             <!-- Hint for Other -->
-            <v-alert 
-              v-if="newProduct.product_name === 'Other'"
-              type="info" 
-              density="compact"
-              class="mb-3"
-            >
-              New products are automatically added to your shopping list
-            </v-alert>
-          </v-form>
-        </v-card-text>
-      
-        <v-card-actions class="pa-4">
-          <v-btn @click="closeProductDialog" :disabled="isSubmittingProduct">
-            Cancel
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            @click="submitNewProduct"
-            :loading="isSubmittingProduct"
-            :disabled="!productFormValid"
+            <div v-if="newProduct.product_name === 'Other'" class="alert alert-info">
+              <i class="fas fa-info-circle alert-icon"></i>
+              <div class="alert-content">
+                New products are automatically added to your shopping list
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Dialog Footer -->
+        <div class="dialog-footer">
+          <button 
+            type="button"
+            class="btn btn-outlined" 
+            @click="closeProductDialog"
+            :disabled="isSubmittingProduct"
           >
-            <v-icon class="mr-1">mdi-plus</v-icon>
-            Add Product
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="submitNewProduct"
+            :disabled="!productFormValid || isSubmittingProduct"
+            :class="{ 'btn-loading': isSubmittingProduct }"
+          >
+            <template v-if="!isSubmittingProduct">
+              <i class="fas fa-plus"></i>
+              Add Product
+            </template>
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- ✅ END OF PRODUCT DIALOG -->
-    <!-- ✅ HEADER CARD -->
-    <v-card class="mx-auto mt-5">
-      <v-card-title class="pb-0">
-        <h2>
-          <i class="fas fa-map-marked-alt title-icon"></i>
+
+    <!-- ✅ HEADER CARD (NO VUETIFY) -->
+    <div class="card mt-5">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-map-marked-alt"></i>
           Products By Locations
         </h2>
-      </v-card-title>
-
-      <!-- ✅ NAVIGATION -->
-      <div class="navigation-grid">
-        <v-btn 
-          variant="outlined" 
-          :to="{ name: 'ProductsByVendors' }"
-          prepend-icon="fas fa-store"
-        >
-          Shopping List By Vendor
-        </v-btn>
-
-        <v-btn 
-          variant="outlined" 
-          :to="{ name: 'ProductList' }"
-          prepend-icon="fas fa-shopping-basket"
-        >
-          Shopping List By Product
-        </v-btn>
-
-        <v-btn 
-          variant="outlined" 
-          :to="{ name: 'ProductVendorCreate' }"
-          prepend-icon="fas fa-plus"
-          color="primary"
-        >
-          Create Vendor/Product
-        </v-btn>
       </div>
-    </v-card>
-    <!-- ✅ LOADING STATE -->
-    <div v-if="isLoading" class="text-center pa-4">
-      <v-progress-circular indeterminate color="primary" />
-      <p class="mt-2">Loading locations...</p>
+
+      <!-- ✅ NAVIGATION (NO VUETIFY) -->
+      <div class="card-body">
+        <div class="navigation-grid">
+          <router-link 
+            :to="{ name: 'ProductsByVendors' }"
+            class="btn btn-outlined"
+          >
+            <i class="fas fa-store"></i>
+            Shopping List By Vendor
+          </router-link>
+
+          <router-link 
+            :to="{ name: 'ProductList' }"
+            class="btn btn-outlined"
+          >
+            <i class="fas fa-shopping-basket"></i>
+            Shopping List By Product
+          </router-link>
+
+          <router-link 
+            :to="{ name: 'ProductVendorCreate' }"
+            class="btn btn-primary"
+          >
+            <i class="fas fa-plus"></i>
+            Create Vendor/Product
+          </router-link>
+        </div>
+      </div>
     </div>
-    <!-- ✅ MAIN CONTENT -->
-    <v-card v-else class="mt-4">
+
+    <!-- ✅ LOADING STATE (NO VUETIFY) -->
+    <div v-if="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading locations...</p>
+    </div>
+
+    <!-- ✅ MAIN CONTENT (NO VUETIFY) -->
+    <div v-else class="card mt-4">
       <!-- ✅ SWITCH AND VENDOR FILTER -->
-      <v-card-title class="switch-container">
+      <div class="card-header switch-container">
         <div class="switch-description-wrapper">
           <span class="switch-description-text">
             {{ showShoppingList ? 'Selected Items Only:' : 'All Items:' }}
           </span>
-          <v-switch
-            v-model="showShoppingList"
-            color="primary"
-            hide-details
-            density="compact"
-            class="switch-control"
-          />
+          <label class="switch-label">
+            <input
+              v-model="showShoppingList"
+              type="checkbox"
+              class="switch-input"
+            />
+            <span class="switch-slider"></span>
+          </label>
         </div>
 
         <!-- ✅ VENDOR FILTER INDICATOR -->
         <div v-if="selectedVendorFilter" class="vendor-filter-indicator">
-          <v-chip
-            color="success"
-            variant="elevated"
-            size="large"
-            class="vendor-filter-chip"
-            closable
-            @click:close="clearVendorFilter"
-          >
-            <i class="fas fa-filter mr-2"></i>
+          <span class="chip chip-success chip-large vendor-filter-chip">
+            <i class="fas fa-filter"></i>
             Filtering: {{ vendorFilterName }}
-          </v-chip>
+            <button 
+              class="chip-close-btn" 
+              @click="clearVendorFilter"
+              type="button"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </span>
           <small class="vendor-filter-hint">Double-click any vendor to filter</small>
         </div>
-      </v-card-title>
+      </div>
 
       <!-- ✅ MAIN CONTENT AREA -->
-      <v-card-text class="content-wrapper">
+      <div class="card-body content-wrapper">
         <!-- ✅ TOP SUBMIT BUTTON -->
         <div class="top-submit-section mb-4">
-          <v-btn 
+          <button
             @click="submitChanges"
-            :loading="isSubmitting"
-            color="primary"
-            size="large"
-            block
-            class="top-submit-button"
+            :disabled="isSubmitting"
+            :class="['btn', 'btn-primary', 'btn-large', 'btn-block', 'top-submit-button', { 'btn-loading': isSubmitting }]"
           >
-            <i class="fas fa-save save-icon"></i>
-            Save All Changes
-            <v-chip size="small" class="ml-2" style="color:darkblue">
-              Quick Save
-            </v-chip>
-          </v-btn>
+            <template v-if="!isSubmitting">
+              <i class="fas fa-save save-icon"></i>
+              Save All Changes
+              <span class="chip chip-small" style="background: rgba(255,255,255,0.2); color: white; border: none;">
+                Quick Save
+              </span>
+            </template>
+          </button>
         </div>
 
         <!-- ✅ CONTENT CONTAINER -->
         <div class="content-container">
           <!-- ✅ LOCATIONS GRID -->
           <div class="locations-grid">
-            <v-card
+            <div
               v-for="(location, locationIndex) in filteredLocations"
               :key="locationIndex"
-              :class="{ 'location-expanded': expandedLocations.has(locations.indexOf(location)) }"
-              variant="outlined"
-              class="location-card"
+              :class="['location-card', 'card', { 'location-expanded': expandedLocations.has(locations.indexOf(location)) }]"
             >
-              <!-- ✅ UPDATE THE LOCATION HEADER SECTION (Around line 180) -->
+              <!-- ✅ LOCATION HEADER -->
               <div 
                 class="location-header" 
                 @click="toggleLocation(locations.indexOf(location))"
@@ -234,41 +264,36 @@
                 <span class="location-name">{{ location }}</span>
                         
                 <div class="location-controls">
-                  <!-- ✅ ADD LOCATION-LEVEL FILTER SWITCH -->
-                  <div class="location-filter-wrapper mr-3">
+                  <!-- ✅ LOCATION-LEVEL FILTER SWITCH -->
+                  <div class="location-filter-wrapper">
                     <span class="location-filter-text">
                       {{ getLocationFilter(location) ? 'Selected Only:' : 'All Items:' }}
                     </span>
-                    <v-switch
-                      :model-value="getLocationFilter(location)"
-                      @update:model-value="setLocationFilter(location, $event)"
-                      color="primary"
-                      hide-details
-                      density="compact"
-                      class="location-switch-control ml-2"
-                      @click.stop
-                    />
+                    <label class="switch-label location-switch-control">
+                      <input
+                        :checked="getLocationFilter(location)"
+                        @change="setLocationFilter(location, $event.target.checked)"
+                        @click.stop
+                        type="checkbox"
+                        class="switch-input"
+                      />
+                      <span class="switch-slider"></span>
+                    </label>
                   </div>
                   
-                  <v-chip 
-                    size="small" 
-                    :color="expandedLocations.has(locations.indexOf(location)) ? 'primary' : 'default'"
-                    class="mr-2"
-                  >
+                  <span class="chip chip-small chip-primary">
                     <i class="fas fa-store chip-icon"></i>
                     {{ getVendorsForLocation(location).length }} vendors
-                  </v-chip>
+                  </span>
                   
-                  <v-btn
+                  <button
                     v-if="expandedLocations.has(locations.indexOf(location))"
                     @click.stop="toggleAllVendorsForLocation(location)"
-                    size="x-small"
-                    variant="text"
-                    :color="allVendorsExpandedForLocation(location) ? 'error' : 'primary'"
-                    class="mr-2"
+                    class="btn btn-outlined btn-small"
+                    :class="{ 'btn-danger': allVendorsExpandedForLocation(location) }"
                   >
                     {{ allVendorsExpandedForLocation(location) ? 'Collapse All' : 'Expand All' }}
-                  </v-btn>
+                  </button>
                   
                   <i 
                     :class="[
@@ -279,67 +304,64 @@
                   ></i>
                 </div>
               </div>
+
               <!-- ✅ LOCATION CONTENT (VENDORS) -->
-              <v-expand-transition>
-                <div v-show="expandedLocations.has(locations.indexOf(location))" class="pa-4">
+              <div 
+                v-show="expandedLocations.has(locations.indexOf(location))" 
+                class="location-content"
+              >
+                <div 
+                  v-for="vendor in getVendorsForLocation(location)" 
+                  :key="vendor.vendor_id || vendor.id"
+                  class="vendor-section"
+                >
                   <div 
-                    v-for="vendor in getVendorsForLocation(location)" 
-                    :key="vendor.vendor_id || vendor.id"
-                    class="vendor-section mb-4"
+                    :class="['vendor-card', 'card', { 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)), 'vendor-filtered': selectedVendorFilter === (vendor.vendor_id || vendor.id) }]"
                   >
-                    <v-card 
-                      variant="outlined" 
-                      class="vendor-card"
-                      :class="{ 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)) }"
-                    >
-                      <!-- ✅ VENDOR HEADER WITH DOUBLE-CLICK -->
-                      <!-- ✅ UPDATE THE VENDOR HEADER SECTION -->
+                    <!-- ✅ VENDOR HEADER -->
                     <div 
                       class="vendor-header" 
                       @click="toggleVendor(location, vendor)"
                       @dblclick="handleVendorDoubleClick(vendor, $event)"
-                      :class="{ 'vendor-filtered': selectedVendorFilter === (vendor.vendor_id || vendor.id) }"
                     >
                       <i class="fas fa-store vendor-store-icon"></i>
                       
-                      <!-- ✅ NEW: VENDOR NAME AND EDIT GROUP -->
+                      <!-- ✅ VENDOR NAME AND EDIT GROUP -->
                       <div class="vendor-name-group">
                         <span class="vendor-name">{{ vendor.vendor_name }}</span>
                         
-                        <!-- ✅ EDIT BUTTON RIGHT NEXT TO NAME -->
-                        <v-btn
+                        <!-- ✅ EDIT BUTTON -->
+                        <button
                           @click.stop="editVendor(vendor)"
-                          size="x-small"
-                          variant="text"
-                          color="info"
-                          class="edit-vendor-btn ml-2"
+                          class="btn btn-outlined btn-small edit-vendor-btn"
                         >
                           <i class="fas fa-edit"></i>
-                          <span class="edit-hint ml-1">Edit</span>
-                        </v-btn>
-                        
-                        <!-- ✅ NEW: PRODUCT COUNT CHIP NEXT TO EDIT -->
+                          <span class="edit-hint">Edit</span>
+                        </button>
                       </div>
 
                       <!-- ✅ FILTER INDICATOR -->
-                      <i v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)" 
-                        class="fas fa-filter vendor-filter-icon mr-2"></i>
+                      <i 
+                        v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)" 
+                        class="fas fa-filter vendor-filter-icon"
+                      ></i>
 
-                      <!-- ✅ VENDOR CONTROLS (MOVED TO RIGHT) -->
+                      <!-- ✅ VENDOR CONTROLS -->
                       <div class="vendor-controls">
-                        <div class="vendor-filter-wrapper mr-3">
+                        <div class="vendor-filter-wrapper">
                           <span class="vendor-filter-text">
                             {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
                           </span>
-                          <v-switch
-                            :model-value="getVendorProductFilter(vendor)"
-                            @update:model-value="setVendorProductFilter(vendor, $event)"
-                            color="secondary"
-                            hide-details
-                            density="compact"
-                            class="vendor-switch-control ml-2"
-                            @click.stop
-                          />
+                          <label class="switch-label vendor-switch-control">
+                            <input
+                              :checked="getVendorProductFilter(vendor)"
+                              @change="setVendorProductFilter(vendor, $event.target.checked)"
+                              @click.stop
+                              type="checkbox"
+                              class="switch-input"
+                            />
+                            <span class="switch-slider"></span>
+                          </label>
                         </div>
                         
                         <i 
@@ -352,92 +374,88 @@
                       </div>
                     </div>
 
-                      <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
-                      <v-expand-transition>
-                        <div v-show="expandedVendors.has(getVendorKey(location, vendor))" class="pa-4">
-                          <div class="products-header mb-3">
-                            <div class="products-header-content">
-                              <div class="products-title">
-                                <h4 
-                                  class="products-clickable-title"
-                                  @dblclick="openProductDialog(location, vendor)"
-                                >
-                                  <!--i class="fas fa-box products-icon"></!--i-->
-                                  <v-chip size="small" color="info" class="ml-2"
-                                  @click.stop="openProductDialog(location, vendor)"
-                                  >
-                                    {{ getFilteredProducts(vendor).length }} items
-                                  </v-chip>
-
-                                  <!-- ✅ ADD SINGLE CLICK ON PLUS ICON AS BACKUP -->
-                                  <v-icon 
-                                    size="small" 
-                                    color="success"
-                                    class="ml-2 add-product-hint"
-                                    title="Double-click to add new product OR click this plus"
-                                    @click.stop="openProductDialog(location, vendor)"
-                                  >
-                                    mdi-plus-circle
-                                  </v-icon>
-                                </h4>
-                              </div>                           
-                            </div>
-                          </div>              
-                          <!-- ✅ PRODUCTS LIST (UNCHANGED) -->
-                          <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
-                            <v-card
-                              v-for="(product, productIndex) in getFilteredProducts(vendor)"
-                              :key="product.id"
-                              variant="outlined"
-                              class="product-card pa-3"
-                              :class="{
-                                'product-selected': product.active,
-                                'product-multi-selected': selectedProducts.has(product.id)
-                              }"
-                              @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+                    <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
+                    <div 
+                      v-show="expandedVendors.has(getVendorKey(location, vendor))" 
+                      class="vendor-content"
+                    >
+                      <div class="products-header">
+                        <div class="products-header-content">
+                          <div class="products-title">
+                            <h4 
+                              class="products-clickable-title"
+                              @dblclick="openProductDialog(location, vendor)"
                             >
-                              <div class="d-flex align-center">
-                                <div class="product-indicators mr-3">
-                                  <i 
-                                    v-if="product.active" 
-                                    class="fas fa-check-circle selected-indicator"
-                                  ></i>
-                                </div>
-                                
-                                <span class="product-name">{{ product.product_name }}</span>
-                                
-                                <v-btn
-                                  @click.stop="editProduct(product)"
-                                  size="x-small"
-                                  variant="text"
-                                  color="info"
-                                  class="ml-auto"
-                                >
-                                  <i class="fas fa-edit"></i>
-                                  <span class="edit-hint ml-1">Edit</span>
-                                </v-btn>
-                              </div>
-                            </v-card>
-                          </div>
-                        
-                          <!-- ✅ NO PRODUCTS STATE (UNCHANGED) -->
-                          <div v-else class="no-products">
-                            <i class="fas fa-inbox no-products-icon"></i>
-                            <p>{{ getVendorProductFilter(vendor) ? 'No selected products' : 'No products available' }} for this vendor</p>
+                              <span class="chip chip-info chip-small">
+                                {{ getFilteredProducts(vendor).length }} items
+                              </span>
+
+                              <!-- ✅ ADD PRODUCT BUTTON -->
+                              <button
+                                type="button"
+                                class="btn btn-success btn-small add-product-hint"
+                                @click.stop="openProductDialog(location, vendor)"
+                                title="Double-click title or click here to add new product"
+                              >
+                                <i class="fas fa-plus-circle"></i>
+                              </button>
+                            </h4>
+                          </div>                           
+                        </div>
+                      </div>
+
+                      <!-- ✅ PRODUCTS LIST -->
+                      <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
+                        <div
+                          v-for="(product, productIndex) in getFilteredProducts(vendor)"
+                          :key="product.id"
+                          :class="[
+                            'product-card', 
+                            'card',
+                            {
+                              'product-selected': product.active,
+                              'product-multi-selected': selectedProducts.has(product.id)
+                            }
+                          ]"
+                          @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+                        >
+                          <div class="product-content">
+                            <div class="product-indicators">
+                              <i 
+                                v-if="product.active" 
+                                class="fas fa-check-circle selected-indicator"
+                              ></i>
+                            </div>
+                            
+                            <span class="product-name">{{ product.product_name }}</span>
+                            
+                            <button
+                              @click.stop="editProduct(product)"
+                              class="btn btn-outlined btn-small"
+                            >
+                              <i class="fas fa-edit"></i>
+                              <span class="edit-hint">Edit</span>
+                            </button>
                           </div>
                         </div>
-                      </v-expand-transition>
-                    </v-card>
-                  </div>
-
-                  <!-- ✅ NO VENDORS STATE -->
-                  <div v-if="getVendorsForLocation(location).length === 0" class="no-vendors">
-                    <i class="fas fa-store-slash no-vendors-icon"></i>
-                    <h4>No vendors in {{ location }}</h4>
+                      </div>
+                    
+                      <!-- ✅ NO PRODUCTS STATE -->
+                      <div v-else class="no-products empty-state">
+                        <i class="fas fa-inbox empty-state-icon"></i>
+                        <p>{{ getVendorProductFilter(vendor) ? 'No selected products' : 'No products available' }} for this vendor</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </v-expand-transition>
-            </v-card>
+
+                <!-- ✅ NO VENDORS STATE -->
+                <div v-if="getVendorsForLocation(location).length === 0" class="no-vendors empty-state">
+                  <i class="fas fa-store-slash empty-state-icon"></i>
+                  <h4>No vendors in {{ location }}</h4>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- ✅ GLOBAL CONTROLS (RIGHT SIDE) -->
@@ -448,46 +466,41 @@
                 Quick Controls
               </h4>
               
-              <v-btn
+              <button
                 @click="toggleAllLocations"
-                variant="outlined"
-                size="small"
-                prepend-icon="fas fa-map-marker-alt"
-                class="control-btn"
-                :color="allLocationsExpanded ? 'error' : 'primary'"
+                class="btn btn-outlined btn-small control-btn"
+                :class="{ 'btn-danger': allLocationsExpanded }"
               >
+                <i class="fas fa-map-marker-alt"></i>
                 {{ allLocationsExpanded ? 'Collapse Locations' : 'Expand Locations' }}
-              </v-btn>
+              </button>
 
-              <v-btn
+              <button
                 @click="toggleAllVendors"
-                variant="outlined"
-                size="small"
-                prepend-icon="fas fa-store"
-                class="control-btn"
+                class="btn btn-outlined btn-small control-btn"
+                :class="{ 'btn-danger': allVendorsExpanded }"
                 :disabled="!hasAnyExpandedLocations"
-                :color="allVendorsExpanded ? 'error' : 'primary'"
               >
+                <i class="fas fa-store"></i>
                 {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
-              </v-btn>
+              </button>
             </div>
           </div>
         </div>
         
         <!-- ✅ BOTTOM SAVE BUTTON -->
-        <v-btn 
+        <button
           @click="submitChanges"
-          :loading="isSubmitting"
-          color="primary"
-          size="large"
-          block
-          class="mt-4 mb-safe-area"
+          :disabled="isSubmitting"
+          :class="['btn', 'btn-primary', 'btn-large', 'btn-block', 'mt-4', 'mb-safe-area', { 'btn-loading': isSubmitting }]"
         >
-          <i class="fas fa-save save-icon"></i>
-          Save All Changes
-        </v-btn>
-      </v-card-text>
-    </v-card>
+          <template v-if="!isSubmitting">
+            <i class="fas fa-save save-icon"></i>
+            Save All Changes
+          </template>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -497,7 +510,6 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
-import { VProgressCircular } from 'vuetify/components'
 
 const router = useRouter();
 const store = useStore();
@@ -1237,6 +1249,314 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Custom Dialog Overlay */
+.custom-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.custom-dialog {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-header {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialog-header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.dialog-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.dialog-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dialog-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.dialog-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Autocomplete Wrapper */
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.input-clear-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s;
+}
+
+.input-clear-btn:hover {
+  color: #667eea;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #667eea;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.autocomplete-item {
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.form-hint {
+  display: block;
+  margin-top: 0.5rem;
+  color: #666;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* Custom Switch */
+.switch-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  gap: 0.75rem;
+}
+
+.switch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: #ccc;
+  border-radius: 30px;
+  transition: background 0.3s;
+}
+
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.switch-input:checked + .switch-slider {
+  background: #667eea;
+}
+
+.switch-input:checked + .switch-slider::before {
+  transform: translateX(30px);
+}
+
+.switch-input:disabled + .switch-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.switch-text {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Location Filter Wrapper */
+.location-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.location-filter-text {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.location-switch-control {
+  min-width: 60px;
+}
+
+/* Vendor Name Group */
+.vendor-name-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.edit-vendor-btn {
+  margin-left: 0.5rem;
+}
+
+/* Location/Vendor Content Animation */
+.location-content,
+.vendor-content {
+  padding: 1rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Product Content */
+.product-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+
+/* Chip Close Button */
+.chip-close-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  margin-left: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.chip-close-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Chip Sizes */
+.chip-large {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+/* Mobile Responsive for Dialog */
+@media (max-width: 768px) {
+  .custom-dialog {
+    max-height: 95vh;
+    margin: 0.5rem;
+  }
+  
+  .dialog-header {
+    padding: 1rem;
+  }
+  
+  .dialog-header-content {
+    font-size: 1.1rem;
+  }
+  
+  .dialog-body {
+    padding: 1rem;
+  }
+  
+  .dialog-footer {
+    padding: 0.75rem 1rem;
+    flex-direction: column-reverse;
+  }
+  
+  .dialog-footer .btn {
+    width: 100%;
+  }
+  
+  .autocomplete-dropdown {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    max-height: 50vh;
+    border-radius: 16px 16px 0 0;
+  }
+}
 /* Desktop product dropdown fixes */
 :deep(.desktop-product-dropdown) {
   z-index: 2010 !important;

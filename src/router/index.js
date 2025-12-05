@@ -58,8 +58,9 @@ const routes = [
     name: "About",
     component: () => import("../views/About.vue"),
   },
-
+  // ❌ TEMPORARILY DISABLED - High memory usage
   // ✅ BOOKS
+  /*
   {
     path: "/books",
     name: "BookList",
@@ -86,7 +87,7 @@ const routes = [
     component: () => import('@/views/books/BookEdit.vue'),
     meta: { requiresAuth: true}
   },
-
+  */
   // ✅ EVENTS
   {
     path: "/events",
@@ -134,8 +135,9 @@ const routes = [
     component: () => import('@/views/events/EventsAssigned.vue'),
     meta: { requiresAuth: true}
   },
-
+  // ❌ TEMPORARILY DISABLED - High memory usage
   // ✅ FILMS
+  /*
   {
     path: "/films",
     name: "FilmList",
@@ -162,6 +164,7 @@ const routes = [
     component: () => import('@/views/films/FilmEdit.vue'),
     meta: { requiresAuth: true}
   },
+  */
 
   // ✅ GARDENS
   {
@@ -218,7 +221,8 @@ const routes = [
     component: () => import('@/views/glucoseReadings/GlucoseReadingEdit.vue'),
     meta: { requiresAuth: true },
   },
-
+  // ❌ TEMPORARILY DISABLED - High memory usage
+  /* 
   // ✅ GOLF
   {
     path: "/golfs",
@@ -246,7 +250,8 @@ const routes = [
     component: () => import('@/views/golfs/GolfEdit.vue'),
     meta: { requiresAuth: true}
   },
-  // ✅ MEDS - ROUTES
+  */
+
   // HEALTH MARKERS:
   {
     path: "/health_dashboard",
@@ -397,8 +402,9 @@ const routes = [
     component: () => import('../views/products/ProductEdit.vue'),
     meta: { requiresAuth: true}
   },
-
+  // ❌ TEMPORARILY DISABLED - High memory usage
   // ✅ TRAILS
+  /*
   {
     path: "/trails",
     name: "TrailList",
@@ -425,8 +431,10 @@ const routes = [
     component: () => import('@/views/trails/TrailEdit.vue'),
     meta: { requiresAuth: true}
   },
-
+  */
+  // ❌ TEMPORARILY DISABLED - High memory usage
   // ✅ TRAVELS
+  /*
   {
     path: "/travels",
     name: "TravelList",
@@ -473,7 +481,7 @@ const routes = [
     component: () => import('@/views/travel_events/TravelEventDetails.vue'),
     meta: { requiresAuth: true}
   },
-
+  */
   // ✅ USERS
   {
     path: "/users",

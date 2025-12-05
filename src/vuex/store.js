@@ -20,8 +20,8 @@ export default new Vuex.Store({
     isNewUser: null,
     loggedIn: null,
     loggedOut: null,
-    book: [],
-    books: [],
+    //book: [],
+    //books: [],
     events: [],
     eventsRequest: [],
     eventsStatus: [],
@@ -59,12 +59,12 @@ export default new Vuex.Store({
     shopping_list: [],
     //sleepMarkers: [],
     //sleepMarker: {},
-    trail: {},
-    trails: [],
-    travel: [],
-    travels: [],
-    travel_event: [],
-    travel_events: [],
+    //trail: {},
+    //trails: [],
+    //travel: [],
+    //travels: [],
+    //travel_event: [],
+    //travel_events: [],
     users: [],
     vendor: {},
     vendors: [],
@@ -86,18 +86,22 @@ export default new Vuex.Store({
   },
   plugins: [createPersistedState()],
   mutations: {
-    ADD_BOOK(state, book) {
-      state.books.push(book);
-    },
-    DELETE_BOOK(state, book) {
-      state.book = book;
-    },
-    SET_BOOK(state, book) {
-      state.book = book;
-    },
-    SET_BOOKS(state, books) {
-      state.books = books;
-    },
+    //ADD_BOOK(state, book) {
+    //  state.books.push(book);
+    //},
+    //DELETE_BOOK(state, book) {
+    //  state.book = book;
+    //},
+    //SET_BOOK(state, book) {
+    //  state.book = book;
+    //},
+    //SET_BOOKS(state, books) {
+    //  state.books = books;
+    //},
+
+    //CLEAR_BOOKS(state) {
+    //  state.books = [];
+    //},
     ADD_EVENT(state, event) {
       state.events.push(event);
     },
@@ -119,18 +123,21 @@ export default new Vuex.Store({
     SET_EVENT_STATISTIC_DETAIL(state, eventStatisticDetail) {
       state.eventStatisticDetail = eventStatisticDetail;
     },
-    ADD_FILM(state, film) {
-      state.films.push(film);
-    },
-    DELETE_FILM(state, film) {
-      state.film = film;
-    },
-    SET_FILM(state, film) {
-      state.film = film;
-    },
-    SET_FILMS(state, films) {
-      state.films = films;
-    },
+    //ADD_FILM(state, film) {
+    //  state.films.push(film);
+    //},
+    //DELETE_FILM(state, film) {
+    //  state.film = film;
+    //},
+    //SET_FILM(state, film) {
+    //  state.film = film;
+    //},
+    //SET_FILMS(state, films) {
+    //  state.films = films;
+    //},
+    //CLEAR_FILMS(state) { 
+    //  state.films = [];
+    //}, 
     SET_GARDEN(state, garden) {
       state.garden = garden;
     },
@@ -160,18 +167,18 @@ export default new Vuex.Store({
     SET_GLUCOSE_READING(state, reading) {
       state.glucoseReading = reading;
     },
-    ADD_GOLF(state, golf) {
-      state.golfs.push(golf);
-    },
-    DELETE_GOLF(state, golf) {
-      state.golf = golf;
-    },
-    SET_GOLF(state, golf) {
-      state.golf = golf;
-    },
-    SET_GOLFS(state, golfs) {
-      state.golfs = golfs;
-    },
+    //ADD_GOLF(state, golf) {
+    //  state.golfs.push(golf);
+    //},
+    //DELETE_GOLF(state, golf) {
+    //  state.golf = golf;
+    //},
+    //SET_GOLF(state, golf) {
+    //  state.golf = golf;
+    //},
+    //SET_GOLFS(state, golfs) {
+    //  state.golfs = golfs;
+    //},
     ADD_HEALTH_MARKER(state, healthMarker) {
       state.healthMarkers.push(healthMarker);
     },
@@ -240,16 +247,12 @@ export default new Vuex.Store({
     SET_SLEEP_MARKERS(state, sleepMarkers) {
       state.sleepMarkers = sleepMarkers;
     },
+
     */
-    CLEAR_BOOKS(state) {
-      state.books = [];
-    },
     CLEAR_EVENTS(state) {
       state.events = [];
     },
-    CLEAR_FILMS(state) { 
-      state.films = [];
-    }, 
+
     SET_OOBS_TOTAL(state, total) {
       state.oobsTotal = total;
     }, 
@@ -316,39 +319,39 @@ export default new Vuex.Store({
     SET_SHOPPING_LIST(state, shopping_list) {
       state.shopping_list = shopping_list;
     },
-    ADD_TRAIL(state, trail) {
-      state.trails.push(trail);
-    },
-    DELETE_TRAIL(state, trail) {
-      state.trail = trail;
-    },
-    SET_TRAIL(state, trail) {
-      state.trail = trail;
-    },
-    SET_TRAILS(state, trail) {
-      state.trails = trail;
-    },
-    ADD_TRAVEL(state, travel) {
-      state.travels.push(travel);
-    },
-    DELETE_TRAVEL(state, travel) {
-      state.travel = travel;
-    },
-    DELETE_TRAVEL_EVENT(state, travel_event) {
-      state.travel_event = travel_event;
-    },
-    SET_TRAVEL(state, travel) {
-      state.travel = travel;
-    },
-    SET_TRAVEL_EVENT(state, travel_event) {
-      state.travel_event = travel_event;
-    },
-    SET_TRAVELS(state, travels) {
-      state.travels = travels;
-    },
-    SET_TRAVEL_EVENTS(state, travel_events) {
-      state.travel_events = travel_events;
-    },
+    //ADD_TRAIL(state, trail) {
+    //  state.trails.push(trail);
+    //},
+    //DELETE_TRAIL(state, trail) {
+    //  state.trail = trail;
+    //},
+    //SET_TRAIL(state, trail) {
+    //  state.trail = trail;
+    //},
+    //SET_TRAILS(state, trail) {
+    //  state.trails = trail;
+    //},
+    //ADD_TRAVEL(state, travel) {
+    //  state.travels.push(travel);
+    //},
+    //DELETE_TRAVEL(state, travel) {
+    //  state.travel = travel;
+    //},
+    //DELETE_TRAVEL_EVENT(state, travel_event) {
+    //  state.travel_event = travel_event;
+    //},
+    //SET_TRAVEL(state, travel) {
+    //  state.travel = travel;
+    //},
+    //SET_TRAVEL_EVENT(state, travel_event) {
+    //  state.travel_event = travel_event;
+    //},
+    //SET_TRAVELS(state, travels) {
+    //  state.travels = travels;
+    //},
+    //SET_TRAVEL_EVENTS(state, travel_events) {
+    //  state.travel_events = travel_events;
+    //},
     ADD_USER(state, user) {
       state.users.push(user);
     },
@@ -442,14 +445,15 @@ export default new Vuex.Store({
     },
     
     RESET_STATE(state) {
-      state.books = [];
-      state.films = [];
+      //state.books = [];
+      //state.films = [];
+      //state.golfs = [];
       state.events = [];
       state.oobs = [];
       state.plants = [];
       state.products = [];
-      state.trails = [];
-      state.travels = [];
+      //state.trails = [];
+      //state.travels = [];
       state.glucoseReadings = [];
       state.waterings = [];
     }
@@ -625,7 +629,7 @@ export default new Vuex.Store({
          router.back(error)
        });
     },
-
+    /*
     async createBook({ commit }, book) {
       EventService.postBook(book)
         .then(() => {
@@ -682,6 +686,7 @@ export default new Vuex.Store({
         commit('SET_BOOKS', []); // Set empty array on error
       }
     },
+    */
     async fetchGarden({ commit }, id) {
       //const existingGarden = state.gardens.find((garden) => garden.id === id);
       //if (existingGarden) {
@@ -878,7 +883,7 @@ export default new Vuex.Store({
     setEventsRequest({ commit }, requestType) {
       commit('SET_EVENTS_REQUEST', requestType);
     },
-
+    /*
     async createFilm({ commit }, film) {
       EventService.postFilm(film)
         .then(() => {
@@ -934,6 +939,7 @@ export default new Vuex.Store({
           location.reload();
       });
     },
+    */
     async createGarden({ commit }, garden) {
       EventService.postGarden(garden)
         .then(() => {
@@ -1086,7 +1092,7 @@ export default new Vuex.Store({
         alert("Failed to create glucose reading. Please try again.");
       }
     },
-
+    /*
     async createGolf({ commit }, golf) {
       EventService.postGolf(golf)
         .then(() => {
@@ -1132,6 +1138,7 @@ export default new Vuex.Store({
           alert("Golf Fetch Error: ", error.response.data )
         });
     },
+    */
     // ✅ HealthMarkers ACTIONS
     async createHealthMarker({ commit }, healthMarker) {
       EventService.postHealthMarker(healthMarker)
@@ -1511,7 +1518,7 @@ export default new Vuex.Store({
       }
     },
     */
-
+    /*
     async createTrail({ commit }, trail) {
       EventService.postTrail(trail)
         .then(() => {
@@ -1557,6 +1564,8 @@ export default new Vuex.Store({
           router.push({name:'home'})
         });
     },
+    */
+    /*
     createTravel({ commit }, travel) {
       EventService.postTravel(travel)
         .then(() => {
@@ -1669,6 +1678,7 @@ export default new Vuex.Store({
           alert("Travel Event Put Error: ", error.response.data )
         });
     },
+    */
     async createUser({ commit }, user) {
       EventService.postUser(user)
         .then(() => {
@@ -1921,14 +1931,15 @@ export default new Vuex.Store({
       console.log('🧹 Clearing large datasets from memory...');
       
       // Clear arrays but keep essential data
-      commit('SET_BOOKS', []);
-      commit('SET_FILMS', []);
+      //commit('SET_BOOKS', []);
+      //commit('SET_FILMS', []);
+      //commit('SET_GOLFS', []);
       commit('SET_EVENTS', []);
       commit('SET_OOBS', []);
       commit('SET_PLANTS', []);
       commit('SET_PRODUCTS', []);
-      commit('SET_TRAILS', []);
-      commit('SET_TRAVELS', []);
+      //commit('SET_TRAILS', []);
+      //commit('SET_TRAVELS', []);
       commit('SET_GLUCOSE_READINGS', []);
       commit('SET_WATERINGS', []);
       
@@ -1958,9 +1969,9 @@ export default new Vuex.Store({
     waterings(state) {
       return state.waterings || []; // Ensure it always returns an array
     },
-    numberOfBooks(state) {
-      return state.books.length
-    },
+    //numberOfBooks(state) {
+    //  return state.books.length
+    //},
     loggedIn (state) {
       return !!state.user
     },
