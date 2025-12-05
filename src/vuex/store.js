@@ -4,10 +4,8 @@ import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import EventService from '@/services/EventService'
 import router from '../router'
-import DateFormatService from "@/services/DateFormatService.js";
+//import DateFormatService from "@/services/DateFormatService.js";
 
-//Vuex.use(Vuex)
-//const localStorage = new Vuex.localStorage({
 var api_authenticate_url = "";
 export default new Vuex.Store({
   props: ["message"],
@@ -1429,96 +1427,72 @@ export default new Vuex.Store({
     },
 
     // ✅ SleepMarkers ACTIONS
-    /*
-    async createSleepMarker({ commit }, sleepMarker) {
-      EventService.postSleepMarker(sleepMarker)
-        .then(() => {
-          commit("ADD_SLEEP_MARKER", sleepMarker);
-          alert("Sleep Marker was successfully added.");
-        })
-        .catch((error) => {
-          alert("Sleep Marker Post Error: ", error.response.data )
-        });
+        async createSleepMarker({ commit }, sleepMarker) {
+      try {
+        const response = await EventService.postSleepMarker(sleepMarker);
+        commit("ADD_SLEEP_MARKER", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Sleep Marker Post Error:", error);
+        throw error;
+      }
     },
 
     async deleteSleepMarker({ commit, dispatch }, sleepMarker) {
       try {
         const response = await EventService.deleteSleepMarker(sleepMarker);
-        // ✅ REFRESH THE ENTIRE SLEEP MARKERS LIST TO GET UPDATED DATA
         await dispatch('fetchSleepMarkers');
-
-        return response.data; // ✅ RETURN SUCCESS
-
+        return response.data;
       } catch (error) {
-        console.error('❌ Store: Sleep Marker delete error:', error);
+        console.error('Sleep Marker delete error:', error);
         throw error;
       }
     },
 
-    async fetchSleepMarker({ commit, state }, id) {
-      console.log("Fetching Sleep Marker with ID:", id);
-      const existingSleepMarker = state.sleepMarkers.find((marker) => marker.id === id);
-      if (existingSleepMarker) {
-        commit("SET_SLEEP_MARKER", existingSleepMarker);
-      } else {
-        EventService.getSleepMarker(id)
-          .then((response) => {
-            commit("SET_SLEEP_MARKER", response.data);
-          })
-          .catch((error) => {
-            alert("Sleep Marker Get Error: ", error.response.data )
-          });
+    async fetchSleepMarker({ commit }, id) {
+      try {
+        const response = await EventService.getSleepMarker(id);
+        commit("SET_SLEEP_MARKER", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Sleep Marker Get Error:", error);
+        throw error;
       }
     },
 
     async fetchSleepMarkers({ commit }) {
-      console.log("Fetching Sleep Markers");
       try {
         commit('SET_SLEEP_MARKERS', []);
-
         const response = await EventService.getSleepMarkers();
-        console.log("Sleep Markers Response:", response); 
-        // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
+        
         let sleepMarkersArray = [];
-
         if (Array.isArray(response.data)) {
-          // ✅ NEW FORMAT: Direct array
-          console.log("Response Data is an array");
           sleepMarkersArray = response.data;
-          console.log("Sleep Markers Array:", sleepMarkersArray);
         } else if (response.data && Array.isArray(response.data.data)) {
-          // ✅ OLD FORMAT: Paginated (fallback)
-          console.log("Response Data has data array");  
           sleepMarkersArray = response.data.data;
-        } else {
-          console.error('❌ Store: Unexpected response format:', response);
-          sleepMarkersArray = [];
         }
-        console.log("Sleep Markers Array to return:", sleepMarkersArray); 
+        
         commit('SET_SLEEP_MARKERS', sleepMarkersArray);
-
         return sleepMarkersArray;
-
       } catch (error) {
-        console.error('❌ Store: Error fetching sleep markers:', error);
+        console.error('Error fetching sleep markers:', error);
         commit('SET_SLEEP_MARKERS', []);
         throw error;
       }
     },
+    
     async updateSleepMarker({ commit, dispatch }, sleepMarker) {
       try {
         const response = await EventService.putSleepMarker(sleepMarker);
-        // Commit the updated marker to Vuex state
         commit("SET_SLEEP_MARKER", response.data);
-        // Optionally fetch the updated list of markers
         await dispatch("fetchSleepMarkers");
+        return response.data;
       } catch (error) {
-        console.error("Error updating sleep marker:", error.response.data);
-        alert("Failed to update sleep marker. Please try again.");
+        console.error("Error updating sleep marker:", error);
+        throw error;
       }
     },
-    */
-    /*
+    // ✅ Trails ACTIONS    
     async createTrail({ commit }, trail) {
       EventService.postTrail(trail)
         .then(() => {
@@ -1564,7 +1538,6 @@ export default new Vuex.Store({
           router.push({name:'home'})
         });
     },
-    */
     /*
     createTravel({ commit }, travel) {
       EventService.postTravel(travel)
