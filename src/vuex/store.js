@@ -1313,8 +1313,7 @@ export default new Vuex.Store({
       EventService.postProduct(product)
         .then((response) => {
           commit("ADD_PRODUCT", response.data);
-          alert("Product " + product.product_name + " was created");
-        })
+          alert("Product was successfully added for " + product.product_name);})
         .catch((error) => {
           alert("Product Create Error: ", error.response.data )
         });

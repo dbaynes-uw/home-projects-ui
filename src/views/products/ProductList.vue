@@ -455,36 +455,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* ✅ Component-specific overrides */
-.input-badge {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
+/* ✅ IMPORT SHARED STYLES */
+@import '@/assets/styles/ui-components.css';
 
-.navigation-flex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
+/* ========================================
+   COMPONENT-SPECIFIC ONLY (100 lines!)
+   ======================================== */
 
-.navigation-flex .btn {
-  min-width: 200px;
-}
-
-/* ✅ SEARCH HIGHLIGHTING */
-.search-highlight {
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 152, 0, 0.3) 100%);
-  color: #f57c00;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-/* ✅ PAGE WRAPPER */
+/* Page Wrapper */
 .page-wrapper {
   width: 100%;
   display: flex;
@@ -502,7 +480,20 @@ onMounted(async () => {
   margin: 0 auto;
 }
 
-/* ✅ CONTROLS SECTION - Updated to match card style */
+/* Navigation */
+.navigation-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.navigation-flex .btn {
+  min-width: 200px;
+}
+
+/* Controls Section */
 .controls-section {
   background: white;
   border-radius: 12px;
@@ -514,6 +505,13 @@ onMounted(async () => {
 .search-section {
   max-width: 600px;
   margin: 0 auto;
+}
+
+.input-badge {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .toggle-section {
@@ -536,7 +534,7 @@ onMounted(async () => {
   transform: translateY(-1px);
 }
 
-/* ✅ PRODUCTS WRAPPER */
+/* Products Wrapper */
 .products-wrapper {
   min-height: 200px;
   background: white;
@@ -545,7 +543,7 @@ onMounted(async () => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ PRODUCT SECTION - Updated styling */
+/* Product Section */
 .product-section {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
   border-radius: 8px;
@@ -576,7 +574,7 @@ onMounted(async () => {
   color: #764ba2;
 }
 
-/* ✅ VENDOR OPTION */
+/* Vendor Option */
 .vendor-option {
   display: flex;
   align-items: center;
@@ -612,7 +610,24 @@ onMounted(async () => {
   color: #667eea;
 }
 
-/* ✅ SUBMIT BUTTON */
+/* Search Highlighting */
+.search-highlight {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 152, 0, 0.3) 100%);
+  color: #f57c00;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.search-summary {
+  animation: slideDown 0.3s ease;
+}
+
+.search-suggestions {
+  margin-top: 1rem;
+}
+
+/* Submit Button */
 .submit-button {
   position: sticky;
   bottom: 20px;
@@ -624,7 +639,7 @@ onMounted(async () => {
   box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
 }
 
-/* ✅ UTILITY CLASSES */
+/* Utility Classes */
 .mt-2 { margin-top: 0.5rem; }
 .mt-4 { margin-top: 1rem; }
 .mt-5 { margin-top: 1.5rem; }
@@ -633,8 +648,12 @@ onMounted(async () => {
 .ml-2 { margin-left: 0.5rem; }
 .mr-2 { margin-right: 0.5rem; }
 
-/* ✅ RESPONSIVE DESIGN */
+/* Responsive */
 @media (max-width: 768px) {
+  .product-list-container {
+    padding: 0.5rem;
+  }
+  
   .navigation-flex {
     flex-direction: column;
   }
@@ -655,26 +674,18 @@ onMounted(async () => {
     padding: 0.75rem;
   }
   
-  .controls-section {
-    padding: 1rem;
-  }
-  
+  .controls-section,
   .products-wrapper {
     padding: 1rem;
   }
 }
 
-/* ✅ ACCESSIBILITY */
+/* Accessibility */
 .toggle-link:focus,
 .checkbox-label:focus,
 .product-checkbox:focus {
   outline: 2px solid #667eea;
   outline-offset: 2px;
   border-radius: 4px;
-}
-
-/* ✅ REMOVE OLD LEGACY STYLES */
-#form-container {
-  width: 100%;
 }
 </style>

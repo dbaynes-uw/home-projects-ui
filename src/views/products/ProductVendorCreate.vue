@@ -1,160 +1,243 @@
 <template>
   <div class="page-wrapper">
     <div class="product-vendor-container">
-      <!-- ✅ HEADER CARD -->
-      <v-card class="mx-auto mt-5">
-        <v-card-title class="pb-0">
-          <h2>
+      <!-- ✅ HEADER CARD (NO VUETIFY) -->
+      <div class="card mt-5">
+        <div class="card-header">
+          <h2 class="card-title">
             <i class="fas fa-plus-circle"></i>
             Add Vendor/Products
           </h2>
-        </v-card-title>
+        </div>
         
         <!-- ✅ NAVIGATION BUTTONS -->
-        <v-card-text>
-          <div class="navigation-flex">
-            <v-btn
-              variant="outlined"
+        <div class="card-body">
+          <div class="navigation-grid">
+            <router-link 
               :to="{ name: 'ProductsByLocations' }"
-              prepend-icon="fas fa-map-marker-alt"
-              class="nav-button"
+              class="btn btn-outlined"
             >
+              <i class="fas fa-map-marker-alt"></i>
               Product Location List
-            </v-btn>
+            </router-link>
             
-            <v-btn
-              variant="outlined"
+            <router-link 
               :to="{ name: 'ProductsByVendors' }"
-              prepend-icon="fas fa-store"
-              class="nav-button"
+              class="btn btn-outlined"
             >
+              <i class="fas fa-store"></i>
               List By Vendor
-            </v-btn>
+            </router-link>
             
-            <v-btn
-              variant="outlined"
+            <router-link 
               :to="{ name: 'ProductList' }"
-              prepend-icon="fas fa-shopping-basket"
-              class="nav-button"
+              class="btn btn-outlined"
             >
+              <i class="fas fa-shopping-basket"></i>
               List by Product
-            </v-btn>
+            </router-link>
           </div>
-        </v-card-text>
-      </v-card>
+        </div>
+      </div>
 
-      <!-- ✅ FORM CARD - NOW ALL DROPDOWNS SHOULD WORK! -->
-      <v-card class="mt-4">
-        <v-card-title>
-          <h3>
+      <!-- ✅ FORM CARD (NO VUETIFY) -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h3 class="card-title">
             <i class="fas fa-edit"></i>
             Vendor & Product Details
           </h3>
-        </v-card-title>
+        </div>
         
-        <v-card-text>
-          <v-form @submit.prevent="onSubmit" ref="formRef">
-            <v-container class="form-container">
-              
-              <!-- ✅ LOCATION SELECT - SHOULD WORK NOW! -->
-              <v-select
-                v-model="vendor.location"
-                label="Vendor Location"
-                :items="vendorsLocationsGroup?.vendorsLocationsGroup || []"
-                :rules="[requiredLocation]"
-                variant="outlined"
-                density="comfortable"
-                prepend-inner-icon="fas fa-map-marker-alt"
-                class="mb-4 expanded-product-field"
-                clearable
-                :hint="`${(vendorsLocationsGroup?.vendorsLocationsGroup || []).length} locations available`"
-                persistent-hint
-              />
-                        
-              <!-- ✅ VENDOR NAME - SHOULD WORK NOW! -->
-              <v-select
-                v-model="vendor.vendor_name"
-                label="Vendor Name"
-                :items="vendorsGroup?.vendorsGroup || []"
-                :rules="[requiredVendorName]"
-                variant="outlined"
-                density="comfortable"
-                prepend-inner-icon="fas fa-store"
-                class="mb-4 expanded-product-field"
-                clearable
-                :hint="`${(vendorsGroup?.vendorsGroup || []).length} vendors available`"
-                persistent-hint
-              />
-                        
-              <!-- ✅ OTHER VENDOR NAME -->
-              <v-text-field
-                v-if="vendor.vendor_name === 'Other'"
-                v-model="vendor.other_vendor_name"
-                label="Other Vendor Name"
-                :rules="[requiredOtherVendorName]"
-                variant="outlined"
-                density="comfortable"
-                prepend-inner-icon="fas fa-store-alt"
-                class="mb-4 expanded-product-field"
-                clearable
-              />
-                        
-              <!-- ✅ PRODUCT AUTOCOMPLETE - ALREADY WORKS! -->
-              <v-autocomplete
-                v-model="vendor.product_name"
-                v-model:search="productSearch"
-                label="Vendor Product"
-                :items="getAllProducts"
-                :rules="[requiredProductName]"
-                variant="outlined"
-                density="comfortable"
-                prepend-inner-icon="fas fa-box"
-                class="mb-6 expanded-product-field"
-                clearable
-                :no-data-text="getNoDataText"
-                auto-select-first
-                :menu-props="{ 
-                  closeOnClick: true,
-                  closeOnContentClick: true,
-                  maxHeight: '300px',
-                  zIndex: 9999
-                }"
-                :hint="getProductHint"
-                persistent-hint
-              />
-              
-              <!-- ✅ OTHER PRODUCT NAME -->
-              <v-text-field
-                v-if="vendor.product_name === 'Other'"
-                v-model="vendor.other_product_name"
-                label="Other Product Name"
-                :rules="[requiredOtherProductName]"
-                variant="outlined"
-                density="comfortable"
-                prepend-inner-icon="fas fa-plus-square"
-                class="mb-6 expanded-product-field"
-                clearable
-              />
-              
-              <!-- ✅ SUBMIT BUTTON -->
-              <div class="submit-section mt-8">
-                <v-btn 
-                  type="submit" 
-                  color="primary"
-                  size="large"
-                  block
-                  class="submit-button"
-                  :loading="isSubmitting"
-                  :disabled="!isFormValid"
+        <div class="card-body">
+          <form @submit.prevent="onSubmit" ref="formRef" class="form-container">
+            
+            <!-- ✅ LOCATION SELECT (CUSTOM) -->
+            <div class="form-group">
+              <label class="form-label required">
+                <i class="fas fa-map-marker-alt"></i>
+                Vendor Location
+              </label>
+              <div class="select-wrapper">
+                <select
+                  v-model="vendor.location"
+                  @change="validateLocation"
+                  class="form-select"
+                  :class="{ 'is-invalid': errors.location }"
+                  required
                 >
+                  <option value="" disabled>Select a location...</option>
+                  <option 
+                    v-for="location in availableLocations" 
+                    :key="location"
+                    :value="location"
+                  >
+                    {{ location }}
+                  </option>
+                </select>
+                <i class="fas fa-chevron-down select-icon"></i>
+              </div>
+              <small v-if="errors.location" class="form-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ errors.location }}
+              </small>
+              <small v-else class="form-hint">
+                {{ availableLocations.length }} locations available
+              </small>
+            </div>
+            
+            <!-- ✅ VENDOR NAME SELECT (CUSTOM) -->
+            <div class="form-group">
+              <label class="form-label required">
+                <i class="fas fa-store"></i>
+                Vendor Name
+              </label>
+              <div class="select-wrapper">
+                <select
+                  v-model="vendor.vendor_name"
+                  @change="validateVendorName"
+                  class="form-select"
+                  :class="{ 'is-invalid': errors.vendor_name }"
+                  required
+                >
+                  <option value="" disabled>Select a vendor...</option>
+                  <option 
+                    v-for="vendorName in availableVendors" 
+                    :key="vendorName"
+                    :value="vendorName"
+                  >
+                    {{ vendorName }}
+                  </option>
+                </select>
+                <i class="fas fa-chevron-down select-icon"></i>
+              </div>
+              <small v-if="errors.vendor_name" class="form-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ errors.vendor_name }}
+              </small>
+              <small v-else class="form-hint">
+                {{ availableVendors.length }} vendors available
+              </small>
+            </div>
+            
+            <!-- ✅ OTHER VENDOR NAME (if "Other" selected) -->
+            <div v-if="vendor.vendor_name === 'Other'" class="form-group">
+              <label class="form-label required">
+                <i class="fas fa-store-alt"></i>
+                Other Vendor Name
+              </label>
+              <input
+                v-model="vendor.other_vendor_name"
+                @input="validateOtherVendorName"
+                type="text"
+                class="form-input"
+                :class="{ 'is-invalid': errors.other_vendor_name }"
+                placeholder="Enter vendor name..."
+                required
+              />
+              <small v-if="errors.other_vendor_name" class="form-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ errors.other_vendor_name }}
+              </small>
+            </div>
+            
+            <!-- ✅ PRODUCT AUTOCOMPLETE (CUSTOM) -->
+            <div class="form-group">
+              <label class="form-label required">
+                <i class="fas fa-box"></i>
+                Vendor Product
+              </label>
+              <div class="autocomplete-wrapper">
+                <div class="input-wrapper">
+                  <i class="fas fa-search input-icon"></i>
+                  <input
+                    v-model="productSearch"
+                    @input="handleProductSearch"
+                    @focus="showProductDropdown = true"
+                    @blur="handleProductBlur"
+                    @keydown.enter.prevent="selectFirstProduct"
+                    @keydown.down.prevent="navigateDropdown(1)"
+                    @keydown.up.prevent="navigateDropdown(-1)"
+                    type="text"
+                    class="form-input has-icon"
+                    :class="{ 'is-invalid': errors.product_name }"
+                    placeholder="Search for a product..."
+                    required
+                  />
+                  <button
+                    v-if="productSearch"
+                    type="button"
+                    class="input-clear-btn"
+                    @click="clearProductSearch"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                
+                <!-- Custom Dropdown -->
+                <div 
+                  v-if="showProductDropdown && filteredProductOptions.length > 0" 
+                  class="autocomplete-dropdown"
+                >
+                  <div
+                    v-for="(product, index) in filteredProductOptions"
+                    :key="index"
+                    :class="['autocomplete-item', { 'active': index === selectedIndex }]"
+                    @mousedown.prevent="selectProduct(product)"
+                    @mouseenter="selectedIndex = index"
+                  >
+                    {{ product }}
+                  </div>
+                </div>
+                
+                <small v-if="errors.product_name" class="form-error">
+                  <i class="fas fa-exclamation-circle"></i>
+                  {{ errors.product_name }}
+                </small>
+                <small v-else class="form-hint">
+                  {{ getProductHint }}
+                </small>
+              </div>
+            </div>
+            
+            <!-- ✅ OTHER PRODUCT NAME (if "Other" selected) -->
+            <div v-if="vendor.product_name === 'Other'" class="form-group">
+              <label class="form-label required">
+                <i class="fas fa-plus-square"></i>
+                Other Product Name
+              </label>
+              <input
+                v-model="vendor.other_product_name"
+                @input="validateOtherProductName"
+                type="text"
+                class="form-input"
+                :class="{ 'is-invalid': errors.other_product_name }"
+                placeholder="Enter product name..."
+                required
+              />
+              <small v-if="errors.other_product_name" class="form-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ errors.other_product_name }}
+              </small>
+            </div>
+            
+            <!-- ✅ SUBMIT BUTTON -->
+            <div class="submit-section">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-large btn-block"
+                :class="{ 'btn-loading': isSubmitting }"
+                :disabled="!isFormValid || isSubmitting"
+              >
+                <template v-if="!isSubmitting">
                   <i class="fas fa-save"></i>
                   Submit Vendor & Product
-                </v-btn>
-              </div>
-            </v-container>
-          </v-form>
-        </v-card-text>
-      </v-card>
+                </template>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -163,19 +246,19 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
-// ✅ ADD THE EXPLICIT IMPORT THAT WORKS
-import { VSelect } from 'vuetify/components'
+
 const store = useStore();
 
 // ✅ REACTIVE STATE
 const formRef = ref(null);
 const isSubmitting = ref(false);
-const showDebug = ref(true); // ✅ TOGGLE DEBUG INFO
 const productSearch = ref('');
+const showProductDropdown = ref(false);
+const selectedIndex = ref(0);
 
 // ✅ VENDOR DATA
 const vendor = ref({
-  vendor_name: null,
+  vendor_name: '',
   location: '',
   created_by: '',
   other_vendor_name: '',
@@ -183,44 +266,22 @@ const vendor = ref({
   other_product_name: '',
 });
 
-// ✅ VALIDATION STATE
-const validationState = ref({
-  isLocationValid: false,
-  isVendorNameValid: false,
-  isProductNameValid: false,
-  isOtherProductNameValid: true,
-  isOtherVendorNameValid: true,
-});
-// ✅ ADD TEST VALUES
-const testValue1 = ref(null);
-const testValue2 = ref(null);
-const testValue3 = ref(null);
-const testValue4 = ref(null);
-
-// ✅ ADD SIMPLE COMPUTED ARRAYS
-const computedTestArray = computed(() => ['One', 'Two', 'Three']);
-
-const rawVendorsArray = computed(() => {
-  const storeData = store.state.vendors_group;
-  
-  // ✅ TRY ALL POSSIBLE DATA STRUCTURES
-  if (Array.isArray(storeData)) {
-    return storeData;
-  }
-  
-  if (storeData?.vendorsGroup && Array.isArray(storeData.vendorsGroup)) {
-    return storeData.vendorsGroup;
-  }
-  
-  if (storeData?.data && Array.isArray(storeData.data)) {
-    return storeData.data;
-  }
-  
-  console.log('❌ No valid array found, using fallback');
-  return ['Fallback1', 'Fallback2', 'Fallback3'];
+// ✅ VALIDATION ERRORS
+const errors = ref({
+  location: '',
+  vendor_name: '',
+  product_name: '',
+  other_vendor_name: '',
+  other_product_name: '',
 });
 
-// ✅ ADD DATA CLEANING FUNCTION
+// ✅ COMPUTED PROPERTIES
+const vendorsGroup = computed(() => store.state.vendors_group);
+const vendorsLocationsGroup = computed(() => store.state.vendors_locations_group);
+const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
+const user = computed(() => store.state.user?.resource_owner);
+
+// Clean array data
 const cleanArrayData = (data) => {
   if (!Array.isArray(data)) return [];
   return data
@@ -229,85 +290,146 @@ const cleanArrayData = (data) => {
     .filter(item => item.length > 0);
 };
 
+// Available options
+const availableLocations = computed(() => {
+  const locations = vendorsLocationsGroup.value?.vendorsLocationsGroup || [];
+  return cleanArrayData(locations).sort();
+});
 
-const vendorsGroup = computed(() => store.state.vendors_group);
-const vendorsLocationsGroup = computed(() => store.state.vendors_locations_group);
-const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
-// ✅ ENHANCED COMPUTED PROPERTIES WITH CLEANING
-// ✅ ENHANCED getAllProducts WITH CLEANING
+const availableVendors = computed(() => {
+  const vendors = vendorsGroup.value?.vendorsGroup || [];
+  return cleanArrayData(vendors).sort();
+});
+
 const getAllProducts = computed(() => {
   const products = vendorsProductsGroup.value?.vendorsProductsGroup || [];
-  const cleanedProducts = cleanArrayData(products);
-  return cleanedProducts;
+  return cleanArrayData(products).sort();
 });
-const user = computed(() => store.state.user?.resource_owner);
 
-// ✅ DYNAMIC MESSAGES
-const getNoDataText = computed(() => {
-  const totalProducts = getAllProducts.value.length;
-  if (totalProducts === 0) {
-    return 'Loading products...';
+// Filter products based on search
+const filteredProductOptions = computed(() => {
+  if (!productSearch.value) {
+    return getAllProducts.value;
   }
-  return 'No matching products found';
+  const search = productSearch.value.toLowerCase();
+  return getAllProducts.value.filter(name => 
+    name.toLowerCase().includes(search)
+  );
 });
 
 const getProductHint = computed(() => {
   const totalProducts = getAllProducts.value.length;
-  if (productSearch.value) {
-    return `Searching "${productSearch.value}" in ${totalProducts} products`;
+  if (!productSearch.value) {
+    return `${totalProducts} products available. Type to search or select "Other" to create new`;
   }
-  return `${totalProducts} products available`;
+  if (filteredProductOptions.value.length === 0) {
+    return 'No matching products found. Try selecting "Other" to create new product';
+  }
+  return `${filteredProductOptions.value.length} products found`;
 });
 
 const isFormValid = computed(() => {
-  return validationState.value.isLocationValid &&
-         validationState.value.isVendorNameValid &&
-         validationState.value.isProductNameValid &&
-         validationState.value.isOtherProductNameValid &&
-         validationState.value.isOtherVendorNameValid;
+  return vendor.value.location &&
+         vendor.value.vendor_name &&
+         vendor.value.product_name &&
+         (vendor.value.vendor_name !== 'Other' || vendor.value.other_vendor_name) &&
+         (vendor.value.product_name !== 'Other' || vendor.value.other_product_name);
 });
-// ✅ VALIDATION RULES
-const requiredLocation = (value) => {
-  const isValid = !!value;
-  validationState.value.isLocationValid = isValid;
-  return isValid || 'Please select a location';
-};
 
-const requiredVendorName = (value) => {
-  const isValid = !!value;
-  validationState.value.isVendorNameValid = isValid;
-  return isValid || 'Please select a vendor name';
-};
-
-const requiredProductName = (value) => {
-  const isValid = !!value;
-  validationState.value.isProductNameValid = isValid;
-  
-  if (value === 'Other') {
-    validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
-  } else {
-    validationState.value.isOtherProductNameValid = true;
+// ✅ VALIDATION METHODS
+const validateLocation = () => {
+  if (!vendor.value.location) {
+    errors.value.location = 'Please select a location';
+    return false;
   }
+  errors.value.location = '';
+  return true;
+};
+
+const validateVendorName = () => {
+  if (!vendor.value.vendor_name) {
+    errors.value.vendor_name = 'Please select a vendor name';
+    return false;
+  }
+  errors.value.vendor_name = '';
+  return true;
+};
+
+const validateProductName = () => {
+  if (!vendor.value.product_name) {
+    errors.value.product_name = 'Please select a product';
+    return false;
+  }
+  errors.value.product_name = '';
+  return true;
+};
+
+const validateOtherVendorName = () => {
+  if (vendor.value.vendor_name === 'Other' && !vendor.value.other_vendor_name) {
+    errors.value.other_vendor_name = 'Please enter the other vendor name';
+    return false;
+  }
+  errors.value.other_vendor_name = '';
+  return true;
+};
+
+const validateOtherProductName = () => {
+  if (vendor.value.product_name === 'Other' && !vendor.value.other_product_name) {
+    errors.value.other_product_name = 'Please enter the other product name';
+    return false;
+  }
+  errors.value.other_product_name = '';
+  return true;
+};
+
+// ✅ PRODUCT AUTOCOMPLETE METHODS
+const handleProductSearch = () => {
+  showProductDropdown.value = true;
+  selectedIndex.value = 0;
+};
+
+const handleProductBlur = () => {
+  setTimeout(() => {
+    showProductDropdown.value = false;
+  }, 200);
+};
+
+const clearProductSearch = () => {
+  productSearch.value = '';
+  vendor.value.product_name = '';
+  showProductDropdown.value = false;
+  errors.value.product_name = '';
+};
+
+const selectProduct = (productName) => {
+  vendor.value.product_name = productName;
+  productSearch.value = productName;
+  showProductDropdown.value = false;
+  validateProductName();
+};
+
+const selectFirstProduct = () => {
+  if (filteredProductOptions.value.length > 0) {
+    selectProduct(filteredProductOptions.value[selectedIndex.value]);
+  }
+};
+
+const navigateDropdown = (direction) => {
+  if (filteredProductOptions.value.length === 0) return;
   
-  return isValid || 'Please select a product';
-};
-
-const requiredOtherProductName = (value) => {
-  const isValid = !!value;
-  validationState.value.isOtherProductNameValid = isValid;
-  return isValid || 'Please enter the other product name';
-};
-
-const requiredOtherVendorName = (value) => {
-  const isValid = !!value;
-  validationState.value.isOtherVendorNameValid = isValid;
-  return isValid || 'Please enter the other vendor name';
+  selectedIndex.value += direction;
+  
+  if (selectedIndex.value < 0) {
+    selectedIndex.value = filteredProductOptions.value.length - 1;
+  } else if (selectedIndex.value >= filteredProductOptions.value.length) {
+    selectedIndex.value = 0;
+  }
 };
 
 // ✅ RESET FORM
 const resetForm = () => {
   vendor.value = {
-    vendor_name: null,
+    vendor_name: '',
     location: '',
     created_by: user.value?.email || '',
     other_vendor_name: '',
@@ -316,35 +438,30 @@ const resetForm = () => {
   };
   
   productSearch.value = '';
+  showProductDropdown.value = false;
+  selectedIndex.value = 0;
   
-  validationState.value = {
-    isLocationValid: false,
-    isVendorNameValid: false,
-    isProductNameValid: false,
-    isOtherProductNameValid: true,
-    isOtherVendorNameValid: true,
+  errors.value = {
+    location: '',
+    vendor_name: '',
+    product_name: '',
+    other_vendor_name: '',
+    other_product_name: '',
   };
-  
-  formRef.value?.resetValidation();
 };
 
 // ✅ WATCHERS
 watch(() => vendor.value.product_name, (newValue) => {
-  
-  if (newValue === 'Other') {
-    validationState.value.isOtherProductNameValid = !!vendor.value.other_product_name;
-  } else {
-    validationState.value.isOtherProductNameValid = true;
+  if (newValue !== 'Other') {
     vendor.value.other_product_name = '';
+    errors.value.other_product_name = '';
   }
 });
 
 watch(() => vendor.value.vendor_name, (newValue) => {
-  if (newValue === 'Other') {
-    validationState.value.isOtherVendorNameValid = !!vendor.value.other_vendor_name;
-  } else {
-    validationState.value.isOtherVendorNameValid = true;
+  if (newValue !== 'Other') {
     vendor.value.other_vendor_name = '';
+    errors.value.other_vendor_name = '';
   }
 });
 
@@ -353,76 +470,72 @@ const onSubmit = async () => {
   try {
     isSubmitting.value = true;
     
-    const { valid } = await formRef.value.validate();
+    // Validate all fields
+    const isValid = validateLocation() &&
+                   validateVendorName() &&
+                   validateProductName() &&
+                   validateOtherVendorName() &&
+                   validateOtherProductName();
     
-    if (valid && isFormValid.value) {
-      const vendorData = {
-        ...vendor.value,
-        id: uuidv4(),
-        created_by: user.value?.email || '',
-      };
-      // ✅ TRY TO SUBMIT BUT DON'T CRASH IF IT FAILS
-      try {
-        await store.dispatch('createVendor', vendorData);
-        
-        const productName = vendor.value.product_name === 'Other' 
-          ? vendor.value.other_product_name 
-          : vendor.value.product_name;
-          
-        const vendorName = vendor.value.vendor_name === 'Other'
-          ? vendor.value.other_vendor_name
-          : vendor.value.vendor_name;
-        
-        alert(`✅ Product ${productName} was added for ${vendorName}`);
-        resetForm();
-        
-      } catch (submitError) {
-        console.warn('⚠️ Submit failed but continuing:', submitError);
-        alert('Form submitted locally (API connection issue)');
-        resetForm();
-      }
-      
-    } else {
-      console.warn('⚠️ Form validation failed');
-      alert('Please correct required fields and resubmit');
+    if (!isValid) {
+      alert('Please correct the errors and try again');
+      return;
     }
+    
+    const vendorData = {
+      ...vendor.value,
+      id: uuidv4(),
+      created_by: user.value?.email || '',
+    };
+    
+    await store.dispatch('createVendor', vendorData);
+    
+    const productName = vendor.value.product_name === 'Other' 
+      ? vendor.value.other_product_name 
+      : vendor.value.product_name;
+      
+    const vendorName = vendor.value.vendor_name === 'Other'
+      ? vendor.value.other_vendor_name
+      : vendor.value.vendor_name;
+    
+    alert(`✅ Product "${productName}" was added for "${vendorName}" at "${vendor.value.location}"`);
+    
+    // Refresh data
+    await Promise.all([
+      store.dispatch('fetchVendorsGroup'),
+      store.dispatch('fetchVendorsLocationsGroup'),
+      store.dispatch('fetchVendorsProductsGroup'),
+      store.dispatch('fetchProducts'),
+      store.dispatch('fetchVendorsProducts')
+    ]);
+    
+    resetForm();
     
   } catch (error) {
     console.error('❌ Error in form submission:', error);
-    alert(`Error adding vendor: ${error.message}`);
+    alert(`❌ Error adding vendor: ${error.message}`);
   } finally {
     isSubmitting.value = false;
   }
 };
 
-// ✅ SIMPLIFIED LIFECYCLE
+// ✅ LIFECYCLE
 onMounted(async () => {
   try {
-    vendor.value.created_by = user.value?.email || '';    
-    // ✅ TRY TO FETCH DATA WITH BETTER ERROR HANDLING
-    try {
-      const results = await Promise.allSettled([
-        store.dispatch('fetchVendorsGroup'),
-        store.dispatch('fetchVendorsLocationsGroup'), 
-        store.dispatch('fetchVendorsProductsGroup')
-      ]);
-      
-      // ✅ CHECK EACH RESULT
-      results.forEach((result, index) => {
-        const actionNames = ['fetchVendorsGroup', 'fetchVendorsLocationsGroup', 'fetchVendorsProductsGroup'];
-        if (result.status !== 'fulfilled') {
-          console.error(`❌ ${actionNames[index]} failed:`, result.reason);
-        }
-      });
-      
-    } catch (error) {
-      console.error('❌ API fetch failed:', error);
-      alert('Error fetching initial data, some dropdowns may be empty');
-    }
+    vendor.value.created_by = user.value?.email || '';
     
-    // ✅ FINAL DATA CHECK
-    setTimeout(() => {
-    }, 1000);
+    const results = await Promise.allSettled([
+      store.dispatch('fetchVendorsGroup'),
+      store.dispatch('fetchVendorsLocationsGroup'), 
+      store.dispatch('fetchVendorsProductsGroup')
+    ]);
+    
+    results.forEach((result, index) => {
+      const actionNames = ['fetchVendorsGroup', 'fetchVendorsLocationsGroup', 'fetchVendorsProductsGroup'];
+      if (result.status !== 'fulfilled') {
+        console.error(`❌ ${actionNames[index]} failed:`, result.reason);
+      }
+    });
     
   } catch (error) {
     console.error('❌ Error in onMounted:', error);
@@ -431,6 +544,13 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ✅ IMPORT SHARED STYLES */
+@import '@/assets/styles/ui-components.css';
+
+/* ========================================
+   COMPONENT-SPECIFIC STYLES
+   ======================================== */
+
 .page-wrapper {
   width: 100%;
   display: flex;
@@ -446,161 +566,112 @@ onMounted(async () => {
   margin: 0 auto;
 }
 
-.navigation-flex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.nav-button {
-  min-width: 160px !important;
-  height: 40px !important;
 }
 
 .form-container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 1rem;
-}
-/*:deep(.v-autocomplete .v-field__input) {
-  font-size: 16px !important; 
+  padding: 1rem 0;
 }
 
-
-:deep(.v-autocomplete .v-field__placeholder) {
-  font-style: italic !important;
-  color: #666 !important;
+/* Custom Select */
+.select-wrapper {
+  position: relative;
 }
 
-:deep(.expanded-product-field .v-field) {
-  min-height: 60px !important;
-  cursor: text !important;
-  display: flex !important;
-  align-items: center !important;
+.form-select {
+  width: 100%;
+  padding: 0.875rem 2.5rem 0.875rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
-:deep(.expanded-product-field .v-field__field) {
-  padding: 16px 12px !important;
-  min-height: 60px !important;
-  display: flex !important;
-  align-items: center !important;
+.form-select:hover {
+  border-color: #667eea;
 }
 
-:deep(.expanded-product-field .v-field__input) {
-  font-size: 16px !important;
-  padding: 0 !important; 
-  min-height: auto !important; 
-  line-height: 1.5 !important;
-  display: flex !important;
-  align-items: center !important;
+.form-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-:deep(.expanded-product-field .v-field__input input) {
-  padding: 0 !important;
-  margin: 0 !important;
-  line-height: 1.5 !important;
-  height: auto !important;
-  text-align: left !important;
+.form-select.is-invalid {
+  border-color: #ef4444;
 }
 
-:deep(.expanded-product-field .v-field__prepend-inner) {
-  padding: 16px 8px 16px 12px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+.select-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  pointer-events: none;
+  transition: transform 0.3s;
 }
 
-:deep(.expanded-product-field .v-field__append-inner) {
-  padding: 16px 12px 16px 8px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+.form-select:focus + .select-icon {
+  transform: translateY(-50%) rotate(180deg);
 }
 
-:deep(.expanded-product-field .v-label) {
-  display: flex !important;
-  align-items: center !important;
+/* Autocomplete Dropdown Navigation */
+.autocomplete-item.active {
+  background: rgba(102, 126, 234, 0.2);
 }
 
-:deep(.expanded-product-field .v-field__input input::placeholder) {
-  line-height: 1.5 !important;
-  font-style: italic !important;
-  color: #666 !important;
+/* Required Label */
+.form-label.required::after {
+  content: ' *';
+  color: #ef4444;
 }
 
-
-@media (max-width: 768px) {
-  :deep(.expanded-product-field .v-field) {
-    min-height: 70px !important;
-    display: flex !important;
-    align-items: center !important;
-  }
-  
-  :deep(.expanded-product-field .v-field__field) {
-    padding: 20px 16px !important;
-    min-height: 70px !important;
-    display: flex !important;
-    align-items: center !important;
-  }
-  
-  :deep(.expanded-product-field .v-field__input) {
-    font-size: 16px !important;
-    -webkit-appearance: none !important;
-    padding: 0 !important;
-    line-height: 1.5 !important;
-  }
-  
-  :deep(.expanded-product-field .v-field__prepend-inner) {
-    padding: 20px 12px 20px 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  
-  :deep(.expanded-product-field .v-field__append-inner) {
-    padding: 20px 16px 20px 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
+/* Submit Section */
+.submit-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f0f0f0;
 }
-*/
-/* ✅ RESPONSIVE */
+
+/* Utility Classes */
+.mt-4 { margin-top: 1rem; }
+.mt-5 { margin-top: 1.5rem; }
+
+/* Responsive */
 @media (max-width: 768px) {
   .product-vendor-container {
     padding: 0.5rem;
   }
   
-  .navigation-flex {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .nav-button {
-    width: 100% !important;
-    max-width: 280px;
+  .navigation-grid {
+    grid-template-columns: 1fr;
   }
   
   .form-container {
-    padding: 0.5rem;
+    padding: 0.5rem 0;
   }
-    /* ✅ MOBILE SEARCH ENHANCEMENTS */
-  :deep(.v-autocomplete .v-field__input) {
-    font-size: 16px !important; /* ✅ PREVENT ZOOM ON MOBILE */
-    -webkit-appearance: none !important;
+  
+  /* Prevent zoom on mobile inputs */
+  .form-input,
+  .form-select {
+    font-size: 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .navigation-flex {
-    gap: 0.5rem;
-  }
-  
-  .nav-button {
-    height: 36px !important;
-    font-size: 14px !important;
+  .navigation-grid .btn {
+    font-size: 14px;
+    padding: 0.625rem 1rem;
   }
 }
 </style>
