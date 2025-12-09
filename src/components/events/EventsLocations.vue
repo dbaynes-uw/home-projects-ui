@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 // ✅ DEFINE PROPS AND EMITS
 const props = defineProps({
@@ -47,11 +47,6 @@ function handleChange(newValue) {
     emit('clear-location');
   }
 }
-
-// ✅ MOUNTED DEBUG
-onMounted(() => {
-  console.log('🚀 EventsLocations component MOUNTED!');
-});
 
 // ✅ WATCH PROPS
 watch(() => props.selectedLocationValue, (newVal) => {

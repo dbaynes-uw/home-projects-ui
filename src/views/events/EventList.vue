@@ -364,9 +364,9 @@ const displayEvents = computed(() => {
   
   // Status filter
   if (showActiveEvents.value) {
-    filtered = filtered.filter(event => event.status === 'active');
+    filtered = filtered.filter(event => event.status.toLowerCase() === 'active');
   } else {
-    filtered = filtered.filter(event => event.status === 'inactive');
+    filtered = filtered.filter(event => event.status.toLowerCase() === 'inactive');
   }
   if (selectedDueByValue.value && selectedDueByValue.value !== '' && selectedDueByValue.value !== null) {
 

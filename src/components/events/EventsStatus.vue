@@ -38,22 +38,16 @@ const isShowingActive = computed(() => props.showActiveEvents);
 // ✅ FIXED TOGGLE FUNCTION
 function toggleEventsStatus() {
   const newActiveState = !props.showActiveEvents; // ✅ TOGGLE BASED ON PROPS
-  
-  console.log('🔄 Toggling from', props.showActiveEvents, 'to', newActiveState);
-  
+    
   // Call appropriate store action with status parameter
   if (newActiveState) {
     // Switch to Active Events
-    console.log('📡 Dispatching eventsStatus with "active"');
     store.dispatch('eventsStatus', 'active');
     store.commit('SET_EVENTS_REQUEST', 'Active');
-    console.log('✅ Switched to Active Events');
   } else {
     // Switch to Inactive Events
-    console.log('📡 Dispatching eventsStatus with "inactive"');
     store.dispatch('eventsStatus', 'inactive');
     store.commit('SET_EVENTS_REQUEST', 'Inactive');
-    console.log('✅ Switched to Inactive Events');
   }
   
   // ✅ EMIT NEW STATE TO PARENT
@@ -61,8 +55,6 @@ function toggleEventsStatus() {
   
   // ✅ DEBUG - CHECK STORE STATE AFTER DISPATCH
   setTimeout(() => {
-    console.log('📊 Store events after dispatch:', store.getters.events?.length || 0);
-    console.log('📊 Store state:', store.state.eventsRequest);
   }, 1000);
 }
 
