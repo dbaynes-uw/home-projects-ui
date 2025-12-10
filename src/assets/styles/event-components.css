@@ -1,0 +1,296 @@
+/* ========================================
+   EVENTS-SPECIFIC SHARED STYLES
+   Used across EventCreate, EventEdit, EventList, EventShow
+   ======================================== */
+
+/* ✅ EVENT CONTAINER */
+.event-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ✅ EVENT HEADER */
+.event-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.event-header h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.75rem;
+}
+
+.event-header i {
+  color: #41b883;
+  font-size: 1.5rem;
+}
+
+/* ✅ BACK LINK */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  background: rgba(108, 117, 125, 0.1);
+  color: #495057;
+  transform: translateX(-4px);
+}
+
+.back-link i {
+  font-size: 1.1em;
+}
+
+/* ✅ PAST DUE WARNING */
+.past-due-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #fee 0%, #fcc 100%);
+  border: 2px solid #f99;
+  border-left: 4px solid #d32f2f;
+  border-radius: 8px;
+  color: #d32f2f;
+  font-weight: 600;
+  margin: 1rem 0;
+  animation: pulseWarning 2s infinite;
+}
+
+.past-due-warning i {
+  font-size: 1.5em;
+  color: #d32f2f;
+}
+
+@keyframes pulseWarning {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 8px rgba(211, 47, 47, 0);
+  }
+}
+
+/* ✅ SUCCESS MESSAGE */
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(69, 160, 73, 0.1) 100%);
+  border: 2px solid #4CAF50;
+  border-left: 4px solid #4CAF50;
+  border-radius: 8px;
+  color: #2e7d32;
+  font-weight: 600;
+  margin: 1rem 0;
+}
+
+.success-message i {
+  font-size: 1.5em;
+  color: #4CAF50;
+}
+
+/* ✅ EVENT STATUS CHIPS */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.status-chip.active {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(69, 160, 73, 0.15) 100%);
+  color: #2e7d32;
+  border: 2px solid #4CAF50;
+}
+
+.status-chip.inactive {
+  background: linear-gradient(135deg, rgba(158, 158, 158, 0.15) 0%, rgba(117, 117, 117, 0.15) 100%);
+  color: #616161;
+  border: 2px solid #9e9e9e;
+}
+
+.status-chip.completed {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15) 0%, rgba(25, 118, 210, 0.15) 100%);
+  color: #1565c0;
+  border: 2px solid #2196F3;
+}
+
+/* ✅ EVENT INFO SECTION */
+.event-info-section {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border-left: 4px solid #667eea;
+  margin: 1rem 0;
+}
+
+.event-info-row {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  gap: 1rem;
+}
+
+.event-info-label {
+  font-weight: 600;
+  color: #667eea;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 180px;
+}
+
+.event-info-value {
+  color: #333;
+  font-weight: 500;
+}
+
+/* ✅ DETAILS BUTTON */
+.details-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  padding: 0.875rem 1.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.details-btn i {
+  font-size: 1.1em;
+}
+
+/* ✅ EVENT ACTIONS */
+.event-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.event-actions .btn,
+.event-actions .details-btn {
+  flex: 1;
+  min-width: 200px;
+  justify-content: center;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .event-container {
+    padding: 0.5rem;
+  }
+  
+  .event-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .event-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .event-info-label {
+    min-width: auto;
+  }
+  
+  .event-actions {
+    flex-direction: column;
+  }
+  
+  .event-actions .btn,
+  .event-actions .details-btn {
+    width: 100%;
+    min-width: auto;
+  }
+  /* ...existing styles... */
+
+/* ✅ CUSTOM SELECT (SHARED ACROSS ALL EVENT FORMS) */
+.select-wrapper {
+  position: relative;
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.875rem 2.5rem 0.875rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.form-select:hover {
+  border-color: #667eea;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.select-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  pointer-events: none;
+  transition: transform 0.3s;
+}
+
+.form-select:focus + .select-icon {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* ✅ REQUIRED LABEL INDICATOR */
+.form-label.required::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+/* ✅ UTILITY CLASSES */
+.mt-4 { margin-top: 1rem; }
+.mt-5 { margin-top: 1.5rem; }
+
+/* ...rest of existing styles... */
+}

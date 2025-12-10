@@ -763,7 +763,7 @@ onMounted(async () => {
 <style scoped>
 /* ✅ IMPORT ALL SHARED STYLES */
 @import '@/assets/styles/ui-components.css';
-@import '@/assets/styles/products-components.css';
+@import '@/assets/styles/product-components.css';
 
 /* ========================================
    COMPONENT-SPECIFIC ONLY (30 lines!)

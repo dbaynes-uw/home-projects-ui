@@ -1,167 +1,220 @@
 <template>
-  <h1>Create an Event</h1>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h3>Create an Event View</h3>
-    </v-card-title>
-  </v-card>
-  <router-link :to="{ name: 'EventList' }">
-    <h3>Back to Event List</h3>
-  </router-link>
-  <form class="card-display" @submit.prevent="onSubmit">
-    <div class="form-container">
-      <v-text-field
-        label="Description"
-        v-model="event.description"
-        required
-      />
-      <v-text-field
-        label="Action Date"
-        v-model="event.action_due_date"
-        type="date"
-      />
-      <v-select
-        label="Whose Turn?"
-        :items="ASSIGNEES_CURRENT"
-        v-model="event.assigned"
-      >
-        <option
-          v-for="option in ASSIGNEES_CURRENT"
-          :value="option"
-          :key="option"
-          id="select-box"
-          :selected="option === event.assigned"
+  <div class="event-create-container">
+    <!-- ✅ HEADER CARD (NO VUETIFY) -->
+    <div class="card mt-5">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-calendar-plus"></i>
+          Create an Event
+        </h2>
+      </div>
+      
+      <div class="card-body">
+        <router-link 
+          :to="{ name: 'EventList' }"
+          class="btn btn-outlined"
         >
-          {{ option }}
-        </option>
-      </v-select>
-      <v-select
-        label="Frequency in Days"
-        :items="EVENT_FREQUENCY"
-        v-model="event.frequency"
-        required
-      >
-        <option
-          v-for="option in EVENT_FREQUENCY"
-          :value="option"
-          :key="option"
-          id="select-box"
-          :selected="option === event.frequency"
-        >
-          {{ option }}
-        </option>
-      </v-select>
-      <v-textarea
-        label="Notes"
-        v-model="event.notes"
-        rows="3"
-        cols="40"
-      />
-      <br>
-      <button class="button" id="link-as-button" type="submit">
-        Submit
-      </button>
+          <i class="fas fa-arrow-left"></i>
+          Back to Event List
+        </router-link>
+      </div>
     </div>
-  </form>
-  <!--Vuex:-->
-  <!--div>{{ $store.state.events }}</div-->
-</template>
-<script setup>
-import { ASSIGNEES_CURRENT, EVENT_FREQUENCY } from "@/services/constants";
-import { v4 as uuidv4 } from "uuid";
-</script>
-<script>
-//import { mapGetters, mapActions } from "vuex";
-//Vuex
-//import EventService from "@/services/EventService.js";
-export default {
-  event() {
-    return this.$store.state.event;
-  },
-  data() {
-    return {
-      event: {
-        description: "",
-        assigned: "",
-        assigned_email: "",
-        frequency: "",
-        action_completed_date: "",
-        status: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-    };
-  },
-  methods: {
-    //Vuex...mapActions(["addEvent"]),
-    onSubmit() {
-      const event = {
-        ...this.event,
-        id: uuidv4(),
-        status: 'active',
-        created_by: this.$store.state.user.resource_owner.email,
-      };
-      //Vuex 2:
-      if (this.$store.dispatch("createEvent", event)) {
-        this.$router.push({ name: "EventList" });
-      } 
-    },
-  },
 
+    <!-- ✅ FORM CARD (NO VUETIFY) -->
+    <div class="card mt-4">
+      <form @submit.prevent="onSubmit">
+        <div class="card-body">
+          
+          <!-- ✅ DESCRIPTION -->
+          <div class="form-group">
+            <label class="form-label required">
+              <i class="fas fa-align-left"></i>
+              Description
+            </label>
+            <input
+              v-model="event.description"
+              type="text"
+              class="form-input"
+              placeholder="Enter event description..."
+              required
+            />
+          </div>
+
+          <!-- ✅ ACTION DATE -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-calendar"></i>
+              Action Due Date
+            </label>
+            <input
+              v-model="event.action_due_date"
+              type="date"
+              class="form-input"
+            />
+          </div>
+
+          <!-- ✅ ASSIGNED SELECT -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-user"></i>
+              Whose Turn?
+            </label>
+            <div class="select-wrapper">
+              <select
+                v-model="event.assigned"
+                class="form-select"
+              >
+                <option value="">Select assignee...</option>
+                <option 
+                  v-for="option in ASSIGNEES_CURRENT" 
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }}
+                </option>
+              </select>
+              <i class="fas fa-chevron-down select-icon"></i>
+            </div>
+          </div>
+
+          <!-- ✅ FREQUENCY SELECT -->
+          <div class="form-group">
+            <label class="form-label required">
+              <i class="fas fa-repeat"></i>
+              Frequency in Days
+            </label>
+            <div class="select-wrapper">
+              <select
+                v-model="event.frequency"
+                class="form-select"
+                required
+              >
+                <option value="">Select frequency...</option>
+                <option 
+                  v-for="option in EVENT_FREQUENCY" 
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }} days
+                </option>
+              </select>
+              <i class="fas fa-chevron-down select-icon"></i>
+            </div>
+          </div>
+
+          <!-- ✅ NOTES -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-sticky-note"></i>
+              Notes
+            </label>
+            <textarea
+              v-model="event.notes"
+              class="form-input"
+              rows="4"
+              placeholder="Add any notes about this event..."
+            ></textarea>
+          </div>
+
+          <!-- ✅ SUBMIT BUTTON -->
+          <button 
+            type="submit"
+            class="btn btn-primary btn-large btn-block"
+            :disabled="isSubmitting"
+            :class="{ 'btn-loading': isSubmitting }"
+          >
+            <template v-if="!isSubmitting">
+              <i class="fas fa-save"></i>
+              Create Event
+            </template>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+import { v4 as uuidv4 } from 'uuid';
+import { ASSIGNEES_CURRENT, EVENT_FREQUENCY } from '@/services/constants';
+
+const store = useStore();
+const router = useRouter();
+
+// ✅ REACTIVE STATE
+const isSubmitting = ref(false);
+
+const event = ref({
+  description: '',
+  assigned: '',
+  assigned_email: '',
+  frequency: '',
+  action_due_date: '',
+  action_completed_date: '',
+  status: '',
+  notes: '',
+  created_by: '',
+});
+
+// ✅ COMPUTED
+const user = computed(() => store.state.user?.resource_owner);
+
+// ✅ SET CREATED_BY
+if (user.value?.email) {
+  event.value.created_by = user.value.email;
+}
+
+// ✅ SUBMIT FUNCTION
+const onSubmit = async () => {
+  try {
+    isSubmitting.value = true;
+    
+    const eventData = {
+      ...event.value,
+      id: uuidv4(),
+      status: 'active',
+      created_by: user.value?.email || '',
+      created_at: new Date().toISOString(),
+    };
+    
+    console.log('📅 Creating event:', eventData);
+    
+    const success = await store.dispatch('createEvent', eventData);
+    
+    if (success) {
+      alert(`✅ Event "${eventData.description}" created successfully!`);
+      router.push({ name: 'EventList' });
+    } else {
+      alert('❌ Failed to create event');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error creating event:', error);
+    alert(`❌ Error: ${error.message}`);
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
-<style>
-.add-form {
-  display: flex;
-  flex-direction: column;
-  width: 425px;
-  padding: 20px;
-  margin: 40px;
-  border: 2px solid #d8d8d8;
-  background-color: white;
-  -webkit-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  -moz-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  box-shadow: 2px 15px -12px rgba(0, 0, 0, 0.57);
-}
-#notes {
-  width: 100%;
-  height: 4rem;
-}
-.button {
-  margin: 30px;
-  background-color: #39495c;
-  border-radius: 5px;
-  font-size: 18px;
-  width: 160px;
-  height: 60px;
-  color: white;
-  padding: 20px;
-  box-shadow: inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.17),
-    inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15),
-    inset 0 0 0em 0.05em rgba(255, 255, 255, 0.12);
-  text-align: center;
-  cursor: pointer;
-}
-label {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-}
-fieldset {
-  border: 0;
-  margin: 0;
-  padding: 0;
-}
-select {
-  border-color: darkgreen;
-}
-legend {
-  font-size: 28px;
-  font-weight: 700;
-  margin-top: 20px;
+
+<style scoped>
+/* ✅ IMPORT ALL SHARED STYLES */
+@import '@/assets/styles/ui-components.css';
+@import '@/assets/styles/event-components.css';
+
+/* ========================================
+   COMPONENT-SPECIFIC STYLES
+   ======================================== */
+
+/* Responsive overrides only */
+@media (max-width: 768px) {
+  /* Prevent zoom on mobile inputs */
+  .form-input,
+  .form-select {
+    font-size: 16px;
+  }
 }
 </style>

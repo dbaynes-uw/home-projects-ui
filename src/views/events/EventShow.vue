@@ -117,7 +117,6 @@ const historyCount = computed(() => {
 // ✅ METHODS
 const toggleHistory = () => {
   showHistory.value = !showHistory.value;
-  console.log('📋 History toggled:', showHistory.value);
 };
 
 const deleteEvent = async (eventToDelete) => {
@@ -145,7 +144,6 @@ const formatStandardDateTime = (value) => {
 
 // ✅ LIFECYCLE HOOKS
 onMounted(async () => {
-  console.log('✅ EventShow mounted (Composition API)');
   
   // Fetch the event
   await store.dispatch("fetchEvent", props.id);
@@ -155,12 +153,10 @@ onMounted(async () => {
   
   setTimeout(() => {
     const mdiElements = document.querySelectorAll('.mdi');
-    console.log('📊 MDI elements found:', mdiElements.length);
     
     if (mdiElements.length > 0) {
       const testIcon = mdiElements[0];
       const styles = window.getComputedStyle(testIcon, ':before');
-      console.log('🎨 MDI font loaded:', styles.fontFamily.includes('Material Design Icons'));
     }
   }, 500);
 });

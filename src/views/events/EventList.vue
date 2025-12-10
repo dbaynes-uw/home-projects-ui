@@ -1,320 +1,261 @@
 <template>
-  <div class="page-wrapper">
-      <!-- ✅ ANIMATED BACKGROUND SHAPES -->
-    <div class="background-shapes">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
-      <div class="shape shape-3"></div>
-      <div class="shape shape-4"></div>
-      <div class="shape shape-5"></div>
-      <div class="shape shape-6"></div>
-    </div>
-    <div class="event-list-container">
-      <!-- ✅ CONSISTENT CARD CONTAINER -->
-      <div class="cards-container">
-        <div class="background-shapes">
-          <div class="shape shape-1"></div>
-          <div class="shape shape-2"></div>
-          <div class="shape shape-3"></div>
-          <div class="shape shape-4"></div>
-          <div class="shape shape-5"></div>
-          <div class="shape shape-6"></div>
-        </div>
-        <!-- ✅ HEADER CARD -->
-        <v-card class="mt-5">
-          <v-card-title>
-            <div>
-              <h2>Events Dashboard</h2>
-              <h3 class="text-medium-emphasis mb-0">Created by: {{ user?.email }}</h3>
-            </div>
-          </v-card-title>
-        </v-card>
-        <!-- ✅ MODERN NAVIGATION -->
-        <!-- ✅ NAVIGATION SECTION -->
-        <div class="card-wrapper">     
-          <v-card-text>
-            <div class="navigation-flex">
-              <v-btn
-                variant="outlined"
-                :to="{ name: 'EventStatistics' }"
-                prepend-icon="fas fa-chart-bar"
-                id="button-as-link"
-                class="nav-button"
-              >
-                Statistics
-              </v-btn>
-
-              <v-btn
-                variant="outlined"
-                :to="{ name: 'EventCreate' }"
-                prepend-icon="mdi-plus"
-                color="primary"
-                id="button-as-link"
-                class="nav-button"
-              >
-                New Event
-              </v-btn>
-            </div>
-          </v-card-text>
-        </div>
+  <div class="event-list-container">
+    <!-- ✅ HEADER CARD -->
+    <div class="card mt-5">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-calendar-alt"></i>
+          Events Dashboard
+        </h2>
+        <p class="subtitle">Created by: {{ user?.email }}</p>
+      </div>
       
-        <!-- ✅ FILTERS CARD -->
-        <div class="card-wrapper">     
-          <v-card class="mt-4">
-            <v-card-title>
-              <h3>Filters & Search</h3>
-            </v-card-title>
+      <!-- ✅ NAVIGATION -->
+      <div class="card-body">
+        <div class="navigation-flex">
+          <router-link
+            :to="{ name: 'EventStatistics' }"
+            class="btn btn-outlined"
+          >
+            <i class="fas fa-chart-bar"></i>
+            Statistics
+          </router-link>
 
-            <v-card-text>
-              <!-- ✅ FILTER COMPONENTS ROW -->
-              <div class="filters-grid mb-4">
-                <div class="filter-with-counter">
-                  <EventsPastDue />
-                  <div class="filter-with-counter counter-badge-red pulse-animation">{{ pastDueCount }}</div>
-                </div>
+          <router-link
+            :to="{ name: 'EventCreate' }"
+            class="btn btn-primary"
+          >
+            <i class="fas fa-plus"></i>
+            New Event
+          </router-link>
+        </div>
+      </div>
+    </div>
 
-                <div class="filter-with-counter">
-                  <EventsStatus 
-                    :show-active-events="showActiveEvents"
-                    @toggle-status="handleStatusToggle"
-                  />
-                  <div
-                    :class="getStatusBadgeClass()" 
-                    class="counter-badge-green">{{ displayEvents.length }}</div>
-                </div>
-                <!-- ✅ DUE BY FILTER -->
-                <EventsDueBy 
-                  :selectedDueByValue="selectedDueByValue"
-                  @events-due-by="handleDueByFilter"
-                  @clear-due-by="handleClearDueBy"
-                />
-                
-                <!-- ✅ LOCATIONS FILTER -->
-                <EventsLocations 
-                  :selectedLocationValue="selectedLocationValue"
-                  @events-location="handleLocationFilter"
-                  @clear-location="handleClearLocation"
-                />
-              </div>
-              
-              <!-- ✅ SEARCH CONTAINER -->
-              <div class="search-container" :class="{ 'search-focused': searchFocused }">
-                <div class="background-shapes">
-                  <div class="shape shape-1"></div>
-                  <div class="shape shape-2"></div>
-                  <div class="shape shape-3"></div>
-                  <div class="shape shape-4"></div>
-                  <div class="shape shape-5"></div>
-                  <div class="shape shape-6"></div>
-                </div>
-                
-                <v-text-field
-                  v-model="inputSearchText"
-                  @input="searchColumns"
-                  @focus="searchFocused = true"
-                  @blur="searchFocused = false"
-                  @click:clear="showIndex"
-                  placeholder="Search events by description or assignee..."
-                  prepend-inner-icon="fas fa-magnify"
-                  variant="outlined"
-                  clearable
-                  hide-details
-                  class="morphing-search"
-                />
-                
-                <div class="search-suggestions" v-if="searchFocused && inputSearchText">
-                  <div class="suggestion-count">{{ filteredResults.length }} results found</div>
-                </div>
-              </div>
-              
-              <!-- ✅ ENHANCED VIEW TOGGLE -->
-              <div>
-                <v-btn-toggle
-                  v-model="viewMode"
-                  mandatory
-                  variant="elevated"
-                  divided
-                  color="primary"
-                  class="view-toggle-enhanced"
-                >
-                  <v-btn 
-                    value="cards"
-                    class="view-btn consistent-btn"
-                    :class="{ 'view-btn-active': viewMode === 'cards' }"
-                    id="button-as-link"
-                  >
-                    <i class="fas fa-th"></i> <!-- ✅ CHANGED FROM mdi-view-grid -->
-                    Cards View
-                  </v-btn>
+    <!-- ✅ FILTERS CARD -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-filter"></i>
+          Filters & Search
+        </h3>
+      </div>
 
-                  <v-btn
-                    value="table"
-                    class="view-btn consistent-btn"
-                    :class="{ 'view-btn-active': viewMode === 'table' }"
-                    id="button-as-link"
-                  >
-                    <i class="fas fa-table"></i>
-                    Table View
-                  </v-btn>
+      <div class="card-body">
+        <!-- ✅ FILTER COMPONENTS ROW -->
+        <div class="filters-grid mb-4">
+          <div class="filter-with-counter">
+            <EventsPastDue />
+            <div class="counter-badge counter-badge-red pulse-animation">
+              {{ pastDueCount }}
+            </div>
+          </div>
 
-                  <v-btn
-                    v-if="isAdmin"
-                    @click="notifyEventsDue"
-                    class="view-btn consistent-btn"
-                    id="button-as-link"
-                    variant="elevated"
-                  >
-                    <i class="fas fa-envelope"></i> <!-- ✅ CHANGED FROM mdi-email-send -->
-                    Notify Due
-                  </v-btn>
-                </v-btn-toggle>
-              </div>
-            </v-card-text>
-          </v-card>
-        </div> 
+          <div class="filter-with-counter">
+            <EventsStatus 
+              :show-active-events="showActiveEvents"
+              @toggle-status="handleStatusToggle"
+            />
+            <div :class="getStatusBadgeClass()">
+              {{ displayEvents.length }}
+            </div>
+          </div>
 
-        <br/><br/>
+          <!-- ✅ DUE BY FILTER -->
+          <EventsDueBy 
+            :selectedDueByValue="selectedDueByValue"
+            @events-due-by="handleDueByFilter"
+            @clear-due-by="handleClearDueBy"
+          />
+          
+          <!-- ✅ LOCATIONS FILTER -->
+          <EventsLocations 
+            :selectedLocationValue="selectedLocationValue"
+            @events-location="handleLocationFilter"
+            @clear-location="handleClearLocation"
+          />
+        </div>
+        
+        <!-- ✅ SEARCH INPUT (NO VUETIFY) -->
+        <div class="search-section">
+          <div class="form-group">
+            <div class="search-input-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              <input
+                v-model="inputSearchText"
+                @input="searchColumns"
+                @focus="searchFocused = true"
+                @blur="searchFocused = false"
+                type="text"
+                class="form-input search-input"
+                placeholder="Search events by description or assignee..."
+              />
+              <button
+                v-if="inputSearchText"
+                @click="showIndex"
+                class="clear-search-btn"
+                type="button"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <small v-if="searchFocused && inputSearchText" class="search-hint">
+              {{ filteredResults.length }} results found
+            </small>
+          </div>
+        </div>
+        
+        <!-- ✅ VIEW TOGGLE (NO VUETIFY) -->
+        <div class="view-toggle-section">
+          <div class="btn-group">
+            <button
+              @click="viewMode = 'cards'"
+              class="btn"
+              :class="{ 'btn-primary': viewMode === 'cards', 'btn-outlined': viewMode !== 'cards' }"
+            >
+              <i class="fas fa-th"></i>
+              Cards View
+            </button>
 
-        <!-- ✅ LOADING STATE -->
-        <div class="card-wrapper"> 
-          <v-card v-if="isLoading" class="mt-4">
-            <v-progress-circular indeterminate color="primary" size="64" />
-            <p class="mt-4">Loading events...</p>
-          </v-card>
+            <button
+              @click="viewMode = 'table'"
+              class="btn"
+              :class="{ 'btn-primary': viewMode === 'table', 'btn-outlined': viewMode !== 'table' }"
+            >
+              <i class="fas fa-table"></i>
+              Table View
+            </button>
 
-          <!-- ✅ RESULTS SECTION -->
-          <v-card v-else class="mt-4">
-            <div class="background-shapes">
-              <div class="shape shape-1"></div>
-              <div class="shape shape-2"></div>
-              <div class="shape shape-3"></div>
-              <div class="shape shape-4"></div>
-              <div class="shape shape-5"></div>
-              <div class="shape shape-6"></div>
+            <button
+              v-if="isAdmin"
+              @click="notifyEventsDue"
+              class="btn btn-success"
+            >
+              <i class="fas fa-envelope"></i>
+              Notify Due
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ LOADING STATE -->
+    <div v-if="isLoading" class="card mt-4">
+      <div class="card-body text-center">
+        <div class="spinner"></div>
+        <p class="mt-3">Loading events...</p>
+      </div>
+    </div>
+
+    <!-- ✅ RESULTS SECTION -->
+    <div v-else class="card mt-4">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">
+            <i class="fas fa-list"></i>
+            {{ getResultsTitle() }}
+          </h3>
+          <p class="subtitle">
+            {{ getResultsCount() }} event{{ displayEvents.length !== 1 ? 's' : '' }} found
+          </p>
+          <p class="hint-text">
+            <i class="fas fa-info-circle"></i>
+            Double click a card to view details or edit
+          </p>
+        </div>
+
+        <!-- ✅ LEGEND -->
+        <div class="legend-chips">
+          <span class="chip chip-success chip-small">
+            <i class="fas fa-check-circle"></i>
+            Complete
+          </span>
+          <span class="chip chip-warning chip-small">
+            <i class="fas fa-clock"></i>
+            Incomplete
+          </span>
+          <span class="chip chip-danger chip-small">
+            <i class="fas fa-exclamation-triangle"></i>
+            Past Due
+          </span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- ✅ CARDS VIEW -->
+        <div v-if="viewMode === 'cards'" class="events-grid">
+          <div
+            v-for="event in displayEvents"
+            :key="event.id"
+            @dblclick="showEvent(event)"
+            :class="['event-card', getEventCardClass(event)]"
+          >
+            <!-- ✅ CARD HEADER -->
+            <div class="event-card-header">
+              <i :class="[getEventStatusIcon(event), 'event-status-icon']"></i>
+              <h4 class="event-title">{{ event.description }}</h4>
             </div>
             
-            <v-card-title class="d-flex justify-space-between align-center">
-              <div>
-                <h3>{{ getResultsTitle() }}</h3>
-                <p class="text-medium-emphasis mb-0">
-                  {{ getResultsCount() }} event{{ displayEvents.length !== 1 ? 's' : '' }} found
-                </p>
-                <p class="text-medium-emphasis mb-0">
-                  Double click a card to view details or edit.
-                </p>
+            <!-- ✅ CARD BODY -->
+            <div class="event-card-body">
+              <div class="event-detail-row">
+                <i class="fas fa-user"></i>
+                <span>{{ event.assigned }}</span>
               </div>
 
-              <!-- ✅ LEGEND -->
-              <v-chip-group>
-                <v-chip color="success" variant="outlined" size="small">
-                <i class="fas fa-check-circle"></i>
-                  Complete
-                </v-chip>
-                <v-chip color="warning" variant="outlined" size="small">
-                  <i class="fas fa-clock"></i>
-                  Incomplete
-                </v-chip>
-                <v-chip color="error" variant="outlined" size="small">
-                  <i class="fas fa-exclamation-triangle" style="color: #8b0000"></i>
-                  Past Due
-                </v-chip>
-              </v-chip-group>
-            </v-card-title>
-
-            <v-card-text>
-              <!-- ✅ CARDS VIEW -->
-              <div v-if="viewMode === 'cards'" class="events-grid">
-                <v-card
-                  v-for="(event, index) in displayEvents"
-                  :key="event.id"
-                  @dblclick="showEvent(event)"
-                  :class="[getEventCardClass(event), 'animated-card']"
-                  :style="{ animationDelay: `${index * 0.1}s` }"
-                  variant="outlined"
-                  hover
-                  class="event-card"
-                >                
-                  <!-- ✅ CARD TITLE WITH FA ICON -->
-                  <v-card-title class="pb-2">
-                    <div class="d-flex align-center">
-                      <i 
-                        :class="[getEventStatusIcon(event), `text-${getEventStatusColor(event)}`]"
-                        class="mr-2"
-                      ></i>
-                      <span class="text-truncate">{{ event.description }}</span>
-                    </div>
-                  </v-card-title>
-                
-                  <v-card-text>
-                    <div class="event-details">                      
-                      <div class="d-flex align-center mb-2">
-                        <i class="fas fa-user mr-2" style="font-size: 14px;"></i>
-                        <span>{{ event.assigned }}</span>
-                      </div>
-
-                      <div class="d-flex align-center">
-                        <i class="fas fa-sync-alt mr-2" style="font-size: 14px;"></i>
-                        <span>Frequency: {{ event.frequency }} Days</span>
-                      </div>
-
-                      <div class="d-flex align-center mb-2">
-                        <i class="fas fa-calendar-alt mr-2" style="font-size: 14px;"></i>
-                        <span>Last Action: {{ formatStandardDate(event.action_completed_date) }}</span>
-                      </div>
-
-                      <div class="d-flex align-center mb-2">
-                        <i class="fas fa-calendar-check mr-2" style="font-size: 14px;"></i>
-                        <span> Due: {{ formatStandardDate(event.action_due_date) }}</span>
-                        <v-chip
-                          v-if="isEventPastDue(event)"
-                          color="error"
-                          size="x-small"
-                          class="ml-2"
-                        >
-                          PAST DUE
-                        </v-chip>
-                        &nbsp;
-                        <i class="fas fa-triangle-exclamation" style="color: #8b0000"></i>
-                      </div>
-
-                      <div class="d-flex align-center">
-                        <i class="fas fa-map-marker-alt mr-2" style="font-size: 14px;"></i>
-                        <span>Location: {{ event.location || 'No location' }}</span>
-                      </div>
-
-                      <div class="d-flex align-center">
-                        <i class="fas fa-info-circle mr-2" style="font-size: 14px;"></i>
-                        <span>Status: {{ event.status.charAt(0).toUpperCase() + event.status.slice(1) }}</span>
-                      </div>
-                    </div>
-                  </v-card-text>
-                
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      @click.stop="editEvent(event)"
-                      variant="text"
-                      size="small"
-                      color="primary"
-                    >
-                      <i class="fas fa-edit mr-1"></i>
-                      Edit
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
+              <div class="event-detail-row">
+                <i class="fas fa-sync-alt"></i>
+                <span>Every {{ event.frequency }} days</span>
               </div>
 
-              <!-- ✅ TABLE VIEW -->
-              <div v-else>
-                <EventIndex :events="displayEvents" />
+              <div class="event-detail-row">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Last: {{ formatStandardDate(event.action_completed_date) }}</span>
               </div>
-            </v-card-text>
-          </v-card>
+
+              <div class="event-detail-row">
+                <i class="fas fa-calendar-check"></i>
+                <span>Due: {{ formatStandardDate(event.action_due_date) }}</span>
+                <span 
+                  v-if="isEventPastDue(event)"
+                  class="chip chip-danger chip-tiny ml-2"
+                >
+                  <i class="fas fa-exclamation-triangle"></i>
+                  PAST DUE
+                </span>
+              </div>
+
+              <div class="event-detail-row">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ event.location || 'No location' }}</span>
+              </div>
+
+              <div class="event-detail-row">
+                <i class="fas fa-info-circle"></i>
+                <span>{{ event.status.charAt(0).toUpperCase() + event.status.slice(1) }}</span>
+              </div>
+            </div>
+            
+            <!-- ✅ CARD FOOTER -->
+            <div class="event-card-footer">
+              <button
+                @click.stop="editEvent(event)"
+                class="btn btn-small btn-text"
+              >
+                <i class="fas fa-edit"></i>
+                Edit
+              </button>
+            </div>
+          </div>
         </div>
 
-      </div> <!-- ✅ END cards-container -->
-    </div> <!-- ✅ END event-list-container -->
-  </div>  <!-- ✅ END page-wrapper -->
+        <!-- ✅ TABLE VIEW -->
+        <div v-else>
+          <EventIndex :events="displayEvents" />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -335,8 +276,8 @@ import DateFormatService from "@/services/DateFormatService.js";
 const router = useRouter();
 const store = useStore();
 
-// ✅ MOVE THESE TO THE TOP - BEFORE ANY COMPUTED PROPERTIES
-const showActiveEvents = ref(true); // ✅ DEFAULT TO INACTIVE
+// ✅ REACTIVE STATE
+const showActiveEvents = ref(true);
 const isLoading = ref(true);
 const inputSearchText = ref('');
 const viewMode = ref('cards');
@@ -345,7 +286,8 @@ const selectedLocationValue = ref('');
 const selectedDueByValue = ref('');    
 const filteredResults = ref([]);
 const searchFocused = ref(false);
-// ✅ NOW COMPUTED PROPERTIES CAN ACCESS THE REFS ABOVE
+
+// ✅ COMPUTED PROPERTIES
 const user = computed(() => store.state.user?.resource_owner);
 const events = computed(() => store.state.events || []);
 
@@ -353,13 +295,12 @@ const isAdmin = computed(() =>
   user.value?.email?.toLowerCase().includes('baynes') || 
   user.value?.email === 'dlbaynes@gmail.com'
 );
+
 const pastDueCount = computed(() => {
   return events.value.filter(event => isEventPastDue(event)).length;
 });
 
-// ✅ NOW displayEvents CAN ACCESS showActiveEvents
 const displayEvents = computed(() => {
-  
   let filtered = events.value;
   
   // Status filter
@@ -368,48 +309,39 @@ const displayEvents = computed(() => {
   } else {
     filtered = filtered.filter(event => event.status.toLowerCase() === 'inactive');
   }
+  
+  // Due by filter
   if (selectedDueByValue.value && selectedDueByValue.value !== '' && selectedDueByValue.value !== null) {
-
     if (selectedDueByValue.value === 'all') {
       filtered = filtered.filter(event => 
         event.action_due_date && event.action_due_date !== ''
       );
     } else {
-      // ✅ FIXED: Use 'filtered' not 'dueByFiltered'
       const daysAhead = parseInt(selectedDueByValue.value);
       const targetDate = dayjs().add(daysAhead, 'day').format('YYYY-MM-DD');
-
       filtered = filtered.filter(event => 
         event.action_due_date && event.action_due_date <= targetDate
       );
     }
   }
-  // Location filter debug
+  
+  // Location filter
   if (selectedLocationValue.value && selectedLocationValue.value !== '' && selectedLocationValue.value !== 'all') {
-    const uniqueLocations = [...new Set(filtered.map(e => e.location))];
-    
-    const beforeCount = filtered.length;
-    filtered = filtered.filter(event => {
-      const match = event.location === selectedLocationValue.value;
-      if (!match) {
-        console.log('❌ No match:', event.location, '!==', selectedLocationValue.value);
-      } else {
-        console.log('✅ Match found:', event.location, '===', selectedLocationValue.value);
-      }
-      return match;
-    });    
-  }  
+    filtered = filtered.filter(event => event.location === selectedLocationValue.value);
+  }
+  
   return filtered;
 });
 
-// ✅ FUNCTIONS
-
+// ✅ METHODS
 function handleDueByFilter(daysValue) {
   selectedDueByValue.value = daysValue;
 }
+
 function handleClearDueBy() {
   selectedDueByValue.value = '';
 }
+
 function handleLocationFilter(locationValue) {
   selectedLocationValue.value = locationValue;
 }
@@ -420,37 +352,28 @@ function handleClearLocation() {
 
 function handleStatusToggle(newActiveState) {
   showActiveEvents.value = newActiveState;
-
   filteredResults.value = [];
   inputSearchText.value = '';
   selectedLocationValue.value = '';
   selectedDueByValue.value = '';
-  
 }
+
 function getStatusBadgeClass() {
-  const baseClass = 'counter-badge';
-  
-  if (showActiveEvents.value) {
-    return `${baseClass}-green`; // Green for active
-  } else {
-    return `${baseClass}-purple`;  // Purple for inactive
-  }
+  return showActiveEvents.value ? 'counter-badge counter-badge-green' : 'counter-badge counter-badge-purple';
 }
+
 function getResultsTitle() {
   const statusText = showActiveEvents.value ? 'Active' : 'Inactive';
   let title = `${statusText} Events`;
   
-  // Show location filter
   if (selectedLocationValue.value) {
     title += ` - ${selectedLocationValue.value}`;
   }
   
-  // Show due by filter
   if (selectedDueByValue.value) {
     title += ` - Due in ${selectedDueByValue.value} days`;
   }
   
-  // Show search indicator
   if (filteredResults.value.length > 0) {
     title += ` - Search Results`;
   }
@@ -458,27 +381,23 @@ function getResultsTitle() {
   return title;
 }
 
-// ✅ ALL YOUR OTHER FUNCTIONS (unchanged)
 function searchColumns() {
   filteredResults.value = [];
   
   if (!inputSearchText.value || inputSearchText.value.length < 2) {
-    filteredResults.value = [];
     return;
   }
 
-  if (events.value && events.value.length > 0) {
-    events.value.forEach((event) => {
-      const searchHasDescription = 
-        event.description?.toLowerCase().includes(inputSearchText.value.toLowerCase());
-      const searchHasAssigned = 
-        event.assigned?.toLowerCase().includes(inputSearchText.value.toLowerCase());
-      
-      if (searchHasDescription || searchHasAssigned) {
-        filteredResults.value.push(event);
-      }
-    });
-  }
+  events.value.forEach((event) => {
+    const searchHasDescription = 
+      event.description?.toLowerCase().includes(inputSearchText.value.toLowerCase());
+    const searchHasAssigned = 
+      event.assigned?.toLowerCase().includes(inputSearchText.value.toLowerCase());
+    
+    if (searchHasDescription || searchHasAssigned) {
+      filteredResults.value.push(event);
+    }
+  });
 }
 
 function showIndex() {
@@ -492,15 +411,9 @@ function getEventCardClass(event) {
   return 'event-active';
 }
 
-function getEventStatusColor(event) {
-  if (event.status === 'inactive') return 'grey';
-  if (isEventPastDue(event)) return 'error';
-  return 'success';
-}
-
 function getEventStatusIcon(event) {
   if (event.status === 'inactive') return 'fas fa-pause-circle';
-  if (isEventPastDue(event)) return 'fas fa-alert-circle';
+  if (isEventPastDue(event)) return 'fas fa-exclamation-circle';
   return 'fas fa-check-circle';
 }
 
@@ -526,12 +439,13 @@ async function notifyEventsDue() {
     const result = await axios.put(apiUrl.value + "notification_events_due");
     
     if (result.statusText.toLowerCase() === 'ok') {
-      console.log("✅ Notification emails sent successfully");
+      alert('✅ Notification emails sent successfully');
     } else {
-      console.error("❌ Error sending notification emails");
+      alert('❌ Error sending notification emails');
     }
   } catch (error) {
     console.error("❌ Failed to send notifications:", error);
+    alert('❌ Failed to send notifications');
   }
 }
 
@@ -539,9 +453,8 @@ function formatStandardDate(value) {
   return DateFormatService.formatStandardDatejs(value);
 }
 
-// ✅ ONMOUNTED
+// ✅ LIFECYCLE
 onMounted(async () => {  
-  // Set API URL based on environment
   if (window.location.port === "8080") {
     apiUrl.value = "http://localhost:3000/api/v1/events/";
   } else {
@@ -551,6 +464,7 @@ onMounted(async () => {
   try {
     await store.dispatch("fetchEvents");
   } catch (error) {
+    console.error('❌ Error loading events:', error);
   } finally {
     isLoading.value = false;
   }
@@ -558,339 +472,49 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* ✅ FLOATING SHAPES BACKGROUND */
-.page-wrapper {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-  position: relative;
-  overflow-x: hidden;
-  height: 102% !important
-}
+/* ✅ IMPORT SHARED STYLES */
+@import '@/assets/styles/ui-components.css';
+@import '@/assets/styles/event-components.css';
 
-/* ✅ PAGE WRAPPER AND BACKGROUND */
-.page-wrapper {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-  position: relative;
-  overflow-x: hidden;
-  height: 102% !important;
-}
+/* ========================================
+   EVENT LIST SPECIFIC STYLES
+   ======================================== */
 
-/* ✅ LAYERED BACKGROUND SHAPES - MULTIPLE SECTIONS */
-
-/* PAGE-LEVEL BACKGROUND SHAPES */
-.page-wrapper > .background-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-}
-
-/* CARDS CONTAINER BACKGROUND SHAPES */
-.cards-container > .background-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* SEARCH CONTAINER BACKGROUND SHAPES */
-.search-container > .background-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  border-radius: 12px;
-}
-
-/* RESULTS CARD BACKGROUND SHAPES */
-.v-card > .background-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  border-radius: 12px;
-}
-
-/* EVENT DETAILS BACKGROUND SHAPES */
-.event-details > .background-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  border-radius: 8px;
-}
-
-/* ✅ SHARED SHAPE STYLING */
-.shape {
-  position: absolute;
-  border-radius: 50%;
-  animation: float 20s infinite ease-in-out;
-}
-
-/* PAGE-LEVEL SHAPES */
-.page-wrapper > .background-shapes .shape {
-  opacity: 0.1;
-}
-
-/* CARDS CONTAINER SHAPES - SLIGHTLY DIFFERENT */
-.cards-container > .background-shapes .shape {
-  opacity: 0.08;
-  animation: float 25s infinite ease-in-out;
-}
-
-/* SEARCH CONTAINER SHAPES - SUBTLE */
-.search-container > .background-shapes .shape {
-  opacity: 0.05;
-  animation: float 15s infinite ease-in-out;
-  transform: scale(0.6);
-}
-
-/* RESULTS CARD SHAPES - SLOW */
-.v-card > .background-shapes .shape {
-  opacity: 0.06;
-  animation: float 30s infinite ease-in-out;
-  transform: scale(0.8);
-}
-
-/* EVENT DETAILS SHAPES - TINY */
-.event-details > .background-shapes .shape {
-  opacity: 0.03;
-  animation: float 10s infinite ease-in-out;
-  transform: scale(0.3);
-}
-
-/* ✅ INDIVIDUAL SHAPE DEFINITIONS */
-.shape-1 {
-  width: 200px;
-  height: 200px;
-  background: linear-gradient(45deg, #16c0b0, #84cf6a);
-  top: 10%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.shape-2 {
-  width: 300px;
-  height: 300px;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  top: 60%;
-  right: 10%;
-  animation-delay: -5s;
-}
-
-.shape-3 {
-  width: 150px;
-  height: 150px;
-  background: linear-gradient(45deg, #ff7e5f, #feb47b);
-  top: 30%;
-  left: 60%;
-  animation-delay: -10s;
-}
-
-.shape-4 {
-  width: 250px;
-  height: 250px;
-  background: linear-gradient(45deg, #84cf6a, #16c0b0);
-  bottom: 20%;
-  left: 20%;
-  animation-delay: -15s;
-}
-
-.shape-5 {
-  width: 100px;
-  height: 100px;
-  background: linear-gradient(45deg, #764ba2, #667eea);
-  top: 80%;
-  right: 30%;
-  animation-delay: -7s;
-}
-
-.shape-6 {
-  width: 180px;
-  height: 180px;
-  background: linear-gradient(45deg, #feb47b, #ff7e5f);
-  top: 5%;
-  right: 50%;
-  animation-delay: -12s;
-}
-
-/* ✅ SHAPE VARIATIONS FOR DIFFERENT SECTIONS */
-.cards-container > .background-shapes .shape-1 {
-  top: 15%;
-  left: 15%;
-  animation-delay: -2s;
-}
-
-.cards-container > .background-shapes .shape-2 {
-  top: 65%;
-  right: 15%;
-  animation-delay: -7s;
-}
-
-.search-container > .background-shapes .shape-1 {
-  top: 20%;
-  left: 20%;
-  animation-delay: -1s;
-}
-
-.search-container > .background-shapes .shape-2 {
-  bottom: 20%;
-  right: 20%;
-  animation-delay: -3s;
-}
-
-.v-card > .background-shapes .shape-1 {
-  top: 25%;
-  left: 25%;
-  animation-delay: -4s;
-}
-
-.v-card > .background-shapes .shape-2 {
-  bottom: 25%;
-  right: 25%;
-  animation-delay: -8s;
-}
-
-.event-details > .background-shapes .shape-1 {
-  top: 10%;
-  left: 80%;
-  animation-delay: -1.5s;
-}
-
-.event-details > .background-shapes .shape-2 {
-  bottom: 10%;
-  left: 10%;
-  animation-delay: -3.5s;
-}
-
-/* ✅ FLOAT ANIMATION */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateY(-20px) rotate(90deg) scale(1.1);
-  }
-  50% {
-    transform: translateY(20px) rotate(180deg) scale(0.9);
-  }
-  75% {
-    transform: translateY(-10px) rotate(270deg) scale(1.05);
-  }
-}
-
-/* ✅ ENSURE CONTENT STAYS ON TOP */
 .event-list-container {
-  position: relative;
-  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-.cards-container {
-  position: relative;
-  z-index: 1;
+/* Navigation */
+.navigation-flex {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.v-card-title,
-.v-card-text,
-.v-card-actions {
-  position: relative;
-  z-index: 2;
+.navigation-flex .btn {
+  flex: 1;
+  min-width: 200px;
 }
 
-.search-container .v-text-field {
-  position: relative;
-  z-index: 2;
+/* Filters Grid */
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-/* ✅ CARD ANIMATIONS */
-.animated-card {
-  opacity: 0;
-  transform: translateY(30px) scale(0.95);
-  animation: cardEnter 0.6s ease forwards;
-}
-
-@keyframes cardEnter {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.event-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ✅ COUNTER BADGES */
 .filter-with-counter {
   position: relative;
 }
 
-/* Counter Badges*/
+/* Counter Badges */
 .counter-badge {
-  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
-}
-/* RED - For Past Due (your existing one) */
-.counter-badge-red {
-  background: linear-gradient(45deg, #ff416c, #ff4b2b);
-  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
-}
-
-/* GREEN - For Active Events */
-.counter-badge-green {
-  background: linear-gradient(45deg, #4caf50, #8bc34a);
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
-}
-
-/* BLUE - For Info/Statistics */
-.counter-badge-blue {
-  background: linear-gradient(45deg, #2196f3, #03a9f4);
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
-}
-
-/* ORANGE - For Warnings */
-.counter-badge-orange {
-  background: linear-gradient(45deg, #ff9800, #ffc107);
-  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
-}
-
-/* PURPLE - For Special Categories */
-.counter-badge-purple {
-  background: linear-gradient(45deg, #9c27b0, #e91e63);
-  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.4);
-}
-
-/* ✅ SHARED COUNTER BADGE BASE STYLES */
-.counter-badge,
-.counter-badge-red,
-.counter-badge-green,
-.counter-badge-blue,
-.counter-badge-orange,
-.counter-badge-purple {
   position: absolute;
   top: -8px;
-  left: 10rem;
+  right: -8px;
   color: white;
   border-radius: 50%;
   width: 32px;
@@ -903,174 +527,277 @@ onMounted(async () => {
   z-index: 10;
 }
 
+.counter-badge-red {
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.4);
+}
+
+.counter-badge-green {
+  background: linear-gradient(45deg, #4caf50, #8bc34a);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+.counter-badge-purple {
+  background: linear-gradient(45deg, #9c27b0, #e91e63);
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.4);
+}
+
 .pulse-animation {
   animation: pulse 2s infinite;
 }
-
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); box-shadow: 0 4px 16px rgba(255, 65, 108, 0.6); }
 }
 
-/* ✅ SEARCH MORPHING ANIMATION */
-.search-container {
+/* Search Section */
+.search-section {
+  margin: 1.5rem 0;
+}
+
+.search-input-wrapper {
   position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-bottom: 1rem;
 }
 
-.search-focused {
-  transform: scale(1.02);
-  z-index: 10;
-}
-
-.morphing-search {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-focused .morphing-search {
-  box-shadow: 0 8px 32px rgba(22, 192, 176, 0.3);
-  border-radius: 16px;
-}
-
-.search-suggestions {
+.search-icon {
   position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-  padding: 1rem;
-  transform: translateY(-8px);
-  animation: slideDown 0.3s ease forwards;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 1.1rem;
 }
 
-@keyframes slideDown {
-  to {
-    transform: translateY(0);
-  }
+.search-input {
+  padding-left: 3rem;
+  padding-right: 3rem;
 }
 
-.suggestion-count {
-  color: #16c0b0;
+.clear-search-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.clear-search-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.search-hint {
+  color: #667eea;
   font-weight: 600;
-  font-size: 14px;
+  margin-top: 0.5rem;
+  display: block;
 }
 
-/* ✅ CARD TITLE STYLING */
-:deep(.v-card-title) {
-  background: linear-gradient(135deg, rgba(22, 192, 176, 0.08) 0%, rgba(132, 207, 106, 0.08) 100%) !important;
-  border-bottom: 1px solid rgba(22, 192, 176, 0.15) !important;
-  padding: 1.5rem !important;
-  border-radius: 12px 12px 0 0 !important;
+/* View Toggle */
+.view-toggle-section {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
 }
 
-:deep(.v-card-title)::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(22, 192, 176, 0.05) 0%, transparent 50%);
-  pointer-events: none;
-  border-radius: 12px 12px 0 0;
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
-/* ✅ LAYOUT AND GRID STYLING */
-.cards-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
+/* Legend */
+.legend-chips {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
 }
 
-.event-list-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.navigation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.filters-grid {
-  position: relative;
-  left: -2rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
+/* Events Grid */
 .events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1rem;
 }
 
-/* ✅ EVENT CARD STYLING */
+/* Event Cards */
 .event-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .event-active {
-  border-left: 4px solid rgb(var(--v-theme-success));
+  border-left: 4px solid #4CAF50;
 }
 
 .event-pastdue {
-  border-left: 4px solid rgb(var(--v-theme-error));
-  background-color: rgba(var(--v-theme-error), 0.05);
+  border-left: 4px solid #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.02) 0%, rgba(239, 68, 68, 0.05) 100%);
 }
 
 .event-inactive {
-  border-left: 4px solid rgb(var(--v-theme-grey));
-  background-color: rgba(var(--v-theme-error), 0.05);
+  border-left: 4px solid #9e9e9e;
+  background: linear-gradient(135deg, rgba(158, 158, 158, 0.02) 0%, rgba(158, 158, 158, 0.05) 100%);
+  opacity: 0.8;
 }
 
-.event-details {
-  font-size: 0.875rem;
-  position: relative;
+.event-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* ✅ RESPONSIVE DESIGN */
+.event-status-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.event-active .event-status-icon {
+  color: #4CAF50;
+}
+
+.event-pastdue .event-status-icon {
+  color: #ef4444;
+}
+
+.event-inactive .event-status-icon {
+  color: #9e9e9e;
+}
+
+.event-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-card-body {
+  padding: 1.25rem;
+}
+
+.event-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.event-detail-row i {
+  color: #667eea;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.event-card-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Utilities */
+.subtitle {
+  margin: 0.5rem 0 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.hint-text {
+  margin: 0.5rem 0 0;
+  color: #999;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-5 { margin-top: 1.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; }
+
+.text-center {
+  text-align: center;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  /* Hide some shapes on mobile for performance */
-  .shape-4,
-  .shape-5,
-  .shape-6 {
-    display: none;
+  .event-list-container {
+    padding: 0.5rem;
   }
   
-  /* Make remaining shapes smaller */
-  .shape {
-    transform: scale(0.7) !important;
-    opacity: 0.05 !important;
+  .navigation-flex {
+    flex-direction: column;
   }
   
-  .cards-container {
-    padding: 0 0.5rem;
+  .navigation-flex .btn {
+    width: 100%;
+    min-width: auto;
   }
   
   .filters-grid {
-    left: 0;
     grid-template-columns: 1fr;
   }
   
   .events-grid {
     grid-template-columns: 1fr;
   }
-}
-
-@media (max-width: 480px) {
-  .shape {
-    display: none; /* Hide all shapes on very small screens */
+  
+  .legend-chips {
+    justify-content: center;
+  }
+  
+  .btn-group {
+    width: 100%;
+  }
+  
+  .btn-group .btn {
+    flex: 1;
   }
 }
 </style>
