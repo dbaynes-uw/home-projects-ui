@@ -181,72 +181,16 @@
         </div>
       </div>
 
-      <div class="card-body">
-        <!-- ✅ CARDS VIEW -->
+            <div class="card-body">
+        <!-- ✅ CARDS VIEW - NOW USING EventCard COMPONENT -->
         <div v-if="viewMode === 'cards'" class="events-grid">
-          <div
+          <EventCard
             v-for="event in displayEvents"
             :key="event.id"
-            @dblclick="showEvent(event)"
-            :class="['event-card', getEventCardClass(event)]"
-          >
-            <!-- ✅ CARD HEADER -->
-            <div class="event-card-header">
-              <i :class="[getEventStatusIcon(event), 'event-status-icon']"></i>
-              <h4 class="event-title">{{ event.description }}</h4>
-            </div>
-            
-            <!-- ✅ CARD BODY -->
-            <div class="event-card-body">
-              <div class="event-detail-row">
-                <i class="fas fa-user"></i>
-                <span>{{ event.assigned }}</span>
-              </div>
-
-              <div class="event-detail-row">
-                <i class="fas fa-sync-alt"></i>
-                <span>Every {{ event.frequency }} days</span>
-              </div>
-
-              <div class="event-detail-row">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Last: {{ formatStandardDate(event.action_completed_date) }}</span>
-              </div>
-
-              <div class="event-detail-row">
-                <i class="fas fa-calendar-check"></i>
-                <span>Due: {{ formatStandardDate(event.action_due_date) }}</span>
-                <span 
-                  v-if="isEventPastDue(event)"
-                  class="chip chip-danger chip-tiny ml-2"
-                >
-                  <i class="fas fa-exclamation-triangle"></i>
-                  PAST DUE
-                </span>
-              </div>
-
-              <div class="event-detail-row">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>{{ event.location || 'No location' }}</span>
-              </div>
-
-              <div class="event-detail-row">
-                <i class="fas fa-info-circle"></i>
-                <span>{{ event.status.charAt(0).toUpperCase() + event.status.slice(1) }}</span>
-              </div>
-            </div>
-            
-            <!-- ✅ CARD FOOTER -->
-            <div class="event-card-footer">
-              <button
-                @click.stop="editEvent(event)"
-                class="btn btn-small btn-text"
-              >
-                <i class="fas fa-edit"></i>
-                Edit
-              </button>
-            </div>
-          </div>
+            :event="event"
+            @edit="editEvent"
+            @view="showEvent"
+          />
         </div>
 
         <!-- ✅ TABLE VIEW -->
@@ -266,13 +210,12 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 
 // Components
+import EventCard from "@/components/events/EventCard.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 import EventsDueBy from "@/components/events/EventsDueBy.vue";
 import EventsLocations from "@/components/events/EventsLocations.vue";
 import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventsStatus from "@/components/events/EventsStatus.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-
 const router = useRouter();
 const store = useStore();
 

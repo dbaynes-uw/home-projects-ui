@@ -1,4 +1,5 @@
 <template>
+  <ConfirmDialogue ref="confirmDialogue" />
   <div class="table-container">
     <!-- ✅ TABLE HEADER -->
     <div class="table-header">
@@ -132,6 +133,14 @@
                 >
                   <i class="fas fa-copy"></i>
                 </button>
+                <button
+                  @click="deleteMarker(marker)"
+                  class="action-icon action-icon-delete"
+                  title="Delete Marker"
+                  type="button"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>                
               </div>
             </td>
           </tr>
@@ -167,6 +176,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+
 import { 
   getHealthMarkerByName, 
   getResultStatus 
@@ -217,6 +228,8 @@ function sortBy(key) {
 }
 
 // ✅ HELPER METHODS
+const confirmDialogue = ref(null);
+
 const getMarkerIconClass = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
   // Convert MDI icons to Font Awesome
@@ -340,7 +353,33 @@ const duplicateHealthMarker = (marker) => {
     } 
   });
 };
+const deleteMarker = async (marker) => {
+  const ok = await confirmDialogue.value.show({
+    title: "Delete Marker",
+    message: `Are you sure you want to delete "${marker.marker_name}"? This cannot be undone.`,
+    okButton: "Delete Forever",
+    cancelButton: "Cancel"
+  });
 
+  if (!ok) {
+    console.log('❌ Delete cancelled by user');
+    return;
+  }
+
+  try {
+    const success = await store.dispatch("deleteMarker", marker);
+    
+    if (success) {
+      // Reload the page to refresh the list
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      throw new Error('Delete failed');
+    }
+  } catch (error) {
+    console.error('❌ Delete error:', error);
+    alert(`Failed to delete "${marker.description}". Please try again.`);
+  }
+};
 const exportToCsv = () => {
   const csvHeaders = [
     'Health Marker',
@@ -384,6 +423,12 @@ const exportToCsv = () => {
 </script>
 
 <style scoped>
-/* ✅ All shared table styles now come from table-components.css */
-/* Only component-specific overrides if needed */
+/* ✅ IMPORT ALL SHARED STYLES */
+@import '@/assets/styles/ui-components.css';
+@import '@/assets/styles/table-components.css';
+
+/* ========================================
+   NO COMPONENT-SPECIFIC STYLES NEEDED!
+   Everything comes from table-components.css! 🎉
+   ======================================== */
 </style>
