@@ -195,9 +195,11 @@ const deleteEvent = async (event) => {
   }
 
   try {
+    console.log('🗑️ Deleting event:', event);
     const success = await store.dispatch("deleteEvent", event);
     
     if (success) {
+      console.log('✅ Delete successful');
       // Reload the page to refresh the list
       setTimeout(() => location.reload(), 1000);
     } else {

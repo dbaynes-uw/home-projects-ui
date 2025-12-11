@@ -1,5 +1,5 @@
 <template>
-  <ConfirmDialogue ref="confirmDialogue" />
+  <ConfirmDialogue ref="confirmDialogue" />  
   <div class="table-container">
     <!-- ✅ TABLE HEADER -->
     <div class="table-header">
@@ -134,13 +134,13 @@
                   <i class="fas fa-copy"></i>
                 </button>
                 <button
-                  @click="deleteMarker(marker)"
-                  class="action-icon action-icon-delete"
+                  class="table-action-btn delete"
+                  @click.stop="deleteMarker(marker)"
                   title="Delete Marker"
                   type="button"
                 >
                   <i class="fas fa-trash-alt"></i>
-                </button>                
+                </button>
               </div>
             </td>
           </tr>
@@ -176,6 +176,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex'; 
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 import { 
@@ -193,6 +194,11 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const store = useStore();
+
+// REFS
+const confirmDialogue = ref(null); 
+
 
 // ✅ SORTING STATE
 const sortKey = ref('marker_date');
@@ -226,9 +232,6 @@ function sortBy(key) {
     sortAsc.value = false;
   }
 }
-
-// ✅ HELPER METHODS
-const confirmDialogue = ref(null);
 
 const getMarkerIconClass = (markerName) => {
   const marker = getHealthMarkerByName(markerName);
@@ -354,22 +357,42 @@ const duplicateHealthMarker = (marker) => {
   });
 };
 const deleteMarker = async (marker) => {
+  console.log('🗑️ Deleting marker:', marker.id);
+  
+  // ✅ Make sure confirmDialogue.value exists
+  if (!confirmDialogue.value) {
+    console.error('❌ confirmDialogue ref is null!');
+    return;
+  }
+  
   const ok = await confirmDialogue.value.show({
     title: "Delete Marker",
-    message: `Are you sure you want to delete "${marker.marker_name}"? This cannot be undone.`,
+    message: `Are you sure you want to delete "${getMarkerLabel(marker.marker_name)}"? This cannot be undone.`,
     okButton: "Delete Forever",
     cancelButton: "Cancel"
   });
-
+  
+  console.log('✅ User confirmation result:', ok);
+  
   if (!ok) {
     console.log('❌ Delete cancelled by user');
     return;
   }
 
   try {
-    const success = await store.dispatch("deleteMarker", marker);
+    console.log('🔄 Dispatching deleteHealthMarker action...');
+    const success = await store.dispatch("deleteHealthMarker", marker.id);
+    
+    console.log('✅ Delete success:', success);
     
     if (success) {
+      await confirmDialogue.value.show({
+        title: "Marker Deleted",
+        message: `"${getMarkerLabel(marker.marker_name)}" has been deleted successfully.`,
+        okButton: "OK",
+        cancelButton: null
+      });
+      
       // Reload the page to refresh the list
       setTimeout(() => location.reload(), 1000);
     } else {
@@ -377,9 +400,16 @@ const deleteMarker = async (marker) => {
     }
   } catch (error) {
     console.error('❌ Delete error:', error);
-    alert(`Failed to delete "${marker.description}". Please try again.`);
+    
+    await confirmDialogue.value.show({
+      title: "Delete Failed",
+      message: `Failed to delete "${getMarkerLabel(marker.marker_name)}". Please try again.`,
+      okButton: "OK",
+      cancelButton: null
+    });
   }
 };
+
 const exportToCsv = () => {
   const csvHeaders = [
     'Health Marker',
