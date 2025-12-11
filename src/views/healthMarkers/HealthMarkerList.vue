@@ -98,7 +98,7 @@
   <div class="results-section">
     <h3 class="results-count">
       <i class="fas fa-hashtag"></i>
-      Results New {{ displayedHealthMarkers.length }}
+      Results {{ displayedHealthMarkers.length }}
     </h3>
     
     <!-- ✅ CATEGORY BREAKDOWN -->
@@ -149,6 +149,7 @@
         </div>
       </div>
     </div>
+    
   </div>
 </template>
 

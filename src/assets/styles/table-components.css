@@ -661,3 +661,24 @@
 .text-center {
   text-align: center;
 }
+.table-wrapper {
+  margin-bottom: 6rem; /* ✅ INCREASED from 4rem to 6rem */
+  padding-bottom: 2rem; /* Extra padding at bottom of table */
+}
+
+/* Alternative: Add padding to last row if needed */
+.data-table tbody tr:last-child td {
+  padding-bottom: 1.5rem; /* Extra space on last row cells */
+}
+
+/* ✅ ADD THIS NEW RULE for the table-footer itself */
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  padding-bottom: 5rem; /* ✅ ADD EXTRA BOTTOM PADDING to push it up from nav bar */
+  background: rgba(102, 126, 234, 0.03);
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+  font-size: 0.9rem;
+}

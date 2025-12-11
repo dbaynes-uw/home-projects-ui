@@ -11,6 +11,10 @@
           <i class="fas fa-list-ol"></i>
           {{ markers.length }} entr{{ markers.length === 1 ? 'y' : 'ies' }}
         </div>
+        <button class="export-btn" @click="exportToCsv">
+          <i class="fas fa-download"></i>
+          Export CSV
+        </button>
       </div>
     </div>
     
@@ -127,12 +131,14 @@
   </div>
 </template>
 
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/sleepMarkers/SleepMarkerTable.vue -->
+
 <script setup>
 import { ref, computed } from 'vue';
 import dayjs from 'dayjs';
 
 const props = defineProps({
-  markers: {
+  markers: {  // ✅ The prop is called 'markers'
     type: Array,
     required: true
   }
@@ -178,15 +184,126 @@ function formatDate(date) {
   return dayjs(date).format('MMM DD, YYYY');
 }
 
+function formatTime(time) {
+  if (!time) return '—';
+  return dayjs(time, 'HH:mm').format('h:mm A');
+}
+
+function getDaysAgo(dateString) {
+  if (!dateString) return '';
+  
+  const testDate = new Date(dateString);
+  const today = new Date();
+  const diffTime = today - testDate;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return '1 day ago';
+  if (diffDays < 30) return `${diffDays} days ago`;
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return months === 1 ? '1 month ago' : `${months} months ago`;
+  }
+  
+  const years = Math.floor(diffDays / 365);
+  return years === 1 ? '1 year ago' : `${years} years ago`;
+}
+
+function truncateNotes(notes) {
+  if (!notes) return '';
+  return notes.length > 40 ? notes.substring(0, 40) + '...' : notes;
+}
+
 function getQualityClass(quality) {
   const q = parseFloat(quality);
   if (q >= 8) return 'quality-good';
   if (q >= 6) return 'quality-medium';
   return 'quality-poor';
 }
+
+const exportToCsv = () => {
+  const csvHeaders = [
+    'Date',
+    'Bed Time',
+    'Wake Time',
+    'Time in Bed',
+    'Time Asleep',
+    'Awakenings',
+    'Quality',
+    'Awake Sleep',
+    'REM Sleep',
+    'Core Sleep',
+    'Deep Sleep',
+    'Had OOB',
+    'Notes'
+  ];
+  
+  // ✅ FIXED: Changed props.sleepMarkers to props.markers
+  const csvData = props.markers.map(item => [
+    formatDate(item.sleep_date),
+    formatTime(item.bed_time),
+    formatTime(item.wake_time),
+    item.time_in_bed || '',
+    item.time_asleep || '',
+    item.awakenings || 0,
+    item.sleep_quality || '',
+    item.awake_sleep || '',
+    item.rem_sleep || '',
+    item.core_sleep || '',
+    item.deep_sleep || '',
+    item.had_oob ? 'Yes' : 'No',
+    truncateNotes(item.sleep_notes) || ''
+  ]);
+  
+  const csvContent = [
+    csvHeaders.join(','),
+    ...csvData.map(row => row.map(field => `"${field}"`).join(','))
+  ].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `sleep-records-${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
 </script>
 
 <style scoped>
-/* ✅ All shared table styles now come from table-components.css */
-/* Only component-specific overrides if needed */
+/* ✅ IMPORT ALL SHARED STYLES */
+@import '@/assets/styles/ui-components.css';
+@import '@/assets/styles/table-components.css';
+
+/* ========================================
+   SLEEP MARKER TABLE SPECIFIC STYLES
+   ======================================== */
+
+/* Quality Badge */
+.quality-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.quality-good {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.quality-medium {
+  background: rgba(234, 179, 8, 0.1);
+  color: #ca8a04;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.quality-poor {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
 </style>

@@ -1,24 +1,29 @@
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/sleepMarkers/SleepMarkerList.vue -->
+
 <template>
-  <div class="sleep-markers-container">
-    <!-- ✅ HEADER WITH CONTROLS -->
-    <v-card-title class="pb-0">
-      <h2><i class="fas fa-pills"></i> 
-        <router-link :to="{ name: 'HealthDashboard' }"> Health Dashboard</router-link>
-      </h2>
-    </v-card-title>
-    <br/>
+  <div class="list-view-container">
+    <!-- ✅ BREADCRUMB - Now from shared CSS -->
+    <div class="breadcrumb-nav">
+      <router-link :to="{ name: 'HealthDashboard' }" class="breadcrumb-link">
+        <i class="fas fa-heartbeat"></i>
+        Health Dashboard
+      </router-link>
+      <i class="fas fa-chevron-right breadcrumb-separator"></i>
+      <span class="breadcrumb-current">Sleep Markers</span>
+    </div>
+
+    <!-- ✅ HEADER - Now from shared CSS -->
     <BaseCard class="header-card">
       <template #header>
         <div class="header-content">
           <div class="title-section">
             <h2>
-              <i class="fas fa-bed bed-icon"></i>
+              <i class="fas fa-bed animated-icon"></i>
               Sleep Markers
             </h2>           
           </div>
           
           <div class="controls-section">
-            <!-- Add New Sleep Entry Button -->
             <BaseButton
               variant="success"
               icon="plus"
@@ -27,7 +32,7 @@
               Add Sleep Entry
             </BaseButton>
             
-            <!-- View Toggle Buttons -->
+            <!-- ✅ VIEW TOGGLE - Now from shared CSS -->
             <div class="view-toggle">
               <button
                 v-for="view in views"
@@ -43,7 +48,7 @@
         </div>
       </template>
 
-      <!-- ✅ STATS SUMMARY ROW -->
+      <!-- ✅ STATS - Now from shared CSS -->
       <div class="stats-row">
         <div class="stat-card stat-card-info">
           <div class="stat-icon">
@@ -68,38 +73,42 @@
           <div class="stat-value">{{ averageAwakenings }}</div>
           <div class="stat-label">Avg Awakenings</div>
         </div>
+
         <div class="stat-card stat-card-warning">
           <div class="stat-icon">
-            <i class="fas fa-brain"></i>
+            <i class="fas fa-moon-stars"></i>
           </div>
           <div class="stat-value">{{ averageAwakeSleep }}</div>
-          <div class="stat-label">Avg Awake Sleep</div>
+          <div class="stat-label">Avg Awake</div>
         </div>
+
         <div class="stat-card stat-card-warning">
           <div class="stat-icon">
             <i class="fas fa-brain"></i>
           </div>
           <div class="stat-value">{{ averageRemSleep }}</div>
-          <div class="stat-label">Avg Rem Sleep</div>
+          <div class="stat-label">Avg REM</div>
         </div>
+
         <div class="stat-card stat-card-warning">
           <div class="stat-icon">
-            <i class="fas fa-brain"></i>
+            <i class="fas fa-cloud"></i>
           </div>
           <div class="stat-value">{{ averageCoreSleep }}</div>
-          <div class="stat-label">Avg Core Sleep</div>
+          <div class="stat-label">Avg Core</div>
         </div>
+
         <div class="stat-card stat-card-warning">
           <div class="stat-icon">
-            <i class="fas fa-brain"></i>
+            <i class="fas fa-water"></i>
           </div>
           <div class="stat-value">{{ averageDeepSleep }}</div>
-          <div class="stat-label">Avg Deep Sleep</div>
+          <div class="stat-label">Avg Deep</div>
         </div>        
       </div>
     </BaseCard>
 
-    <!-- ✅ LOADING STATE -->
+    <!-- ✅ LOADING - Now from shared CSS -->
     <BaseCard v-if="isLoading" class="loading-card">
       <div class="loading-content">
         <div class="spinner"></div>
@@ -107,7 +116,7 @@
       </div>
     </BaseCard>
 
-    <!-- ✅ CARD VIEW -->
+    <!-- ✅ CARDS VIEW - Now from shared CSS -->
     <div v-else-if="currentView === 'cards'" class="cards-view">
       <div class="cards-grid">
         <SleepMarkerCard
@@ -119,7 +128,7 @@
         />
       </div>
       
-      <!-- Empty State -->
+      <!-- ✅ EMPTY STATE - Now from shared CSS -->
       <BaseCard v-if="sleepMarkers.length === 0" class="empty-state">
         <div class="empty-content">
           <i class="fas fa-bed empty-icon"></i>
@@ -130,16 +139,11 @@
         </div>
       </BaseCard>
     </div>
-
-    <!-- ✅ TABLE VIEW -->
-    <SleepMarkerTable
-      v-else-if="currentView === 'table'"
-      :markers="sleepMarkers"
-      @edit="editMarker"
-      @delete="deleteMarker"
+    <!-- Table View -->
+    <SleepMarkerIndex
+      v-if="currentView === 'table'"
+      :sleepMarkers="sleepMarkers"
     />
-
-    <!-- ✅ CALENDAR VIEW -->
     <SleepMarkerCalendar
       v-else-if="currentView === 'calendar'"
       :markers="sleepMarkers"
@@ -147,13 +151,12 @@
       @date-click="openAddDialogForDate"
     />
 
-    <!-- ✅ CHARTS VIEW -->
     <SleepMarkerCharts
       v-else-if="currentView === 'charts'"
       :markers="sleepMarkers"
     />
 
-    <!-- ✅ ADD/EDIT DIALOG (NOW USING BaseModal!) -->
+    <!-- ✅ DIALOG -->
     <BaseModal
       v-model="showDialog"
       :title="selectedMarker?.id ? 'Edit Sleep Entry' : 'Add Sleep Entry'"
@@ -166,6 +169,8 @@
         @cancel="closeDialog"
       />
     </BaseModal>
+
+    <ConfirmDialogue ref="confirmDialogue" />
   </div>
 </template>
 
@@ -176,10 +181,11 @@ import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseModal from '@/components/ui/BaseModal.vue';
 import SleepMarkerCard from '@/components/sleepMarkers/SleepMarkerCard.vue';
-import SleepMarkerTable from '@/components/sleepMarkers/SleepMarkerTable.vue';
+import SleepMarkerIndex from '@/components/sleepMarkers/SleepMarkerIndex.vue';
 import SleepMarkerCalendar from '@/components/sleepMarkers/SleepMarkerCalendar.vue';
 import SleepMarkerCharts from '@/components/sleepMarkers/SleepMarkerCharts.vue';
 import SleepMarkerForm from '@/components/sleepMarkers/SleepMarkerForm.vue';
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 // ✅ PINIA STORE
 const sleepMarkerStore = useSleepMarkerStore();
@@ -188,6 +194,7 @@ const sleepMarkerStore = useSleepMarkerStore();
 const currentView = ref('cards');
 const showDialog = ref(false);
 const selectedMarker = ref(null);
+const confirmDialogue = ref(null);
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -225,12 +232,31 @@ function editMarker(marker) {
 }
 
 async function deleteMarker(marker) {
-  if (confirm(`Delete sleep entry for ${marker.sleep_date}?`)) {
-    try {
-      await sleepMarkerStore.deleteSleepMarker(marker.id);
-    } catch (error) {
-      alert('Failed to delete sleep entry. Please try again.');
-    }
+  const ok = await confirmDialogue.value?.show({
+    title: "Delete Sleep Entry",
+    message: `Are you sure you want to delete the sleep entry for ${marker.sleep_date}? This cannot be undone.`,
+    okButton: "Delete Forever",
+    cancelButton: "Cancel"
+  });
+
+  if (!ok) return;
+
+  try {
+    await sleepMarkerStore.deleteSleepMarker(marker.id);
+    await confirmDialogue.value?.show({
+      title: "Entry Deleted",
+      message: "Sleep entry has been deleted successfully.",
+      okButton: "OK",
+      cancelButton: null
+    });
+  } catch (error) {
+    console.error('❌ Delete error:', error);
+    await confirmDialogue.value?.show({
+      title: "Delete Failed",
+      message: "Failed to delete sleep entry. Please try again.",
+      okButton: "OK",
+      cancelButton: null
+    });
   }
 }
 
@@ -257,299 +283,18 @@ onMounted(async () => {
   try {
     await sleepMarkerStore.fetchSleepMarkers();
   } catch (error) {
-    alert('Failed to load sleep data. Please refresh the page.');}
+    alert('Failed to load sleep data. Please refresh the page.');
+  }
 });
 </script>
 
 <style scoped>
-/* ✅ CONTAINER */
-.sleep-markers-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-}
+/* ✅ IMPORT ALL SHARED STYLES */
+@import '@/assets/styles/ui-components.css';
+@import '@/assets/styles/list-view-components.css';
 
-/* ✅ HEADER CARD */
-.header-card {
-  margin-bottom: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-}
-
-.header-card :deep(.base-card-header) {
-  background: transparent;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.header-card :deep(.base-card-body) {
-  padding-top: 24px;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.title-section h2 {
-  margin: 0;
-  color: white;
-  font-size: 28px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.meds-menu-link {
-  color: white;
-  text-decoration: none;
-}
-.meds-menu-link:hover {
-  text-decoration: underline;
-}
-.bed-icon {
-  color: #FFD700;
-  font-size: 1.5em;
-  animation: gentle-bounce 2s ease-in-out infinite;
-}
-
-@keyframes gentle-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-.controls-section {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-/* ✅ VIEW TOGGLE */
-.view-toggle {
-  display: flex;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 4px;
-  gap: 4px;
-}
-
-.view-btn {
-  padding: 10px 16px;
-  border: none;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.view-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-}
-
-.view-btn.active {
-  background: white;
-  color: #667eea;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.view-btn i {
-  font-size: 16px;
-}
-
-/* ✅ STATS ROW */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-top: 24px;
-}
-
-.stat-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 24px;
-  text-align: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-.stat-card-info {
-  border-left: 4px solid #2196F3;
-}
-
-.stat-card-success {
-  border-left: 4px solid #4CAF50;
-}
-
-.stat-card-warning {
-  border-left: 4px solid #FF9800;
-}
-
-.stat-card-danger {
-  border-left: 4px solid #F44336;
-}
-
-.stat-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
-  opacity: 0.7;
-}
-
-.stat-card-info .stat-icon { color: #2196F3; }
-.stat-card-success .stat-icon { color: #4CAF50; }
-.stat-card-warning .stat-icon { color: #FF9800; }
-.stat-card-danger .stat-icon { color: #F44336; }
-
-.stat-value {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-}
-
-/* ✅ LOADING STATE */
-.loading-card {
-  margin-top: 24px;
-}
-
-.loading-content {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.spinner {
-  width: 64px;
-  height: 64px;
-  border: 4px solid rgba(102, 126, 234, 0.1);
-  border-top-color: #667eea;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 20px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-content p {
-  margin: 0;
-  font-size: 16px;
-  color: #666;
-}
-
-/* ✅ CARDS VIEW */
-.cards-view {
-  margin-top: 24px;
-}
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-/* ✅ EMPTY STATE */
-.empty-state {
-  margin-top: 24px;
-}
-
-.empty-content {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.empty-icon {
-  font-size: 64px;
-  color: #ddd;
-  margin-bottom: 20px;
-}
-
-.empty-content p {
-  margin: 0 0 20px;
-  font-size: 18px;
-  color: #666;
-}
-
-/* ✅ MOBILE RESPONSIVE */
-@media (max-width: 768px) {
-  .sleep-markers-container {
-    padding: 16px;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .title-section h2 {
-    font-size: 24px;
-  }
-  
-  .controls-section {
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .view-toggle {
-    width: 100%;
-  }
-  
-  .view-btn {
-    flex: 1;
-    justify-content: center;
-  }
-  
-  .view-btn span {
-    display: none;
-  }
-  
-  .stats-row {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  
-  .stat-value {
-    font-size: 24px;
-  }
-  
-  .stat-label {
-    font-size: 12px;
-  }
-  
-  .cards-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .stats-row {
-    grid-template-columns: 1fr;
-  }
-}
+/* ========================================
+   NO COMPONENT-SPECIFIC STYLES NEEDED!
+   Everything comes from list-view-components.css! 🎉
+   ======================================== */
 </style>

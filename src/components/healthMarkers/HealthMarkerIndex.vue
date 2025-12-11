@@ -11,7 +11,7 @@
       <div class="table-controls">
         <div class="table-count">
           <i class="fas fa-list-ol"></i>
-          {{ healthMarkers.length }} result{{ healthMarkers.length === 1 ? '' : 's' }}
+          {{ props.healthMarkers.length }} result{{ props.healthMarkers.length === 1 ? '' : 's' }}
         </div>
         
         <button class="export-btn" @click="exportToCsv">
@@ -152,7 +152,7 @@
         <i class="fas fa-database"></i>
         <h3>No Health Markers Found</h3>
         <p>Try adjusting your filters or add your first health marker.</p>
-        <button class="table-empty-btn" @click="$router.push({ name: 'HealthMarkerCreate' })">
+        <button class="table-empty-btn" @click="router.push({ name: 'HealthMarkerCreate' })">
           <i class="fas fa-plus"></i>
           Add Health Marker
         </button>
@@ -167,7 +167,7 @@
       </div>
       
       <div class="pagination-info">
-        Showing {{ sortedMarkers.length }} of {{ healthMarkers.length }} results
+        Showing {{ sortedMarkers.length }} of {{ props.healthMarkers.length }} results
       </div>
     </div>
   </div>
