@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-// ✅ ONLY IMPORT CORE COMPONENTS (Used immediately)
+// ✅ ONLY IMPORT CORE COMPONENTS (Used imoobiately)
 import Home from '../views/Home.vue'
 // In router/index.js - ADD THIS BEFORE export default router
 const routes = [
@@ -295,7 +295,7 @@ const routes = [
     path: "/oobs",
     name: "OobList",
     component: () => import('@/views/oobs/OobList.vue'),
-    //component: () => import('@/views/meds/MedList.vue'),
+    //component: () => import('@/views/oobs/OobList.vue'),
     meta: { requiresAuth: true}
   },
   {
@@ -336,7 +336,6 @@ const routes = [
     meta: { requiresAuth: true },
   },
   */
-  /* ERROR
   {
     path: "/sleep-marker/:id",
     name: "SleepMarkerEdit",
@@ -344,7 +343,6 @@ const routes = [
     component: () => import('@/views/sleepMarkers/SleepMarkerEdit.vue'),
     meta: { requiresAuth: true },
   },
-  */
   // ✅ PLANTS
   {
     path: "/plants",

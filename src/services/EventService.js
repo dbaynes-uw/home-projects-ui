@@ -233,29 +233,28 @@ export default {
   deleteOob(oob) {
     this.init();
        // For Testing: setTimeout(5000);
-    //return axios.delete(api_url + "Oobs/" + `${oob.id}`);
-    return axios.delete(api_url + "meds/" + `${oob.id}`);
+    return axios.delete(api_url + "oobs/" + `${oob.id}`);
   },
   getOob(id) {
     this.init();
     //return axios.get(api_url + "Oobs/" + id);
-    return axios.get(api_url + "meds/" + id);
+    return axios.get(api_url + "oobs/" + id);
   },
   getOobs() {
     this.init();
     //return axios.get(api_url + "Oobs")
-    return axios.get(api_url + "meds")
+    return axios.get(api_url + "oobs")
 
   },
   async putOob(updatedOob) {
     this.init();
     //return axios.put(api_url + "Oobs" + `/${updatedOob.id}`, updatedOob);
-    return axios.put(api_url + "meds" + `/${updatedOob.id}`, updatedOob);
+    return axios.put(api_url + "oobs" + `/${updatedOob.id}`, updatedOob);
   },
   async postOob(oob) {
     this.init();
     //return axios.post(api_url + 'Oobs', oob);
-    return axios.post(api_url + 'meds', oob);
+    return axios.post(api_url + 'oobs', oob);
 
   },
   deletePlant(plant) {
@@ -333,10 +332,10 @@ export default {
     this.init();
     return axios.put(api_url + "sleep_markers" + `/${updatedSleepMarker.id}`, updatedSleepMarker);
   },
-  deleteSleepMarker(sleepMarker) {
+  deleteSleepMarker(id) {
     this.init();
     // For Testing: setTimeout(5000);
-    return axios.delete(api_url + "sleep_markers/" + `${sleepMarker.id}`);
+    return axios.delete(api_url + "sleep_markers/" + `${id}`);
   },
 
   async postTrail(trail) {

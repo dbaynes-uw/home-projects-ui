@@ -308,7 +308,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
     },
 
     // ✅ CREATE SLEEP MARKER
-        async createSleepMarker(sleepMarkerData) {
+    async createSleepMarker(sleepMarkerData) {
       this.loading = true;
       this.error = null;
       
@@ -318,9 +318,10 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         const response = await EventService.postSleepMarker(apiData);
         
+        alert('Sleep entry created successfully!');
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
-        
+
         return response.data;
         
       } catch (error) {
@@ -362,6 +363,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
 
     // ✅ DELETE SLEEP MARKER
     async deleteSleepMarker(id) {
+      console.log('🗑️ Deleting sleep marker with ID:', id);
       this.loading = true;
       this.error = null;
       
@@ -370,7 +372,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
-                
+        alert('Sleep entry deleted successfully.');                
         return true;
         
       } catch (error) {

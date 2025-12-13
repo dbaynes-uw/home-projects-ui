@@ -55,8 +55,6 @@ export default new Vuex.Store({
     products: [],
     products_by_location: [],
     shopping_list: [],
-    //sleepMarkers: [],
-    //sleepMarker: {},
     //trail: {},
     //trails: [],
     //travel: [],
@@ -177,60 +175,6 @@ export default new Vuex.Store({
     //SET_GOLFS(state, golfs) {
     //  state.golfs = golfs;
     //},
-    ADD_HEALTH_MARKER(state, healthMarker) {
-      state.healthMarkers.push(healthMarker);
-    },
-    DELETE_HEALTH_MARKER(state, health_marker) {
-      state.healthMarker = health_marker;
-    },
-    SET_HEALTH_MARKER(state, health_marker) {
-      state.healthMarker = health_marker;
-    },
-    SET_HEALTH_MARKERS(state, health_markers) {
-      state.healthMarkers = health_markers;
-    },
-    ADD_OOB(state, oob) {
-      state.oobs.push(oob);
-    },
-    DELETE_OOB(state, oob) {
-      state.oob = oob;
-    },
-    SET_OOB(state, oob) {
-      state.oob = oob;
-    },
-    // ✅ FIXED SET_OOBS MUTATION
-    SET_OOBS(state, response) {
-      // ✅ HANDLE DIFFERENT RESPONSE FORMATS
-      if (Array.isArray(response)) {
-        // ✅ DIRECT ARRAY (YOUR CURRENT API FORMAT)
-        state.oobs = response;
-      } else if (response && Array.isArray(response.data)) {
-        // ✅ NESTED IN response.data
-        state.oobs = response.data;
-      } else if (response && response.data && Array.isArray(response.data.data)) {
-        // ✅ DOUBLE NESTED
-        state.oobs = response.data.data;
-      } else {
-        // ✅ FALLBACK FOR UNEXPECTED FORMATS
-        console.error('❌ Unexpected oobs response format:', response);
-        console.error('❌ Response type:', typeof response);
-        console.error('❌ Response keys:', response && typeof response === 'object' ? Object.keys(response) : 'N/A');
-        state.oobs = []; // ✅ Fallback to empty array
-      }
-    },
-
-    SET_OOBS_PAGINATION(state, pagination) {
-      if (pagination && typeof pagination === 'object') {
-        state.oobsPagination = {
-          current_page: pagination.current_page || 1,
-          per_page: pagination.per_page || 20,
-          total_count: pagination.total_count || 0,
-          total_pages: pagination.total_pages || 0
-        };
-      } else {
-        console.warn('⚠️ SET_OOBS_PAGINATION: Invalid pagination data:', pagination);
-      }
-    },
     // ✅ SLEEP_MARKER MUTATIONS
     /*
     ADD_SLEEP_MARKER(state, sleepMarker) {
@@ -251,12 +195,6 @@ export default new Vuex.Store({
       state.events = [];
     },
 
-    SET_OOBS_TOTAL(state, total) {
-      state.oobsTotal = total;
-    }, 
-    APPEND_OOBS(state, newOobs) {
-      state.oobs = [...state.oobs, ...newOobs];
-    },    
     DELETE_PLANT(state, plantId) {
       state.plants = state.plants.filter(plant => plant.id !== plantId);
     },
@@ -447,7 +385,6 @@ export default new Vuex.Store({
       //state.films = [];
       //state.golfs = [];
       state.events = [];
-      state.oobs = [];
       state.plants = [];
       state.products = [];
       //state.trails = [];
@@ -1137,178 +1074,6 @@ export default new Vuex.Store({
         });
     },
     */
-    // ✅ HealthMarkers ACTIONS
-    async createHealthMarker({ commit }, healthMarker) {
-      EventService.postHealthMarker(healthMarker)
-        .then(() => {
-          commit("ADD_HEALTH_MARKER", healthMarker);
-          alert("Health Marker was successfully added.");
-        })
-        .catch((error) => {
-          alert("Health Marker Post Error: ", error.response.data )
-        });
-    },
-
-    async deleteHealthMarker({ commit, dispatch }, healthMarker) {
-      try {
-        const response = await EventService.deleteHealthMarker(healthMarker);
-        // ✅ REFRESH THE ENTIRE HEALTH MARKERS LIST TO GET UPDATED DATA
-        await dispatch('fetchHealthMarker');
-
-        return response.data; // ✅ RETURN SUCCESS
-
-      } catch (error) {
-        console.error('❌ Store: Health Marker delete error:', error);
-        throw error;
-      }
-    },
-
-    async fetchHealthMarker({ commit, state }, id) {
-      console.log("Fetching Health Marker with ID:", id);
-      const existingHealthMarker = state.healthMarkers.find((marker) => marker.id === id);
-      if (existingHealthMarker) {
-        commit("SET_HEALTH_MARKER", existingHealthMarker);
-      } else {
-        EventService.getHealthMarker(id)
-          .then((response) => {
-            commit("SET_HEALTH_MARKER", response.data);
-          })
-          .catch((error) => {
-            alert("Health Marker Get Error: ", error.response.data )
-          });
-      }
-    },
-
-    async fetchHealthMarkers({ commit }) {
-      try {
-        commit('SET_HEALTH_MARKERS', []);
-
-        const response = await EventService.getHealthMarkers();
-
-        // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
-        let healthMarkersArray = [];
-
-        if (Array.isArray(response.data)) {
-          // ✅ NEW FORMAT: Direct array
-          healthMarkersArray = response.data;
-        } else if (response.data && Array.isArray(response.data.data)) {
-          // ✅ OLD FORMAT: Paginated (fallback)
-          healthMarkersArray = response.data.data;
-        } else {
-          console.error('❌ Store: Unexpected response format:', response);
-          healthMarkersArray = [];
-        }
-
-        commit('SET_HEALTH_MARKERS', healthMarkersArray);
-
-        return healthMarkersArray;
-
-      } catch (error) {
-        console.error('❌ Store: Error fetching health markers:', error);
-        commit('SET_HEALTH_MARKERS', []);
-        throw error;
-      }
-    },
-    async updateHealthMarker({ commit, dispatch }, healthMarker) {
-      try {
-        const response = await EventService.putHealthMarker(healthMarker);
-        // Commit the updated marker to Vuex state
-        commit("SET_HEALTH_MARKER", response.data);
-        // Optionally fetch the updated list of markers
-        await dispatch("fetchHealthMarkers");
-      } catch (error) {
-        console.error("Error updating health marker:", error.response.data);
-        alert("Failed to update health marker. Please try again.");
-      }
-    },
-    // ✅ FIXED createOOB ACTION (around line 980)
-    async createOob({ commit, dispatch }, oob) {
-      try {
-        const response = await EventService.postOob(oob);
-
-        // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
-        await dispatch('fetchOobs');
-        return response.data; // ✅ RETURN SUCCESS
-
-      } catch (error) {
-        console.error('❌ Store: OOB create error:', error);
-        throw error;
-      }
-    },
-
-    async deleteOob({ commit, dispatch }, oob) {
-      try {
-        const response = await EventService.deleteOob(oob);
-        // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
-        await dispatch('fetchOobs');
-
-        return response.data; // ✅ RETURN SUCCESS
-
-      } catch (error) {
-        console.error('❌ Store: OOB delete error:', error);
-        throw error;
-      }
-    },
-
-    async fetchOob({ commit, state }, id) {
-      const existingOob = state.oobs.find((oob) => oob.id === id);
-      if (existingOob) {
-        commit("SET_OOB", existingOOB);
-      } else {
-        EventService.getOob(id)
-          .then((response) => {
-            commit("SET_OOB", response.data);
-          })
-          .catch((error) => {
-            alert("OOB Get Error: ", error.response.data )
-          });
-      }
-    },
-    // ✅ SIMPLIFIED fetchOobs ACTION
-    async fetchOobs({ commit }) {
-      try {
-        commit('SET_OOBS', []);
-
-        const response = await EventService.getOobs();
-        // ✅ HANDLE BOTH OLD (PAGINATED) AND NEW (SIMPLE) FORMATS
-        let oobsArray = [];
-
-        if (Array.isArray(response.data)) {
-          // ✅ NEW FORMAT: Direct array
-          oobsArray = response.data;
-        } else if (response.data && Array.isArray(response.data.data)) {
-          // ✅ OLD FORMAT: Paginated (fallback)
-          oobsArray = response.data.data;
-        } else {
-          console.error('❌ Store: Unexpected response format:', response);
-          oobsArray = [];
-        }
-
-        commit('SET_OOBS', oobsArray);
-
-        return oobsArray;
-
-      } catch (error) {
-        console.error('❌ Store: Error fetching oobs:', error);
-        commit('SET_OOBS', []);
-        throw error;
-      }
-    },
-    // ✅ ENHANCED updateOob ACTION (around line 1020)
-    async updateOob({ commit, dispatch }, oob) {
-      try {
-        const response = await EventService.putOob(oob);
-        // ✅ REFRESH THE ENTIRE OOBS LIST TO GET UPDATED DATA
-        await dispatch('fetchOobs');
-
-        return response.data; // ✅ RETURN SUCCESS
-
-      } catch (error) {
-        console.error('❌ Store: OOB update error:', error);
-        throw error;
-      }
-    },
-
     async createProduct({ commit }, product) {
       EventService.postProduct(product)
         .then((response) => {
@@ -1423,73 +1188,6 @@ export default new Vuex.Store({
         .catch((error) => {
           alert("ProductsVendors Put Error: ", error.response.data )
         });
-    },
-
-    // ✅ SleepMarkers ACTIONS
-        async createSleepMarker({ commit }, sleepMarker) {
-      try {
-        const response = await EventService.postSleepMarker(sleepMarker);
-        commit("ADD_SLEEP_MARKER", response.data);
-        return response.data;
-      } catch (error) {
-        console.error("Sleep Marker Post Error:", error);
-        throw error;
-      }
-    },
-
-    async deleteSleepMarker({ commit, dispatch }, sleepMarker) {
-      try {
-        const response = await EventService.deleteSleepMarker(sleepMarker);
-        await dispatch('fetchSleepMarkers');
-        return response.data;
-      } catch (error) {
-        console.error('Sleep Marker delete error:', error);
-        throw error;
-      }
-    },
-
-    async fetchSleepMarker({ commit }, id) {
-      try {
-        const response = await EventService.getSleepMarker(id);
-        commit("SET_SLEEP_MARKER", response.data);
-        return response.data;
-      } catch (error) {
-        console.error("Sleep Marker Get Error:", error);
-        throw error;
-      }
-    },
-
-    async fetchSleepMarkers({ commit }) {
-      try {
-        commit('SET_SLEEP_MARKERS', []);
-        const response = await EventService.getSleepMarkers();
-        
-        let sleepMarkersArray = [];
-        if (Array.isArray(response.data)) {
-          sleepMarkersArray = response.data;
-        } else if (response.data && Array.isArray(response.data.data)) {
-          sleepMarkersArray = response.data.data;
-        }
-        
-        commit('SET_SLEEP_MARKERS', sleepMarkersArray);
-        return sleepMarkersArray;
-      } catch (error) {
-        console.error('Error fetching sleep markers:', error);
-        commit('SET_SLEEP_MARKERS', []);
-        throw error;
-      }
-    },
-    
-    async updateSleepMarker({ commit, dispatch }, sleepMarker) {
-      try {
-        const response = await EventService.putSleepMarker(sleepMarker);
-        commit("SET_SLEEP_MARKER", response.data);
-        await dispatch("fetchSleepMarkers");
-        return response.data;
-      } catch (error) {
-        console.error("Error updating sleep marker:", error);
-        throw error;
-      }
     },
     // ✅ Trails ACTIONS    
     async createTrail({ commit }, trail) {

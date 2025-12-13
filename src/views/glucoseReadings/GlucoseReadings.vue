@@ -3,7 +3,7 @@
     <v-card class="mx-auto mt-5">
       <v-card-title class="pb-0">
         <h2><i class="fas fa-pills"></i>
-          <router-link :to="{ name: 'HealthDashboard' }" class="meds-menu-link"> Health Dashboard</router-link>
+          <router-link :to="{ name: 'HealthDashboard' }" class="oobs-menu-link"> Health Dashboard</router-link>
         </h2>
       </v-card-title>
         <v-card-title class="pb-0">

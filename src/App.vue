@@ -364,7 +364,7 @@ export default {
   min-width: 160px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  max-height: 400px;
+  max-height: 420px;
   overflow-y: auto;
 }
 

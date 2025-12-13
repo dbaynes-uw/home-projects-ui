@@ -1,34 +1,34 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/oobs/MedChart.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/oobs/OobChart.vue -->
 <template>
-  <div class="med-chart">
-    <h3>Med Chart (Chart temporarily disabled for memory optimization)</h3>
+  <div class="oob-chart">
+    <h3>Oob Chart (Chart temporarily disabled for memory optimization)</h3>
     
     <!-- ✅ SIMPLE DATA DISPLAY INSTEAD OF CHART -->
     <div class="chart-replacement">
       <p><strong>Number of occurrences:</strong> {{ timeFrameCount }}</p>
       
       <div class="simple-stats">
-        <div class="stat-item" v-for="(med, index) in filteredMeds" :key="index">
-          <span class="date">{{ formatStandardDate(med.date_of_occurrence) }}</span>
-          <span class="interval">{{ med.interval_days }} days</span>
+        <div class="stat-item" v-for="(oob, index) in filteredOobs" :key="index">
+          <span class="date">{{ formatStandardDate(oob.date_of_occurrence) }}</span>
+          <span class="interval">{{ oob.interval_days }} days</span>
         </div>
       </div>
       
       <!-- ✅ OPTIONAL: Simple bar representation -->
-      <div class="simple-bars" v-if="filteredMeds.length > 0">
+      <div class="simple-bars" v-if="filteredOobs.length > 0">
         <div 
-          v-for="(med, index) in filteredMeds" 
+          v-for="(oob, index) in filteredOobs" 
           :key="index"
           class="bar-item"
         >
-          <div class="bar-label">{{ formatStandardDate(med.date_of_occurrence) }}</div>
+          <div class="bar-label">{{ formatStandardDate(oob.date_of_occurrence) }}</div>
           <div class="bar-container">
             <div 
               class="bar-fill" 
-              :style="{ width: (med.interval_days / maxInterval * 100) + '%' }"
+              :style="{ width: (oob.interval_days / maxInterval * 100) + '%' }"
             ></div>
           </div>
-          <div class="bar-value">{{ med.interval_days }}</div>
+          <div class="bar-value">{{ oob.interval_days }}</div>
         </div>
       </div>
     </div>
@@ -39,19 +39,19 @@
 import DateFormatService from "@/services/DateFormatService.js";
 
 export default {
-  name: 'MedChart',
-  props: ["meds", "timeFrame", "chartLabels", "chartIntervals"],
+  name: 'OobChart',
+  props: ["oobs", "timeFrame", "chartLabels", "chartIntervals"],
   
   data() {
     return {
       timeFrameCount: 0,
-      filteredMeds: []
+      filteredOobs: []
     }
   },
   
   computed: {
     maxInterval() {
-      return Math.max(...this.filteredMeds.map(med => med.interval_days), 1)
+      return Math.max(...this.filteredOobs.map(oob => oob.interval_days), 1)
     }
   },
   
@@ -62,15 +62,15 @@ export default {
   methods: {
     filterTimeFrame(value) {
       this.timeFrameCount = 0
-      this.filteredMeds = []
+      this.filteredOobs = []
       
       let compareDate = new Date()
       const days = value.target ? value.target.value : value
       compareDate.setDate(compareDate.getDate() - days)
       
-      this.filteredMeds = this.meds.filter(med => {
-        const medDate = new Date(med.date_of_occurrence)
-        if (medDate > compareDate) {
+      this.filteredOobs = this.oobs.filter(oob => {
+        const oobDate = new Date(oob.date_of_occurrence)
+        if (oobDate > compareDate) {
           this.timeFrameCount++
           return true
         }
@@ -86,7 +86,7 @@ export default {
 </script>
 
 <style scoped>
-.med-chart {
+.oob-chart {
   padding: 20px;
 }
 

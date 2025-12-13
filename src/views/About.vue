@@ -140,11 +140,11 @@ export default {
           url: '/gardens'
         },
         {
-          name: 'meds_menu',
-          title: 'Meds',
+          name: 'oobs_menu',
+          title: 'Oobs',
           description: 'Track your Medical History',
           icon: 'fas fa-pills',
-          url: '/meds_menu'
+          url: '/oobs_menu'
         },
         {
           name: 'shopping',

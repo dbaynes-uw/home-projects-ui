@@ -1,21 +1,21 @@
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/oobs/MedCard.vue -->
 <template>
-  <div class="med-card">
+  <div class="oob-card">
     <!-- ✅ MODERN CARD LAYOUT -->
-    <v-card class="med-card-content" elevation="2">
+    <v-card class="oob-card-content" elevation="2">
       <!-- ✅ CARD HEADER WITH DATE -->
-      <v-card-title class="med-card-header">
+      <v-card-title class="oob-card-header">
         <div class="header-content">
           <v-icon class="header-icon">mdi-pill</v-icon>
           <div class="header-text">
-            <h3 class="med-date">{{ formatStandardDateTime(med.date_of_occurrence) }} {{ formatDayOfWeek(med.date_of_occurrence) }}</h3>
-            <p class="med-duration">{{ med.duration }}</p>
+            <h3 class="oob-date">{{ formatStandardDateTime(oob.date_of_occurrence) }} {{ formatDayOfWeek(oob.date_of_occurrence) }}</h3>
+            <p class="oob-duration">{{ oob.duration }}</p>
           </div>
         </div>
       </v-card-title>
 
       <!-- ✅ CARD CONTENT -->
-      <v-card-text class="med-details">
+      <v-card-text class="oob-details">
         <!-- ✅ INTERVAL INFORMATION -->
         <div class="interval-section">
           <h4 class="section-title">
@@ -24,22 +24,22 @@
           </h4>
           <div class="interval-grid">
             <div class="interval-item">
-              <span class="interval-value">{{ med.interval_days }}</span>
+              <span class="interval-value">{{ oob.interval_days }}</span>
               <span class="interval-label">days</span>
             </div>
             <div class="interval-item">
-              <span class="interval-value">{{ med.interval_hours }}</span>
+              <span class="interval-value">{{ oob.interval_hours }}</span>
               <span class="interval-label">hours</span>
             </div>
             <div class="interval-item">
-              <span class="interval_value">{{ med.interval_minutes }}</span>
+              <span class="interval_value">{{ oob.interval_minutes }}</span>
               <span class="interval-label">minutes</span>
             </div>
           </div>
         </div>
 
         <!-- ✅ CIRCUMSTANCES/NOTES -->
-        <div v-if="med.circumstances" class="circumstances-section">
+        <div v-if="oob.circumstances" class="circumstances-section">
           <h4 class="section-title">
             <v-icon size="small" class="section-icon">mdi-note-text</v-icon>
             Notes:
@@ -57,7 +57,7 @@
       </v-card-text>
 
       <!-- ✅ CARD ACTIONS -->
-      <v-card-actions class="med-actions">
+      <v-card-actions class="oob-actions">
         <div class="actions-left">
           <!-- ✅ BACK TO LIST -->
           <v-btn 
@@ -76,7 +76,7 @@
             variant="outlined"
             color="primary"
             size="small"
-            :to="{ name: 'OobEdit', params: { id: med.id } }"
+            :to="{ name: 'OobEdit', params: { id: oob.id } }"
             prepend-icon="mdi-pencil"
           >
             Edit
@@ -101,14 +101,14 @@
       <v-card>
         <v-card-title class="dialog-title">
           <v-icon color="error" class="mr-2">mdi-delete-alert</v-icon>
-          Delete Med from List
+          Delete Oob from List
         </v-card-title>
         
         <v-card-text class="dialog-content">
-          <p>Are you sure you want to delete this med entry?</p>
+          <p>Are you sure you want to delete this oob entry?</p>
           <div class="delete-details">
-            <p><strong>Date:</strong> {{ formatStandardDateTime(med.date_of_occurrence) }}</p>
-            <p><strong>Duration:</strong> {{ med.duration }}</p>
+            <p><strong>Date:</strong> {{ formatStandardDateTime(oob.date_of_occurrence) }}</p>
+            <p><strong>Duration:</strong> {{ oob.duration }}</p>
           </div>
           <p class="warning-text">
             <v-icon color="warning" size="small" class="mr-1">mdi-alert</v-icon>
@@ -127,10 +127,10 @@
           <v-btn 
             color="error"
             variant="elevated"
-            @click="handleDeleteMed"
+            @click="handleDeleteOob"
             :loading="isDeleting"
           >
-            Delete Med
+            Delete Oob
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -151,7 +151,7 @@ const router = useRouter();
 
 // ✅ PROPS
 const props = defineProps({
-  med: {
+  oob: {
     type: Object,
     required: true,
     default: () => ({})
@@ -160,7 +160,7 @@ const props = defineProps({
 
 // ✅ ERROR HANDLER
 onErrorCaptured((error, instance, info) => {
-  console.error('❌ MedCard error captured:', error);
+  console.error('❌ OobCard error captured:', error);
   console.error('❌ Error info:', info);
   return false;
 });
@@ -174,9 +174,9 @@ const splitLength = ref(30);
 const isDev = computed(() => process.env.NODE_ENV === 'development');
 
 const splitCircumstances = computed(() => {
-  if (!props.med.circumstances) return [];
+  if (!props.oob.circumstances) return [];
   
-  return SplitStringService.splitList(props.med.circumstances, splitLength.value);
+  return SplitStringService.splitList(props.oob.circumstances, splitLength.value);
 });
 
 // ✅ METHODS
@@ -188,38 +188,38 @@ const formatDayOfWeek = (value) => {
   if (!value) return '';
   return DateFormatService.formatDayOfWeekjs(value);
 };
-const handleDeleteMed = async () => {
+const handleDeleteOob = async () => {
   try {
     isDeleting.value = true;
     
-    if (!props.med.id) {
-      throw new Error('Med ID is required for deletion');
+    if (!props.oob.id) {
+      throw new Error('Oob ID is required for deletion');
     }
     
     // ✅ DISPATCH DELETE ACTION
-    const result = await store.dispatch('deleteOob', props.med);
+    const result = await store.dispatch('deleteOob', props.oob);
     
     if (result !== false) {      
       // ✅ SHOW SUCCESS MESSAGE
-      const formattedDate = formatStandardDateTime(props.med.date_of_occurrence);
-      alert(`✅ Med was deleted for ${formattedDate}`);
+      const formattedDate = formatStandardDateTime(props.oob.date_of_occurrence);
+      alert(`✅ Oob was deleted for ${formattedDate}`);
       
       // ✅ NAVIGATE BACK TO LIST
       await router.push({ name: 'OobList' });
     } else {
       console.error('❌ Delete failed');
-      alert('❌ Error deleting med - please try again');
+      alert('❌ Error deleting oob - please try again');
     }
     
   } catch (error) {
-    console.error('❌ Error deleting med:', error);
+    console.error('❌ Error deleting oob:', error);
     
     if (error.response?.status === 404) {
-      alert('❌ Med not found - it may have already been deleted');
+      alert('❌ Oob not found - it may have already been deleted');
     } else if (error.response?.status === 500) {
       alert('❌ Server error - please try again later');
     } else {
-      alert(`❌ Error deleting med: ${error.message}`);
+      alert(`❌ Error deleting oob: ${error.message}`);
     }
   } finally {
     isDeleting.value = false;
@@ -227,21 +227,21 @@ const handleDeleteMed = async () => {
   }
 };
 
-const debugMedData = () => {
-  console.log('🔍 MED DATA DEBUG:');
+const debugOobData = () => {
+  console.log('🔍 OOB DATA DEBUG:');
   console.log('='.repeat(50));
   
-  console.log('Med object:', props.med);
-  console.log('Med ID:', props.med.id);
-  console.log('Date of occurrence:', props.med.date_of_occurrence);
-  console.log('Duration:', props.med.duration);
-  console.log('Circumstances:', props.med.circumstances);
-  console.log('Circumstances length:', props.med.circumstances?.length || 0);
+  console.log('Oob object:', props.oob);
+  console.log('Oob ID:', props.oob.id);
+  console.log('Date of occurrence:', props.oob.date_of_occurrence);
+  console.log('Duration:', props.oob.duration);
+  console.log('Circumstances:', props.oob.circumstances);
+  console.log('Circumstances length:', props.oob.circumstances?.length || 0);
   
   console.log('\nInterval data:');
-  console.log('Days:', props.med.interval_days);
-  console.log('Hours:', props.med.interval_hours);
-  console.log('Minutes:', props.med.interval_minutes);
+  console.log('Days:', props.oob.interval_days);
+  console.log('Hours:', props.oob.interval_hours);
+  console.log('Minutes:', props.oob.interval_minutes);
   
   console.log('\nSplit circumstances:');
   splitCircumstances.value.forEach((line, index) => {
@@ -254,23 +254,23 @@ const debugMedData = () => {
 
 <style scoped>
 /* ✅ MODERN CARD STYLES */
-.med-card {
+.oob-card {
   width: 100%;
   margin-bottom: 1rem;
 }
 
-.med-card-content {
+.oob-card-content {
   border-radius: 12px;
   transition: all 0.3s ease;
 }
 
-.med-card-content:hover {
+.oob-card-content:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
 }
 
 /* ✅ HEADER STYLES */
-.med-card-header {
+.oob-card-header {
   background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
   color: white;
   padding: 1rem 1.5rem;
@@ -292,20 +292,20 @@ const debugMedData = () => {
   flex: 1;
 }
 
-.med-date {
+.oob-date {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
 }
 
-.med-duration {
+.oob-duration {
   margin: 0.25rem 0 0 0;
   opacity: 0.9;
   font-size: 0.9rem;
 }
 
 /* ✅ CONTENT STYLES */
-.med-details {
+.oob-details {
   padding: 1.5rem;
 }
 
@@ -380,7 +380,7 @@ const debugMedData = () => {
 }
 
 /* ✅ ACTIONS STYLES */
-.med-actions {
+.oob-actions {
   padding: 1rem 1.5rem;
   background: #fafafa;
   display: flex;
@@ -426,7 +426,7 @@ const debugMedData = () => {
 }
 
 /* ✅ RESPONSIVE DESIGN */
-@media (max-width: 768px) {
+@oobia (max-width: 768px) {
   .header-content {
     flex-direction: column;
     text-align: center;
@@ -438,7 +438,7 @@ const debugMedData = () => {
     gap: 0.5rem;
   }
   
-  .med-actions {
+  .oob-actions {
     flex-direction: column;
     gap: 1rem;
   }
@@ -449,13 +449,13 @@ const debugMedData = () => {
     justify-content: center;
   }
   
-  .med-details {
+  .oob-details {
     padding: 1rem;
   }
 }
 
 /* ✅ ACCESSIBILITY */
-.med-card-content:focus-within {
+.oob-card-content:focus-within {
   outline: 2px solid #1976d2;
   outline-offset: 2px;
 }

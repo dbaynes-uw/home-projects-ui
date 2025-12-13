@@ -1,11 +1,11 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
 
-  <div class="med-index-container">
+  <div class="oob-index-container">
     <div class="index-header">
       <h3 class="results-count">
         <i class="fas fa-counter"></i>
-        Total: {{ meds.length }}
+        Total: {{ oobs.length }}
       </h3>
       
       <div class="view-controls">
@@ -21,7 +21,7 @@
     </div>
 
     <!-- ✅ PROPERLY STRUCTURED V-TABLE -->
-    <v-table :density="isCompact ? 'compact' : 'default'" class="med-table">
+    <v-table :density="isCompact ? 'compact' : 'default'" class="oob-table">
       <thead>
         <tr>
           <!-- ✅ SORTABLE HEADERS -->
@@ -94,52 +94,52 @@
         
       <tbody>
         <tr 
-          v-for="(med, medIndex) in sortedMeds" 
-          :key="med.id || medIndex"
-          class="med-row"
-          :class="{ 'even-row': medIndex % 2 === 0 }"
+          v-for="(oob, oobIndex) in sortedOobs" 
+          :key="oob.id || oobIndex"
+          class="oob-row"
+          :class="{ 'even-row': oobIndex % 2 === 0 }"
         >
           <td class="date-cell">
             <div class="cell-content">
               <i class="fas fa-calendar-clock cell-icon"></i>
-              <span>{{ formatStandardDateTime(med.date_of_occurrence) }}</span>
+              <span>{{ formatStandardDateTime(oob.date_of_occurrence) }}</span>
             </div>
           </td>
           
           <td class="duration-cell">
             <div class="cell-content">
               <i class="fas fa-timer-outline cell-icon"></i>
-              <span>{{ capitalizeFirst(med.duration) }}</span>
+              <span>{{ capitalizeFirst(oob.duration) }}</span>
             </div>
           </td>
           
           <td class="interval-cell">
-            <span class="interval-badge">{{ med.interval_days }} days</span>
+            <span class="interval-badge">{{ oob.interval_days }} days</span>
           </td>
           
           <td class="interval-cell">
-            <span class="interval-badge secondary">{{ med.interval_hours }} hours</span>
+            <span class="interval-badge secondary">{{ oob.interval_hours }} hours</span>
           </td>
           
           <td class="interval-cell">
-            <span class="interval-badge tertiary">{{ med.interval_minutes }} minutes</span>
+            <span class="interval-badge tertiary">{{ oob.interval_minutes }} minutes</span>
           </td>
           
           <td class="circumstances-cell">
-            <div v-if="med.circumstances" class="circumstances-content">
+            <div v-if="oob.circumstances" class="circumstances-content">
               <textarea 
-                v-model="med.circumstances" 
+                v-model="oob.circumstances" 
                 class="circumstances-textarea"
                 rows="2"
-                :readonly="!isEditing[med.id]"
-                @blur="saveCircumstances(med)"
+                :readonly="!isEditing[oob.id]"
+                @blur="saveCircumstances(oob)"
               />
               <button 
-                @click="toggleEdit(med.id)"
+                @click="toggleEdit(oob.id)"
                 class="edit-circumstances-btn"
-                :title="isEditing[med.id] ? 'Save' : 'Edit'"
+                :title="isEditing[oob.id] ? 'Save' : 'Edit'"
               >
-                <i class="mdi" :class="isEditing[med.id] ? 'fas fa-content-save' : 'fas fa-pencil'"></i>
+                <i class="mdi" :class="isEditing[oob.id] ? 'fas fa-content-save' : 'fas fa-pencil'"></i>
               </button>
             </div>
             <span v-else class="no-circumstances">
@@ -152,16 +152,16 @@
             <div class="action-buttons">
               <!-- ✅ EDIT BUTTON -->
               <router-link
-                :to="{ name: 'OobEdit', params: { id: `${med.id}` } }"
+                :to="{ name: 'OobEdit', params: { id: `${oob.id}` } }"
                 class="action-btn edit-btn"
-                title="Edit Med"
+                title="Edit Oob"
               >
                 <i class="fas fa-pencil"></i>
               </router-link>
               
               <!-- ✅ VIEW DETAILS BUTTON -->
               <router-link
-                :to="{ name: 'OobDetails', params: { id: `${med.id}` } }"
+                :to="{ name: 'OobDetails', params: { id: `${oob.id}` } }"
                 class="action-btn view-btn"
                 title="View Details"
               >
@@ -170,9 +170,9 @@
               
               <!-- ✅ DELETE BUTTON -->
               <button
-                @click="deleteMed(med)"
+                @click="deleteOob(oob)"
                 class="action-btn delete-btn"
-                title="Delete Med"
+                title="Delete Oob"
               >
                 <i class="fas fa-delete"></i>
               </button>
@@ -183,9 +183,9 @@
     </v-table>
     
     <!-- ✅ EMPTY STATE -->
-    <div v-if="meds.length === 0" class="empty-state">
-      <i class="fas fa-medication-outline"></i>
-      <p>No meds to display</p>
+    <div v-if="oobs.length === 0" class="empty-state">
+      <i class="fas fa-oobication-outline"></i>
+      <p>No oobs to display</p>
     </div>
   </div>
 </template>
@@ -204,7 +204,7 @@ const store = useStore();
 
 // ✅ PROPS
 const props = defineProps({
-  meds: {
+  oobs: {
     type: Array,
     default: () => []
   }
@@ -218,10 +218,10 @@ const sortDirection = ref('desc');
 const isEditing = reactive({});
 
 // ✅ COMPUTED PROPERTIES
-const sortedMeds = computed(() => {
-  if (!props.meds || props.meds.length === 0) return [];
+const sortedOobs = computed(() => {
+  if (!props.oobs || props.oobs.length === 0) return [];
   
-  const sorted = [...props.meds].sort((a, b) => {
+  const sorted = [...props.oobs].sort((a, b) => {
     let aVal = a[sortBy.value];
     let bVal = b[sortBy.value];
     
@@ -274,22 +274,22 @@ const getSortIcon = (column) => {
   return sortDirection.value === 'asc' ? 'fas fa-sort-ascending' : 'fas fa-sort-descending';
 };
 
-const toggleEdit = (medId) => {
-  isEditing[medId] = !isEditing[medId];
+const toggleEdit = (oobId) => {
+  isEditing[oobId] = !isEditing[oobId];
 };
 
-const saveCircumstances = (med) => {
-  if (isEditing[med.id]) {
-    console.log('💾 Auto-saving circumstances for med:', med.id);
-    // store.dispatch('updateMed', med);
+const saveCircumstances = (oob) => {
+  if (isEditing[oob.id]) {
+    console.log('💾 Auto-saving circumstances for oob:', oob.id);
+    // store.dispatch('updateOob', oob);
   }
 };
 
-const deleteMed = async (med) => {
+const deleteOob = async (oob) => {
   try {
     const ok = await confirmDialogue.value?.show({
-      title: "Delete Med Record",
-      message: `Are you sure you want to delete the med record from ${formatStandardDateTime(med.date_of_occurrence)}? This action cannot be undone.`,
+      title: "Delete Oob Record",
+      message: `Are you sure you want to delete the oob record from ${formatStandardDateTime(oob.date_of_occurrence)}? This action cannot be undone.`,
       okButton: "Delete Forever",
       cancelButton: "Keep Record"
     });
@@ -299,14 +299,14 @@ const deleteMed = async (med) => {
       return;
     }
 
-    console.log('🗑️ Deleting med:', med.id);
+    console.log('🗑️ Deleting oob:', oob.id);
     
-    const result = await store.dispatch("deleteMed", med);
+    const result = await store.dispatch("deleteOob", oob);
     
     if (result && result.success !== false) {
       await confirmDialogue.value?.show({
-        title: "Med Deleted",
-        message: `Med record from ${formatStandardDateTime(med.date_of_occurrence)} has been permanently deleted.`,
+        title: "Oob Deleted",
+        message: `Oob record from ${formatStandardDateTime(oob.date_of_occurrence)} has been permanently deleted.`,
         okButton: "OK",
         cancelButton: null
       });
@@ -319,7 +319,7 @@ const deleteMed = async (med) => {
     
     await confirmDialogue.value?.show({
       title: "Delete Failed",
-      message: `Failed to delete med record. ${error.message || 'Please try again.'}`,
+      message: `Failed to delete oob record. ${error.message || 'Please try again.'}`,
       okButton: "OK",
       cancelButton: null
     });
@@ -332,7 +332,7 @@ const formatStandardDateTime = (value) => {
 };
 </script>
 <style scoped>
-.med-index-container {
+.oob-index-container {
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -385,7 +385,7 @@ const formatStandardDateTime = (value) => {
 }
 
 /* ✅ TABLE STYLING */
-.med-table {
+.oob-table {
   width: 100%;
   border-collapse: collapse;
 }
@@ -438,12 +438,12 @@ const formatStandardDateTime = (value) => {
 }
 
 /* ✅ ROW STYLING */
-.med-row {
+.oob-row {
   transition: all 0.3s ease;
   border-bottom: 1px solid #f1f3f4;
 }
 
-.med-row:hover {
+.oob-row:hover {
   background: rgba(65, 184, 131, 0.05);
 }
 
@@ -635,7 +635,7 @@ const formatStandardDateTime = (value) => {
 }
 
 /* ✅ RESPONSIVE */
-@media (max-width: 1200px) {
+@oobia (max-width: 1200px) {
   .circumstances-cell {
     max-width: 200px;
   }
@@ -645,7 +645,7 @@ const formatStandardDateTime = (value) => {
   }
 }
 
-@media (max-width: 768px) {
+@oobia (max-width: 768px) {
   .index-header {
     flex-direction: column;
     gap: 1rem;
@@ -673,7 +673,7 @@ const formatStandardDateTime = (value) => {
   }
 }
 
-@media (max-width: 480px) {
+@oobia (max-width: 480px) {
   .action-buttons {
     flex-direction: column;
     gap: 0.25rem;

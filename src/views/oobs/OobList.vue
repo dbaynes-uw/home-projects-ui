@@ -2,7 +2,9 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2><i class="fas fa-pills"></i> 
-        <router-link :to="{ name: 'HealthDashboard' }" class="meds-menu-link"> Health Dashboard</router-link>
+        <router-link :to="{ name: 'HealthDashboard' }" class="oobs-menu-link">
+          Health Dashboard
+        </router-link>
       </h2>
     </v-card-title>
     <v-card-title class="pb-0">
@@ -10,37 +12,35 @@
         OOBs Dashboard
       </h2>
     </v-card-title>    
-    <!-- ✅ MODERN NAVIGATION -->    
+    
+    <!-- ✅ NAVIGATION BUTTONS -->    
     <div class="navigation-buttons">
-
-      <router-link :to="{ name: 'OobCreate' }" class="nav-btn" id="button-as-link">
-        <!-- ✅ CHANGED: mdi-plus → fas fa-plus -->
+      <router-link :to="{ name: 'OobCreate' }" class="nav-btn">
         <i class="fas fa-plus"></i>
-        <span style="position: relative; left: 2rem;">Add OOB</span>
+        <span>Add OOB</span>
       </router-link>
       
-      <button @click="toggleIndexView" class="nav-btn" id="button-as-link">
-        <!-- ✅ CHANGED: mdi-view-grid/mdi-view-list → fas fa-th/fas fa-list -->
+      <button @click="toggleIndexView" class="nav-btn">
         <i :class="showIndexView ? 'fas fa-th' : 'fas fa-list'"></i>
         <span>{{ showIndexView ? 'Card View' : 'Index View' }}</span>
       </button>
       
-      <button @click="toggleOobChart" class="nav-btn" id="button-as-link">
-        <!-- ✅ CHANGED: mdi-chart-bar → fas fa-chart-bar -->
+      <button @click="toggleOobChart" class="nav-btn">
         <i class="fas fa-chart-bar"></i>
         <span>{{ showOobChart ? 'Hide Chart' : 'Show Chart' }}</span>
       </button>
     </div>
   </v-card>
 
-  <!-- ✅ EXTERNAL LINK (already FontAwesome) -->
+  <!-- ✅ EXTERNAL LINK -->
   <div class="external-link">
     <a href="https://myhealthchart.com/" target="_blank">
       <i class="fas fa-external-link-alt"></i>
       MyHealthChart Portal
     </a>
   </div>
-  <!-- ✅ FILTERS SECTION (already FontAwesome) -->
+
+  <!-- ✅ FILTERS SECTION -->
   <div class="filters-section">
     <div class="time-frame-filter">
       <label>
@@ -64,46 +64,49 @@
         clear-icon="fas fa-times"
         @click:clear="clearSearch"
         @input="performSearch"
-        placeholder="Search meds..."
+        placeholder="Search OOBs..."
         prepend-inner-icon="fas fa-search"
         class="search-field"
       />
     </div>
   </div>
 
-  <!-- ✅ ENHANCED CHART SECTION (no icon changes needed) -->
-  <div v-if="showOobChart && displayedMeds.length > 0" class="chart-section">
+  <!-- ✅ CHART SECTION -->
+  <div v-if="showOobChart && displayedOobs.length > 0" class="chart-section">
     <div class="chart-debug mb-3">
       <p><strong>Debug Info:</strong></p>
-      <p>📊 Displaying {{ displayedMeds.length }} meds</p>
+      <p>📊 Displaying {{ displayedOobs.length }} OOBs</p>
       <p>📅 Time Frame: {{ selectedTimeFrame || 'All Time' }} days</p>
     </div>
     
     <OobChart 
       :key="chartKey"
-      :meds="displayedMeds" 
+      :oobs="displayedOobs" 
       :timeFrame="parseInt(selectedTimeFrame) || 365"
-      :chartLabels="chartLabels" 
-      :chartIntervals="chartIntervals"
     />
   </div>
   
-  <!-- ✅ RESULTS SECTION (already FontAwesome) -->
+  <!-- ✅ RESULTS SECTION -->
   <div class="results-section">
     <h3 class="results-count">
       <i class="fas fa-hashtag"></i>
-      List Total: {{ displayedMeds.length }}
+      List Total: {{ displayedOobs.length }}
     </h3>
     
-    <div v-if="displayedMeds.length === 0" class="no-results">
+    <div v-if="isLoading" class="loading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading OOBs...</p>
+    </div>
+    
+    <div v-else-if="displayedOobs.length === 0" class="no-results">
       <i class="fas fa-info-circle"></i>
-      <p>No meds found matching your criteria.</p>
+      <p>No OOBs found matching your criteria.</p>
     </div>
     
     <div v-else>
-      <!-- ✅ INDEX VIEW -->
+      <!-- ✅ INDEX/TABLE VIEW -->
       <div v-if="showIndexView">
-        <OobIndex :meds="displayedMeds" />
+        <OobIndex :oobs="displayedOobs" />
       </div>
       
       <!-- ✅ CARD VIEW -->
@@ -115,198 +118,184 @@
         
         <div class="cards-grid">
           <OobCard
-            v-for="med in displayedMeds"
-            :key="med.id"
-            :med="med"
-            class="med-card"
-            @dblclick="editMed(med)"
+            v-for="oob in displayedOobs"
+            :key="oob.id"
+            :oob="oob"
+            @edit="editOob"
+            @delete="deleteOob"
           />
         </div>
       </div>
     </div>
   </div>
+
+  <!-- ✅ EDIT/ADD DIALOG -->
+  <BaseModal
+    v-model="showDialog"
+    :title="selectedOob?.id ? 'Edit OOB' : 'Add OOB'"
+    size="large"
+    @close="closeDialog"
+  >
+    <OobForm
+      :oob="selectedOob"
+      @save="handleSave"
+      @cancel="closeDialog"
+    />
+  </BaseModal>
+
+  <ConfirmDialogue ref="confirmDialogue" />
 </template>
 
 <script setup>
-// ✅ YOUR SCRIPT STAYS EXACTLY THE SAME
-import { ref, computed, onMounted, nextTick, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import OobCard from "@/components/oobs/OobCard.vue";
-import OobChart from "@/components/oobs/OobChart.vue";
-import OobIndex from "@/components/oobs/OobIndex.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-import { onUnmounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useOobStore } from '@/stores/OobStore';
+import BaseModal from '@/components/ui/BaseModal.vue';
+import OobCard from '@/components/oobs/OobCard.vue';
+import OobIndex from '@/components/oobs/OobIndex.vue';
+import OobForm from '@/components/oobs/OobForm.vue';
+import OobChart from '@/components/oobs/OobChart.vue';
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-onUnmounted(() => {  
-  // Clear search and filters
-  searchText.value = '';
-  selectedTimeFrame.value = '30';
-  
-  // Clear component-level data
-  if (meds.value.length > 100) {
-    console.log('🧹 Clearing large meds array...')
-    store.dispatch('clearLargeDatasets');
-  }
-})
-// ✅ COMPOSITION API SETUP
-const store = useStore();
-const router = useRouter(); // For navigation
+// ✅ PINIA STORE
+const oobStore = useOobStore();
 
-// ✅ REACTIVE STATE
-const showIndexView = ref(false);
+// ✅ STATE
+const showIndexView = ref(false);  // false = cards, true = table
 const showOobChart = ref(false);
+const showDialog = ref(false);
+const selectedOob = ref(null);
+const confirmDialogue = ref(null);
 const searchText = ref('');
-const selectedTimeFrame = ref('30'); // Default to 30 days
-const chartKey = ref(0); // Force chart re-render
+const selectedTimeFrame = ref('');
+const chartKey = ref(0);
 
-// ✅ COMPUTED PROPERTIES
-const meds = computed(() => {
-  const storeState = store.state.oobs;
-  // ✅ HANDLE BOTH ARRAY AND NON-ARRAY STATES
-  if (Array.isArray(storeState)) {
-    return storeState;
-  } else if (storeState === 0 || storeState === null || storeState === undefined) {
-    return [];
-  } else {
-    console.warn('⚠️ Unexpected meds state type:', typeof storeState, storeState);
-    return [];
-  }
-});
+// ✅ COMPUTED FROM PINIA STORE
+const oobs = computed(() => oobStore.allOobs);
+const isLoading = computed(() => oobStore.isLoading);
+const oobCount = computed(() => oobStore.oobCount);
 
-const chartLabels = computed(() => {
-  return displayedMeds.value.map(med => 
-    DateFormatService.formatStandardDatejs(med.date_of_occurrence)
-  );
-});
+// ✅ DISPLAYED OOBS (with filtering)
+const displayedOobs = computed(() => {
+  let filtered = [...oobs.value];
 
-const chartIntervals = computed(() => {
-  return displayedMeds.value.map(med => med.interval_days || 0);
-});
-
-
-const displayedMeds = computed(() => {  
-  // ✅ SAFETY CHECK: ENSURE WE HAVE AN ARRAY
-  let result = Array.isArray(meds.value) ? [...meds.value] : [];
-  // ✅ HARD LIMIT TO PREVENT MEMORY ISSUES (EMERGENCY PROTECTION)
-  if (result.length > 500) {
-    console.warn('🚨 Too many meds, limiting to 500 to prevent R14 memory errors');
-    result = result.slice(0, 500);
-  }
-  // Early return if no meds
-  if (result.length === 0) {
-    return [];
-  }
-  
-  // ✅ APPLY TIME FRAME FILTER
-  if (selectedTimeFrame.value && result.length > 0) {
-    const daysBack = parseInt(selectedTimeFrame.value);
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - daysBack);
+  // Apply time frame filter
+  if (selectedTimeFrame.value) {
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - parseInt(selectedTimeFrame.value));
     
-    const beforeFilter = result.length;
-    result = result.filter(med => {
-      const medDate = new Date(med.date_of_occurrence);
-      return medDate >= cutoffDate;
+    filtered = filtered.filter(oob => {
+      const oobDate = new Date(oob.oob_date);
+      return oobDate >= daysAgo;
     });
   }
-  
-  // ✅ APPLY SEARCH FILTER
-  if (searchText.value && searchText.value.length >= 2) {
-    const searchLower = searchText.value.toLowerCase();
-    const beforeFilter = result.length;
-    
-    result = result.filter(med => {
-      // Search in date
-      const searchInDate = med.date_of_occurrence && 
-        DateFormatService.formatDatejs(med.date_of_occurrence)
-          .toLowerCase()
-          .includes(searchLower);
-          
-      // Search in duration
-      const searchInDuration = med.duration && 
-        med.duration.toLowerCase().includes(searchLower);
-        
-      // Search in circumstances
-      const searchInCircumstances = med.circumstances && 
-        med.circumstances.toLowerCase().includes(searchLower);
-      
-      // Search in description (if exists)
-      const searchInDescription = med.description && 
-        med.description.toLowerCase().includes(searchLower);
-        
-      // Search in type (if exists)
-      const searchInType = med.type && 
-        med.type.toLowerCase().includes(searchLower);
-      
-      return searchInDate || searchInDuration || searchInCircumstances || 
-             searchInDescription || searchInType;
+
+  // Apply search filter
+  if (searchText.value) {
+    const search = searchText.value.toLowerCase();
+    filtered = filtered.filter(oob => {
+      return (
+        oob.oob_type?.toLowerCase().includes(search) ||
+        oob.oob_notes?.toLowerCase().includes(search) ||
+        oob.oob_severity?.toLowerCase().includes(search)
+      );
     });
   }
-  
-  // ✅ SAFE SORT: ENSURE result IS STILL AN ARRAY
-  const sortedResult = Array.isArray(result) ? result.sort((a, b) => {
-    // Sort by date (most recent first)
-    const dateA = new Date(a.date_of_occurrence);
-    const dateB = new Date(b.date_of_occurrence);
-    return dateB - dateA;
-  }) : [];
-  
-  // ✅ ADDITIONAL MEMORY PROTECTION - WARN IF STILL TOO LARGE
-  if (sortedResult.length > 200) {
-    console.warn('⚠️ Large result set:', sortedResult.length, 'items - consider more filtering');
-  }
-  
-  return sortedResult;
-});
 
-// ✅ WATCHER TO FORCE CHART UPDATE (NO SIDE EFFECTS)
-watch(
-  [selectedTimeFrame, displayedMeds], 
-  () => {    
-    // Force chart re-render by incrementing key
-    chartKey.value++;
-  },
-  { immediate: true }
-);
+  return filtered;
+});
 
 // ✅ METHODS
-const toggleIndexView = () => {
+function toggleIndexView() {
   showIndexView.value = !showIndexView.value;
-};
+}
 
-const toggleOobChart = () => {
+function toggleOobChart() {
   showOobChart.value = !showOobChart.value;
-};
+  if (showOobChart.value) {
+    chartKey.value++; // Force chart re-render
+  }
+}
 
-const editMed = (med) => {
-  router.push({ name: 'OobEdit', params: { id: med.id } });
-};
+function filterByTimeFrame() {
+  console.log('Filtering by time frame:', selectedTimeFrame.value);
+}
 
-const clearSearch = () => {
+function clearSearch() {
   searchText.value = '';
-};
+}
 
-const performSearch = () => {
-  // Search is reactive through computed property
-};
+function performSearch() {
+  console.log('Searching for:', searchText.value);
+}
 
-// ✅ SIMPLIFIED FILTER FUNCTION
-const filterByTimeFrame = () => {
-  // The watcher will handle chartKey increment
-  nextTick(() => {
+function editOob(oob) {
+  console.log('Editing OOB:', oob);
+  selectedOob.value = { ...oob };
+  showDialog.value = true;
+}
+
+async function deleteOob(oob) {
+  if (!confirmDialogue.value) {
+    console.error('❌ confirmDialogue ref is null!');
+    return;
+  }
+
+  const ok = await confirmDialogue.value.show({
+    title: "Delete OOB Record",
+    message: `Are you sure you want to delete the OOB from ${oob.oob_date}? This cannot be undone.`,
+    okButton: "Delete Forever",
+    cancelButton: "Cancel"
   });
-};
 
-// ✅ ENHANCED MOUNTED DEBUG
-onMounted(async () => {
+  if (!ok) return;
 
   try {
-    await store.dispatch('fetchOobs')
+    await oobStore.deleteOob(oob.id);
+    
+    await confirmDialogue.value.show({
+      title: "OOB Deleted",
+      message: "OOB record has been deleted successfully.",
+      okButton: "OK",
+      cancelButton: null
+    });
   } catch (error) {
-    console.error('❌ Fetch Error details:', error.message, error.stack)
+    console.error('❌ Delete error:', error);
+    
+    await confirmDialogue.value.show({
+      title: "Delete Failed",
+      message: "Failed to delete OOB record. Please try again.",
+      okButton: "OK",
+      cancelButton: null
+    });
   }
-})
+}
+
+async function handleSave(oobData) {
+  try {
+    if (oobData.id) {
+      await oobStore.updateOob(oobData);
+    } else {
+      await oobStore.createOob(oobData);
+    }
+    closeDialog();
+  } catch (error) {
+    console.error('Save error:', error);
+  }
+}
+
+function closeDialog() {
+  showDialog.value = false;
+  selectedOob.value = null;
+}
+
+// ✅ LIFECYCLE
+onMounted(async () => {
+  try {
+    await oobStore.fetchOobs();
+  } catch (error) {
+    console.error('Failed to load OOBs:', error);
+  }
+});
 </script>
 <style scoped>
 .title-section h2 {
@@ -318,11 +307,11 @@ onMounted(async () => {
   align-items: center;
   gap: 12px;
 }
-.meds-menu-link {
+.oobs-menu-link {
   color: #000;
   text-decoration: none;
 }
-.meds-menu-link:hover {
+.oobs-menu-link:hover {
   text-decoration: underline;
 }
 /* ✅ FONT AWESOME GLUCOSE BUTTON WITH HEART ICON */
@@ -528,11 +517,11 @@ onMounted(async () => {
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
 }
 
-.med-card {
+.oob-card {
   transition: transform 0.2s ease;
 }
 
-.med-card:hover {
+.oob-card:hover {
   transform: scale(1.02);
   cursor: pointer;
 }
