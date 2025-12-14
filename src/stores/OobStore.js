@@ -1,26 +1,81 @@
 import { defineStore } from 'pinia';
 import EventService from '@/services/EventService';
 
-// ✅ HELPER FUNCTION: Normalize date format
-function normalizeDate(dateString) {
-  if (!dateString) return dateString;
+// ✅ HELPER FUNCTION: Format timestamp for datetime-local input
+function formatDatetimeLocal(timestamp) {
+  if (!timestamp) return timestamp;
   
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-    return dateString;
+  try {
+    // Extract ONLY date and time, IGNORE timezone completely
+    // Format: "2025-12-12 19:07:00.000000000 -0800"
+    //          ^^^^ ^^^^^ ^^^^^  take only this part
+    const match = timestamp.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})/);
+    
+    if (match) {
+      const [, date, time] = match;
+      return `${date}T${time}`;  // "2025-12-12T19:07"
+    }
+    
+    // Fallback: If already in ISO format, extract date and time
+    if (timestamp.includes('T')) {
+      const [datePart, timePart] = timestamp.split('T');
+      const time = timePart.split(':').slice(0, 2).join(':'); // Get HH:mm
+      return `${datePart}T${time}`;
+    }
+    
+    // Last resort: return as-is
+    return timestamp;
+    
+  } catch (error) {
+    console.error('❌ Error formatting timestamp:', error);
+    return timestamp;
   }
+}
+
+// ✅ HELPER FUNCTION: Calculate time intervals between OOBs
+function calculateIntervals(oobs) {
+  if (!oobs || oobs.length === 0) return oobs;
   
-  if (dateString.includes('T')) {
-    return dateString.split('T')[0];
-  }
+  // Sort by date descending (newest first)
+  const sorted = [...oobs].sort((a, b) => {
+    return new Date(b.date_of_occurrence) - new Date(a.date_of_occurrence);
+  });
   
-  return dateString;
+  // Calculate intervals
+  return sorted.map((oob, index) => {
+    if (index === sorted.length - 1) {
+      // Last (oldest) entry - no previous entry
+      return {
+        ...oob,
+        interval_days: 0,
+        interval_hours: 0,
+        interval_minutes: 0
+      };
+    }
+    
+    // Calculate difference from next entry (previous in time)
+    const currentDate = new Date(oob.date_of_occurrence);
+    const nextDate = new Date(sorted[index + 1].date_of_occurrence);
+    
+    const diffMs = currentDate - nextDate;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    return {
+      ...oob,
+      interval_days: diffDays,
+      interval_hours: diffHours % 24,
+      interval_minutes: diffMinutes % 60
+    };
+  });
 }
 
 // ✅ HELPER FUNCTION: Format OOB for display
 function formatOob(oob) {
   return {
     ...oob,
-    date_of_occurrence: normalizeDate(oob.date_of_occurrence)
+    date_of_occurrence: formatDatetimeLocal(oob.date_of_occurrence)
   };
 }
 
@@ -182,6 +237,7 @@ export const useOobStore = defineStore('oob', {
     totalPages: (state) => state.pagination.total_pages,
     totalCount: (state) => state.pagination.total_count
   },
+
   actions: {
     // ========================================
     // FETCH ALL OOBS
@@ -194,6 +250,7 @@ export const useOobStore = defineStore('oob', {
         console.log('🔄 Fetching OOBs from API...');
         const response = await EventService.getOobs();
         console.log('🔄 Raw OOBs response:', response);
+        
         // ✅ HANDLE DIFFERENT RESPONSE FORMATS
         let oobsArray = [];
         if (Array.isArray(response.data)) {
@@ -203,9 +260,13 @@ export const useOobStore = defineStore('oob', {
         }
 
         // ✅ FORMAT EACH OOB
-        this.oobs = oobsArray.map(oob => formatOob(oob));
+        const formattedOobs = oobsArray.map(oob => formatOob(oob));
         
-        console.log(`✅ Fetched ${this.oobs.length} OOBs`);
+        // ✅ CALCULATE INTERVALS
+        this.oobs = calculateIntervals(formattedOobs);
+        
+        console.log(`✅ Fetched ${this.oobs.length} OOBs with intervals`);
+        console.log('📊 Sample OOB with intervals:', this.oobs[0]);
         return this.oobs;
         
       } catch (error) {
@@ -229,19 +290,31 @@ export const useOobStore = defineStore('oob', {
       try {
         console.log(`🔄 Fetching OOB ${id}...`);
         
-        // Check if we already have it
+        // Check if we already have it with intervals
         const existing = this.oobById(id);
         if (existing) {
           this.oob = existing;
+          console.log('✅ OOB found in cache:', this.oob);
           return existing;
         }
         
         const response = await EventService.getOob(id);
         
-        // ✅ FORMAT THE OOB
-        this.oob = formatOob(response.data);
+        console.log('🔄 Raw OOB from API:', response.data);
         
-        console.log('✅ OOB fetched:', this.oob);
+        // ✅ FORMAT THE OOB
+        const formattedOob = formatOob(response.data);
+        
+        // ✅ CALCULATE INTERVALS FOR THIS OOB
+        // We need to get all OOBs to calculate proper intervals
+        if (this.oobs.length === 0) {
+          await this.fetchOobs();
+        }
+        
+        // Find this OOB in the list (which now has intervals)
+        this.oob = this.oobById(id) || formattedOob;
+        
+        console.log('✅ OOB with intervals:', this.oob);
         return this.oob;
         
       } catch (error) {
@@ -265,7 +338,7 @@ export const useOobStore = defineStore('oob', {
         console.log('🔄 Creating OOB...', oobData);
         const response = await EventService.postOob(oobData);
         
-        // Refresh list to get updated data
+        // ✅ REFRESH LIST TO RECALCULATE INTERVALS
         await this.fetchOobs();
         
         console.log('✅ OOB created:', response.data);
@@ -293,7 +366,7 @@ export const useOobStore = defineStore('oob', {
         console.log('🔄 Updating OOB...', oobData);
         const response = await EventService.putOob(oobData);
         
-        // Refresh list to get updated data
+        // ✅ REFRESH LIST TO RECALCULATE INTERVALS
         await this.fetchOobs();
         
         console.log('✅ OOB updated:', response.data);
@@ -321,7 +394,7 @@ export const useOobStore = defineStore('oob', {
       try {
         await EventService.deleteOob({ id });
         
-        // Refresh list to get updated data
+        // ✅ REFRESH LIST TO RECALCULATE INTERVALS
         await this.fetchOobs();
         
         console.log('✅ OOB deleted');

@@ -45,19 +45,19 @@
                 </template>
               </v-text-field>
 
-              <!-- ✅ DURATION -->
-              <v-text-field 
-                label="Duration (minutes)"
+              <!-- ✅ DURATION - DROPDOWN -->
+              <v-select
+                label="Duration"
+                :items="durationOptions"
                 v-model="oob.duration"
-                type="text"
                 variant="outlined"
                 class="mb-4"
-                placeholder="e.g., 15 minutes, 1 hour, etc."
+                clearable
               >
                 <template v-slot:prepend-inner>
                   <v-icon class="icon-css">mdi-timer</v-icon>
                 </template>
-              </v-text-field>
+              </v-select>
 
               <!-- ✅ CIRCUMSTANCES TEXTAREA -->
               <v-textarea
@@ -114,6 +114,13 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { useOobStore } from '@/stores/OobStore';
+
+// ✅ DURATION OPTIONS CONSTANT
+const durationOptions = [
+  { title: 'Short: < 1min', value: 'Short: < 1min' },
+  { title: 'Medium: 1 to 2mins', value: 'Medium: 1 to 2mins' },
+  { title: 'Long: > 2mins', value: 'Long: > 2mins' }
+];
 
 // ✅ COMPOSITION API SETUP
 const router = useRouter();

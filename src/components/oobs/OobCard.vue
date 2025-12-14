@@ -140,14 +140,14 @@
 
 <script setup>
 import { ref, computed, onErrorCaptured } from 'vue';
-import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { useOobStore } from '@/stores/OobStore'; // ✅ Import Pinia store
 import DateFormatService from '@/services/DateFormatService.js';
 import SplitStringService from '@/services/SplitStringService.js';
 
 // ✅ COMPOSITION API SETUP
-const store = useStore();
 const router = useRouter();
+const oobStore = useOobStore(); // ✅ Use Pinia instead of Vuex
 
 // ✅ PROPS
 const props = defineProps({
@@ -184,42 +184,41 @@ const formatStandardDateTime = (value) => {
   if (!value) return 'No date';
   return DateFormatService.formatStandardDateTimejs(value);
 };
+
 const formatDayOfWeek = (value) => {
   if (!value) return '';
   return DateFormatService.formatDayOfWeekjs(value);
 };
+
 const handleDeleteOob = async () => {
   try {
     isDeleting.value = true;
     
     if (!props.oob.id) {
-      throw new Error('Oob ID is required for deletion');
+      throw new Error('OOB ID is required for deletion');
     }
     
-    // ✅ DISPATCH DELETE ACTION
-    const result = await store.dispatch('deleteOob', props.oob);
+    console.log('🗑️ Deleting OOB:', props.oob.id);
     
-    if (result !== false) {      
-      // ✅ SHOW SUCCESS MESSAGE
-      const formattedDate = formatStandardDateTime(props.oob.date_of_occurrence);
-      alert(`✅ Oob was deleted for ${formattedDate}`);
-      
-      // ✅ NAVIGATE BACK TO LIST
-      await router.push({ name: 'OobList' });
-    } else {
-      console.error('❌ Delete failed');
-      alert('❌ Error deleting oob - please try again');
-    }
+    // ✅ USE PINIA STORE ACTION
+    await oobStore.deleteOob(props.oob.id);
+    
+    // ✅ SHOW SUCCESS MESSAGE
+    const formattedDate = formatStandardDateTime(props.oob.date_of_occurrence);
+    alert(`✅ OOB was deleted for ${formattedDate}`);
+    
+    // ✅ NAVIGATE BACK TO LIST
+    await router.push({ name: 'OobList' });
     
   } catch (error) {
-    console.error('❌ Error deleting oob:', error);
+    console.error('❌ Error deleting OOB:', error);
     
     if (error.response?.status === 404) {
-      alert('❌ Oob not found - it may have already been deleted');
+      alert('❌ OOB not found - it may have already been deleted');
     } else if (error.response?.status === 500) {
       alert('❌ Server error - please try again later');
     } else {
-      alert(`❌ Error deleting oob: ${error.message}`);
+      alert(`❌ Error deleting OOB: ${error.message}`);
     }
   } finally {
     isDeleting.value = false;
@@ -231,8 +230,8 @@ const debugOobData = () => {
   console.log('🔍 OOB DATA DEBUG:');
   console.log('='.repeat(50));
   
-  console.log('Oob object:', props.oob);
-  console.log('Oob ID:', props.oob.id);
+  console.log('OOB object:', props.oob);
+  console.log('OOB ID:', props.oob.id);
   console.log('Date of occurrence:', props.oob.date_of_occurrence);
   console.log('Duration:', props.oob.duration);
   console.log('Circumstances:', props.oob.circumstances);
@@ -251,7 +250,6 @@ const debugOobData = () => {
   console.log('='.repeat(50));
 };
 </script>
-
 <style scoped>
 /* ✅ MODERN CARD STYLES */
 .oob-card {

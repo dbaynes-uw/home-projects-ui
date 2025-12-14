@@ -19,16 +19,19 @@
         />
       </div>
 
-      <!-- ✅ DURATION -->
+      <!-- ✅ DURATION - DROPDOWN -->
       <div class="form-group">
         <label for="duration">Duration</label>
-        <input
+        <select
           id="duration"
           v-model="formData.duration"
-          type="text"
           class="form-control"
-          placeholder="e.g., 15 minutes, 1 hour, etc."
-        />
+        >
+          <option value="">Select Duration (Optional)</option>
+          <option value="Short: < 1min">Short: &lt; 1min</option>
+          <option value="Medium: 1 to 2mins">Medium: 1 to 2mins</option>
+          <option value="Long: > 2mins">Long: &gt; 2mins</option>
+        </select>
       </div>
 
       <!-- ✅ CIRCUMSTANCES -->
@@ -41,19 +44,6 @@
           rows="6"
           placeholder="Describe what happened, any triggers, symptoms, etc..."
         ></textarea>
-      </div>
-
-      <!-- ✅ CREATED BY (READ-ONLY, AUTO-FILLED) -->
-      <div class="form-group">
-        <label for="created_by">Created By</label>
-        <input
-          id="created_by"
-          v-model="formData.created_by"
-          type="text"
-          class="form-control"
-          readonly
-          disabled
-        />
       </div>
     </div>
 
@@ -99,8 +89,7 @@ const store = useStore();
 const formData = ref({
   date_of_occurrence: '',
   duration: '',
-  circumstances: '',
-  created_by: ''
+  circumstances: ''
 });
 
 // ✅ COMPUTED
@@ -119,13 +108,12 @@ watch(
     console.log('📥 OOB prop received:', newOob);
     
     if (newOob) {
-      // Populate form with existing data
+      // ✅ NO NEED TO FORMAT - STORE ALREADY DID IT!
       formData.value = {
         id: newOob.id,
-        date_of_occurrence: formatDatetimeLocal(newOob.date_of_occurrence) || '',
+        date_of_occurrence: newOob.date_of_occurrence || '', // Already formatted by store!
         duration: newOob.duration || '',
-        circumstances: newOob.circumstances || '',
-        created_by: newOob.created_by || ''
+        circumstances: newOob.circumstances || ''
       };
       
       console.log('✅ Form populated with:', formData.value);
@@ -133,10 +121,6 @@ watch(
       // Reset form for new entry
       resetForm();
       
-      // Auto-fill created_by with current user
-      if (user.value) {
-        formData.value.created_by = user.value.email || user.value.username || user.value.name || 'Unknown User';
-      }
     }
   },
   { immediate: true }
@@ -158,90 +142,16 @@ function resetForm() {
   formData.value = {
     date_of_occurrence: '',
     duration: '',
-    circumstances: '',
-    created_by: ''
+    circumstances: ''
   };
-}
-
-// ✅ HELPER: Convert timestamp to datetime-local format
-function formatDatetimeLocal(timestamp) {
-  if (!timestamp) return '';
-  
-  try {
-    console.log('🔍 Raw timestamp from API:', timestamp);
-    
-    // Method 1: Extract date/time directly from Rails timestamp format
-    // Format: "2025-12-12 19:07:00.000000000 -0800"
-    const match = timestamp.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})/);
-    
-    if (match) {
-      const [, year, month, day, hours, minutes, seconds] = match;
-      
-      // Extract timezone offset (e.g., "-0800")
-      const tzMatch = timestamp.match(/([+-]\d{4})$/);
-      
-      if (tzMatch) {
-        const tzOffset = tzMatch[1];
-        
-        // Build ISO 8601 string with timezone
-        const isoString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${tzOffset.slice(0, 3)}:${tzOffset.slice(3)}`;
-        console.log('🔄 Constructed ISO string:', isoString);
-        
-        // Parse as Date (which handles timezone conversion)
-        const date = new Date(isoString);
-        
-        // Format for datetime-local using the DATE'S local representation
-        // This preserves the DISPLAY time from the API
-        const localYear = date.getFullYear();
-        const localMonth = String(date.getMonth() + 1).padStart(2, '0');
-        const localDay = String(date.getDate()).padStart(2, '0');
-        const localHours = String(date.getHours()).padStart(2, '0');
-        const localMinutes = String(date.getMinutes()).padStart(2, '0');
-        
-        const formatted = `${localYear}-${localMonth}-${localDay}T${localHours}:${localMinutes}`;
-        console.log('✅ Formatted for datetime-local:', formatted);
-        return formatted;
-      }
-      
-      // If no timezone, use the raw values (treat as local time)
-      const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
-      console.log('✅ Formatted (no TZ):', formatted);
-      return formatted;
-    }
-    
-    // Fallback: Try parsing as standard date
-    const date = new Date(timestamp);
-    
-    if (isNaN(date.getTime())) {
-      console.error('❌ Invalid date:', timestamp);
-      return '';
-    }
-    
-    // Format for datetime-local
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    
-    const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
-    console.log('✅ Formatted (fallback):', formatted);
-    return formatted;
-    
-  } catch (error) {
-    console.error('❌ Error formatting datetime:', error);
-    return '';
-  }
 }
 
 // ✅ LIFECYCLE
 onMounted(() => {
-  // Auto-fill created_by if creating new OOB
-  if (!isEditing.value && user.value) {
-    formData.value.created_by = user.value.email || user.value.username || user.value.name || 'Unknown User';
-  }
+  console.log('📝 OobForm mounted. Editing mode:', isEditing.value);
 });
 </script>
+
 <style scoped>
 /* ✅ IMPORT SHARED FORM STYLES */
 @import '@/assets/styles/ui-components.css';
@@ -321,6 +231,21 @@ onMounted(() => {
   background: #f7fafc;
   color: #a0aec0;
   cursor: not-allowed;
+}
+
+/* ✅ SELECT DROPDOWN STYLING */
+select.form-control {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ef4444' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 12px;
+  padding-right: 2.5rem;
+}
+
+select.form-control::-ms-expand {
+  display: none;
 }
 
 textarea.form-control {
