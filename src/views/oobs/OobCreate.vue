@@ -1,12 +1,12 @@
 <template>
   <div class="page-wrapper">
-    <div class="med-create-container">
+    <div class="oob-create-container">
       <!-- ✅ HEADER CARD -->
       <v-card class="mx-auto mt-5">
         <v-card-title class="pb-0">
           <h2>
-            <i class="fas fa-pills"></i>
-            Add Med to Collection
+            <i class="fas fa-exclamation-triangle"></i>
+            Add OOB Record
           </h2>
         </v-card-title>
         
@@ -19,7 +19,7 @@
               prepend-icon="fas fa-list"
               class="nav-button"
             >
-              View All Meds
+              View All OOBs
             </v-btn>
           </div>
         </v-card-text>
@@ -30,10 +30,10 @@
         <v-card-text>
           <v-form @submit.prevent="onSubmit" ref="formRef">
             <v-container id="form-container">
-              <!-- ✅ DATE OF OCCURRENCE -->
+              <!-- ✅ DATE OF OCCURRENCE - DATETIME-LOCAL -->
               <v-text-field 
-                label="Date of Occurrence"
-                v-model="med.date_of_occurrence"
+                label="Date & Time of Occurrence"
+                v-model="oob.date_of_occurrence"
                 type="datetime-local"
                 :rules="[requiredDateOccurrence]"
                 variant="outlined"
@@ -41,43 +41,57 @@
                 :error="!isDateOccurrenceValid && hasAttemptedSubmit"
               >
                 <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-calendar</v-icon>
+                  <v-icon class="icon-css">mdi-calendar-clock</v-icon>
                 </template>
               </v-text-field>
 
-              <!-- ✅ DURATION SELECT -->
-              <v-select
-                label="Duration"
-                :items="MED_DURATIONS"
-                v-model="med.duration"
-                :rules="[requiredDuration]"
+              <!-- ✅ DURATION -->
+              <v-text-field 
+                label="Duration (minutes)"
+                v-model="oob.duration"
+                type="text"
                 variant="outlined"
                 class="mb-4"
-                :error="!isDurationValid && hasAttemptedSubmit"
+                placeholder="e.g., 15 minutes, 1 hour, etc."
               >
                 <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-clock</v-icon>
+                  <v-icon class="icon-css">mdi-timer</v-icon>
                 </template>
-              </v-select>
+              </v-text-field>
 
               <!-- ✅ CIRCUMSTANCES TEXTAREA -->
               <v-textarea
-                label="Circumstances: sugar, sleep, alcohol, etc..."
-                v-model="med.circumstances"
+                label="Circumstances / Notes"
+                v-model="oob.circumstances"
                 variant="outlined"
                 clearable
-                rows="4"
+                rows="6"
                 class="mb-4"
+                placeholder="Describe what happened, any triggers, symptoms, etc..."
               >
                 <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-note</v-icon>
+                  <v-icon class="icon-css">mdi-note-text</v-icon>
                 </template>
               </v-textarea>
+
+              <!-- ✅ CREATED BY (READ-ONLY, AUTO-FILLED) -->
+              <v-text-field 
+                label="Created By"
+                v-model="oob.created_by"
+                variant="outlined"
+                class="mb-4"
+                readonly
+                disabled
+              >
+                <template v-slot:prepend-inner>
+                  <v-icon class="icon-css">mdi-account</v-icon>
+                </template>
+              </v-text-field>
 
               <!-- ✅ SUBMIT BUTTON WITH LOADING STATE -->
               <v-btn 
                 type="submit" 
-                color="primary"
+                color="error"
                 size="large"
                 block 
                 class="mt-4"
@@ -85,7 +99,7 @@
                 :disabled="!isFormValid && hasAttemptedSubmit"
               >
                 <i class="fas fa-save"></i>
-                Add Med to Collection
+                Add OOB Record
               </v-btn>
             </v-container>
           </v-form>
@@ -96,34 +110,25 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onErrorCaptured } from 'vue';
-import { useStore } from 'vuex';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { v4 as uuidv4 } from 'uuid';
-import { VSelect } from 'vuetify/components'
-import { MED_DURATIONS } from '@/services/constants';
+import { useStore } from 'vuex';
+import { useOobStore } from '@/stores/OobStore';
 
 // ✅ COMPOSITION API SETUP
-const store = useStore();
 const router = useRouter();
+const store = useStore();
+const oobStore = useOobStore();
 const formRef = ref(null);
-
-// ✅ ERROR HANDLER
-onErrorCaptured((error, instance, info) => {
-  console.error('❌ Component error captured:', error);
-  console.error('❌ Error info:', info);
-  return false;
-});
 
 // ✅ REACTIVE STATE
 const isSubmitting = ref(false);
 const hasAttemptedSubmit = ref(false);
 const isFormValid = ref(false);
 const isDateOccurrenceValid = ref(false);
-const isDurationValid = ref(false);
 
-// ✅ FORM DATA
-const med = ref({
+// ✅ FORM DATA - ONLY 4 FIELDS
+const oob = ref({
   date_of_occurrence: '',
   duration: '',
   circumstances: '',
@@ -131,8 +136,7 @@ const med = ref({
 });
 
 // ✅ COMPUTED PROPERTIES
-const user = computed(() => store.state.user?.resource_owner);
-const isDev = computed(() => process.env.NODE_ENV === 'development');
+const user = computed(() => store.state.user);
 
 // ✅ VALIDATION RULES
 const requiredDateOccurrence = (value) => {
@@ -141,52 +145,26 @@ const requiredDateOccurrence = (value) => {
     return true;
   } else {
     isDateOccurrenceValid.value = false;
-    return 'Please enter Date of Occurrence';
-  }
-};
-
-const requiredDuration = (value) => {
-  if (value && value.trim()) {
-    isDurationValid.value = true;
-    return true;
-  } else {
-    isDurationValid.value = false;
-    return 'Please Select Duration';
+    return 'Please enter Date & Time of Occurrence';
   }
 };
 
 // ✅ FORM VALIDATION WATCHER
-watch([isDateOccurrenceValid, isDurationValid], () => {
-  isFormValid.value = isDateOccurrenceValid.value && isDurationValid.value;
+watch(isDateOccurrenceValid, (newValue) => {
+  isFormValid.value = newValue;
 });
 
-// ✅ WATCH USER AND SET CREATED_BY
-watch(user, (newUser) => {
-  if (newUser?.email) {
-    med.value.created_by = newUser.email;
-  }
-}, { immediate: true });
-
-// ✅ WATCH FORM FIELDS FOR VALIDATION
-watch(() => med.value.date_of_occurrence, (newValue) => {
+// ✅ WATCH DATE FIELD FOR VALIDATION
+watch(() => oob.value.date_of_occurrence, (newValue) => {
   if (hasAttemptedSubmit.value) {
     requiredDateOccurrence(newValue);
   }
 });
 
-watch(() => med.value.duration, (newValue) => {
-  if (hasAttemptedSubmit.value) {
-    requiredDuration(newValue);
-  }
-});
-
 // ✅ METHODS
 const checkValidations = () => {
-  
-  const dateValid = requiredDateOccurrence(med.value.date_of_occurrence);
-  const durationValid = requiredDuration(med.value.duration);
-    
-  isFormValid.value = dateValid === true && durationValid === true;
+  const dateValid = requiredDateOccurrence(oob.value.date_of_occurrence);
+  isFormValid.value = dateValid === true;
   return isFormValid.value;
 };
 
@@ -200,42 +178,24 @@ const onSubmit = async () => {
     
     if (!isValid) {
       console.warn('❌ Form validation failed');
-      alert('Please correct required fields and resubmit');
+      alert('Please enter a date & time of occurrence');
       return;
     }
     
-    // ✅ PREPARE MED DATA
-    const medData = {
-      ...med.value,
-      id: uuidv4(),
-      created_by: user.value?.email || '',
-    };
-    
-    // ✅ VALIDATE REQUIRED FIELDS
-    if (!medData.date_of_occurrence) {
+    // ✅ VALIDATE REQUIRED FIELD
+    if (!oob.value.date_of_occurrence) {
       throw new Error('Date of occurrence is required');
     }
     
-    if (!medData.duration) {
-      throw new Error('Duration is required');
-    }
+    console.log('📤 Submitting OOB:', oob.value);
     
-    if (!medData.created_by) {
-      throw new Error('User email is required');
-    }
+    // ✅ SUBMIT TO PINIA STORE
+    await oobStore.createOob(oob.value);
     
-    // ✅ SUBMIT TO STORE
-    const result = await store.dispatch('createOob', medData);    
+    alert(`✅ OOB record created for ${formatDateTime(oob.value.date_of_occurrence)}`);
     
-    if (result !== false) {
-      alert(`✅ Oob submitted for ${medData.date_of_occurrence}`);
-      
-      // ✅ NAVIGATE TO MED LIST
-      await router.push({ name: 'OobList' });
-    } else {
-      console.error('❌ Store returned false');
-      alert('❌ Error adding Oob - please try again');
-    }
+    // ✅ NAVIGATE TO OOB LIST
+    await router.push({ name: 'OobList' });
     
   } catch (error) {
     console.error('❌ Error in onSubmit:', error);
@@ -245,38 +205,33 @@ const onSubmit = async () => {
     } else if (error.response?.status === 500) {
       alert(`❌ Server Error: Check backend logs`);
     } else {
-      alert(`❌ Error creating med: ${error.message}`);
+      alert(`❌ Error creating OOB: ${error.message}`);
     }
   } finally {
     isSubmitting.value = false;
   }
 };
 
-// ✅ DEBUG FUNCTION
-const debugFormState = () => {
-  console.log('🔍 FORM STATE DEBUG:');
-  console.log('='.repeat(50));
-  
-  console.log('Form data:', med.value);
-  console.log('User:', user.value);
-  console.log('Validations:', {
-    isFormValid: isFormValid.value,
-    isDateOccurrenceValid: isDateOccurrenceValid.value,
-    isDurationValid: isDurationValid.value,
-    hasAttemptedSubmit: hasAttemptedSubmit.value,
-    isSubmitting: isSubmitting.value
+// ✅ HELPER FUNCTION: Format datetime-local for display
+const formatDateTime = (dateTimeString) => {
+  if (!dateTimeString) return '';
+  const date = new Date(dateTimeString);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   });
-  
-  console.log('Available durations:', MED_DURATIONS);
-  
-  console.log('='.repeat(50));
 };
 
 // ✅ LIFECYCLE
 onMounted(() => {
-  // ✅ SET INITIAL USER IF AVAILABLE
-  if (user.value?.email) {
-    med.value.created_by = user.value.email;
+  console.log('✅ OobCreate mounted');
+  
+  // ✅ AUTO-FILL created_by WITH CURRENT USER
+  if (user.value) {
+    oob.value.created_by = user.value.email || user.value.username || user.value.name || 'Unknown User';
   }
 });
 </script>
@@ -291,7 +246,7 @@ onMounted(() => {
   margin: 0;
 }
 
-.med-create-container {
+.oob-create-container {
   width: 100%;
   max-width: 800px;
   padding: 1rem;
@@ -318,11 +273,10 @@ onMounted(() => {
 }
 
 .icon-css {
-  color: #1976d2 !important;
+  color: #ef4444 !important; /* Red theme for OOBs */
   top: -0.2rem;
 }
 
-/* ✅ KEEP ESSENTIAL LEGACY STYLES */
 .v-field__clearable {
   padding: 1rem !important;
 }
@@ -337,17 +291,14 @@ onMounted(() => {
     min-width: 100% !important;
   }
   
-  .med-create-container {
+  .oob-create-container {
     padding: 0.5rem;
   }
 }
 
 /* ✅ ACCESSIBILITY */
 .nav-button:focus {
-  outline: 2px solid #1976d2;
+  outline: 2px solid #ef4444;
   outline-offset: 2px;
 }
-
-/* ✅ REMOVE UNUSED LEGACY STYLES */
-/* Cleaned up all the old float-based and manual styling */
 </style>

@@ -7,114 +7,53 @@
         OOB Information
       </h3>
 
-      <div class="form-row">
-        <!-- OOB Date -->
-        <div class="form-group">
-          <label for="date_of_occurrence" class="required">OOB Date</label>
-          <input
-            id="date_of_occurrence"
-            v-model="formData.date_of_occurrence"
-            type="date"
-            class="form-control"
-            required
-          />
-        </div>
-
-        <!-- OOB Type -->
-        <div class="form-group">
-          <label for="type_of_occurrence" class="required">OOB Type</label>
-          <select
-            id="type_of_occurrence"
-            v-model="formData.type_of_occurrence"
-            class="form-control"
-            required
-          >
-            <option value="">Select Type</option>
-            <option value="Bowel Movement">Bowel Movement</option>
-            <option value="Urination">Urination</option>
-            <option value="Vomiting">Vomiting</option>
-            <option value="Nausea">Nausea</option>
-            <option value="Diarrhea">Diarrhea</option>
-            <option value="Constipation">Constipation</option>
-            <option value="Bleeding">Bleeding</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <!-- Severity -->
-        <div class="form-group">
-          <label for="severity">Severity</label>
-          <select
-            id="severity"
-            v-model="formData.severity"
-            class="form-control"
-          >
-            <option value="">Select Severity</option>
-            <option value="Mild">Mild</option>
-            <option value="Moderate">Moderate</option>
-            <option value="Severe">Severe</option>
-          </select>
-        </div>
-
-        <!-- Time of Day -->
-        <div class="form-group">
-          <label for="time_of_day">Time of Day</label>
-          <input
-            id="time_of_day"
-            v-model="formData.time_of_day"
-            type="time"
-            class="form-control"
-          />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <!-- Duration -->
-        <div class="form-group">
-          <label for="duration">Duration (minutes)</label>
-          <input
-            id="duration"
-            v-model.number="formData.duration"
-            type="number"
-            class="form-control"
-            placeholder="e.g., 15"
-            min="0"
-          />
-        </div>
-
-        <!-- Frequency -->
-        <div class="form-group">
-          <label for="frequency">Frequency (times today)</label>
-          <input
-            id="frequency"
-            v-model.number="formData.frequency"
-            type="number"
-            class="form-control"
-            placeholder="e.g., 3"
-            min="0"
-          />
-        </div>
-      </div>
-    </div>
-
-    <!-- ✅ ADDITIONAL DETAILS SECTION -->
-    <div class="form-section">
-      <h3 class="section-title">
-        <i class="fas fa-clipboard-list"></i>
-        Additional Details
-      </h3>
-
+      <!-- ✅ DATE & TIME OF OCCURRENCE -->
       <div class="form-group">
-        <label for="circumstances">Notes/Circumstances</label>
+        <label for="date_of_occurrence" class="required">Date & Time of Occurrence</label>
+        <input
+          id="date_of_occurrence"
+          v-model="formData.date_of_occurrence"
+          type="datetime-local"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <!-- ✅ DURATION -->
+      <div class="form-group">
+        <label for="duration">Duration</label>
+        <input
+          id="duration"
+          v-model="formData.duration"
+          type="text"
+          class="form-control"
+          placeholder="e.g., 15 minutes, 1 hour, etc."
+        />
+      </div>
+
+      <!-- ✅ CIRCUMSTANCES -->
+      <div class="form-group">
+        <label for="circumstances">Circumstances / Notes</label>
         <textarea
           id="circumstances"
           v-model="formData.circumstances"
           class="form-control"
-          rows="4"
-          placeholder="Any additional observations or circumstances..."
+          rows="6"
+          placeholder="Describe what happened, any triggers, symptoms, etc..."
         ></textarea>
+      </div>
+
+      <!-- ✅ CREATED BY (READ-ONLY, AUTO-FILLED) -->
+      <div class="form-group">
+        <label for="created_by">Created By</label>
+        <input
+          id="created_by"
+          v-model="formData.created_by"
+          type="text"
+          class="form-control"
+          readonly
+          disabled
+        />
       </div>
     </div>
 
@@ -140,7 +79,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
 const props = defineProps({
@@ -152,24 +92,25 @@ const props = defineProps({
 
 const emit = defineEmits(['save', 'cancel']);
 
-// ✅ FORM DATA - OLD FIELD NAMES
+// ✅ VUEX STORE FOR USER
+const store = useStore();
+
+// ✅ FORM DATA - ONLY 4 FIELDS
 const formData = ref({
   date_of_occurrence: '',
-  type_of_occurrence: '',
-  severity: '',
-  time_of_day: '',
-  duration: null,
-  frequency: null,
-  circumstances: ''
+  duration: '',
+  circumstances: '',
+  created_by: ''
 });
 
 // ✅ COMPUTED
 const isEditing = computed(() => !!props.oob?.id);
 
 const isFormValid = computed(() => {
-  return formData.value.date_of_occurrence !== '' &&
-         formData.value.type_of_occurrence !== '';
+  return formData.value.date_of_occurrence !== '';
 });
+
+const user = computed(() => store.state.user);
 
 // ✅ WATCH FOR PROP CHANGES
 watch(
@@ -181,19 +122,21 @@ watch(
       // Populate form with existing data
       formData.value = {
         id: newOob.id,
-        date_of_occurrence: newOob.date_of_occurrence || '',
-        type_of_occurrence: newOob.type_of_occurrence || '',
-        severity: newOob.severity || '',
-        time_of_day: newOob.time_of_day || '',
-        duration: newOob.duration || null,
-        frequency: newOob.frequency || null,
-        circumstances: newOob.circumstances || ''
+        date_of_occurrence: formatDatetimeLocal(newOob.date_of_occurrence) || '',
+        duration: newOob.duration || '',
+        circumstances: newOob.circumstances || '',
+        created_by: newOob.created_by || ''
       };
       
       console.log('✅ Form populated with:', formData.value);
     } else {
       // Reset form for new entry
       resetForm();
+      
+      // Auto-fill created_by with current user
+      if (user.value) {
+        formData.value.created_by = user.value.email || user.value.username || user.value.name || 'Unknown User';
+      }
     }
   },
   { immediate: true }
@@ -214,14 +157,90 @@ function handleCancel() {
 function resetForm() {
   formData.value = {
     date_of_occurrence: '',
-    type_of_occurrence: '',
-    severity: '',
-    time_of_day: '',
-    duration: null,
-    frequency: null,
-    circumstances: ''
+    duration: '',
+    circumstances: '',
+    created_by: ''
   };
 }
+
+// ✅ HELPER: Convert timestamp to datetime-local format
+function formatDatetimeLocal(timestamp) {
+  if (!timestamp) return '';
+  
+  try {
+    console.log('🔍 Raw timestamp from API:', timestamp);
+    
+    // Method 1: Extract date/time directly from Rails timestamp format
+    // Format: "2025-12-12 19:07:00.000000000 -0800"
+    const match = timestamp.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})/);
+    
+    if (match) {
+      const [, year, month, day, hours, minutes, seconds] = match;
+      
+      // Extract timezone offset (e.g., "-0800")
+      const tzMatch = timestamp.match(/([+-]\d{4})$/);
+      
+      if (tzMatch) {
+        const tzOffset = tzMatch[1];
+        
+        // Build ISO 8601 string with timezone
+        const isoString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${tzOffset.slice(0, 3)}:${tzOffset.slice(3)}`;
+        console.log('🔄 Constructed ISO string:', isoString);
+        
+        // Parse as Date (which handles timezone conversion)
+        const date = new Date(isoString);
+        
+        // Format for datetime-local using the DATE'S local representation
+        // This preserves the DISPLAY time from the API
+        const localYear = date.getFullYear();
+        const localMonth = String(date.getMonth() + 1).padStart(2, '0');
+        const localDay = String(date.getDate()).padStart(2, '0');
+        const localHours = String(date.getHours()).padStart(2, '0');
+        const localMinutes = String(date.getMinutes()).padStart(2, '0');
+        
+        const formatted = `${localYear}-${localMonth}-${localDay}T${localHours}:${localMinutes}`;
+        console.log('✅ Formatted for datetime-local:', formatted);
+        return formatted;
+      }
+      
+      // If no timezone, use the raw values (treat as local time)
+      const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
+      console.log('✅ Formatted (no TZ):', formatted);
+      return formatted;
+    }
+    
+    // Fallback: Try parsing as standard date
+    const date = new Date(timestamp);
+    
+    if (isNaN(date.getTime())) {
+      console.error('❌ Invalid date:', timestamp);
+      return '';
+    }
+    
+    // Format for datetime-local
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
+    console.log('✅ Formatted (fallback):', formatted);
+    return formatted;
+    
+  } catch (error) {
+    console.error('❌ Error formatting datetime:', error);
+    return '';
+  }
+}
+
+// ✅ LIFECYCLE
+onMounted(() => {
+  // Auto-fill created_by if creating new OOB
+  if (!isEditing.value && user.value) {
+    formData.value.created_by = user.value.email || user.value.username || user.value.name || 'Unknown User';
+  }
+});
 </script>
 <style scoped>
 /* ✅ IMPORT SHARED FORM STYLES */
@@ -243,10 +262,6 @@ function resetForm() {
   border: 1px solid rgba(239, 68, 68, 0.1);
 }
 
-.form-section:last-of-type {
-  margin-bottom: 1.5rem;
-}
-
 .section-title {
   margin: 0 0 1.5rem 0;
   color: #ef4444;
@@ -261,20 +276,14 @@ function resetForm() {
   font-size: 1.25rem;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.form-row:last-child {
-  margin-bottom: 0;
-}
-
 .form-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -308,44 +317,17 @@ function resetForm() {
   color: #cbd5e0;
 }
 
+.form-control:disabled {
+  background: #f7fafc;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
 textarea.form-control {
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
   font-family: inherit;
-}
-
-select.form-control {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
-}
-
-/* Checkbox Group */
-.checkbox-group {
-  margin-top: 1rem;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-  user-select: none;
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  accent-color: #ef4444;
-}
-
-.checkbox-label span {
-  color: #4a5568;
-  font-weight: 500;
+  line-height: 1.5;
 }
 
 /* Form Actions */
@@ -355,6 +337,7 @@ select.form-control {
   gap: 1rem;
   padding-top: 1.5rem;
   border-top: 2px solid rgba(239, 68, 68, 0.1);
+  margin-top: 1.5rem;
 }
 
 /* Responsive */
@@ -365,11 +348,6 @@ select.form-control {
 
   .form-section {
     padding: 1rem;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
   }
 
   .form-actions {
