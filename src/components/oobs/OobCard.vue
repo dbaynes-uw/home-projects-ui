@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/oobs/MedCard.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/oobs/OobCard.vue -->
 <template>
   <div class="oob-card">
     <!-- ✅ MODERN CARD LAYOUT -->

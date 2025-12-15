@@ -166,7 +166,7 @@ const showDialog = ref(false);
 const selectedOob = ref(null);
 const confirmDialogue = ref(null);
 const searchText = ref('');
-const selectedTimeFrame = ref('');
+const selectedTimeFrame = ref('7');
 const chartKey = ref(0);
 
 // ✅ COMPUTED FROM PINIA STORE
@@ -174,62 +174,92 @@ const oobs = computed(() => oobStore.allOobs);
 const isLoading = computed(() => oobStore.isLoading);
 const oobCount = computed(() => oobStore.oobCount);
 
-// ✅ DISPLAYED OOBS (with filtering)
+// ✅ DISPLAYED OOBS (with filtering) - FIXED!
 const displayedOobs = computed(() => {
   let filtered = [...oobs.value];
 
-  // Apply time frame filter
+  console.log('🔍 Filtering OOBs...');
+  console.log('📊 Total OOBs:', filtered.length);
+  console.log('📅 Selected time frame:', selectedTimeFrame.value || 'All Time');
+  console.log('🔎 Search text:', searchText.value || 'None');
+
+  // ✅ Apply time frame filter (FIXED!)
   if (selectedTimeFrame.value) {
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - parseInt(selectedTimeFrame.value));
     
+    console.log('📅 Filtering from date:', daysAgo.toISOString());
+    
     filtered = filtered.filter(oob => {
-      const oobDate = new Date(oob.oob_date);
-      return oobDate >= daysAgo;
+      // ✅ FIXED: Use date_of_occurrence instead of oob_date
+      const oobDate = new Date(oob.date_of_occurrence);
+      const isInRange = oobDate >= daysAgo;
+      
+      if (!isInRange) {
+        console.log(`❌ Filtered out: ${oob.id} - ${oobDate.toISOString()}`);
+      }
+      
+      return isInRange;
     });
+    
+    console.log('✅ After time filter:', filtered.length, 'OOBs');
   }
 
-  // Apply search filter
+  // ✅ Apply search filter (FIXED!)
   if (searchText.value) {
     const search = searchText.value.toLowerCase();
+    
     filtered = filtered.filter(oob => {
-      return (
-        oob.oob_type?.toLowerCase().includes(search) ||
-        oob.oob_notes?.toLowerCase().includes(search) ||
-        oob.oob_severity?.toLowerCase().includes(search)
-      );
+      // ✅ FIXED: Search in correct fields
+      const matchesCircumstances = oob.circumstances?.toLowerCase().includes(search);
+      const matchesDuration = oob.duration?.toLowerCase().includes(search);
+      const matchesCreatedBy = oob.created_by?.toLowerCase().includes(search);
+      
+      return matchesCircumstances || matchesDuration || matchesCreatedBy;
     });
+    
+    console.log('✅ After search filter:', filtered.length, 'OOBs');
   }
 
+  console.log('📊 Final filtered count:', filtered.length);
   return filtered;
 });
 
 // ✅ METHODS
 function toggleIndexView() {
   showIndexView.value = !showIndexView.value;
+  console.log('📋 View toggled:', showIndexView.value ? 'Index' : 'Cards');
 }
 
 function toggleOobChart() {
   showOobChart.value = !showOobChart.value;
   if (showOobChart.value) {
     chartKey.value++; // Force chart re-render
+    console.log('📊 Chart shown, key:', chartKey.value);
+  } else {
+    console.log('📊 Chart hidden');
   }
 }
 
 function filterByTimeFrame() {
-  console.log('Filtering by time frame:', selectedTimeFrame.value);
+  // ✅ REMOVED: This function is no longer needed!
+  // The computed property `displayedOobs` handles filtering automatically
+  console.log('📅 Time frame changed:', selectedTimeFrame.value || 'All Time');
 }
 
 function clearSearch() {
   searchText.value = '';
+  console.log('🔎 Search cleared');
 }
 
 function performSearch() {
-  console.log('Searching for:', searchText.value);
+  // ✅ REMOVED: This function is no longer needed!
+  // The computed property `displayedOobs` handles filtering automatically
+  console.log('🔎 Searching for:', searchText.value);
 }
 
 function editOob(oob) {
-  console.log('Editing OOB:', oob);
+  console.log('✏️ Editing OOB:', oob.id);
   selectedOob.value = { ...oob };
   showDialog.value = true;
 }
@@ -242,14 +272,18 @@ async function deleteOob(oob) {
 
   const ok = await confirmDialogue.value.show({
     title: "Delete OOB Record",
-    message: `Are you sure you want to delete the OOB from ${oob.oob_date}? This cannot be undone.`,
+    message: `Are you sure you want to delete the OOB from ${oob.date_of_occurrence}? This cannot be undone.`,
     okButton: "Delete Forever",
     cancelButton: "Cancel"
   });
 
-  if (!ok) return;
+  if (!ok) {
+    console.log('❌ Delete cancelled');
+    return;
+  }
 
   try {
+    console.log('🗑️ Deleting OOB:', oob.id);
     await oobStore.deleteOob(oob.id);
     
     await confirmDialogue.value.show({
@@ -258,6 +292,8 @@ async function deleteOob(oob) {
       okButton: "OK",
       cancelButton: null
     });
+    
+    console.log('✅ OOB deleted successfully');
   } catch (error) {
     console.error('❌ Delete error:', error);
     
@@ -273,19 +309,23 @@ async function deleteOob(oob) {
 async function handleSave(oobData) {
   try {
     if (oobData.id) {
+      console.log('💾 Updating OOB:', oobData.id);
       await oobStore.updateOob(oobData);
     } else {
+      console.log('➕ Creating new OOB');
       await oobStore.createOob(oobData);
     }
     closeDialog();
+    console.log('✅ Save successful');
   } catch (error) {
-    console.error('Save error:', error);
+    console.error('❌ Save error:', error);
   }
 }
 
 function closeDialog() {
   showDialog.value = false;
   selectedOob.value = null;
+  console.log('❌ Dialog closed');
 }
 
 // ✅ LIFECYCLE
@@ -293,10 +333,12 @@ onMounted(async () => {
   try {
     await oobStore.fetchOobs();
   } catch (error) {
-    console.error('Failed to load OOBs:', error);
+    console.error('❌ Failed to load OOBs:', error);
   }
 });
+
 </script>
+
 <style scoped>
 .title-section h2 {
   margin: 0;

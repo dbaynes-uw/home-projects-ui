@@ -104,7 +104,9 @@ export const useOobStore = defineStore('oob', {
     isOobsEmpty: (state) => state.oobs.length === 0,
 
     oobById: (state) => (id) => {
-      return state.oobs.find(oob => oob.id === id);
+      // ✅ Handle both string and number IDs (route params are strings!)
+      const numId = parseInt(id);
+      return state.oobs.find(oob => oob.id === numId || oob.id === id);
     },
 
     // ========================================
@@ -262,7 +264,7 @@ export const useOobStore = defineStore('oob', {
         // ✅ FORMAT EACH OOB
         const formattedOobs = oobsArray.map(oob => formatOob(oob));
         
-        // ✅ CALCULATE INTERVALS
+        // ✅ CALCULATE INTERVALS (THIS WAS MISSING!)
         this.oobs = calculateIntervals(formattedOobs);
         
         console.log(`✅ Fetched ${this.oobs.length} OOBs with intervals`);
@@ -286,35 +288,40 @@ export const useOobStore = defineStore('oob', {
     async fetchOob(id) {
       this.loading = true;
       this.error = null;
-
+    
       try {
         console.log(`🔄 Fetching OOB ${id}...`);
         
-        // Check if we already have it with intervals
+        // ✅ ENSURE WE HAVE ALL OOBS (with intervals already calculated)
+        if (this.oobs.length === 0) {
+          console.log('📥 Fetching all OOBs first (includes interval calculation)...');
+          await this.fetchOobs();
+        }
+        
+        // ✅ JUST FIND IT IN THE LIST - IT ALREADY HAS INTERVALS!
         const existing = this.oobById(id);
         if (existing) {
           this.oob = existing;
-          console.log('✅ OOB found in cache:', this.oob);
-          return existing;
+          console.log('✅ OOB found with pre-calculated intervals:', this.oob);
+          return this.oob;
         }
         
+        // ✅ IF NOT IN LIST (edge case), FETCH FROM API
         const response = await EventService.getOob(id);
-        
         console.log('🔄 Raw OOB from API:', response.data);
         
         // ✅ FORMAT THE OOB
         const formattedOob = formatOob(response.data);
         
-        // ✅ CALCULATE INTERVALS FOR THIS OOB
-        // We need to get all OOBs to calculate proper intervals
-        if (this.oobs.length === 0) {
-          await this.fetchOobs();
-        }
+        // ✅ ADD DEFAULT INTERVALS (since it's not in the list)
+        this.oob = {
+          ...formattedOob,
+          interval_days: 0,
+          interval_hours: 0,
+          interval_minutes: 0
+        };
         
-        // Find this OOB in the list (which now has intervals)
-        this.oob = this.oobById(id) || formattedOob;
-        
-        console.log('✅ OOB with intervals:', this.oob);
+        console.log('⚠️ OOB not in list, using default intervals:', this.oob);
         return this.oob;
         
       } catch (error) {
