@@ -249,9 +249,7 @@ export const useOobStore = defineStore('oob', {
       this.error = null;
 
       try {
-        console.log('🔄 Fetching OOBs from API...');
         const response = await EventService.getOobs();
-        console.log('🔄 Raw OOBs response:', response);
         
         // ✅ HANDLE DIFFERENT RESPONSE FORMATS
         let oobsArray = [];
@@ -267,12 +265,9 @@ export const useOobStore = defineStore('oob', {
         // ✅ CALCULATE INTERVALS (THIS WAS MISSING!)
         this.oobs = calculateIntervals(formattedOobs);
         
-        console.log(`✅ Fetched ${this.oobs.length} OOBs with intervals`);
-        console.log('📊 Sample OOB with intervals:', this.oobs[0]);
         return this.oobs;
         
       } catch (error) {
-        console.error('❌ Error fetching OOBs:', error);
         this.error = error.message || 'Failed to fetch OOBs';
         this.oobs = [];
         throw error;
@@ -290,11 +285,9 @@ export const useOobStore = defineStore('oob', {
       this.error = null;
     
       try {
-        console.log(`🔄 Fetching OOB ${id}...`);
         
         // ✅ ENSURE WE HAVE ALL OOBS (with intervals already calculated)
         if (this.oobs.length === 0) {
-          console.log('📥 Fetching all OOBs first (includes interval calculation)...');
           await this.fetchOobs();
         }
         
@@ -302,13 +295,11 @@ export const useOobStore = defineStore('oob', {
         const existing = this.oobById(id);
         if (existing) {
           this.oob = existing;
-          console.log('✅ OOB found with pre-calculated intervals:', this.oob);
           return this.oob;
         }
         
         // ✅ IF NOT IN LIST (edge case), FETCH FROM API
         const response = await EventService.getOob(id);
-        console.log('🔄 Raw OOB from API:', response.data);
         
         // ✅ FORMAT THE OOB
         const formattedOob = formatOob(response.data);
@@ -321,7 +312,6 @@ export const useOobStore = defineStore('oob', {
           interval_minutes: 0
         };
         
-        console.log('⚠️ OOB not in list, using default intervals:', this.oob);
         return this.oob;
         
       } catch (error) {
@@ -342,17 +332,14 @@ export const useOobStore = defineStore('oob', {
       this.error = null;
 
       try {
-        console.log('🔄 Creating OOB...', oobData);
         const response = await EventService.postOob(oobData);
         
         // ✅ REFRESH LIST TO RECALCULATE INTERVALS
         await this.fetchOobs();
         
-        console.log('✅ OOB created:', response.data);
         return response.data;
         
       } catch (error) {
-        console.error('❌ Error creating OOB:', error);
         alert('Failed to create OOB. Please try again.');
         this.error = error.message || 'Failed to create OOB';
         throw error;
@@ -370,17 +357,14 @@ export const useOobStore = defineStore('oob', {
       this.error = null;
 
       try {
-        console.log('🔄 Updating OOB...', oobData);
         const response = await EventService.putOob(oobData);
         
         // ✅ REFRESH LIST TO RECALCULATE INTERVALS
         await this.fetchOobs();
         
-        console.log('✅ OOB updated:', response.data);
         return response.data;
         
       } catch (error) {
-        console.error('❌ Error updating OOB:', error);
         alert('Failed to update OOB. Please try again.');
         this.error = error.message || 'Failed to update OOB';
         throw error;
@@ -394,7 +378,6 @@ export const useOobStore = defineStore('oob', {
     // DELETE OOB
     // ========================================
     async deleteOob(id) {
-      console.log('🗑️ Deleting OOB with ID:', id);
       this.loading = true;
       this.error = null;
 
@@ -404,11 +387,9 @@ export const useOobStore = defineStore('oob', {
         // ✅ REFRESH LIST TO RECALCULATE INTERVALS
         await this.fetchOobs();
         
-        console.log('✅ OOB deleted');
         return true;
         
       } catch (error) {
-        console.error('❌ Error deleting OOB:', error);
         alert('Failed to delete OOB. Please try again.');
         this.error = error.message || 'Failed to delete OOB';
         throw error;
@@ -427,7 +408,6 @@ export const useOobStore = defineStore('oob', {
 
     cleanup() {
       this.$reset();
-      console.log('🧹 OobStore cleaned up');
     },
 
     $reset() {

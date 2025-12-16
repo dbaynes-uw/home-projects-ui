@@ -1,77 +1,68 @@
 <template>
-  <div class="edit-view-container">
-    <!-- ✅ BREADCRUMB NAVIGATION -->
-    <div class="breadcrumb-nav">
-      <router-link :to="{ name: 'HealthDashboard' }" class="breadcrumb-link">
-        <i class="fas fa-heartbeat"></i>
-        Health Dashboard
-      </router-link>
-      <i class="fas fa-chevron-right breadcrumb-separator"></i>
-      <router-link :to="{ name: 'OobList' }" class="breadcrumb-link">
-        <i class="fas fa-exclamation-triangle"></i>
-        OOBs
-      </router-link>
-      <i class="fas fa-chevron-right breadcrumb-separator"></i>
-      <span class="breadcrumb-current">Edit OOB</span>
-    </div>
-    <!-- ✅ LOADING STATE -->
-    <BaseCard v-if="isLoading" class="loading-card">
-      <div class="loading-content">
-        <div class="spinner"></div>
-        <p>Loading OOB...</p>
-      </div>
-    </BaseCard>
-
-    <!-- ✅ ERROR STATE -->
-    <BaseCard v-else-if="error" class="error-card">
-      <div class="error-content">
-        <i class="fas fa-exclamation-circle"></i>
-        <h3>Error Loading OOB</h3>
-        <p>{{ error }}</p>
-        <BaseButton variant="primary" @click="router.push({ name: 'OobList' })">
-          Back to OOB List
-        </BaseButton>
-      </div>
-    </BaseCard>
-
-    <!-- ✅ EDIT FORM -->
-    <BaseCard v-else-if="oob" class="edit-card">
-      <template #header>
-        <div class="header-content">
-          <div class="title-section">
-            <h2>
+  <div class="oob-edit-wrapper">
+    <!-- ✅ PAGE HEADER WITH BREADCRUMB -->
+    <div class="page-wrapper gradient-oob">
+      <div class="page-container">
+        <div class="page-header">
+          <h1>
+            <router-link :to="{ name: 'HealthDashboard' }" class="breadcrumb-link">
+              <i class="fas fa-pills"></i>
+              Health Dashboard
+            </router-link>
+            <i class="fas fa-chevron-right breadcrumb-separator"></i>
+            <router-link :to="{ name: 'OobList' }" class="breadcrumb-link">
+              <i class="fas fa-exclamation-triangle icon-oob"></i>
+              OOBs
+            </router-link>
+            <i class="fas fa-chevron-right breadcrumb-separator"></i>
+            <span>
               <i class="fas fa-edit"></i>
               Edit OOB
-            </h2>
-            <div class="oob-id">ID: {{ oob.id }}</div>
-          </div>
-          
-          <div class="header-actions">
-            <BaseButton
-              variant="secondary"
-              icon="arrow-left"
-              @click="router.push({ name: 'OobList' })"
-            >
-              Back to List
-            </BaseButton>
-            <BaseButton
-              variant="danger"
-              icon="trash"
-              @click="handleDelete"
-            >
-              Delete OOB
-            </BaseButton>
+            </span>
+          </h1>
+        </div>
+
+        <!-- ✅ LOADING STATE -->
+        <div v-if="isLoading" class="loading-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          Loading OOB...
+        </div>
+
+        <!-- ✅ ERROR STATE -->
+        <div v-else-if="!oob" class="empty-state">
+          <i class="fas fa-exclamation-circle"></i>
+          <h3>OOB Not Found</h3>
+          <p>The requested OOB record could not be found.</p>
+          <router-link :to="{ name: 'OobList' }" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i>
+            Back to List
+          </router-link>
+        </div>
+
+        <!-- ✅ FORM CARD -->
+        <div v-else class="form-card">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-exclamation-triangle icon-oob"></i>
+                Edit OOB Record
+              </h2>
+              <p class="card-subtitle">
+                Modify OOB from {{ formatDate(oob.date_of_occurrence) }}
+              </p>
+            </div>
+
+            <div class="card-body">
+              <OobForm
+                :oob="oob"
+                @save="handleSave"
+                @cancel="handleCancel"
+              />
+            </div>
           </div>
         </div>
-      </template>
-
-      <!-- ✅ OOB FORM -->
-      <OobForm
-        :oob="oob"
-        @save="handleSave"
-        @cancel="handleCancel"
-      />
-    </BaseCard>
+      </div>
+    </div>
 
     <ConfirmDialogue ref="confirmDialogue" />
   </div>
@@ -81,217 +72,176 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useOobStore } from '@/stores/OobStore';
-import BaseButton from '@/components/ui/BaseButton.vue';
-import BaseCard from '@/components/ui/BaseCard.vue';
 import OobForm from '@/components/oobs/OobForm.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-// ✅ ROUTER & ROUTE
+// ✅ ROUTER, ROUTE & STORE
 const router = useRouter();
 const route = useRoute();
-
-// ✅ PINIA STORE
 const oobStore = useOobStore();
 
 // ✅ REFS
 const confirmDialogue = ref(null);
 
 // ✅ COMPUTED
-const oob = computed(() => oobStore.oob);
+const oob = computed(() => {
+  const id = parseInt(route.params.id);
+  return oobStore.allOobs.find(o => o.id === id);
+});
+
 const isLoading = computed(() => oobStore.isLoading);
-const error = computed(() => oobStore.error);
 
 // ✅ METHODS
+function formatDate(dateString) {
+  if (!dateString) return 'Unknown Date';
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (error) {
+    return dateString;
+  }
+}
+
 async function handleSave(oobData) {
-  if (!confirmDialogue.value) {
-    console.error('❌ confirmDialogue ref is null!');
-    return;
-  }
-
-  const ok = await confirmDialogue.value.show({
-    title: "Update OOB Record",
-    message: "Are you sure you want to update this OOB record?",
-    okButton: "Update",
-    cancelButton: "Cancel"
-  });
-
-  if (!ok) {
-    console.log('❌ Update cancelled by user');
-    return;
-  }
-
   try {
     await oobStore.updateOob(oobData);
     
-    await confirmDialogue.value.show({
-      title: "OOB Updated",
-      message: "OOB record has been updated successfully.",
-      okButton: "OK",
-      cancelButton: null
-    });
+    // Show success message
+    if (confirmDialogue.value) {
+      await confirmDialogue.value.show({
+        title: "OOB Updated",
+        message: "OOB record has been updated successfully.",
+        okButton: "OK",
+        cancelButton: null
+      });
+    }
     
+    // Navigate back to list
     router.push({ name: 'OobList' });
-    
   } catch (error) {
     console.error('❌ Update error:', error);
     
-    await confirmDialogue.value.show({
-      title: "Update Failed",
-      message: "Failed to update OOB record. Please try again.",
-      okButton: "OK",
-      cancelButton: null
-    });
+    // Show error message
+    if (confirmDialogue.value) {
+      await confirmDialogue.value.show({
+        title: "Update Failed",
+        message: "Failed to update OOB record. Please try again.",
+        okButton: "OK",
+        cancelButton: null
+      });
+    }
   }
 }
 
-function handleCancel() {
-  router.push({ name: 'OobList' });
-}
-
-async function handleDelete() {
-  if (!confirmDialogue.value) {
-    console.error('❌ confirmDialogue ref is null!');
-    return;
-  }
-
-  const ok = await confirmDialogue.value.show({
-    title: "Delete OOB Record",
-    message: `Are you sure you want to delete this OOB record from ${oob.value.oob_date}? This cannot be undone.`,
-    okButton: "Delete Forever",
-    cancelButton: "Cancel"
-  });
-
-  if (!ok) {
-    console.log('❌ Delete cancelled by user');
-    return;
-  }
-
-  try {
-    await oobStore.deleteOob(oob.value.id);
-    
-    await confirmDialogue.value.show({
-      title: "OOB Deleted",
-      message: "OOB record has been deleted successfully.",
-      okButton: "OK",
-      cancelButton: null
+async function handleCancel() {
+  // Confirm navigation away
+  if (confirmDialogue.value) {
+    const ok = await confirmDialogue.value.show({
+      title: "Cancel Editing",
+      message: "Are you sure you want to cancel? Any unsaved changes will be lost.",
+      okButton: "Yes, Cancel",
+      cancelButton: "Keep Editing"
     });
     
+    if (ok) {
+      router.push({ name: 'OobList' });
+    }
+  } else {
     router.push({ name: 'OobList' });
-    
-  } catch (error) {
-    console.error('❌ Delete error:', error);
-    
-    await confirmDialogue.value.show({
-      title: "Delete Failed",
-      message: "Failed to delete OOB record. Please try again.",
-      okButton: "OK",
-      cancelButton: null
-    });
   }
 }
 
 // ✅ LIFECYCLE
 onMounted(async () => {
-  const id = route.params.id;
-  
-  if (!id) {
-    console.error('❌ No OOB ID provided');
-    router.push({ name: 'OobList' });
-    return;
+  // Ensure OOBs are loaded
+  if (oobStore.allOobs.length === 0) {
+    try {
+      await oobStore.fetchOobs();
+    } catch (error) {
+      console.error('❌ Failed to load OOBs:', error);
+    }
   }
-
-  try {
-    await oobStore.fetchOob(id);
-  } catch (error) {
-    console.error('❌ Failed to load OOB:', error);
+  
+  // Check if OOB exists
+  if (!oob.value) {
+    console.warn('⚠️ OOB not found:', route.params.id);
   }
 });
 </script>
 
 <style scoped>
-/* ✅ IMPORT SHARED STYLES */
-@import '@/assets/styles/ui-components.css';
-@import '@/assets/styles/list-view-components.css';
+/* ✅ IMPORT SHARED HEALTH STYLES */
+@import '@/assets/styles/health-shared.css';
 
 /* ========================================
-   OOB EDIT - COMPONENT-SPECIFIC STYLES ONLY
+   COMPONENT-SPECIFIC STYLES
    ======================================== */
 
-.edit-view-container {
-  max-width: 1200px;
+.oob-edit-wrapper {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Page wrapper spacing */
+.page-wrapper {
+  padding-bottom: 120px; /* Space for footer */
+}
+
+/* Breadcrumb navigation */
+.breadcrumb-link {
+  color: white;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  font-size: 1.5rem;
+  opacity: 0.6;
+  margin: 0 0.5rem;
+}
+
+/* Form card container */
+.form-card {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
-/* Edit Card Specific */
-.edit-card {
-  margin-top: 1.5rem;
+.form-card .card {
+  border-left: 4px solid #ef4444; /* OOB red accent */
 }
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-}
-
-.title-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.title-section h2 {
+/* Card subtitle */
+.card-subtitle {
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: #2d3748;
-  font-size: 1.75rem;
-}
-
-.title-section h2 i {
-  color: #ef4444;
-}
-
-/* OOB-specific ID badge (red theme) */
-.oob-id {
-  padding: 0.5rem 1rem;
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.header-actions {
-  display: flex;
-  gap: 1rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .edit-view-container {
-    padding: 1rem;
+  .form-card {
+    max-width: 100%;
   }
-
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .title-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .header-actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .header-actions button {
-    width: 100%;
+  
+  .breadcrumb-separator {
+    font-size: 1.25rem;
+    margin: 0 0.25rem;
   }
 }
 </style>

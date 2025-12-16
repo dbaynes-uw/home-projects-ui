@@ -1,78 +1,133 @@
 <template>
   <form @submit.prevent="handleSubmit" class="oob-form">
-    <!-- ✅ OOB INFORMATION SECTION -->
-    <div class="form-section">
-      <h3 class="section-title">
-        <i class="fas fa-exclamation-triangle"></i>
-        OOB Information
-      </h3>
+    <!-- ✅ DATE & TIME -->
+    <div class="form-group">
+      <label for="date_of_occurrence" class="form-label required">
+        <i class="fas fa-calendar-alt"></i>
+        Date & Time of Occurrence
+      </label>
+      <input
+        id="date_of_occurrence"
+        v-model="formData.date_of_occurrence"
+        type="datetime-local"
+        class="form-input"
+        :class="{ 'input-error': errors.date_of_occurrence }"
+        required
+      />
+      <span v-if="errors.date_of_occurrence" class="error-message">
+        {{ errors.date_of_occurrence }}
+      </span>
+    </div>
 
-      <!-- ✅ DATE & TIME OF OCCURRENCE -->
-      <div class="form-group">
-        <label for="date_of_occurrence" class="required">Date & Time of Occurrence</label>
-        <input
-          id="date_of_occurrence"
-          v-model="formData.date_of_occurrence"
-          type="datetime-local"
-          class="form-control"
-          required
-        />
+    <!-- ✅ DURATION -->
+    <div class="form-group">
+      <label for="duration" class="form-label required">
+        <i class="fas fa-clock"></i>
+        Duration
+      </label>
+      <select
+        id="duration"
+        v-model="formData.duration"
+        class="form-select"
+        :class="{ 'input-error': errors.duration }"
+        required
+      >
+        <option value="">Select duration...</option>
+        <option value="Short">Short (< 5 minutes)</option>
+        <option value="Long">Long (5-15 minutes)</option>
+        <option value="Very Long">Very Long (> 15 minutes)</option>
+      </select>
+      <span v-if="errors.duration" class="error-message">
+        {{ errors.duration }}
+      </span>
+    </div>
+
+    <!-- ✅ CIRCUMSTANCES (OPTIONAL) -->
+    <div class="form-group">
+      <label for="circumstances" class="form-label">
+        <i class="fas fa-notes-medical"></i>
+        Circumstances
+        <span class="optional-badge">Optional</span>
+      </label>
+      <textarea
+        id="circumstances"
+        v-model="formData.circumstances"
+        class="form-textarea"
+        rows="4"
+        placeholder="Describe what happened, where it occurred, any triggers..."
+      ></textarea>
+      <p class="form-hint">
+        <i class="fas fa-info-circle"></i>
+        Include details like location, activities, and any potential causes
+      </p>
+    </div>
+
+    <!-- ✅ INTERVAL DISPLAY (EDIT MODE ONLY) -->
+    <div v-if="isEditMode && hasInterval" class="form-group">
+      <label class="form-label">
+        <i class="fas fa-stopwatch"></i>
+        Time Since Last OOB
+      </label>
+      <div class="interval-display-card">
+        <div v-if="formData.interval_days" class="interval-stat">
+          <span class="interval-value">{{ formData.interval_days }}</span>
+          <span class="interval-label">Days</span>
+        </div>
+        <div v-if="formData.interval_hours" class="interval-stat">
+          <span class="interval-value">{{ formData.interval_hours }}</span>
+          <span class="interval-label">Hours</span>
+        </div>
+        <div v-if="formData.interval_minutes" class="interval-stat">
+          <span class="interval-value">{{ formData.interval_minutes }}</span>
+          <span class="interval-label">Minutes</span>
+        </div>
       </div>
+      <p class="form-hint">
+        <i class="fas fa-info-circle"></i>
+        This is automatically calculated and cannot be edited
+      </p>
+    </div>
 
-      <!-- ✅ DURATION - DROPDOWN -->
-      <div class="form-group">
-        <label for="duration">Duration</label>
-        <select
-          id="duration"
-          v-model="formData.duration"
-          class="form-control"
-        >
-          <option value="">Select Duration (Optional)</option>
-          <option value="Short: < 1min">Short: &lt; 1min</option>
-          <option value="Medium: 1 to 2mins">Medium: 1 to 2mins</option>
-          <option value="Long: > 2mins">Long: &gt; 2mins</option>
-        </select>
-      </div>
-
-      <!-- ✅ CIRCUMSTANCES -->
-      <div class="form-group">
-        <label for="circumstances">Circumstances / Notes</label>
-        <textarea
-          id="circumstances"
-          v-model="formData.circumstances"
-          class="form-control"
-          rows="6"
-          placeholder="Describe what happened, any triggers, symptoms, etc..."
-        ></textarea>
+    <!-- ✅ CREATED BY (EDIT MODE ONLY) -->
+    <div v-if="isEditMode && formData.created_by" class="form-group">
+      <label class="form-label">
+        <i class="fas fa-user"></i>
+        Created By
+      </label>
+      <div class="readonly-field">
+        {{ formData.created_by }}
       </div>
     </div>
 
     <!-- ✅ FORM ACTIONS -->
     <div class="form-actions">
-      <BaseButton
-        type="button"
-        variant="secondary"
-        @click="handleCancel"
-      >
-        Cancel
-      </BaseButton>
-      <BaseButton
+      <button
         type="submit"
-        variant="primary"
-        icon="save"
-        :disabled="!isFormValid"
+        class="btn btn-primary"
+        :disabled="isSubmitting"
       >
-        {{ isEditing ? 'Update OOB' : 'Create OOB' }}
-      </BaseButton>
+        <i v-if="!isSubmitting" class="fas fa-save"></i>
+        <i v-else class="fas fa-spinner fa-spin"></i>
+        {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update OOB' : 'Create OOB') }}
+      </button>
+      
+      <button
+        type="button"
+        class="btn btn-secondary"
+        @click="handleCancel"
+        :disabled="isSubmitting"
+      >
+        <i class="fas fa-times"></i>
+        Cancel
+      </button>
     </div>
   </form>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import BaseButton from '@/components/ui/BaseButton.vue';
+import { ref, computed, onMounted } from 'vue';
 
+// ✅ PROPS
 const props = defineProps({
   oob: {
     type: Object,
@@ -80,206 +135,245 @@ const props = defineProps({
   }
 });
 
+// ✅ EMITS
 const emit = defineEmits(['save', 'cancel']);
 
-// ✅ VUEX STORE FOR USER
-const store = useStore();
-
-// ✅ FORM DATA - ONLY 4 FIELDS
+// ✅ FORM STATE
 const formData = ref({
   date_of_occurrence: '',
   duration: '',
-  circumstances: ''
+  circumstances: '',
+  interval_days: null,
+  interval_hours: null,
+  interval_minutes: null,
+  created_by: ''
 });
+
+const errors = ref({});
+const isSubmitting = ref(false);
 
 // ✅ COMPUTED
-const isEditing = computed(() => !!props.oob?.id);
+const isEditMode = computed(() => !!props.oob);
 
-const isFormValid = computed(() => {
-  return formData.value.date_of_occurrence !== '';
+const hasInterval = computed(() => {
+  return formData.value.interval_days !== null || 
+         formData.value.interval_hours !== null || 
+         formData.value.interval_minutes !== null;
 });
 
-const user = computed(() => store.state.user);
-
-// ✅ WATCH FOR PROP CHANGES
-watch(
-  () => props.oob,
-  (newOob) => {
-    console.log('📥 OOB prop received:', newOob);
-    
-    if (newOob) {
-      // ✅ NO NEED TO FORMAT - STORE ALREADY DID IT!
-      formData.value = {
-        id: newOob.id,
-        date_of_occurrence: newOob.date_of_occurrence || '', // Already formatted by store!
-        duration: newOob.duration || '',
-        circumstances: newOob.circumstances || ''
-      };
-      
-      console.log('✅ Form populated with:', formData.value);
-    } else {
-      // Reset form for new entry
-      resetForm();
-      
-    }
-  },
-  { immediate: true }
-);
-
 // ✅ METHODS
-function handleSubmit() {
-  if (!isFormValid.value) return;
+function initializeForm() {
+  if (props.oob) {
+    // Edit mode - populate with existing data
+    formData.value = {
+      id: props.oob.id,
+      date_of_occurrence: formatDateForInput(props.oob.date_of_occurrence),
+      duration: props.oob.duration || '',
+      circumstances: props.oob.circumstances || '',
+      interval_days: props.oob.interval_days,
+      interval_hours: props.oob.interval_hours,
+      interval_minutes: props.oob.interval_minutes,
+      created_by: props.oob.created_by || ''
+    };
+  } else {
+    // Create mode - set default date to now
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    formData.value.date_of_occurrence = `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+}
 
-  console.log('📤 Submitting form data:', formData.value);
-  emit('save', { ...formData.value });
+function formatDateForInput(dateString) {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return '';
+  }
+}
+
+function validateForm() {
+  errors.value = {};
+  
+  if (!formData.value.date_of_occurrence) {
+    errors.value.date_of_occurrence = 'Date and time is required';
+  }
+  
+  if (!formData.value.duration) {
+    errors.value.duration = 'Duration is required';
+  }
+  
+  return Object.keys(errors.value).length === 0;
+}
+
+async function handleSubmit() {
+  if (!validateForm()) {
+    return;
+  }
+  
+  isSubmitting.value = true;
+  
+  try {
+    // Convert datetime-local to ISO format for API
+    const submitData = {
+      ...formData.value,
+      date_of_occurrence: new Date(formData.value.date_of_occurrence).toISOString()
+    };
+    
+    emit('save', submitData);
+  } catch (error) {
+    console.error('❌ Form submission error:', error);
+    errors.value.submit = 'Failed to save OOB. Please try again.';
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
 function handleCancel() {
   emit('cancel');
 }
 
-function resetForm() {
-  formData.value = {
-    date_of_occurrence: '',
-    duration: '',
-    circumstances: ''
-  };
-}
-
 // ✅ LIFECYCLE
 onMounted(() => {
-  console.log('📝 OobForm mounted. Editing mode:', isEditing.value);
+  initializeForm();
 });
 </script>
 
 <style scoped>
-/* ✅ IMPORT SHARED FORM STYLES */
-@import '@/assets/styles/ui-components.css';
+/* ✅ IMPORT SHARED HEALTH STYLES */
+@import '@/assets/styles/health-shared.css';
 
 /* ========================================
-   OOB FORM
+   COMPONENT-SPECIFIC STYLES
    ======================================== */
 
 .oob-form {
-  padding: 1.5rem;
+  width: 100%;
 }
 
-.form-section {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: rgba(239, 68, 68, 0.02);
-  border-radius: 12px;
-  border: 1px solid rgba(239, 68, 68, 0.1);
-}
-
-.section-title {
-  margin: 0 0 1.5rem 0;
-  color: #ef4444;
-  font-size: 1.1rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.section-title i {
-  font-size: 1.25rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.5rem;
-}
-
-.form-group:last-child {
-  margin-bottom: 0;
-}
-
-.form-group label {
-  margin-bottom: 0.5rem;
-  color: #4a5568;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.form-group label.required::after {
+/* Required field indicator */
+.required::after {
   content: ' *';
   color: #ef4444;
+  font-weight: bold;
 }
 
-.form-control {
+/* Optional badge */
+.optional-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #e5e7eb;
+  color: #6b7280;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+/* Interval display card */
+.interval-display-card {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fecaca;
+  border-radius: 12px;
+}
+
+.interval-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.interval-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ef4444;
+  line-height: 1;
+}
+
+.interval-label {
+  font-size: 0.875rem;
+  color: #991b1b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Readonly field */
+.readonly-field {
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  background: white;
+  color: #6b7280;
+  font-size: 0.875rem;
 }
 
-.form-control:focus {
-  outline: none;
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+/* Form actions - FIXED ALIGNMENT */
+.form-actions {
+  display: flex;
+  gap: 1rem; /* ✅ SPACE BETWEEN BUTTONS */
+  justify-content: flex-start; /* ✅ ALIGN LEFT */
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f3f4f6;
 }
 
-.form-control::placeholder {
-  color: #cbd5e0;
-}
-
-.form-control:disabled {
-  background: #f7fafc;
-  color: #a0aec0;
+/* Disabled button state */
+.btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* ✅ SELECT DROPDOWN STYLING */
-select.form-control {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ef4444' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 12px;
-  padding-right: 2.5rem;
+/* Error state for form controls */
+.input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
 }
 
-select.form-control::-ms-expand {
-  display: none;
-}
-
-textarea.form-control {
-  resize: vertical;
-  min-height: 120px;
-  font-family: inherit;
-  line-height: 1.5;
-}
-
-/* Form Actions */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid rgba(239, 68, 68, 0.1);
-  margin-top: 1.5rem;
+.input-error:focus {
+  outline-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .oob-form {
+  .interval-display-card {
+    gap: 1rem;
     padding: 1rem;
   }
-
-  .form-section {
-    padding: 1rem;
+  
+  .interval-value {
+    font-size: 1.5rem;
   }
-
+  
+  .interval-label {
+    font-size: 0.75rem;
+  }
+  
   .form-actions {
-    flex-direction: column-reverse;
+    flex-direction: column;
+    gap: 0.75rem; /* ✅ VERTICAL GAP ON MOBILE */
   }
-
-  .form-actions button {
+  
+  .form-actions .btn {
     width: 100%;
   }
 }

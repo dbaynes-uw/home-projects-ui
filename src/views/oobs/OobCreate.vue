@@ -1,41 +1,52 @@
 <template>
-  <div class="page-wrapper">
-    <div class="oob-create-container">
-      <!-- ✅ HEADER CARD -->
-      <v-card class="mx-auto mt-5">
-        <v-card-title class="pb-0">
-          <h2>
-            <i class="fas fa-exclamation-triangle"></i>
-            Add OOB Record
-          </h2>
-        </v-card-title>
-        
-        <!-- ✅ NAVIGATION BUTTONS -->
-        <v-card-text>
-          <div class="navigation-flex">
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'OobList' }"
-              prepend-icon="fas fa-list"
-              class="nav-button"
-            >
-              View All OOBs
-            </v-btn>
-          </div>
-        </v-card-text>
-      </v-card>
+  <div class="oob-create-wrapper">
+    <!-- ✅ PAGE HEADER WITH BREADCRUMB -->
+    <div class="page-wrapper gradient-oob">
+      <div class="page-container">
+        <div class="page-header">
+          <h1>
+            <router-link :to="{ name: 'HealthDashboard' }" class="breadcrumb-link">
+              <i class="fas fa-pills"></i>
+              Health Dashboard
+            </router-link>
+            <i class="fas fa-chevron-right breadcrumb-separator"></i>
+            <router-link :to="{ name: 'OobList' }" class="breadcrumb-link">
+              <i class="fas fa-exclamation-triangle icon-oob"></i>
+              OOBs
+            </router-link>
+            <i class="fas fa-chevron-right breadcrumb-separator"></i>
+            <span>
+              <i class="fas fa-plus"></i>
+              Create New OOB
+            </span>
+          </h1>
+        </div>
 
-      <!-- ✅ MAIN FORM CARD -->
-      <v-card class="mt-4">
-        <v-card-text>
-          <!-- ✅ USE OobForm COMPONENT (like OobEdit does) -->
-          <OobForm
-            @save="handleSave"
-            @cancel="handleCancel"
-          />
-        </v-card-text>
-      </v-card>
+        <!-- ✅ FORM CARD -->
+        <div class="form-card">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-exclamation-triangle icon-oob"></i>
+                Add New OOB Record
+              </h2>
+              <p class="card-subtitle">
+                Record a new Out of Bounds incident
+              </p>
+            </div>
+
+            <div class="card-body">
+              <OobForm
+                @save="handleSave"
+                @cancel="handleCancel"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <ConfirmDialogue ref="confirmDialogue" />
   </div>
 </template>
 
@@ -44,98 +55,132 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useOobStore } from '@/stores/OobStore';
 import OobForm from '@/components/oobs/OobForm.vue';
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-// ✅ COMPOSITION API SETUP
+// ✅ ROUTER & STORE
 const router = useRouter();
 const oobStore = useOobStore();
 
-// ✅ REACTIVE STATE
-const isSubmitting = ref(false);
+// ✅ REFS
+const confirmDialogue = ref(null);
 
 // ✅ METHODS
-const handleSave = async (oobData) => {
+async function handleSave(oobData) {
   try {
-    isSubmitting.value = true;
-    
-    console.log('📤 Creating OOB:', oobData);
-    
-    // ✅ SUBMIT TO PINIA STORE
     await oobStore.createOob(oobData);
     
-    alert(`✅ OOB record created successfully!`);
-    
-    // ✅ NAVIGATE TO OOB LIST
-    await router.push({ name: 'OobList' });
-    
-  } catch (error) {
-    console.error('❌ Error creating OOB:', error);
-    
-    if (error.response?.status === 422) {
-      alert(`❌ Validation Error: ${JSON.stringify(error.response.data)}`);
-    } else if (error.response?.status === 500) {
-      alert(`❌ Server Error: Check backend logs`);
-    } else {
-      alert(`❌ Error creating OOB: ${error.message}`);
+    // Show success message
+    if (confirmDialogue.value) {
+      await confirmDialogue.value.show({
+        title: "OOB Created",
+        message: "OOB record has been created successfully.",
+        okButton: "OK",
+        cancelButton: null
+      });
     }
-  } finally {
-    isSubmitting.value = false;
+    
+    // Navigate back to list
+    router.push({ name: 'OobList' });
+  } catch (error) {
+    console.error('❌ Create error:', error);
+    
+    // Show error message
+    if (confirmDialogue.value) {
+      await confirmDialogue.value.show({
+        title: "Create Failed",
+        message: "Failed to create OOB record. Please try again.",
+        okButton: "OK",
+        cancelButton: null
+      });
+    }
   }
-};
+}
 
-const handleCancel = () => {
-  console.log('❌ Create cancelled');
-  router.push({ name: 'OobList' });
-};
+async function handleCancel() {
+  // Confirm navigation away
+  if (confirmDialogue.value) {
+    const ok = await confirmDialogue.value.show({
+      title: "Cancel Creation",
+      message: "Are you sure you want to cancel? Any unsaved changes will be lost.",
+      okButton: "Yes, Cancel",
+      cancelButton: "Keep Editing"
+    });
+    
+    if (ok) {
+      router.push({ name: 'OobList' });
+    }
+  } else {
+    router.push({ name: 'OobList' });
+  }
+}
 </script>
 
 <style scoped>
-/* ✅ MODERN CONSISTENT STYLES */
-.page-wrapper {
+/* ✅ IMPORT SHARED HEALTH STYLES */
+@import '@/assets/styles/health-shared.css';
+
+/* ========================================
+   COMPONENT-SPECIFIC STYLES
+   ======================================== */
+
+.oob-create-wrapper {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
+  min-height: 100vh;
 }
 
-.oob-create-container {
-  width: 100%;
-  max-width: 800px;
-  padding: 1rem;
+/* Page wrapper spacing */
+.page-wrapper {
+  padding-bottom: 120px; /* Space for footer */
+}
+
+/* Breadcrumb navigation */
+.breadcrumb-link {
+  color: white;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+}
+
+.breadcrumb-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  font-size: 1.5rem;
+  opacity: 0.6;
+  margin: 0 0.5rem;
+}
+
+/* Form card container */
+.form-card {
+  max-width: 900px;
   margin: 0 auto;
 }
 
-.navigation-flex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+.form-card .card {
+  border-left: 4px solid #ef4444; /* OOB red accent */
 }
 
-.nav-button {
-  min-width: 200px !important;
-  height: 40px !important;
+/* Card subtitle */
+.card-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
-/* ✅ RESPONSIVE DESIGN */
+/* Responsive */
 @media (max-width: 768px) {
-  .navigation-flex {
-    flex-direction: column;
+  .form-card {
+    max-width: 100%;
   }
   
-  .nav-button {
-    min-width: 100% !important;
+  .breadcrumb-separator {
+    font-size: 1.25rem;
+    margin: 0 0.25rem;
   }
-  
-  .oob-create-container {
-    padding: 0.5rem;
-  }
-}
-
-/* ✅ ACCESSIBILITY */
-.nav-button:focus {
-  outline: 2px solid #ef4444;
-  outline-offset: 2px;
 }
 </style>

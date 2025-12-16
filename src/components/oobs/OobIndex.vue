@@ -1,681 +1,404 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-
-  <div class="oob-index-container">
-    <div class="index-header">
-      <h3 class="results-count">
-        <i class="fas fa-counter"></i>
-        Total: {{ oobs.length }}
-      </h3>
-      
-      <div class="view-controls">
-        <button 
-          @click="toggleDensity" 
-          class="density-btn"
-          :title="isCompact ? 'Expand Table' : 'Compact Table'"
-        >
-          <i class="mdi" :class="isCompact ? 'fas fa-table-large' : 'fas fa-table'"></i>
-          <span>{{ isCompact ? 'Expand' : 'Compact' }}</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ✅ PROPERLY STRUCTURED V-TABLE -->
-    <v-table :density="isCompact ? 'compact' : 'default'" class="oob-table">
-      <thead>
-        <tr>
-          <!-- ✅ SORTABLE HEADERS -->
-          <th 
-            class="sortable-header" 
-            @click="sortList('date_of_occurrence')"
-            :class="{ 'sorted': sortBy === 'date_of_occurrence' }"
-          >
-            <div class="header-content">
-              <i class="fas fa-calendar-clock"></i>
-              <span>Date of Occurrence</span>
-              <i class="mdi sort-icon" :class="getSortIcon('date_of_occurrence')"></i>
-            </div>
-          </th>
-          
-          <th 
-            class="sortable-header" 
-            @click="sortList('duration')"
-            :class="{ 'sorted': sortBy === 'duration' }"
-          >
-            <div class="header-content">
-              <i class="fas fa-timer-outline"></i>
-              <span>Duration</span>
-              <i class="mdi sort-icon" :class="getSortIcon('duration')"></i>
-            </div>
-          </th>
-          
-          <th 
-            class="sortable-header" 
-            @click="sortList('interval_days')"
-            :class="{ 'sorted': sortBy === 'interval_days' }"
-          >
-            <div class="header-content">
-              <i class="fas fa-calendar-range"></i>
-              <span>Days Since Last</span>
-              <i class="mdi sort-icon" :class="getSortIcon('interval_days')"></i>
-            </div>
-          </th>
-          
-          <!-- ✅ NON-SORTABLE HEADERS -->
-          <th class="non-sortable-header">
-            <div class="header-content">
-              <i class="fas fa-clock-time-four-outline"></i>
-              <span>Hours</span>
-            </div>
-          </th>
-          
-          <th class="non-sortable-header">
-            <div class="header-content">
-              <i class="fas fa-clock-outline"></i>
-              <span>Minutes</span>
-            </div>
-          </th>
-          
-          <th class="non-sortable-header">
-            <div class="header-content">
-              <i class="fas fa-note-text-outline"></i>
-              <span>Circumstances</span>
-            </div>
-          </th>
-          
-          <th class="non-sortable-header actions-header">
-            <div class="header-content">
+  <div class="oob-index-wrapper">
+    <!-- ✅ TABLE CONTAINER -->
+    <div class="table-container">
+      <table class="data-table">
+        <!-- ✅ TABLE HEADER -->
+        <thead>
+          <tr>
+            <th class="col-date">
+              <i class="fas fa-calendar-alt"></i>
+              Date
+            </th>
+            <th class="col-duration">
+              <i class="fas fa-clock"></i>
+              Duration
+            </th>
+            <th class="col-circumstances">
+              <i class="fas fa-notes-medical"></i>
+              Circumstances
+            </th>
+            <th class="col-interval">
+              <i class="fas fa-stopwatch"></i>
+              Since Last
+            </th>
+            <th class="col-actions">
               <i class="fas fa-cog"></i>
-              <span>Actions</span>
-            </div>
-          </th>
-        </tr>
-      </thead>
-        
-      <tbody>
-        <tr 
-          v-for="(oob, oobIndex) in sortedOobs" 
-          :key="oob.id || oobIndex"
-          class="oob-row"
-          :class="{ 'even-row': oobIndex % 2 === 0 }"
-        >
-          <td class="date-cell">
-            <div class="cell-content">
-              <i class="fas fa-calendar-clock cell-icon"></i>
-              <span>{{ formatStandardDateTime(oob.date_of_occurrence) }}</span>
-            </div>
-          </td>
-          
-          <td class="duration-cell">
-            <div class="cell-content">
-              <i class="fas fa-timer-outline cell-icon"></i>
-              <span>{{ capitalizeFirst(oob.duration) }}</span>
-            </div>
-          </td>
-          
-          <td class="interval-cell">
-            <span class="interval-badge">{{ oob.interval_days }} days</span>
-          </td>
-          
-          <td class="interval-cell">
-            <span class="interval-badge secondary">{{ oob.interval_hours }} hours</span>
-          </td>
-          
-          <td class="interval-cell">
-            <span class="interval-badge tertiary">{{ oob.interval_minutes }} minutes</span>
-          </td>
-          
-          <td class="circumstances-cell">
-            <div v-if="oob.circumstances" class="circumstances-content">
-              <textarea 
-                v-model="oob.circumstances" 
-                class="circumstances-textarea"
-                rows="2"
-                :readonly="!isEditing[oob.id]"
-                @blur="saveCircumstances(oob)"
-              />
-              <button 
-                @click="toggleEdit(oob.id)"
-                class="edit-circumstances-btn"
-                :title="isEditing[oob.id] ? 'Save' : 'Edit'"
-              >
-                <i class="mdi" :class="isEditing[oob.id] ? 'fas fa-content-save' : 'fas fa-pencil'"></i>
-              </button>
-            </div>
-            <span v-else class="no-circumstances">
-              <i class="fas fa-minus"></i>
-              No notes
-            </span>
-          </td>
-          
-          <td class="actions-cell">
-            <div class="action-buttons">
-              <!-- ✅ EDIT BUTTON -->
-              <router-link
-                :to="{ name: 'OobEdit', params: { id: `${oob.id}` } }"
-                class="action-btn edit-btn"
-                title="Edit Oob"
-              >
-                <i class="fas fa-pencil"></i>
-              </router-link>
-              
-              <!-- ✅ VIEW DETAILS BUTTON -->
-              <router-link
-                :to="{ name: 'OobDetails', params: { id: `${oob.id}` } }"
-                class="action-btn view-btn"
-                title="View Details"
-              >
-                <i class="fas fa-eye"></i>
-              </router-link>
-              
-              <!-- ✅ DELETE BUTTON -->
-              <button
-                @click="deleteOob(oob)"
-                class="action-btn delete-btn"
-                title="Delete Oob"
-              >
-                <i class="fas fa-delete"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-    
-    <!-- ✅ EMPTY STATE -->
-    <div v-if="oobs.length === 0" class="empty-state">
-      <i class="fas fa-oobication-outline"></i>
-      <p>No oobs to display</p>
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <!-- ✅ TABLE BODY -->
+        <tbody>
+          <tr
+            v-for="oob in sortedOobs"
+            :key="oob.id"
+            class="table-row"
+            @dblclick="handleView(oob)"
+          >
+            <!-- Date Column -->
+            <td class="col-date">
+              <div class="cell-content">
+                <span class="date-value">{{ formatDate(oob.date_of_occurrence) }}</span>
+                <span v-if="oob.created_by" class="creator-badge">
+                  <i class="fas fa-user"></i>
+                  {{ oob.created_by }}
+                </span>
+              </div>
+            </td>
+
+            <!-- Duration Column -->
+            <td class="col-duration">
+              <span :class="['badge', getDurationBadgeClass(oob.duration)]">
+                {{ oob.duration || 'N/A' }}
+              </span>
+            </td>
+
+            <!-- Circumstances Column -->
+            <td class="col-circumstances">
+              <div class="circumstances-text">
+                {{ truncate(oob.circumstances, 100) }}
+              </div>
+              <div v-if="oob.notes" class="notes-preview">
+                <i class="fas fa-comment"></i>
+                {{ truncate(oob.notes, 50) }}
+              </div>
+            </td>
+
+            <!-- Interval Column -->
+            <td class="col-interval">
+              <div v-if="hasInterval(oob)" class="interval-display">
+                <span v-if="oob.interval_days" class="interval-part">
+                  <strong>{{ oob.interval_days }}</strong>d
+                </span>
+                <span v-if="oob.interval_hours" class="interval-part">
+                  <strong>{{ oob.interval_hours }}</strong>h
+                </span>
+                <span v-if="oob.interval_minutes" class="interval-part">
+                  <strong>{{ oob.interval_minutes }}</strong>m
+                </span>
+              </div>
+              <span v-else class="text-muted">—</span>
+            </td>
+
+            <!-- Actions Column -->
+            <td class="col-actions">
+              <div class="action-buttons">
+                <button
+                  @click.stop="handleView(oob)"
+                  class="btn btn-info btn-sm"
+                  title="View OOB Details"
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button
+                  @click.stop="handleEdit(oob)"
+                  class="btn btn-primary btn-sm"
+                  title="Edit OOB"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  @click.stop="handleDelete(oob)"
+                  class="btn btn-danger btn-sm"
+                  title="Delete OOB"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ✅ EMPTY STATE -->
+      <div v-if="!oobs || oobs.length === 0" class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No OOBs to Display</h3>
+        <p>Start by adding your first OOB record</p>
+      </div>
+
+      <!-- ✅ HINT TEXT -->
+      <p v-if="oobs && oobs.length > 0" class="hint-text">
+        <i class="fas fa-hand-pointer"></i>
+        Double click any row to view details
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue';
-import { useStore } from 'vuex';
-//import { useRouter } from 'vue-router'; // ✅ UNCOMMENT THIS
-// eslint-disable-next-line no-unused-vars
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-
-// ✅ COMPOSITION API SETUP
-const store = useStore();
-//const router = useRouter(); // ✅ UNCOMMENT THIS
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 // ✅ PROPS
 const props = defineProps({
   oobs: {
     type: Array,
+    required: true,
     default: () => []
   }
 });
 
-// ✅ REFS (FIX THE ORDER AND REMOVE DUPLICATE)
-const confirmDialogue = ref(null);
-const isCompact = ref(true);
-const sortBy = ref('date_of_occurrence');
-const sortDirection = ref('desc');
-const isEditing = reactive({});
+// ✅ EMITS
+const emit = defineEmits(['edit', 'delete']);
 
-// ✅ COMPUTED PROPERTIES
+// ✅ ROUTER
+const router = useRouter();
+
+// ✅ COMPUTED - SORT BY DATE (NEWEST FIRST)
 const sortedOobs = computed(() => {
-  if (!props.oobs || props.oobs.length === 0) return [];
+  if (!props.oobs) return [];
   
-  const sorted = [...props.oobs].sort((a, b) => {
-    let aVal = a[sortBy.value];
-    let bVal = b[sortBy.value];
-    
-    // Handle different data types
-    if (sortBy.value.includes('interval')) {
-      aVal = parseInt(aVal) || 0;
-      bVal = parseInt(bVal) || 0;
-    } else if (sortBy.value.includes('date')) {
-      aVal = new Date(aVal);
-      bVal = new Date(bVal);
-    } else {
-      aVal = String(aVal || '').toLowerCase();
-      bVal = String(bVal || '').toLowerCase();
-    }
-    
-    if (sortDirection.value === 'asc') {
-      return aVal > bVal ? 1 : -1;
-    } else {
-      return aVal < bVal ? 1 : -1;
-    }
+  return [...props.oobs].sort((a, b) => {
+    const dateA = new Date(a.date_of_occurrence);
+    const dateB = new Date(b.date_of_occurrence);
+    return dateB - dateA; // Newest first
   });
-  
-  return sorted;
 });
 
 // ✅ METHODS
-const capitalizeFirst = (str) => {
-  if (!str) return '';
-  if (typeof str !== 'string') return String(str);
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-};
-
-const toggleDensity = () => {
-  isCompact.value = !isCompact.value;
-};
-
-const sortList = (column) => {
-  if (sortBy.value === column) {
-    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortBy.value = column;
-    sortDirection.value = 'desc';
-  }
+const formatDate = (dateString) => {
+  if (!dateString) return 'Unknown Date';
   
-  console.log(`🔄 Sorting by ${column} (${sortDirection.value})`);
-};
-
-const getSortIcon = (column) => {
-  if (sortBy.value !== column) return 'fas fa-sort';
-  return sortDirection.value === 'asc' ? 'fas fa-sort-ascending' : 'fas fa-sort-descending';
-};
-
-const toggleEdit = (oobId) => {
-  isEditing[oobId] = !isEditing[oobId];
-};
-
-const saveCircumstances = (oob) => {
-  if (isEditing[oob.id]) {
-    console.log('💾 Auto-saving circumstances for oob:', oob.id);
-    // store.dispatch('updateOob', oob);
-  }
-};
-
-const deleteOob = async (oob) => {
   try {
-    const ok = await confirmDialogue.value?.show({
-      title: "Delete Oob Record",
-      message: `Are you sure you want to delete the oob record from ${formatStandardDateTime(oob.date_of_occurrence)}? This action cannot be undone.`,
-      okButton: "Delete Forever",
-      cancelButton: "Keep Record"
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
-
-    if (!ok) {
-      console.log('❌ Delete cancelled by user');
-      return;
-    }
-
-    console.log('🗑️ Deleting oob:', oob.id);
-    
-    const result = await store.dispatch("deleteOob", oob);
-    
-    if (result && result.success !== false) {
-      await confirmDialogue.value?.show({
-        title: "Oob Deleted",
-        message: `Oob record from ${formatStandardDateTime(oob.date_of_occurrence)} has been permanently deleted.`,
-        okButton: "OK",
-        cancelButton: null
-      });
-    } else {
-      throw new Error(result?.message || 'Delete failed');
-    }
-    
   } catch (error) {
-    console.error('❌ Delete failed:', error);
-    
-    await confirmDialogue.value?.show({
-      title: "Delete Failed",
-      message: `Failed to delete oob record. ${error.message || 'Please try again.'}`,
-      okButton: "OK",
-      cancelButton: null
-    });
+    console.error('Error formatting date:', error);
+    return dateString;
   }
 };
 
-const formatStandardDateTime = (value) => {
-  if (!value) return 'No date';
-  return DateFormatService.formatStandardDateTimejs(value);
+const truncate = (text, maxLength) => {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
+
+const getDurationBadgeClass = (duration) => {
+  if (!duration) return 'badge-secondary';
+  
+  const lower = duration.toLowerCase();
+  if (lower.includes('short')) return 'badge-success';
+  if (lower.includes('long') && !lower.includes('very')) return 'badge-warning';
+  if (lower.includes('very long')) return 'badge-danger';
+  return 'badge-info';
+};
+
+const hasInterval = (oob) => {
+  return oob.interval_days !== undefined || 
+         oob.interval_hours !== undefined || 
+         oob.interval_minutes !== undefined;
+};
+
+const handleView = (oob) => {
+  router.push({ name: 'OobDetails', params: { id: oob.id } });
+};
+
+const handleEdit = (oob) => {
+  router.push({ name: 'OobEdit', params: { id: oob.id } });
+};
+
+const handleDelete = (oob) => {
+  emit('delete', oob);
 };
 </script>
+
 <style scoped>
-.oob-index-container {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
+/* ✅ IMPORT SHARED HEALTH STYLES */
+@import '@/assets/styles/health-shared.css';
 
-.index-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-bottom: 1px solid #dee2e6;
-}
+/* ========================================
+   COMPONENT-SPECIFIC STYLES
+   ======================================== */
 
-.results-count {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #2c3e50;
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.results-count i {
-  color: #41b883;
-}
-
-.view-controls {
-  display: flex;
-  gap: 1rem;
-}
-
-.density-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: white;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.density-btn:hover {
-  background: #41b883;
-  color: white;
-  border-color: #41b883;
-}
-
-/* ✅ TABLE STYLING */
-.oob-table {
+.oob-index-wrapper {
   width: 100%;
-  border-collapse: collapse;
 }
 
-/* ✅ HEADER STYLING */
-.sortable-header {
-  background: linear-gradient(135deg, #41b883 0%, #369870 100%);
-  color: white;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.3s ease;
+/* Table container with scroll */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 2rem;
 }
 
-.sortable-header:hover {
-  background: linear-gradient(135deg, #369870 0%, #2e8a5e 100%);
+/* Table uses shared .data-table class but with OOB-specific tweaks */
+.data-table {
+  border-left: 4px solid #ef4444; /* OOB red accent */
 }
 
-.sortable-header.sorted {
-  background: linear-gradient(135deg, #2e8a5e 0%, #25774f 100%);
-}
-
-.non-sortable-header {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6169 100%);
-  color: white;
-  font-weight: 600;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 0.75rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  justify-content: flex-start;
-}
-
-.actions-header .header-content {
-  justify-content: center;
-}
-
-.sort-icon {
-  margin-left: auto;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
-}
-
-.sortable-header:hover .sort-icon {
-  opacity: 1;
-}
-
-/* ✅ ROW STYLING */
-.oob-row {
-  transition: all 0.3s ease;
-  border-bottom: 1px solid #f1f3f4;
-}
-
-.oob-row:hover {
-  background: rgba(65, 184, 131, 0.05);
-}
-
-.even-row {
-  background: rgba(248, 249, 250, 0.5);
-}
-
-/* ✅ CELL STYLING */
-.cell-content {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-}
-
-.cell-icon {
-  color: #41b883;
-  font-size: 1.1rem;
-}
-
-.date-cell {
+/* Column widths */
+.col-date {
+  width: 20%;
   min-width: 180px;
 }
 
-.duration-cell {
+.col-duration {
+  width: 12%;
   min-width: 120px;
-}
-
-.interval-cell {
   text-align: center;
-  padding: 0.75rem;
 }
 
-.interval-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background: #41b883;
-  color: white;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
+.col-circumstances {
+  width: 35%;
+  min-width: 250px;
 }
 
-.interval-badge.secondary {
-  background: #667eea;
+.col-interval {
+  width: 15%;
+  min-width: 140px;
+  text-align: center;
 }
 
-.interval-badge.tertiary {
-  background: #f093fb;
+.col-actions {
+  width: 12%;
+  min-width: 140px;
+  text-align: center;
 }
 
-/* ✅ CIRCUMSTANCES STYLING */
-.circumstances-cell {
-  max-width: 300px;
-  padding: 0.5rem;
-}
-
-.circumstances-content {
+/* Cell content styling */
+.cell-content {
   display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.circumstances-textarea {
-  flex: 1;
-  min-width: 200px;
-  padding: 0.5rem;
-  border: 1px solid #dee2e6;
+.date-value {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.creator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  padding: 2px 6px;
+  background: #f3f4f6;
   border-radius: 4px;
-  resize: vertical;
-  font-family: inherit;
-  font-size: 0.9rem;
+  width: fit-content;
 }
 
-.circumstances-textarea:focus {
-  outline: none;
-  border-color: #41b883;
-  box-shadow: 0 0 0 2px rgba(65, 184, 131, 0.2);
+.circumstances-text {
+  color: #374151;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
 }
 
-.circumstances-textarea[readonly] {
-  background: #f8f9fa;
-  border-color: #e9ecef;
-}
-
-.edit-circumstances-btn {
-  background: none;
-  border: none;
-  color: #41b883;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.edit-circumstances-btn:hover {
-  background: rgba(65, 184, 131, 0.1);
-}
-
-.no-circumstances {
+.notes-preview {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #999;
+  font-size: 0.875rem;
+  color: #6b7280;
   font-style: italic;
-  padding: 0.75rem;
 }
 
-/* ✅ ACTION BUTTONS */
-.actions-cell {
-  text-align: center;
-  padding: 0.5rem;
-  vertical-align: middle;
+.notes-preview i {
+  color: #9ca3af;
 }
 
+/* Interval display */
+.interval-display {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.interval-part {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.interval-part strong {
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.text-muted {
+  color: #9ca3af;
+}
+
+/* Action buttons in table */
 .action-buttons {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   gap: 0.5rem;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Row hover effect */
+.table-row {
   cursor: pointer;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
-.action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.table-row:hover {
+  background-color: rgba(239, 68, 68, 0.05) !important;
+  transform: translateX(2px);
 }
 
-.action-btn i {
-  font-size: 1.2rem;
-}
-
-.edit-btn {
-  color: #41b883;
-  border: 1px solid #41b883;
-}
-
-.edit-btn:hover {
-  background: #41b883;
-  color: white;
-}
-
-.view-btn {
-  color: #667eea;
-  border: 1px solid #667eea;
-}
-
-.view-btn:hover {
-  background: #667eea;
-  color: white;
-}
-
-.delete-btn {
-  color: #e74c3c;
-  border: 1px solid #e74c3c;
-}
-
-.delete-btn:hover {
-  background: #e74c3c;
-  color: white;
-}
-
-/* ✅ EMPTY STATE */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #666;
-}
-
-.empty-state i {
-  font-size: 4rem;
-  color: #ccc;
-  margin-bottom: 1rem;
-}
-
-/* ✅ RESPONSIVE */
-@oobia (max-width: 1200px) {
-  .circumstances-cell {
-    max-width: 200px;
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .col-circumstances {
+    min-width: 200px;
   }
   
-  .circumstances-textarea {
+  .col-interval {
+    min-width: 120px;
+  }
+  
+  .col-actions {
+    min-width: 130px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    font-size: 0.875rem;
+  }
+  
+  .col-date {
     min-width: 150px;
   }
-}
-
-@oobia (max-width: 768px) {
-  .index-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
+  
+  .col-duration {
+    min-width: 100px;
   }
   
-  .header-content {
-    font-size: 0.8rem;
-    padding: 0.75rem 0.5rem;
+  .col-circumstances {
+    min-width: 180px;
   }
   
-  .header-content span {
-    display: none;
+  .col-interval {
+    min-width: 100px;
+  }
+  
+  .col-actions {
+    min-width: 120px;
+  }
+  
+  .btn-sm {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
   }
   
   .action-buttons {
-    flex-direction: row;
-    gap: 0.25rem;
-    flex-wrap: wrap;
-  }
-  
-  .action-btn {
-    width: 32px;
-    height: 32px;
-  }
-}
-
-@oobia (max-width: 480px) {
-  .action-buttons {
-    flex-direction: column;
     gap: 0.25rem;
   }
 }

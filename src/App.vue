@@ -316,7 +316,6 @@ export default {
 </script>
 
 <style scoped>
-
 /* ✅ APP TITLE STYLING */
 .app-title {
   margin-left: 1rem;
@@ -414,24 +413,16 @@ export default {
   color: #8b0000 !important;
 }
 
-/* ✅ FOOTER CONTAINER */
-/* ✅ FOOTER CONTAINER - FIXED HEIGHT */
-.footer-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 0; /* ✅ REDUCED PADDING */
-  min-height: auto; /* ✅ NO MIN HEIGHT */
-  max-height: 80px; /* ✅ MAXIMUM HEIGHT LIMIT */
-}
-/* ✅ SMART FOOTER - SMOOTH TRANSITIONS */
+/* ========================================
+   SMART FOOTER - FIXED & RESPONSIVE
+   ======================================== */
+
 .smart-footer {
-  height: 50px !important;
-  min-height: 50px !important;
-  max-height: 50px !important;
+  height: 60px !important;
+  min-height: 60px !important;
+  max-height: 60px !important;
   padding: 0 !important;
-  overflow: hidden;
+  overflow: visible !important;
   position: fixed !important;
   bottom: 0 !important;
   left: 0 !important;
@@ -451,250 +442,177 @@ export default {
   opacity: 0 !important;
 }
 
-/* ✅ FOOTER NAVIGATION */
+/* ✅ FOOTER NAVIGATION - ALWAYS USE GRID FOR ALL 11 ITEMS */
 .footer-nav {
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 4px 0; /* ✅ REDUCED FROM 8px */
-  min-height: auto; /* ✅ NO MIN HEIGHT */
+  display: grid !important;
+  grid-template-columns: repeat(11, 1fr) !important;
+  gap: 2px !important;
+  width: 100% !important;
+  height: 100% !important;
+  align-items: stretch !important;
+  padding: 4px 4px !important;
+  box-sizing: border-box !important;
 }
 
-.footer-status {
-  text-align: center;
-  padding-top: 4px; /* ✅ REDUCED FROM 8px */
-  padding-bottom: 4px; /* ✅ ADD BOTTOM PADDING */
-}
-
-/* ✅ FOOTER NAVIGATION BUTTONS - COMPACT */
+/* ✅ NAVIGATION BUTTONS - FIT TO GRID */
 .nav-button {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px; /* ✅ REDUCED FROM 8px */
-  border-radius: 6px; /* ✅ SMALLER RADIUS */
-  transition: all 0.3s ease;
-  flex: 1;
-  min-width: 0;
-  max-width: calc(100% / 11);
-  height: auto; /* ✅ AUTO HEIGHT */
+  padding: 2px !important;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
 }
 
 .nav-button:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px); /* ✅ REDUCED FROM -2px */
 }
 
 .footer-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 32px; /* ✅ REDUCED FROM 48px */
-  max-height: 36px; /* ✅ ADD MAX HEIGHT */
-  padding: 2px; /* ✅ REDUCED FROM 4px */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  gap: 2px !important;
 }
 
-.mobile-footer {
-  min-height: 40px !important; /* ✅ REDUCED FROM 60px */
-  max-height: 44px !important; /* ✅ ADD MAX HEIGHT */
-}
-
-/* ✅ FOOTER ICONS - SMALLER */
+/* ✅ FOOTER ICONS */
 .footer-icon {
   color: white !important;
-  font-size: 14px; /* ✅ REDUCED FROM 16px */
-  transition: all 0.3s ease;
-}
-
-.mobile-footer-icon {
-  font-size: 12px !important; /* ✅ REDUCED FROM 14px */
-  margin-bottom: 2px; /* ✅ REDUCED FROM 4px */
+  font-size: 16px !important;
+  transition: all 0.2s ease;
+  flex-shrink: 0 !important;
 }
 
 .footer-text {
-  color: white;
-  font-size: 9px; /* ✅ REDUCED FROM 10px */
-  font-weight: 500;
-  text-align: center;
-  line-height: 1.1; /* ✅ TIGHTER LINE HEIGHT */
-  margin: 0; /* ✅ NO MARGIN */
+  color: white !important;
+  font-size: 8px !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+  margin: 0 !important;
 }
 
-.footer-info {
-  color: white;
-  margin: 0;
-  font-size: 11px; /* ✅ REDUCED FROM 12px */
-  font-weight: 500;
-  line-height: 1; /* ✅ TIGHT LINE HEIGHT */
+/* ✅ DESKTOP HOVER EFFECTS */
+@media (min-width: 769px) {
+  .smart-footer {
+    height: 70px !important;
+    min-height: 70px !important;
+    max-height: 70px !important;
+  }
+
+  .footer-nav {
+    padding: 8px 16px !important;
+    gap: 4px !important;
+  }
+
+  .nav-button {
+    padding: 4px !important;
+  }
+  
+  .nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .nav-button:hover .footer-icon {
+    transform: scale(1.15);
+    color: #ffeb3b !important;
+  }
+  
+  .footer-icon {
+    font-size: 20px !important;
+  }
+  
+  .footer-text {
+    font-size: 10px !important;
+  }
 }
 
-/* ✅ MOBILE RESPONSIVE - EVEN MORE COMPACT */
+/* ✅ TABLET */
 @media (max-width: 768px) {
   .smart-footer {
-    height: 50px !important;        /* ✅ INCREASED FROM 45px */
+    height: 55px !important;
+    min-height: 55px !important;
+    max-height: 55px !important;
+  }
+  
+  .footer-nav {
+    padding: 4px 8px !important;
+    gap: 2px !important;
+  }
+  
+  .footer-icon {
+    font-size: 14px !important;
+  }
+  
+  .footer-text {
+    font-size: 7px !important;
+  }
+}
+
+/* ✅ MOBILE */
+@media (max-width: 480px) {
+  .smart-footer {
+    height: 50px !important;
     min-height: 50px !important;
     max-height: 50px !important;
   }
   
   .footer-nav {
-    padding: 3px 2px;              /* ✅ SLIGHTLY MORE PADDING */
+    padding: 2px 4px !important;
+    gap: 1px !important;
   }
   
   .nav-button {
-    height: 44px;                  /* ✅ INCREASED FROM 38px */
-    max-height: 44px;
-    padding: 3px 1px;              /* ✅ BETTER SPACING */
-  }
-  
-  .footer-link {
-    height: 40px;                  /* ✅ INCREASED FROM 34px */
-    max-height: 40px;
-    padding: 2px 1px;              /* ✅ BETTER INTERNAL SPACING */
+    padding: 1px !important;
   }
   
   .footer-icon {
-    font-size: 15px !important;    /* ✅ SLIGHTLY LARGER ICONS */
-    margin-bottom: 2px;            /* ✅ BETTER ICON SPACING */
+    font-size: 12px !important;
   }
   
   .footer-text {
-    font-size: 9px !important;     /* ✅ INCREASED FROM 8px */
-    line-height: 1.1;              /* ✅ BETTER LINE HEIGHT */
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 6px !important;
   }
 }
 
-@media (max-width: 480px) {
-  .smart-footer {
-    height: 48px !important;       /* ✅ INCREASED FROM 40px */
-    min-height: 48px !important;
-    max-height: 48px !important;
-  }
-  
-  .footer-nav {
-    padding: 2px 1px;              /* ✅ MINIMAL BUT PRESENT PADDING */
-  }
-  
-  .nav-button {
-    height: 42px;                  /* ✅ INCREASED FROM 34px */
-    max-height: 42px;
-    padding: 2px 0.5px;            /* ✅ MINIMAL PADDING */
-  }
-  
-  .footer-link {
-    height: 38px;                  /* ✅ INCREASED FROM 30px */
-    max-height: 38px;
-    padding: 1px;
-  }
-  
-  .footer-icon {
-    font-size: 14px !important;    /* ✅ GOOD SIZE FOR SMALL SCREENS */
-    margin-bottom: 1px;
-  }
-  
-  .footer-text {
-    font-size: 8.5px !important;   /* ✅ SLIGHTLY LARGER */
-    line-height: 1.2;              /* ✅ BETTER READABILITY */
-  }
-}
-
+/* ✅ TINY SCREENS */
 @media (max-width: 360px) {
-  .footer-container {
-    max-height: 55px; /* ✅ SUPER COMPACT */
-  }
-  
-  .nav-button {
-    flex: 0 1 calc(33.333% - 4px);
-    padding: 1px;
-  }
-  
-  .footer-text {
-    font-size: 6px;
-  }
-  
-  .mobile-footer-icon {
-    font-size: 9px !important;
-  }
-  
-  .footer-link {
-    min-height: 20px;
-    max-height: 24px;
-  }
-}
-
-/* ✅ BETTER RESPONSIVE GRID FOR FOOTER BUTTONS */
-.footer-nav {
-  display: grid;                  /* ✅ USE GRID INSTEAD OF FLEX */
-  grid-template-columns: repeat(11, 1fr);  /* ✅ 11 EQUAL COLUMNS */
-  gap: 1px;                       /* ✅ TINY GAP BETWEEN BUTTONS */
-  width: 100%;
-  height: 100%;
-  align-items: stretch;
-  padding-left: 1rem;
-  box-sizing: border-box;
-}
-
-.nav-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;                   /* ✅ ALLOW SHRINKING */
-  width: 100%;
-  height: 100%;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-/* ✅ HOVER EFFECTS ONLY ON DESKTOP */
-@media (min-width: 769px) {
-  .footer-nav {
-    display: flex;                /* ✅ FLEX ON DESKTOP */
-    justify-content: space-around;
-    gap: 0;
-  }
-  
-  .nav-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-1px);
-  }
-  
-  .nav-button:hover .footer-icon {
-    transform: scale(1.1);
-    color: #ffeb3b !important;
+  .smart-footer {
+    height: 45px !important;
+    min-height: 45px !important;
+    max-height: 45px !important;
   }
   
   .footer-icon {
-    font-size: 16px;
+    font-size: 11px !important;
   }
   
   .footer-text {
-    font-size: 9px;
+    font-size: 5px !important;
   }
 }
-/* ✅ ENSURE FOOTER DOESN'T INTERFERE WITH CONTENT */
-.v-footer {
-  height: auto !important;
-  min-height: auto !important;
-  flex: 0 0 auto !important; /* ✅ DON'T GROW */
-}
 
-/* ✅ MAIN CONTENT ADJUSTMENT - NO PADDING SINCE FOOTER IS SMART */
+/* ✅ MAIN CONTENT PADDING (for fixed footer) */
 .v-main {
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
+  padding-bottom: 80px !important;
 }
 
-/* ✅ REMOVE VUETIFY APP PADDING */
-.v-application {
-  padding-bottom: 0 !important;
-}
 @media (max-width: 768px) {
   .v-main {
     padding-bottom: 70px !important;
@@ -706,19 +624,15 @@ export default {
     padding-bottom: 60px !important;
   }
 }
-/* ✅ DESKTOP SPECIFIC */
-@media (min-width: 769px) {
-  .footer-link {
-    min-height: 48px;
-  }
-  
-  .footer-icon {
-    font-size: 18px !important;
-  }
-  
-  .nav-button:hover .footer-icon {
-    transform: scale(1.1);
-    color: #ffeb3b !important; /* Yellow on hover */
-  }
+
+/* ✅ VUETIFY OVERRIDES */
+.v-footer {
+  height: auto !important;
+  min-height: auto !important;
+  flex: 0 0 auto !important;
+}
+
+.v-application {
+  padding-bottom: 0 !important;
 }
 </style>
