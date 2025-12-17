@@ -170,7 +170,6 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
       this.error = null;
 
       try {
-        console.log('🔄 Fetching health markers from API...');
         const response = await EventService.getHealthMarkers(); // ✅ Use EventService
         
         // ✅ HANDLE DIFFERENT RESPONSE FORMATS (like SleepMarkerStore)
@@ -184,7 +183,6 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
         // ✅ FORMAT EACH MARKER
         this.healthMarkers = healthMarkersArray.map(marker => formatHealthMarker(marker));
         
-        console.log(`✅ Fetched ${this.healthMarkers.length} health markers`);
         return this.healthMarkers;
         
       } catch (error) {
@@ -264,31 +262,41 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
     // ========================================
     // UPDATE HEALTH MARKER
     // ========================================
-    async updateHealthMarker(markerData) {
-      this.loading = true;
-      this.error = null;
+// ========================================
+// UPDATE HEALTH MARKER
+// ========================================
+async updateHealthMarker(id, healthMarkerData) {
+  this.loading = true;  // ✅ CHANGED: loading instead of isLoading
+  this.error = null;
 
-      try {
-        console.log('🔄 Updating health marker...', markerData);
-        const response = await EventService.putHealthMarker(markerData); // ✅ Use EventService
-        
-        // Refresh list to get updated data
-        await this.fetchHealthMarkers();
-        
-        console.log('✅ Health marker updated:', response.data);
-        return response.data;
-        
-      } catch (error) {
-        console.error('❌ Error updating health marker:', error);
-        alert('Failed to update health marker. Please try again.');
-        this.error = error.message || 'Failed to update health marker';
-        throw error;
-        
-      } finally {
-        this.loading = false;
-      }
-    },
-
+  try {
+    // ✅ CREATE FULL OBJECT WITH ID AND DATA
+    const updatedHealthMarker = {
+      id: id,
+      ...healthMarkerData
+    };
+    
+    // ✅ PASS FULL OBJECT TO SERVICE
+    const response = await EventService.putHealthMarker(updatedHealthMarker);
+  
+    // ✅ FORMAT THE RESPONSE DATA
+    const formattedMarker = formatHealthMarker(response.data);
+    
+    // Update in store
+    const index = this.healthMarkers.findIndex(m => m.id === id);
+    if (index !== -1) {
+      this.healthMarkers[index] = formattedMarker;
+    }
+  
+    return formattedMarker;
+  } catch (error) {
+    console.error('❌ Update error:', error);
+    this.error = error.message || 'Failed to update health marker';
+    throw error;
+  } finally {
+    this.loading = false;  // ✅ CHANGED: loading instead of isLoading
+  }
+},
     // ========================================
     // DELETE HEALTH MARKER
     // ========================================

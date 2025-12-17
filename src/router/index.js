@@ -286,6 +286,13 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/health-markers/:id',
+    name: 'HealthMarkerDetails',
+    props: true,
+    component: () => import('@/components/healthMarkers/HealthMarkerDetails.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/test/health-marker-card',
     name: 'HealthMarkerCardTest',
     component: () => import('@/components/test/HealthMarkerCardTest.vue')

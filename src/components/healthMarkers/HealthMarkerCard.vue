@@ -1,140 +1,102 @@
 <template>
-  <BaseCard class="health-marker-card" :class="statusBorderClass" hover clickable @click="editHealthMarker">
+  <div 
+    class="health-marker-card"
+    @dblclick="handleDoubleClick"
+  >
+    <!-- ✅ CARD HEADER -->
     <div class="card-header">
-      <div class="marker-title">
-        <i :class="`fas ${markerIcon}`" class="marker-icon"></i>
-        <div class="title-text">
-          <h3>{{ markerInfo?.label || healthMarker.marker_name }}</h3>
-          <span class="category-badge" :class="categoryBadgeClass">
-            {{ markerInfo?.category || 'Other' }}
+      <div class="header-left">
+        <h3 class="marker-name">
+          <i class="fas fa-vial icon-health"></i>
+          {{ healthMarker.marker_name }}
+        </h3>
+        <p class="marker-date">
+          <i class="fas fa-calendar-alt"></i>
+          {{ formatDate(healthMarker.marker_date) }}
+        </p>
+      </div>
+      
+      <div class="header-right">
+        <span :class="['status-badge', getStatusClass(healthMarker.status)]">
+          {{ healthMarker.status || 'Unknown' }}
+        </span>
+      </div>
+    </div>
+    <!-- ✅ CARD BODY -->
+    <div class="card-body">
+      <!-- Value & Unit -->
+      <div class="metric-row">
+        <div class="metric-item">
+          <span class="metric-label">
+            <i class="fas fa-tachometer-alt"></i>
+            Value
+          </span>
+          <span class="metric-value">
+            {{ healthMarker.marker_value }}
+            <span class="metric-unit">{{ healthMarker.unit }}</span>
+          </span>
+        </div>
+
+        <!-- Reference Range -->
+        <div v-if="healthMarker.reference_range" class="metric-item">
+          <span class="metric-label">
+            <i class="fas fa-arrows-alt-h"></i>
+            Range
+          </span>
+          <span class="metric-value-secondary">
+            {{ healthMarker.reference_range }}
           </span>
         </div>
       </div>
-      <div class="actions">
-        <button class="action-btn edit-btn" @click.stop="editHealthMarker" title="Edit">
-          <i class="fas fa-edit"></i>
-        </button>
+
+      <!-- Lab Name -->
+      <div v-if="healthMarker.lab_name" class="info-row">
+        <i class="fas fa-hospital"></i>
+        <span>{{ healthMarker.lab_name }}</span>
+      </div>
+
+      <!-- Notes Preview -->
+      <div v-if="healthMarker.notes" class="notes-preview">
+        <i class="fas fa-sticky-note"></i>
+        <span>{{ truncateNotes(healthMarker.notes) }}</span>
       </div>
     </div>
 
-    <div class="card-body">
-      <!-- ✅ RESULT BANNER -->
-      <div class="result-banner" :class="statusColorClass">
-        <div class="result-content">
-          <i class="fas fa-chart-line"></i>
-          <div class="result-info">
-            <span class="result-label">Test Result</span>
-            <span class="result-value">{{ healthMarker.marker_result }} {{ markerInfo?.unit || '' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ✅ STATUS SECTION -->
-      <div class="status-section" :class="statusColorClass">
-        <div class="status-content">
-          <i :class="`fas ${statusIconClass}`"></i>
-          <div class="status-info">
-            <span class="status-label">{{ resultStatus?.title || 'Result' }}</span>
-            <span class="status-message">{{ resultStatus?.message || 'No status available' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ✅ INFO ROW -->
-      <div class="info-row">
-        <div class="info-item">
-          <i class="fas fa-calendar-day"></i>
-          <span class="info-label">Test Date</span>
-          <span class="info-value">{{ formattedDate }}</span>
-        </div>
-        <div class="info-item">
-          <i class="fas fa-clock"></i>
-          <span class="info-label">Recorded</span>
-          <span class="info-value">{{ daysAgo }}</span>
-        </div>
-      </div>
-
-      <!-- ✅ RANGES SECTION -->
-      <div v-if="markerInfo" class="ranges-section">
-        <div class="ranges-header">
-          <i class="fas fa-ruler-horizontal"></i>
-          <span>Reference Ranges</span>
-        </div>
-        <div class="ranges-content">
-          <div class="range-item normal">
-            <i class="fas fa-check-circle"></i>
-            <span><strong>Normal:</strong> {{ markerInfo.normalRange }}</span>
-          </div>
-          <div v-if="markerInfo.highRange" class="range-item high">
-            <i class="fas fa-arrow-up"></i>
-            <span><strong>High:</strong> {{ markerInfo.highRange }}</span>
-          </div>
-          <div v-if="markerInfo.lowRange" class="range-item low">
-            <i class="fas fa-arrow-down"></i>
-            <span><strong>Low:</strong> {{ markerInfo.lowRange }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ✅ LAB & DOCTOR INFO -->
-      <div class="metadata-row">
-        <div v-if="healthMarker.lab_name" class="metadata-item">
-          <i class="fas fa-flask"></i>
-          <span class="metadata-label">Lab:</span>
-          <span class="metadata-value">{{ healthMarker.lab_name }}</span>
-        </div>
-        <div v-if="healthMarker.doctor_name" class="metadata-item">
-          <i class="fas fa-user-md"></i>
-          <span class="metadata-label">Doctor:</span>
-          <span class="metadata-value">{{ healthMarker.doctor_name }}</span>
-        </div>
-      </div>
-
-      <!-- ✅ NOTES SECTION -->
-      <div v-if="healthMarker.notes" class="notes-section">
-        <div class="notes-header">
-          <i class="fas fa-sticky-note"></i>
-          <span>Notes</span>
-        </div>
-        <div class="notes-content">
-          <p>{{ healthMarker.notes }}</p>
-        </div>
-      </div>
-
-      <!-- ✅ ADDITIONAL INFO -->
-      <div v-if="markerInfo" class="info-section">
-        <div class="info-text">
-          <i class="fas fa-info-circle"></i>
-          <span>{{ markerInfo.description }}</span>
-        </div>
-        <div class="info-text">
-          <i class="fas fa-calendar-check"></i>
-          <span><strong>Test Frequency:</strong> {{ markerInfo.testFrequency }}</span>
-        </div>
-      </div>
-
-      <!-- ✅ FOOTER -->
-      <div class="card-footer">
-        <span class="created-by">
-          <i class="fas fa-user"></i>
-          {{ healthMarker.created_by || 'DLB' }}
-        </span>
-        <button class="footer-btn" @click.stop="editHealthMarker">
-          <i class="fas fa-pencil-alt"></i>
-          Edit
-        </button>
-      </div>
+    <!-- ✅ CARD FOOTER -->
+    <div class="card-footer">
+      <button
+        @click.stop="$emit('edit', healthMarker)"
+        class="btn btn-sm btn-primary"
+        title="Edit Marker"
+      >
+        <i class="fas fa-edit"></i>
+      </button>
+      
+      <button
+        @click.stop="$emit('delete', healthMarker)"
+        class="btn btn-sm btn-danger"
+        title="Delete Marker"
+      >
+        <i class="fas fa-trash"></i>
+      </button>
     </div>
-  </BaseCard>
+
+    <!-- ✅ DOUBLE-CLICK HINT -->
+    <div class="card-hint">
+      <i class="fas fa-hand-pointer"></i>
+      Double-click to view details
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
-import BaseCard from '@/components/ui/BaseCard.vue';
-import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
-import DateFormatService from '@/services/DateFormatService';
 
+// ✅ ROUTER
+const router = useRouter();
+
+// ✅ PROPS
 const props = defineProps({
   healthMarker: {
     type: Object,
@@ -142,202 +104,248 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['dblclick']);
-const router = useRouter();
-
-// ✅ COMPUTED PROPERTIES
-const markerInfo = computed(() => {
-  return getHealthMarkerByName(props.healthMarker.marker_name);
-});
-
-const resultStatus = computed(() => {
-  if (!props.healthMarker.marker_name || !props.healthMarker.marker_result) return null;
-  return getResultStatus(props.healthMarker.marker_name, props.healthMarker.marker_result);
-});
-
-const statusColorClass = computed(() => {
-  if (!resultStatus.value) return 'status-info';
-  
-  switch (resultStatus.value.type) {
-    case 'success': return 'status-success';
-    case 'warning': return 'status-warning';
-    case 'error': return 'status-error';
-    default: return 'status-info';
-  }
-});
-
-const statusBorderClass = computed(() => {
-  if (!resultStatus.value) return 'border-info';
-  
-  switch (resultStatus.value.type) {
-    case 'success': return 'border-success';
-    case 'warning': return 'border-warning';
-    case 'error': return 'border-error';
-    default: return 'border-info';
-  }
-});
-
-const statusIconClass = computed(() => {
-  if (!resultStatus.value) return 'fa-info-circle';
-  
-  switch (resultStatus.value.type) {
-    case 'success': return 'fa-check-circle';
-    case 'warning': return 'fa-exclamation-triangle';
-    case 'error': return 'fa-times-circle';
-    default: return 'fa-info-circle';
-  }
-});
-
-const categoryBadgeClass = computed(() => {
-  if (!markerInfo.value) return 'badge-default';
-  
-  switch (markerInfo.value.category) {
-    case 'Diabetes': return 'badge-error';
-    case 'Thyroid': return 'badge-warning';
-    case 'Lipids': return 'badge-info';
-    case 'Vitamins': return 'badge-success';
-    case 'Heart': return 'badge-purple';
-    case 'General': return 'badge-blue-grey';
-    default: return 'badge-default';
-  }
-});
-
-const markerIcon = computed(() => {
-  if (!markerInfo.value) return 'fa-heart-pulse';
-  
-  // Convert mdi icons to Font Awesome
-  const iconMap = {
-    'mdi-water': 'fa-tint',
-    'mdi-food-apple': 'fa-apple-alt',
-    'mdi-pill': 'fa-pills',
-    'mdi-heart-pulse': 'fa-heartbeat',
-    'mdi-weight': 'fa-weight',
-    'mdi-bone': 'fa-bone',
-    'mdi-chart-line': 'fa-chart-line',
-    'mdi-sun-thermometer': 'fa-thermometer-half',
-    'mdi-blood-bag': 'fa-tint',
-    'mdi-alpha-a': 'fa-font',
-    'mdi-water-percent': 'fa-tint',
-    'mdi-fire': 'fa-fire',
-    'mdi-atom': 'fa-atom',
-    'mdi-flask': 'fa-flask',
-    'mdi-leaf': 'fa-leaf'
-  };
-  
-  return iconMap[markerInfo.value.icon] || 'fa-heartbeat';
-});
-
-const formattedDate = computed(() => {
-  if (!props.healthMarker.marker_date) return 'No date';
-  return DateFormatService.formatDatejs(props.healthMarker.marker_date);
-});
-
-const daysAgo = computed(() => {
-  if (!props.healthMarker.marker_date) return '';
-  
-  const resultDate = new Date(props.healthMarker.marker_date);
-  const today = new Date();
-  const diffTime = today - resultDate;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return '1 day ago';
-  if (diffDays < 30) return `${diffDays} days ago`;
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return months === 1 ? '1 month ago' : `${months} months ago`;
-  }
-  
-  const years = Math.floor(diffDays / 365);
-  return years === 1 ? '1 year ago' : `${years} years ago`;
-});
+// ✅ EMITS
+defineEmits(['edit', 'delete']);
 
 // ✅ METHODS
-const editHealthMarker = () => {
-  router.push({ name: 'HealthMarkerEdit', params: { id: props.healthMarker.id } });
-};
+// ✅ ADDED THIS METHOD
+function handleDoubleClick() {
+  router.push({ 
+    name: 'HealthMarkerDetails', 
+    params: { id: props.healthMarker.id } 
+  });
+}
+function formatDate(dateString) {
+  if (!dateString) return 'Unknown Date';
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch (error) {
+    return dateString;
+  }
+}
+
+function getStatusClass(status) {
+  if (!status) return 'badge-secondary';
+  
+  const lower = status.toLowerCase();
+  if (lower === 'normal') return 'badge-success';
+  if (lower === 'high' || lower === 'low') return 'badge-warning';
+  if (lower === 'critical') return 'badge-danger';
+  return 'badge-info';
+}
+
+function truncateNotes(notes) {
+  if (!notes) return '';
+  if (notes.length <= 100) return notes;
+  return notes.substring(0, 100) + '...';
+}
 </script>
 
-// ...template stays the same...
-
 <style scoped>
-/* ✅ HEALTH MARKER SPECIFIC STYLES ONLY */
+/* ✅ IMPORT SHARED HEALTH STYLES */
+@import '@/assets/styles/health-shared.css';
+
+/* ========================================
+   COMPONENT-SPECIFIC STYLES
+   ======================================== */
+
 .health-marker-card {
+  position: relative;
   background: white;
-  border-left: 4px solid #e0e0e0;
+  border-radius: 12px;
+  border-left: 4px solid #667eea; /* Health purple accent */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
 }
 
-/* ✅ RANGES SECTION (unique to health markers) */
-.ranges-section {
-  margin-bottom: 20px;
-  padding: 16px;
-  background: linear-gradient(135deg, rgba(158, 158, 158, 0.05) 0%, rgba(117, 117, 117, 0.05) 100%);
-  border-radius: 8px;
-  border: 1px solid rgba(158, 158, 158, 0.2);
+.health-marker-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
 }
 
-.ranges-header {
+/* Card header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem;
+  border-bottom: 1px solid #f3f4f6;
+  gap: 1rem;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.marker-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  color: #616161;
-  margin-bottom: 12px;
-  font-size: 14px;
+  gap: 0.5rem;
 }
 
-.ranges-header i {
-  font-size: 16px;
+.marker-date {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.ranges-content {
+.header-right {
+  flex-shrink: 0;
+}
+
+/* Card body */
+.card-body {
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 1rem;
 }
 
-.range-item {
+/* Metrics row */
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  padding: 8px;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #667eea;
+  line-height: 1;
+}
+
+.metric-unit {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-left: 0.25rem;
+}
+
+.metric-value-secondary {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* Info row */
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  padding: 0.5rem;
+  background: #f9fafb;
   border-radius: 6px;
 }
 
-.range-item i {
-  font-size: 14px;
-}
-
-.range-item.normal {
-  background: rgba(76, 175, 80, 0.1);
-  color: #2e7d32;
-}
-
-.range-item.high {
-  background: rgba(239, 68, 68, 0.1);
-  color: #c62828;
-}
-
-.range-item.low {
-  background: rgba(33, 150, 243, 0.1);
-  color: #1565c0;
-}
-
-/* ✅ INFO TEXT (unique to health markers) */
-.info-text {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #666;
-  line-height: 1.6;
-}
-
-.info-text i {
-  font-size: 14px;
+.info-row i {
   color: #667eea;
 }
 
-/* All other styles now come from card-components.css! */
+/* Notes preview */
+.notes-preview {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+  padding: 0.75rem;
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  border-radius: 4px;
+}
+
+.notes-preview i {
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Card footer */
+.card-footer {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #f3f4f6;
+  background: #fafafa;
+}
+
+.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Card hint */
+.card-hint {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.health-marker-card:hover .card-hint {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .metric-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .header-right {
+    align-self: flex-start;
+  }
+  
+  .metric-value {
+    font-size: 1.25rem;
+  }
+}
 </style>
