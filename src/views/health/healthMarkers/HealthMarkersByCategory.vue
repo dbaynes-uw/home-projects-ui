@@ -387,10 +387,10 @@ import {
   getHealthMarkersByCategory, 
   getHealthMarkerByName 
 } from '@/services/health-marker-constants';
-import HealthMarkerCard from '@/components/healthMarkers/HealthMarkerCard.vue';
-import HealthMarkerIndex from '@/components/healthMarkers/HealthMarkerIndex.vue';
+import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
+import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';
 import DateFormatService from '@/services/DateFormatService';
-import HealthMarkerCategoryChart from '@/components/healthMarkers/HealthMarkerCategoryChart.vue';
+import HealthMarkerCategoryChart from '@/components/health/healthMarkers/HealthMarkerCategoryChart.vue';
 
 // ✅ ADD CHART.JS IMPORTS
 /*import {

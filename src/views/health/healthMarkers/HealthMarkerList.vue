@@ -168,8 +168,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/HealthMarkerStore';
-import HealthMarkerCard from '@/components/healthMarkers/HealthMarkerCard.vue';
-import HealthMarkerIndex from '@/components/healthMarkers/HealthMarkerIndex.vue';
+import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
+import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 // ✅ ROUTER & STORE

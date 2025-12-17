@@ -72,7 +72,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useOobStore } from '@/stores/OobStore';
-import OobForm from '@/components/oobs/OobForm.vue';
+import OobForm from '@/components/health/oobs/OobForm.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 // ✅ ROUTER, ROUTE & STORE

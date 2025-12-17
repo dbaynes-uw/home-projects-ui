@@ -42,7 +42,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import HealthMarkerCard from '@/components/healthMarkers/HealthMarkerCard.vue';
+import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
 
 // Define mock data directly in the component
 const mockMarkers = ref([

@@ -1,5 +1,5 @@
 <template>
-  <div class="health-marker-edit-wrapper">
+  <div class="health-marker-create-wrapper">
     <!-- ✅ PAGE HEADER WITH GRADIENT -->
     <div class="page-wrapper gradient-health">
       <div class="page-container">
@@ -17,34 +17,16 @@
             </router-link>
             <i class="fas fa-chevron-right breadcrumb-separator"></i>
             <span>
-              <i class="fas fa-edit"></i>
-              Edit Health Marker
+              <i class="fas fa-plus-circle"></i>
+              New Health Marker
             </span>
           </h1>
         </div>
 
-        <!-- ✅ LOADING STATE -->
-        <div v-if="isLoading" class="loading-state">
-          <i class="fas fa-spinner fa-spin"></i>
-          Loading health marker...
-        </div>
-
-        <!-- ✅ ERROR STATE -->
-        <div v-else-if="!healthMarker" class="empty-state">
-          <i class="fas fa-exclamation-circle"></i>
-          <h3>Health Marker Not Found</h3>
-          <p>The requested health marker could not be found.</p>
-          <router-link :to="{ name: 'HealthMarkerList' }" class="btn btn-primary">
-            <i class="fas fa-arrow-left"></i>
-            Back to List
-          </router-link>
-        </div>
-
-        <!-- ✅ FORM CARD - ADD mode="edit" -->
-        <div v-else class="form-card">
+        <!-- ✅ FORM CARD - ADD mode="create" -->
+        <div class="form-card">
           <HealthMarkerForm
-            :health-marker="healthMarker"
-            mode="edit"
+            mode="create"
             @submit="handleSubmit"
             @cancel="handleCancel"
           />
@@ -55,32 +37,21 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/HealthMarkerStore';
-import HealthMarkerForm from '@/components/healthMarkers/HealthMarkerForm.vue';
+import HealthMarkerForm from '@/components/health/healthMarkers/HealthMarkerForm.vue';
 
-// ✅ ROUTER, ROUTE & STORE
+// ✅ ROUTER & STORE
 const router = useRouter();
-const route = useRoute();
 const healthMarkerStore = useHealthMarkerStore();
-
-// ✅ COMPUTED
-const healthMarker = computed(() => {
-  const id = parseInt(route.params.id);
-  return healthMarkerStore.allHealthMarkers.find(m => m.id === id);
-});
-
-const isLoading = computed(() => healthMarkerStore.loading);
 
 // ✅ METHODS
 async function handleSubmit(formData) {
   try {
-    const id = parseInt(route.params.id);
-    await healthMarkerStore.updateHealthMarker(id, formData);
+    await healthMarkerStore.createHealthMarker(formData);
     router.push({ name: 'HealthMarkerList' });
   } catch (error) {
-    console.error('❌ Update failed:', error);
+    console.error('❌ Create failed:', error);
     throw error; // Let form handle the error display
   }
 }
@@ -88,21 +59,6 @@ async function handleSubmit(formData) {
 function handleCancel() {
   router.push({ name: 'HealthMarkerList' });
 }
-
-// ✅ LIFECYCLE
-onMounted(async () => {
-  if (healthMarkerStore.allHealthMarkers.length === 0) {
-    try {
-      await healthMarkerStore.fetchHealthMarkers();
-    } catch (error) {
-      console.error('❌ Failed to load health markers:', error);
-    }
-  }
-  
-  if (!healthMarker.value) {
-    console.warn('⚠️ Health marker not found:', route.params.id);
-  }
-});
 </script>
 
 <style scoped>
@@ -113,7 +69,7 @@ onMounted(async () => {
    COMPONENT-SPECIFIC STYLES
    ======================================== */
 
-.health-marker-edit-wrapper {
+.health-marker-create-wrapper {
   width: 100%;
   min-height: 100vh;
 }

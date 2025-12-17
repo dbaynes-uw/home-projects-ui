@@ -58,9 +58,9 @@
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import GlucoseReadingIndex from '@/components/glucoseReadings/GlucoseReadingIndex.vue';
-import GlucoseReadingDetails from '@/components/glucoseReadings/GlucoseReadingDetails.vue';
-import GlucoseReadingSummary from '@/components/glucoseReadings/GlucoseReadingSummary.vue'; // <-- Import it
+import GlucoseReadingIndex from '@/components/health/glucoseReadings/GlucoseReadingIndex.vue';
+import GlucoseReadingDetails from '@/components/health/glucoseReadings/GlucoseReadingDetails.vue';
+import GlucoseReadingSummary from '@/components/health/glucoseReadings/GlucoseReadingSummary.vue'; // <-- Import it
 
 const store = useStore();
 const router = useRouter();

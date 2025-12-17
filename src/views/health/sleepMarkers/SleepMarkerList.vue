@@ -180,11 +180,11 @@ import { useSleepMarkerStore } from '@/stores/SleepMarkerStore';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseModal from '@/components/ui/BaseModal.vue';
-import SleepMarkerCard from '@/components/sleepMarkers/SleepMarkerCard.vue';
-import SleepMarkerIndex from '@/components/sleepMarkers/SleepMarkerIndex.vue';
-import SleepMarkerCalendar from '@/components/sleepMarkers/SleepMarkerCalendar.vue';
-import SleepMarkerCharts from '@/components/sleepMarkers/SleepMarkerCharts.vue';
-import SleepMarkerForm from '@/components/sleepMarkers/SleepMarkerForm.vue';
+import SleepMarkerCard from '@/components/health/sleepMarkers/SleepMarkerCard.vue';
+import SleepMarkerIndex from '@/components/health/sleepMarkers/SleepMarkerIndex.vue';
+import SleepMarkerCalendar from '@/components/health/sleepMarkers/SleepMarkerCalendar.vue';
+import SleepMarkerCharts from '@/components/health/sleepMarkers/SleepMarkerCharts.vue';
+import SleepMarkerForm from '@/components/health/sleepMarkers/SleepMarkerForm.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 // ✅ PINIA STORE

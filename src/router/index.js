@@ -194,33 +194,6 @@ const routes = [
     meta: { requiresAuth: true}
   },
 
-  // ✅ GLUCOSE READINGS
-  {
-    path: "/glucose-readings",
-    name: "GlucoseReadings",
-    component: () => import('@/views/glucoseReadings/GlucoseReadings.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/glucoseReadings/:id?",
-    name: "GlucoseReadingDetails",
-    props: true,
-    component: () => import('@/components/glucoseReadings/GlucoseReadingDetails.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/glucose-reading/create",
-    name: "GlucoseReadingCreate",
-    component: () => import('@/views/glucoseReadings/GlucoseReadingCreate.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/glucose-reading/:id",
-    name: "GlucoseReadingEdit",
-    props: true,
-    component: () => import('@/views/glucoseReadings/GlucoseReadingEdit.vue'),
-    meta: { requiresAuth: true },
-  },
   // ❌ TEMPORARILY DISABLED - High memory usage
   /* 
   // ✅ GOLF
@@ -251,105 +224,133 @@ const routes = [
     meta: { requiresAuth: true}
   },
   */
+  // ========================================
+  // HEALTH DASHBOARD
+  // ========================================
+  {
+    path: '/health',
+    name: 'HealthDashboard',
+    component: () => import('@/views/health/HealthDashboard.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
+  },
 
-  // HEALTH MARKERS:
+  // ========================================
+  // HEALTH MARKERS
+  // ========================================
   {
-    path: "/health_dashboard",
-    name: "HealthDashboard",
-    props: true,
-    component: () => import('@/views/HealthDashboard.vue'),
-    meta: { requiresAuth: true },
+    path: '/health/markers',
+    name: 'HealthMarkerList',
+    component: () => import('@/views/health/healthMarkers/HealthMarkerList.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
   {
-    path: "/health-marker/create",
-    name: "HealthMarkerCreate",
-    component: () => import('@/views/healthMarkers/HealthMarkerCreate.vue'),
-    meta: { requiresAuth: true}
+    path: '/health/markers/create',
+    name: 'HealthMarkerCreate',
+    component: () => import('@/views/health/healthMarkers/HealthMarkerCreate.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
   {
-    path: "/health-markers",
-    name: "HealthMarkerList",
-    component: () => import('@/views/healthMarkers/HealthMarkerList.vue'),
-    meta: { requiresAuth: true },
+    path: '/health/markers/:id/edit',
+    name: 'HealthMarkerEdit',
+    component: () => import('@/views/health/healthMarkers/HealthMarkerEdit.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
   {
-    path: "/healthMarkers/category",
-    name: "HealthMarkersByCategory",
-    component: () => import('@/views/healthMarkers/HealthMarkersByCategory.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/health-marker/:id",
-    name: "HealthMarkerEdit",
-    props: true,
-    component: () => import('@/views/healthMarkers/HealthMarkerEdit.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/health-markers/:id',
+    path: '/health/markers/:id',
     name: 'HealthMarkerDetails',
-    props: true,
-    component: () => import('@/views/healthMarkers/HealthMarkerDetailsWrapper.vue'),  // ✅ NEW
-    meta: { requiresAuth: true },
+    component: () => import('@/views/health/healthMarkers/HealthMarkerDetailsWrapper.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
   {
-    path: '/test/health-marker-card',
-    name: 'HealthMarkerCardTest',
-    component: () => import('@/components/test/HealthMarkerCardTest.vue')
+    path: '/health/markers/by-category',
+    name: 'HealthMarkersByCategory',
+    component: () => import('@/views/health/healthMarkers/HealthMarkersByCategory.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
 
+  // ========================================
+  // GLUCOSE READINGS
+  // ========================================
   {
-    path: "/oobs",
-    name: "OobList",
-    component: () => import('@/views/oobs/OobList.vue'),
-    //component: () => import('@/views/oobs/OobList.vue'),
-    meta: { requiresAuth: true}
+    path: '/health/glucose',
+    name: 'GlucoseReadings',
+    component: () => import('@/views/health/glucoseReadings/GlucoseReadings.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
   {
-    path: "/oob/create",
-    name: "OobCreate",
-    component: () => import('@/views/oobs/OobCreate.vue'),
-    meta: { requiresAuth: true}
+    path: '/health/glucose/create',
+    name: 'GlucoseReadingCreate',
+    component: () => import('@/views/health/glucoseReadings/GlucoseReadingCreate.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
   {
-    path: "/oobs/:id/details",  // ← FIXED: Different path for details
-    name: "OobDetails",
-    props: true,
-    component: () => import('@/views/oobs/OobDetails.vue'),
-    meta: { requiresAuth: true}
+    path: '/health/glucose/:id/edit',
+    name: 'GlucoseReadingEdit',
+    component: () => import('@/views/health/glucoseReadings/GlucoseReadingEdit.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
-  {
-    path: "/oobs/:id",  // ← FIXED: Different path pattern for edit
-    name: "OobEdit",
-    props: true,
-    component: () => import('@/views/oobs/OobEdit.vue'),
-    meta: { requiresAuth: true}
-  },
+  //{
+  //  path: '/health/glucose/:id',
+  //  name: 'GlucoseReadingDetails',
+  //  component: () => import('@/views/health/glucoseReadings/GlucoseReadingDetails.vue'),  // ✅ UPDATED
+  //  meta: { requiresAuth: true }
+  //},
 
-  // SLEEP MARKERS:
-  // ✅ SLEEP MARKERS (lowercase folder)
+  // ========================================
+  // SLEEP MARKERS
+  // ========================================
   {
-    path: "/sleep-markers",
-    name: "SleepMarkerList",
-    component: () => import('@/views/sleepMarkers/SleepMarkerList.vue'), // ✅ lowercase
-    meta: { requiresAuth: true },
+    path: '/health/sleep',
+    name: 'SleepMarkerList',
+    component: () => import('@/views/health/sleepMarkers/SleepMarkerList.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
-  /* Later */
-  /*
+  //{
+  //  path: '/health/sleepMarkers/create',
+  //  name: 'SleepMarkerCreate',
+  //  component: () => import('@/views/health/sleepMarkers/SleepMarkerCreate.vue'),  // ✅ UPDATED
+  //  meta: { requiresAuth: true }
+  //},
   {
-    path: "/sleepMarkers/category",
-    name: "SleepMarkersByCategory",
-    component: () => import('@/views/sleepMarkers/SleepMarkersByCategory.vue'),
-    meta: { requiresAuth: true },
+    path: '/health/sleepMarkers/:id/edit',
+    name: 'SleepMarkerEdit',
+    component: () => import('@/views/health/sleepMarkers/SleepMarkerEdit.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
-  */
+  //?{
+  //?  path: '/health/sleepMarkers/:id',
+  //?  name: 'SleepMarkerDetails',
+  //?  component: () => import('@/views/health/sleepMarkers/SleepMarkerDetails.vue'),  // ✅ UPDATED
+  //?  meta: { requiresAuth: true }
+  //?},
+
+  // ========================================
+  // OOBS
+  // ========================================
   {
-    path: "/sleep-marker/:id",
-    name: "SleepMarkerEdit",
-    props: true,
-    component: () => import('@/views/sleepMarkers/SleepMarkerEdit.vue'),
-    meta: { requiresAuth: true },
+    path: '/health/oobs',
+    name: 'OobList',
+    component: () => import('@/views/health/oobs/OobList.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
   },
+  {
+    path: '/health/oobs/create',
+    name: 'OobCreate',
+    component: () => import('@/views/health/oobs/OobCreate.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/health/oobs/:id/edit',
+    name: 'OobEdit',
+    component: () => import('@/views/health/oobs/OobEdit.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/health/oobs/:id',
+    name: 'OobDetails',
+    component: () => import('@/views/health/oobs/OobDetails.vue'),  // ✅ UPDATED
+    meta: { requiresAuth: true }
+},
   // ✅ PLANTS
   {
     path: "/plants",

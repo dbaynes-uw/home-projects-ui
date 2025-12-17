@@ -68,7 +68,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useOobStore } from '@/stores/OobStore';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
-import OobCard from '@/components/oobs/OobCard.vue';
+import OobCard from '@/components/health/oobs/OobCard.vue';
 // ✅ COMPOSITION API SETUP
 const router = useRouter();
 const route = useRoute();

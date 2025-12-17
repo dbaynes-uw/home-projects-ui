@@ -24,7 +24,7 @@
               <div class="form-group">
                 <label for="marker_name" class="form-label" :class="{ required: isEditable }">
                   <i class="fas fa-tag"></i>
-                  Health Marker
+                  <u>Health Marker</u>
                 </label>
                 <select
                   v-if="isEditable"
@@ -55,7 +55,7 @@
               <div class="form-group">
                 <label for="marker_date" class="form-label" :class="{ required: isEditable }">
                   <i class="fas fa-calendar-alt"></i>
-                  Test Date
+                  <u>Test Date</u>  
                 </label>
                 <input
                   v-if="isEditable"
@@ -680,7 +680,7 @@ onMounted(() => {
   gap: 0.5rem;
   font-weight: 600;
   color: #374151;
-  font-size: 0.875rem;
+  font-size: 1.25rem;
 }
 
 .form-label.required::after {
@@ -726,7 +726,8 @@ select.form-control {
 /* Static display for view mode */
 .form-control-static {
   padding: 0.75rem 0;
-  font-size: 0.9375rem;
+  font-size: 1.25rem;
+  font-weight: bold;
   color: #1f2937;
   min-height: 42px;
   display: flex;

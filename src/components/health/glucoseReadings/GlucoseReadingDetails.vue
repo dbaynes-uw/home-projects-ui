@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import GlucoseReadingCard from "@/components/glucoseReadings/GlucoseReadingCard.vue";
+import GlucoseReadingCard from "@/components/health/glucoseReadings/GlucoseReadingCard.vue";
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";

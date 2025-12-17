@@ -57,7 +57,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/HealthMarkerStore';
-import HealthMarkerForm from '@/components/healthMarkers/HealthMarkerForm.vue';
+import HealthMarkerForm from '@/components/health/healthMarkers/HealthMarkerForm.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 const router = useRouter();

@@ -29,12 +29,12 @@
               <i :class="showIndexView ? 'fas fa-th' : 'fas fa-list'"></i>
               {{ showIndexView ? 'Card View' : 'Index View' }}
             </button>
-            
+            <!--
             <button @click="toggleOobChart" class="btn btn-info">
               <i class="fas fa-chart-bar"></i>
               {{ showOobChart ? 'Hide Chart' : 'Show Chart' }}
             </button>
-            
+            -->
             <a href="https://myhealthchart.com/" target="_blank" class="btn btn-primary">
               <i class="fas fa-external-link-alt"></i>
               MyHealthChart
@@ -87,6 +87,7 @@
                 {{ displayedOobs.length }} records
               </span>
             </div>
+            <!--
             <div class="card-body">
               <OobChart 
                 :key="chartKey"
@@ -94,6 +95,7 @@
                 :timeFrame="parseInt(selectedTimeFrame) || 365"
               />
             </div>
+            -->
           </div>
         </div>
         
@@ -181,10 +183,10 @@
 import { ref, computed, onMounted } from 'vue';
 import { useOobStore } from '@/stores/OobStore';
 import BaseModal from '@/components/ui/BaseModal.vue';
-import OobCard from '@/components/oobs/OobCard.vue';
-import OobIndex from '@/components/oobs/OobIndex.vue';
-import OobForm from '@/components/oobs/OobForm.vue';
-import OobChart from '@/components/oobs/OobChart.vue';
+import OobCard from '@/components/health/oobs/OobCard.vue';
+import OobIndex from '@/components/health/oobs/OobIndex.vue';
+import OobForm from '@/components/health/oobs/OobForm.vue';
+//import OobChart from '@/components/oobs/OobChart.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 // ✅ PINIA STORE
