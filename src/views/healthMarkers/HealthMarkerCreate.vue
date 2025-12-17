@@ -23,9 +23,10 @@
           </h1>
         </div>
 
-        <!-- ✅ FORM CARD -->
+        <!-- ✅ FORM CARD - ADD mode="create" -->
         <div class="form-card">
           <HealthMarkerForm
+            mode="create"
             @submit="handleSubmit"
             @cancel="handleCancel"
           />

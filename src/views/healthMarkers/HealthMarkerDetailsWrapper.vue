@@ -1,9 +1,8 @@
 <template>
-  <div class="health-marker-edit-wrapper">
-    <!-- ✅ PAGE HEADER WITH GRADIENT -->
+  <div class="health-marker-details-wrapper">
     <div class="page-wrapper gradient-health">
       <div class="page-container">
-        <!-- ✅ BREADCRUMB -->
+        <!-- Breadcrumb -->
         <div class="page-header">
           <h1>
             <router-link :to="{ name: 'HealthDashboard' }" class="breadcrumb-link">
@@ -17,19 +16,19 @@
             </router-link>
             <i class="fas fa-chevron-right breadcrumb-separator"></i>
             <span>
-              <i class="fas fa-edit"></i>
-              Edit Health Marker
+              <i class="fas fa-vial"></i>
+              {{ healthMarker?.marker_name || 'Details' }}
             </span>
           </h1>
         </div>
 
-        <!-- ✅ LOADING STATE -->
+        <!-- Loading -->
         <div v-if="isLoading" class="loading-state">
           <i class="fas fa-spinner fa-spin"></i>
-          Loading health marker...
+          Loading marker details...
         </div>
 
-        <!-- ✅ ERROR STATE -->
+        <!-- Error -->
         <div v-else-if="!healthMarker" class="empty-state">
           <i class="fas fa-exclamation-circle"></i>
           <h3>Health Marker Not Found</h3>
@@ -40,32 +39,32 @@
           </router-link>
         </div>
 
-        <!-- ✅ FORM CARD - ADD mode="edit" -->
-        <div v-else class="form-card">
-          <HealthMarkerForm
-            :health-marker="healthMarker"
-            mode="edit"
-            @submit="handleSubmit"
-            @cancel="handleCancel"
-          />
-        </div>
+        <!-- ✅ USE FORM IN VIEW MODE -->
+        <HealthMarkerForm
+          v-else
+          :health-marker="healthMarker"
+          mode="view"
+          @delete="handleDelete"
+        />
       </div>
     </div>
+
+    <ConfirmDialogue ref="confirmDialogue" />
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/HealthMarkerStore';
 import HealthMarkerForm from '@/components/healthMarkers/HealthMarkerForm.vue';
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-// ✅ ROUTER, ROUTE & STORE
 const router = useRouter();
 const route = useRoute();
 const healthMarkerStore = useHealthMarkerStore();
+const confirmDialogue = ref(null);
 
-// ✅ COMPUTED
 const healthMarker = computed(() => {
   const id = parseInt(route.params.id);
   return healthMarkerStore.allHealthMarkers.find(m => m.id === id);
@@ -73,23 +72,41 @@ const healthMarker = computed(() => {
 
 const isLoading = computed(() => healthMarkerStore.loading);
 
-// ✅ METHODS
-async function handleSubmit(formData) {
+async function handleDelete(marker) {
+  if (!confirmDialogue.value) return;
+
+  const ok = await confirmDialogue.value.show({
+    title: "Delete Health Marker",
+    message: `Are you sure you want to delete ${marker.marker_name}? This cannot be undone.`,
+    okButton: "Delete Forever",
+    cancelButton: "Cancel"
+  });
+
+  if (!ok) return;
+
   try {
-    const id = parseInt(route.params.id);
-    await healthMarkerStore.updateHealthMarker(id, formData);
+    await healthMarkerStore.deleteHealthMarker(marker.id);
+    
+    await confirmDialogue.value.show({
+      title: "Marker Deleted",
+      message: "Health marker has been deleted successfully.",
+      okButton: "OK",
+      cancelButton: null
+    });
+    
     router.push({ name: 'HealthMarkerList' });
   } catch (error) {
-    console.error('❌ Update failed:', error);
-    throw error; // Let form handle the error display
+    console.error('❌ Delete error:', error);
+    
+    await confirmDialogue.value.show({
+      title: "Delete Failed",
+      message: "Failed to delete health marker. Please try again.",
+      okButton: "OK",
+      cancelButton: null
+    });
   }
 }
 
-function handleCancel() {
-  router.push({ name: 'HealthMarkerList' });
-}
-
-// ✅ LIFECYCLE
 onMounted(async () => {
   if (healthMarkerStore.allHealthMarkers.length === 0) {
     try {
@@ -98,32 +115,21 @@ onMounted(async () => {
       console.error('❌ Failed to load health markers:', error);
     }
   }
-  
-  if (!healthMarker.value) {
-    console.warn('⚠️ Health marker not found:', route.params.id);
-  }
 });
 </script>
 
 <style scoped>
-/* ✅ IMPORT SHARED HEALTH STYLES */
 @import '@/assets/styles/health-shared.css';
 
-/* ========================================
-   COMPONENT-SPECIFIC STYLES
-   ======================================== */
-
-.health-marker-edit-wrapper {
+.health-marker-details-wrapper {
   width: 100%;
   min-height: 100vh;
 }
 
-/* Page wrapper spacing */
 .page-wrapper {
   padding-bottom: 120px;
 }
 
-/* Breadcrumb styling */
 .breadcrumb-link {
   color: white;
   text-decoration: none;
@@ -144,18 +150,7 @@ onMounted(async () => {
   margin: 0 0.5rem;
 }
 
-/* Form card */
-.form-card {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-  .form-card {
-    max-width: 100%;
-  }
-
   .breadcrumb-separator {
     font-size: 1.25rem;
     margin: 0 0.25rem;
