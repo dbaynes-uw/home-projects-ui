@@ -306,8 +306,8 @@ watch(() => props.sleepMarker, (newMarker) => {
 function resetForm() {
   formData.value = {
     sleep_date: new Date().toISOString().split('T')[0],
-    bed_time: '22:00',
-    wake_time: '07:00',
+    bed_time: '',
+    wake_time: '',
     total_sleep_hours: 8,
     sleep_quality: 7,
     deep_sleep: '0m',

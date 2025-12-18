@@ -18,16 +18,16 @@
     <div class="card-body">
       <!-- Sleep Times -->
       <div class="time-row">
-        <div class="time-item">
+        <!--div class="time-item">
           <i class="fas fa-bed"></i>
           <span class="time-label">Bed Time</span>
           <span class="time-value">{{ sleepMarker.bed_time }}</span>
-        </div>
+        </!--div>
         <div class="time-item">
           <i class="fas fa-sun"></i>
           <span class="time-label">Wake Time</span>
           <span class="time-value">{{ sleepMarker.wake_time }}</span>
-        </div>
+        </div-->
         <div class="time-item">
           <i class="fas fa-clock"></i>
           <span class="time-label">Time in Bed</span>
@@ -70,6 +70,11 @@
           <span class="stat-label">Quality</span>
         </div>
         <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.awakenings }}</span>
+          <span class="stat-label">Awakenings</span>
+        </div>
+        <div class="stat-item">
           <i class="fas fa-brain stat-icon"></i>
           <span class="stat-value">{{ sleepMarker.awake_sleep }}</span>
           <span class="stat-label">Awake Sleep</span>
@@ -89,11 +94,6 @@
           <span class="stat-value">{{ sleepMarker.deep_sleep }}</span>
           <span class="stat-label">Deep Sleep</span>
         </div>        
-        <div class="stat-item">
-          <i class="fas fa-eye stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.awakenings }}</span>
-          <span class="stat-label">Awakenings</span>
-        </div>
       </div>
 
       <!-- OOB Section -->
@@ -119,7 +119,7 @@
       </div>
 
       <!-- Dreams Section -->
-      <div class="dreams-section">
+      <div v-if="sleepMarker.dream_notes" class="dreams-section">
         <div class="dreams-header">
           <i class="fas fa-cloud"></i>
           <span>Dreams Recorded</span>
@@ -127,13 +127,13 @@
         <div v-if="sleepMarker.dream_notes" class="dreams-notes">
           <p>{{ sleepMarker.dream_notes }}</p>
         </div>
-        <div v-else class="notes-indicator">
+        <!--div v-else class="notes-indicator">
           <span>Dreams occurred (no notes)</span>
-        </div>
+        <div-->
       </div>      
 
       <!-- Diet Section -->
-      <div class="info-section sugar-section">
+      <div v-if="sleepMarker.diet_notes" class="info-section sugar-section">
         <div class="info-header">
           <i class="fas fa-candy-cane"></i>
           <span>Diet</span>
@@ -141,13 +141,13 @@
         <div v-if="sleepMarker.diet_notes" class="info-content">
           <p>{{ sleepMarker.diet_notes }}</p>
         </div>
-        <div v-else class="notes-indicator">
+        <!--div v-else class="notes-indicator">
           <span>Diet (no notes)</span>
-        </div>        
+        </!--div-->        
       </div>
 
       <!-- Exercise Section -->
-      <div class="info-section exercise-section">
+      <div v-if="sleepMarker.exercise_notes" class="info-section exercise-section">
         <div class="info-header">
           <i class="fas fa-dumbbell"></i>
           <span>Exercise</span>
@@ -155,13 +155,13 @@
         <div v-if="sleepMarker.exercise_notes" class="info-content">
           <p>{{ sleepMarker.exercise_notes }}</p>
         </div>
-        <div v-else class="notes-indicator">
+        <!--div v-else class="notes-indicator">
           <span>Exercise (no notes)</span>
-        </div>             
+        </!--div-->             
       </div>
 
       <!-- Alcohol Section -->
-      <div class="info-section alcohol-section">
+      <div v-if="sleepMarker.alcohol_notes" class="info-section alcohol-section">
         <div class="info-header">
           <i class="fas fa-wine-glass"></i>
           <span>Alcohol</span>
@@ -169,13 +169,13 @@
         <div v-if="sleepMarker.alcohol_notes" class="info-content">
           <p>{{ sleepMarker.alcohol_notes }}</p>
         </div>
-        <div v-else class="notes-indicator">
+        <!--div v-else class="notes-indicator">
           <span>Alcohol (none)</span>
-        </div>  
+        </div-->  
       </div>
 
       <!-- Sugar Section -->
-      <div class="info-section sugar-section">
+      <div v-if="sleepMarker.sugar_notes" class="info-section sugar-section">
         <div class="info-header">
           <i class="fas fa-candy-cane"></i>
           <span>Sugar</span>
@@ -183,13 +183,13 @@
         <div v-if="sleepMarker.sugar_notes" class="info-content">
           <p>{{ sleepMarker.sugar_notes }}</p>
         </div>
-        <div v-else class="notes-indicator">
+        <!--div v-else class="notes-indicator">
           <span>Sugar (no notes)</span>
-        </div>        
+        </div-->        
       </div>
 
       <!-- Sleep Notes Section -->
-      <div class="sleep-notes-section">
+      <div v-if="sleepMarker.sleep_notes" class="sleep-notes-section">
         <div class="notes-header">
           <i class="fas fa-sticky-note"></i>
           <span>Sleep Notes</span>
@@ -197,9 +197,9 @@
         <div v-if="sleepMarker.sleep_notes" class="notes-content">
           <p>{{ sleepMarker.sleep_notes }}</p>
         </div>
-        <div v-else class="notes-indicator">
+        <!--div v-else class="notes-indicator">
           <span>Sleep (no notes)</span>
-        </div>  
+        </div-->  
       </div>
     </div>
   </BaseCard>
