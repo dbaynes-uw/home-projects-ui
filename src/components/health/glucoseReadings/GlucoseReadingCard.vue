@@ -1,135 +1,266 @@
 <template>
-  <BaseCard class="glucose-reading-card" hover clickable @click="goToEdit">
+  <div class="glucose-reading-card">
+    <!-- Header -->
     <div class="card-header">
-      <div class="date-badge">
-        <i class="fas fa-calendar-day"></i>
-        {{ formattedDate }}
+      <div class="header-left">
+        <i class="fas fa-tint glucose-icon"></i>
+        <div>
+          <h3>{{ formatDate(glucoseReading.reading_date) }}</h3>
+          <span class="time-badge">{{ glucoseReading.reading_time }}</span>
+        </div>
       </div>
-      <div class="actions">
-        <button class="action-btn edit-btn" @click.stop="goToEdit" title="Edit">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="action-btn delete-btn" @click.stop="deleteGlucoseReading" title="Delete">
-          <i class="fas fa-trash"></i>
-        </button>
+      <div class="glucose-value-large" :class="getGlucoseClass(glucoseReading.glucose_value)">
+        {{ glucoseReading.glucose_value }}
+        <span class="unit">mg/dL</span>
       </div>
     </div>
 
-    <div class="card-body">
-      <!-- Glucose Reading Banner -->
-      <div class="glucose-banner" :class="glucoseColorClass">
-        <div class="glucose-content">
-          <i class="fas fa-tint"></i>
-          <div class="glucose-info">
-            <span class="glucose-label">Glucose Reading</span>
-            <span class="glucose-value">{{ glucose_reading.reading }} {{ glucose_reading.reading_unit }}</span>
+    <!-- Reading Info -->
+    <div class="card-section">
+      <h4><i class="fas fa-info-circle"></i> Reading Details</h4>
+      <div class="info-grid">
+        <div class="info-item">
+          <i class="fas fa-utensils"></i>
+          <div>
+            <span class="label">Reading Type</span>
+            <span class="value">{{ glucoseReading.reading_type || '-' }}</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-pills"></i>
+          <div>
+            <span class="label">Medication Taken</span>
+            <span class="value">{{ glucoseReading.medication_taken ? 'Yes' : 'No' }}</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Status Section -->
-      <div class="status-section" :class="glucoseColorClass">
-        <div class="status-content">
-          <i class="fas fa-info-circle"></i>
-          <div class="status-info">
-            <strong>Status:</strong>
-            <span v-if="glucose_reading.reading < 100">Normal - Optimal glucose level</span>
-            <span v-else-if="glucose_reading.reading >= 100 && glucose_reading.reading <= 125">Prediabetes - Elevated glucose</span>
-            <span v-else>Diabetes - High glucose level</span>
+    <!-- Insulin Section -->
+    <div v-if="glucoseReading.insulin_units" class="card-section">
+      <h4><i class="fas fa-syringe"></i> Insulin</h4>
+      <div class="info-grid">
+        <div class="info-item">
+          <i class="fas fa-syringe"></i>
+          <div>
+            <span class="label">Units</span>
+            <span class="value">{{ glucoseReading.insulin_units }}</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-tag"></i>
+          <div>
+            <span class="label">Type</span>
+            <span class="value">{{ glucoseReading.insulin_type || '-' }}</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Info Row -->
-      <div class="info-row">
+    <!-- Carbs Section -->
+    <div v-if="glucoseReading.carbs_consumed" class="card-section">
+      <h4><i class="fas fa-bread-slice"></i> Nutrition</h4>
+      <div class="info-grid">
         <div class="info-item">
-          <span class="info-label">Type</span>
-          <span class="info-value">{{ glucose_reading.reading_type }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Time</span>
-          <span class="info-value">{{ formattedTime }}</span>
-        </div>
-      </div>
-
-      <!-- Notes Section -->
-      <div v-if="glucose_reading.notes" class="notes-section">
-        <div class="notes-header">
-          <i class="fas fa-sticky-note"></i>
-          <span>Notes</span>
-        </div>
-        <div class="notes-content">
-          <p>{{ glucose_reading.notes }}</p>
+          <i class="fas fa-bread-slice"></i>
+          <div>
+            <span class="label">Carbs</span>
+            <span class="value">{{ glucoseReading.carbs_consumed }}g</span>
+          </div>
         </div>
       </div>
     </div>
-  </BaseCard>
+
+    <!-- Notes Section -->
+    <div v-if="glucoseReading.notes" class="card-section">
+      <h4><i class="fas fa-sticky-note"></i> Notes</h4>
+      <p class="notes-text">{{ glucoseReading.notes }}</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="card-actions">
+      <button class="btn btn-secondary" @click="$emit('edit', glucoseReading)">
+        <i class="fas fa-edit"></i>
+        Edit
+      </button>
+      <button class="btn btn-danger" @click="$emit('delete', glucoseReading)">
+        <i class="fas fa-trash"></i>
+        Delete
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import BaseCard from '@/components/ui/BaseCard.vue';
-
-const props = defineProps({
-  glucose_reading: {
+defineProps({
+  glucoseReading: {
     type: Object,
     required: true
   }
 });
 
-const emit = defineEmits(['delete']);
-const router = useRouter();
+defineEmits(['edit', 'delete']);
 
-const formattedDate = computed(() => {
-  if (!props.glucose_reading.reading_date) return '';
-  const date = new Date(props.glucose_reading.reading_date);
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
   return date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   });
-});
+}
 
-const formattedTime = computed(() => {
-  if (!props.glucose_reading.reading_date) return '';
-  const date = new Date(props.glucose_reading.reading_date);
-  return date.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
-  });
-});
-
-const glucoseColorClass = computed(() => {
-  const value = parseFloat(props.glucose_reading.reading);
-  if (value < 100) return 'glucose-good';
-  if (value >= 100 && value <= 125) return 'glucose-warning';
+function getGlucoseClass(value) {
+  const v = parseFloat(value);
+  if (v < 70) return 'glucose-low';
+  if (v < 100) return 'glucose-good';
+  if (v <= 140) return 'glucose-elevated';
   return 'glucose-high';
-});
-
-const goToEdit = () => {
-  router.push({
-    name: 'GlucoseReadingEdit',
-    params: { id: props.glucose_reading.id }
-  });
-};
-
-const deleteGlucoseReading = () => {
-  if (confirm('Are you sure you want to delete this glucose reading?')) {
-    emit('delete', props.glucose_reading.id);
-  }
-};
+}
 </script>
 
 <style scoped>
-/* ✅ All shared styles now come from card-components.css */
-/* Only component-specific overrides remain here */
+@import '@/assets/styles/ui-components.css';
 
 .glucose-reading-card {
-  /* Inherits from BaseCard + card-components.css */
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ No other styles needed - everything is centralized! */
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.glucose-icon {
+  font-size: 32px;
+  opacity: 0.9;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.time-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.glucose-value-large {
+  font-size: 48px;
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.unit {
+  font-size: 16px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.glucose-low {
+  color: #ff6b6b;
+}
+
+.glucose-good {
+  color: #51cf66;
+}
+
+.glucose-elevated {
+  color: #ffd43b;
+}
+
+.glucose-high {
+  color: #ff6b6b;
+}
+
+.card-section {
+  padding: 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.card-section:last-of-type {
+  border-bottom: none;
+}
+
+.card-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info-item i {
+  color: #667eea;
+  font-size: 18px;
+  margin-top: 4px;
+}
+
+.info-item .label {
+  display: block;
+  font-size: 12px;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.info-item .value {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.notes-text {
+  margin: 0;
+  color: #4a5568;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.card-actions {
+  padding: 20px 24px;
+  background: #f7fafc;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
 </style>
