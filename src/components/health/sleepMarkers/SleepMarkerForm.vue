@@ -229,7 +229,7 @@
         icon="content-save"
         :loading="isSubmitting"
       >
-        {{ marker?.id ? 'Update Entry' : 'Save Entry' }}
+        {{ sleepMarker?.id ? 'Update Entry' : 'Save Entry' }}
       </BaseButton>
     </div>
   </form>
@@ -242,7 +242,7 @@ import BaseButton from '@/components/ui/BaseButton.vue';
 import HoursMinutesInput from '@/components/ui/HoursMinutesInput.vue';
 
 const props = defineProps({
-  marker: {
+  sleepMarker: {
     type: Object,
     default: null
   }
@@ -276,8 +276,8 @@ const formData = ref({
   sleep_notes: ''
 });
 
-// Watch for marker changes (edit mode)
-watch(() => props.marker, (newMarker) => {
+// Watch for sleepMarker changes (edit mode)
+watch(() => props.sleepMarker, (newMarker) => {
   if (newMarker) {
     const data = { ...newMarker };
     

@@ -66,7 +66,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useOobStore } from '@/stores/OobStore';
+import { useOobStore } from '@/stores/health/OobStore';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import OobCard from '@/components/health/oobs/OobCard.vue';
 // ✅ COMPOSITION API SETUP
@@ -159,10 +159,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-  @import '@/assets/styles/health-shared.css';
+  @import '@/assets/styles/health/health-shared.css';
 
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health-shared.css';
+@import '@/assets/styles/health/health-shared.css';
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES ONLY

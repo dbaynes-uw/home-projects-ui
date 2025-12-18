@@ -56,7 +56,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useHealthMarkerStore } from '@/stores/HealthMarkerStore';
+import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import HealthMarkerForm from '@/components/health/healthMarkers/HealthMarkerForm.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
@@ -119,7 +119,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-@import '@/assets/styles/health-shared.css';
+@import '@/assets/styles/health/health-shared.css';
 
 .health-marker-details-wrapper {
   width: 100%;

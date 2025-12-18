@@ -246,7 +246,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useHealthMarkerStore } from '@/stores/HealthMarkerStore';
+import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
@@ -385,7 +385,7 @@ onMounted(async () => {
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health-shared.css';
+@import '@/assets/styles/health/health-shared.css';
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES

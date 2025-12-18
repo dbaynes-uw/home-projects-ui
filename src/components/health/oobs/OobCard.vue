@@ -143,7 +143,7 @@ const handleDoubleClick = () => {
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health-shared.css';
+@import '@/assets/styles/health/health-shared.css';
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES

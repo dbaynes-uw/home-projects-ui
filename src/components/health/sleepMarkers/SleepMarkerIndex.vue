@@ -1,453 +1,608 @@
-/* filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/sleepMarkers/SleepMarkerIndex.vue */
-
 <template>
-  <ConfirmDialogue ref="confirmDialogue" />  
-  <div class="table-container">
-    <!-- ✅ TABLE HEADER -->
-    <div class="table-header">
-      <h3>
-        <i class="fas fa-bed header-icon"></i>
-        Sleep Records Index
-      </h3>
-      
-      <div class="table-controls">
-        <div class="table-count">
-          <i class="fas fa-moon"></i>
-          {{ props.sleepMarkers.length }} record{{ props.sleepMarkers.length === 1 ? '' : 's' }}
-        </div>
-        
-        <button class="export-btn" @click="exportToCsv">
-          <i class="fas fa-download"></i>
-          Export CSV
-        </button>
+  <div class="sleep-marker-index">
+    <!-- ✅ SEARCH & FILTER BAR -->
+    <div class="index-controls">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search sleep records..."
+          class="search-input"
+        />
+      </div>
+
+      <div class="filter-controls">
+        <select v-model="qualityFilter" class="filter-select">
+          <option value="">All Quality Levels</option>
+          <option value="high">High Quality (8-10)</option>
+          <option value="medium">Medium Quality (5-7)</option>
+          <option value="low">Low Quality (1-4)</option>
+        </select>
+
+        <select v-model="sortBy" class="filter-select">
+          <option value="date-desc">Date (Newest First)</option>
+          <option value="date-asc">Date (Oldest First)</option>
+          <option value="quality-desc">Quality (Highest First)</option>
+          <option value="quality-asc">Quality (Lowest First)</option>
+          <option value="duration-desc">Duration (Longest First)</option>
+          <option value="duration-asc">Duration (Shortest First)</option>
+        </select>
       </div>
     </div>
 
-    <!-- ✅ TABLE WRAPPER -->
-    <div class="table-wrapper">
+    <!-- ✅ TABLE VIEW -->
+    <div class="table-container">
       <table class="data-table">
         <thead>
           <tr>
-            <th @click="sortBy('sleep_date')" class="sortable">
+            <th @click="setSortBy('date')" class="sortable">
+              <i class="fas fa-calendar-day"></i>
               Date
-              <i v-if="sortKey === 'sleep_date'" :class="sortIcon" class="sort-icon"></i>
+              <i v-if="sortBy.startsWith('date')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th @click="sortBy('time_asleep')" class="sortable center">
-              Time Asleep
-              <i v-if="sortKey === 'time_asleep'" :class="sortIcon" class="sort-icon"></i>
+            <th>
+              <i class="fas fa-bed"></i>
+              Bed Time
             </th>
-            <th @click="sortBy('time_in_bed')" class="sortable">
-              Time in Bed
-              <i v-if="sortKey === 'time_in_bed'" :class="sortIcon" class="sort-icon"></i>
+            <th>
+              <i class="fas fa-sun"></i>
+              Wake Time
             </th>
-            <th @click="sortBy('sleep_quality')" class="sortable center">
+            <th>
+              <i class="fas fa-clock"></i>
+              In Bed
+            </th>
+            <th>
+              <i class="fas fa-moon"></i>
+              Asleep
+            </th>
+            <th @click="setSortBy('quality')" class="sortable">
+              <i class="fas fa-star"></i>
               Quality
-              <i v-if="sortKey === 'sleep_quality'" :class="sortIcon" class="sort-icon"></i>
+              <i v-if="sortBy.startsWith('quality')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-
-            <th @click="sortBy('awakenings')" class="sortable center">
-              Awakenings
-              <i v-if="sortKey === 'awakenings'" :class="sortIcon" class="sort-icon"></i>
+            <th>
+              <i class="fas fa-tint"></i>
+              Glucose
             </th>
-                        <th @click="sortBy('awake_sleep')" class="sortable">
-              Awake Sleep
-              <i v-if="sortKey === 'awake_sleep'" :class="sortIcon" class="sort-icon"></i>
+            <th>
+              <i class="fas fa-weight"></i>
+              Weight
             </th>
-            <th @click="sortBy('rem_sleep')" class="sortable">
-              REM Sleep
-              <i v-if="sortKey === 'rem_sleep'" :class="sortIcon" class="sort-icon"></i>
+            <th>
+              <i class="fas fa-ghost"></i>
+              OOB
             </th>
-            <th @click="sortBy('core_sleep')" class="sortable">
-              Core Sleep
-              <i v-if="sortKey === 'core_sleep'" :class="sortIcon" class="sort-icon"></i>
-            </th>
-            <th @click="sortBy('deep_sleep')" class="sortable">
-              Deep Sleep
-              <i v-if="sortKey === 'deep_sleep'" :class="sortIcon" class="sort-icon"></i>
-            </th>
-            <th @click="sortBy('had_oob')" class="sortable center">
-              OOBs
-              <i v-if="sortKey === 'had_oob'" :class="sortIcon" class="sort-icon"></i>
-            </th>
-
-            <th>Notes</th>
-            <th class="center">Actions</th>
+            <th class="actions-column">Actions</th>
           </tr>
         </thead>
-        <tbody v-if="sortedMarkers.length > 0">
-          <tr 
-            v-for="marker in sortedMarkers" 
-            :key="marker.id"
-            @click="editSleepMarker(marker)"
-            class="clickable-row"
+        <tbody>
+          <tr
+            v-for="sleepMarker in filteredMarkers"
+            :key="sleepMarker.id"
+            class="data-row"
+            @click="openModal(sleepMarker)"
           >
-            <!-- Date -->
+            <td class="date-cell">{{ formatDate(sleepMarker.sleep_date) }}</td>
+            <td>{{ sleepMarker.bed_time }}</td>
+            <td>{{ sleepMarker.wake_time }}</td>
+            <td>{{ sleepMarker.time_in_bed }}</td>
+            <td>{{ sleepMarker.time_asleep }}</td>
             <td>
-              <div class="date-cell">
-                <div class="date-value">{{ formatDate(marker.sleep_date) }}</div>
-                <!--div class="days-ago">{{ getDaysAgo(marker.sleep_date) }}</!div-->
-              </div>
-            </td>
-
-            <!-- Time Asleep -->
-            <td class="center">
-              <div class="result-cell">
-                <span class="result-value">{{ marker.time_asleep || '—' }}</span>
-              </div>
-            </td>
-            <td class="center">
-              <div class="result-cell">
-                <span class="result-value">{{ marker.time_in_bed || '—' }}</span>
-              </div>
-            </td>
-            <!-- Quality -->
-            <td class="center">
-              <span :class="['status-badge', getQualityClass(marker.sleep_quality)]">
-                <i :class="getQualityIcon(marker.sleep_quality)"></i>
-                {{ marker.sleep_quality ? `${marker.sleep_quality}/10` : 'Not rated' }}
+              <span class="quality-badge" :class="getQualityClass(sleepMarker.sleep_quality)">
+                {{ sleepMarker.sleep_quality }}/10
               </span>
             </td>
-
-            <!-- Awakenings -->
-            <td class="center">
-              <span :class="['awakening-badge', getAwakeningClass(marker.awakenings)]">
+            <td>
+              <span v-if="sleepMarker.am_fasting_glucose_value" class="glucose-value" :class="getGlucoseClass(sleepMarker.am_fasting_glucose_value)">
+                {{ sleepMarker.am_fasting_glucose_value }}
+              </span>
+              <span v-else class="text-muted">-</span>
+            </td>
+            <td>
+              <span v-if="sleepMarker.fasting_weight">{{ formatWeight(sleepMarker.fasting_weight) }}</span>
+              <span v-else class="text-muted">-</span>
+            </td>
+            <td class="oob-cell">
+              <i v-if="sleepMarker.had_oob" class="fas fa-ghost oob-icon" title="Had OOB"></i>
+              <span v-else class="text-muted">-</span>
+            </td>
+            <td class="actions-cell" @click.stop>
+              <button
+                class="action-btn edit-btn"
+                @click="openModal(sleepMarker)"
+                title="View Details"
+              >
                 <i class="fas fa-eye"></i>
-                {{ marker.awakenings || 0 }}
-              </span>
-            </td>
-            <td class="center"><span class="result-value">{{ marker.awake_sleep }}</span></td>
-            <td class="center"><span class="result-value">{{ marker.rem_sleep }}</span></td>
-            <td class="center"><span class="result-value">{{ marker.core_sleep }}</span></td>
-            <td class="center"><span class="result-value">{{ marker.deep_sleep }}</span></td>
-            <td class="center"><span class="result-value">{{ marker.had_oob ? 'Yes' : 'No' }}</span></td>
-            <!-- Notes -->
-            <td>
-              <div class="notes-cell">
-                <span v-if="marker.sleep_notes" class="notes-preview" :title="marker.sleep_notes">
-                  <i class="fas fa-sticky-note"></i>
-                  {{ truncateNotes(marker.sleep_notes) }}
-                </span>
-                <span v-else class="no-notes">—</span>
-              </div>
-            </td>
-
-            <!-- Actions (same as before) -->
-            <td>
-              <div class="actions-cell">
-                <button 
-                  class="table-action-btn edit" 
-                  @click.stop="editSleepMarker(marker)"
-                  title="Edit"
-                >
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button 
-                  class="table-action-btn duplicate" 
-                  @click.stop="duplicateSleepMarker(marker)"
-                  title="Duplicate"
-                >
-                  <i class="fas fa-copy"></i>
-                </button>
-                <button
-                  class="table-action-btn delete"
-                  @click.stop="deleteMarker(marker)"
-                  title="Delete Record"
-                  type="button"
-                >
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
+              </button>
+              <button
+                class="action-btn delete-btn"
+                @click="$emit('delete', sleepMarker)"
+                title="Delete"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
-      
-      <!-- Empty State -->
-      <div v-if="sortedMarkers.length === 0" class="table-empty">
+
+      <!-- ✅ EMPTY STATE -->
+      <div v-if="filteredMarkers.length === 0" class="empty-state">
         <i class="fas fa-bed"></i>
-        <h3>No Sleep Records Found</h3>
-        <p>Start tracking your sleep to see records here.</p>
-        <button class="table-empty-btn" @click="router.push({ name: 'SleepMarkerCreate' })">
-          <i class="fas fa-plus"></i>
-          Add Sleep Record
-        </button>
+        <p>No sleep records found</p>
       </div>
     </div>
 
-    <!-- ✅ TABLE FOOTER -->
-    <div class="table-footer">
-      <div class="footer-info">
-        <i class="fas fa-info-circle"></i>
-        <span>Click any row to edit • Use column headers to sort</span>
+    <!-- ✅ STATS SUMMARY -->
+    <div class="stats-summary">
+      <div class="stat-item">
+        <i class="fas fa-list"></i>
+        <span class="stat-value">{{ filteredMarkers.length }}</span>
+        <span class="stat-label">Records</span>
       </div>
-      
-      <div class="pagination-info">
-        Showing {{ sortedMarkers.length }} of {{ props.sleepMarkers.length }} records
+      <div class="stat-item">
+        <i class="fas fa-clock"></i>
+        <span class="stat-value">{{ averageSleep }}</span>
+        <span class="stat-label">Avg Sleep</span>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-star"></i>
+        <span class="stat-value">{{ averageQuality }}</span>
+        <span class="stat-label">Avg Quality</span>
       </div>
     </div>
+
+    <!-- ✅ MODAL (Same as SleepMarkerList) -->
+    <transition name="modal-fade">
+      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+        <div class="modal-container">
+          <div class="modal-header">
+            <h2>
+              <i class="fas fa-bed"></i>
+              Sleep Details
+            </h2>
+            <button class="modal-close" @click="closeModal">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <SleepMarkerCard
+              v-if="selectedMarker"
+              :sleepMarker="selectedMarker"
+              @edit="handleEdit"
+              @delete="handleDelete"
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" @click="closeModal">
+              <i class="fas fa-times"></i>
+              Close
+            </button>
+            <button class="btn btn-primary" @click="handleEdit(selectedMarker)">
+              <i class="fas fa-edit"></i>
+              Edit
+            </button>
+            <button class="btn btn-danger" @click="handleDelete(selectedMarker)">
+              <i class="fas fa-trash"></i>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
-// Around line 200 in SleepMarkerIndex.vue
 import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useSleepMarkerStore } from '@/stores/SleepMarkerStore'; // ✅ Use Pinia store
-import dayjs from 'dayjs';
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from '@/services/DateFormatService';
+import SleepMarkerCard from './SleepMarkerCard.vue';
 
 const props = defineProps({
   sleepMarkers: {
     type: Array,
-    required: true,
-    default: () => []
+    required: true
   }
 });
-defineEmits(['edit', 'delete']);
-const router = useRouter();
-const sleepMarkerStore = useSleepMarkerStore(); // ✅ Use Pinia store
 
-// ✅ REFS
-const confirmDialogue = ref(null);
+const emit = defineEmits(['edit', 'delete']);
 
-// ✅ SORTING STATE
-const sortKey = ref('sleep_date'); // ✅ CHANGED from marker_date
-const sortAsc = ref(false);
+// ✅ MODAL STATE
+const showModal = ref(false);
+const selectedMarker = ref(null);
 
-const sortedMarkers = computed(() => {
-  const sorted = [...props.sleepMarkers];
-  sorted.sort((a, b) => {
-    let aVal = a[sortKey.value];
-    let bVal = b[sortKey.value];
-    
-    if (aVal == null) return 1;
-    if (bVal == null) return -1;
-    
-    if (aVal < bVal) return sortAsc.value ? -1 : 1;
-    if (aVal > bVal) return sortAsc.value ? 1 : -1;
-    return 0;
+// ✅ FILTERS & SEARCH
+const searchQuery = ref('');
+const qualityFilter = ref('');
+const sortBy = ref('date-desc');
+
+// ✅ MODAL METHODS
+function openModal(sleepMarker) {
+  selectedMarker.value = sleepMarker;
+  showModal.value = true;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  showModal.value = false;
+  selectedMarker.value = null;
+  document.body.style.overflow = '';
+}
+
+function handleEdit(sleepMarker) {
+  closeModal();
+  emit('edit', sleepMarker);
+}
+
+function handleDelete(sleepMarker) {
+  closeModal();
+  emit('delete', sleepMarker);
+}
+
+// ✅ FILTERED & SORTED MARKERS
+const filteredMarkers = computed(() => {
+  let filtered = [...props.sleepMarkers];
+
+  // Apply search
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(m =>
+      m.sleep_date?.toLowerCase().includes(query) ||
+      m.sleep_notes?.toLowerCase().includes(query) ||
+      m.dream_notes?.toLowerCase().includes(query)
+    );
+  }
+
+  // Apply quality filter
+  if (qualityFilter.value) {
+    filtered = filtered.filter(m => {
+      const quality = parseInt(m.sleep_quality);
+      if (qualityFilter.value === 'high') return quality >= 8;
+      if (qualityFilter.value === 'medium') return quality >= 5 && quality <= 7;
+      if (qualityFilter.value === 'low') return quality <= 4;
+      return true;
+    });
+  }
+
+  // Apply sorting
+  filtered.sort((a, b) => {
+    switch (sortBy.value) {
+      case 'date-desc':
+        return new Date(b.sleep_date) - new Date(a.sleep_date);
+      case 'date-asc':
+        return new Date(a.sleep_date) - new Date(b.sleep_date);
+      case 'quality-desc':
+        return parseInt(b.sleep_quality) - parseInt(a.sleep_quality);
+      case 'quality-asc':
+        return parseInt(a.sleep_quality) - parseInt(b.sleep_quality);
+      case 'duration-desc':
+        return parseTime(b.time_asleep) - parseTime(a.time_asleep);
+      case 'duration-asc':
+        return parseTime(a.time_asleep) - parseTime(b.time_asleep);
+      default:
+        return 0;
+    }
   });
-  return sorted;
+
+  return filtered;
 });
 
-const sortIcon = computed(() => {
-  return sortAsc.value ? 'fas fa-sort-up' : 'fas fa-sort-down';
-});
-
-function sortBy(key) {
-  if (sortKey.value === key) {
-    sortAsc.value = !sortAsc.value;
+function setSortBy(column) {
+  if (sortBy.value.startsWith(column)) {
+    sortBy.value = sortBy.value.includes('desc') ? `${column}-asc` : `${column}-desc`;
   } else {
-    sortKey.value = key;
-    sortAsc.value = false;
+    sortBy.value = `${column}-desc`;
   }
 }
 
-// ✅ QUALITY HELPERS (updated for numeric scale)
-const getQualityClass = (quality) => {
-  const q = parseFloat(quality);
-  if (q >= 8) return 'status-success';
-  if (q >= 6) return 'status-warning';
-  return 'status-error';
-};
-
-const getQualityIcon = (quality) => {
-  const q = parseFloat(quality);
-  if (q >= 8) return 'fas fa-star';
-  if (q >= 6) return 'fas fa-check-circle';
-  return 'fas fa-times-circle';
-};
-
-// ✅ AWAKENING HELPERS
-const getAwakeningClass = (awakenings) => {
-  if (!awakenings || awakenings === 0) return 'awakening-good';
-  if (awakenings <= 2) return 'awakening-fair';
-  return 'awakening-poor';
-};
-
-// ✅ DATE/TIME FORMATTING
-function formatDate(date) {
-  return dayjs(date).format('MMM DD, YYYY');
+// ✅ FORMATTING HELPERS
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
 }
 
-const formatTime = (time) => {
-  if (!time) return '—';
-  // Time is already formatted as HH:MM from the store
-  return dayjs(time, 'HH:mm').format('h:mm A');
-};
+function formatWeight(weight) {
+  if (!weight) return '';
+  const lbs = Math.floor(weight);
+  const oz = Math.round((weight - lbs) * 16);
+  return oz === 0 ? `${lbs} lbs` : `${lbs} lbs ${oz} oz`;
+}
 
-//const getDaysAgo = (dateString) => {
-//  if (!dateString) return '';
-//  
-//  const testDate = new Date(dateString);
-//  const today = new Date();
-//  const diffTime = today - testDate;
-//  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-//  
-//  if (diffDays === 0) return 'Today';
-//  if (diffDays === 1) return '1 day ago';
-//  if (diffDays < 30) return `${diffDays} days ago`;
-//  if (diffDays < 365) {
-//    const months = Math.floor(diffDays / 30);
-//    return months === 1 ? '1 month ago' : `${months} months ago`;
-//  }
-//  
-//  const years = Math.floor(diffDays / 365);
-//  return years === 1 ? '1 year ago' : `${years} years ago`;
-//};
+function getQualityClass(quality) {
+  const q = parseInt(quality);
+  if (q >= 8) return 'quality-high';
+  if (q >= 5) return 'quality-medium';
+  return 'quality-low';
+}
 
-const truncateNotes = (notes) => {
-  if (!notes) return '';
-  return notes.length > 40 ? notes.substring(0, 40) + '...' : notes;
-};
+function getGlucoseClass(value) {
+  const v = parseFloat(value);
+  if (v < 100) return 'glucose-good';
+  if (v <= 125) return 'glucose-warning';
+  return 'glucose-high';
+}
 
-// ✅ ACTION METHODS
-const editSleepMarker = (marker) => {
-  if (marker?.id) {
-    router.push({ name: 'SleepMarkerEdit', params: { id: marker.id } });
+// ✅ STATS
+const averageSleep = computed(() => {
+  if (filteredMarkers.value.length === 0) return '-';
+  
+  // Filter out invalid or zero values
+  const validTimes = filteredMarkers.value
+    .map(m => parseTime(m.time_asleep))
+    .filter(time => time > 0);
+  
+  if (validTimes.length === 0) return '-';
+  
+  const total = validTimes.reduce((sum, time) => sum + time, 0);
+  const avg = total / validTimes.length;
+  const hours = Math.floor(avg / 60);
+  const minutes = Math.round(avg % 60);
+  
+  return `${hours}h ${minutes}m`;
+});
+
+function parseTime(timeStr) {
+  if (!timeStr || typeof timeStr !== 'string') return 0;
+  
+  // ✅ Handle "6h" format (hours only)
+  if (timeStr.includes('h')) {
+    const hoursMatch = timeStr.match(/(\d+(?:\.\d+)?)h/);
+    const minutesMatch = timeStr.match(/(\d+)m/);
+    
+    const hours = hoursMatch ? parseFloat(hoursMatch[1]) : 0;
+    const minutes = minutesMatch ? parseInt(minutesMatch[1]) : 0;
+    
+    return Math.round(hours * 60 + minutes);
   }
-};
-
-const duplicateSleepMarker = (marker) => {
-  router.push({ 
-    name: 'SleepMarkerCreate', 
-    query: { 
-      duplicate: marker.id,
-      sleep_quality: marker.sleep_quality,
-      sleep_notes: marker.sleep_notes
-    } 
-  });
-};
-
-const deleteMarker = async (marker) => {
-  if (!confirmDialogue.value) {
-    console.error('❌ confirmDialogue ref is null!');
-    return;
+  
+  // ✅ Handle "HH:MM" format (fallback for other time fields)
+  const parts = timeStr.split(':');
+  if (parts.length === 2) {
+    const hours = parseInt(parts[0]);
+    const minutes = parseInt(parts[1]);
+    
+    if (!isNaN(hours) && !isNaN(minutes)) {
+      return hours * 60 + minutes;
+    }
   }
   
-  const ok = await confirmDialogue.value.show({
-    title: "Delete Sleep Record",
-    message: `Are you sure you want to delete the sleep record from ${formatDate(marker.sleep_date)}? This cannot be undone.`,
-    okButton: "Delete Forever",
-    cancelButton: "Cancel"
-  });
-  
-  if (!ok) return;
-
-  try {
-    await sleepMarkerStore.deleteSleepMarker(marker.id);
-  } catch (error) {
-    console.error('❌ Delete error:', error);
-  }
-};
-
-const exportToCsv = () => {
-  const csvHeaders = [
-    'Date',
-    'Bed Time',
-    'Wake Time',
-    'Time in Bed',
-    'Time Asleep',
-    'Awakenings',
-    'Quality',
-    'Deep Sleep',
-    'REM Sleep',
-    'Core Sleep',
-    'Awake Sleep',
-    'Days Ago',
-    'Notes'
-  ];
-  
-  const csvData = props.sleepMarkers.map(item => [
-    formatDate(item.sleep_date),
-    formatTime(item.bed_time),
-    formatTime(item.wake_time),
-    item.time_in_bed || '',
-    item.time_asleep || '',
-    item.awakenings || 0,
-    item.sleep_quality || '',
-    item.deep_sleep || '',
-    item.rem_sleep || '',
-    item.core_sleep || '',
-    item.awake_sleep || '',
-    // getDaysAgo(item.sleep_date),
-    truncateNotes(item.sleep_notes) || ''
-  ]);
-  
-  const csvContent = [
-    csvHeaders.join(','),
-    ...csvData.map(row => row.map(field => `"${field}"`).join(','))
-  ].join('\n');
-  
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `sleep-records-${new Date().toISOString().split('T')[0]}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
-};
+  return 0;
+}
+const averageQuality = computed(() => {
+  if (filteredMarkers.value.length === 0) return '-';
+  const total = filteredMarkers.value.reduce((sum, m) => sum + parseInt(m.sleep_quality), 0);
+  return (total / filteredMarkers.value.length).toFixed(1);
+});
 </script>
+
 <style scoped>
-/* ✅ IMPORT ALL SHARED STYLES */
+/* ✅ IMPORT SHARED STYLES */
 @import '@/assets/styles/ui-components.css';
-@import '@/assets/styles/table-components.css';
+@import '@/assets/styles/list-view-components.css';
 
 /* ========================================
-   SLEEP MARKER INDEX SPECIFIC STYLES
+   COMPONENT-SPECIFIC STYLES
    ======================================== */
 
-/* Time Cell */
-.time-cell {
+.sleep-marker-index {
+  width: 100%;
+}
+
+/* Quality badges */
+.quality-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.quality-high {
+  background: #d4edda;
+  color: #155724;
+}
+
+.quality-medium {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.quality-low {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Glucose values */
+.glucose-value {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.glucose-good {
+  color: #28a745;
+  background: #d4edda;
+}
+
+.glucose-warning {
+  color: #856404;
+  background: #fff3cd;
+}
+
+.glucose-high {
+  color: #721c24;
+  background: #f8d7da;
+}
+
+/* OOB indicator */
+.oob-cell {
+  text-align: center;
+}
+
+.oob-icon {
+  color: #667eea;
+  font-size: 18px;
+}
+
+/* Stats summary */
+.stats-summary {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.stat-item i {
+  font-size: 24px;
+  color: #667eea;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ✅ MODAL STYLES (Same as SleepMarkerList) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: #374151;
+  z-index: 9999;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-.time-cell i {
-  color: #667eea;
-  font-size: 1rem;
+.modal-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Awakening Badge */
-.awakening-badge {
-  display: inline-flex;
+.modal-header {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.875rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  justify-content: space-between;
+  padding: 24px 32px;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.awakening-good {
-  background: rgba(22, 163, 74, 0.1);
-  color: #16a34a;
-  border: 1px solid rgba(22, 163, 74, 0.3);
-}
-
-.awakening-fair {
-  background: rgba(234, 179, 8, 0.1);
-  color: #ca8a04;
-  border: 1px solid rgba(234, 179, 8, 0.3);
-}
-
-.awakening-poor {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-/* Clickable Row */
-.clickable-row {
+.modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 18px;
 }
 
-.clickable-row:hover {
-  background: linear-gradient(90deg, rgba(102, 126, 234, 0.03) 0%, rgba(102, 126, 234, 0.06) 100%);
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px 32px;
+  border-top: 1px solid #e2e8f0;
+  background: #f7fafc;
+  justify-content: flex-end;
+}
+
+/* Modal transitions */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-fade-enter-active .modal-container,
+.modal-fade-leave-active .modal-container {
+  transition: transform 0.3s ease;
+}
+
+.modal-fade-enter-from .modal-container,
+.modal-fade-leave-to .modal-container {
+  transform: scale(0.9);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-container {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .stats-summary {
+    flex-direction: column;
+  }
 }
 </style>

@@ -181,7 +181,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useOobStore } from '@/stores/OobStore';
+import { useOobStore } from '@/stores/health/OobStore';
 import BaseModal from '@/components/ui/BaseModal.vue';
 import OobCard from '@/components/health/oobs/OobCard.vue';
 import OobIndex from '@/components/health/oobs/OobIndex.vue';
@@ -320,7 +320,7 @@ onMounted(async () => {
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health-shared.css';
+@import '@/assets/styles/health/health-shared.css';
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES

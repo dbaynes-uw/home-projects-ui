@@ -120,9 +120,9 @@
     <div v-else-if="currentView === 'cards'" class="cards-view">
       <div class="cards-grid">
         <SleepMarkerCard
-          v-for="marker in sleepMarkers"
-          :key="marker.id"
-          :marker="marker"
+          v-for="sleepMarker in sleepMarkers"
+          :key="sleepMarker.id"
+          :sleepMarker="sleepMarker"
           @edit="editMarker"
           @delete="deleteMarker"
         />
@@ -140,20 +140,26 @@
       </BaseCard>
     </div>
     <!-- Table View -->
+    <!-- ✅ TABLE VIEW - ADD @edit and @delete handlers -->
     <SleepMarkerIndex
-      v-if="currentView === 'table'"
+      v-else-if="currentView === 'table'"
       :sleepMarkers="sleepMarkers"
+      @edit="editMarker"
+      @delete="deleteMarker"
     />
+
+    <!-- ✅ CALENDAR VIEW -->
     <SleepMarkerCalendar
       v-else-if="currentView === 'calendar'"
-      :markers="sleepMarkers"
+      :sleepMarkers="sleepMarkers"
       @edit="editMarker"
       @date-click="openAddDialogForDate"
     />
 
+    <!-- ✅ CHARTS VIEW -->
     <SleepMarkerCharts
       v-else-if="currentView === 'charts'"
-      :markers="sleepMarkers"
+      :sleepMarkers="sleepMarkers"
     />
 
     <!-- ✅ DIALOG -->
@@ -164,7 +170,7 @@
       @close="closeDialog"
     >
       <SleepMarkerForm
-        :marker="selectedMarker"
+        :sleepMarker="selectedMarker"
         @save="handleSave"
         @cancel="closeDialog"
       />
@@ -176,7 +182,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useSleepMarkerStore } from '@/stores/SleepMarkerStore';
+import { useSleepMarkerStore } from '@/stores/health/SleepMarkerStore';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseModal from '@/components/ui/BaseModal.vue';
@@ -226,15 +232,15 @@ function openAddDialogForDate(date) {
   showDialog.value = true;
 }
 
-function editMarker(marker) {
-  selectedMarker.value = { ...marker };
+function editMarker(sleepMarker) {
+  selectedMarker.value = { ...sleepMarker };
   showDialog.value = true;
 }
 
-async function deleteMarker(marker) {
+async function deleteMarker(sleepMarker) {
   const ok = await confirmDialogue.value?.show({
     title: "Delete Sleep Entry",
-    message: `Are you sure you want to delete the sleep entry for ${marker.sleep_date}? This cannot be undone.`,
+    message: `Are you sure you want to delete the sleep entry for ${sleepMarker.sleep_date}? This cannot be undone.`,
     okButton: "Delete Forever",
     cancelButton: "Cancel"
   });
@@ -242,7 +248,7 @@ async function deleteMarker(marker) {
   if (!ok) return;
 
   try {
-    await sleepMarkerStore.deleteSleepMarker(marker.id);
+    await sleepMarkerStore.deleteSleepMarker(sleepMarker.id);
     await confirmDialogue.value?.show({
       title: "Entry Deleted",
       message: "Sleep entry has been deleted successfully.",
@@ -260,15 +266,16 @@ async function deleteMarker(marker) {
   }
 }
 
-async function handleSave(markerData) {
+async function handleSave(sleepMarkerData) {
   try {
-    if (markerData.id) {
-      await sleepMarkerStore.updateSleepMarker(markerData);
+    if (sleepMarkerData.id) {
+      await sleepMarkerStore.updateSleepMarker(sleepMarkerData);
     } else {
-      await sleepMarkerStore.createSleepMarker(markerData);
+      await sleepMarkerStore.createSleepMarker(sleepMarkerData);
     }
     closeDialog();
   } catch (error) {
+    console.error('❌ Save error:', error);
     alert('Failed to save sleep entry. Please try again.');
   }
 }
@@ -283,6 +290,7 @@ onMounted(async () => {
   try {
     await sleepMarkerStore.fetchSleepMarkers();
   } catch (error) {
+    console.error('❌ Fetch error:', error);
     alert('Failed to load sleep data. Please refresh the page.');
   }
 });
@@ -292,9 +300,4 @@ onMounted(async () => {
 /* ✅ IMPORT ALL SHARED STYLES */
 @import '@/assets/styles/ui-components.css';
 @import '@/assets/styles/list-view-components.css';
-
-/* ========================================
-   NO COMPONENT-SPECIFIC STYLES NEEDED!
-   Everything comes from list-view-components.css! 🎉
-   ======================================== */
 </style>

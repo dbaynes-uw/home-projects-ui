@@ -57,7 +57,7 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useHealthMarkerStore } from '@/stores/HealthMarkerStore';
+import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import HealthMarkerForm from '@/components/health/healthMarkers/HealthMarkerForm.vue';
 
 // ✅ ROUTER, ROUTE & STORE
@@ -107,7 +107,7 @@ onMounted(async () => {
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health-shared.css';
+@import '@/assets/styles/health/health-shared.css';
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES

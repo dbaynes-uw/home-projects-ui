@@ -53,7 +53,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useOobStore } from '@/stores/OobStore';
+import { useOobStore } from '@/stores/health/OobStore';
 import OobForm from '@/components/health/oobs/OobForm.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
@@ -117,7 +117,7 @@ async function handleCancel() {
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health-shared.css';
+@import '@/assets/styles/health/health-shared.css';
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES
