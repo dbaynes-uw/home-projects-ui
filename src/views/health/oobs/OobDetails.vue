@@ -86,7 +86,7 @@ const oobId = computed(() => parseInt(route.params.id));
 
 // ✅ METHODS
 const goBack = () => {
-  router.push({ name: 'OobList' });
+  router.push({ name: 'Oobs' });
 };
 
 const editOob = () => {
@@ -131,7 +131,7 @@ const deleteOob = async () => {
     });
         
     // ✅ NAVIGATE BACK TO LIST
-    router.push({ name: 'OobList' });
+    router.push({ name: 'Oobs' });
     
   } catch (error) {
     

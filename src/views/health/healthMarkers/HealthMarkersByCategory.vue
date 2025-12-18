@@ -25,7 +25,7 @@
 
             <v-btn
               variant="outlined"
-              :to="{ name: 'HealthMarkerList' }"
+              :to="{ name: 'HealthMarkers' }"
               prepend-icon="fas fa-list"
               class="nav-button"
             >

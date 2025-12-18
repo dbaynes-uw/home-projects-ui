@@ -154,7 +154,7 @@
       </div>
     </div>
 
-    <!-- ✅ MODAL (Same as SleepMarkerList) -->
+    <!-- ✅ MODAL (Same as SleepMarkers) -->
     <transition name="modal-fade">
       <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
         <div class="modal-container">
@@ -489,7 +489,7 @@ const averageQuality = computed(() => {
   letter-spacing: 0.5px;
 }
 
-/* ✅ MODAL STYLES (Same as SleepMarkerList) */
+/* ✅ MODAL STYLES (Same as SleepMarkers) */
 .modal-overlay {
   position: fixed;
   top: 0;

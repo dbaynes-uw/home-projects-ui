@@ -168,6 +168,8 @@
   </form>
 </template>
 
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/health/glucoseReadings/GlucoseReadingForm.vue -->
+
 <script setup>
 import { reactive, computed, watch } from 'vue';
 
@@ -182,43 +184,70 @@ const emit = defineEmits(['save', 'cancel']);
 
 const isEditing = computed(() => !!props.glucoseReading?.id);
 
+// ✅ Initialize form state
 const formState = reactive({
-  id: props.glucoseReading?.id || null,
-  reading_date: props.glucoseReading?.reading_date || new Date().toISOString().split('T')[0],
-  reading_time: props.glucoseReading?.reading_time || new Date().toTimeString().slice(0, 5),
-  glucose_value: props.glucoseReading?.glucose_value || null,
-  reading_type: props.glucoseReading?.reading_type || '',
-  insulin_units: props.glucoseReading?.insulin_units || null,
-  insulin_type: props.glucoseReading?.insulin_type || '',
-  carbs_consumed: props.glucoseReading?.carbs_consumed || null,
-  medication_taken: props.glucoseReading?.medication_taken || false,
-  notes: props.glucoseReading?.notes || ''
+  id: null,
+  reading_date: new Date().toISOString().split('T')[0],
+  reading_time: new Date().toTimeString().slice(0, 5),
+  glucose_value: null,
+  reading_type: '',
+  insulin_units: null,
+  insulin_type: '',
+  carbs_consumed: null,
+  medication_taken: false,
+  notes: ''
 });
 
+// ✅ Watch for prop changes and map API fields to form fields
 watch(() => props.glucoseReading, (newReading) => {
   if (newReading) {
-    Object.assign(formState, {
-      id: newReading.id,
-      reading_date: newReading.reading_date,
-      reading_time: newReading.reading_time,
-      glucose_value: newReading.glucose_value,
-      reading_type: newReading.reading_type || '',
-      insulin_units: newReading.insulin_units || null,
-      insulin_type: newReading.insulin_type || '',
-      carbs_consumed: newReading.carbs_consumed || null,
-      medication_taken: newReading.medication_taken || false,
-      notes: newReading.notes || ''
-    });
+    
+    // ✅ Extract date and time from reading_date timestamp
+    const readingDateTime = new Date(newReading.reading_date);
+    const dateStr = readingDateTime.toISOString().split('T')[0];
+    const timeStr = readingDateTime.toTimeString().slice(0, 5);
+    
+    // ✅ Map API fields to form fields
+    formState.id = newReading.id;
+    formState.reading_date = dateStr;
+    formState.reading_time = timeStr;
+    formState.glucose_value = newReading.reading || newReading.glucose_value; // ✅ API uses 'reading'
+    formState.reading_type = newReading.reading_type || '';
+    formState.insulin_units = newReading.insulin_units || null;
+    formState.insulin_type = newReading.insulin_type || '';
+    formState.carbs_consumed = newReading.carbs_consumed || null;
+    formState.medication_taken = newReading.medication_taken || false;
+    formState.notes = newReading.notes || '';
+    
+  } else {
+    
+    // Reset to defaults for new reading
+    formState.id = null;
+    formState.reading_date = new Date().toISOString().split('T')[0];
+    formState.reading_time = new Date().toTimeString().slice(0, 5);
+    formState.glucose_value = null;
+    formState.reading_type = '';
+    formState.insulin_units = null;
+    formState.insulin_type = '';
+    formState.carbs_consumed = null;
+    formState.medication_taken = false;
+    formState.notes = '';
   }
 }, { immediate: true });
 
 function handleSubmit() {
-  // Clean up the data before submitting
+  
+  // ✅ Map form fields back to API fields
   const cleanData = {
-    ...formState,
-    glucose_value: parseFloat(formState.glucose_value),
+    id: formState.id,
+    reading_date: `${formState.reading_date}T${formState.reading_time}:00`, // ✅ Combine date + time
+    reading: parseFloat(formState.glucose_value), // ✅ API expects 'reading' not 'glucose_value'
+    reading_type: formState.reading_type || null,
     insulin_units: formState.insulin_units ? parseFloat(formState.insulin_units) : null,
+    insulin_type: formState.insulin_type || null,
     carbs_consumed: formState.carbs_consumed ? parseInt(formState.carbs_consumed) : null,
+    medication_taken: formState.medication_taken || false,
+    notes: formState.notes || ''
   };
 
   emit('save', cleanData);
@@ -239,9 +268,7 @@ function getGlucoseLabel(value) {
   if (v <= 140) return '⚡ Elevated';
   return '🚨 High';
 }
-</script>
-
-<style scoped>
+</script><style scoped>
 @import '@/assets/styles/ui-components.css';
 
 .glucose-reading-form {

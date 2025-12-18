@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/sleepMarkers/SleepMarkerList.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/sleepMarkers/SleepMarkers.vue -->
 
 <template>
   <div class="list-view-container">

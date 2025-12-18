@@ -15,7 +15,7 @@
           <div class="navigation-flex">
             <v-btn
               variant="outlined"
-              :to="{ name: 'HealthMarkerList' }"
+              :to="{ name: 'HealthMarkers' }"
               prepend-icon="fas fa-list"
               class="nav-button"
             >
@@ -601,7 +601,7 @@ const onSubmit = async () => {
       originalHealthMarker.value = { ...updateData };
       
       // ✅ NAVIGATE TO HEALTH MARKER LIST
-      await router.push({ name: 'HealthMarkerList' });
+      await router.push({ name: 'HealthMarkers' });
       
     } else {
       console.error('❌ Store returned false');
@@ -633,7 +633,7 @@ const deleteHealthMarker = async () => {
       alert(`✅ Health marker ${healthMarker.value.marker_name} deleted successfully`);
       
       // ✅ NAVIGATE TO HEALTH MARKER LIST
-      await router.push({ name: 'HealthMarkerList' });
+      await router.push({ name: 'HealthMarkers' });
       
     } else {
       console.error('❌ Store returned false');

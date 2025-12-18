@@ -392,7 +392,7 @@
               </button>
 
               <router-link
-                :to="{ name: 'HealthMarkerList' }"
+                :to="{ name: 'HealthMarkers' }"
                 class="btn btn-secondary btn-lg"
               >
                 <i class="fas fa-arrow-left"></i>

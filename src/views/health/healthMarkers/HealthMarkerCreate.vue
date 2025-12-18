@@ -11,7 +11,7 @@
               Health Dashboard
             </router-link>
             <i class="fas fa-chevron-right breadcrumb-separator"></i>
-            <router-link :to="{ name: 'HealthMarkerList' }" class="breadcrumb-link">
+            <router-link :to="{ name: 'HealthMarkers' }" class="breadcrumb-link">
               <i class="fas fa-heartbeat icon-health"></i>
               Health Markers
             </router-link>
@@ -49,7 +49,7 @@ const healthMarkerStore = useHealthMarkerStore();
 async function handleSubmit(formData) {
   try {
     await healthMarkerStore.createHealthMarker(formData);
-    router.push({ name: 'HealthMarkerList' });
+    router.push({ name: 'HealthMarkers' });
   } catch (error) {
     console.error('❌ Create failed:', error);
     throw error; // Let form handle the error display
@@ -57,7 +57,7 @@ async function handleSubmit(formData) {
 }
 
 function handleCancel() {
-  router.push({ name: 'HealthMarkerList' });
+  router.push({ name: 'HealthMarkers' });
 }
 </script>
 

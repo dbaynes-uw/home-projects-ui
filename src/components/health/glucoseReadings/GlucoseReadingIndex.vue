@@ -61,10 +61,10 @@
             @click="openModal(reading)"
           >
             <td class="date-cell">{{ formatDate(reading.reading_date) }}</td>
-            <td>{{ reading.reading_time }}</td>
+            <td>{{ formatTime(reading.reading_date) }}</td>
             <td>
-              <span class="glucose-badge" :class="getGlucoseClass(reading.glucose_value)">
-                {{ reading.glucose_value }}
+              <span class="glucose-badge" :class="getGlucoseClass(reading.reading || reading.glucose_value)">
+                {{ reading.reading || reading.glucose_value }}
               </span>
             </td>
             <td>{{ reading.reading_type || '-' }}</td>
@@ -203,7 +203,7 @@ const filteredReadings = computed(() => {
 
   if (rangeFilter.value) {
     filtered = filtered.filter(r => {
-      const value = parseFloat(r.glucose_value);
+      const value = parseFloat(r.reading || r.glucose_value); // ✅ Use correct field
       if (rangeFilter.value === 'low') return value < 70;
       if (rangeFilter.value === 'good') return value >= 70 && value < 100;
       if (rangeFilter.value === 'elevated') return value >= 100 && value <= 140;
@@ -215,13 +215,13 @@ const filteredReadings = computed(() => {
   filtered.sort((a, b) => {
     switch (sortBy.value) {
       case 'date-desc':
-        return new Date(b.reading_date + ' ' + b.reading_time) - new Date(a.reading_date + ' ' + a.reading_time);
+        return new Date(b.reading_date) - new Date(a.reading_date);
       case 'date-asc':
-        return new Date(a.reading_date + ' ' + a.reading_time) - new Date(b.reading_date + ' ' + b.reading_time);
+        return new Date(a.reading_date) - new Date(b.reading_date);
       case 'value-desc':
-        return parseFloat(b.glucose_value) - parseFloat(a.glucose_value);
+        return parseFloat(b.reading || b.glucose_value) - parseFloat(a.reading || a.glucose_value);
       case 'value-asc':
-        return parseFloat(a.glucose_value) - parseFloat(b.glucose_value);
+        return parseFloat(a.reading || a.glucose_value) - parseFloat(b.reading || b.glucose_value);
       default:
         return 0;
     }
@@ -244,6 +244,16 @@ function formatDate(dateStr) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+function formatTime(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// ✅ ADD THIS FUNCTION
 function getGlucoseClass(value) {
   const v = parseFloat(value);
   if (v < 70) return 'glucose-low';
@@ -254,20 +264,23 @@ function getGlucoseClass(value) {
 
 const averageGlucose = computed(() => {
   if (filteredReadings.value.length === 0) return '-';
-  const total = filteredReadings.value.reduce((sum, r) => sum + parseFloat(r.glucose_value), 0);
+  const total = filteredReadings.value.reduce((sum, r) => {
+    const value = r.reading || r.glucose_value;
+    return sum + parseFloat(value);
+  }, 0);
   return Math.round(total / filteredReadings.value.length);
 });
 
 const inRangePercentage = computed(() => {
   if (filteredReadings.value.length === 0) return '-';
   const inRange = filteredReadings.value.filter(r => {
-    const v = parseFloat(r.glucose_value);
+    const v = parseFloat(r.reading || r.glucose_value);
     return v >= 70 && v < 140;
   }).length;
   return `${Math.round((inRange / filteredReadings.value.length) * 100)}%`;
 });
-</script>
 
+</script>
 <style scoped>
 @import '@/assets/styles/ui-components.css';
 @import '@/assets/styles/list-view-components.css';

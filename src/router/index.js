@@ -239,8 +239,8 @@ const routes = [
   // ========================================
   {
     path: '/health/markers',
-    name: 'HealthMarkerList',
-    component: () => import('@/views/health/healthMarkers/HealthMarkerList.vue'),  // ✅ UPDATED
+    name: 'HealthMarkers',
+    component: () => import('@/views/health/healthMarkers/HealthMarkers.vue'),  // ✅ UPDATED
     meta: { requiresAuth: true }
   },
   {
@@ -301,8 +301,8 @@ const routes = [
   // ========================================
   {
     path: '/health/sleep',
-    name: 'SleepMarkerList',
-    component: () => import('@/views/health/sleepMarkers/SleepMarkerList.vue'),  // ✅ UPDATED
+    name: 'SleepMarkers',
+    component: () => import('@/views/health/sleepMarkers/SleepMarkers.vue'),  // ✅ UPDATED
     meta: { requiresAuth: true }
   },
   //{
@@ -329,8 +329,8 @@ const routes = [
   // ========================================
   {
     path: '/health/oobs',
-    name: 'OobList',
-    component: () => import('@/views/health/oobs/OobList.vue'),  // ✅ UPDATED
+    name: 'Oobs',
+    component: () => import('@/views/health/oobs/Oobs.vue'),  // ✅ UPDATED
     meta: { requiresAuth: true }
   },
   {

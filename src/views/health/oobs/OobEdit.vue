@@ -10,7 +10,7 @@
               Health Dashboard
             </router-link>
             <i class="fas fa-chevron-right breadcrumb-separator"></i>
-            <router-link :to="{ name: 'OobList' }" class="breadcrumb-link">
+            <router-link :to="{ name: 'Oobs' }" class="breadcrumb-link">
               <i class="fas fa-exclamation-triangle icon-oob"></i>
               OOBs
             </router-link>
@@ -33,7 +33,7 @@
           <i class="fas fa-exclamation-circle"></i>
           <h3>OOB Not Found</h3>
           <p>The requested OOB record could not be found.</p>
-          <router-link :to="{ name: 'OobList' }" class="btn btn-primary">
+          <router-link :to="{ name: 'Oobs' }" class="btn btn-primary">
             <i class="fas fa-arrow-left"></i>
             Back to List
           </router-link>
@@ -124,7 +124,7 @@ async function handleSave(oobData) {
     }
     
     // Navigate back to list
-    router.push({ name: 'OobList' });
+    router.push({ name: 'Oobs' });
   } catch (error) {
     console.error('❌ Update error:', error);
     
@@ -151,10 +151,10 @@ async function handleCancel() {
     });
     
     if (ok) {
-      router.push({ name: 'OobList' });
+      router.push({ name: 'Oobs' });
     }
   } else {
-    router.push({ name: 'OobList' });
+    router.push({ name: 'Oobs' });
   }
 }
 

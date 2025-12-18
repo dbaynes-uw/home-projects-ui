@@ -10,7 +10,7 @@
               Health Dashboard
             </router-link>
             <i class="fas fa-chevron-right breadcrumb-separator"></i>
-            <router-link :to="{ name: 'OobList' }" class="breadcrumb-link">
+            <router-link :to="{ name: 'Oobs' }" class="breadcrumb-link">
               <i class="fas fa-exclamation-triangle icon-oob"></i>
               OOBs
             </router-link>
@@ -80,7 +80,7 @@ async function handleSave(oobData) {
     }
     
     // Navigate back to list
-    router.push({ name: 'OobList' });
+    router.push({ name: 'Oobs' });
   } catch (error) {
     console.error('❌ Create error:', error);
     
@@ -107,10 +107,10 @@ async function handleCancel() {
     });
     
     if (ok) {
-      router.push({ name: 'OobList' });
+      router.push({ name: 'Oobs' });
     }
   } else {
-    router.push({ name: 'OobList' });
+    router.push({ name: 'Oobs' });
   }
 }
 </script>

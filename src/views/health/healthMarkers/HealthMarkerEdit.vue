@@ -11,7 +11,7 @@
               Health Dashboard
             </router-link>
             <i class="fas fa-chevron-right breadcrumb-separator"></i>
-            <router-link :to="{ name: 'HealthMarkerList' }" class="breadcrumb-link">
+            <router-link :to="{ name: 'HealthMarkers' }" class="breadcrumb-link">
               <i class="fas fa-heartbeat icon-health"></i>
               Health Markers
             </router-link>
@@ -34,7 +34,7 @@
           <i class="fas fa-exclamation-circle"></i>
           <h3>Health Marker Not Found</h3>
           <p>The requested health marker could not be found.</p>
-          <router-link :to="{ name: 'HealthMarkerList' }" class="btn btn-primary">
+          <router-link :to="{ name: 'HealthMarkers' }" class="btn btn-primary">
             <i class="fas fa-arrow-left"></i>
             Back to List
           </router-link>
@@ -78,7 +78,7 @@ async function handleSubmit(formData) {
   try {
     const id = parseInt(route.params.id);
     await healthMarkerStore.updateHealthMarker(id, formData);
-    router.push({ name: 'HealthMarkerList' });
+    router.push({ name: 'HealthMarkers' });
   } catch (error) {
     console.error('❌ Update failed:', error);
     throw error; // Let form handle the error display
@@ -86,7 +86,7 @@ async function handleSubmit(formData) {
 }
 
 function handleCancel() {
-  router.push({ name: 'HealthMarkerList' });
+  router.push({ name: 'HealthMarkers' });
 }
 
 // ✅ LIFECYCLE

@@ -6,12 +6,12 @@
      
     <div class="navigation-buttons">
 
-      <router-link :to="{ name: 'HealthMarkerList' }" class="nav-btn" id="button-as-link">
+      <router-link :to="{ name: 'HealthMarkers' }" class="nav-btn" id="button-as-link">
         <i class="fas fa-heartbeat"></i>
         <span>&nbsp;Health Markers</span>
       </router-link>
       
-      <router-link :to="{ name: 'SleepMarkerList' }" class="nav-btn" id="button-as-link">
+      <router-link :to="{ name: 'SleepMarkers' }" class="nav-btn" id="button-as-link">
         <i class="fas fa-bed" aria-hidden="true"></i>
         <span>&nbsp;&nbsp;Sleep Markers</span>
       </router-link>
@@ -22,7 +22,7 @@
         <span>&nbsp;Glucose</span>
       </router-link>
 
-      <router-link :to="{ name: 'OobList' }" class="nav-btn glucose-btn" id="button-as-link">
+      <router-link :to="{ name: 'Oobs' }" class="nav-btn glucose-btn" id="button-as-link">
         <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
         <i class="fa fa-thumbs-down" aria-hidden="true"></i>
         <span>&nbsp;Oobs</span>
