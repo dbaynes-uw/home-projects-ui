@@ -179,7 +179,7 @@
           </div>
         
           <div class="modal-body">
-            <SleepMarkerCar`d
+            <SleepMarkerCard
               v-if="selectedMarker"
               :sleepMarker="selectedMarker"
               viewMode="detail" 
