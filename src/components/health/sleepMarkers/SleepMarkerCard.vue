@@ -1,11 +1,17 @@
 <template>
-  <BaseCard class="sleep-marker-card" hover clickable @click="$emit('edit', sleepMarker)">
+  <BaseCard 
+    class="sleep-marker-card" 
+    :hover="viewMode === 'grid'" 
+    :clickable="viewMode === 'grid'" 
+    @click="viewMode === 'grid' ? $emit('edit', sleepMarker) : null"
+  >
     <div class="card-header">
       <div class="date-badge">
         <i class="fas fa-calendar-day"></i>
         {{ formattedDate }}
       </div>
-      <div class="actions">
+      <!-- ✅ Only show action buttons in grid mode -->
+      <div v-if="viewMode === 'grid'" class="actions">
         <button class="action-btn edit-btn" @click.stop="$emit('edit', sleepMarker)" title="Edit">
           <i class="fas fa-edit"></i>
         </button>
@@ -18,16 +24,26 @@
     <div class="card-body">
       <!-- Sleep Times -->
       <div class="time-row">
-        <!--div class="time-item">
+        <div v-if="viewMode === 'detail'" class="time-item">
           <i class="fas fa-bed"></i>
           <span class="time-label">Bed Time</span>
           <span class="time-value">{{ sleepMarker.bed_time }}</span>
-        </!--div>
-        <div class="time-item">
+        </div>
+        <div v-if="sleepMarker.bed_time"class="time-item">
+          <i class="fas fa-bed"></i>
+          <span class="time-label">Bed Time</span>
+          <span class="time-value">{{ sleepMarker.bed_time }}</span>
+        </div>
+        <div v-if="viewMode === 'detail'" class="time-item">
           <i class="fas fa-sun"></i>
           <span class="time-label">Wake Time</span>
           <span class="time-value">{{ sleepMarker.wake_time }}</span>
-        </div-->
+        </div>
+        <div v-if="sleepMarker.wake_time" class="time-item">
+          <i class="fas fa-sun"></i>
+          <span class="time-label">Wake Time</span>
+          <span class="time-value">{{ sleepMarker.wake_time }}</span>
+        </div>
         <div class="time-item">
           <i class="fas fa-clock"></i>
           <span class="time-label">Time in Bed</span>
@@ -213,6 +229,11 @@ const props = defineProps({
   sleepMarker: {
     type: Object,
     required: true
+  },
+  viewMode: {
+    type: String,
+    default: 'grid',
+    validator: (value) => ['grid', 'detail'].includes(value)
   }
 });
 

@@ -177,16 +177,15 @@
               <i class="fas fa-times"></i>
             </button>
           </div>
-
+        
           <div class="modal-body">
-            <SleepMarkerCard
+            <SleepMarkerCar`d
               v-if="selectedMarker"
               :sleepMarker="selectedMarker"
-              @edit="handleEdit"
-              @delete="handleDelete"
+              viewMode="detail" 
             />
           </div>
-
+        
           <div class="modal-footer">
             <button class="btn btn-secondary" @click="closeModal">
               <i class="fas fa-times"></i>

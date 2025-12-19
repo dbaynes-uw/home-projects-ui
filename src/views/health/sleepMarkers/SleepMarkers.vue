@@ -123,6 +123,7 @@
           v-for="sleepMarker in sleepMarkers"
           :key="sleepMarker.id"
           :sleepMarker="sleepMarker"
+          viewMode="grid"
           @edit="editMarker"
           @delete="deleteMarker"
         />

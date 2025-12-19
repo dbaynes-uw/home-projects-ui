@@ -18,7 +18,6 @@
         label="Bed Time"
         type="time"
         prepend-icon="clock-outline"
-        required
         :error="errors.bed_time"
         hint="What time did you go to bed?"
       />
@@ -29,7 +28,6 @@
         label="Wake Time"
         type="time"
         prepend-icon="alarm"
-        required
         :error="errors.wake_time"
         hint="What time did you wake up?"
       />
@@ -334,14 +332,6 @@ function validateForm() {
   
   if (!formData.value.sleep_date) {
     errors.value.sleep_date = 'Sleep date is required';
-  }
-  
-  if (!formData.value.bed_time) {
-    errors.value.bed_time = 'Bed time is required';
-  }
-  
-  if (!formData.value.wake_time) {
-    errors.value.wake_time = 'Wake time is required';
   }
   
   return Object.keys(errors.value).length === 0;

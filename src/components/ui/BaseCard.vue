@@ -1,16 +1,16 @@
 <template>
-  <div 
+  <div
     :class="['base-card', { 'base-card-hover': hover, 'base-card-clickable': clickable }]"
     @click="handleClick"
   >
     <div v-if="$slots.header" class="base-card-header">
       <slot name="header"></slot>
     </div>
-    
+
     <div class="base-card-body">
       <slot></slot>
     </div>
-    
+
     <div v-if="$slots.footer" class="base-card-footer">
       <slot name="footer"></slot>
     </div>
@@ -21,19 +21,19 @@
 const props = defineProps({
   hover: {
     type: Boolean,
-    default: true
+    default: true,
   },
   clickable: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
-const emit = defineEmits(['click']);
+const emit = defineEmits(["click"]);
 
 function handleClick(event) {
   if (props.clickable) {
-    emit('click', event);
+    emit("click", event);
   }
 }
 </script>
@@ -63,7 +63,11 @@ function handleClick(event) {
 .base-card-header {
   padding: 20px 24px;
   border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.05) 0%,
+    rgba(118, 75, 162, 0.05) 100%
+  );
 }
 
 .base-card-body {
