@@ -221,25 +221,6 @@
         </div>
       </div>
 
-      <!-- ✅ DEBUG INFO (NO VUETIFY) -->
-      <div v-if="isDev" class="card mt-4 alert alert-info">
-        <div class="card-header">
-          <h3 class="card-title">
-            <i class="fas fa-bug"></i>
-            Debug Info
-          </h3>
-        </div>
-        <div class="card-body">
-          <p><strong>Search Query:</strong> "{{ searchQuery }}"</p>
-          <p><strong>Show Shopping List:</strong> {{ showShoppingList }}</p>
-          <p><strong>Products:</strong> {{ products.length }} total</p>
-          <p><strong>Shopping List:</strong> {{ shoppingList.length }} items</p>
-          <p><strong>Vendors:</strong> {{ vendors.length }} vendors</p>
-          <p><strong>Displayed Products:</strong> {{ displayedProducts.length }} items</p>
-          <p><strong>Filtered Products:</strong> {{ filteredProducts.length }} items</p>
-          <p><strong>Active Products:</strong> {{ getActiveProductsCount }}</p>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -253,8 +234,7 @@ import { v4 as uuidv4 } from 'uuid';
 const store = useStore();
 
 // ✅ REACTIVE STATE
-const showShoppingList = ref(false);
-const isProductToggled = ref(null);
+const showShoppingList = ref(true);
 const isSubmitting = ref(false);
 const isLoading = ref(true);
 const searchQuery = ref('');
@@ -264,10 +244,8 @@ const changedProductIds = ref(new Set()); // ✅ TRACK CHANGED PRODUCTS
 const products = computed(() => store.state.products || []);
 const vendors = computed(() => store.state.vendors || []);
 const shoppingList = computed(() => store.state.shopping_list || []);
-const vendorsProducts = computed(() => store.state.vendors_products || []);
 
 const user = computed(() => store.state.user?.resource_owner);
-const isDev = computed(() => process.env.NODE_ENV === 'development');
 
 // ✅ DISPLAYED PRODUCTS (NORMAL MODE - NO SEARCH)
 const displayedProducts = computed(() => {

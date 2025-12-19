@@ -42,14 +42,6 @@
               <i v-if="sortBy.startsWith('date')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
             <th>
-              <i class="fas fa-bed"></i>
-              Bed Time
-            </th>
-            <th>
-              <i class="fas fa-sun"></i>
-              Wake Time
-            </th>
-            <th>
               <i class="fas fa-clock"></i>
               In Bed
             </th>
@@ -57,19 +49,35 @@
               <i class="fas fa-moon"></i>
               Asleep
             </th>
-            <th @click="setSortBy('quality')" class="sortable">
+            <th>
+              <i class="fa-solid fa-cloud-bolt"></i>
+              Awake
+            </th>
+            <th>
+              <i class="fa-solid fa-satellite-dish"></i>
+              REM
+            </th>
+            <th>
+              <i class="fa-solid fa-bolt"></i>
+              Core
+            </th>
+            <th>
+              <i class="fa-solid fa-binoculars"></i>
+              Deep
+            </th>
+            <!--th @click="setSortBy('quality')" class="sortable">
               <i class="fas fa-star"></i>
               Quality
               <i v-if="sortBy.startsWith('quality')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
-            </th>
-            <th>
+            </!--th-->
+            <!--th>
               <i class="fas fa-tint"></i>
               Glucose
-            </th>
+            </!--th>
             <th>
               <i class="fas fa-weight"></i>
               Weight
-            </th>
+            </th-->
             <th>
               <i class="fas fa-ghost"></i>
               OOB
@@ -85,25 +93,27 @@
             @click="openModal(sleepMarker)"
           >
             <td class="date-cell">{{ formatDate(sleepMarker.sleep_date) }}</td>
-            <td>{{ sleepMarker.bed_time }}</td>
-            <td>{{ sleepMarker.wake_time }}</td>
             <td>{{ sleepMarker.time_in_bed }}</td>
             <td>{{ sleepMarker.time_asleep }}</td>
-            <td>
+            <td>{{ sleepMarker.awake_sleep }}</td>
+            <td>{{ sleepMarker.rem_sleep }}</td>
+            <td>{{ sleepMarker.core_sleep }}</td>
+            <td>{{ sleepMarker.deep_sleep }}</td>
+            <!--td>
               <span class="quality-badge" :class="getQualityClass(sleepMarker.sleep_quality)">
                 {{ sleepMarker.sleep_quality }}/10
               </span>
-            </td>
-            <td>
+            </td-->
+            <!--td>
               <span v-if="sleepMarker.am_fasting_glucose_value" class="glucose-value" :class="getGlucoseClass(sleepMarker.am_fasting_glucose_value)">
                 {{ sleepMarker.am_fasting_glucose_value }}
               </span>
               <span v-else class="text-muted">-</span>
-            </td>
-            <td>
+            </td-->
+            <!--td>
               <span v-if="sleepMarker.fasting_weight">{{ formatWeight(sleepMarker.fasting_weight) }}</span>
               <span v-else class="text-muted">-</span>
-            </td>
+            </td-->
             <td class="oob-cell">
               <i v-if="sleepMarker.had_oob" class="fas fa-ghost oob-icon" title="Had OOB"></i>
               <span v-else class="text-muted">-</span>
@@ -309,28 +319,28 @@ function formatDate(dateStr) {
     year: 'numeric'
   });
 }
-
+/*
 function formatWeight(weight) {
   if (!weight) return '';
   const lbs = Math.floor(weight);
   const oz = Math.round((weight - lbs) * 16);
   return oz === 0 ? `${lbs} lbs` : `${lbs} lbs ${oz} oz`;
 }
-
+*/
 function getQualityClass(quality) {
   const q = parseInt(quality);
   if (q >= 8) return 'quality-high';
   if (q >= 5) return 'quality-medium';
   return 'quality-low';
 }
-
+/*
 function getGlucoseClass(value) {
   const v = parseFloat(value);
   if (v < 100) return 'glucose-good';
   if (v <= 125) return 'glucose-warning';
   return 'glucose-high';
 }
-
+*/
 // ✅ STATS
 const averageSleep = computed(() => {
   if (filteredMarkers.value.length === 0) return '-';

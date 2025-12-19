@@ -101,22 +101,6 @@
         </v-form>
       </v-card-text>
     </v-card>
-
-    <!-- ✅ DEBUG INFO (DEV ONLY) -->
-    <v-card v-if="isDev" class="mt-4" color="info" variant="tonal">
-      <v-card-title>
-        <i class="fas fa-bug"></i>
-        Debug Info
-      </v-card-title>
-      <v-card-text>
-        <p><strong>Vendor ID:</strong> {{ vendor.id }}</p>
-        <p><strong>Location:</strong> {{ vendor.location }}</p>
-        <p><strong>Vendor Name:</strong> {{ vendor.vendor_name }}</p>
-        <p><strong>Form Valid:</strong> {{ isFormValid }}</p>
-        <p><strong>Is Loading:</strong> {{ isLoading }}</p>
-        <p><strong>Route ID:</strong> {{ $route.params.id }}</p>
-      </v-card-text>
-    </v-card>
   </div>
 </template>
 
@@ -130,7 +114,6 @@ import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
-const formRef = ref(null);
 const confirmDialogue = ref(null);
 
 // ✅ ERROR HANDLER
@@ -160,7 +143,6 @@ const vendor = ref({
 
 // ✅ COMPUTED PROPERTIES
 const user = computed(() => store.state.user?.resource_owner);
-const isDev = computed(() => process.env.NODE_ENV === 'development');
 
 // ✅ VALIDATION RULES
 const requiredLocation = (value) => {

@@ -277,33 +277,6 @@
         </v-card-text>
       </v-card>
 
-      <!-- ✅ DEBUG INFO (DEV ONLY) -->
-      <v-card v-if="isDev" class="mt-4" color="warning" variant="tonal">
-        <v-card-title>
-          <i class="fas fa-bug mr-2"></i>
-          Debug Info
-        </v-card-title>
-        <v-card-text>
-          <div class="debug-grid">
-            <div><strong>Form Valid:</strong> {{ isFormValid }}</div>
-            <div><strong>Has Changes:</strong> {{ hasChanges }}</div>
-            <div><strong>Loading:</strong> {{ isLoading }}</div>
-            <div><strong>Record ID:</strong> {{ healthMarker.id }}</div>
-            <div><strong>Selected Marker:</strong> {{ healthMarker.marker_name }}</div>
-            <div><strong>Result Status:</strong> {{ resultStatus?.type }}</div>
-          </div>
-          
-          <v-btn 
-            @click="debugFormState"
-            variant="outlined"
-            size="small"
-            class="mt-3"
-          >
-            Debug Form State
-          </v-btn>
-        </v-card-text>
-      </v-card>
-
       <!-- ✅ DELETE CONFIRMATION DIALOG -->
       <v-dialog v-model="showDeleteDialog" max-width="500px">
         <v-card>
@@ -359,7 +332,6 @@ import DateFormatService from '@/services/DateFormatService';
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
-const formRef = ref(null);
 
 // ✅ REACTIVE STATE
 const isLoading = ref(true);
@@ -389,7 +361,6 @@ const originalHealthMarker = ref({});
 
 // ✅ COMPUTED PROPERTIES
 const user = computed(() => store.state.user?.resource_owner);
-const isDev = computed(() => process.env.NODE_ENV === 'development');
 
 const healthMarkerOptions = computed(() => getHealthMarkerOptions());
 
