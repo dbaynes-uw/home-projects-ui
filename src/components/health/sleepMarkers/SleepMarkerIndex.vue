@@ -41,29 +41,35 @@
               Date
               <i v-if="sortBy.startsWith('date')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th>
+            <th @click="setSortBy('inBed')" class="sortable">
               <i class="fas fa-clock"></i>
               In Bed
+              <i v-if="sortBy.startsWith('inBed')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th>
+            <th @click="setSortBy('asleep')" class="sortable">
               <i class="fas fa-moon"></i>
               Asleep
+              <i v-if="sortBy.startsWith('asleep')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>              
             </th>
-            <th>
+            <th @click="setSortBy('awake')" class="sortable">
               <i class="fa-solid fa-cloud-bolt"></i>
               Awake
+              <i v-if="sortBy.startsWith('awake')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th>
+            <th @click="setSortBy('rem')" class="sortable">
               <i class="fa-solid fa-satellite-dish"></i>
               REM
+              <i v-if="sortBy.startsWith('rem')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th>
+            <th @click="setSortBy('core')" class="sortable">
               <i class="fa-solid fa-bolt"></i>
               Core
+              <i v-if="sortBy.startsWith('core')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th>
+            <th @click="setSortBy('deep')" class="sortable">
               <i class="fa-solid fa-binoculars"></i>
               Deep
+              <i v-if="sortBy.startsWith('deep')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
             <!--th @click="setSortBy('quality')" class="sortable">
               <i class="fas fa-star"></i>
@@ -286,20 +292,34 @@ const filteredMarkers = computed(() => {
         return new Date(b.sleep_date) - new Date(a.sleep_date);
       case 'date-asc':
         return new Date(a.sleep_date) - new Date(b.sleep_date);
-      
       case 'oob-desc':
-        return new Date(b.sleep_date) - new Date(a.sleep_date);
+        return new Date(b.had_oob) - new Date(a.had_oob);
       case 'oob-asc':
-        return new Date(a.sleep_date) - new Date(b.sleep_date);
-
-      case 'quality-desc':
-        return parseInt(b.sleep_quality) - parseInt(a.sleep_quality);
-      case 'quality-asc':
-        return parseInt(a.sleep_quality) - parseInt(b.sleep_quality);
-      case 'duration-desc':
+        return new Date(a.had_oob) - new Date(b.had_oob);
+      case 'inBed-desc':
+        return parseInt(b.time_in_bed) - parseInt(a.time_in_bed);
+      case 'inBed-asc':
+        return parseInt(a.time_in_bed) - parseInt(b.time_in_bed);
+      case 'asleep-desc':
         return parseTime(b.time_asleep) - parseTime(a.time_asleep);
-      case 'duration-asc':
+      case 'asleep-asc':
         return parseTime(a.time_asleep) - parseTime(b.time_asleep);
+      case 'awake-desc':
+        return parseTime(b.awake_sleep) - parseTime(a.awake_sleep);
+      case 'awake-asc':
+        return parseTime(a.awake_sleep) - parseTime(b.awake_sleep);
+      case 'rem-desc':
+        return parseTime(b.rem_sleep) - parseTime(a.rem_sleep);
+      case 'rem-asc':
+        return parseTime(a.rem_sleep) - parseTime(b.rem_sleep);
+      case 'core-desc':
+        return parseTime(b.core_sleep) - parseTime(a.core_sleep);
+      case 'core-asc':
+        return parseTime(a.core_sleep) - parseTime(b.core_sleep);
+      case 'deep-desc':
+        return parseTime(b.deep_sleep) - parseTime(a.deep_sleep);
+      case 'deep-asc':
+        return parseTime(a.deep_sleep) - parseTime(b.deep_sleep);       
       default:
         return 0;
     }
