@@ -78,9 +78,10 @@
               <i class="fas fa-weight"></i>
               Weight
             </th-->
-            <th>
+            <th @click="setSortBy('oob')" class="sortable">
               <i class="fas fa-ghost"></i>
               OOB
+              <i v-if="sortBy.startsWith('oob')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
             <th class="actions-column">Actions</th>
           </tr>
@@ -114,10 +115,12 @@
               <span v-if="sleepMarker.fasting_weight">{{ formatWeight(sleepMarker.fasting_weight) }}</span>
               <span v-else class="text-muted">-</span>
             </td-->
+            
             <td class="oob-cell">
               <i v-if="sleepMarker.had_oob" class="fas fa-ghost oob-icon" title="Had OOB"></i>
               <span v-else class="text-muted">-</span>
             </td>
+
             <td class="actions-cell" @click.stop>
               <button
                 class="action-btn edit-btn"
@@ -283,6 +286,12 @@ const filteredMarkers = computed(() => {
         return new Date(b.sleep_date) - new Date(a.sleep_date);
       case 'date-asc':
         return new Date(a.sleep_date) - new Date(b.sleep_date);
+      
+      case 'oob-desc':
+        return new Date(b.sleep_date) - new Date(a.sleep_date);
+      case 'oob-asc':
+        return new Date(a.sleep_date) - new Date(b.sleep_date);
+
       case 'quality-desc':
         return parseInt(b.sleep_quality) - parseInt(a.sleep_quality);
       case 'quality-asc':
