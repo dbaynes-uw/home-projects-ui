@@ -124,6 +124,7 @@
           :key="sleepMarker.id"
           :sleepMarker="sleepMarker"
           viewMode="grid"
+          @view="openDetailsModal"
           @edit="editMarker"
           @delete="deleteMarker"
         />
@@ -163,6 +164,33 @@
       :sleepMarkers="sleepMarkers"
     />
 
+    <!-- ✅ DETAILS MODAL -->
+    <BaseModal
+      v-model="showDetailsModal"
+      title="Sleep Marker Details"
+      size="large"
+      @close="closeDetailsModal"
+    >
+      <SleepMarkerCard
+        v-if="selectedMarker"
+        :sleepMarker="selectedMarker"
+        viewMode="detail"
+      />
+      <template #footer>
+        <button class="btn btn-secondary" @click="closeDetailsModal">
+          <i class="fas fa-times"></i>
+          Close
+        </button>
+        <button class="btn btn-primary" @click="editFromDetails">
+          <i class="fas fa-edit"></i>
+          Edit
+        </button>
+        <button class="btn btn-danger" @click="deleteFromDetails">
+          <i class="fas fa-trash"></i>
+          Delete
+        </button>
+      </template>
+    </BaseModal>
     <!-- ✅ DIALOG -->
     <BaseModal
       v-model="showDialog"
@@ -200,6 +228,7 @@ const sleepMarkerStore = useSleepMarkerStore();
 // ✅ STATE
 const currentView = ref('cards');
 const showDialog = ref(false);
+const showDetailsModal = ref(false);
 const selectedMarker = ref(null);
 const confirmDialogue = ref(null);
 
@@ -223,6 +252,26 @@ const averageDeepSleep = computed(() => sleepMarkerStore.averageDeepSleep);
 const averageAwakenings = computed(() => sleepMarkerStore.averageAwakenings);
 
 // ✅ METHODS
+function openDetailsModal(marker) {
+  selectedMarker.value = marker;
+  showDetailsModal.value = true;
+}
+
+function closeDetailsModal() {
+  showDetailsModal.value = false;
+  selectedMarker.value = null;
+}
+
+function editFromDetails() {
+  showDetailsModal.value = false;
+  editMarker(selectedMarker.value);
+}
+
+async function deleteFromDetails() {
+  showDetailsModal.value = false;
+  await deleteMarker(selectedMarker.value);
+}
+
 function openAddDialog() {
   selectedMarker.value = null;
   showDialog.value = true;

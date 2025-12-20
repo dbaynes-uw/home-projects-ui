@@ -3,7 +3,7 @@
     class="sleep-marker-card" 
     :hover="viewMode === 'grid'" 
     :clickable="viewMode === 'grid'" 
-    @click="viewMode === 'grid' ? $emit('edit', sleepMarker) : null"
+    @click="viewMode === 'grid' ? $emit('view', sleepMarker) : null"
   >
     <div class="card-header">
       <div class="date-badge">
@@ -24,23 +24,13 @@
     <div class="card-body">
       <!-- Sleep Times -->
       <div class="time-row">
-        <div v-if="viewMode === 'detail'" class="time-item">
+        <div v-if="viewMode === 'detail' && sleepMarker.bed_time" class="time-item">
           <i class="fas fa-bed"></i>
           <span class="time-label">Bed Time</span>
           <span class="time-value">{{ sleepMarker.bed_time }}</span>
         </div>
-        <div v-if="sleepMarker.bed_time"class="time-item">
+        <div v-if="viewMode === 'detail' && sleepMarker.wake_time" class="time-item">
           <i class="fas fa-bed"></i>
-          <span class="time-label">Bed Time</span>
-          <span class="time-value">{{ sleepMarker.bed_time }}</span>
-        </div>
-        <div v-if="viewMode === 'detail'" class="time-item">
-          <i class="fas fa-sun"></i>
-          <span class="time-label">Wake Time</span>
-          <span class="time-value">{{ sleepMarker.wake_time }}</span>
-        </div>
-        <div v-if="sleepMarker.wake_time" class="time-item">
-          <i class="fas fa-sun"></i>
           <span class="time-label">Wake Time</span>
           <span class="time-value">{{ sleepMarker.wake_time }}</span>
         </div>
@@ -237,7 +227,7 @@ const props = defineProps({
   }
 });
 
-defineEmits(['edit', 'delete']);
+defineEmits(['view', 'edit', 'delete']);
 
 const formattedDate = computed(() => {
   if (!props.sleepMarker.sleep_date) return '';
