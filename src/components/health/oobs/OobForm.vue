@@ -33,9 +33,9 @@
         required
       >
         <option value="">Select duration...</option>
-        <option value="Short">Short (< 5 minutes)</option>
-        <option value="Long">Long (5-15 minutes)</option>
-        <option value="Very Long">Very Long (> 15 minutes)</option>
+        <option value="Short">Short (< 1 minute)</option>
+        <option value="Medium">Medium (1 - 2 minutes)</option>
+        <option value="Long">Long (> 2 minutes)</option>
       </select>
       <span v-if="errors.duration" class="error-message">
         {{ errors.duration }}
