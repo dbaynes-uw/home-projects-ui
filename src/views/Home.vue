@@ -19,7 +19,7 @@ import { authComputed } from '../vuex/helpers.js'
 
 export default {
   name: "Home",
-  // eslint-disable-next-line vue/require-prop-type-constructor
+   
   props: ['message'],
   //components: {
   //  Register

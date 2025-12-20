@@ -200,12 +200,10 @@ const selectedOob = ref(null);
 const confirmDialogue = ref(null);
 const searchText = ref('');
 const selectedTimeFrame = ref('7');
-const chartKey = ref(0);
 
 // ✅ COMPUTED FROM PINIA STORE
 const oobs = computed(() => oobStore.allOobs);
 const isLoading = computed(() => oobStore.isLoading);
-const oobCount = computed(() => oobStore.oobCount);
 
 // ✅ DISPLAYED OOBS (with filtering)
 const displayedOobs = computed(() => {
@@ -243,13 +241,6 @@ function toggleIndexView() {
   showIndexView.value = !showIndexView.value;
 }
 
-function toggleOobChart() {
-  showOobChart.value = !showOobChart.value;
-  if (showOobChart.value) {
-    chartKey.value++;
-  }
-}
-
 function editOob(oob) {
   selectedOob.value = { ...oob };
   showDialog.value = true;
@@ -281,6 +272,7 @@ async function deleteOob(oob) {
       cancelButton: null
     });
   } catch (error) {
+    console.error('❌ Delete error:', error);
     await confirmDialogue.value.show({
       title: "Delete Failed",
       message: "Failed to delete OOB record. Please try again.",

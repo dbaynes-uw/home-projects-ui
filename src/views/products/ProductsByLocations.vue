@@ -894,7 +894,7 @@ function clearVendorFilter() {
 function autoExpandLocationsWithVendor(vendorId) {
   expandedLocations.value.clear();
   expandedVendors.value.clear();
-  filteredLocations.value.forEach((location, index) => {
+  filteredLocations.value.forEach((location) => {
     const originalIndex = locations.value.indexOf(location);
     if (originalIndex !== -1) {
       expandedLocations.value.add(originalIndex);
@@ -913,7 +913,7 @@ function toggleAllLocations() {
     expandedVendors.value.clear();
   } else {
     const locationsToExpand = selectedVendorFilter.value ? filteredLocations.value : locations.value;
-    locationsToExpand.forEach((location, index) => {
+    locationsToExpand.forEach((location) => {
       const originalIndex = locations.value.indexOf(location);
       if (originalIndex !== -1) {
         expandedLocations.value.add(originalIndex);

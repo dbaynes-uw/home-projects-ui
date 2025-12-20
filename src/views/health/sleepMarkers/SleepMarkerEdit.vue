@@ -318,7 +318,7 @@
 
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/oobs/HealthMarkerEdit.vue -->
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 import { 
@@ -330,7 +330,7 @@ import DateFormatService from '@/services/DateFormatService';
 
 // ✅ COMPOSITION API SETUP
 const store = useStore();
-const router = useRouter();
+const _router = useRouter();
 const route = useRoute();
 
 // ✅ REACTIVE STATE
@@ -360,7 +360,6 @@ const healthMarker = ref({
 const originalHealthMarker = ref({});
 
 // ✅ COMPUTED PROPERTIES
-const user = computed(() => store.state.user?.resource_owner);
 
 const healthMarkerOptions = computed(() => getHealthMarkerOptions());
 
@@ -572,7 +571,7 @@ const onSubmit = async () => {
       originalHealthMarker.value = { ...updateData };
       
       // ✅ NAVIGATE TO HEALTH MARKER LIST
-      await router.push({ name: 'HealthMarkers' });
+      await this.$router.push({ name: 'HealthMarkers' });
       
     } else {
       console.error('❌ Store returned false');
@@ -604,7 +603,7 @@ const deleteHealthMarker = async () => {
       alert(`✅ Health marker ${healthMarker.value.marker_name} deleted successfully`);
       
       // ✅ NAVIGATE TO HEALTH MARKER LIST
-      await router.push({ name: 'HealthMarkers' });
+      await this.$router.push({ name: 'HealthMarkers' });
       
     } else {
       console.error('❌ Store returned false');
@@ -618,18 +617,6 @@ const deleteHealthMarker = async () => {
     isDeleting.value = false;
     showDeleteDialog.value = false;
   }
-};
-
-// ✅ DEBUG FUNCTION
-const debugFormState = () => {
-  console.log('🔍 HEALTH MARKER EDIT DEBUG:');
-  console.log('Route ID:', route.params.id);
-  console.log('Form data:', healthMarker.value);
-  console.log('Original data:', originalHealthMarker.value);
-  console.log('Has changes:', hasChanges.value);
-  console.log('All health markers in store:', store.state.healthMarkers?.length);
-  console.log('Selected marker info:', selectedMarkerInfo.value);
-  console.log('Result status:', resultStatus.value);
 };
 
 // ✅ SINGLE LIFECYCLE HOOK

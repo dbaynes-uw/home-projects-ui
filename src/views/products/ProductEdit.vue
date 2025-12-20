@@ -355,7 +355,7 @@ export default {
       try {
         // Check if vendor has products
         if (this.vendorProducts.length > 0) {
-          const ok = await this.$refs.confirmDialogue.show({
+          var ok = await this.$refs.confirmDialogue.show({
             title: `Cannot Delete Vendor`,
             message: `"${vendor.vendor_name}" has ${this.vendorProducts.length} product(s). Please delete or reassign all products before deleting this vendor.`,
             okButton: "OK",
@@ -364,7 +364,7 @@ export default {
           return;
         }
         
-        const ok = await this.$refs.confirmDialogue.show({
+          ok = await this.$refs.confirmDialogue.show({
           title: `Delete Vendor`,
           message: `Are you sure you want to delete "${vendor.vendor_name}"? This cannot be undone.`,
           okButton: "Delete Forever",

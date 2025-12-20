@@ -183,5 +183,5 @@ export default {
   margin-right: 0.5rem;
 }
 
-@import '../assets/authorization.scss';
+@import '../assets/authorization.css';
 </style>

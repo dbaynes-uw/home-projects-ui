@@ -291,6 +291,7 @@ function formatDate(dateString) {
       year: 'numeric'
     });
   } catch (error) {
+    console.log('Date formatting error:', error);
     return dateString;
   }
 }
@@ -308,6 +309,7 @@ function formatDateTime(dateString) {
       minute: '2-digit'
     });
   } catch (error) {
+    console.log('DateTime formatting error:', error);
     return dateString;
   }
 }

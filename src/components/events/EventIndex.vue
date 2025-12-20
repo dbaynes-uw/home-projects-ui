@@ -118,7 +118,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 
 const store = useStore();
-const router = useRouter();
+const _router = useRouter();
 
 // ✅ PROPS
 const props = defineProps({

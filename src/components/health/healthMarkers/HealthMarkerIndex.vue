@@ -117,7 +117,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 
@@ -183,6 +182,7 @@ function formatDate(dateString) {
       year: 'numeric'
     });
   } catch (error) {
+    console.log('Date formatting error:', error);
     return dateString;
   }
 }

@@ -347,28 +347,6 @@ function formatDate(dateStr) {
     year: 'numeric'
   });
 }
-/*
-function formatWeight(weight) {
-  if (!weight) return '';
-  const lbs = Math.floor(weight);
-  const oz = Math.round((weight - lbs) * 16);
-  return oz === 0 ? `${lbs} lbs` : `${lbs} lbs ${oz} oz`;
-}
-*/
-function getQualityClass(quality) {
-  const q = parseInt(quality);
-  if (q >= 8) return 'quality-high';
-  if (q >= 5) return 'quality-medium';
-  return 'quality-low';
-}
-/*
-function getGlucoseClass(value) {
-  const v = parseFloat(value);
-  if (v < 100) return 'glucose-good';
-  if (v <= 125) return 'glucose-warning';
-  return 'glucose-high';
-}
-*/
 // ✅ STATS
 const averageSleep = computed(() => {
   if (filteredMarkers.value.length === 0) return '-';

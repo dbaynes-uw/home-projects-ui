@@ -333,6 +333,7 @@ async function deleteReading(reading) {
     await store.dispatch('deleteGlucoseReading', reading);
     await store.dispatch('fetchGlucoseReadings');
   } catch (error) {
+    console.error('❌ Delete error:', error);
     alert('Failed to delete reading. Please try again.');
   }
 }
@@ -348,6 +349,7 @@ async function handleSave(readingData) {
     await store.dispatch('fetchGlucoseReadings');
     closeDialog();
   } catch (error) {
+    console.error('❌ Delete error:', error);
     alert('Failed to save glucose reading. Please try again.');
   }
 }
@@ -389,6 +391,7 @@ onMounted(async () => {
   try {
     await store.dispatch('fetchGlucoseReadings');
   } catch (error) {
+    console.error('❌ Delete error:', error);
     alert('Failed to load glucose readings. Please refresh the page.');
   } finally {
     isLoading.value = false;

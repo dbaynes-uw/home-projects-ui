@@ -130,7 +130,7 @@
       <!-- ✅ LEGEND -->
       <div class="chart-legend">
         <div 
-          v-for="(markerName, index) in Object.keys(groupedData)"
+          v-for="markerName in Object.keys(groupedData)"
           :key="markerName"
           class="legend-item"
         >
@@ -290,7 +290,7 @@ const groupedData = computed(() => {
   
   // Convert to chart coordinates
   Object.keys(groups).forEach(markerName => {
-    groups[markerName] = groups[markerName].map((data, index, array) => {
+    groups[markerName] = groups[markerName].map((data) => {
       const xPos = padding.left + 
         ((data.date - minDate.value) / dateRange) * 
         (chartWidth.value - padding.left - padding.right);
@@ -353,7 +353,7 @@ const xAxisLabels = computed(() => {
   const labels = [];
   const dataPoints = chartData.value.slice(0, 6); // Limit to 6 labels
   
-  dataPoints.forEach((data, index) => {
+  dataPoints.forEach((data) => {
     const dateRange = maxDate.value - minDate.value;
     if (dateRange === 0) return;
     

@@ -989,7 +989,7 @@ export default new Vuex.Store({
         const response = await EventService.getGlucoseReading(id); // Call the API
         commit("SET_GLUCOSE_READING", response.data); // Commit the data to the state
       } catch (error) {
-        console.error("Error fetching glucose reading: ");
+        console.error("Error fetching glucose reading: ", error);
         alert("Failed to fetch glucose reading. Please try again.");
       }
     },
@@ -1446,7 +1446,7 @@ export default new Vuex.Store({
     },
 
     // ✅ FIXED fetchVendor ACTION - ADD THE MISSING RETURN!
-    async fetchVendor({ commit }, vendorId) {
+    async fetchVendor(vendorId) {
       try {
         console.log('Store fetchVendor ID: ', vendorId);
 

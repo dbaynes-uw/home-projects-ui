@@ -146,7 +146,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
 const store = useStore();
-const router = useRouter();
+const _router = useRouter();
 
 const props = defineProps(["id"]);
 const isMobile = ref(false);
@@ -234,7 +234,7 @@ async function updateWatering() {
     await store.dispatch('fetchWaterings');
          
     // Navigate back
-    router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
+    this.$router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
     
   } catch (error) {
     console.error('❌ Update failed:', error);

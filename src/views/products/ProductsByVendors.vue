@@ -310,7 +310,7 @@
                 <!-- ✅ PRODUCTS LIST -->
                 <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
                   <div
-                    v-for="(product, productIndex) in getFilteredProducts(vendor)"
+                    v-for="(product) in getFilteredProducts(vendor)"
                     :key="product.id"
                     :class="[
                       'product-card', 
@@ -439,7 +439,6 @@ const newProduct = ref({
 // ✅ COMPUTED PROPERTIES
 const vendorsProducts = computed(() => store.state.vendors_products || []);
 const user = computed(() => store.state.user?.resource_owner);
-const isDev = computed(() => process.env.NODE_ENV === 'development');
 
 // Get unique vendors (no duplicates)
 const vendors = computed(() => {

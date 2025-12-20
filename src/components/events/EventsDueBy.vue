@@ -21,7 +21,7 @@
 
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue';
+import { ref } from 'vue';
 
 // ✅ DEFINE PROPS AND EMITS
 const props = defineProps({
@@ -31,50 +31,14 @@ const props = defineProps({
   }
 });
 
-const selectRef = ref(null);
-function handleNativeChange(event) {
-  const newValue = event.target.value;
-  handleChange(newValue);
-}
-function handleDropdownClick() {
-  nextTick(() => {
-    // Check if menu exists after click
-    const menus = document.querySelectorAll('.v-menu');
-    const overlays = document.querySelectorAll('.v-overlay__content');
-  });
-}
-const emit = defineEmits(['events-due-by', 'clear-due-by']);
+//const emit = defineEmits(['events-due-by', 'clear-due-by']);
 
 // ✅ REACTIVE STATE
 const internalValue = ref(props.selectedDueByValue);
-
-onMounted(() => {
-  const vuetifyStyles = document.querySelector('style[data-vite-dev-id*="vuetify"]') || 
-                       document.querySelector('link[href*="vuetify"]');
-});
-// ✅ ENHANCED HANDLE CHANGES WITH MORE LOGGING
-function handleChange(newValue) {
-  internalValue.value = newValue;
-  
-  if (newValue && newValue !== '' && newValue !== null) {
-    emit('events-due-by', newValue);
-  } else {
-    emit('clear-due-by');
-  }
-}
-
 </script>
 
 <style scoped>
-/*.due-by-wrapper {
-  position: relative;
-  top: 0.5rem;
-  left: 2.5rem !important;
-  width: 100%;
-  max-width: 15.8rem !important;
-  height: 48px;
-}
-*/
+
 .due-by-wrapper {
   position: relative;
   width: 200px;

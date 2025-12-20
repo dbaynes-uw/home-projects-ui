@@ -382,11 +382,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import { 
-  HEALTH_MARKER_CATEGORIES, 
-  getHealthMarkersByCategory, 
-  getHealthMarkerByName 
-} from '@/services/health-marker-constants';
+import { HEALTH_MARKER_CATEGORIES, getHealthMarkerByName } from '@/services/health-marker-constants';
 import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
 import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';
 import DateFormatService from '@/services/DateFormatService';
@@ -535,118 +531,6 @@ const toggleChartView = () => {
   console.log('📊 Toggled chart view:', showChartView.value ? 'CHART' : 'CATEGORY');
 };
 
-const getCategoryChartData = (category) => {
-  const markers = filteredHealthMarkers.value.filter(marker => 
-    getMarkerCategory(marker.marker_name) === category
-  );
-  
-  if (markers.length === 0) return null;
-  
-  // Group by marker type and sort by date
-  const markerGroups = {};
-  
-  markers.forEach(marker => {
-    if (!markerGroups[marker.marker_name]) {
-      markerGroups[marker.marker_name] = [];
-    }
-    
-    markerGroups[marker.marker_name].push({
-      x: marker.marker_date,
-      y: parseFloat(marker.marker_result),
-      label: `${marker.marker_result} on ${DateFormatService.formatDatejs(marker.marker_date)}`
-    });
-  });
-  
-  // Sort each group by date
-  Object.keys(markerGroups).forEach(markerName => {
-    markerGroups[markerName].sort((a, b) => new Date(a.x) - new Date(b.x));
-  });
-  
-  // Create chart datasets
-  const datasets = Object.keys(markerGroups).map((markerName, index) => {
-    const colors = [
-      '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-      '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
-    ];
-    
-    return {
-      label: getHealthMarkerByName(markerName)?.label || markerName,
-      data: markerGroups[markerName],
-      borderColor: colors[index % colors.length],
-      backgroundColor: colors[index % colors.length] + '20',
-      fill: false,
-      tension: 0.1,
-      pointRadius: 6,
-      pointHoverRadius: 8,
-      pointBorderWidth: 2,
-      pointBackgroundColor: '#fff'
-    };
-  });
-  
-  return {
-    datasets,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      plugins: {
-        title: {
-          display: true,
-          text: `${category} Trends Over Time`,
-          font: {
-            size: 16,
-            weight: 'bold'
-          }
-        },
-        legend: {
-          display: true,
-          position: 'top'
-        },
-        tooltip: {
-          callbacks: {
-            title: function(context) {
-              return DateFormatService.formatDatejs(context[0].parsed.x);
-            },
-            label: function(context) {
-              const markerInfo = getHealthMarkerByName(context.dataset.label);
-              const unit = markerInfo?.unit || '';
-              return `${context.dataset.label}: ${context.parsed.y}${unit}`;
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          type: 'time',
-          time: {
-            unit: 'month',
-            displayFormats: {
-              month: 'MMM yyyy'
-            }
-          },
-          title: {
-            display: true,
-            text: 'Date'
-          }
-        },
-        y: {
-          beginAtZero: false,
-          title: {
-            display: true,
-            text: 'Result Value'
-          },
-          grid: {
-            color: 'rgba(0, 0, 0, 0.1)'
-          }
-        }
-      }
-    }
-  };
-};
-
 const getCategoriesWithData = computed(() => {
   return displayedCategories.value.filter(category => {
     const markers = filteredHealthMarkers.value.filter(marker => 
@@ -658,6 +542,7 @@ const getCategoriesWithData = computed(() => {
 const totalResults = computed(() => filteredHealthMarkers.value.length);
 
 // ✅ HELPER METHODS
+
 const getMarkerCategory = (markerName) => {
   const markerInfo = getHealthMarkerByName(markerName);
   return markerInfo?.category || 'Other';

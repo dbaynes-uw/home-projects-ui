@@ -348,18 +348,6 @@ function showIndex() {
   inputSearchText.value = '';
 }
 
-function getEventCardClass(event) {
-  if (event.status === 'inactive') return 'event-inactive';
-  if (isEventPastDue(event)) return 'event-pastdue';
-  return 'event-active';
-}
-
-function getEventStatusIcon(event) {
-  if (event.status === 'inactive') return 'fas fa-pause-circle';
-  if (isEventPastDue(event)) return 'fas fa-exclamation-circle';
-  return 'fas fa-check-circle';
-}
-
 function isEventPastDue(event) {
   const today = dayjs().format("YYYY-MM-DD");
   return event.status === 'active' && event.action_due_date < today;
@@ -390,10 +378,6 @@ async function notifyEventsDue() {
     console.error("❌ Failed to send notifications:", error);
     alert('❌ Failed to send notifications');
   }
-}
-
-function formatStandardDate(value) {
-  return DateFormatService.formatStandardDatejs(value);
 }
 
 // ✅ LIFECYCLE

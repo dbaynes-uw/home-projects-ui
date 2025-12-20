@@ -189,25 +189,6 @@ function formatTime(time) {
   return dayjs(time, 'HH:mm').format('h:mm A');
 }
 
-function getDaysAgo(dateString) {
-  if (!dateString) return '';
-  
-  const testDate = new Date(dateString);
-  const today = new Date();
-  const diffTime = today - testDate;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return '1 day ago';
-  if (diffDays < 30) return `${diffDays} days ago`;
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return months === 1 ? '1 month ago' : `${months} months ago`;
-  }
-  
-  const years = Math.floor(diffDays / 365);
-  return years === 1 ? '1 year ago' : `${years} years ago`;
-}
 
 function truncateNotes(notes) {
   if (!notes) return '';

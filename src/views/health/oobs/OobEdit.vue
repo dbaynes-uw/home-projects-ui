@@ -105,6 +105,7 @@ function formatDate(dateString) {
       minute: '2-digit'
     });
   } catch (error) {
+    console.error('❌ Date formatting error:', error);
     return dateString;
   }
 }
@@ -151,7 +152,7 @@ async function handleCancel() {
     });
     
     if (ok) {
-      router.push({ name: 'Oobs' });
+      this.$router.push({ name: 'Oobs' });
     }
   } else {
     router.push({ name: 'Oobs' });
