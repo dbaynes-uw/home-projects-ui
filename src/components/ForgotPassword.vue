@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import '../assets/authorization.css';
 import { ref, computed } from 'vue'
 
 export default {
@@ -183,5 +184,4 @@ export default {
   margin-right: 0.5rem;
 }
 
-@import '../assets/authorization.css';
 </style>
