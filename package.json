@@ -12,7 +12,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "serve": "vite",
-    "start": "vite",
+    "start": "serve -s dist -l $PORT",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
     "heroku-postbuild": "vite build"
   },
@@ -29,7 +29,8 @@
     "vue-select": "^4.0.0-beta.6",
     "vuetify": "^3.0.0-beta.0",
     "vuex": "^4.0.0",
-    "vuex-persistedstate": "^4.1.0"
+    "vuex-persistedstate": "^4.1.0",
+    "serve": "^14.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -38,7 +39,6 @@
     "@vitejs/plugin-vue": "^5.0.0",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "^10.6.2",
-    "serve": "^14.2.5",
     "vite": "^5.0.0",
     "vite-plugin-vue-devtools": "^7.0.0",
     "vue-eslint-parser": "^10.2.0"
