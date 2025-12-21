@@ -9,7 +9,7 @@
 
 <script>
 import axios from 'axios'
-import EventCard from '../components/events/EventCard'
+import EventCard from '../components/events/EventCard.vue'
 
 export default {
   components: { EventCard },

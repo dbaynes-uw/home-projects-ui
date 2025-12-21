@@ -86,7 +86,7 @@
 </template>
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
-import EventCard from '@/components/events/EventCard'
+import EventCard from '@/components/events/EventCard.vue'
 export default {
   name: "EventStatisticDetail",
   components: {
