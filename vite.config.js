@@ -15,7 +15,8 @@ export default defineConfig({
   },
   server: {
     port: 8080,
-    open: true
+    //open: true
+    open: process.env.NODE_ENV !== 'production'
   },
   build: {
     outDir: 'dist',

@@ -18,8 +18,10 @@
   },
   "dependencies": {
     "axios": "^1.2.2",
+    "compression": "^1.8.1",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.10",
+    "express": "^5.2.1",
     "pinia": "^3.0.4",
     "uuid": "^13.0.0",
     "vue": "^3.2.47",
@@ -36,6 +38,7 @@
     "@vitejs/plugin-vue": "^5.0.0",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "^10.6.2",
+    "serve": "^14.2.5",
     "vite": "^5.0.0",
     "vite-plugin-vue-devtools": "^7.0.0",
     "vue-eslint-parser": "^10.2.0"
