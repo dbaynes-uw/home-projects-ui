@@ -23,5 +23,8 @@ export default defineConfig({
   define: {
     // Make process.env available in browser
     'process.env': {}
+  },
+  optimizeDeps: {
+    include: ['uuid']
   }
 })
