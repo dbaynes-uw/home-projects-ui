@@ -1,14 +1,11 @@
-//import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
-import axios from 'axios'
+import api from '@/services/api' 
 import EventService from '@/services/EventService'
 import router from '../router'
-//import DateFormatService from "@/services/DateFormatService.js";
+import { getAuthUrl } from '@/services/api'
 
-var api_authenticate_url = "";
 export default new Vuex.Store({
-  props: ["message"],
   state: {
     id: "",
     token: "",
@@ -80,7 +77,36 @@ export default new Vuex.Store({
       //],
     }
   },
-  plugins: [createPersistedState()],
+    plugins: [
+    createPersistedState({
+      key: 'vuex', // localStorage key name
+      paths: ['user', 'token', 'loggedIn', 'id'], // ✅ Only persist auth data
+      storage: window.localStorage,
+      // ✅ Add this to ensure it saves/restores properly
+      getState: (key, storage) => {
+        try {
+          const value = storage.getItem(key)
+          console.log('📦 vuex-persistedstate: Loading state from localStorage')
+          return value ? JSON.parse(value) : undefined
+        } catch (error) {
+          console.error('❌ Error loading state:', error)
+          return undefined
+        }
+      },
+      setState: (key, state, storage) => {
+        try {
+          console.log('📦 vuex-persistedstate: Saving state to localStorage', {
+            user: !!state.user,
+            token: !!state.token,
+            loggedIn: state.loggedIn
+          })
+          storage.setItem(key, JSON.stringify(state))
+        } catch (error) {
+          console.error('❌ Error saving state:', error)
+        }
+      }
+    })
+  ],
   mutations: {
     //ADD_BOOK(state, book) {
     //  state.books.push(book);
@@ -292,47 +318,69 @@ export default new Vuex.Store({
       state.users.push(user);
     },
 
-    SET_USER_DATA (state, userData) {
+        SET_USER_DATA (state, userData) {
+      console.log('🔍 SET_USER_DATA called with:', {
+        hasUserData: !!userData,
+        hasToken: !!userData?.token,
+        token: userData?.token?.substring(0, 20) + '...'
+      })
+      
       if (userData && typeof userData === 'object') {
-        state.user = userData;
-        state.loggedIn = true;
-        state.token = userData.token || '';
-        state.id = userData.id || '';
-
-        // ✅ SAVE TO LOCALSTORAGE
+        // ✅ Set all state properties
+        state.user = userData
+        state.loggedIn = true
+        state.token = userData.token || ''
+        state.id = userData.id || ''
+        
+        console.log('✅ State updated:', {
+          loggedIn: state.loggedIn,
+          hasUser: !!state.user,
+          hasToken: !!state.token,
+          userId: state.id
+        })
+        
+        // ✅ Manual backup (in addition to vuex-persistedstate)
         try {
-          localStorage.setItem('user', JSON.stringify(userData));
+          localStorage.setItem('user', JSON.stringify(userData))
+          console.log('✅ Manual backup saved to localStorage.user')
         } catch (error) {
-          console.error('❌ SET_USER_DATA: Failed to save to localStorage:', error);
+          console.error('❌ Failed to save manual backup:', error)
         }
-
-        // ✅ SET AUTH HEADER FOR FUTURE REQUESTS
-        if (userData.token) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
-        }
+        
+        // ✅ Check if vuex-persistedstate saved it
+        setTimeout(() => {
+          const vuexState = localStorage.getItem('vuex')
+          if (vuexState) {
+            const parsed = JSON.parse(vuexState)
+            console.log('✅ vuex-persistedstate verification:', {
+              hasUser: !!parsed.user,
+              hasToken: !!parsed.token,
+              loggedIn: parsed.loggedIn
+            })
+          } else {
+            console.warn('⚠️ vuex-persistedstate did not save!')
+          }
+        }, 100)
+        
       } else {
-        console.error('❌ SET_USER_DATA: Invalid user data:', userData);
+        console.error('❌ SET_USER_DATA: Invalid user data:', userData)
       }
+    },
+    
+    CLEAR_USER_DATA (state) {
+      console.log('🔍 CLEAR_USER_DATA: Clearing user data')
+      state.user = null
+      state.loggedIn = false
+      state.token = ''
+      state.id = ''
+      
+      localStorage.removeItem('user')
+      localStorage.removeItem('vuex')
     },
 
     CLEAR_PLANT() {
       localStorage.removeItem('plant')
     },
-    
-    CLEAR_USER_DATA (state) {
-      console.log('🔍 CLEAR_USER_DATA: Clearing user data: ', state);
-      state.user = null;
-      state.loggedIn = false;
-      state.token = '';
-      state.id = '';
-
-      localStorage.removeItem('user')
-      //axios.defaults.headers.common['Authorization'] = null
-      // ✅ CLEAR AUTH HEADER
-      delete axios.defaults.headers.common['Authorization'];
-  
-    },
-
     CLEAR_WATERING() {
       localStorage.removeItem('watering')
     },
@@ -394,175 +442,181 @@ export default new Vuex.Store({
     }
   
   },
-  actions: {
-    async register ({ commit }, credentials) {
-      //this.init_authentication;
-      if (window.location.port == "8080") {
-        //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-        api_authenticate_url = "//localhost:3000/api/v1/users/";
-      } else {
-        api_authenticate_url =
-          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/users/";
-      }
-      this.message = null
-      // Comment ADMIN baynes check to register user.
-      // Send New User link to site at Reset Password
-
-      //if ( credentials.email.toLowerCase().includes('baynes')) {
-      return axios
-        .post(api_authenticate_url, credentials)
-        .then(({ data }) => {
-          this.message = data.name + " - You have Successfully Registered."
-          commit('ADD_USER', data)
-        })
-        .catch((error) => {
-          this.$store.state.errors = null
-          if (this.message == null) {
-            error = error.response.request.statusText + '!';
-          } else {
-            error = this.message
-          }
-          alert("Registration error: ", error.response.request.statusText)
-          router.push({name:'home', params: {message: this.message}})
-        });
-    },
-
-    // Update your login action to handle the resource_owner format:
-    async login ({ commit }, credentials) {
-      // ✅ SET API URL BASED ON ENVIRONMENT (or use your utility)
-      let api_authenticate_url;
-      if (window.location.port == "8080") {
-        api_authenticate_url = "http://localhost:3000/users/tokens/";
-      } else {
-        api_authenticate_url = "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/tokens/";
-      }
+actions: {
+  async register ({ commit }, credentials) {
+    const authUrl = getAuthUrl()
     
-      try {
-        console.log('🔍 Store login: Attempting with:', {
-          email: credentials.email,
-          password: '[HIDDEN]'
-        });
-        console.log('🔍 Store login: API URL:', api_authenticate_url + "sign_in");
-        
-        const response = await axios.post(api_authenticate_url + "sign_in", credentials);
-        
-        console.log('✅ Store login: Full API response:', response.data);
-        
-        // ✅ HANDLE YOUR SPECIFIC API RESPONSE FORMAT (resource_owner)
-        let userData;
-        
-        if (response.data.resource_owner) {
-          // ✅ YOUR API FORMAT: resource_owner contains user data
-          userData = {
-            // ✅ FLATTEN THE USER DATA FROM resource_owner
-            id: response.data.resource_owner.id,
-            email: response.data.resource_owner.email,
-            created_at: response.data.resource_owner.created_at,
-            updated_at: response.data.resource_owner.updated_at,
-            // ✅ ADD TOKEN DATA FROM ROOT LEVEL
-            token: response.data.token,
-            refresh_token: response.data.refresh_token,
-            expires_in: response.data.expires_in,
-            token_type: response.data.token_type,
-            // ✅ KEEP ORIGINAL STRUCTURE FOR REFERENCE
-            resource_owner: response.data.resource_owner
-          };
-          console.log('✅ Store login: Extracted userData from resource_owner:', userData);
-        } else if (response.data.user) {
-          // Fallback: user object at root level
-          userData = { ...response.data.user };
-          userData.token = response.data.token;
-          console.log('✅ Store login: Using user format:', userData);
-        } else {
-          // Fallback: direct response data
-          userData = { ...response.data };
-          console.log('✅ Store login: Using direct response format:', userData);
+    try {
+      const response = await api.post(`${authUrl}/api/v1/users/`, credentials)
+      commit('ADD_USER', response.data)
+      this.message = response.data.name + " - You have Successfully Registered."
+      return response.data
+    } catch (error) {
+      console.error('Registration error:', error)
+      alert("Registration error: " + error.response?.request?.statusText || error.message)
+      router.push({name:'home', params: {message: this.message}})
+      throw error
+    }
+  },
+
+    async login ({ commit }, credentials) {
+      const authUrl = getAuthUrl()
+  
+  try {
+    console.log('🔍 Store login: Attempting with:', {
+      email: credentials.email,
+      password: '[HIDDEN]'
+    })
+    
+    // ✅ SEND ONLY EMAIL AND PASSWORD
+    const loginPayload = {
+      email: credentials.email,
+      password: credentials.password
+    }
+    
+    console.log('📤 Sending login payload:', { email: loginPayload.email, password: '[HIDDEN]' })
+    
+    const response = await api.post(`${authUrl}/users/tokens/sign_in`, loginPayload)
+    
+    console.log('✅ Store login: Full API response:', response.data)
+    console.log('✅ Token received:', response.data.token?.substring(0, 20) + '...')
+    
+    let userData
+    
+    if (response.data.resource_owner) {
+      userData = {
+        id: response.data.resource_owner.id,
+        email: response.data.resource_owner.email,
+        created_at: response.data.resource_owner.created_at,
+        updated_at: response.data.resource_owner.updated_at,
+        token: response.data.token,
+        refresh_token: response.data.refresh_token,
+        expires_in: response.data.expires_in,
+        token_type: response.data.token_type,
+        resource_owner: response.data.resource_owner
+      }
+      console.log('✅ Login: Constructed userData (with resource_owner):', {
+        ...userData,
+        token: userData.token?.substring(0, 20) + '...'
+      })
+    } else if (response.data.user) {
+      userData = { 
+        ...response.data.user, 
+        token: response.data.token 
+      }
+      console.log('✅ Login: Constructed userData (with user):', {
+        ...userData,
+        token: userData.token?.substring(0, 20) + '...'
+      })
+    } else {
+      userData = { ...response.data }
+      console.log('✅ Login: Constructed userData (raw data):', {
+        ...userData,
+        token: userData.token?.substring(0, 20) + '...'
+      })
+    }
+    
+        console.log('🔍 Login: About to commit SET_USER_DATA')
+        commit('SET_USER_DATA', userData)
+
+        console.log('🔍 Login: After commit, checking localStorage...')
+        const vuexState = localStorage.getItem('vuex')
+        if (vuexState) {
+          const parsed = JSON.parse(vuexState)
+          console.log('📦 vuex.user.token:', parsed.user?.token?.substring(0, 20) + '...')
+          console.log('📦 vuex.token:', parsed.token?.substring(0, 20) + '...')
         }
-        
-        console.log('✅ Store login: Final userData before commit:', userData);
-        
-        // ✅ COMMIT USER DATA TO STORE
-        commit('SET_USER_DATA', userData);
-        
-        // ✅ VERIFY IT WAS SET
-        console.log('✅ Store login: User in state after commit:', this.state.user);
-        
-        return { success: true, user: userData };
+
+        return { success: true, user: userData }
       
       } catch (error) {
-        console.error('❌ Store login: Error:', error);
-        console.error('❌ Store login: Error response:', error.response?.data);
-        
-        let errorMessage = 'Login failed';
-        
+        console.error('❌ Store login: Error:', error)
+        console.error('❌ Error response:', error.response?.data)
+        console.error('❌ Error status:', error.response?.status)
+
+        let errorMessage = 'Login failed'
+
         if (error.response?.data) {
-          const errorData = error.response.data;
-          
+          const errorData = error.response.data
+
           if (errorData.error_description && Array.isArray(errorData.error_description)) {
-            errorMessage = errorData.error_description.join(', ');
+            errorMessage = errorData.error_description.join(', ')
           } else if (errorData.error) {
-            errorMessage = errorData.error.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            errorMessage = errorData.error.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
           } else if (errorData.message) {
-            errorMessage = errorData.message;
+            errorMessage = errorData.message
           }
         }
+
+        throw new Error(errorMessage)
+      }
+    },
+
+    async logout({ commit }) {
+      console.log('🔍 Logout: Starting logout process...')
+      
+      try {
+        // Optional: Call API to invalidate token on server
+        // const authUrl = getAuthUrl()
+        // await api.post(`${authUrl}/users/tokens/sign_out`)
         
-        throw new Error(errorMessage);
+        // Clear user data from store
+        commit('CLEAR_USER_DATA')
+        
+        console.log('✅ Logout: User data cleared')
+        
+        // Redirect to login
+        router.push({ name: 'Login' })
+        
+        return { success: true }
+      } catch (error) {
+        console.error('❌ Logout error:', error)
+        // Still clear local data even if API call fails
+        commit('CLEAR_USER_DATA')
+        router.push({ name: 'Login' })
+        throw error
       }
     },
-
-    async logout ({ commit }) {
-      commit('CLEAR_USER_DATA')
-      router.push({name: 'Login'});
-    },
-
     async forgotPassword ({ commit }, email) {
-      console.log("Forgot Password for " + email)
-      if (window.location.port == "8080") {
-        //api_url = "http://davids-macbook-pro.local:3000/...";
-        api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
-      } else {
-        api_authenticate_url =
-          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/password_resets";
+      const authUrl = getAuthUrl()
+
+      try {
+        const response = await api.post(`${authUrl}/api/v1/password_resets/`, { email })
+        commit('SET_USER_DATA', response.data)
+        return response.data
+      } catch (error) {
+        console.error('Forgot password error:', error)
+        alert("Invalid Login Credentials or API problem - Please try again")
+        router.back()
+        throw error
       }
-      //this.init_authentication;
-      return axios
-        .post(api_authenticate_url, { email: email })
-        //.post(api_authenticate_url, user )
-        .then(({ data }) => {
-         commit('SET_USER_DATA', data)
-       })
-       .catch((error) => {
-         alert("Invalid Login Credentials or API problem - Please try again")
-         //location.reload()
-         //const message = error.response.request.statusText + '!';
-         error = error.response.request.statusText + '!';
-         router.back(error)
-       });
-    },
-    async resetPassword ({ commit }, email) {
-      console.log("Reset Password for " + email)  
-      if (window.location.port == "8080") {
-        //api_url = "http://davids-macbook-pro.local:3000/...";
-        api_authenticate_url = "//localhost:3000/api/v1/password_resets/"
-      } else {
-        api_authenticate_url =
-          "//peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/users/password/";
+    },    
+    // ✅ RESET PASSWORD (FIXED!)
+    async resetPassword ({ commit }, { token, password, password_confirmation }) {
+      const authUrl = getAuthUrl()
+
+      try {
+        console.log("Reset Password with token:", token)
+
+        const response = await api.patch(
+          `${authUrl}/api/v1/password_resets/${token}`, 
+          { 
+            password: password, 
+            password_confirmation: password_confirmation 
+          }
+        )
+
+        commit('SET_USER_DATA', response.data)
+        alert('Password successfully reset!')
+        return response.data
+
+      } catch (error) {
+        console.error('Reset password error:', error)
+        const errorMessage = error.response?.request?.statusText || error.message
+        alert("Password reset failed: " + errorMessage)
+        router.back()
+        throw error
       }
-      //this.init_authentication;
-      return axios
-        .patch(`api_authenticate_url + /${this.$route.params.token}`, { password: this.password, password_confirmation: this.password_confirmation })
-        //.post(api_authenticate_url, user )
-        .then(({ data }) => {
-         commit('SET_USER_DATA', data)
-       })
-       .catch((error) => {
-         alert("Invalid Login Credentials or API problem - Please try again for " + email)
-         //location.reload()
-         //const message = error.response.request.statusText + '!';
-         error = error.response.request.statusText + '!';
-         router.back(error)
-       });
     },
     /*
     async createBook({ commit }, book) {

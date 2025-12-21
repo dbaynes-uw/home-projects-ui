@@ -9,15 +9,16 @@ import './assets/styles/ui-components.css';
 import router from "./router";
 import store from "./vuex/store.js";
 
-// ✅ FIXED VUETIFY IMPORTS
+// ✅ VUETIFY IMPORTS
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 import * as directives from 'vuetify/directives'
 
+// ✅ VUE-SELECT - ADD THIS IMPORT!
+import vSelect from 'vue-select'
+import "vue-select/dist/vue-select.css";
 
-
-// ✅ IMPORT SPECIFIC COMPONENTS
-// ✅ ADD THE MISSING COMPONENTS TO YOUR IMPORTS
+// ✅ IMPORT VUETIFY COMPONENTS
 import { 
   VCard, 
   VCardTitle, 
@@ -39,8 +40,8 @@ import {
   VAppBar,
   VMain,
   VFooter,  
-  VAutocomplete,        // ✅ ADD THIS - Missing!
-  VTextarea,            // ✅ ADD THIS - Often needed
+  VAutocomplete,
+  VTextarea,
   VToolbarTitle,
   VSpacer,
   VMenu,
@@ -84,8 +85,8 @@ const vuetify = createVuetify({
     VAppBar,
     VMain,
     VFooter,
-    VAutocomplete,      // ✅ ADD THIS - Missing!
-    VTextarea,          // ✅ ADD THIS - Often needed
+    VAutocomplete,
+    VTextarea,
     VToolbarTitle,
     VSpacer,
     VMenu,
@@ -110,24 +111,22 @@ const vuetify = createVuetify({
   },
 })
 
-import vSelect from "vue-select";
-import "vue-select/dist/vue-select.css";
-
 // ✅ CREATE APP
 const app = createApp(App);
 
-const pinia = createPinia(); // ✅ CREATE PINIA INSTANCE
+const pinia = createPinia();
 
 // ✅ DISABLE VUE DEVTOOLS IN PRODUCTION
 if (process.env.NODE_ENV === 'production') {
   app.config.devtools = false;
   app.config.performance = false;
 }
-app.use(pinia); // ✅ USE PINIA IN APP
+
+app.use(pinia);
 app.use(router);
 app.use(store);
 app.use(vuetify);
-app.component("v-select", vSelect);
+app.component("v-select", vSelect);  // ✅ Now this will work!
 
 // ✅ BASIC USER RESTORATION
 try {

@@ -1,249 +1,208 @@
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/Login.vue -->
-<template>
-  <v-card class="mx-auto mt-5" max-width="500">
-    <v-card-title class="pb-0">
-      <h1>Home Projects</h1>
-      <h3>Log In</h3>
-    </v-card-title>
-    
-    <v-card-subtitle v-if="statusMessage">
-      <h2 style="color: red">
-        {{ statusMessage }}
-      </h2>
-    </v-card-subtitle>
-    
-    <v-card-text>
-      <v-form @submit.prevent="login">
-        <v-container id="form-container">
-          <v-text-field
-            label="Email"
-            v-model="state.email"
-            type="email"
-            name="email"
-            placeholder="user@example.com"
-            :error="showValidationErrors && v$.email.$error"
-            :error-messages="showValidationErrors && v$.email.$error ? v$.email.$errors[0].$message : ''"
-            @blur="v$.email.$touch"
-          />
-          
-  <v-text-field
-    label="Password (Minimum 8 characters)"
-    v-model="state.password"
-    :type="showPassword ? 'text' : 'password'"
-    name="password"
-    variant="outlined"
-    :error="showValidationErrors && v$.password.$error"
-    :error-messages="showValidationErrors && v$.password.$error ? v$.password.$errors[0].$message : ''"
-    @blur="v$.password.$touch"
-  >
-    <!-- ✅ USE DIRECT FONTAWESOME ICON (NO V-ICON WRAPPER) -->
-    <template v-slot:append-inner>
-      <i 
-        :class="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
-        class="password-eye-icon"
-        @click="showPassword = !showPassword"
-        role="button"
-        :aria-label="showPassword ? 'Hide password' : 'Show password'"
-        tabindex="0"
-        @keydown.enter="showPassword = !showPassword"
-        @keydown.space.prevent="showPassword = !showPassword"
-        :title="showPassword ? 'Hide password' : 'Show password'"
-      />
-    </template>
-  </v-text-field>
-          
-          <span>
-            {{ state.password.length }} characters used.
-          </span>
-          
-          <small v-if="!canUseVuelidate" class="text-warning">
-            ⚠️ Advanced validation disabled (memory optimization)
-          </small>
-          
-          <br/>
-          <v-btn 
-            type="submit" 
-            block 
-            class="mt-2" 
-            :disabled="!isValid || loading"
-            :loading="loading"
-          >
-            <i class="fas fa-sign-in-alt mr-2"></i>
-            Submit
-          </v-btn>
-        </v-container>
-      </v-form>
-      
-      <v-alert 
-        v-if="message" 
-        :type="error ? 'error' : 'success'" 
-        variant="tonal" 
-        class="mt-4"
-      >
-        {{ message }}
-      </v-alert>
-    </v-card-text>
-    
-    <v-card-actions class="justify-center">
-      <div class="text-center">
-        Don't have an account? 
-        <router-link to="/register">Register</router-link>
-        <br />
-        Forgot or Need Password Reset?  
-        <router-link to="/forgot_password">Forgot or Reset Password</router-link>
-        <p class="mt-2">T: dl..@.. t...t... P: dl..@.. H...P...s</p>
-      </div>
-    </v-card-actions>
-  </v-card>
-</template>
 
-<script>
-import { reactive, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+<script setup>
+import { ref } from 'vue'
 import { useStore } from 'vuex'
-import { useFormValidation, validators } from '@/composables/useValidation'
+import { useRouter } from 'vue-router'
 
-export default {
-  setup() {
-    console.log('🔍 Login.vue setup() running...')
+const store = useStore()
+const router = useRouter()
+
+const email = ref('')
+const password = ref('')
+const error = ref('')
+
+async function handleLogin() {
+  try {
+    error.value = ''
     
-    const router = useRouter()
-    const store = useStore()
+    console.log('🔍 Login: Starting login process...')
     
-    // ✅ REACTIVE FORM DATA
-    const state = reactive({
-      email: '',
-      password: ''
+    const result = await store.dispatch('login', {
+      email: email.value,
+      password: password.value
     })
     
-    // ✅ VALIDATION RULES
-    const rules = computed(() => ({
-      email: { 
-        required: validators.required, 
-        email: validators.email,
-        validFormat: (value) => {
-          if (!value) return true;
-          const strictEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-          return strictEmailRegex.test(value) || 'Please enter a valid email address (e.g., user@example.com)';
-        }
-      },
-      password: {
-        required: validators.required,
-        minLength: validators.minLength(8)
-      }
-    }))
+    console.log('✅ Login: Dispatch returned:', result)
     
-    // ✅ USE SIMPLE VALIDATION
-    const { v$, isValid, getFieldError, validate, canUseVuelidate } = useFormValidation(state, rules)
+    // ✅ CHECK STATE AFTER LOGIN
+    console.log('🔍 Login: Checking store state...')
+    console.log('Store state:', {
+      loggedIn: store.state.loggedIn,
+      hasUser: !!store.state.user,
+      hasToken: !!store.state.token,
+      token: store.state.token?.substring(0, 20) + '...'
+    })
     
-    const showPassword = ref(false)
-    const message = ref('')
-    const error = ref(false)
-    const loading = ref(false)
-    const showValidationErrors = ref(false)
-    
-    const statusMessage = computed(() => store.state.message || '')
-
-    return {
-      state,
-      v$,
-      isValid,
-      getFieldError,
-      validate,
-      canUseVuelidate,
-      showPassword,
-      message,
-      error,
-      loading,
-      showValidationErrors,
-      statusMessage,
-      router,
-      store
+    // ✅ CHECK LOCALSTORAGE AFTER LOGIN
+    console.log('🔍 Login: Checking localStorage...')
+    const vuexState = localStorage.getItem('vuex')
+    if (vuexState) {
+      const parsed = JSON.parse(vuexState)
+      console.log('localStorage vuex:', {
+        loggedIn: parsed.loggedIn,
+        hasUser: !!parsed.user,
+        hasToken: !!parsed.token || !!parsed.user?.token,
+        token: (parsed.token || parsed.user?.token)?.substring(0, 20) + '...'
+      })
     }
-  },
-
-  mounted() {
-    console.log('✅ Login.vue mounted successfully!')
-  },
-
-  methods: {
-    // ✅ PROPER COMPONENT LOGIN METHOD
-    async login() {
-      this.showValidationErrors = true
-      this.loading = true
-      this.message = ''
-      
-      // ✅ EXTRA EMAIL VALIDATION
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.test(this.state.email)) {
-        this.message = 'Please enter a valid email address (e.g., user@example.com)';
-        this.error = true;
-        this.loading = false;
-        return;
-      }
-      
-      const isFormValid = await this.validate()
-      if (!isFormValid) {
-        this.message = 'Please fix the errors above'
-        this.error = true
-        this.loading = false;
-        return
-      }
-
-      try {
-        console.log('🔍 Login.vue: Calling store login action with:', {
-          email: this.state.email,
-          password: '[HIDDEN]'
-        });
-        
-        // ✅ CALL THE STORE LOGIN ACTION
-        const result = await this.store.dispatch('login', {
-          email: this.state.email.trim().toLowerCase(),
-          password: this.state.password
-        })
-        
-        console.log('✅ Login.vue: Store login returned:', result);
-        console.log('✅ Login.vue: User in store after login:', this.store.state.user);
-        
-        this.message = 'Login successful! Redirecting...'
-        this.error = false
-        
-        setTimeout(() => {
-          this.router.push({ name: 'About' })
-        }, 1500)
-        
-      } catch (err) {
-        console.error('❌ Login.vue: Login failed:', err);
-        this.message = err.message || 'Login failed. Please try again.'
-        this.error = true
-      } finally {
-        this.loading = false
-      }
+    
+    const userState = localStorage.getItem('user')
+    if (userState) {
+      const parsed = JSON.parse(userState)
+      console.log('localStorage user:', {
+        hasToken: !!parsed.token,
+        token: parsed.token?.substring(0, 20) + '...'
+      })
     }
+    
+    if (result.success) {
+      console.log('✅ Login successful! Redirecting to About...')
+      
+      // ✅ WAIT A TICK FOR STATE TO SETTLE
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      router.push({ name: 'About' })
+    }
+  } catch (err) {
+    console.error('❌ Login failed:', err)
+    error.value = err.message
   }
 }
+
 </script>
 
+<template>
+  <div class="login-container">
+    <div class="login-card">
+      <h1>Login</h1>
+      
+      <form @submit.prevent="handleLogin">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            id="email"
+            v-model="email" 
+            type="email" 
+            placeholder="Enter your email" 
+            required 
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            id="password"
+            v-model="password" 
+            type="password" 
+            placeholder="Enter your password" 
+            required 
+          />
+        </div>
+        
+        <button type="submit" class="btn-primary">Login</button>
+        
+        <div v-if="error" class="error-message">{{ error }}</div>
+      </form>
+      
+      <div class="links">
+        <router-link to="/forgot-password">Forgot Password?</router-link>
+        <router-link to="/register">Create Account</router-link>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
-.error-message {
-  color: #f44336;
-  font-weight: bold;
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.success-message {
-  color: #4caf50;
-  font-weight: bold;
-}
-
-.text-warning {
-  color: #ff9800;
-}
-
-#form-container {
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
   max-width: 400px;
-  margin: 0 auto;
 }
 
+h1 {
+  margin: 0 0 30px;
+  text-align: center;
+  color: #333;
+}
 
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background: #5568d3;
+}
+
+.error-message {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c33;
+  text-align: center;
+}
+
+.links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.links a {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
 </style>

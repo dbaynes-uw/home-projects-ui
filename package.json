@@ -2,23 +2,25 @@
   "name": "home-projects-ui",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=18.18.0 || ^20.9.0 || >=21.1.0",
     "npm": ">=9.0.0"
   },
   "scripts": {
-    "heroku-postbuild": "npm run build",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "start": "vue-cli-service serve",
-    "lint": "eslint . --ext .vue,.js,.mjs,.cjs --fix"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite",
+    "start": "vite",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
+    "heroku-postbuild": "vite build"
   },
   "dependencies": {
     "axios": "^1.2.2",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.10",
     "pinia": "^3.0.4",
-    "serve": "^14.0.0",
     "vue": "^3.2.47",
     "vue-router": "^4.2.5",
     "vue-select": "^4.0.0-beta.6",
@@ -30,18 +32,11 @@
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
     "@eslint/js": "^9.39.2",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-plugin-vuex": "~5.0.0",
-    "@vue/cli-service": "^5.0.8",
-    "buffer": "^6.0.3",
+    "@vitejs/plugin-vue": "^5.0.0",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "^10.6.2",
-    "path-browserify": "^1.0.1",
-    "process": "^0.11.10",
-    "stream-browserify": "^3.0.0",
-    "url": "^0.11.4",
-    "util": "^0.12.5",
+    "vite": "^5.0.0",
+    "vite-plugin-vue-devtools": "^7.0.0",
     "vue-eslint-parser": "^10.2.0"
   }
 }

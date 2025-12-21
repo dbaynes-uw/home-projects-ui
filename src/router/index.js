@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from '@/vuex/store';
 
 // ✅ ONLY IMPORT CORE COMPONENTS (Used imoobiately)
 import Home from '../views/Home.vue'
@@ -559,31 +560,18 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
-
+// Navigation guard
 router.beforeEach((to, from, next) => {
-  const loggedIn = localStorage.getItem('user')
+  const isAuthenticated = store.state.loggedIn
   
-  // ✅ MEMORY CLEANUP ON ROUTE CHANGE
-  if (from.name && from.name !== to.name) {
-    // Clear large datasets when changing routes
-    const store = router.app?.$store;
-    if (store && store.dispatch) {
-      try {
-        store.dispatch('clearLargeDatasets');
-        console.log('🧹 Route cleanup:', from.name, '→', to.name);
-      } catch (error) {
-        console.warn('⚠️ Cleanup failed:', error.message);
-      }
-    }
-  }
-  
-  // ✅ AUTH CHECK
-  if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
-    next('/')
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'Login' })
+  } else if (to.name === 'Login' && isAuthenticated) {
+    next({ name: 'HealthMarkers' }) // Or your preferred default route
   } else {
     next()
   }
-});
+})
 router.onError((error) => {
   console.error('Router error:', error);
   
