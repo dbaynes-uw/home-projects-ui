@@ -334,7 +334,7 @@
                         <button
                           @click.stop="editVendor(vendor)"
                           class="btn btn-outlined btn-small edit-vendor-btn"
-                        >EV
+                        >
                           <i class="fas fa-edit"></i>
                           <span class="edit-hint">Edit</span>
                         </button>
@@ -558,7 +558,6 @@ const vendorsProducts = computed(() => {
   if (Array.isArray(rawData)) return rawData;
   if (rawData?.data && Array.isArray(rawData.data)) return rawData.data;
   if (rawData?.vendors_products && Array.isArray(rawData.vendors_products)) return rawData.vendors_products;
-  console.warn('❌ vendorsProducts is not in expected format:', rawData);
   return [];
 });
 
@@ -997,7 +996,6 @@ function editVendor(vendor) {
 }
 
 function editProduct(product) {
-  console.log('✏️ Editing product:', product);
   router.push({ 
     name: 'ProductEdit', 
     params: { id: product.id } 
