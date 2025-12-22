@@ -86,7 +86,6 @@ export default new Vuex.Store({
       getState: (key, storage) => {
         try {
           const value = storage.getItem(key)
-          console.log('📦 vuex-persistedstate: Loading state from localStorage')
           return value ? JSON.parse(value) : undefined
         } catch (error) {
           console.error('❌ Error loading state:', error)
@@ -95,11 +94,6 @@ export default new Vuex.Store({
       },
       setState: (key, state, storage) => {
         try {
-          console.log('📦 vuex-persistedstate: Saving state to localStorage', {
-            user: !!state.user,
-            token: !!state.token,
-            loggedIn: state.loggedIn
-          })
           storage.setItem(key, JSON.stringify(state))
         } catch (error) {
           console.error('❌ Error saving state:', error)
@@ -318,12 +312,7 @@ export default new Vuex.Store({
       state.users.push(user);
     },
 
-        SET_USER_DATA (state, userData) {
-      console.log('🔍 SET_USER_DATA called with:', {
-        hasUserData: !!userData,
-        hasToken: !!userData?.token,
-        token: userData?.token?.substring(0, 20) + '...'
-      })
+      SET_USER_DATA (state, userData) {
       
       if (userData && typeof userData === 'object') {
         // ✅ Set all state properties
@@ -332,17 +321,9 @@ export default new Vuex.Store({
         state.token = userData.token || ''
         state.id = userData.id || ''
         
-        console.log('✅ State updated:', {
-          loggedIn: state.loggedIn,
-          hasUser: !!state.user,
-          hasToken: !!state.token,
-          userId: state.id
-        })
-        
         // ✅ Manual backup (in addition to vuex-persistedstate)
         try {
           localStorage.setItem('user', JSON.stringify(userData))
-          console.log('✅ Manual backup saved to localStorage.user')
         } catch (error) {
           console.error('❌ Failed to save manual backup:', error)
         }
@@ -350,14 +331,7 @@ export default new Vuex.Store({
         // ✅ Check if vuex-persistedstate saved it
         setTimeout(() => {
           const vuexState = localStorage.getItem('vuex')
-          if (vuexState) {
-            const parsed = JSON.parse(vuexState)
-            console.log('✅ vuex-persistedstate verification:', {
-              hasUser: !!parsed.user,
-              hasToken: !!parsed.token,
-              loggedIn: parsed.loggedIn
-            })
-          } else {
+          if (!vuexState) {
             console.warn('⚠️ vuex-persistedstate did not save!')
           }
         }, 100)
@@ -1147,6 +1121,15 @@ actions: {
         .catch((error) => {
           alert("Product Delete Error: ", error.response.data )
         });
+    },
+    async fetchProduct({ commit }, id) {
+      console.log("Fetching product with ID:", id);
+      try {
+        const response = await EventService.getProduct(id);
+        commit("SET_PRODUCT", response.data);
+      } catch (error) {
+          alert("Product Error", error.data)
+        }
     },
 
     async fetchProducts({ commit }) {

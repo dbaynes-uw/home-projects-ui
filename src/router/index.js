@@ -403,7 +403,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/product/:id",
+    path: "/products/:id",
     name: "ProductEdit",
     props: true,
     component: () => import('../views/products/ProductEdit.vue'),

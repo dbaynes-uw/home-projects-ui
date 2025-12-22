@@ -1,13 +1,15 @@
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/products/ProductEdit.vue -->
+
 <template>
-  <div class="vendor-edit-container">
+  <div class="product-edit-container">
     <ConfirmDialogue ref="confirmDialogue" />
     
     <!-- ✅ HEADER CARD -->
     <div class="card mt-5">
       <div class="card-header">
         <h2 class="card-title">
-          <i class="fas fa-store-alt"></i>
-          Edit or Delete Vendor
+          <i class="fas fa-box"></i>
+          Edit or Delete Product
         </h2>
         <p v-if="statusMessage" class="status-message">
           <i class="fas fa-info-circle"></i>
@@ -27,87 +29,152 @@
           </router-link>
 
           <button 
-            @click="deleteVendor(vendor)"
+            @click="deleteProduct"
             class="btn btn-danger"
             type="button"
           >
             <i class="fas fa-trash"></i>
-            Delete Vendor
+            Delete Product
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ LOADING STATE -->
+    <div v-if="loading" class="card mt-4">
+      <div class="card-body">
+        <div class="loading-container">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading product...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ ERROR STATE -->
+    <div v-else-if="error" class="card mt-4">
+      <div class="card-body">
+        <div class="error-container">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>{{ error }}</p>
+          <button @click="fetchProduct" class="btn btn-primary">
+            <i class="fas fa-redo"></i>
+            Retry
           </button>
         </div>
       </div>
     </div>
 
     <!-- ✅ EDIT FORM -->
-    <div class="card mt-4">
-      <form @submit.prevent="updateVendor">
+    <div v-else-if="product" class="card mt-4">
+      <form @submit.prevent="updateProduct">
         <div class="card-body">
           
-          <!-- ✅ VENDOR INFO SECTION -->
+          <!-- ✅ PRODUCT INFO SECTION -->
           <div class="info-section mb-4">
             <div class="info-row">
               <span class="info-label">
                 <i class="fas fa-hashtag"></i>
-                Vendor ID:
+                Product ID:
               </span>
-              <span class="info-value">{{ vendor.id }}</span>
+              <span class="info-value">{{ product.id }}</span>
             </div>
             <div class="info-row">
               <span class="info-label">
                 <i class="fas fa-calendar-plus"></i>
                 Created:
               </span>
-              <span class="info-value">{{ formatDate(vendor.created_at) }}</span>
+              <span class="info-value">{{ formatDate(product.created_at) }}</span>
             </div>
             <div class="info-row">
               <span class="info-label">
-                <i class="fas fa-user"></i>
-                Created By:
+                <i class="fas fa-calendar-alt"></i>
+                Last Updated:
               </span>
-              <span class="info-value">{{ vendor.created_by || 'Unknown' }}</span>
+              <span class="info-value">{{ formatDate(product.updated_at) }}</span>
             </div>
           </div>
 
-          <!-- ✅ LOCATION SELECT -->
+          <!-- ✅ VENDOR SELECT -->
           <div class="form-group">
             <label class="form-label required">
-              <i class="fas fa-map-marker-alt"></i>
-              Vendor Location
+              <i class="fas fa-store"></i>
+              Vendor
             </label>
             <div class="select-wrapper">
               <select
-                v-model="vendor.location"
+                v-model="product.vendor_id"
                 class="form-select"
                 required
+                @change="onVendorChange"
               >
-                <option value="" disabled>Select a location...</option>
+                <option value="" disabled>Select a vendor...</option>
                 <option 
-                  v-for="location in availableLocations" 
-                  :key="location"
-                  :value="location"
+                  v-for="vendor in vendors" 
+                  :key="vendor.id"
+                  :value="vendor.id"
                 >
-                  {{ location }}
+                  {{ vendor.vendor_name }} ({{ vendor.location }})
                 </option>
               </select>
               <i class="fas fa-chevron-down select-icon"></i>
             </div>
             <small class="form-hint">
-              {{ availableLocations.length }} locations available
+              {{ vendors.length }} vendors available
             </small>
           </div>
 
-          <!-- ✅ VENDOR NAME -->
+          <!-- ✅ LOCATION (Auto-populated from vendor) -->
           <div class="form-group">
-            <label class="form-label required">
-              <i class="fas fa-store"></i>
-              Vendor Name
+            <label class="form-label">
+              <i class="fas fa-map-marker-alt"></i>
+              Location
             </label>
             <input
-              v-model="vendor.vendor_name"
+              v-model="selectedVendorLocation"
+              type="text"
+              class="form-input"
+              disabled
+              placeholder="Select a vendor first"
+            />
+            <small class="form-hint">
+              Location is automatically set based on the selected vendor
+            </small>
+          </div>
+
+          <!-- ✅ PRODUCT NAME -->
+          <div class="form-group">
+            <label class="form-label required">
+              <i class="fas fa-box"></i>
+              Product Name
+            </label>
+            <input
+              v-model="product.product_name"
               type="text"
               class="form-input"
               required
+              placeholder="Enter product name"
             />
+          </div>
+
+          <!-- ✅ ACTIVE STATUS -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-toggle-on"></i>
+              Status
+            </label>
+            <div class="toggle-wrapper">
+              <label class="toggle-label">
+                <input
+                  v-model="product.active"
+                  type="checkbox"
+                  class="toggle-input"
+                />
+                <span class="toggle-slider"></span>
+                <span class="toggle-text">
+                  {{ product.active ? 'Active' : 'Inactive' }}
+                </span>
+              </label>
+            </div>
           </div>
 
           <!-- ✅ NOTES -->
@@ -117,10 +184,10 @@
               Notes
             </label>
             <textarea
-              v-model="vendor.notes"
+              v-model="product.notes"
               class="form-input"
               rows="4"
-              placeholder="Add any notes about this vendor..."
+              placeholder="Add any notes about this product..."
             ></textarea>
           </div>
 
@@ -133,7 +200,11 @@
           >
             <template v-if="!isSubmitting">
               <i class="fas fa-save"></i>
-              Update Vendor
+              Update Product
+            </template>
+            <template v-else>
+              <i class="fas fa-spinner fa-spin"></i>
+              Updating...
             </template>
           </button>
 
@@ -145,248 +216,184 @@
         </div>
       </form>
     </div>
-
-    <!-- ✅ PRODUCTS SECTION -->
-    <div v-if="vendorProducts.length > 0" class="card mt-4">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="fas fa-box"></i>
-          Products for this Vendor
-          <span class="chip chip-primary chip-small ml-2">
-            {{ vendorProducts.length }}
-          </span>
-        </h3>
-      </div>
-      <div class="card-body">
-        <div class="products-grid">
-          <div 
-            v-for="product in vendorProducts" 
-            :key="product.id"
-            class="product-item"
-            @click="editProduct(product)"
-          >
-            <div class="product-item-content">
-              <i class="fas fa-box product-icon"></i>
-              <div class="product-details">
-                <div class="product-name">{{ product.product_name }}</div>
-                <div class="product-meta">
-                  <span :class="['chip', 'chip-small', product.active ? 'chip-success' : 'chip-grey']">
-                    {{ product.active ? 'Active' : 'Inactive' }}
-                  </span>
-                </div>
-              </div>
-              <i class="fas fa-chevron-right product-chevron"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+<script setup>
+import { ref, computed, onMounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+import api from '@/services/api'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 
-export default {
-  name: 'VendorEdit',
-  
-  components: {
-    ConfirmDialogue,
-  },
-  
-  props: {
-    id: {
-      type: [String, Number],
-      required: true
+// ✅ COMPOSABLES
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
+
+// ✅ REFS
+const confirmDialogue = ref(null)
+const product = ref(null)
+const loading = ref(false)
+const error = ref(null)
+const statusMessage = ref('')
+const isSubmitting = ref(false)
+
+// ✅ COMPUTED
+const vendors = computed(() => store.state.vendors || [])
+
+const selectedVendor = computed(() => {
+  if (!product.value?.vendor_id) return null
+  return vendors.value.find(v => v.id === product.value.vendor_id)
+})
+
+const selectedVendorLocation = computed(() => {
+  return selectedVendor.value?.location || 'No vendor selected'
+})
+
+// ✅ METHODS
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A'
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+const fetchProduct = async () => {
+  try {
+    loading.value = true
+    error.value = null  
+    
+    // ✅ GET request to products controller    
+    const response = await api.get(`/api/v1/products/${route.params.id}`)
+    
+    // ✅ API returns { product: {...}, vendor: {...} }
+    product.value = response.data.product
+    
+  } catch (err) {
+    console.error('❌ Error fetching product:', err)
+    error.value = err.response?.data?.message || 'Failed to load product'
+  } finally {
+    loading.value = false
+  }
+}
+
+const fetchVendors = async () => {
+  try {
+    if (vendors.value.length === 0) {
+      await store.dispatch('fetchVendors')
     }
-  },
+  } catch (err) {
+    console.error('❌ Error fetching vendors:', err)
+  }
+}
+
+const onVendorChange = () => {
   
-  data() {
-    return {
-      vendor: {
-        id: "",
-        vendor_name: "",
-        location: "",
-        notes: "",
-        created_by: "",
-        created_at: "",
-        updated_at: ""
-      },
-      vendorProducts: [],
-      api_url: "",
-      statusMessage: '',
-      isSubmitting: false,
-    };
-  },
-  
-  computed: {
-    availableLocations() {
-      const rawData = this.$store.state.vendors_locations_group;
-      
-      if (rawData?.vendorsLocationsGroup && Array.isArray(rawData.vendorsLocationsGroup)) {
-        return this.cleanArrayData(rawData.vendorsLocationsGroup);
-      }
-      if (Array.isArray(rawData)) {
-        return this.cleanArrayData(rawData);
-      }
-      if (rawData?.data && Array.isArray(rawData.data)) {
-        return this.cleanArrayData(rawData.data);
-      }
-      
-      console.warn('❌ vendorsLocationsGroup is not in expected format:', rawData);
-      return [];
+  // Auto-update location based on vendor
+  if (selectedVendor.value) {
+    product.value.location = selectedVendor.value.location
+  }
+}
+
+const updateProduct = async () => {
+  try {
+    const ok = await confirmDialogue.value.show({
+      title: 'Update Product',
+      message: `Are you sure you want to update "${product.value.product_name}"?`,
+      okButton: 'Update',
+    })
+    
+    if (!ok) return
+    
+    isSubmitting.value = true
+    statusMessage.value = ''
+    
+    // ✅ Prepare product data
+    const productData = {
+      ...product.value,
+      location: selectedVendor.value?.location || product.value.location,
+      updated_at: new Date().toISOString()
     }
-  },
-  
-  async mounted() {
-    try {
-      // ✅ Use centralized API URL
-      const baseUrl = window.location.port === "8080"
-        ? "http://localhost:3000/api/v1"
-        : "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1";
-      
-      this.api_url = `${baseUrl}/vendors/`;
-      
-      // Fetch vendor data
-      const result = await axios.get(this.api_url + this.$route.params.id);
-      this.vendor = result.data;
-      
-      // Fetch locations
-      await this.$store.dispatch('fetchVendorsLocationsGroup');
-      
-      // Fetch vendor's products
-      await this.fetchVendorProducts();
-      
-      console.log('✅ Vendor loaded:', this.vendor);
-      console.log('✅ Vendor products:', this.vendorProducts);
-    } catch (error) {
-      console.error('❌ Error loading vendor:', error);
-      this.statusMessage = 'Error loading vendor';
-    }
-  },
-  
-  methods: {
-    cleanArrayData(data) {
-      if (!Array.isArray(data)) return [];
-      return data
-        .filter(item => item !== null && item !== undefined && item !== '')
-        .map(item => typeof item === 'string' ? item.trim() : String(item).trim())
-        .filter(item => item.length > 0)
-        .sort();
-    },
     
-    async fetchVendorProducts() {
-      try {
-        const allProducts = this.$store.state.products || [];
-        this.vendorProducts = allProducts.filter(
-          product => product.vendor_id === this.vendor.id
-        );
-      } catch (error) {
-        console.error('❌ Error fetching vendor products:', error);
-      }
-    },
-    
-    formatDate(dateString) {
-      if (!dateString) return 'N/A';
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    },
-    
-    editProduct(product) {
-      this.$router.push({
-        name: 'ProductEdit',
-        params: { id: product.id }
-      });
-    },
-    
-    async updateVendor() {
-      try {
-        const ok = await this.$refs.confirmDialogue.show({
-          title: "Update Vendor",
-          message: `Are you sure you want to update "${this.vendor.vendor_name}"?`,
-          okButton: "Update",
-        });
+    // ✅ PUT request to products controller
+    const response = await api.put(`/api/v1/products/${product.value.id}`, productData)
         
-        if (ok) {
-          this.isSubmitting = true;
-          
-          const vendorData = {
-            ...this.vendor,
-            updated_by: this.$store.state.user?.resource_owner?.email || "",
-            updated_at: new Date().toISOString()
-          };
-          
-          const success = await this.$store.dispatch("updateVendor", vendorData);
-          
-          if (success) {
-            this.statusMessage = `✅ Vendor "${vendorData.vendor_name}" updated successfully!`;
-            
-            // Refresh data
-            await Promise.all([
-              this.$store.dispatch('fetchVendors'),
-              this.$store.dispatch('fetchVendorsProducts'),
-              this.$store.dispatch('fetchVendorsLocationsGroup')
-            ]);
-            
-            // Clear message after 3 seconds
-            setTimeout(() => {
-              this.statusMessage = '';
-            }, 3000);
-          } else {
-            this.statusMessage = '❌ Failed to update vendor';
-          }
-        }
-      } catch (error) {
-        console.error('❌ Error updating vendor:', error);
-        this.statusMessage = `❌ Error: ${error.message}`;
-      } finally {
-        this.isSubmitting = false;
-      }
-    },
+    // Update local state - API returns { product: {...}, vendor: {...} }
+    product.value = response.data.product
     
-    async deleteVendor(vendor) {
-      try {
-        // Check if vendor has products
-        if (this.vendorProducts.length > 0) {
-          var ok = await this.$refs.confirmDialogue.show({
-            title: `Cannot Delete Vendor`,
-            message: `"${vendor.vendor_name}" has ${this.vendorProducts.length} product(s). Please delete or reassign all products before deleting this vendor.`,
-            okButton: "OK",
-            cancelButton: null
-          });
-          return;
-        }
-        
-          ok = await this.$refs.confirmDialogue.show({
-          title: `Delete Vendor`,
-          message: `Are you sure you want to delete "${vendor.vendor_name}"? This cannot be undone.`,
-          okButton: "Delete Forever",
-        });
-        
-        if (ok) {
-          await this.$store.dispatch("deleteVendor", vendor);
-          
-          this.statusMessage = `✅ Vendor "${vendor.vendor_name}" deleted! Redirecting...`;
-          
-          // Redirect after 2 seconds
-          setTimeout(() => {
-            this.$router.push({ name: "ProductsByLocations" });
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('❌ Error deleting vendor:', error);
-        this.statusMessage = `❌ Error: ${error.message}`;
-      }
-    },
-  },
-};
+    statusMessage.value = `✅ Product "${product.value.product_name}" updated successfully!`
+    
+    // ✅ Refresh store data
+    await Promise.all([
+      store.dispatch('fetchProducts'),
+      store.dispatch('fetchVendorsProducts')
+    ])
+    
+    // Clear message after 3 seconds
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 3000)
+    
+  } catch (err) {
+    console.error('❌ Error updating product:', err)
+    statusMessage.value = `❌ Error: ${err.response?.data?.message || err.message}`
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const deleteProduct = async () => {
+  try {
+    const ok = await confirmDialogue.value.show({
+      title: 'Delete Product',
+      message: `Are you sure you want to delete "${product.value.product_name}"? This cannot be undone.`,
+      okButton: 'Delete Forever',
+    })
+    
+    if (!ok) return
+    
+    // ✅ DELETE request to products controller
+    await api.delete(`/api/v1/products/${product.value.id}`)
+    
+    statusMessage.value = `✅ Product "${product.value.product_name}" deleted! Redirecting...`
+    
+    // ✅ Refresh store data
+    await Promise.all([
+      store.dispatch('fetchProducts'),
+      store.dispatch('fetchVendorsProducts')
+    ])
+    
+    // Redirect after 2 seconds
+    setTimeout(() => {
+      router.push({ name: 'ProductsByLocations' })
+    }, 2000)
+    
+  } catch (err) {
+    console.error('❌ Error deleting product:', err)
+    statusMessage.value = `❌ Error: ${err.response?.data?.message || err.message}`
+  }
+}
+
+// ✅ LIFECYCLE
+onMounted(async () => {
+  await Promise.all([
+    fetchProduct(),
+    fetchVendors()
+  ])
+})
+
+// ✅ WATCH for route changes
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    fetchProduct()
+  }
+})
 </script>
 
 <style scoped>
@@ -397,10 +404,38 @@ export default {
    COMPONENT-SPECIFIC STYLES
    ======================================== */
 
-.vendor-edit-container {
+.product-edit-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem;
+}
+
+/* Loading & Error States */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+
+.loading-container i {
+  font-size: 3rem;
+  color: #667eea;
+}
+
+.error-container i {
+  font-size: 3rem;
+  color: #ef4444;
+}
+
+.loading-container p,
+.error-container p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
 }
 
 /* Action Buttons */
@@ -516,75 +551,92 @@ export default {
   transform: translateY(-50%) rotate(180deg);
 }
 
+/* Toggle Switch */
+.toggle-wrapper {
+  padding: 0.5rem 0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background: #ccc;
+  border-radius: 26px;
+  transition: background 0.3s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.toggle-input:checked + .toggle-slider {
+  background: #4CAF50;
+}
+
+.toggle-input:checked + .toggle-slider::before {
+  transform: translateX(24px);
+}
+
+.toggle-text {
+  font-weight: 600;
+  color: #333;
+}
+
+.toggle-input:checked ~ .toggle-text {
+  color: #4CAF50;
+}
+
 /* Required Label */
 .form-label.required::after {
   content: ' *';
   color: #ef4444;
 }
 
-/* Products Grid */
-.products-grid {
-  display: grid;
-  gap: 0.75rem;
+/* Button Loading State */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
 }
 
-.product-item {
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.product-item:hover {
-  border-color: #667eea;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-}
-
-.product-item-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.product-icon {
-  font-size: 1.5rem;
-  color: #667eea;
-  flex-shrink: 0;
-}
-
-.product-details {
-  flex: 1;
-}
-
-.product-name {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.25rem;
-}
-
-.product-meta {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.product-chevron {
-  color: #999;
-  flex-shrink: 0;
+.btn-loading i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
 }
 
 /* Utility Classes */
 .mt-4 { margin-top: 1rem; }
 .mt-5 { margin-top: 1.5rem; }
 .mb-4 { margin-bottom: 1rem; }
-.ml-2 { margin-left: 0.5rem; }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .vendor-edit-container {
+  .product-edit-container {
     padding: 0.5rem;
   }
   
@@ -606,17 +658,7 @@ export default {
   .info-label {
     min-width: auto;
   }
-  
-  .product-item-content {
-    padding: 0.75rem;
-  }
-  
-  .product-name {
-    font-size: 0.95rem;
-  }
 }
-
 </style>
-
 
 <!-- End of File -->

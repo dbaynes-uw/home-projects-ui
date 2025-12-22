@@ -334,7 +334,7 @@
                         <button
                           @click.stop="editVendor(vendor)"
                           class="btn btn-outlined btn-small edit-vendor-btn"
-                        >
+                        >EV
                           <i class="fas fa-edit"></i>
                           <span class="edit-hint">Edit</span>
                         </button>
@@ -433,6 +433,7 @@
                               @click.stop="editProduct(product)"
                               class="btn btn-outlined btn-small"
                             >
+                            EP
                               <i class="fas fa-edit"></i>
                               <span class="edit-hint">Edit</span>
                             </button>
@@ -989,6 +990,7 @@ function getVendorsForLocation(location) {
 }
 
 function editVendor(vendor) {
+  console.log('✏️ Editing vendor:', vendor);
   router.push({ 
     name: 'VendorEdit', 
     params: { id: vendor.vendor_id || vendor.id }
@@ -996,6 +998,7 @@ function editVendor(vendor) {
 }
 
 function editProduct(product) {
+  console.log('✏️ Editing product:', product);
   router.push({ 
     name: 'ProductEdit', 
     params: { id: product.id } 

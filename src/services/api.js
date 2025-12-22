@@ -14,30 +14,19 @@ const api = axios.create({
 // ✅ FIXED: Synchronous token retrieval only
 api.interceptors.request.use(
   (config) => {
-    console.log('🔍 API INTERCEPTOR - Request to:', config.url)
-    console.log('🔍 LocalStorage keys:', Object.keys(localStorage))
-    
+
     let token = null
     
     // Method 1: Try vuex-persistedstate
     const vuexState = localStorage.getItem('vuex')
-    console.log('📦 vuex raw exists:', !!vuexState)
     
     if (vuexState) {
       try {
         const state = JSON.parse(vuexState)
-        console.log('📦 vuex parsed state:', {
-          hasUser: !!state.user,
-          hasUserToken: !!state.user?.token,
-          hasToken: !!state.token,
-          loggedIn: state.loggedIn
-        })
         
         token = state.user?.token || state.token
         
-        if (token) {
-          console.log('✅ Token from vuex:', token.substring(0, 30) + '...')
-        } else {
+        if (!token) {
           console.warn('⚠️ vuex exists but no token found')
           console.log('Full vuex state:', state)
         }
@@ -51,21 +40,13 @@ api.interceptors.request.use(
     // Method 2: Fallback to manual 'user' save
     if (!token) {
       const userString = localStorage.getItem('user')
-      console.log('📦 user raw exists:', !!userString)
       
       if (userString) {
         try {
           const userData = JSON.parse(userString)
-          console.log('📦 user parsed:', {
-            hasToken: !!userData.token,
-            email: userData.email
-          })
           
           token = userData.token
           
-          if (token) {
-            console.log('✅ Token from user:', token.substring(0, 30) + '...')
-          }
         } catch (error) {
           console.error('❌ Error parsing user:', error)
         }
@@ -75,13 +56,6 @@ api.interceptors.request.use(
     // Add token to request
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-      console.log('✅ Authorization header set')
-    } else {
-      console.error('❌ NO TOKEN FOUND - Request will fail!')
-      console.log('Available localStorage:', {
-        vuex: localStorage.getItem('vuex')?.substring(0, 100),
-        user: localStorage.getItem('user')?.substring(0, 100)
-      })
     }
     
     return config
@@ -95,7 +69,6 @@ api.interceptors.request.use(
 // ✅ Response interceptor
 api.interceptors.response.use(
   (response) => {
-    console.log('✅ API Response:', response.status, response.config.url)
     return response
   },
   (error) => {

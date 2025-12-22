@@ -280,6 +280,18 @@ export default {
     this.init();
     return api.delete(api_url + "products/" + `${product.id}`);
   },
+  getProduct(id) {
+    this.init();
+    console.log("ES GET Product with ID:", id);
+    console.log("ES GET Product URL:", api_url + "products/" + id);
+    return api.get(api_url + "products/" + id);
+  },
+  /*
+  getGarden(id) {
+    this.init();
+    return api.get(api_url + "gardens/" + id);
+  },
+  */
   async getProducts() {
     this.init();
     return api.get(api_url + "products")
