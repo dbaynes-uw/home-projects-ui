@@ -433,7 +433,6 @@
                               @click.stop="editProduct(product)"
                               class="btn btn-outlined btn-small"
                             >
-                            EP
                               <i class="fas fa-edit"></i>
                               <span class="edit-hint">Edit</span>
                             </button>
