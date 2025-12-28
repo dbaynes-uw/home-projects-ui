@@ -286,6 +286,7 @@ const filteredMarkers = computed(() => {
   }
 
   // Apply sorting
+  console
   filtered.sort((a, b) => {
     switch (sortBy.value) {
       case 'date-desc':
@@ -367,30 +368,33 @@ const averageSleep = computed(() => {
 });
 
 function parseTime(timeStr) {
-  if (!timeStr || typeof timeStr !== 'string') return 0;
-  
-  // ✅ Handle "6h" format (hours only)
-  if (timeStr.includes('h')) {
+  if (!timeStr) return 0;
+  // If it's a number, treat as minutes
+  if (typeof timeStr === 'number') return timeStr;
+  if (typeof timeStr === 'string') {
+    // Handle 'Xh Ym' or 'Xh' or 'Ym' format
     const hoursMatch = timeStr.match(/(\d+(?:\.\d+)?)h/);
     const minutesMatch = timeStr.match(/(\d+)m/);
-    
-    const hours = hoursMatch ? parseFloat(hoursMatch[1]) : 0;
-    const minutes = minutesMatch ? parseInt(minutesMatch[1]) : 0;
-    
-    return Math.round(hours * 60 + minutes);
-  }
-  
-  // ✅ Handle "HH:MM" format (fallback for other time fields)
-  const parts = timeStr.split(':');
-  if (parts.length === 2) {
-    const hours = parseInt(parts[0]);
-    const minutes = parseInt(parts[1]);
-    
-    if (!isNaN(hours) && !isNaN(minutes)) {
-      return hours * 60 + minutes;
+    if (hoursMatch || minutesMatch) {
+      const hours = hoursMatch ? parseFloat(hoursMatch[1]) : 0;
+      const minutes = minutesMatch ? parseInt(minutesMatch[1]) : 0;
+      return Math.round(hours * 60 + minutes);
+    }
+    // Handle 'HH:MM' format
+    const parts = timeStr.split(':');
+    if (parts.length === 2) {
+      const hours = parseInt(parts[0]);
+      const minutes = parseInt(parts[1]);
+      if (!isNaN(hours) && !isNaN(minutes)) {
+        return hours * 60 + minutes;
+      }
+    }
+    // Handle plain number string (minutes)
+    const asInt = parseInt(timeStr);
+    if (!isNaN(asInt)) {
+      return asInt;
     }
   }
-  
   return 0;
 }
 const averageQuality = computed(() => {
