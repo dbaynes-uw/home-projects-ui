@@ -113,12 +113,11 @@
               <div class="products-wrapper">
                 <!-- ✅ SEARCH RESULTS MODE -->
                 <template v-if="searchQuery && filteredProducts.length > 0">
-                  <div v-for="product in filteredProducts" :key="product.id" class="product-section">
+                  <div v-for="(product, idx) in filteredProducts" :key="product.id" class="product-section">
                     <h3 class="product-name">
                       <i class="fas fa-box"></i>
-                      <span v-html="highlightSearchTerm(product.product_name)"></span>
+                      <span v-if="shouldShowProductName(filteredProducts, idx)" v-html="highlightSearchTerm(product.product_name)"></span>
                     </h3>
-                    
                     <div class="vendor-option">
                       <input
                         :id="`product-${product.id}`"
@@ -144,12 +143,11 @@
 
                 <!-- ✅ NORMAL MODE (NO SEARCH) -->
                 <template v-else-if="!searchQuery && displayedProducts.length > 0">
-                  <div v-for="product in displayedProducts" :key="product.id" class="product-section">
+                  <div v-for="(product, idx) in displayedProducts" :key="product.id" class="product-section">
                     <h3 class="product-name">
                       <i class="fas fa-box"></i>
-                      {{ product.product_name }}
+                      <span v-if="showShoppingList ? shouldShowProductName(displayedProducts, idx) : true">{{ product.product_name }}</span>
                     </h3>
-                    
                     <div class="vendor-option">
                       <input
                         :id="`product-${product.id}`"
@@ -226,6 +224,11 @@
 </template>
 
 <script setup>
+// Show product name only for the first occurrence in consecutive duplicates
+function shouldShowProductName(list, idx) {
+  if (idx === 0) return true;
+  return list[idx].product_name !== list[idx - 1].product_name;
+}
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
