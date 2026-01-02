@@ -26,13 +26,13 @@
               Date 
               <i v-if="sortKey === 'sleep_date'" :class="sortIcon" class="sort-icon"></i>
             </th>
-            <th @click="sortBy('bed_time')" class="sortable">
+            <th @click="sortBy('bedtime')" class="sortable">
               Bed Time
-              <i v-if="sortKey === 'bed_time'" :class="sortIcon" class="sort-icon"></i>
+              <i v-if="sortKey === 'bedtime'" :class="sortIcon" class="sort-icon"></i>
             </th>
-            <th @click="sortBy('wake_time')" class="sortable">
+            <th @click="sortBy('waketime')" class="sortable">
               Wake Time
-              <i v-if="sortKey === 'wake_time'" :class="sortIcon" class="sort-icon"></i>
+              <i v-if="sortKey === 'waketime'" :class="sortIcon" class="sort-icon"></i>
             </th>
             <th @click="sortBy('time_in_bed')" class="sortable">
               Time in Bed
@@ -80,8 +80,8 @@
                 <div class="date-value">{{ formatDate(marker.sleep_date) }}</div>
               </div>
             </td>
-            <td>{{ marker.bed_time }}</td>
-            <td>{{ marker.wake_time }}</td>
+            <td>{{ marker.bedtime }}</td>
+            <td>{{ marker.waketime }}</td>
             <td>{{ marker.time_in_bed }}</td>
             <td>{{ marker.time_asleep }}</td>
             <td class="center">{{ marker.awakenings }}</td>
@@ -222,8 +222,8 @@ const exportToCsv = () => {
   // ✅ FIXED: Changed props.sleepMarkers to props.markers
   const csvData = props.markers.map(item => [
     formatDate(item.sleep_date),
-    formatTime(item.bed_time),
-    formatTime(item.wake_time),
+    formatTime(item.bedtime),
+    formatTime(item.waketime),
     item.time_in_bed || '',
     item.time_asleep || '',
     item.awakenings || 0,

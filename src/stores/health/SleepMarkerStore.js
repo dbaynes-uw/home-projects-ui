@@ -61,17 +61,31 @@ function hoursMinutesToMinutes(hoursMinutesString) {
   }
 }
 
+// ✅ Convert 'HH:mm' string to minutes since midnight
+function hhmmToMinutes(hhmm) {
+  if (!hhmm || typeof hhmm !== 'string') return null;
+  const match = hhmm.match(/^(\d{2}):(\d{2})$/);
+  if (!match) return null;
+  const hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  console.log(`Converting HH:MM ${hhmm} to minutes:`, hours * 60 + minutes);
+  return hours * 60 + minutes;
+}
+
 // ✅ NEW: Prepare data for API (convert back to minutes)
 function prepareForApi(markerData) {
   return {
     ...markerData,
-    deep_sleep: hoursMinutesToMinutes(markerData.deep_sleep),
-    rem_sleep: hoursMinutesToMinutes(markerData.rem_sleep),
-    core_sleep: hoursMinutesToMinutes(markerData.core_sleep),
-    awake_sleep: hoursMinutesToMinutes(markerData.awake_sleep),
+    deep: hoursMinutesToMinutes(markerData.deep),
+    rem: hoursMinutesToMinutes(markerData.rem),
+    core: hoursMinutesToMinutes(markerData.core),
+    awake: hoursMinutesToMinutes(markerData.awake),
     time_in_bed: hoursMinutesToMinutes(markerData.time_in_bed),
     time_awake: hoursMinutesToMinutes(markerData.time_awake),
     time_asleep: hoursMinutesToMinutes(markerData.time_asleep),
+    scheduled_bedtime: markerData.scheduled_bedtime,
+    scheduled_waketime: markerData.scheduled_waketime,
+    actual_bedtime: markerData.actual_bedtime,
   };
 }
 
@@ -96,13 +110,16 @@ function formatSleepMarker(marker) {
   return {
     ...marker,
     sleep_date: normalizeDate(marker.sleep_date), // ✅ Just normalize, don't convert
-    bed_time: extractTime(marker.bed_time),
-    wake_time: extractTime(marker.wake_time),
+    bedtime: extractTime(marker.bedtime),
+    waketime: extractTime(marker.waketime),
+    scheduled_bedtime: extractTime(marker.scheduled_bedtime),
+    scheduled_waketime: extractTime(marker.scheduled_waketime),
+    actual_bedtime: extractTime(marker.actual_bedtime),
     // ✅ Convert all sleep duration fields from minutes to "Xh Ym" format
-    deep_sleep: minutesToHoursMinutes(marker.deep_sleep),
-    rem_sleep: minutesToHoursMinutes(marker.rem_sleep),
-    core_sleep: minutesToHoursMinutes(marker.core_sleep),
-    awake_sleep: minutesToHoursMinutes(marker.awake_sleep),
+    deep: minutesToHoursMinutes(marker.deep),
+    rem: minutesToHoursMinutes(marker.rem),
+    core: minutesToHoursMinutes(marker.core),
+    awake: minutesToHoursMinutes(marker.awake),
     time_in_bed: minutesToHoursMinutes(marker.time_in_bed),
     time_awake: minutesToHoursMinutes(marker.time_awake),
     time_asleep: minutesToHoursMinutes(marker.time_asleep)
@@ -180,10 +197,12 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       return decimalHoursToHoursMinutes(average);
     },
 
-    averageSleepQuality: (state) => {
+    averageSleepScore: (state) => {
+      console.log('Calculating average sleep score for', state.sleepMarkers.length, 'markers');
       if (!state.sleepMarkers.length) return '0.0';
       const total = state.sleepMarkers.reduce((sum, m) => 
-        sum + (parseFloat(m.sleep_quality) || 0), 0
+        sum + (parseFloat(m.sleep_score) || 0), 0
+      
       );
       return (total / state.sleepMarkers.length).toFixed(1);
     },
@@ -192,7 +211,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       if (state.sleepMarkers.length === 0) return '0m';
       const total = state.sleepMarkers.reduce((sum, m) => {
         // Convert "1h 30m" string to decimal for averaging
-        return sum + hoursMinutesToDecimal(m.awake_sleep);
+        return sum + hoursMinutesToDecimal(m.awake);
       }, 0);
       const average = total / state.sleepMarkers.length;
       return decimalHoursToHoursMinutes(average);
@@ -202,7 +221,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       if (state.sleepMarkers.length === 0) return '0m';
       const total = state.sleepMarkers.reduce((sum, m) => {
         // Convert "1h 30m" string to decimal for averaging
-        return sum + hoursMinutesToDecimal(m.rem_sleep);
+        return sum + hoursMinutesToDecimal(m.rem);
       }, 0);
       const average = total / state.sleepMarkers.length;
       return decimalHoursToHoursMinutes(average);
@@ -211,7 +230,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
     averageCoreSleep: (state) => {
       if (state.sleepMarkers.length === 0) return '0m';
       const total = state.sleepMarkers.reduce((sum, m) => {
-        return sum + hoursMinutesToDecimal(m.core_sleep);
+        return sum + hoursMinutesToDecimal(m.core);
       }, 0);
       const average = total / state.sleepMarkers.length;
       return decimalHoursToHoursMinutes(average);
@@ -220,7 +239,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
     averageDeepSleep: (state) => {
       if (state.sleepMarkers.length === 0) return '0m';
       const total = state.sleepMarkers.reduce((sum, m) => {
-        return sum + hoursMinutesToDecimal(m.deep_sleep);
+        return sum + hoursMinutesToDecimal(m.deep);
       }, 0);
       const average = total / state.sleepMarkers.length;
       return decimalHoursToHoursMinutes(average);
@@ -235,10 +254,10 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       return decimalHoursToHoursMinutes(average);
     },
 
-    averageAwakenings: (state) => {
+    averageInterruptions: (state) => {
       if (!state.sleepMarkers.length) return '0';
       const total = state.sleepMarkers.reduce((sum, m) => 
-        sum + (parseInt(m.awakenings) || 0), 0
+        sum + (parseInt(m.interruptions) || 0), 0
       );
       return Math.round(total / state.sleepMarkers.length);
     },
@@ -342,10 +361,12 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       try {
         
         // ✅ Convert hours/minutes to minutes for API
-        const apiData = prepareForApi(sleepMarkerData);
-        
+        const apiData = prepareForApi(sleepMarkerData)
+      
         const response = await EventService.putSleepMarker(apiData);
-        
+      
+        alert('Sleep entry updated successfully!');
+      
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
                 
@@ -372,7 +393,6 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
-        alert('Sleep entry deleted successfully.');                
         return true;
         
       } catch (error) {

@@ -11,94 +11,180 @@
         required
         :error="errors.sleep_date"
       />
-
+ formData.scheduled_bedtime: {{ formData.scheduled_bedtime }}
       <!-- Bed Time -->
       <BaseInput
-        v-model="formData.bed_time"
-        label="Bed Time"
+        v-model="formData.scheduled_bedtime"
+        label="Scheduled Bed Time"
         type="time"
         prepend-icon="clock-outline"
-        :error="errors.bed_time"
+        :error="errors.scheduled_bedtime"
         hint="What time did you go to bed?"
       />
 
+      formData.scheduled_waketime: {{ formData.scheduled_waketime }}
       <!-- Wake Time -->
       <BaseInput
-        v-model="formData.wake_time"
+        v-model="formData.scheduled_waketime"
         label="Wake Time"
         type="time"
         prepend-icon="alarm"
-        :error="errors.wake_time"
+        :error="errors.scheduled_waketime"
         hint="What time did you wake up?"
       />
 
-      <!-- Sleep Quality -->
-      <div class="form-group">
-        <label class="form-label">
-          Sleep Quality
-          <span class="quality-value">({{ formData.sleep_quality }}/10)</span>
-        </label>
-        <input
-          v-model.number="formData.sleep_quality"
-          type="range"
-          min="0"
-          max="10"
-          step="0.5"
-          class="range-slider"
-        />
-        <div class="range-labels">
-          <span>Poor</span>
-          <span>Excellent</span>
-        </div>
-      </div>
-
-      <HoursMinutesInput
-        v-model="formData.time_in_bed"
-        label="Time in Bed"
-        :error="errors.time_in_bed"
-      />
-
-      <HoursMinutesInput
-        v-model="formData.time_asleep"
-        label="Time Asleep"
-        :error="errors.time_asleep"
-      />
-      
-      <!-- Awakenings -->
+      <!-- Actual Bed Time -->
       <BaseInput
-        v-model.number="formData.awakenings"
-        label="Number of Awakenings"
+        v-model="formData.actual_bedtime"
+        label="Actual Bed Time"
+        type="time"
+        prepend-icon="clock-outline"
+        :error="errors.actual_bedtime"
+        hint="Optional"
+      />
+      <!-- Sleep Score -->
+      <BaseInput
+        v-model.number="formData.sleep_score"
+        label="Sleep Score"
+        type="number"
+        min="0"
+        max="100"
+        prepend-icon="star"
+        :error="errors.sleep_score"
+        hint="Overall sleep score (0-100)"
+      />
+
+      <!-- Sleep Score Rating -->
+      <BaseInput
+        v-model="formData.sleep_score_rating"
+        label="Sleep Score Rating"
+        type="text"
+        prepend-icon="star-half"
+        :error="errors.sleep_score_rating"
+        hint="e.g. Excellent, Good, Fair, Poor"
+      />
+
+      <!-- Sleep Score Explained -->
+      <BaseInput
+        v-model="formData.sleep_score_explained"
+        label="Sleep Score Explained"
+        type="text"
+        prepend-icon="comment"
+        :error="errors.sleep_score_explained"
+        hint="Short explanation of the score"
+      />
+      <br/>
+      <!-- Duration Score -->
+      <BaseInput
+        v-model="formData.duration_score"
+        label="Duration Score"
+        type="text"
+        prepend-icon="clock"
+        :error="errors.duration_score"
+        hint="Score for sleep duration. Amount is 'Time Asleep' stage below."
+      />
+
+      <!-- Duration Score Explained -->
+      <BaseInput
+        v-model="formData.duration_score_explained"
+        label="Duration Score Explained"
+        type="text"
+        prepend-icon="comment"
+        :error="errors.duration_score_explained"
+        hint="Short explanation of the duration score"
+      />
+
+      <!-- Bed Time Score -->
+      <BaseInput
+        v-model="formData.bedtime_score"
+        label="Bed Time Score"
+        type="text"
+        prepend-icon="clock"
+        :error="errors.bedtime_score"
+        hint="Score for bed time (0-100)"
+      />
+
+      <!-- Bed Time Score Explained -->
+      <BaseInput
+        v-model="formData.bedtime_score_explained"
+        label="Bed Time Score Explained"
+        type="text"
+        prepend-icon="comment"
+        :error="errors.bedtime_score_explained"
+        hint="Short explanation of the bed time score"
+      />
+
+      <!-- Interruptions -->
+      <BaseInput
+        v-model.number="formData.interruptions"
+        label="Interruptions"
         type="number"
         min="0"
         prepend-icon="eye-off"
-        :error="errors.awakenings"
+        :error="errors.interruptions"
+        hint="Number of interruptions during sleep"
+      />
+      <!-- Interruptions Score -->
+      <BaseInput
+        v-model="formData.interruptions_score"
+        label="Interruptions Score"
+        type="text"
+        prepend-icon="star"
+        :error="errors.interruptions_score"
+        hint="Score for interruptions (0-100)"
       />
 
-      <!-- ✅ HOURS/MINUTES INPUTS -->
-      <HoursMinutesInput
-        v-model="formData.awake_sleep"
-        label="Awake Sleep"
-        :error="errors.awake_sleep"
+      <!-- Interruptions Score Explained -->
+      <BaseInput
+        v-model="formData.interruptions_score_explained"
+        label="Interruptions Score Explained"
+        type="text"
+        prepend-icon="comment"
+        :error="errors.interruptions_score_explained"
+        hint="Short explanation - same amount as Awake stage below."
+      />
+      <br/>
+      <!-- Breaths Per Minute -->
+      <BaseInput
+        v-model.number="formData.from_breaths_per_minute"
+        label="From Breaths Per Minute"
+        type="decimal"
+        min="0"
+        prepend-icon="eye-off"
+        :error="errors.from_breaths_per_minute"
+        hint="Number of breaths per minute (from)"
+      />
+            <!-- Breaths Per Minute -->
+      <BaseInput
+        v-model.number="formData.to_breaths_per_minute"
+        label="To Breaths Per Minute"
+        type="decimal"
+        min="0"
+        prepend-icon="eye-off"
+        :error="errors.to_breaths_per_minute"
+        hint="Number of breaths per minute (to)"
       />
 
-      <HoursMinutesInput
-        v-model="formData.rem_sleep"
-        label="REM Sleep"
-        :error="errors.rem_sleep"
+      <!-- Heart Beats Per Minute -->
+      <BaseInput
+        v-model.number="formData.from_heart_beats_per_minute"
+        label="From Heart Beats Per Minute"
+        type="decimal"
+        min="0"
+        prepend-icon="eye-off"
+        :error="errors.from_heart_beats_per_minute"
+        hint="Number of heart beats per minute (from)"
       />
-
-      <HoursMinutesInput
-        v-model="formData.core_sleep"
-        label="Core Sleep"
-        :error="errors.core_sleep"
+            <!-- Heart Beats Per Minute -->
+      <BaseInput
+        v-model.number="formData.to_heart_beats_per_minute"
+        label="To Heart Beats Per Minute"
+        type="decimal"
+        min="0"
+        prepend-icon="eye-off"
+        :error="errors.to_heart_beats_per_minute"
+        hint="Number of heart beats per minute (to)"
       />
-
-      <HoursMinutesInput
-        v-model="formData.deep_sleep"
-        label="Deep Sleep"
-        :error="errors.deep_sleep"
-      />
-
       <!-- ✅ NEW: FASTING WEIGHT (LBS + OZ) -->
       <div class="weight-input-group">
         <label class="form-label">
@@ -124,7 +210,44 @@
           />
           <span class="weight-separator">oz</span>
         </div>
-      </div> 
+      </div>
+      <HoursMinutesInput
+        v-model="formData.time_in_bed"
+        label="Time in Bed"
+        :error="errors.time_in_bed"
+      />
+
+      <HoursMinutesInput
+        v-model="formData.time_asleep"
+        label="Time Asleep"
+        :error="errors.time_asleep"
+      />
+
+      <!-- ✅ HOURS/MINUTES INPUTS -->
+      <HoursMinutesInput
+        v-model="formData.awake"
+        label="Awake Sleep"
+        :error="errors.awake"
+      />
+
+      <HoursMinutesInput
+        v-model="formData.rem"
+        label="REM Sleep"
+        :error="errors.rem"
+      />
+
+      <HoursMinutesInput
+        v-model="formData.core"
+        label="Core Sleep"
+        :error="errors.core"
+      />
+
+      <HoursMinutesInput
+        v-model="formData.deep"
+        label="Deep Sleep"
+        :error="errors.deep"
+      />
+
     </div>  
 
     <!-- ✅ DREAM NOTES TEXTAREA (Conditional, Full Width) -->
@@ -253,18 +376,32 @@ const errors = ref({});
 
 const formData = ref({
   sleep_date: '',
-  bed_time: '',
-  wake_time: '',
+  scheduled_bedtime: '22:30',
+  scheduled_waketime: '06:30',
+  actual_bedtime: '22:30',
   total_sleep_hours: 8,
-  sleep_quality: 7,
-  deep_sleep: '0m',
-  rem_sleep: '0m',
-  core_sleep: '0m',
-  awake_sleep: '0m',
-  awakenings: 0,
+  sleep_score: '',
+  sleep_score_rating: '',
+  sleep_score_explained: '',
+  duration_score: '',
+  duration_score_explained: '',
+  bedtime_score: '',
+  bedtime_score_explained: '',
+  interruptions: 0,
+  interruptions_score: '',
+  interruptions_score_explained: '',
+  from_breaths_per_minute: null,
+  to_breaths_per_minute: null,
+  breaths_per_minute_explained: null,
+  from_heart_beats_per_minute: null,
+  to_heart_beats_per_minute: null,
+  heart_beats_per_minute_explained: null,
   time_in_bed: '0m',
-  time_awake: '0m',
   time_asleep: '0m',
+  deep: '0m',
+  rem: '0m',
+  core: '0m',
+  awake: '0m',
   dream_notes: '',
   fasting_weight_lbs: null,
   fasting_weight_oz: null,
@@ -304,25 +441,31 @@ watch(() => props.sleepMarker, (newMarker) => {
 function resetForm() {
   formData.value = {
     sleep_date: new Date().toISOString().split('T')[0],
-    bed_time: '',
-    wake_time: '',
-    total_sleep_hours: 8,
-    sleep_quality: 7,
-    deep_sleep: '0m',
-    rem_sleep: '0m',
-    core_sleep: '0m',
-    awake_sleep: '0m',
-    awakenings: 0,
+    scheduled_bedtime: '22:30',
+    scheduled_waketime: '06:30',
+    actual_bedtime: '',
+    sleep_score: '',
+    sleep_score_rating: '',
+    sleep_score_explained: '',
+    duration_score: '',
+    duration_score_explained: '',
+    bedtime_score: '',
+    bedtime_score_explained: '',
+    interruptions: 0,
+    interruptions_score: '',
+    interruptions_score_explained: '',
+    from_breaths_per_minute: null,
+    to_breaths_per_minute: null,
+    breaths_per_minute_explained: null,
+    from_heart_beats_per_minute: null,
+    to_heart_beats_per_minute: null,
+    heart_beats_per_minute_explained: null,
     time_in_bed: '0m',
-    time_awake: '0m',
-    time_asleep: '0m',
-    dream_notes: '',
-    fasting_weight_lbs: null,
-    fasting_weight_oz: null,
-    exercise_notes: '',
-    alcohol_notes: '',
-    sugar_notes: '',
-    sleep_notes: ''
+    time_asleep: '0m',   
+    deep: '0m',
+    rem: '0m',
+    core: '0m',
+    awake: '0m',
   };
   errors.value = {};
 }
@@ -346,18 +489,29 @@ async function handleSubmit() {
   
   try {
     const submitData = { ...formData.value };
-    
+
+    // Guard: Ensure scheduled_bedtime and scheduled_waketime are strings in 'HH:mm' format
+    const timeRegex = /^\d{2}:\d{2}$/;
+    if (typeof submitData.scheduled_bedtime !== 'string' || !timeRegex.test(submitData.scheduled_bedtime)) {
+      submitData.scheduled_bedtime = '22:30';
+    }
+    console.log('scheduled_bedtime before test:', submitData.scheduled_bedtime);
+    if (typeof submitData.scheduled_waketime !== 'string' || !timeRegex.test(submitData.scheduled_waketime)) {
+      submitData.scheduled_waketime = '06:30';
+    }
+    console.log('scheduled_waketime before submit:', submitData.scheduled_waketime);
     // ✅ Convert lbs + oz to decimal before submitting
     if (submitData.fasting_weight_lbs !== null || submitData.fasting_weight_oz !== null) {
       const lbs = submitData.fasting_weight_lbs || 0;
       const oz = submitData.fasting_weight_oz || 0;
       submitData.fasting_weight = lbs + (oz / 16);
-      
+
       // Remove the temporary fields
       delete submitData.fasting_weight_lbs;
       delete submitData.fasting_weight_oz;
     }
-    
+    console.log('scheduled_bedtime before submit:', submitData.scheduled_bedtime);
+
     emit('save', submitData);
     resetForm();
   } catch (error) {

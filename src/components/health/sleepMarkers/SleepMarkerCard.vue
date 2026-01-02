@@ -24,15 +24,46 @@
     <div class="card-body">
       <!-- Sleep Times -->
       <div class="time-row">
-        <div v-if="viewMode === 'detail' && sleepMarker.bed_time" class="time-item">
+        <!--viewMode === 'detail' && -->
+        <div v-if="sleepMarker.sleep_score" class="time-item">
           <i class="fas fa-bed"></i>
-          <span class="time-label">Bed Time</span>
-          <span class="time-value">{{ sleepMarker.bed_time }}</span>
+          <span class="time-label">Sleep Score</span>
+          <span class="time-value">{{ sleepMarker.sleep_score }}</span>
         </div>
-        <div v-if="viewMode === 'detail' && sleepMarker.wake_time" class="time-item">
+        <div v-if="sleepMarker.sleep_score_rating" class="time-item">
           <i class="fas fa-bed"></i>
-          <span class="time-label">Wake Time</span>
-          <span class="time-value">{{ sleepMarker.wake_time }}</span>
+          <span class="time-label">Sleep Score Rating</span>
+          <span class="time-value">{{ sleepMarker.sleep_score_rating }}</span>
+        </div>        
+        <div v-if="sleepMarker.duration_score" class="time-item">
+          <i class="fas fa-bed"></i>
+          <span class="time-label">Duration Score</span>
+          <span class="time-value">{{ sleepMarker.duration_score }}</span>
+        </div>
+        <div v-if="sleepMarker.duration_score_explained" class="time-item">
+          <i class="fas fa-bed"></i>
+          <span class="time-label">Duration Score Explained</span>
+          <span class="time-value">{{ sleepMarker.duration_score_explained }}</span>
+        </div>
+        <div v-if="sleepMarker.bedtime_score" class="time-item">
+          <i class="fas fa-bed"></i>
+          <span class="time-label">Bedtime Score</span>
+          <span class="time-value">{{ sleepMarker.bedtime_score }}</span>
+        </div>
+        <div v-if="sleepMarker.bedtime_score_explained" class="time-item">
+          <i class="fas fa-bed"></i>
+          <span class="time-label">Bedtime Score Explained</span>
+          <span class="time-value">{{ sleepMarker.bedtime_score_explained }}</span>
+        </div>        
+        <div class="stat-item">
+          <i class="fas fa-star stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.interruptions_score }}</span>
+          <span class="stat-label">Interruptions Score</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.interruptions_score_explained }}</span>
+          <span class="stat-label">Interruptions Score Explained</span>
         </div>
         <div class="time-item">
           <i class="fas fa-clock"></i>
@@ -57,6 +88,29 @@
         </div>
       </div>
 
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.awake }}</span>
+          <span class="stat-label">Awake Sleep</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.rem }}</span>
+          <span class="stat-label">REM Sleep</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.core }}</span>
+          <span class="stat-label">Core Sleep</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-brain stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.deep }}</span>
+          <span class="stat-label">Deep Sleep</span>
+        </div>        
+      </div>
       <!-- Fasting Weight Banner -->
       <div class="weight-banner">
         <div class="weight-content">
@@ -67,41 +121,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Stats Grid -->
-      <div class="stats-grid">
-        <div class="stat-item">
-          <i class="fas fa-star stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.sleep_quality }}/10</span>
-          <span class="stat-label">Quality</span>
-        </div>
-        <div class="stat-item">
-          <i class="fas fa-eye stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.awakenings }}</span>
-          <span class="stat-label">Awakenings</span>
-        </div>
-        <div class="stat-item">
-          <i class="fas fa-brain stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.awake_sleep }}</span>
-          <span class="stat-label">Awake Sleep</span>
-        </div>
-        <div class="stat-item">
-          <i class="fas fa-brain stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.rem_sleep }}</span>
-          <span class="stat-label">REM Sleep</span>
-        </div>
-        <div class="stat-item">
-          <i class="fas fa-brain stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.core_sleep }}</span>
-          <span class="stat-label">Core Sleep</span>
-        </div>
-        <div class="stat-item">
-          <i class="fas fa-brain stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.deep_sleep }}</span>
-          <span class="stat-label">Deep Sleep</span>
-        </div>        
-      </div>
-
       <!-- OOB Section -->
       <div v-if="sleepMarker.had_oob" class="oob-details">
         <div class="oob-header">

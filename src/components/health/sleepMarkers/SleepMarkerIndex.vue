@@ -41,6 +41,11 @@
               Date
               <i v-if="sortBy.startsWith('date')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
+            <th @click="setSortBy('sleepScore')" class="sortable">
+              <i class="fas fa-calendar-day"></i>
+              Sleep Score
+              <i v-if="sortBy.startsWith('sleepScore')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
+            </th>            
             <th @click="setSortBy('inBed')" class="sortable">
               <i class="fas fa-clock"></i>
               In Bed
@@ -100,12 +105,13 @@
             @click="openModal(sleepMarker)"
           >
             <td class="date-cell">{{ formatDate(sleepMarker.sleep_date) }}</td>
+            <td>{{ sleepMarker.sleep_score }}</td>
             <td>{{ sleepMarker.time_in_bed }}</td>
             <td>{{ sleepMarker.time_asleep }}</td>
-            <td>{{ sleepMarker.awake_sleep }}</td>
-            <td>{{ sleepMarker.rem_sleep }}</td>
-            <td>{{ sleepMarker.core_sleep }}</td>
-            <td>{{ sleepMarker.deep_sleep }}</td>
+            <td>{{ sleepMarker.awake }}</td>
+            <td>{{ sleepMarker.rem }}</td>
+            <td>{{ sleepMarker.core }}</td>
+            <td>{{ sleepMarker.deep }}</td>
             <!--td>
               <span class="quality-badge" :class="getQualityClass(sleepMarker.sleep_quality)">
                 {{ sleepMarker.sleep_quality }}/10
@@ -168,8 +174,8 @@
       </div>
       <div class="stat-item">
         <i class="fas fa-star"></i>
-        <span class="stat-value">{{ averageQuality }}</span>
-        <span class="stat-label">Avg Quality</span>
+        <span class="stat-value">{{ averageScore }}</span>
+        <span class="stat-label">Avg Score</span>
       </div>
     </div>
 
@@ -293,6 +299,10 @@ const filteredMarkers = computed(() => {
         return new Date(b.sleep_date) - new Date(a.sleep_date);
       case 'date-asc':
         return new Date(a.sleep_date) - new Date(b.sleep_date);
+      case 'sleepScore-desc':
+        return new Date(b.sleep_score) - new Date(a.sleep_score);
+      case 'sleepScore-asc':
+        return new Date(a.sleep_score) - new Date(b.sleep_score);        
       case 'oob-desc':
         return new Date(b.had_oob) - new Date(a.had_oob);
       case 'oob-asc':
@@ -306,21 +316,21 @@ const filteredMarkers = computed(() => {
       case 'asleep-asc':
         return parseTime(a.time_asleep) - parseTime(b.time_asleep);
       case 'awake-desc':
-        return parseTime(b.awake_sleep) - parseTime(a.awake_sleep);
+        return parseTime(b.awake) - parseTime(a.awake);
       case 'awake-asc':
-        return parseTime(a.awake_sleep) - parseTime(b.awake_sleep);
+        return parseTime(a.awake) - parseTime(b.awake);
       case 'rem-desc':
-        return parseTime(b.rem_sleep) - parseTime(a.rem_sleep);
+        return parseTime(b.rem) - parseTime(a.rem);
       case 'rem-asc':
-        return parseTime(a.rem_sleep) - parseTime(b.rem_sleep);
+        return parseTime(a.rem) - parseTime(b.rem);
       case 'core-desc':
-        return parseTime(b.core_sleep) - parseTime(a.core_sleep);
+        return parseTime(b.core) - parseTime(a.core);
       case 'core-asc':
-        return parseTime(a.core_sleep) - parseTime(b.core_sleep);
+        return parseTime(a.core) - parseTime(b.core);
       case 'deep-desc':
-        return parseTime(b.deep_sleep) - parseTime(a.deep_sleep);
+        return parseTime(b.deep) - parseTime(a.deep);
       case 'deep-asc':
-        return parseTime(a.deep_sleep) - parseTime(b.deep_sleep);       
+        return parseTime(a.deep) - parseTime(b.deep);       
       default:
         return 0;
     }
@@ -397,9 +407,9 @@ function parseTime(timeStr) {
   }
   return 0;
 }
-const averageQuality = computed(() => {
+const averageScore = computed(() => {
   if (filteredMarkers.value.length === 0) return '-';
-  const total = filteredMarkers.value.reduce((sum, m) => sum + parseInt(m.sleep_quality), 0);
+  const total = filteredMarkers.value.reduce((sum, m) => sum + parseInt(m.sleep_score), 0);
   return (total / filteredMarkers.value.length).toFixed(1);
 });
 </script>

@@ -50,6 +50,13 @@
 
       <!-- ✅ STATS - Now from shared CSS -->
       <div class="stats-row">
+        <div class="stat-card stat-card-success">
+          <div class="stat-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-value">{{ averageSleepScore }}</div>
+          <div class="stat-label">Avg Sleep Score</div>
+        </div>
         <div class="stat-card stat-card-info">
           <div class="stat-icon">
             <i class="fas fa-moon"></i>
@@ -57,21 +64,14 @@
           <div class="stat-value">{{ averageSleepHours }}</div>
           <div class="stat-label">Avg Sleep/Night</div>
         </div>
-        
-        <div class="stat-card stat-card-success">
-          <div class="stat-icon">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="stat-value">{{ averageSleepQuality }}/10</div>
-          <div class="stat-label">Avg Quality</div>
-        </div>
+    
         
         <div class="stat-card stat-card-danger">
           <div class="stat-icon">
             <i class="fas fa-eye"></i>
           </div>
-          <div class="stat-value">{{ averageAwakenings }}</div>
-          <div class="stat-label">Avg Awakenings</div>
+          <div class="stat-value">{{ averageInterruptions}}</div>
+          <div class="stat-label">Avg Interruptions</div>
         </div>
 
         <div class="stat-card stat-card-warning">
@@ -244,12 +244,12 @@ const views = [
 const sleepMarkers = computed(() => sleepMarkerStore.allSleepMarkers);
 const isLoading = computed(() => sleepMarkerStore.isLoading);
 const averageSleepHours = computed(() => sleepMarkerStore.averageSleepHours);
-const averageSleepQuality = computed(() => sleepMarkerStore.averageSleepQuality);
+const averageSleepScore = computed(() => sleepMarkerStore.averageSleepScore);
 const averageAwakeSleep = computed(() => sleepMarkerStore.averageAwakeSleep);
 const averageRemSleep = computed(() => sleepMarkerStore.averageRemSleep);
 const averageCoreSleep = computed(() => sleepMarkerStore.averageCoreSleep);
 const averageDeepSleep = computed(() => sleepMarkerStore.averageDeepSleep);
-const averageAwakenings = computed(() => sleepMarkerStore.averageAwakenings);
+const averageInterruptions = computed(() => sleepMarkerStore.averageInterruptions);
 
 // ✅ METHODS
 function openDetailsModal(marker) {
