@@ -74,7 +74,27 @@
           <i class="fas fa-moon"></i>
           <span class="time-label">Time Asleep</span>
           <span class="time-value">{{ sleepMarker.time_asleep }}</span>
-        </div>        
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.from_breaths_per_minute }}</span>
+          <span class="stat-label">From Breaths Per Minute</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.to_breaths_per_minute }}</span>
+          <span class="stat-label">To Breaths Per Minute</span>
+        </div> 
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.from_heart_beats_per_minute }}</span>
+          <span class="stat-label">From Heart Beats Per Minute</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.to_heart_beats_per_minute }}</span>
+          <span class="stat-label">To Heart Beats Per Minute</span>
+        </div>                      
       </div>
 
       <!-- Fasting Glucose Banner -->
@@ -111,6 +131,7 @@
           <span class="stat-label">Deep Sleep</span>
         </div>        
       </div>
+
       <!-- Fasting Weight Banner -->
       <div class="weight-banner">
         <div class="weight-content">
@@ -121,6 +142,7 @@
           </div>
         </div>
       </div>
+
       <!-- OOB Section -->
       <div v-if="sleepMarker.had_oob" class="oob-details">
         <div class="oob-header">
