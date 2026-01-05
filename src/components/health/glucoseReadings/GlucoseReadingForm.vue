@@ -59,7 +59,7 @@
         </label>
         <select v-model="formState.reading_type" class="form-input">
           <option value="">Select type...</option>
-          <option value="Fasting">Fasting</option>
+          <option value="AM-Fasting">AM-Fasting</option>
           <option value="Before Meal">Before Meal</option>
           <option value="After Meal">After Meal (1-2 hours)</option>
           <option value="Bedtime">Bedtime</option>
