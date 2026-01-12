@@ -255,11 +255,12 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
     },
 
     averageInterruptions: (state) => {
-      if (!state.sleepMarkers.length) return '0';
+      if (!state.sleepMarkers.length) return '0.00';
       const total = state.sleepMarkers.reduce((sum, m) => 
-        sum + (parseInt(m.interruptions) || 0), 0
+        sum + (parseFloat(m.interruptions) || 0), 0
       );
-      return Math.round(total / state.sleepMarkers.length);
+      const avg = total / state.sleepMarkers.length;
+      return avg.toFixed(1);
     },
 
     isLoading: (state) => state.loading,
