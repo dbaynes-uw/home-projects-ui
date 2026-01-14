@@ -1,10 +1,25 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-const ROOT_URL = import.meta.env.VITE_ROOT_URL || 'http://localhost:8080'
+// ✅ SMART API URL DETECTION
+// If accessing via localhost, use localhost API
+// If accessing via IP address (iPhone), use IP address API
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const API_BASE_URL = isLocalhost 
+  ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:3000/api/v1')
+  : (import.meta.env.VITE_API_URL || 'http://10.0.0.13:3000/api/v1')
+
+const ROOT_URL = import.meta.env.VITE_ROOT_URL || window.location.origin
+
+console.log('🌐 API Configuration:', {
+  hostname: window.location.hostname,
+  isLocalhost,
+  apiBaseUrl: API_BASE_URL,
+  rootUrl: ROOT_URL
+})
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true, 
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

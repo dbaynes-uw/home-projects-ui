@@ -12,13 +12,12 @@ export default {
     //}
   },
   init() {
+    // ✅ In development, use empty string - baseURL already has /api/v1
+    // ✅ In production, use full Heroku URL
     if (window.location.port == "8080") {
-      //api_url = "http://davids-macbook-pro.local:3000/api/v1/";
-      api_url = "http://localhost:3000/api/v1/";
-      //api.defaults.baseURL = '//localhost:3000/';
+      api_url = "";
     } else {
-      api_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
+      api_url = "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
     }
   },
   deleteBook(book) {

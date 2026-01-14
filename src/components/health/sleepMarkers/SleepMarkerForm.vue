@@ -109,6 +109,8 @@
         v-model="formData.bedtime_score_explained"
         label="Bed Time Score Explained"
         type="text"
+        inputmode="numeric"
+        pattern="\d+/\d+"
         prepend-icon="comment"
         :error="errors.bedtime_score_explained"
         hint="Short explanation of the bed time score"
