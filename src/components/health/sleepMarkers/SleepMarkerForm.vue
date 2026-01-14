@@ -144,7 +144,27 @@
         hint="Short explanation - same amount as Awake stage below."
       />
       <br/>
-      <!-- Breaths Per Minute -->
+      <!-- From Heart Beats Per Minute -->
+      <BaseInput
+        v-model.number="formData.from_heart_beats_per_minute"
+        label="From Heart Beats Per Minute"
+        type="decimal"
+        min="0"
+        prepend-icon="eye-off"
+        :error="errors.from_heart_beats_per_minute"
+        hint="Number of heart beats per minute (from)"
+      />
+      <!-- To Heart Beats Per Minute -->
+      <BaseInput
+        v-model.number="formData.to_heart_beats_per_minute"
+        label="To Heart Beats Per Minute"
+        type="decimal"
+        min="0"
+        prepend-icon="eye-off"
+        :error="errors.to_heart_beats_per_minute"
+        hint="Number of heart beats per minute (to)"
+      />
+      <!-- From Breaths Per Minute -->
       <BaseInput
         v-model.number="formData.from_breaths_per_minute"
         label="From Breaths Per Minute"
@@ -154,7 +174,7 @@
         :error="errors.from_breaths_per_minute"
         hint="Number of breaths per minute (from)"
       />
-            <!-- Breaths Per Minute -->
+      <!-- To Breaths Per Minute -->
       <BaseInput
         v-model.number="formData.to_breaths_per_minute"
         label="To Breaths Per Minute"
@@ -165,26 +185,6 @@
         hint="Number of breaths per minute (to)"
       />
 
-      <!-- Heart Beats Per Minute -->
-      <BaseInput
-        v-model.number="formData.from_heart_beats_per_minute"
-        label="From Heart Beats Per Minute"
-        type="decimal"
-        min="0"
-        prepend-icon="eye-off"
-        :error="errors.from_heart_beats_per_minute"
-        hint="Number of heart beats per minute (from)"
-      />
-            <!-- Heart Beats Per Minute -->
-      <BaseInput
-        v-model.number="formData.to_heart_beats_per_minute"
-        label="To Heart Beats Per Minute"
-        type="decimal"
-        min="0"
-        prepend-icon="eye-off"
-        :error="errors.to_heart_beats_per_minute"
-        hint="Number of heart beats per minute (to)"
-      />
       <!-- ✅ NEW: FASTING WEIGHT (LBS + OZ) -->
       <div class="weight-input-group">
         <label class="form-label">
