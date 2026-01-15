@@ -19,6 +19,8 @@
         :min="min"
         :max="max"
         :step="step"
+        :inputmode="inputmode"
+        :pattern="pattern"
         :class="['base-input', { 'has-prepend': prependIcon, 'has-append': appendIcon, 'has-error': error }]"
         @blur="$emit('blur', $event)"
         @focus="$emit('focus', $event)"
@@ -96,6 +98,14 @@ const props = defineProps({
   },
   step: {
     type: [String, Number],
+    default: undefined
+  },
+  inputmode: {
+    type: String,
+    default: undefined
+  },
+  pattern: {
+    type: String,
     default: undefined
   },
   id: {

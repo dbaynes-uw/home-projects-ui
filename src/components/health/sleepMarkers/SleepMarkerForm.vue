@@ -95,14 +95,32 @@
       />
 
       <!-- Bed Time Score -->
-      <BaseInput
-        v-model="formData.bedtime_score"
-        label="Bed Time Score"
-        type="text"
-        prepend-icon="clock"
-        :error="errors.bedtime_score"
-        hint="Score for bed time (0-100)"
-      />
+      <div class="score-input-group">
+        <label class="form-label">
+          <i class="mdi mdi-clock"></i>
+          Bed Time Score
+        </label>
+        <div class="score-inputs">
+          <BaseInput
+            v-model.number="formData.bedtime_score_numerator"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="Score"
+            :error="errors.bedtime_score_numerator"
+          />
+          <span class="score-separator">/</span>
+          <BaseInput
+            v-model.number="formData.bedtime_score_denominator"
+            type="number"
+            min="0"
+            max="100"
+            :error="errors.bedtime_score_denominator"
+          />
+        </div>
+        <div class="base-input-hint">Score for bed time (0-100)</div>
+      </div>
+
 
       <!-- Bed Time Score Explained -->
       <BaseInput
@@ -388,6 +406,8 @@ const formData = ref({
   duration_score: '',
   duration_score_explained: '',
   bedtime_score: '',
+  bedtime_score_numerator: null,
+  bedtime_score_denominator: null,
   bedtime_score_explained: '',
   interruptions: 0,
   interruptions_score: '',
@@ -427,6 +447,13 @@ watch(() => props.sleepMarker, (newMarker) => {
       delete data.fasting_weight; // Remove the decimal field
     }
     
+    // ✅ Convert bedtime_score "85/100" back to numerator/denominator
+    if (data.bedtime_score && typeof data.bedtime_score === 'string' && data.bedtime_score.includes('/')) {
+      const [numerator, denominator] = data.bedtime_score.split('/');
+      data.bedtime_score_numerator = parseInt(numerator) || null;
+      data.bedtime_score_denominator = parseInt(denominator) || null;
+    }
+    
     formData.value = data;
   } else {
     resetForm();
@@ -452,6 +479,8 @@ function resetForm() {
     duration_score: '',
     duration_score_explained: '',
     bedtime_score: '',
+    bedtime_score_numerator: null,
+    bedtime_score_denominator: null,
     bedtime_score_explained: '',
     interruptions: 0,
     interruptions_score: '',
@@ -511,6 +540,17 @@ async function handleSubmit() {
       // Remove the temporary fields
       delete submitData.fasting_weight_lbs;
       delete submitData.fasting_weight_oz;
+    }
+    
+    // ✅ Convert numerator/denominator to "85/100" format before submitting
+    if (submitData.bedtime_score_numerator !== null || submitData.bedtime_score_denominator !== null) {
+      const numerator = submitData.bedtime_score_numerator || 0;
+      const denominator = submitData.bedtime_score_denominator || 100;
+      submitData.bedtime_score = `${numerator}/${denominator}`;
+
+      // Remove the temporary fields
+      delete submitData.bedtime_score_numerator;
+      delete submitData.bedtime_score_denominator;
     }
     console.log('scheduled_bedtime before submit:', submitData.scheduled_bedtime);
 
@@ -672,6 +712,44 @@ async function handleSubmit() {
   .weight-input-group {
     grid-column: span 1;
   }
+}
+
+/* ✅ SCORE INPUT GROUP STYLING */
+.score-input-group {
+  margin-bottom: 20px;
+}
+
+.score-input-group .form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.score-input-group .form-label i {
+  font-size: 16px;
+}
+
+.score-inputs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.score-separator {
+  font-size: 20px;
+  font-weight: 600;
+  color: #666;
+}
+
+.base-input-hint {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #999;
 }
 /* ✅ DIET NOTES STYLING */
 .diet-section {
