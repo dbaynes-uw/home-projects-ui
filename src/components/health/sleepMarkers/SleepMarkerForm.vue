@@ -75,14 +75,32 @@
       />
       <br/>
       <!-- Duration Score -->
-      <BaseInput
-        v-model="formData.duration_score"
-        label="Duration Score"
-        type="text"
-        prepend-icon="clock"
-        :error="errors.duration_score"
-        hint="Score for sleep duration. Amount is 'Time Asleep' stage below."
-      />
+      <div class="score-input-group">
+        <label class="form-label">
+          <i class="mdi mdi-clock"></i>
+          Duration Score
+        </label>
+        <div class="score-inputs">
+          <BaseInput
+            v-model.number="formData.duration_score_numerator"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="Score"
+            :error="errors.duration_score_numerator"
+          />
+          <span class="score-separator">/</span>
+          <BaseInput
+            v-model.number="formData.duration_score_denominator"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="100"
+            :error="errors.duration_score_denominator"
+          />
+        </div>
+        <div class="base-input-hint">Score for sleep duration. Amount is 'Time Asleep' stage below.</div>
+      </div>
 
       <!-- Duration Score Explained -->
       <BaseInput
@@ -145,14 +163,32 @@
         hint="Number of interruptions during sleep"
       />
       <!-- Interruptions Score -->
-      <BaseInput
-        v-model="formData.interruptions_score"
-        label="Interruptions Score"
-        type="text"
-        prepend-icon="star"
-        :error="errors.interruptions_score"
-        hint="Score for interruptions (0-100)"
-      />
+      <div class="score-input-group">
+        <label class="form-label">
+          <i class="mdi mdi-star"></i>
+          Interruptions Score
+        </label>
+        <div class="score-inputs">
+          <BaseInput
+            v-model.number="formData.interruptions_score_numerator"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="Score"
+            :error="errors.interruptions_score_numerator"
+          />
+          <span class="score-separator">/</span>
+          <BaseInput
+            v-model.number="formData.interruptions_score_denominator"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="100"
+            :error="errors.interruptions_score_denominator"
+          />
+        </div>
+        <div class="base-input-hint">Score for interruptions (0-100)</div>
+      </div>
 
       <!-- Interruptions Score Explained -->
       <BaseInput
@@ -411,6 +447,8 @@ const formData = ref({
   bedtime_score_explained: '',
   interruptions: 0,
   interruptions_score: '',
+  interruptions_score_numerator: null,
+  interruptions_score_denominator: null,
   interruptions_score_explained: '',
   from_breaths_per_minute: null,
   to_breaths_per_minute: null,
@@ -433,6 +471,15 @@ const formData = ref({
   sleep_notes: ''
 });
 
+// Helper to parse "85/100" into {numerator, denominator}
+function parseScoreField(data, field) {
+  if (data[field] && typeof data[field] === 'string' && data[field].includes('/')) {
+    const [numerator, denominator] = data[field].split('/');
+    data[`${field}_numerator`] = parseInt(numerator) || null;
+    data[`${field}_denominator`] = parseInt(denominator) || null;
+  }
+}
+
 // Watch for sleepMarker changes (edit mode)
 watch(() => props.sleepMarker, (newMarker) => {
   if (newMarker) {
@@ -447,13 +494,10 @@ watch(() => props.sleepMarker, (newMarker) => {
       delete data.fasting_weight; // Remove the decimal field
     }
     
-    // ✅ Convert bedtime_score "85/100" back to numerator/denominator
-    if (data.bedtime_score && typeof data.bedtime_score === 'string' && data.bedtime_score.includes('/')) {
-      const [numerator, denominator] = data.bedtime_score.split('/');
-      data.bedtime_score_numerator = parseInt(numerator) || null;
-      data.bedtime_score_denominator = parseInt(denominator) || null;
-    }
-    
+    // Use helper for all score fields
+    parseScoreField(data, 'bedtime_score');
+    parseScoreField(data, 'duration_score');
+    parseScoreField(data, 'interruptions_score');
     formData.value = data;
   } else {
     resetForm();
@@ -467,9 +511,15 @@ watch(() => props.sleepMarker, (newMarker) => {
 //  }
 //});
 
+function getLocalDateString() {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  return now.toISOString().split('T')[0];
+}
+
 function resetForm() {
   formData.value = {
-    sleep_date: new Date().toISOString().split('T')[0],
+    sleep_date: getLocalDateString(),
     scheduled_bedtime: '22:30',
     scheduled_waketime: '06:30',
     actual_bedtime: '',
@@ -477,6 +527,8 @@ function resetForm() {
     sleep_score_rating: '',
     sleep_score_explained: '',
     duration_score: '',
+    duration_score_numerator: null,
+    duration_score_denominator: null,
     duration_score_explained: '',
     bedtime_score: '',
     bedtime_score_numerator: null,
@@ -484,6 +536,8 @@ function resetForm() {
     bedtime_score_explained: '',
     interruptions: 0,
     interruptions_score: '',
+    interruptions_score_numerator: null,
+    interruptions_score_denominator: null,
     interruptions_score_explained: '',
     from_breaths_per_minute: null,
     to_breaths_per_minute: null,
@@ -515,9 +569,7 @@ async function handleSubmit() {
   if (!validateForm()) {
     return;
   }
-  
   isSubmitting.value = true;
-  
   try {
     const submitData = { ...formData.value };
 
@@ -542,17 +594,19 @@ async function handleSubmit() {
       delete submitData.fasting_weight_oz;
     }
     
-    // ✅ Convert numerator/denominator to "85/100" format before submitting
-    if (submitData.bedtime_score_numerator !== null || submitData.bedtime_score_denominator !== null) {
-      const numerator = submitData.bedtime_score_numerator || 0;
-      const denominator = submitData.bedtime_score_denominator || 100;
-      submitData.bedtime_score = `${numerator}/${denominator}`;
-
-      // Remove the temporary fields
-      delete submitData.bedtime_score_numerator;
-      delete submitData.bedtime_score_denominator;
+    // Helper to combine numerator/denominator for all score fields
+    function combineScoreField(obj, field) {
+      if (obj[`${field}_numerator`] !== null || obj[`${field}_denominator`] !== null) {
+        const numerator = obj[`${field}_numerator`] || 0;
+        const denominator = obj[`${field}_denominator`] || 100;
+        obj[field] = `${numerator}/${denominator}`;
+        delete obj[`${field}_numerator`];
+        delete obj[`${field}_denominator`];
+      }
     }
-    console.log('scheduled_bedtime before submit:', submitData.scheduled_bedtime);
+    combineScoreField(submitData, 'bedtime_score');
+    combineScoreField(submitData, 'duration_score');
+    combineScoreField(submitData, 'interruptions_score');
 
     emit('save', submitData);
     resetForm();
