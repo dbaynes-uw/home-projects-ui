@@ -85,21 +85,23 @@
             v-model.number="formData.duration_score_numerator"
             type="number"
             min="0"
-            max="100"
+            max="50"
             placeholder="Score"
             :error="errors.duration_score_numerator"
+            @input="clampScore('duration_score_numerator', 50)"
           />
           <span class="score-separator">/</span>
           <BaseInput
             v-model.number="formData.duration_score_denominator"
             type="number"
-            min="0"
-            max="100"
-            placeholder="100"
+            min="50"
+            max="50"
+            placeholder="50"
+            :readonly="true"
             :error="errors.duration_score_denominator"
           />
         </div>
-        <div class="base-input-hint">Score for sleep duration. Amount is 'Time Asleep' stage below.</div>
+        <div class="base-input-hint">Score for sleep duration (0-50)</div>
       </div>
 
       <!-- Duration Score Explained -->
@@ -123,20 +125,23 @@
             v-model.number="formData.bedtime_score_numerator"
             type="number"
             min="0"
-            max="100"
+            max="30"
             placeholder="Score"
             :error="errors.bedtime_score_numerator"
+            @input="clampScore('bedtime_score_numerator', 30)"
           />
           <span class="score-separator">/</span>
           <BaseInput
             v-model.number="formData.bedtime_score_denominator"
             type="number"
-            min="0"
-            max="100"
+            min="30"
+            max="30"
+            placeholder="30"
+            :readonly="true"
             :error="errors.bedtime_score_denominator"
           />
         </div>
-        <div class="base-input-hint">Score for bed time (0-100)</div>
+        <div class="base-input-hint">Score for bed time (0-30)</div>
       </div>
 
 
@@ -173,21 +178,23 @@
             v-model.number="formData.interruptions_score_numerator"
             type="number"
             min="0"
-            max="100"
+            max="20"
             placeholder="Score"
             :error="errors.interruptions_score_numerator"
+            @input="clampScore('interruptions_score_numerator', 20)"
           />
           <span class="score-separator">/</span>
           <BaseInput
             v-model.number="formData.interruptions_score_denominator"
             type="number"
-            min="0"
-            max="100"
-            placeholder="100"
+            min="20"
+            max="20"
+            placeholder="20"
+            :readonly="true"
             :error="errors.interruptions_score_denominator"
           />
         </div>
-        <div class="base-input-hint">Score for interruptions (0-100)</div>
+        <div class="base-input-hint">Score for interruptions (0-20)</div>
       </div>
 
       <!-- Interruptions Score Explained -->
@@ -528,16 +535,16 @@ function resetForm() {
     sleep_score_explained: '',
     duration_score: '',
     duration_score_numerator: null,
-    duration_score_denominator: null,
+    duration_score_denominator: 50,
     duration_score_explained: '',
     bedtime_score: '',
     bedtime_score_numerator: null,
-    bedtime_score_denominator: null,
+    bedtime_score_denominator: 30,
     bedtime_score_explained: '',
     interruptions: 0,
     interruptions_score: '',
     interruptions_score_numerator: null,
-    interruptions_score_denominator: null,
+    interruptions_score_denominator: 20,
     interruptions_score_explained: '',
     from_breaths_per_minute: null,
     to_breaths_per_minute: null,
@@ -598,7 +605,7 @@ async function handleSubmit() {
     function combineScoreField(obj, field) {
       if (obj[`${field}_numerator`] !== null || obj[`${field}_denominator`] !== null) {
         const numerator = obj[`${field}_numerator`] || 0;
-        const denominator = obj[`${field}_denominator`] || 100;
+        const denominator = obj[`${field}_denominator`] || null;
         obj[field] = `${numerator}/${denominator}`;
         delete obj[`${field}_numerator`];
         delete obj[`${field}_denominator`];
@@ -614,6 +621,15 @@ async function handleSubmit() {
     console.error('Error submitting form:', error);
   } finally {
     isSubmitting.value = false;
+  }
+}
+
+function clampScore(field, max) {
+  if (formData.value[field] !== null && formData.value[field] > max) {
+    formData.value[field] = max;
+  }
+  if (formData.value[field] !== null && formData.value[field] < 0) {
+    formData.value[field] = 0;
   }
 }
 </script>
