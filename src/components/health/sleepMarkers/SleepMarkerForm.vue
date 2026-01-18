@@ -11,7 +11,6 @@
         required
         :error="errors.sleep_date"
       />
- formData.scheduled_bedtime: {{ formData.scheduled_bedtime }}
       <!-- Bed Time -->
       <BaseInput
         v-model="formData.scheduled_bedtime"
@@ -22,7 +21,6 @@
         hint="What time did you go to bed?"
       />
 
-      formData.scheduled_waketime: {{ formData.scheduled_waketime }}
       <!-- Wake Time -->
       <BaseInput
         v-model="formData.scheduled_waketime"
@@ -209,7 +207,7 @@
       <BaseInput
         v-model.number="formData.from_heart_beats_per_minute"
         label="From Heart Beats Per Minute"
-        type="decimal"
+        type="number"
         min="0"
         prepend-icon="eye-off"
         :error="errors.from_heart_beats_per_minute"
@@ -219,7 +217,7 @@
       <BaseInput
         v-model.number="formData.to_heart_beats_per_minute"
         label="To Heart Beats Per Minute"
-        type="decimal"
+        type="number"
         min="0"
         prepend-icon="eye-off"
         :error="errors.to_heart_beats_per_minute"
@@ -229,7 +227,8 @@
       <BaseInput
         v-model.number="formData.from_breaths_per_minute"
         label="From Breaths Per Minute"
-        type="decimal"
+        type="number"
+        step="any"
         min="0"
         prepend-icon="eye-off"
         :error="errors.from_breaths_per_minute"
@@ -239,8 +238,10 @@
       <BaseInput
         v-model.number="formData.to_breaths_per_minute"
         label="To Breaths Per Minute"
-        type="decimal"
+        type="number"
+        step="any"
         min="0"
+        max="100"
         prepend-icon="eye-off"
         :error="errors.to_breaths_per_minute"
         hint="Number of breaths per minute (to)"

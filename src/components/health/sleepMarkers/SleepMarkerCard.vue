@@ -8,7 +8,7 @@
     <div class="card-header">
       <div class="date-badge">
         <i class="fas fa-calendar-day"></i>
-        {{ formattedDate }}
+        Night of {{ formattedDate }}
       </div>
       <!-- ✅ Only show action buttons in grid mode -->
       <div v-if="viewMode === 'grid'" class="actions">
@@ -54,7 +54,7 @@
           <i class="fas fa-bed"></i>
           <span class="time-label">Bedtime Score Explained</span>
           <span class="time-value">{{ sleepMarker.bedtime_score_explained }}</span>
-        </div>        
+        </div>     
         <div class="stat-item">
           <i class="fas fa-star stat-icon"></i>
           <span class="stat-value">{{ sleepMarker.interruptions_score }}</span>
@@ -77,16 +77,6 @@
         </div>
         <div class="stat-item">
           <i class="fas fa-eye stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.from_breaths_per_minute }}</span>
-          <span class="stat-label">From Breaths Per Minute</span>
-        </div>
-        <div class="stat-item">
-          <i class="fas fa-eye stat-icon"></i>
-          <span class="stat-value">{{ sleepMarker.to_breaths_per_minute }}</span>
-          <span class="stat-label">To Breaths Per Minute</span>
-        </div> 
-        <div class="stat-item">
-          <i class="fas fa-eye stat-icon"></i>
           <span class="stat-value">{{ sleepMarker.from_heart_beats_per_minute }}</span>
           <span class="stat-label">From Heart Beats Per Minute</span>
         </div>
@@ -95,8 +85,17 @@
           <span class="stat-value">{{ sleepMarker.to_heart_beats_per_minute }}</span>
           <span class="stat-label">To Heart Beats Per Minute</span>
         </div>                      
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.from_breaths_per_minute }}</span>
+          <span class="stat-label">From Breaths Per Minute</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-eye stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.to_breaths_per_minute }}</span>
+          <span class="stat-label">To Breaths Per Minute</span>
+        </div> 
       </div>
-
       <!-- Fasting Glucose Banner -->
       <div v-if="sleepMarker.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
         <div class="glucose-content">
