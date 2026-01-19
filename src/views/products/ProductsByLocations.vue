@@ -2,7 +2,11 @@
   <div class="products-location-container">
     <ConfirmDialogue ref="confirmDialogue" />
     <!-- ✅ CUSTOM PRODUCT DIALOG (NO VUETIFY) -->
-    <div v-if="showProductDialog" class="custom-dialog-overlay" @click.self="closeProductDialog">
+    <div
+      v-if="showProductDialog"
+      class="custom-dialog-overlay"
+      @click.self="closeProductDialog"
+    >
       <div class="custom-dialog">
         <!-- Dialog Header -->
         <div class="dialog-header">
@@ -14,7 +18,7 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
-        
+
         <!-- Dialog Body -->
         <div class="dialog-body">
           <!-- Context Info -->
@@ -25,7 +29,7 @@
               <div><strong>Vendor:</strong> {{ selectedContext.vendorName }}</div>
             </div>
           </div>
-          
+
           <!-- Form -->
           <form @submit.prevent="submitNewProduct" ref="productForm">
             <!-- Product Autocomplete (Custom) -->
@@ -53,9 +57,12 @@
                     <i class="fas fa-times"></i>
                   </button>
                 </div>
-                
+
                 <!-- Custom Dropdown -->
-                <div v-if="showProductDropdown && filteredProductOptions.length > 0" class="autocomplete-dropdown">
+                <div
+                  v-if="showProductDropdown && filteredProductOptions.length > 0"
+                  class="autocomplete-dropdown"
+                >
                   <div
                     v-for="(product, index) in filteredProductOptions"
                     :key="index"
@@ -65,14 +72,14 @@
                     {{ product }}
                   </div>
                 </div>
-                
+
                 <!-- Hint -->
                 <small class="form-hint">
                   {{ getProductHint }}
                 </small>
               </div>
             </div>
-            
+
             <!-- Other Product Name (if "Other" selected) -->
             <div v-if="newProduct.product_name === 'Other'" class="form-group">
               <label class="form-label">Other Product Name *</label>
@@ -84,7 +91,7 @@
                 required
               />
             </div>
-            
+
             <!-- Description -->
             <div class="form-group">
               <label class="form-label">Description (Optional)</label>
@@ -95,7 +102,7 @@
                 placeholder="Add any notes..."
               ></textarea>
             </div>
-            
+
             <!-- Active Switch -->
             <div class="form-group">
               <label class="switch-label">
@@ -109,7 +116,7 @@
                 <span class="switch-text">Add to shopping list immediately</span>
               </label>
             </div>
-            
+
             <!-- Hint for Other -->
             <div v-if="newProduct.product_name === 'Other'" class="alert alert-info">
               <i class="fas fa-info-circle alert-icon"></i>
@@ -119,12 +126,12 @@
             </div>
           </form>
         </div>
-        
+
         <!-- Dialog Footer -->
         <div class="dialog-footer">
-          <button 
+          <button
             type="button"
-            class="btn btn-outlined" 
+            class="btn btn-outlined"
             @click="closeProductDialog"
             :disabled="isSubmittingProduct"
           >
@@ -159,26 +166,17 @@
       <!-- ✅ NAVIGATION (NO VUETIFY) -->
       <div class="card-body">
         <div class="navigation-grid">
-          <router-link 
-            :to="{ name: 'ProductsByVendors' }"
-            class="btn btn-outlined"
-          >
+          <router-link :to="{ name: 'ProductsByVendors' }" class="btn btn-outlined">
             <i class="fas fa-store"></i>
             Shopping List By Vendor
           </router-link>
 
-          <router-link 
-            :to="{ name: 'ProductList' }"
-            class="btn btn-outlined"
-          >
+          <router-link :to="{ name: 'ProductList' }" class="btn btn-outlined">
             <i class="fas fa-shopping-basket"></i>
             Shopping List By Product
           </router-link>
 
-          <router-link 
-            :to="{ name: 'ProductVendorCreate' }"
-            class="btn btn-primary"
-          >
+          <router-link :to="{ name: 'ProductVendorCreate' }" class="btn btn-primary">
             <i class="fas fa-plus"></i>
             Create Vendor/Product
           </router-link>
@@ -198,14 +196,10 @@
       <div class="card-header switch-container">
         <div class="switch-description-wrapper">
           <span class="switch-description-text">
-            {{ showShoppingList ? 'Selected Items Only:' : 'All Items:' }}
+            {{ showShoppingList ? "Selected Items Only:" : "All Items:" }}
           </span>
           <label class="switch-label">
-            <input
-              v-model="showShoppingList"
-              type="checkbox"
-              class="switch-input"
-            />
+            <input v-model="showShoppingList" type="checkbox" class="switch-input" />
             <span class="switch-slider"></span>
           </label>
         </div>
@@ -215,11 +209,7 @@
           <span class="chip chip-success chip-large vendor-filter-chip">
             <i class="fas fa-filter"></i>
             Filtering: {{ vendorFilterName }}
-            <button 
-              class="chip-close-btn" 
-              @click="clearVendorFilter"
-              type="button"
-            >
+            <button class="chip-close-btn" @click="clearVendorFilter" type="button">
               <i class="fas fa-times"></i>
             </button>
           </span>
@@ -234,12 +224,22 @@
           <button
             @click="submitChanges"
             :disabled="isSubmitting"
-            :class="['btn', 'btn-primary', 'btn-large', 'btn-block', 'top-submit-button', { 'btn-loading': isSubmitting }]"
+            :class="[
+              'btn',
+              'btn-primary',
+              'btn-large',
+              'btn-block',
+              'top-submit-button',
+              { 'btn-loading': isSubmitting },
+            ]"
           >
             <template v-if="!isSubmitting">
               <i class="fas fa-save save-icon"></i>
               Save All Changes
-              <span class="chip chip-small" style="background: rgba(255,255,255,0.2); color: white; border: none;">
+              <span
+                class="chip chip-small"
+                style="background: rgba(255, 255, 255, 0.2); color: white; border: none"
+              >
                 Quick Save
               </span>
             </template>
@@ -253,21 +253,27 @@
             <div
               v-for="(location, locationIndex) in filteredLocations"
               :key="locationIndex"
-              :class="['location-card', 'card', { 'location-expanded': expandedLocations.has(locations.indexOf(location)) }]"
+              :class="[
+                'location-card',
+                'card',
+                {
+                  'location-expanded': expandedLocations.has(locations.indexOf(location)),
+                },
+              ]"
             >
               <!-- ✅ LOCATION HEADER -->
-              <div 
-                class="location-header" 
+              <div
+                class="location-header"
                 @click="toggleLocation(locations.indexOf(location))"
               >
                 <i class="fas fa-map-marker-alt location-marker-icon"></i>
                 <span class="location-name">{{ location }}</span>
-                        
+
                 <div class="location-controls">
                   <!-- ✅ LOCATION-LEVEL FILTER SWITCH -->
                   <div class="location-filter-wrapper">
                     <span class="location-filter-text">
-                      {{ getLocationFilter(location) ? 'Selected Only:' : 'All Items:' }}
+                      {{ getLocationFilter(location) ? "Selected Only:" : "All Items:" }}
                     </span>
                     <label class="switch-label location-switch-control">
                       <input
@@ -280,56 +286,72 @@
                       <span class="switch-slider"></span>
                     </label>
                   </div>
-                  
+
                   <span class="chip chip-small chip-primary">
                     <i class="fas fa-store chip-icon"></i>
                     {{ getVendorsForLocation(location).length }} vendors
                   </span>
-                  
+
                   <button
                     v-if="expandedLocations.has(locations.indexOf(location))"
                     @click.stop="toggleAllVendorsForLocation(location)"
                     class="btn btn-outlined btn-small"
                     :class="{ 'btn-danger': allVendorsExpandedForLocation(location) }"
                   >
-                    {{ allVendorsExpandedForLocation(location) ? 'Collapse All' : 'Expand All' }}
+                    {{
+                      allVendorsExpandedForLocation(location)
+                        ? "Collapse All"
+                        : "Expand All"
+                    }}
                   </button>
-                  
-                  <i 
+
+                  <i
                     :class="[
-                      'fas', 
+                      'fas',
                       'chevron-icon',
-                      expandedLocations.has(locations.indexOf(location)) ? 'fa-chevron-up' : 'fa-chevron-down'
+                      expandedLocations.has(locations.indexOf(location))
+                        ? 'fa-chevron-up'
+                        : 'fa-chevron-down',
                     ]"
                   ></i>
                 </div>
               </div>
 
               <!-- ✅ LOCATION CONTENT (VENDORS) -->
-              <div 
-                v-show="expandedLocations.has(locations.indexOf(location))" 
+              <div
+                v-show="expandedLocations.has(locations.indexOf(location))"
                 class="location-content"
               >
-                <div 
-                  v-for="vendor in getVendorsForLocation(location)" 
+                <div
+                  v-for="vendor in getVendorsForLocation(location)"
                   :key="vendor.vendor_id || vendor.id"
                   class="vendor-section"
                 >
-                  <div 
-                    :class="['vendor-card', 'card', { 'vendor-expanded': expandedVendors.has(getVendorKey(location, vendor)), 'vendor-filtered': selectedVendorFilter === (vendor.vendor_id || vendor.id) }]"
+                  <div
+                    :class="[
+                      'vendor-card',
+                      'card',
+                      {
+                        'vendor-expanded': expandedVendors.has(
+                          getVendorKey(location, vendor)
+                        ),
+                        'vendor-filtered':
+                          selectedVendorFilter === (vendor.vendor_id || vendor.id),
+                      },
+                    ]"
                   >
                     <!-- ✅ VENDOR HEADER -->
-                    <div 
-                      class="vendor-header" 
+                    <div
+                      class="vendor-header"
                       @click="toggleVendor(location, vendor)"
                       @dblclick="handleVendorDoubleClick(vendor, $event)"
                     >
                       <i class="fas fa-store vendor-store-icon"></i>
-                      
+
                       <!-- ✅ VENDOR NAME AND EDIT GROUP -->
                       <div class="vendor-name-group">
                         <span class="vendor-name">{{ vendor.vendor_name }}</span>
-                        
+
                         <!-- ✅ EDIT BUTTON -->
                         <button
                           @click.stop="editVendor(vendor)"
@@ -341,8 +363,8 @@
                       </div>
 
                       <!-- ✅ FILTER INDICATOR -->
-                      <i 
-                        v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)" 
+                      <i
+                        v-if="selectedVendorFilter === (vendor.vendor_id || vendor.id)"
                         class="fas fa-filter vendor-filter-icon"
                       ></i>
 
@@ -350,12 +372,18 @@
                       <div class="vendor-controls">
                         <div class="vendor-filter-wrapper">
                           <span class="vendor-filter-text">
-                            {{ getVendorProductFilter(vendor) ? 'Selected Only:' : 'All Items:' }}
+                            {{
+                              getVendorProductFilter(vendor)
+                                ? "Selected Only:"
+                                : "All Items:"
+                            }}
                           </span>
                           <label class="switch-label vendor-switch-control">
                             <input
                               :checked="getVendorProductFilter(vendor)"
-                              @change="setVendorProductFilter(vendor, $event.target.checked)"
+                              @change="
+                                setVendorProductFilter(vendor, $event.target.checked)
+                              "
                               @click.stop
                               type="checkbox"
                               class="switch-input"
@@ -363,26 +391,28 @@
                             <span class="switch-slider"></span>
                           </label>
                         </div>
-                        
-                        <i 
+
+                        <i
                           :class="[
-                            'fas', 
+                            'fas',
                             'chevron-icon',
-                            expandedVendors.has(getVendorKey(location, vendor)) ? 'fa-chevron-up' : 'fa-chevron-down'
+                            expandedVendors.has(getVendorKey(location, vendor))
+                              ? 'fa-chevron-up'
+                              : 'fa-chevron-down',
                           ]"
                         ></i>
                       </div>
                     </div>
 
                     <!-- ✅ VENDOR CONTENT (PRODUCTS) -->
-                    <div 
-                      v-show="expandedVendors.has(getVendorKey(location, vendor))" 
+                    <div
+                      v-show="expandedVendors.has(getVendorKey(location, vendor))"
                       class="vendor-content"
                     >
                       <div class="products-header">
                         <div class="products-header-content">
                           <div class="products-title">
-                            <h4 
+                            <h4
                               class="products-clickable-title"
                               @dblclick="openProductDialog(location, vendor)"
                             >
@@ -397,38 +427,48 @@
                                 @click.stop="openProductDialog(location, vendor)"
                                 title="Double-click title or click here to add new product"
                               >
-                                <i class="fas fa-plus-circle" style="color: navy;"></i>
+                                <i class="fas fa-plus-circle" style="color: navy"></i>
                               </button>
                             </h4>
-                          </div>                           
+                          </div>
                         </div>
                       </div>
 
                       <!-- ✅ PRODUCTS LIST -->
-                      <div v-if="getFilteredProducts(vendor).length > 0" class="products-list">
+                      <div
+                        v-if="getFilteredProducts(vendor).length > 0"
+                        class="products-list"
+                      >
                         <div
                           v-for="(product, productIndex) in getFilteredProducts(vendor)"
                           :key="product.id"
                           :class="[
-                            'product-card', 
+                            'product-card',
                             'card',
                             {
                               'product-selected': product.active,
-                              'product-multi-selected': selectedProducts.has(product.id)
-                            }
+                              'product-multi-selected': selectedProducts.has(product.id),
+                            },
                           ]"
-                          @click="handleProductClick(product, $event, productIndex, getFilteredProducts(vendor))"
+                          @click="
+                            handleProductClick(
+                              product,
+                              $event,
+                              productIndex,
+                              getFilteredProducts(vendor)
+                            )
+                          "
                         >
                           <div class="product-content">
                             <div class="product-indicators">
-                              <i 
-                                v-if="product.active" 
+                              <i
+                                v-if="product.active"
                                 class="fas fa-check-circle selected-indicator"
                               ></i>
                             </div>
-                            
+
                             <span class="product-name">{{ product.product_name }}</span>
-                            
+
                             <button
                               @click.stop="editProduct(product)"
                               class="btn btn-outlined btn-small"
@@ -439,18 +479,28 @@
                           </div>
                         </div>
                       </div>
-                    
+
                       <!-- ✅ NO PRODUCTS STATE -->
                       <div v-else class="no-products empty-state">
                         <i class="fas fa-inbox empty-state-icon"></i>
-                        <p>{{ getVendorProductFilter(vendor) ? 'No selected products' : 'No products available' }} for this vendor</p>
+                        <p>
+                          {{
+                            getVendorProductFilter(vendor)
+                              ? "No selected products"
+                              : "No products available"
+                          }}
+                          for this vendor
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- ✅ NO VENDORS STATE -->
-                <div v-if="getVendorsForLocation(location).length === 0" class="no-vendors empty-state">
+                <div
+                  v-if="getVendorsForLocation(location).length === 0"
+                  class="no-vendors empty-state"
+                >
                   <i class="fas fa-store-slash empty-state-icon"></i>
                   <h4>No vendors in {{ location }}</h4>
                 </div>
@@ -465,14 +515,14 @@
                 <i class="fas fa-cogs"></i>
                 Quick Controls
               </h4>
-              
+
               <button
                 @click="toggleAllLocations"
                 class="btn btn-outlined btn-small control-btn"
                 :class="{ 'btn-danger': allLocationsExpanded }"
               >
                 <i class="fas fa-map-marker-alt"></i>
-                {{ allLocationsExpanded ? 'Collapse Locations' : 'Expand Locations' }}
+                {{ allLocationsExpanded ? "Collapse Locations" : "Expand Locations" }}
               </button>
 
               <button
@@ -482,17 +532,25 @@
                 :disabled="!hasAnyExpandedLocations"
               >
                 <i class="fas fa-store"></i>
-                {{ allVendorsExpanded ? 'Collapse All Vendors' : 'Expand All Vendors' }}
+                {{ allVendorsExpanded ? "Collapse All Vendors" : "Expand All Vendors" }}
               </button>
             </div>
           </div>
         </div>
-        
+
         <!-- ✅ BOTTOM SAVE BUTTON -->
         <button
           @click="submitChanges"
           :disabled="isSubmitting"
-          :class="['btn', 'btn-primary', 'btn-large', 'btn-block', 'mt-4', 'mb-safe-area', { 'btn-loading': isSubmitting }]"
+          :class="[
+            'btn',
+            'btn-primary',
+            'btn-large',
+            'btn-block',
+            'mt-4',
+            'mb-safe-area',
+            { 'btn-loading': isSubmitting },
+          ]"
         >
           <template v-if="!isSubmitting">
             <i class="fas fa-save save-icon"></i>
@@ -505,11 +563,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import { v4 as uuidv4 } from 'uuid';
-import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
+import { ref, computed, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { v4 as uuidv4 } from "uuid";
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 const router = useRouter();
 const store = useStore();
@@ -523,26 +581,26 @@ const confirmDialogue = ref(null);
 // ✅ PRODUCT DIALOG STATE (THESE WERE MISSING!)
 const showProductDialog = ref(false);
 const showProductDropdown = ref(false);
-const productSearch = ref('');
+const productSearch = ref("");
 const isSubmittingProduct = ref(false);
 const productForm = ref(null);
 
 const selectedContext = ref({
-  location: '',
-  vendorName: '',
-  vendorId: null
+  location: "",
+  vendorName: "",
+  vendorId: null,
 });
 
 const newProduct = ref({
-  product_name: '',
-  other_product_name: '',
-  description: '',
-  active: true
+  product_name: "",
+  other_product_name: "",
+  description: "",
+  active: true,
 });
 
 // ✅ FILTER STATE
 const selectedVendorFilter = ref(null);
-const vendorFilterName = ref('');
+const vendorFilterName = ref("");
 const vendorProductFilters = ref(new Map());
 const locationFilters = ref(new Map());
 
@@ -557,7 +615,8 @@ const vendorsProducts = computed(() => {
   const rawData = store.state.vendors_products;
   if (Array.isArray(rawData)) return rawData;
   if (rawData?.data && Array.isArray(rawData.data)) return rawData.data;
-  if (rawData?.vendors_products && Array.isArray(rawData.vendors_products)) return rawData.vendors_products;
+  if (rawData?.vendors_products && Array.isArray(rawData.vendors_products))
+    return rawData.vendors_products;
   return [];
 });
 
@@ -568,7 +627,7 @@ const vendorsLocationsGroup = computed(() => {
   }
   if (Array.isArray(rawData)) return rawData;
   if (rawData?.data && Array.isArray(rawData.data)) return rawData.data;
-  console.warn('❌ vendorsLocationsGroup is not in expected format:', rawData);
+  console.warn("❌ vendorsLocationsGroup is not in expected format:", rawData);
   return [];
 });
 
@@ -576,10 +635,10 @@ const locations = computed(() => vendorsLocationsGroup.value);
 
 const filteredLocations = computed(() => {
   if (!selectedVendorFilter.value) return locations.value;
-  return locations.value.filter(location => {
+  return locations.value.filter((location) => {
     const vendors = getVendorsForLocation(location);
-    return vendors.some(vendor => 
-      (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
+    return vendors.some(
+      (vendor) => (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
     );
   });
 });
@@ -590,10 +649,10 @@ const vendorsProductsGroup = computed(() => store.state.vendors_products_group);
 const getAllProducts = computed(() => {
   const products = vendorsProductsGroup.value?.vendorsProductsGroup || [];
   const cleanedProducts = products
-    .filter(item => item !== null && item !== undefined && item !== '')
-    .map(item => typeof item === 'string' ? item.trim() : String(item).trim())
-    .filter(item => item.length > 0);
-  return [...cleanedProducts, 'Other'];
+    .filter((item) => item !== null && item !== undefined && item !== "")
+    .map((item) => (typeof item === "string" ? item.trim() : String(item).trim()))
+    .filter((item) => item.length > 0);
+  return [...cleanedProducts, "Other"];
 });
 
 const filteredProductOptions = computed(() => {
@@ -601,9 +660,7 @@ const filteredProductOptions = computed(() => {
     return getAllProducts.value;
   }
   const search = productSearch.value.toLowerCase();
-  return getAllProducts.value.filter(name => 
-    name.toLowerCase().includes(search)
-  );
+  return getAllProducts.value.filter((name) => name.toLowerCase().includes(search));
 });
 
 const getProductHint = computed(() => {
@@ -619,7 +676,7 @@ const getProductHint = computed(() => {
 
 const productFormValid = computed(() => {
   if (!newProduct.value.product_name) return false;
-  if (newProduct.value.product_name === 'Other' && !newProduct.value.other_product_name) {
+  if (newProduct.value.product_name === "Other" && !newProduct.value.other_product_name) {
     return false;
   }
   return true;
@@ -637,11 +694,11 @@ const allVendorsExpanded = computed(() => {
   if (expandedLocations.value.size === 0) return true;
   let totalVendors = 0;
   let expandedVendorCount = 0;
-  expandedLocations.value.forEach(locationIndex => {
+  expandedLocations.value.forEach((locationIndex) => {
     const location = locations.value[locationIndex];
     const vendors = getVendorsForLocation(location);
     totalVendors += vendors.length;
-    vendors.forEach(vendor => {
+    vendors.forEach((vendor) => {
       if (expandedVendors.value.has(getVendorKey(location, vendor))) {
         expandedVendorCount++;
       }
@@ -651,45 +708,44 @@ const allVendorsExpanded = computed(() => {
 });
 
 // ✅ PRODUCT DIALOG METHODS
-function openProductDialog(location, vendor) {  
+function openProductDialog(location, vendor) {
   if (!vendor || !vendor.vendor_name) {
-    console.error('❌ Invalid vendor data:', vendor);
-    alert('❌ Invalid vendor data - cannot open dialog');
+    console.error("❌ Invalid vendor data:", vendor);
+    alert("❌ Invalid vendor data - cannot open dialog");
     return;
   }
-  
+
   selectedContext.value = {
     location: location,
     vendorName: vendor.vendor_name,
-    vendorId: vendor.vendor_id || vendor.id
+    vendorId: vendor.vendor_id || vendor.id,
   };
-  
-  newProduct.value = {
-    product_name: '',
-    other_product_name: '',
-    description: '',
-    active: true
-  };
-  
-  productSearch.value = '';
-  showProductDialog.value = true;
 
+  newProduct.value = {
+    product_name: "",
+    other_product_name: "",
+    description: "",
+    active: true,
+  };
+
+  productSearch.value = "";
+  showProductDialog.value = true;
 }
 
 function closeProductDialog() {
   showProductDialog.value = false;
   setTimeout(() => {
     newProduct.value = {
-      product_name: '',
-      other_product_name: '',
-      description: '',
-      active: true
+      product_name: "",
+      other_product_name: "",
+      description: "",
+      active: true,
     };
-    productSearch.value = '';
+    productSearch.value = "";
     selectedContext.value = {
-      location: '',
-      vendorName: '',
-      vendorId: null
+      location: "",
+      vendorName: "",
+      vendorId: null,
     };
   }, 300);
 }
@@ -705,8 +761,8 @@ const handleProductBlur = () => {
 };
 
 const clearProductSearch = () => {
-  productSearch.value = '';
-  newProduct.value.product_name = '';
+  productSearch.value = "";
+  newProduct.value.product_name = "";
   showProductDropdown.value = false;
 };
 
@@ -719,52 +775,52 @@ const selectProduct = (productName) => {
 async function submitNewProduct() {
   try {
     isSubmittingProduct.value = true;
-    
+
     if (!productFormValid.value) {
-      alert('Please complete all required fields');
+      alert("Please complete all required fields");
       return;
     }
-    
-    const finalProductName = newProduct.value.product_name === 'Other' 
-      ? newProduct.value.other_product_name.trim()
-      : newProduct.value.product_name.trim();
-      
+
+    const finalProductName =
+      newProduct.value.product_name === "Other"
+        ? newProduct.value.other_product_name.trim()
+        : newProduct.value.product_name.trim();
+
     if (!finalProductName) {
-      throw new Error('Product name is required');
+      throw new Error("Product name is required");
     }
-    
+
     const productData = {
       product_name: finalProductName,
-      description: newProduct.value.description?.trim() || '',
+      description: newProduct.value.description?.trim() || "",
       vendor_id: selectedContext.value.vendorId,
       location: selectedContext.value.location,
       vendor_name: selectedContext.value.vendorName,
-      active: newProduct.value.product_name === 'Other' ? true : newProduct.value.active,
-      created_by: store.state.user?.resource_owner?.email || '',
+      active: newProduct.value.product_name === "Other" ? true : newProduct.value.active,
+      created_by: store.state.user?.resource_owner?.email || "",
       created_at: new Date().toISOString(),
-      updated_by: store.state.user?.resource_owner?.email || '',
-      updated_at: new Date().toISOString()
+      updated_by: store.state.user?.resource_owner?.email || "",
+      updated_at: new Date().toISOString(),
     };
-    
-    const result = await store.dispatch('createProduct', productData);
 
-    if (result !== false) {     
+    const result = await store.dispatch("createProduct", productData);
+
+    if (result !== false) {
       await Promise.all([
-        store.dispatch('fetchProducts'),
-        store.dispatch('fetchShoppingList'),
-        store.dispatch('fetchVendors'),
-        store.dispatch('fetchVendorsProducts'),
-        store.dispatch('fetchVendorsLocationsGroup'),
-        store.dispatch('fetchVendorsProductsGroup')
+        store.dispatch("fetchProducts"),
+        store.dispatch("fetchShoppingList"),
+        store.dispatch("fetchVendors"),
+        store.dispatch("fetchVendorsProducts"),
+        store.dispatch("fetchVendorsLocationsGroup"),
+        store.dispatch("fetchVendorsProductsGroup"),
       ]);
-      
+
       closeProductDialog();
     } else {
-      throw new Error('Failed to create product');
+      throw new Error("Failed to create product");
     }
-    
   } catch (error) {
-    console.error('❌ Error creating product:', error);
+    console.error("❌ Error creating product:", error);
     alert(`❌ Error: ${error.message}`);
   } finally {
     isSubmittingProduct.value = false;
@@ -772,15 +828,18 @@ async function submitNewProduct() {
 }
 
 // ✅ WATCH FOR "OTHER" SELECTION
-watch(() => newProduct.value.product_name, (newValue) => {
-  if (newValue !== 'Other') {
-    newProduct.value.other_product_name = '';
+watch(
+  () => newProduct.value.product_name,
+  (newValue) => {
+    if (newValue !== "Other") {
+      newProduct.value.other_product_name = "";
+    }
   }
-});
+);
 
 // ✅ ALL YOUR OTHER EXISTING FUNCTIONS (keep as-is)
 function getLocationFilter(location) {
-  console.log("showShoppingList.value: ", showShoppingList.value)
+  console.log("showShoppingList.value: ", showShoppingList.value);
   return locationFilters.value.get(location) ?? showShoppingList.value;
 }
 
@@ -797,7 +856,10 @@ function getVendorProductFilter(vendor) {
   if (vendorLocation && locationFilters.value.has(vendorLocation)) {
     return locationFilters.value.get(vendorLocation);
   }
-  console.log("showShoppingList.value in getVendorProductFilter: ", showShoppingList.value  )
+  console.log(
+    "showShoppingList.value in getVendorProductFilter: ",
+    showShoppingList.value
+  );
   return showShoppingList.value;
 }
 
@@ -812,7 +874,7 @@ function getFilteredProducts(vendor) {
   }
   const showSelectedOnly = getVendorProductFilter(vendor);
   if (showSelectedOnly) {
-    return vendor.products.filter(product => product?.active);
+    return vendor.products.filter((product) => product?.active);
   }
   return vendor.products;
 }
@@ -826,16 +888,18 @@ function toggleLocation(locationIndex) {
     expandedLocations.value.delete(locationIndex);
     const location = locations.value[locationIndex];
     const vendors = getVendorsForLocation(location);
-    vendors.forEach(vendor => {
+    vendors.forEach((vendor) => {
       expandedVendors.value.delete(getVendorKey(location, vendor));
     });
   } else {
     expandedLocations.value.add(locationIndex);
     const location = locations.value[locationIndex];
     const vendors = getVendorsForLocation(location);
-    vendors.forEach(vendor => {
-      if (!selectedVendorFilter.value || 
-          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value) {
+    vendors.forEach((vendor) => {
+      if (
+        !selectedVendorFilter.value ||
+        (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
+      ) {
         expandedVendors.value.add(getVendorKey(location, vendor));
       }
     });
@@ -855,13 +919,15 @@ function toggleAllVendorsForLocation(location) {
   const vendors = getVendorsForLocation(location);
   const allExpanded = allVendorsExpandedForLocation(location);
   if (allExpanded) {
-    vendors.forEach(vendor => {
+    vendors.forEach((vendor) => {
       expandedVendors.value.delete(getVendorKey(location, vendor));
     });
   } else {
-    vendors.forEach(vendor => {
-      if (!selectedVendorFilter.value || 
-          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value) {
+    vendors.forEach((vendor) => {
+      if (
+        !selectedVendorFilter.value ||
+        (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
+      ) {
         expandedVendors.value.add(getVendorKey(location, vendor));
       }
     });
@@ -870,8 +936,9 @@ function toggleAllVendorsForLocation(location) {
 
 function allVendorsExpandedForLocation(location) {
   const vendors = getVendorsForLocation(location);
-  return vendors.length > 0 && vendors.every(vendor => 
-    expandedVendors.value.has(getVendorKey(location, vendor))
+  return (
+    vendors.length > 0 &&
+    vendors.every((vendor) => expandedVendors.value.has(getVendorKey(location, vendor)))
   );
 }
 
@@ -889,7 +956,7 @@ function handleVendorDoubleClick(vendor, event) {
 
 function clearVendorFilter() {
   selectedVendorFilter.value = null;
-  vendorFilterName.value = '';
+  vendorFilterName.value = "";
 }
 
 function autoExpandLocationsWithVendor(vendorId) {
@@ -900,7 +967,7 @@ function autoExpandLocationsWithVendor(vendorId) {
     if (originalIndex !== -1) {
       expandedLocations.value.add(originalIndex);
       const vendors = getVendorsForLocation(location);
-      const targetVendor = vendors.find(v => (v.vendor_id || v.id) === vendorId);
+      const targetVendor = vendors.find((v) => (v.vendor_id || v.id) === vendorId);
       if (targetVendor) {
         expandedVendors.value.add(getVendorKey(location, targetVendor));
       }
@@ -913,7 +980,9 @@ function toggleAllLocations() {
     expandedLocations.value.clear();
     expandedVendors.value.clear();
   } else {
-    const locationsToExpand = selectedVendorFilter.value ? filteredLocations.value : locations.value;
+    const locationsToExpand = selectedVendorFilter.value
+      ? filteredLocations.value
+      : locations.value;
     locationsToExpand.forEach((location) => {
       const originalIndex = locations.value.indexOf(location);
       if (originalIndex !== -1) {
@@ -927,12 +996,14 @@ function toggleAllVendors() {
   if (allVendorsExpanded.value && expandedLocations.value.size > 0) {
     expandedVendors.value.clear();
   } else {
-    expandedLocations.value.forEach(locationIndex => {
+    expandedLocations.value.forEach((locationIndex) => {
       const location = locations.value[locationIndex];
       const vendors = getVendorsForLocation(location);
-      vendors.forEach(vendor => {
-        if (!selectedVendorFilter.value || 
-            (vendor.vendor_id || vendor.id) === selectedVendorFilter.value) {
+      vendors.forEach((vendor) => {
+        if (
+          !selectedVendorFilter.value ||
+          (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
+        ) {
           expandedVendors.value.add(getVendorKey(location, vendor));
         }
       });
@@ -966,8 +1037,12 @@ function handleProductClick(product, event, productIndex, vendorProducts) {
 
 function getVendorLocation(vendor) {
   for (const location of locations.value) {
-    const locationVendors = vendorsProducts.value.filter(v => v?.location === location);
-    if (locationVendors.some(v => (v.vendor_id || v.id) === (vendor.vendor_id || vendor.id))) {
+    const locationVendors = vendorsProducts.value.filter((v) => v?.location === location);
+    if (
+      locationVendors.some(
+        (v) => (v.vendor_id || v.id) === (vendor.vendor_id || vendor.id)
+      )
+    ) {
       return location;
     }
   }
@@ -977,36 +1052,36 @@ function getVendorLocation(vendor) {
 function getVendorsForLocation(location) {
   const vendors = vendorsProducts.value;
   if (!Array.isArray(vendors)) {
-    console.error('❌ vendorsProducts is not an array:', vendors);
+    console.error("❌ vendorsProducts is not an array:", vendors);
     return [];
   }
-  let locationVendors = vendors.filter(vendor => vendor?.location === location);
+  let locationVendors = vendors.filter((vendor) => vendor?.location === location);
   if (selectedVendorFilter.value) {
-    locationVendors = locationVendors.filter(vendor => 
-      (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
+    locationVendors = locationVendors.filter(
+      (vendor) => (vendor.vendor_id || vendor.id) === selectedVendorFilter.value
     );
   }
   return locationVendors;
 }
 
 function editVendor(vendor) {
-  console.log('✏️ Editing vendor:', vendor);
-  router.push({ 
-    name: 'VendorEdit', 
-    params: { id: vendor.vendor_id || vendor.id }
+  console.log("✏️ Editing vendor:", vendor);
+  router.push({
+    name: "VendorEdit",
+    params: { id: vendor.vendor_id || vendor.id },
   });
 }
 
 function editProduct(product) {
-  router.push({ 
-    name: 'ProductEdit', 
-    params: { id: product.id } 
+  router.push({
+    name: "ProductEdit",
+    params: { id: product.id },
   });
 }
 
 function updateProduct(product) {
   if (!product) {
-    console.warn('❌ updateProduct called with invalid product:', product);
+    console.warn("❌ updateProduct called with invalid product:", product);
     return;
   }
 }
@@ -1015,7 +1090,7 @@ async function submitChanges() {
   try {
     isSubmitting.value = true;
     if (!Array.isArray(vendorsProducts.value) || vendorsProducts.value.length === 0) {
-      throw new Error('No vendors products to update!');
+      throw new Error("No vendors products to update!");
     }
     const allProducts = [];
     vendorsProducts.value.forEach((vendor) => {
@@ -1025,45 +1100,47 @@ async function submitChanges() {
             ...product,
             vendor_id: product.vendor_id || vendor.id,
             vendor_name: vendor.vendor_name || product.vendor_name,
-            location: vendor.location || product.location
+            location: vendor.location || product.location,
           });
         });
       }
     });
-    const changedProducts = allProducts.map(product => ({
+    const changedProducts = allProducts.map((product) => ({
       id: product.id,
       vendor_id: product.vendor_id || 1,
-      product_name: product.product_name || 'Unknown Product',
+      product_name: product.product_name || "Unknown Product",
       location: product.location,
       vendor_name: product.vendor_name,
       active: !!product.active,
       created_at: product.created_at,
       updated_at: product.updated_at,
-      updated_by: store.state.user?.resource_owner?.email || '',
-      updated_at_client: new Date().toISOString()
+      updated_by: store.state.user?.resource_owner?.email || "",
+      updated_at_client: new Date().toISOString(),
     }));
-    const activeCount = changedProducts.filter(p => p.active).length;
-    const inactiveCount = changedProducts.filter(p => !p.active).length;
+    const activeCount = changedProducts.filter((p) => p.active).length;
+    const inactiveCount = changedProducts.filter((p) => !p.active).length;
     const submitData = {
       products: changedProducts,
       id: uuidv4(),
-      created_by: store.state.user?.resource_owner?.email || '',
+      created_by: store.state.user?.resource_owner?.email || "",
     };
-    const result = await store.dispatch('putProducts', submitData);
+    const result = await store.dispatch("putProducts", submitData);
     if (result !== false) {
-      alert(`✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`);
+      alert(
+        `✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`
+      );
       await Promise.all([
-        store.dispatch('fetchProducts'),
-        store.dispatch('fetchShoppingList'),
-        store.dispatch('fetchVendors'),
-        store.dispatch('fetchVendorsProducts'),
-        store.dispatch('fetchVendorsLocationsGroup')
+        store.dispatch("fetchProducts"),
+        store.dispatch("fetchShoppingList"),
+        store.dispatch("fetchVendors"),
+        store.dispatch("fetchVendorsProducts"),
+        store.dispatch("fetchVendorsLocationsGroup"),
       ]);
     } else {
-      alert('❌ Update failed');
+      alert("❌ Update failed");
     }
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error("❌ Error:", error);
     alert(`❌ Error: ${error.message}`);
   } finally {
     isSubmitting.value = false;
@@ -1074,15 +1151,15 @@ async function fetchData() {
   isLoading.value = true;
   try {
     const promises = [
-      store.dispatch('fetchVendorsProducts'),
-      store.dispatch('fetchVendorsLocationsGroup'),
-      store.dispatch('fetchShoppingList'),
-      store.dispatch('fetchVendorsProductsGroup')
+      store.dispatch("fetchVendorsProducts"),
+      store.dispatch("fetchVendorsLocationsGroup"),
+      store.dispatch("fetchShoppingList"),
+      store.dispatch("fetchVendorsProductsGroup"),
     ];
     await Promise.all(promises);
     setSmartDefaults();
   } catch (error) {
-    console.error('❌ Error fetching data:', error);
+    console.error("❌ Error fetching data:", error);
   } finally {
     isLoading.value = false;
   }
@@ -1095,8 +1172,9 @@ function setSmartDefaults() {
   let expandedVendorCount = 0;
   locations.value.forEach((location) => {
     const vendors = getVendorsForLocation(location);
-    vendors.forEach(vendor => {
-      const hasSelectedProducts = vendor.products && vendor.products.some(p => p.active);
+    vendors.forEach((vendor) => {
+      const hasSelectedProducts =
+        vendor.products && vendor.products.some((p) => p.active);
       if (hasSelectedProducts) {
         expandedVendors.value.add(getVendorKey(location, vendor));
         const vendorId = vendor.vendor_id || vendor.id;
@@ -1108,9 +1186,11 @@ function setSmartDefaults() {
       }
     });
   });
-  locations.value.forEach(location => {
+  locations.value.forEach((location) => {
     const vendors = getVendorsForLocation(location);
-    const hasAnySelected = vendors.some(v => v.products && v.products.some(p => p.active));
+    const hasAnySelected = vendors.some(
+      (v) => v.products && v.products.some((p) => p.active)
+    );
     locationFilters.value.set(location, hasAnySelected);
   });
   //showShoppingList.value = expandedVendorCount > 0;
@@ -1124,8 +1204,8 @@ onMounted(() => {
 
 <style scoped>
 /* ✅ IMPORT ALL SHARED STYLES */
-@import '@/assets/styles/ui-components.css';
-@import '@/assets/styles/product-components.css';
+@import "@/assets/styles/ui-components.css";
+@import "@/assets/styles/product-components.css";
 
 /* ========================================
    COMPONENT-SPECIFIC ONLY (50 lines!)
@@ -1165,35 +1245,48 @@ onMounted(() => {
 
 .vendor-filtered {
   background-color: rgba(76, 175, 80, 0.1) !important;
-  border-left: 4px solid #4CAF50 !important;
+  border-left: 4px solid #4caf50 !important;
 }
 
 .vendor-filter-icon {
-  color: #4CAF50 !important;
+  color: #4caf50 !important;
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Utility Classes */
-.mt-4 { margin-top: 1rem; }
-.mt-5 { margin-top: 1.5rem; }
-.mb-4 { margin-bottom: 1rem; }
-.chip-icon { margin-right: 0.25rem; }
+.mt-4 {
+  margin-top: 1rem;
+}
+.mt-5 {
+  margin-top: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.chip-icon {
+  margin-right: 0.25rem;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
   .products-location-container {
     padding: 0.5rem;
   }
-  
+
   .navigation-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .vendor-filter-indicator {
     align-items: flex-start;
     margin-left: 0;
