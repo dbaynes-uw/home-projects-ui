@@ -862,6 +862,12 @@ function getVendorProductFilter(vendor) {
 function setVendorProductFilter(vendor, value) {
   const vendorId = vendor.vendor_id || vendor.id;
   vendorProductFilters.value.set(vendorId, value);
+  // Auto-expand vendor when toggling filter
+  const vendorLocation = getVendorLocation(vendor);
+  if (vendorLocation) {
+    const vendorKey = getVendorKey(vendorLocation, vendor);
+    expandedVendors.value.add(vendorKey);
+  }
 }
 
 function getFilteredProducts(vendor) {
