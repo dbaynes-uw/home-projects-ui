@@ -780,6 +780,7 @@ watch(() => newProduct.value.product_name, (newValue) => {
 
 // ✅ ALL YOUR OTHER EXISTING FUNCTIONS (keep as-is)
 function getLocationFilter(location) {
+  console.log("showShoppingList.value: ", showShoppingList.value)
   return locationFilters.value.get(location) ?? showShoppingList.value;
 }
 
@@ -796,6 +797,7 @@ function getVendorProductFilter(vendor) {
   if (vendorLocation && locationFilters.value.has(vendorLocation)) {
     return locationFilters.value.get(vendorLocation);
   }
+  console.log("showShoppingList.value in getVendorProductFilter: ", showShoppingList.value  )
   return showShoppingList.value;
 }
 
@@ -1111,7 +1113,8 @@ function setSmartDefaults() {
     const hasAnySelected = vendors.some(v => v.products && v.products.some(p => p.active));
     locationFilters.value.set(location, hasAnySelected);
   });
-  showShoppingList.value = expandedVendorCount > 0;
+  //showShoppingList.value = expandedVendorCount > 0;
+  showShoppingList.value = true;
 }
 
 onMounted(() => {

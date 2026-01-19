@@ -10,13 +10,6 @@ const API_BASE_URL = isLocalhost
 
 const ROOT_URL = import.meta.env.VITE_ROOT_URL || window.location.origin
 
-console.log('🌐 API Configuration:', {
-  hostname: window.location.hostname,
-  isLocalhost,
-  apiBaseUrl: API_BASE_URL,
-  rootUrl: ROOT_URL
-})
-
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, 
