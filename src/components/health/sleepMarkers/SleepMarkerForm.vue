@@ -5,7 +5,7 @@
       <!-- Sleep Date -->
       <BaseInput
         v-model="formData.sleep_date"
-        label="Sleep Date"
+        label="Night of Sleep Date"
         type="date"
         prepend-icon="calendar"
         required
