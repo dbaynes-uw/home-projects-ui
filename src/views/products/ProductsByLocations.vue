@@ -346,7 +346,7 @@
                       @click="toggleVendor(location, vendor)"
                       @dblclick="handleVendorDoubleClick(vendor, $event)"
                     >
-                      <i class="fas fa-store vendor-store-icon"></i>
+                      <i class="fas fa-store vendor-store-icon" id="store-name-icon-">&nbsp;{{ location }}</i>
 
                       <!-- ✅ VENDOR NAME AND EDIT GROUP -->
                       <div class="vendor-name-group">
@@ -839,7 +839,6 @@ watch(
 
 // ✅ ALL YOUR OTHER EXISTING FUNCTIONS (keep as-is)
 function getLocationFilter(location) {
-  console.log("showShoppingList.value: ", showShoppingList.value);
   return locationFilters.value.get(location) ?? showShoppingList.value;
 }
 
@@ -856,10 +855,6 @@ function getVendorProductFilter(vendor) {
   if (vendorLocation && locationFilters.value.has(vendorLocation)) {
     return locationFilters.value.get(vendorLocation);
   }
-  console.log(
-    "showShoppingList.value in getVendorProductFilter: ",
-    showShoppingList.value
-  );
   return showShoppingList.value;
 }
 
@@ -1292,5 +1287,8 @@ onMounted(() => {
     margin-left: 0;
     width: 100%;
   }
+}
+#store-name-icon-{
+  font-size: 1rem;
 }
 </style>
