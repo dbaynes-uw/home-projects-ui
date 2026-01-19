@@ -423,6 +423,7 @@
                               <!-- ✅ ADD PRODUCT BUTTON -->
                               <button
                                 type="button"
+                                id="btn-low-opacity"
                                 class="btn btn-success btn-small add-product-hint"
                                 @click.stop="openProductDialog(location, vendor)"
                                 title="Double-click title or click here to add new product"
@@ -482,15 +483,15 @@
 
                       <!-- ✅ NO PRODUCTS STATE -->
                       <div v-else class="no-products empty-state">
-                        <i class="fas fa-inbox empty-state-icon"></i>
-                        <p>
+                        <!--i class="fas fa-inbox empty-state-icon"></i-->
+                        <!--p>
                           {{
                             getVendorProductFilter(vendor)
                               ? "No selected products"
                               : "No products available"
                           }}
                           for this vendor
-                        </p>
+                        </!--p-->
                       </div>
                     </div>
                   </div>
@@ -1290,5 +1291,8 @@ onMounted(() => {
 }
 #store-name-icon-{
   font-size: 1rem;
+}
+#btn-low-opacity{
+  opacity: .7;
 }
 </style>
