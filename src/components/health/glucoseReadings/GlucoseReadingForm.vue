@@ -7,7 +7,7 @@
       <div class="form-group">
         <label class="form-label required">
           <i class="fas fa-calendar-day"></i>
-          Reading Date
+          Reading Date - Note: Select Date before if AM-Fasting
         </label>
         <input
           v-model="formState.reading_date"
