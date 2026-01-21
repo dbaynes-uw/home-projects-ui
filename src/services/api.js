@@ -6,7 +6,7 @@ import axios from 'axios'
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
 const API_BASE_URL = isLocalhost 
   ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:3000/api/v1')
-  : (import.meta.env.VITE_API_URL || 'http://10.0.0.13:3000/api/v1')
+  : (import.meta.env.VITE_API_URL || 'http://10.0.0.12:3000/api/v1')
 
 const ROOT_URL = import.meta.env.VITE_ROOT_URL || window.location.origin
 
@@ -99,7 +99,11 @@ api.interceptors.response.use(
 )
 
 export const getAuthUrl = () => {
-  return import.meta.env.VITE_API_URL || 'http://localhost:3000'
+  // ✅ Return base URL without /api/v1 for Devise token routes
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  return isLocalhost 
+    ? 'http://localhost:3000'
+    : 'http://10.0.0.12:3000'
 }
 
 export const config = {
