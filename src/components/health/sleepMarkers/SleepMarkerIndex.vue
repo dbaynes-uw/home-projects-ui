@@ -549,6 +549,78 @@ const averageScore = computed(() => {
   font-size: 12px;
 }
 
+/* ✅ COLUMN-SPECIFIC WIDTHS AND ALIGNMENT */
+.compact-table table th:nth-child(1),
+.compact-table table td.date-cell {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  text-align: left;
+}
+
+/* Sleep Score - narrow and centered */
+.compact-table table th:nth-child(2) {
+  width: 60px;
+  text-align: center;
+}
+
+.compact-table table tbody td:nth-child(2) {
+  width: 60px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Time columns (In Bed, Asleep, Awake, REM, Core, Deep) - centered */
+.compact-table table th:nth-child(3),
+.compact-table table th:nth-child(4),
+.compact-table table th:nth-child(5),
+.compact-table table th:nth-child(6),
+.compact-table table th:nth-child(7),
+.compact-table table th:nth-child(8) {
+  width: 70px;
+  text-align: center;
+}
+
+.compact-table table tbody td:nth-child(3),
+.compact-table table tbody td:nth-child(4),
+.compact-table table tbody td:nth-child(5),
+.compact-table table tbody td:nth-child(6),
+.compact-table table tbody td:nth-child(7),
+.compact-table table tbody td:nth-child(8) {
+  width: 70px;
+  text-align: center;
+}
+
+/* BPM and Breaths columns - very narrow, centered */
+.compact-table table th:nth-child(9),
+.compact-table table th:nth-child(10),
+.compact-table table th:nth-child(11),
+.compact-table table th:nth-child(12) {
+  width: 55px;
+  text-align: center;
+}
+
+.compact-table table tbody td:nth-child(9),
+.compact-table table tbody td:nth-child(10),
+.compact-table table tbody td:nth-child(11),
+.compact-table table tbody td:nth-child(12) {
+  width: 55px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* OOB column - icon only, very narrow, centered */
+.compact-table .oob-cell {
+  width: 50px;
+  text-align: center;
+}
+
+/* Actions column - fixed width, centered */
+.compact-table .actions-cell {
+  width: 90px;
+  text-align: center;
+}
+
 /* ✅ COLUMN TOGGLE BUTTON */
 .btn-toggle-columns {
   padding: 8px 16px;
