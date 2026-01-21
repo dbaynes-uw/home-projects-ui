@@ -28,11 +28,28 @@
           <option value="duration-desc">Duration (Longest First)</option>
           <option value="duration-asc">Duration (Shortest First)</option>
         </select>
+
+        <button @click="showColumnToggle = !showColumnToggle" class="btn-toggle-columns" title="Toggle Columns">
+          <i class="fas fa-columns"></i>
+        </button>
       </div>
     </div>
 
+    <!-- ✅ COLUMN VISIBILITY TOGGLE -->
+    <transition name="slide-down">
+      <div v-if="showColumnToggle" class="column-toggle-panel">
+        <h4><i class="fas fa-eye"></i> Visible Columns</h4>
+        <div class="column-toggles">
+          <label v-for="(visible, col) in visibleColumns" :key="col" class="column-toggle-item">
+            <input type="checkbox" v-model="visibleColumns[col]" @change="saveColumnPreferences" />
+            <span>{{ getColumnLabel(col) }}</span>
+          </label>
+        </div>
+      </div>
+    </transition>
+
     <!-- ✅ TABLE VIEW -->
-    <div class="table-container">
+    <div class="table-container compact-table">
       <table class="data-table">
         <thead>
           <tr>
@@ -41,55 +58,62 @@
               Date
               <i v-if="sortBy.startsWith('date')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th @click="setSortBy('sleepScore')" class="sortable">
-              <i class="fas fa-calendar-day"></i>
-              Sleep Score
+            <th v-if="visibleColumns.sleepScore" @click="setSortBy('sleepScore')" class="sortable">
+              <i class="fas fa-star"></i>
+              Score
               <i v-if="sortBy.startsWith('sleepScore')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>            
-            <th @click="setSortBy('inBed')" class="sortable">
+            <th v-if="visibleColumns.inBed" @click="setSortBy('inBed')" class="sortable">
               <i class="fas fa-clock"></i>
               In Bed
               <i v-if="sortBy.startsWith('inBed')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th @click="setSortBy('asleep')" class="sortable">
+            <th v-if="visibleColumns.asleep" @click="setSortBy('asleep')" class="sortable">
               <i class="fas fa-moon"></i>
               Asleep
               <i v-if="sortBy.startsWith('asleep')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>              
             </th>
-            <th @click="setSortBy('awake')" class="sortable">
-              <i class="fa-solid fa-cloud-bolt"></i>
+            <th v-if="visibleColumns.awake" @click="setSortBy('awake')" class="sortable">
+              <i class="fa-solid fa-bolt"></i>
               Awake
               <i v-if="sortBy.startsWith('awake')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th @click="setSortBy('rem')" class="sortable">
-              <i class="fa-solid fa-satellite-dish"></i>
+            <th v-if="visibleColumns.rem" @click="setSortBy('rem')" class="sortable">
+              <i class="fa-solid fa-brain"></i>
               REM
               <i v-if="sortBy.startsWith('rem')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th @click="setSortBy('core')" class="sortable">
-              <i class="fa-solid fa-bolt"></i>
+            <th v-if="visibleColumns.core" @click="setSortBy('core')" class="sortable">
+              <i class="fa-solid fa-circle"></i>
               Core
               <i v-if="sortBy.startsWith('core')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <th @click="setSortBy('deep')" class="sortable">
-              <i class="fa-solid fa-binoculars"></i>
+            <th v-if="visibleColumns.deep" @click="setSortBy('deep')" class="sortable">
+              <i class="fa-solid fa-water"></i>
               Deep
               <i v-if="sortBy.startsWith('deep')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
-            <!--th @click="setSortBy('quality')" class="sortable">
-              <i class="fas fa-star"></i>
-              Quality
-              <i v-if="sortBy.startsWith('quality')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
-            </!--th-->
-            <!--th>
-              <i class="fas fa-tint"></i>
-              Glucose
-            </!--th>
-            <th>
-              <i class="fas fa-weight"></i>
-              Weight
-            </th-->
-            <th @click="setSortBy('oob')" class="sortable">
+            <th v-if="visibleColumns.fromBpm" @click="setSortBy('from-bpm')" class="sortable">
+              <i class="fa-solid fa-heart"></i>
+              BPM↓
+              <i v-if="sortBy.startsWith('from-bpm')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
+            </th>
+            <th v-if="visibleColumns.toBpm" @click="setSortBy('to-bpm')" class="sortable">
+              <i class="fa-solid fa-heart"></i>
+              BPM↑
+              <i v-if="sortBy.startsWith('to-bpm')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
+            </th>
+            <th v-if="visibleColumns.fromBreaths" @click="setSortBy('from-breaths')" class="sortable">
+              <i class="fa-solid fa-wind"></i>
+              Br↓
+              <i v-if="sortBy.startsWith('from-breaths')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
+            </th>
+            <th v-if="visibleColumns.toBreaths" @click="setSortBy('to-breaths')" class="sortable">
+              <i class="fa-solid fa-wind"></i>
+              Br↑
+              <i v-if="sortBy.startsWith('to-breaths')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
+            </th>
+            <th v-if="visibleColumns.oob" @click="setSortBy('oob')" class="sortable">
               <i class="fas fa-ghost"></i>
               OOB
               <i v-if="sortBy.startsWith('oob')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
@@ -105,30 +129,18 @@
             @click="openModal(sleepMarker)"
           >
             <td class="date-cell">{{ formatDate(sleepMarker.sleep_date) }}</td>
-            <td>{{ sleepMarker.sleep_score }}</td>
-            <td>{{ sleepMarker.time_in_bed }}</td>
-            <td>{{ sleepMarker.time_asleep }}</td>
-            <td>{{ sleepMarker.awake }}</td>
-            <td>{{ sleepMarker.rem }}</td>
-            <td>{{ sleepMarker.core }}</td>
-            <td>{{ sleepMarker.deep }}</td>
-            <!--td>
-              <span class="quality-badge" :class="getQualityClass(sleepMarker.sleep_quality)">
-                {{ sleepMarker.sleep_quality }}/10
-              </span>
-            </td-->
-            <!--td>
-              <span v-if="sleepMarker.am_fasting_glucose_value" class="glucose-value" :class="getGlucoseClass(sleepMarker.am_fasting_glucose_value)">
-                {{ sleepMarker.am_fasting_glucose_value }}
-              </span>
-              <span v-else class="text-muted">-</span>
-            </td-->
-            <!--td>
-              <span v-if="sleepMarker.fasting_weight">{{ formatWeight(sleepMarker.fasting_weight) }}</span>
-              <span v-else class="text-muted">-</span>
-            </td-->
-            
-            <td class="oob-cell">
+            <td v-if="visibleColumns.sleepScore">{{ sleepMarker.sleep_score }}</td>
+            <td v-if="visibleColumns.inBed">{{ sleepMarker.time_in_bed }}</td>
+            <td v-if="visibleColumns.asleep">{{ sleepMarker.time_asleep }}</td>
+            <td v-if="visibleColumns.awake">{{ sleepMarker.awake }}</td>
+            <td v-if="visibleColumns.rem">{{ sleepMarker.rem }}</td>
+            <td v-if="visibleColumns.core">{{ sleepMarker.core }}</td>
+            <td v-if="visibleColumns.deep">{{ sleepMarker.deep }}</td>
+            <td v-if="visibleColumns.fromBpm">{{ sleepMarker.from_heart_beats_per_minute }}</td>
+            <td v-if="visibleColumns.toBpm">{{ sleepMarker.to_heart_beats_per_minute }}</td>
+            <td v-if="visibleColumns.fromBreaths">{{ sleepMarker.from_breaths_per_minute }}</td>
+            <td v-if="visibleColumns.toBreaths">{{ sleepMarker.to_breaths_per_minute }}</td>
+            <td v-if="visibleColumns.oob" class="oob-cell">
               <i v-if="sleepMarker.had_oob" class="fas fa-ghost oob-icon" title="Had OOB"></i>
               <span v-else class="text-muted">-</span>
             </td>
@@ -222,7 +234,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import SleepMarkerCard from './SleepMarkerCard.vue';
 
 const props = defineProps({
@@ -242,6 +254,59 @@ const selectedMarker = ref(null);
 const searchQuery = ref('');
 const qualityFilter = ref('');
 const sortBy = ref('date-desc');
+
+// ✅ COLUMN VISIBILITY
+const showColumnToggle = ref(false);
+const visibleColumns = ref({
+  sleepScore: true,
+  inBed: true,
+  asleep: true,
+  awake: true,
+  rem: true,
+  core: true,
+  deep: true,
+  fromBpm: false,
+  toBpm: false,
+  fromBreaths: false,
+  toBreaths: false,
+  oob: true
+});
+
+// ✅ Load column preferences from localStorage
+onMounted(() => {
+  const saved = localStorage.getItem('sleepMarkerColumns');
+  if (saved) {
+    try {
+      visibleColumns.value = { ...visibleColumns.value, ...JSON.parse(saved) };
+    } catch (e) {
+      console.error('Failed to load column preferences:', e);
+    }
+  }
+});
+
+// ✅ Save column preferences to localStorage
+function saveColumnPreferences() {
+  localStorage.setItem('sleepMarkerColumns', JSON.stringify(visibleColumns.value));
+}
+
+// ✅ Get readable column label
+function getColumnLabel(col) {
+  const labels = {
+    sleepScore: 'Sleep Score',
+    inBed: 'In Bed',
+    asleep: 'Asleep',
+    awake: 'Awake',
+    rem: 'REM',
+    core: 'Core',
+    deep: 'Deep',
+    fromBpm: 'BPM From',
+    toBpm: 'BPM To',
+    fromBreaths: 'Breaths From',
+    toBreaths: 'Breaths To',
+    oob: 'OOB'
+  };
+  return labels[col] || col;
+}
 
 // ✅ MODAL METHODS
 function openModal(sleepMarker) {
@@ -308,9 +373,9 @@ const filteredMarkers = computed(() => {
       case 'oob-asc':
         return new Date(a.had_oob) - new Date(b.had_oob);
       case 'inBed-desc':
-        return parseInt(b.time_in_bed) - parseInt(a.time_in_bed);
+        return (parseFloat(b.time_in_bed) || 0) - (parseFloat(a.time_in_bed) || 0);
       case 'inBed-asc':
-        return parseInt(a.time_in_bed) - parseInt(b.time_in_bed);
+        return (parseFloat(a.time_in_bed) || 0) - (parseFloat(b.time_in_bed) || 0);
       case 'asleep-desc':
         return parseTime(b.time_asleep) - parseTime(a.time_asleep);
       case 'asleep-asc':
@@ -331,6 +396,33 @@ const filteredMarkers = computed(() => {
         return parseTime(b.deep) - parseTime(a.deep);
       case 'deep-asc':
         return parseTime(a.deep) - parseTime(b.deep);       
+      
+      case 'from-bpm-desc':
+        return (parseInt(b.from_heart_beats_per_minute) || 0) - (parseFloat(a.from_heart_beats_per_minute) || 0);
+      case 'from-bpm-asc':
+        return (parseInt(a.from_heart_beats_per_minute) || 0) - (parseFloat(b.from_heart_beats_per_minute) || 0);
+      case 'to-bpm-desc':
+        return (parseInt(b.to_heart_beats_per_minute) || 0) - (parseFloat(a.to_heart_beats_per_minute) || 0);
+      case 'to-bpm-asc':
+        return (parseInt(a.to_heart_beats_per_minute) || 0) - (parseFloat(b.to_heart_beats_per_minute) || 0);
+
+      case 'from-breaths-desc':
+        return (parseFloat(b.from_breaths_per_minute) || 0) - (parseFloat(a.from_breaths_per_minute) || 0);
+      case 'from-breaths-asc':
+        return (parseFloat(a.from_breaths_per_minute) || 0) - (parseFloat(b.from_breaths_per_minute) || 0);
+      case 'to-breaths-desc':
+        return (parseFloat(b.to_breaths_per_minute) || 0) - (parseFloat(a.to_breaths_per_minute) || 0);
+      case 'to-breaths-asc':
+        return (parseFloat(a.to_breaths_per_minute) || 0) - (parseFloat(b.to_breaths_per_minute) || 0);
+
+
+        //case 'to-breaths-desc':
+      //  return (parseFloat(b.to_breaths_per_minute) || 0) - (parseFloat(a.to_breaths_per_minute) || 0);
+      
+        //case 'to-bpm-asc':
+      //  console.log('Sorting bpm ascending', a.to_heart_beats_per_minute, b.to_heart_beats_per_minute);
+      //  return (parseInt(a.to_heart_beats_per_minute) || 0) - (parseFloat(b.to_heart_beats_per_minute) || 0);
+            
       default:
         return 0;
     }
@@ -425,6 +517,131 @@ const averageScore = computed(() => {
 
 .sleep-marker-index {
   width: 100%;
+}
+
+/* ✅ COMPACT TABLE STYLING (Option 5) */
+.compact-table {
+  font-size: 13px;
+}
+
+.compact-table th,
+.compact-table td {
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+
+.compact-table th {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.compact-table th i {
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.compact-table .action-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.compact-table .action-btn i {
+  font-size: 12px;
+}
+
+/* ✅ COLUMN TOGGLE BUTTON */
+.btn-toggle-columns {
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-toggle-columns:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+}
+
+.btn-toggle-columns i {
+  font-size: 14px;
+}
+
+/* ✅ COLUMN TOGGLE PANEL */
+.column-toggle-panel {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.column-toggle-panel h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.column-toggle-panel h4 i {
+  color: #667eea;
+}
+
+.column-toggles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.column-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #f7fafc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 13px;
+}
+
+.column-toggle-item:hover {
+  background: #edf2f7;
+}
+
+.column-toggle-item input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.column-toggle-item span {
+  color: #4a5568;
+  user-select: none;
+}
+
+/* ✅ SLIDE DOWN ANIMATION */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Quality badges */
