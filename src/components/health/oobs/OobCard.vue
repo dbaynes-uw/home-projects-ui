@@ -8,7 +8,7 @@
       </div>
       <div class="header-right">
         <span v-if="props.oob.duration" :class="['badge', durationBadgeClass]">
-          {{ props.oob.duration }}
+          Duration: {{ props.oob.duration }}
         </span>
       </div>
     </div>
@@ -22,6 +22,57 @@
           Circumstances:
         </label>
         <p class="field-value">{{ props.oob.circumstances }}</p>
+      </div>
+      <!-- Sleep Marker Data -->
+      <div v-if="props.oob.sleep_marker" class="sleep-section">
+        <div class="field-group inline-field">
+          <label class="field-label">
+            <i class="fas fa-star"></i>
+            Sleep Score:
+          </label>
+          <span class="field-value">{{ props.oob.sleep_marker.sleep_score }}</span>
+        </div>
+
+        <div class="field-group inline-field">
+          <label class="field-label">
+            <i class="fas fa-bolt"></i>
+            Awake:
+          </label>
+          <span class="field-value">{{ props.oob.sleep_marker.formatted_awake }}</span>
+        </div>
+
+        <div class="field-group inline-field">
+          <label class="field-label">
+            <i class="fas fa-brain"></i>
+            REM Sleep:
+          </label>
+          <span class="field-value">{{ props.oob.sleep_marker.formatted_rem }}</span>
+        </div>
+
+        <div class="field-group inline-field">
+          <label class="field-label">
+            <i class="fas fa-circle"></i>
+            Core Sleep:
+          </label>
+          <span class="field-value">{{ props.oob.sleep_marker.formatted_core }}</span>
+        </div>
+
+        <div class="field-group inline-field">
+          <label class="field-label">
+            <i class="fas fa-water"></i>
+            Deep Sleep:
+          </label>
+          <span class="field-value">{{ props.oob.sleep_marker.formatted_deep }}</span>
+        </div>
+      </div>      
+      <div v-if="props.oob.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
+        <div class="glucose-content">
+          <i class="fas fa-tint"></i>
+          <div class="glucose-info">
+            <span class="glucose-label">Morning Fasting Glucose</span>
+            <span class="glucose-value">{{ oob.am_fasting_glucose_value }} mg/dL</span>
+          </div>
+        </div>
       </div>
 
       <!-- Notes -->
@@ -182,6 +233,28 @@ const handleDoubleClick = () => {
   margin-bottom: 0;
 }
 
+/* Inline field groups (label and value on same line) */
+.inline-field {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.inline-field .field-label {
+  margin-bottom: 0;
+  min-width: 140px;
+  justify-content: flex-start;
+}
+
+.inline-field .field-value {
+  padding-left: 0;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: left;
+}
+
 .field-label {
   display: flex;
   align-items: center;
@@ -223,13 +296,19 @@ const handleDoubleClick = () => {
 .oob-card::after {
   content: 'Double-click to edit';
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 0.75rem;
   color: #9ca3af;
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
 .oob-card:hover::after {
