@@ -25,13 +25,17 @@
       </div>
       <!-- Sleep Marker Data -->
       <div v-if="props.oob.sleep_marker" class="sleep-section">
+                  <a @click.stop="handleSleepMarkerClick">
         <div class="field-group inline-field">
-          <label class="field-label">
-            <i class="fas fa-calendar-day"></i>
-            Sleep Date:
-          </label>
-          <a @click.stop="handleSleepMarkerClick" class="field-value field-link">{{ formattedSleepDate }}</a>
+
+            <label class="field-label">
+              <i class="fas fa-calendar-day"></i>
+              Sleep Date:                
+            </label>       
+            <span class="field-value field-link">{{ formattedSleepDate }}</span>
+          
         </div>
+        </a>
         <div class="field-group inline-field">
           <label class="field-label">
             <i class="fas fa-star"></i>
