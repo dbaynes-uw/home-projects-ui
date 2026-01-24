@@ -27,6 +27,13 @@
       <div v-if="props.oob.sleep_marker" class="sleep-section">
         <div class="field-group inline-field">
           <label class="field-label">
+            <i class="fas fa-calendar-day"></i>
+            Sleep Date:
+          </label>
+          <a @click.stop="handleSleepMarkerClick" class="field-value field-link">{{ formattedSleepDate }}</a>
+        </div>
+        <div class="field-group inline-field">
+          <label class="field-label">
             <i class="fas fa-star"></i>
             Sleep Score:
           </label>
@@ -65,7 +72,7 @@
           <span class="field-value">{{ props.oob.sleep_marker.formatted_deep }}</span>
         </div>
       </div>      
-      <div v-if="props.oob.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
+      <div v-if="props.oob.am_fasting_glucose_value" class="glucose-banner">
         <div class="glucose-content">
           <i class="fas fa-tint"></i>
           <div class="glucose-info">
@@ -125,11 +132,29 @@
       </button>
     </div>
   </div>
+
+  <!-- ✅ SLEEP MARKER MODAL -->
+  <Transition name="modal-fade">
+    <div v-if="showSleepMarkerModal" class="modal-overlay" @click="closeSleepMarkerModal">
+      <div class="modal-container" @click.stop>
+        <button class="modal-close-btn" @click="closeSleepMarkerModal">
+          <i class="fas fa-times"></i>
+        </button>
+        <SleepMarkerCard 
+          v-if="props.oob.sleep_marker"
+          :sleepMarker="props.oob.sleep_marker"
+          @edit="closeSleepMarkerModal"
+          @delete="closeSleepMarkerModal"
+        />
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import SleepMarkerCard from '@/components/health/sleepMarkers/SleepMarkerCard.vue';
 
 // ✅ PROPS
 const props = defineProps({
@@ -144,6 +169,9 @@ const emit = defineEmits(['edit', 'delete']);
 
 // ✅ ROUTER
 const router = useRouter();
+
+// ✅ MODAL STATE
+const showSleepMarkerModal = ref(false);
 
 // ✅ COMPUTED
 const formattedDate = computed(() => {
@@ -161,6 +189,23 @@ const formattedDate = computed(() => {
   } catch (error) {
     console.error('Error formatting date:', error);
     return props.oob.date_of_occurrence;
+  }
+});
+
+const formattedSleepDate = computed(() => {
+
+  if (!props.oob.sleep_marker.sleep_date) return 'Sleep Date Not Present';
+  
+  try {
+    const date = new Date(props.oob.sleep_marker.sleep_date);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch (error) {
+    console.error('Error formatting sleep date:', error);
+    return props.oob.sleep_marker.sleep_date;
   }
 });
 
@@ -189,6 +234,16 @@ const handleDelete = () => {
 
 const handleDoubleClick = () => {
   handleEdit();
+};
+
+const handleSleepMarkerClick = () => {
+  if (props.oob.sleep_marker?.id) {
+    showSleepMarkerModal.value = true;
+  }
+};
+
+const closeSleepMarkerModal = () => {
+  showSleepMarkerModal.value = false;
 };
 </script>
 
@@ -253,6 +308,18 @@ const handleDoubleClick = () => {
   font-weight: 600;
   color: #1f2937;
   text-align: left;
+}
+
+.field-link {
+  color: #3b82f6;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.field-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
 }
 
 .field-label {
@@ -325,5 +392,78 @@ const handleDoubleClick = () => {
     width: 100%;
     justify-content: center;
   }
+}
+
+/* ✅ MODAL STYLES */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-container {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: transparent;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: #f3f4f6;
+  transform: scale(1.1);
+}
+
+.modal-close-btn i {
+  color: #6b7280;
+  font-size: 1.25rem;
+}
+
+/* Modal animations */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-fade-enter-active .modal-container,
+.modal-fade-leave-active .modal-container {
+  transition: transform 0.3s ease;
+}
+
+.modal-fade-enter-from .modal-container,
+.modal-fade-leave-to .modal-container {
+  transform: scale(0.95);
 }
 </style>
