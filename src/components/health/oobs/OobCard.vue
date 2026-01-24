@@ -411,11 +411,12 @@ const closeSleepMarkerModal = () => {
 
 .modal-container {
   position: relative;
-  max-width: 900px;
+  max-width: 600px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
   background: transparent;
+  transform-origin: center;
 }
 
 .modal-close-btn {

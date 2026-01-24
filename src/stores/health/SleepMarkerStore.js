@@ -198,7 +198,6 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
     },
 
     averageSleepScore: (state) => {
-      console.log('Calculating average sleep score for', state.sleepMarkers.length, 'markers');
       if (!state.sleepMarkers.length) return '0.0';
       const total = state.sleepMarkers.reduce((sum, m) => 
         sum + (parseFloat(m.sleep_score) || 0), 0

@@ -436,8 +436,16 @@ const emit = defineEmits(['save', 'cancel']);
 const isSubmitting = ref(false);
 const errors = ref({});
 
+// Helper function to get yesterday's date
+function getYesterdayDateString() {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setMinutes(yesterday.getMinutes() - yesterday.getTimezoneOffset());
+  return yesterday.toISOString().split('T')[0];
+}
+
 const formData = ref({
-  sleep_date: '',
+  sleep_date: getYesterdayDateString(),
   scheduled_bedtime: '22:30',
   scheduled_waketime: '06:30',
   actual_bedtime: '22:30',
@@ -525,7 +533,7 @@ function getLocalDateString() {
 
 function resetForm() {
   formData.value = {
-    sleep_date: getLocalDateString(),
+    sleep_date: getYesterdayDateString(),
     scheduled_bedtime: '22:30',
     scheduled_waketime: '06:30',
     actual_bedtime: '',
