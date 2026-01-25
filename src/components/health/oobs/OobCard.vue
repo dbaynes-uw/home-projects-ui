@@ -76,7 +76,7 @@
           <span class="field-value">{{ props.oob.sleep_marker.formatted_deep }}</span>
         </div>
       </div>      
-      <div v-if="props.oob.am_fasting_glucose_value" class="glucose-banner">
+      <div v-if="props.oob.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
         <div class="glucose-content">
           <i class="fas fa-tint"></i>
           <div class="glucose-info">
@@ -225,6 +225,13 @@ const hasInterval = computed(() => {
   return props.oob.interval_days !== undefined || 
          props.oob.interval_hours !== undefined || 
          props.oob.interval_minutes !== undefined;
+});
+
+const glucoseColorClass = computed(() => {
+  const value = parseFloat(props.oob.am_fasting_glucose_value);
+  if (value < 100) return 'glucose-good';
+  if (value >= 100 && value <= 125) return 'glucose-warning';
+  return 'glucose-high';
 });
 
 // ✅ METHODS
