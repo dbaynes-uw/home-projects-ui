@@ -126,7 +126,7 @@
           </p>
           <router-link :to="{ name: 'OobCreate' }" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
-            Add Your First OOB
+            No Oobs for this Time Frame. Add New OOB?
           </router-link>
         </div>
         
