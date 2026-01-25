@@ -25,7 +25,7 @@
       </div>
       <!-- Sleep Marker Data -->
       <div v-if="props.oob.sleep_marker" class="sleep-section">
-                  <a @click.stop="handleSleepMarkerClick">
+        <a @click.stop="handleSleepMarkerClick">
         <div class="field-group inline-field">
 
             <label class="field-label">
@@ -201,7 +201,9 @@ const formattedSleepDate = computed(() => {
   if (!props.oob.sleep_marker.sleep_date) return 'Sleep Date Not Present';
   
   try {
-    const date = new Date(props.oob.sleep_marker.sleep_date);
+    // Parse the date string manually to avoid timezone issues
+    const [year, month, day] = props.oob.sleep_marker.sleep_date.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

@@ -156,12 +156,12 @@
       <!-- Interruptions -->
       <BaseInput
         v-model.number="formData.interruptions"
-        label="Interruptions"
+        label="Get Up Interruptions"
         type="number"
         min="0"
         prepend-icon="eye-off"
         :error="errors.interruptions"
-        hint="Number of interruptions during sleep"
+        hint="Number of times got out of bed"
       />
       <!-- Interruptions Score -->
       <div class="score-input-group">

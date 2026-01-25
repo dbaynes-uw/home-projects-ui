@@ -16,7 +16,7 @@
             </span>
           </h1>
         </div>
-        
+
         <!-- ✅ NAVIGATION BUTTONS -->
         <div class="action-bar">
           <div class="action-buttons">
@@ -24,10 +24,10 @@
               <i class="fas fa-plus"></i>
               Add OOB
             </router-link>
-            
+
             <button @click="toggleIndexView" class="btn btn-secondary">
               <i :class="showIndexView ? 'fas fa-th' : 'fas fa-list'"></i>
-              {{ showIndexView ? 'Card View' : 'Index View' }}
+              {{ showIndexView ? "Card View" : "Index View" }}
             </button>
             <!--
             <button @click="toggleOobChart" class="btn btn-info">
@@ -83,9 +83,7 @@
                 <i class="fas fa-chart-line"></i>
                 OOB Trends
               </h3>
-              <span class="badge badge-info">
-                {{ displayedOobs.length }} records
-              </span>
+              <span class="badge badge-info"> {{ displayedOobs.length }} records </span>
             </div>
             <!--
             <div class="card-body">
@@ -98,7 +96,7 @@
             -->
           </div>
         </div>
-        
+
         <!-- ✅ RESULTS SECTION -->
         <div class="results-header">
           <h3>
@@ -107,13 +105,13 @@
             <span class="badge badge-info">{{ displayedOobs.length }}</span>
           </h3>
         </div>
-        
+
         <!-- ✅ LOADING STATE -->
         <div v-if="isLoading" class="loading-state">
           <i class="fas fa-spinner fa-spin"></i>
           Loading OOBs...
         </div>
-        
+
         <!-- ✅ EMPTY STATE -->
         <div v-else-if="displayedOobs.length === 0" class="empty-state">
           <i class="fas fa-inbox"></i>
@@ -121,32 +119,27 @@
           <p v-if="searchText || selectedTimeFrame">
             Try adjusting your filters or search criteria
           </p>
-          <p v-else>
-            You haven't recorded any OOBs yet
-          </p>
+          <p v-else>You haven't recorded any OOBs yet</p>
           <router-link :to="{ name: 'OobCreate' }" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
             No Oobs for this Time Frame. Add New OOB?
           </router-link>
         </div>
-        
+
         <!-- ✅ DATA DISPLAY -->
         <div v-else class="content-wrapper">
           <!-- ✅ INDEX/TABLE VIEW - ADD @delete HANDLER -->
           <div v-if="showIndexView">
-            <OobIndex 
-              :oobs="displayedOobs" 
-              @delete="deleteOob"
-            />
+            <OobIndex :oobs="displayedOobs" @delete="deleteOob" />
           </div>
-          
+
           <!-- ✅ CARD VIEW - ALREADY HAS @delete -->
           <div v-else>
             <p class="hint-text">
               <i class="fas fa-hand-pointer"></i>
               Double click any card to edit
             </p>
-            
+
             <div class="cards-grid">
               <OobCard
                 v-for="oob in displayedOobs"
@@ -168,11 +161,7 @@
       size="large"
       @close="closeDialog"
     >
-      <OobForm
-        :oob="selectedOob"
-        @save="handleSave"
-        @cancel="closeDialog"
-      />
+      <OobForm :oob="selectedOob" @save="handleSave" @cancel="closeDialog" />
     </BaseModal>
 
     <ConfirmDialogue ref="confirmDialogue" />
@@ -180,14 +169,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useOobStore } from '@/stores/health/OobStore';
-import BaseModal from '@/components/ui/BaseModal.vue';
-import OobCard from '@/components/health/oobs/OobCard.vue';
-import OobIndex from '@/components/health/oobs/OobIndex.vue';
-import OobForm from '@/components/health/oobs/OobForm.vue';
+import { ref, computed, onMounted } from "vue";
+import { useOobStore } from "@/stores/health/OobStore";
+import BaseModal from "@/components/ui/BaseModal.vue";
+import OobCard from "@/components/health/oobs/OobCard.vue";
+import OobIndex from "@/components/health/oobs/OobIndex.vue";
+import OobForm from "@/components/health/oobs/OobForm.vue";
 //import OobChart from '@/components/oobs/OobChart.vue';
-import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 
 // ✅ PINIA STORE
 const oobStore = useOobStore();
@@ -198,8 +187,8 @@ const showOobChart = ref(false);
 const showDialog = ref(false);
 const selectedOob = ref(null);
 const confirmDialogue = ref(null);
-const searchText = ref('');
-const selectedTimeFrame = ref('7');
+const searchText = ref("");
+const selectedTimeFrame = ref("7");
 
 // ✅ COMPUTED FROM PINIA STORE
 const oobs = computed(() => oobStore.allOobs);
@@ -213,8 +202,8 @@ const displayedOobs = computed(() => {
   if (selectedTimeFrame.value) {
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - parseInt(selectedTimeFrame.value));
-        
-    filtered = filtered.filter(oob => {
+
+    filtered = filtered.filter((oob) => {
       const oobDate = new Date(oob.date_of_occurrence);
       return oobDate >= daysAgo;
     });
@@ -223,12 +212,12 @@ const displayedOobs = computed(() => {
   // Apply search filter
   if (searchText.value) {
     const search = searchText.value.toLowerCase();
-    
-    filtered = filtered.filter(oob => {
+
+    filtered = filtered.filter((oob) => {
       const matchesCircumstances = oob.circumstances?.toLowerCase().includes(search);
       const matchesDuration = oob.duration?.toLowerCase().includes(search);
       const matchesCreatedBy = oob.created_by?.toLowerCase().includes(search);
-      
+
       return matchesCircumstances || matchesDuration || matchesCreatedBy;
     });
   }
@@ -255,7 +244,7 @@ async function deleteOob(oob) {
     title: "Delete OOB Record",
     message: `Are you sure you want to delete the OOB from ${oob.date_of_occurrence}? This cannot be undone.`,
     okButton: "Delete Forever",
-    cancelButton: "Cancel"
+    cancelButton: "Cancel",
   });
 
   if (!ok) {
@@ -264,20 +253,20 @@ async function deleteOob(oob) {
 
   try {
     await oobStore.deleteOob(oob.id);
-    
+
     await confirmDialogue.value.show({
       title: "OOB Deleted",
       message: "OOB record has been deleted successfully.",
       okButton: "OK",
-      cancelButton: null
+      cancelButton: null,
     });
   } catch (error) {
-    console.error('❌ Delete error:', error);
+    console.error("❌ Delete error:", error);
     await confirmDialogue.value.show({
       title: "Delete Failed",
       message: "Failed to delete OOB record. Please try again.",
       okButton: "OK",
-      cancelButton: null
+      cancelButton: null,
     });
   }
 }
@@ -291,7 +280,7 @@ async function handleSave(oobData) {
     }
     closeDialog();
   } catch (error) {
-    console.error('❌ Save error:', error);
+    console.error("❌ Save error:", error);
   }
 }
 
@@ -305,14 +294,14 @@ onMounted(async () => {
   try {
     await oobStore.fetchOobs();
   } catch (error) {
-    console.error('❌ Failed to load OOBs:', error);
+    console.error("❌ Failed to load OOBs:", error);
   }
 });
 </script>
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health/health-shared.css';
+@import "@/assets/styles/health/health-shared.css";
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES
