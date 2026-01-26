@@ -190,6 +190,7 @@
             :event="event"
             @edit="editEvent"
             @view="showEvent"
+            @delete="deleteEvent"
           />
         </div>
 
@@ -363,6 +364,22 @@ function editEvent(event) {
 
 function showEvent(event) {
   router.push({ name: 'EventShow', params: { id: event.id } });
+}
+
+async function deleteEvent(event) {
+  if (!confirm(`Are you sure you want to delete "${event.description}"?`)) {
+    return;
+  }
+  
+  try {
+    const success = await store.dispatch('deleteEvent', event);
+    if (!success) {
+      alert('❌ Failed to delete event');
+    }
+  } catch (error) {
+    console.error('❌ Error deleting event:', error);
+    alert(`❌ Error: ${error.message}`);
+  }
 }
 
 async function notifyEventsDue() {

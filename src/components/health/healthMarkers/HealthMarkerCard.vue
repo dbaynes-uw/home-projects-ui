@@ -29,15 +29,25 @@
         <div class="metric-item">
           <span class="metric-label">
             <i class="fas fa-tachometer-alt"></i>
-            Value
+            Normal Value
           </span>
           <span class="metric-value">
-            {{ healthMarker.marker_value }}
+            {{ healthMarker.normal_range_low }} - {{ healthMarker.normal_range_high }}
+            <span class="metric-unit">{{ healthMarker.unit }}</span>
+          </span>
+        </div>        
+        <div class="metric-item">
+          <span class="metric-label">
+            <i class="fas fa-tachometer-alt"></i>
+            Test Result
+          </span>
+          <span class="metric-value">
+            {{ healthMarker.marker_result }}
             <span class="metric-unit">{{ healthMarker.unit }}</span>
           </span>
         </div>
 
-        <!-- Reference Range -->
+        <!-- NOT YET IN PLACEReference Range -->
         <div v-if="healthMarker.reference_range" class="metric-item">
           <span class="metric-label">
             <i class="fas fa-arrows-alt-h"></i>
@@ -54,11 +64,21 @@
         <i class="fas fa-hospital"></i>
         <span>{{ healthMarker.lab_name }}</span>
       </div>
-
+      <!-- Marker Facts -->
+      <div v-if="healthMarker.marker_facts" class="notes-section">
+        <label class="notes-label">
+          <i class="fas fa-info-circle"></i>
+          Marker Facts
+        </label>
+        <p class="notes-text">{{ truncateNotes(healthMarker.marker_facts) }}</p>
+      </div>
       <!-- Notes Preview -->
-      <div v-if="healthMarker.notes" class="notes-preview">
-        <i class="fas fa-sticky-note"></i>
-        <span>{{ truncateNotes(healthMarker.notes) }}</span>
+      <div v-if="healthMarker.notes" class="notes-section">
+        <label class="notes-label">
+          <i class="fas fa-sticky-note"></i>
+          Notes
+        </label>
+        <p class="notes-text">{{ truncateNotes(healthMarker.notes) }}</p>
       </div>
     </div>
 
@@ -277,7 +297,40 @@ function truncateNotes(notes) {
   color: #667eea;
 }
 
-/* Notes preview */
+/* Notes section */
+.notes-section {
+  margin-top: 1rem;
+}
+
+.notes-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #f59e0b;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.notes-label i {
+  font-size: 1rem;
+}
+
+.notes-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+  padding: 0.75rem;
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  border-radius: 4px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Notes preview (deprecated - replaced by notes-section) */
 .notes-preview {
   display: flex;
   gap: 0.5rem;

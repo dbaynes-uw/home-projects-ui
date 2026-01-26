@@ -177,15 +177,13 @@ const onSubmit = async () => {
       id: uuidv4(),
       status: 'active',
       created_by: user.value?.email || '',
-      created_at: new Date().toISOString(),
     };
     
     console.log('📅 Creating event:', eventData);
     
     const success = await store.dispatch('createEvent', eventData);
-    
+    console.log('📅 Event creation result:', success);
     if (success) {
-      alert(`✅ Event "${eventData.description}" created successfully!`);
       router.push({ name: 'EventList' });
     } else {
       alert('❌ Failed to create event');

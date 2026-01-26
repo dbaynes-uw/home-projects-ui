@@ -121,8 +121,8 @@ export default new Vuex.Store({
     ADD_EVENT(state, event) {
       state.events.push(event);
     },
-    DELETE_EVENT(state, event) {
-      state.event = event;
+    DELETE_EVENT(state, eventToDelete) {
+      state.events = state.events.filter(event => event.id !== eventToDelete.id);
     },
     SET_EVENT(state, event) {
       state.event = event;
@@ -672,14 +672,15 @@ actions: {
       }
     },
     async createEvent({ commit }, event) {
-      EventService.postEvent(event)
-        .then(() => {
-          commit("ADD_EVENT", event);
-          alert("Event was successfully added for " + event.description);
-        })
-        .catch((error) => {
-          alert("Event Post Error for " + event.description + ": " + error.response.request.statusText)
-        });
+      try {
+        await EventService.postEvent(event);
+        commit("ADD_EVENT", event);
+        alert("Event was successfully added for " + event.description);
+        return true;
+      } catch (error) {
+        alert("Event Post Error for " + event.description + ": " + error.response.request.statusText);
+        return false;
+      }
     },
     async fetchEvents({ commit }) {
       EventService.getEvents()
@@ -700,14 +701,15 @@ actions: {
         });
     },
     async deleteEvent({ commit }, event) {
-      EventService.deleteEvent(event.id)
-        .then((response) => {
-          commit("DELETE_EVENT", response.data);
-          alert("Event was successfully Deleted for " + event.description);
-        })
-        .catch((error) => {
-          alert("Event Delete Error: " + event.description + " " + error.response.request.statusText)
-        });
+      try {
+        await EventService.deleteEvent(event.id);
+        commit("DELETE_EVENT", event);
+        alert("Event was successfully Deleted for " + event.description);
+        return true;
+      } catch (error) {
+        alert("Event Delete Error for " + event.description + ": " + error.response.request.statusText);
+        return false;
+      }
     },
     async fetchEvent({ commit, state }, id) {
       const existingEvent = state.events.find((event) => event.id === id);
