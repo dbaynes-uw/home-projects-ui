@@ -1105,13 +1105,16 @@ actions: {
     },
     */
     async createProduct({ commit }, product) {
-      EventService.postProduct(product)
-        .then((response) => {
-          commit("ADD_PRODUCT", response.data);
-          alert("Product was successfully added for " + product.product_name);})
-        .catch((error) => {
-          alert("Product Create Error: ", error.response.data )
-        });
+      try {
+        const response = await EventService.postProduct(product);
+        commit("ADD_PRODUCT", response.data);
+        alert("Product was successfully added for " + product.product_name);
+        return { success: true, data: response.data };
+      } catch (error) {
+        const errorMessage = error.response?.data?.error || error.response?.data?.errors?.[0] || 'Failed to create product';
+        console.error('Product Create Error:', error.response?.data);
+        return { success: false, error: errorMessage };
+      }
     },
 
     async deleteProduct({ commit }, product) {
@@ -1172,15 +1175,18 @@ actions: {
         });
     },
     async updateProduct({ commit }, product) {
-      EventService.putProduct(product)
-        .then((response) => {
-          commit("SET_PRODUCT", response.data);
-          alert("Product " + product.product_name + " was Successfully Updated.")
-        })
-        .catch((error) => {
-          alert("Product Put Error for " + product.product_name + ": " + error.response.request.statusText)
-          location.reload();
-        });
+      try {
+        const response = await EventService.putProduct(product);
+        // Handle both response formats: { product: {...}, vendor: {...} } or just the product
+        const productData = response.data.product || response.data;
+        commit("SET_PRODUCT", productData);
+        alert("Product " + product.product_name + " was Successfully Updated.");
+        return { success: true, data: productData };
+      } catch (error) {
+        const errorMessage = error.response?.data?.error || error.response?.data?.errors?.[0] || error.response?.request?.statusText || 'Failed to update product';
+        alert("Product Put Error for " + product.product_name + ": " + errorMessage);
+        return { success: false, error: errorMessage };
+      }
     },
 
     // ✅ UPDATE YOUR store.js putProducts ACTION

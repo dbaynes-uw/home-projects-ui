@@ -13,11 +13,12 @@ export default {
   },
   init() {
     // ✅ In development, use empty string - baseURL already has /api/v1
-    // ✅ In production, use full Heroku URL
+    // ✅ In production, also use empty string - baseURL handles it
     if (window.location.port == "8080") {
       api_url = "";
+      console.log('🔧 Development mode - api_url set to empty string');
     } else {
-      api_url = "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/";
+      api_url = "";  // ✅ Changed: don't duplicate /api/v1
     }
   },
   deleteBook(book) {
@@ -281,9 +282,11 @@ export default {
   },
   getProduct(id) {
     this.init();
-    console.log("ES GET Product with ID:", id);
-    console.log("ES GET Product URL:", api_url + "products/" + id);
-    return api.get(api_url + "products/" + id);
+    const fullUrl = api_url + "products/" + id;
+    console.log("🔍 ES GET Product with ID:", id);
+    console.log("🔍 api_url:", api_url);
+    console.log("🔍 Full URL:", fullUrl);
+    return api.get(fullUrl);
   },
   /*
   getGarden(id) {

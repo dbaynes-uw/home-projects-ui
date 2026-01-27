@@ -270,7 +270,7 @@ const fetchProduct = async () => {
     error.value = null  
     
     // ✅ GET request to products controller    
-    const response = await api.get(`/api/v1/products/${route.params.id}`)
+    const response = await api.get(`products/${route.params.id}`)
     
     // ✅ API returns { product: {...}, vendor: {...} }
     product.value = response.data.product
@@ -322,7 +322,7 @@ const updateProduct = async () => {
     }
     
     // ✅ PUT request to products controller
-    const response = await api.put(`/api/v1/products/${product.value.id}`, productData)
+    const response = await api.put(`products/${product.value.id}`, productData)
         
     // Update local state - API returns { product: {...}, vendor: {...} }
     product.value = response.data.product
@@ -359,7 +359,7 @@ const deleteProduct = async () => {
     if (!ok) return
     
     // ✅ DELETE request to products controller
-    await api.delete(`/api/v1/products/${product.value.id}`)
+    await api.delete(`products/${product.value.id}`)
     
     statusMessage.value = `✅ Product "${product.value.product_name}" deleted! Redirecting...`
     

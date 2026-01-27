@@ -3,10 +3,14 @@ import axios from 'axios'
 // ✅ SMART API URL DETECTION
 // If accessing via localhost, use localhost API
 // If accessing via IP address (iPhone), use IP address API
+// If on Heroku production, use Heroku API
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const isHeroku = window.location.hostname.includes('herokuapp.com')
 const API_BASE_URL = isLocalhost 
   ? (import.meta.env.VITE_API_URL_LOCAL || 'http://localhost:3000/api/v1')
-  : (import.meta.env.VITE_API_URL || 'http://10.0.0.12:3000/api/v1')
+  : isHeroku
+    ? 'https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1'
+    : (import.meta.env.VITE_API_URL || 'http://10.0.0.12:3000/api/v1')
 
 const ROOT_URL = import.meta.env.VITE_ROOT_URL || window.location.origin
 

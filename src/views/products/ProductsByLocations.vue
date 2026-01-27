@@ -799,14 +799,12 @@ async function submitNewProduct() {
       vendor_name: selectedContext.value.vendorName,
       active: newProduct.value.product_name === "Other" ? true : newProduct.value.active,
       created_by: store.state.user?.resource_owner?.email || "",
-      created_at: new Date().toISOString(),
       updated_by: store.state.user?.resource_owner?.email || "",
-      updated_at: new Date().toISOString(),
     };
 
     const result = await store.dispatch("createProduct", productData);
 
-    if (result !== false) {
+    if (result?.success) {
       await Promise.all([
         store.dispatch("fetchProducts"),
         store.dispatch("fetchShoppingList"),
@@ -818,7 +816,7 @@ async function submitNewProduct() {
 
       closeProductDialog();
     } else {
-      throw new Error("Failed to create product");
+      throw new Error(result?.error || "Failed to create product");
     }
   } catch (error) {
     console.error("❌ Error creating product:", error);
@@ -1114,10 +1112,7 @@ async function submitChanges() {
       location: product.location,
       vendor_name: product.vendor_name,
       active: !!product.active,
-      created_at: product.created_at,
-      updated_at: product.updated_at,
       updated_by: store.state.user?.resource_owner?.email || "",
-      updated_at_client: new Date().toISOString(),
     }));
     const activeCount = changedProducts.filter((p) => p.active).length;
     const inactiveCount = changedProducts.filter((p) => !p.active).length;

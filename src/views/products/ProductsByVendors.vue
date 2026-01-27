@@ -696,10 +696,7 @@ const submitChanges = async () => {
       location: product.location,
       vendor_name: product.vendor_name,
       active: !!product.active,
-      created_at: product.created_at,
-      updated_at: product.updated_at,
       updated_by: user.value?.email || '',
-      updated_at_client: new Date().toISOString()
     }));
     
     const activeCount = changedProducts.filter(p => p.active).length;
