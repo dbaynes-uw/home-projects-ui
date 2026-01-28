@@ -14,7 +14,7 @@
               <th>Status</th>
               <th>Lab</th>
               <th>Doctor</th>
-              <th class="actions-column">Actions</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -38,11 +38,9 @@
               <td class="date-cell">
                 {{ formatDate(marker.marker_date) }}
               </td>
-
               <!-- Result -->
               <td class="result-cell">
-                <span class="result-value">{{ marker.marker_result }}</span>
-                <span v-if="marker.unit" class="result-unit">{{ marker.unit }}</span>
+                <span class="result-value">{{ marker.marker_result }} {{ marker.unit }}</span>
               </td>
 
               <!-- Status -->
@@ -229,7 +227,7 @@ function viewDetails(marker) {
 
 .data-table thead th {
   padding: 1rem;
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   font-size: 0.875rem;
   text-transform: uppercase;
@@ -286,13 +284,14 @@ function viewDetails(marker) {
 
 /* Date cell */
 .date-cell {
-  min-width: 120px;
+  /*min-width: 120px;*/
   color: #6b7280;
 }
 
 /* Result cell */
 .result-cell {
-  min-width: 120px;
+  color: #6b7280;
+  /*min-width: 120px;*/
 }
 
 .result-value {
