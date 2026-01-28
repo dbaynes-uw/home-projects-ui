@@ -150,7 +150,6 @@ function formatDate(dateString) {
 }
 
 function getStatusClass(status) {
-  console.log('Getting status class for status:', status);
   if (!status) return 'badge-secondary';
   
   const lower = status.toLowerCase();

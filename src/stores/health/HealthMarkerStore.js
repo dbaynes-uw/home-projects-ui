@@ -90,39 +90,26 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
       return Array.from(names).sort();
     },
 
-    // Get unique labs
-    uniqueLabs: (state) => {
-      const labs = new Set(state.healthMarkers.map(m => m.marker_lab).filter(Boolean));
-      return Array.from(labs).sort();
-    },
-
     // Count by status
     statusCounts: (state) => {
-      const counts = {
-        Normal: 0,
-        Borderline: 0,
-        High: 0,
-        Low: 0,
-        Critical: 0,
-        Unknown: 0
-      };
-      console.log('Calculating status counts from markers:', state.healthMarkers);
-      state.healthMarkers.forEach(marker => {
-        const status = marker.status || 'Unknown';
-        if (counts[status] !== undefined) {
-          counts[status]++;
-        } else {
-          counts.Unknown++;
-        }
-      });
-
-      return counts;
+      // Define allowed statuses as literals
+        const STATUSES = ['Normal', 'Borderline', 'Borderline High', 'High', 'Low', 'Critical', 'Unknown'];
+        const counts = Object.fromEntries(STATUSES.map(status => [status, 0]));
+        state.healthMarkers.forEach(marker => {
+          const markerStatus = marker && marker.status;
+          if (STATUSES.includes(markerStatus)) {
+            counts[markerStatus]++;
+          } else {
+            counts['Unknown']++;
+          }
+        });
+        return counts;
     },
 
     // Get markers needing attention (High/Low/Critical)
     markersNeedingAttention: (state) => {
       return state.healthMarkers.filter(marker => 
-        ['High', 'Low', 'Critical'].includes(marker.marker_status)
+        ['High', 'Low', 'Critical'].includes(marker.status)
       ).sort((a, b) => new Date(b.marker_date) - new Date(a.marker_date));
     },
 

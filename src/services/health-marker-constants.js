@@ -255,7 +255,6 @@ export const getResultStatus = (markerName, testResult) => {
   const result = parseFloat(testResult);
   
   // ✅ A1C LOGIC
-  console.log('Analyzing result for', markerName, 'with value', result);
   if (markerName === 'Hemoglobin A1c') {
     if (result < 5.7) {
       return { 
@@ -280,21 +279,20 @@ export const getResultStatus = (markerName, testResult) => {
   }
     // ✅ PSA PROSTATE LOGIC
   if (markerName === 'PSA Serum') {
-    if (marker.id == 4) {
-      console.log('PSA Serum result analysis for value:', result);
-    }
-    if (result < 4.0) return { 
+    if (result < 4.0) {
+      return { 
       type: 'success', 
       title: 'Normal', 
       range: marker.normalRange,
       message: 'PSA is normal' 
+      }
     };
     if (result <= 6.0) {
         return { 
         type: 'warning', 
-        title: 'Borderline', 
+        title: 'Borderline High', 
         range: marker.normalRange,
-        message: 'PSA is Borderline' 
+        message: 'PSA is Borderline High' 
       }
     };
     return { 
@@ -314,7 +312,7 @@ export const getResultStatus = (markerName, testResult) => {
     };
     if (result <= 239) return { 
       type: 'warning', 
-      title: 'Borderline', 
+      title: 'Borderline High', 
       range: marker.borderlineRange,
       message: 'Total cholesterol is Borderline high' 
     };
@@ -328,7 +326,7 @@ export const getResultStatus = (markerName, testResult) => {
   
   if (markerName === 'LDL') {
     if (result < 100) return { type: 'success', title: 'Normal', range: marker.normalRange };
-    if (result <= 159) return { type: 'warning', title: 'Borderline', range: marker.borderlineRange };
+    if (result <= 159) return { type: 'warning', title: 'Borderline High', range: marker.borderlineRange };
     return { type: 'error', title: 'High', range: marker.highRange };
   }
   

@@ -81,8 +81,8 @@
               <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ statusCounts.Borderline }}</div>
-              <div class="stat-label">Borderline</div>
+              <div class="stat-value">{{ statusCounts['Borderline High'] }}</div>
+              <div class="stat-label">Borderline High</div>
             </div>
           </div>
           <div class="stat-card stat-warning">
@@ -102,16 +102,6 @@
             <div class="stat-content">
               <div class="stat-value">{{ statusCounts.Critical }}</div>
               <div class="stat-label">Critical</div>
-            </div>
-          </div>
-
-          <div class="stat-card stat-info">
-            <div class="stat-icon">
-              <i class="fas fa-hospital"></i>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ uniqueLabs.length }}</div>
-              <div class="stat-label">Labs</div>
             </div>
           </div>
         </div>
@@ -206,7 +196,6 @@ const healthMarkers = computed(() => healthMarkerStore.allHealthMarkers);
 const isLoading = computed(() => healthMarkerStore.isLoading);
 const healthMarkerCount = computed(() => healthMarkerStore.healthMarkerCount);
 const uniqueMarkerNames = computed(() => healthMarkerStore.uniqueMarkerNames);
-const uniqueLabs = computed(() => healthMarkerStore.uniqueLabs);
 const statusCounts = computed(() => healthMarkerStore.statusCounts);
 
 // ✅ METHODS
