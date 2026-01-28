@@ -592,11 +592,9 @@ async function handleSubmit() {
     if (typeof submitData.scheduled_bedtime !== 'string' || !timeRegex.test(submitData.scheduled_bedtime)) {
       submitData.scheduled_bedtime = '22:30';
     }
-    console.log('scheduled_bedtime before test:', submitData.scheduled_bedtime);
     if (typeof submitData.scheduled_waketime !== 'string' || !timeRegex.test(submitData.scheduled_waketime)) {
       submitData.scheduled_waketime = '06:30';
     }
-    console.log('scheduled_waketime before submit:', submitData.scheduled_waketime);
     // ✅ Convert lbs + oz to decimal before submitting
     if (submitData.fasting_weight_lbs !== null || submitData.fasting_weight_oz !== null) {
       const lbs = submitData.fasting_weight_lbs || 0;

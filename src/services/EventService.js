@@ -14,12 +14,12 @@ export default {
   init() {
     // ✅ In development, use empty string - baseURL already has /api/v1
     // ✅ In production, also use empty string - baseURL handles it
-    if (window.location.port == "8080") {
-      api_url = "";
-      console.log('🔧 Development mode - api_url set to empty string');
-    } else {
-      api_url = "";  // ✅ Changed: don't duplicate /api/v1
-    }
+    //if (window.location.port == "8080") {
+    //  api_url = "";
+    //  console.log('🔧 Development mode - api_url set to empty string');
+    //} else {
+    //  api_url = "";  // ✅ Changed: don't duplicate /api/v1
+    //}
   },
   deleteBook(book) {
     this.init();

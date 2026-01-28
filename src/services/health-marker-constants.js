@@ -1,7 +1,7 @@
 // ✅ COMPREHENSIVE HEALTH MARKERS
 export const HEALTH_MARKERS = [
   {
-    name: 'A1c',
+    name: 'Hemoglobin A1c',
     label: 'Hemoglobin A1c',
     unit: '%',
     normalRange: '< 5.7%',
@@ -109,7 +109,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
-    name: 'PSA_Serum',
+    name: 'PSA Serum',
     label: 'PSA Serum',
     unit: 'ng/ml',
     normalRange: '< 4.0 ng/ml',
@@ -255,13 +255,16 @@ export const getResultStatus = (markerName, testResult) => {
   const result = parseFloat(testResult);
   
   // ✅ A1C LOGIC
-  if (markerName === 'A1c') {
-    if (result < 5.7) return { 
-      type: 'success', 
-      title: 'Normal', 
-      range: marker.normalRange,
-      message: 'A1c is in normal range' 
-    };
+  console.log('Analyzing result for', markerName, 'with value', result);
+  if (markerName === 'Hemoglobin A1c') {
+    if (result < 5.7) {
+      return { 
+        type: 'success', 
+        title: 'Normal', 
+        range: marker.normalRange,
+        message: 'A1c is in normal range' 
+      };
+    }
     if (result <= 6.4) return { 
       type: 'warning', 
       title: 'Prediabetes', 
@@ -276,18 +279,23 @@ export const getResultStatus = (markerName, testResult) => {
     };
   }
     // ✅ PSA PROSTATE LOGIC
-  if (markerName === 'PSA_Serum') {
+  if (markerName === 'PSA Serum') {
+    if (marker.id == 4) {
+      console.log('PSA Serum result analysis for value:', result);
+    }
     if (result < 4.0) return { 
       type: 'success', 
       title: 'Normal', 
       range: marker.normalRange,
       message: 'PSA is normal' 
     };
-    if (result <= 6.0) return { 
-      type: 'warning', 
-      title: 'Borderline High', 
-      range: marker.borderlineRange,
-      message: 'PSA is borderline high' 
+    if (result <= 6.0) {
+        return { 
+        type: 'warning', 
+        title: 'Borderline', 
+        range: marker.normalRange,
+        message: 'PSA is Borderline' 
+      }
     };
     return { 
       type: 'error', 
@@ -306,9 +314,9 @@ export const getResultStatus = (markerName, testResult) => {
     };
     if (result <= 239) return { 
       type: 'warning', 
-      title: 'Borderline High', 
+      title: 'Borderline', 
       range: marker.borderlineRange,
-      message: 'Total cholesterol is borderline high' 
+      message: 'Total cholesterol is Borderline high' 
     };
     return { 
       type: 'error', 
@@ -320,7 +328,7 @@ export const getResultStatus = (markerName, testResult) => {
   
   if (markerName === 'LDL') {
     if (result < 100) return { type: 'success', title: 'Normal', range: marker.normalRange };
-    if (result <= 159) return { type: 'warning', title: 'Borderline High', range: marker.borderlineRange };
+    if (result <= 159) return { type: 'warning', title: 'Borderline', range: marker.borderlineRange };
     return { type: 'error', title: 'High', range: marker.highRange };
   }
   
@@ -368,7 +376,7 @@ export const getResultStatus = (markerName, testResult) => {
     if (result <= 89) return { type: 'warning', title: 'Stage 1 Hypertension', range: marker.stage1Range };
     return { type: 'error', title: 'Stage 2 Hypertension', range: marker.stage2Range };
   }
-  
+  console.log('No specific logic for marker:', markerName);
   // ✅ DEFAULT FOR OTHER MARKERS
   return { 
     type: 'info', 

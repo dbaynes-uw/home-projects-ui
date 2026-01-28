@@ -17,7 +17,12 @@
             </span>
           </h1>
         </div>
-
+        <div class="header-link">
+        <a href="https://myhealthchart.com/" target="_blank" class="btn btn-primary">
+          <i class="fas fa-external-link-alt"></i>
+            MyHealthChart
+        </a>
+        </div>  
         <!-- ✅ CONTROLS ROW -->
         <div class="controls-row">
           <button class="btn btn-success" @click="handleCreate">
@@ -71,7 +76,15 @@
               <div class="stat-label">Normal</div>
             </div>
           </div>
-
+          <div class="stat-card stat-warning">
+            <div class="stat-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value">{{ statusCounts.Borderline }}</div>
+              <div class="stat-label">Borderline</div>
+            </div>
+          </div>
           <div class="stat-card stat-warning">
             <div class="stat-icon">
               <i class="fas fa-exclamation-triangle"></i>

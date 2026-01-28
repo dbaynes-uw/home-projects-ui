@@ -25,17 +25,7 @@
     <!-- ✅ CARD BODY -->
     <div class="card-body">
       <!-- Value & Unit -->
-      <div class="metric-row">
-        <div class="metric-item">
-          <span class="metric-label">
-            <i class="fas fa-tachometer-alt"></i>
-            Normal Value
-          </span>
-          <span class="metric-value">
-            {{ healthMarker.normal_range_low }} - {{ healthMarker.normal_range_high }}
-            <span class="metric-unit">{{ healthMarker.unit }}</span>
-          </span>
-        </div>        
+      <div class="metric-row">   
         <div class="metric-item">
           <span class="metric-label">
             <i class="fas fa-tachometer-alt"></i>
@@ -46,7 +36,16 @@
             <span class="metric-unit">{{ healthMarker.unit }}</span>
           </span>
         </div>
-
+        <div class="metric-item">
+          <span class="metric-label">
+            <i class="fas fa-tachometer-alt"></i>
+            Normal Values
+          </span>
+          <span class="metric-value">
+            {{ healthMarker.normal_range_low }} - {{ healthMarker.normal_range_high }}
+            <span class="metric-unit">{{ healthMarker.unit }}</span>
+          </span>
+        </div>    
         <!-- NOT YET IN PLACEReference Range -->
         <div v-if="healthMarker.reference_range" class="metric-item">
           <span class="metric-label">
@@ -151,11 +150,13 @@ function formatDate(dateString) {
 }
 
 function getStatusClass(status) {
+  console.log('Getting status class for status:', status);
   if (!status) return 'badge-secondary';
   
   const lower = status.toLowerCase();
   if (lower === 'normal') return 'badge-success';
-  if (lower === 'high' || lower === 'low') return 'badge-warning';
+  if (lower.includes('borderline')) return 'badge-warning';
+  if (lower === 'high' || lower === 'low' ) return 'badge-warning';
   if (lower === 'critical') return 'badge-danger';
   return 'badge-info';
 }

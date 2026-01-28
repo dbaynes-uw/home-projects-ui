@@ -100,14 +100,15 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
     statusCounts: (state) => {
       const counts = {
         Normal: 0,
+        Borderline: 0,
         High: 0,
         Low: 0,
         Critical: 0,
         Unknown: 0
       };
-
+      console.log('Calculating status counts from markers:', state.healthMarkers);
       state.healthMarkers.forEach(marker => {
-        const status = marker.marker_status || 'Unknown';
+        const status = marker.status || 'Unknown';
         if (counts[status] !== undefined) {
           counts[status]++;
         } else {
