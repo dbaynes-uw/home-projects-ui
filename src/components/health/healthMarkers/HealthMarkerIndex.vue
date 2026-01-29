@@ -10,6 +10,7 @@
             <tr>
               <th>Marker Name</th>
               <th>Test Date</th>
+              <th></th>
               <th>Result</th>
               <th>Status</th>
               <th>Lab</th>
@@ -40,6 +41,7 @@
               <td class="date-cell">
                 {{ formatDate(marker.marker_date) }}
               </td>
+              <td></td>
               <!-- Result -->
               <td class="result-cell">
                 <span class="result-value"
@@ -182,7 +184,8 @@ function formatDate(dateString) {
   if (!dateString) return "-";
 
   try {
-    const date = new Date(dateString);
+    const [year, month, day] = dateString.split('-');
+    const date = new Date(Number(year), Number(month) - 1, Number(day));  
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -293,14 +296,14 @@ function viewDetails(marker) {
 
 /* Date cell */
 .date-cell {
-  /*min-width: 120px;*/
+  min-width: 120px;
   color: #6b7280;
 }
 
 /* Result cell */
 .result-cell {
   color: #6b7280;
-  /*min-width: 120px;*/
+  min-width: 120px;
 }
 
 .result-value {
