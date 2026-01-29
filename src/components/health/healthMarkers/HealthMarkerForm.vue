@@ -266,6 +266,48 @@
             </div>
           </div>
 
+          <!-- ✅ PANEL ASSOCIATION -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <i class="fas fa-layer-group"></i>
+              Panel Association
+            </h3>
+
+            <div class="form-row">
+              <!-- Panel Selection -->
+              <div class="form-group full-width">
+                <label for="health_marker_panel_id" class="form-label">
+                  <i class="fas fa-folder"></i>
+                  Health Marker Panel
+                </label>
+                <select
+                  v-if="isEditable"
+                  id="health_marker_panel_id"
+                  v-model="form.health_marker_panel_id"
+                  class="form-control"
+                >
+                  <option :value="null">None (Standalone Marker)</option>
+                  <option
+                    v-for="panel in panels"
+                    :key="panel.id"
+                    :value="panel.id"
+                  >
+                    {{ panel.panel_name }} - {{ formatDate(panel.test_date) }}
+                  </option>
+                </select>
+                <div v-else class="form-control-static">
+                  <span v-if="form.health_marker_panel_id">
+                    {{ panels.find(p => p.id === form.health_marker_panel_id)?.panel_name || 'Unknown Panel' }}
+                  </span>
+                  <span v-else>-</span>
+                </div>
+                <small v-if="isEditable" class="form-text">
+                  Associate this marker with a panel, or leave as standalone
+                </small>
+              </div>
+            </div>
+          </div>
+
           <!-- ✅ NOTES & FACTS -->
           <div class="form-section">
             <h3 class="section-title">
@@ -409,6 +451,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { HEALTH_MARKERS, getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import EventService from '@/services/EventService';
 
 // ✅ PROPS
 const props = defineProps({
@@ -438,11 +481,13 @@ const form = ref({
   marker_facts: '',
   notes: '',
   lab_name: '',
-  doctor_name: ''
+  doctor_name: '',
+  health_marker_panel_id: null
 });
 
 const isSubmitting = ref(false);
 const errorMessage = ref('');
+const panels = ref([]);
 
 // ✅ COMPUTED
 const isEditable = computed(() => props.mode === 'create' || props.mode === 'edit');
@@ -575,7 +620,8 @@ async function handleSubmit() {
       marker_facts: form.value.marker_facts || null,
       notes: form.value.notes || null,
       lab_name: form.value.lab_name || null,
-      doctor_name: form.value.doctor_name || null
+      doctor_name: form.value.doctor_name || null,
+      health_marker_panel_id: form.value.health_marker_panel_id || null
     };
 
     // Emit to parent
@@ -606,12 +652,23 @@ function initializeForm() {
       marker_facts: props.healthMarker.marker_facts || '',
       notes: props.healthMarker.notes || '',
       lab_name: props.healthMarker.lab_name || '',
-      doctor_name: props.healthMarker.doctor_name || ''
+      doctor_name: props.healthMarker.doctor_name || '',
+      health_marker_panel_id: props.healthMarker.health_marker_panel_id || null
     };
   } else if (props.mode === 'create') {
     // Create mode - set default date to today
     const today = new Date().toISOString().split('T')[0];
     form.value.marker_date = today;
+  }
+}
+
+async function fetchPanels() {
+  try {
+    const response = await EventService.getHealthMarkerPanels();
+    panels.value = response.data || [];
+  } catch (error) {
+    console.error('Error fetching panels:', error);
+    panels.value = [];
   }
 }
 
@@ -623,6 +680,7 @@ watch(() => props.healthMarker, () => {
 // ✅ LIFECYCLE
 onMounted(() => {
   initializeForm();
+  fetchPanels();
 });
 </script>
 
@@ -674,6 +732,10 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
 }
 
 .form-label {

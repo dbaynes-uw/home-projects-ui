@@ -231,6 +231,33 @@ export default {
     // For Testing: setTimeout(5000);
     return api.delete(api_url + "health_markers/" + `${healthMarker.id}`);
   },
+
+  // Health Marker Panels
+  getHealthMarkerPanelsMixedView() {
+    this.init();
+    return api.get(api_url + "health_marker_panels/mixed_view");
+  },
+  getHealthMarkerPanels() {
+    this.init();
+    return api.get(api_url + "health_marker_panels");
+  },
+  getHealthMarkerPanel(id) {
+    this.init();
+    return api.get(api_url + "health_marker_panels/" + id);
+  },
+  postHealthMarkerPanel(panel) {
+    this.init();
+    return api.post(api_url + "health_marker_panels", panel);
+  },
+  putHealthMarkerPanel(panel) {
+    this.init();
+    return api.put(api_url + "health_marker_panels/" + panel.id, panel);
+  },
+  deleteHealthMarkerPanel(id) {
+    this.init();
+    return api.delete(api_url + "health_marker_panels/" + id);
+  },
+
   deleteOob(oob) {
     this.init();
        // For Testing: setTimeout(5000);

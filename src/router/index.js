@@ -270,6 +270,28 @@ const routes = [
   },
 
   // ========================================
+  // HEALTH MARKER PANELS
+  // ========================================
+  {
+    path: '/health/panels/create',
+    name: 'HealthMarkerPanelCreate',
+    component: () => import('@/views/health/healthMarkers/HealthMarkerPanelEdit.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/health/panels/:id/edit',
+    name: 'HealthMarkerPanelEdit',
+    component: () => import('@/views/health/healthMarkers/HealthMarkerPanelEdit.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/health/panels/:id',
+    name: 'HealthMarkerPanelDetails',
+    component: () => import('@/views/health/healthMarkers/HealthMarkerPanelDetails.vue'),
+    meta: { requiresAuth: true }
+  },
+
+  // ========================================
   // GLUCOSE READINGS
   // ========================================
   {

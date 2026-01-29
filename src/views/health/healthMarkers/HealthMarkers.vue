@@ -25,10 +25,16 @@
         </div>  
         <!-- ✅ CONTROLS ROW -->
         <div class="controls-row">
-          <button class="btn btn-success" @click="handleCreate">
-            <i class="fas fa-plus"></i>
-            Add Health Marker
-          </button>
+          <div class="controls-left">
+            <button class="btn btn-success" @click="handleCreate">
+              <i class="fas fa-plus"></i>
+              Add Health Marker
+            </button>
+            <button class="btn btn-primary" @click="handleCreatePanel">
+              <i class="fas fa-folder-plus"></i>
+              Create Panel
+            </button>
+          </div>
           
           <!-- ✅ VIEW TOGGLE -->
           <div class="view-toggle">
@@ -118,7 +124,45 @@
 
       <!-- ✅ CARD VIEW -->
       <div v-else-if="currentView === 'cards'">
-        <div v-if="healthMarkers.length > 0" class="cards-grid">
+        <!-- View Toggle -->
+        <div class="view-mode-toggle">
+          <button 
+            :class="['toggle-btn', { active: showMixedView }]"
+            @click="showMixedView = true"
+          >
+            <i class="fas fa-layer-group"></i>
+            Grouped (Panels + Markers)
+          </button>
+          <button 
+            :class="['toggle-btn', { active: !showMixedView }]"
+            @click="showMixedView = false"
+          >
+            <i class="fas fa-list"></i>
+            All Markers
+          </button>
+        </div>
+
+        <!-- Mixed View (Panels + Standalone Markers) -->
+        <div v-if="showMixedView && mixedItems.length > 0" class="cards-grid">
+          <template v-for="item in mixedItems" :key="item.type + '-' + item.id">
+            <HealthMarkerPanelCard
+              v-if="item.type === 'panel'"
+              :panel="item"
+              @view="viewPanel"
+              @edit="editPanel"
+              @delete="deletePanel"
+            />
+            <HealthMarkerCard
+              v-else
+              :healthMarker="item"
+              @edit="handleEdit"
+              @delete="handleDelete"
+            />
+          </template>
+        </div>
+
+        <!-- Flat View (All Markers) -->
+        <div v-else-if="!showMixedView && healthMarkers.length > 0" class="cards-grid">
           <HealthMarkerCard
             v-for="marker in healthMarkers"
             :key="marker.id"
@@ -172,8 +216,10 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
+import HealthMarkerPanelCard from '@/components/health/healthMarkers/HealthMarkerPanelCard.vue';
 import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
+import EventService from '@/services/EventService';
 
 // ✅ ROUTER & STORE
 const router = useRouter();
@@ -182,6 +228,8 @@ const healthMarkerStore = useHealthMarkerStore();
 // ✅ STATE
 const currentView = ref('cards');
 const confirmDialogue = ref(null);
+const mixedItems = ref([]);
+const showMixedView = ref(true);
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -190,6 +238,10 @@ const views = [
   { value: 'calendar', label: 'Calendar', icon: 'calendar' },
   { value: 'charts', label: 'Charts', icon: 'chart-line' }
 ];
+
+// ✅ COMPUTED FOR MIXED VIEW
+const panelItems = computed(() => mixedItems.value.filter(item => item.type === 'panel'));
+const standaloneItems = computed(() => mixedItems.value.filter(item => item.type === 'marker'));
 
 // ✅ COMPUTED FROM STORE
 const healthMarkers = computed(() => healthMarkerStore.allHealthMarkers);
@@ -203,6 +255,11 @@ const statusCounts = computed(() => healthMarkerStore.statusCounts);
 // Navigate to create page
 function handleCreate() {
   router.push({ name: 'HealthMarkerCreate' });
+}
+
+// Navigate to create panel page
+function handleCreatePanel() {
+  router.push({ name: 'HealthMarkerPanelCreate' });
 }
 
 // Navigate to edit page
@@ -247,10 +304,72 @@ async function handleDelete(marker) {
   }
 }
 
+// ✅ PANEL METHODS
+function viewPanel(panel) {
+  router.push({ 
+    name: 'HealthMarkerPanelDetails', 
+    params: { id: panel.id } 
+  });
+}
+
+function editPanel(panel) {
+  router.push({ 
+    name: 'HealthMarkerPanelEdit', 
+    params: { id: panel.id } 
+  });
+}
+
+async function deletePanel(panel) {
+  if (!confirmDialogue.value) return;
+
+  const ok = await confirmDialogue.value.show({
+    title: "Delete Panel",
+    message: `Are you sure you want to delete "${panel.panel_name}"? This will not delete the markers, only ungroup them.`,
+    okButton: "Delete Panel",
+    cancelButton: "Cancel"
+  });
+
+  if (!ok) return;
+
+  try {
+    await EventService.deleteHealthMarkerPanel(panel);
+    await fetchMixedView();
+    
+    await confirmDialogue.value.show({
+      title: "Panel Deleted",
+      message: "Panel has been deleted successfully.",
+      okButton: "OK",
+      cancelButton: null
+    });
+  } catch (error) {
+    console.error('❌ Delete panel error:', error);
+    
+    await confirmDialogue.value.show({
+      title: "Delete Failed",
+      message: "Failed to delete panel. Please try again.",
+      okButton: "OK",
+      cancelButton: null
+    });
+  }
+}
+
+async function fetchMixedView() {
+  try {
+    const response = await EventService.getHealthMarkerPanelsMixedView();
+    mixedItems.value = response.data.items || [];
+  } catch (error) {
+    console.error('❌ Fetch mixed view error:', error);
+    mixedItems.value = [];
+  }
+}
+
 // ✅ LIFECYCLE
 onMounted(async () => {
   try {
-    await healthMarkerStore.fetchHealthMarkers();
+    await Promise.all([
+      healthMarkerStore.fetchHealthMarkers(),
+      fetchMixedView()
+    ]);
   } catch (error) {
     console.error('❌ Fetch error:', error);
     alert('Failed to load health markers. Please refresh the page.');
@@ -305,6 +424,54 @@ onMounted(async () => {
   gap: 1rem;
   margin-bottom: 2rem;
   flex-wrap: wrap;
+}
+
+.controls-left {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* View mode toggle */
+.view-mode-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.toggle-btn:hover {
+  background: #f3f4f6;
+  color: #3b82f6;
+}
+
+.toggle-btn.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.toggle-btn i {
+  font-size: 1rem;
 }
 
 /* View toggle buttons */
