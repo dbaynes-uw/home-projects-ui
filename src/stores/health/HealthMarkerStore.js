@@ -65,7 +65,7 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
 
     getHealthMarkersByStatus: (state) => {
       return (status) => state.healthMarkers.filter(
-        marker => marker.marker_status === status
+        marker => marker.status === status
       );
     },
 

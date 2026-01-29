@@ -20,8 +20,8 @@
 
           <!-- Table Body -->
           <tbody>
-            <tr 
-              v-for="marker in healthMarkers" 
+            <tr
+              v-for="marker in healthMarkers"
               :key="marker.id"
               @dblclick="viewDetails(marker)"
               class="table-row-clickable"
@@ -30,7 +30,9 @@
               <td class="marker-name-cell">
                 <div class="cell-content">
                   <i class="fas fa-vial icon-health"></i>
-                  <span class="marker-name">{{ getMarkerLabel(marker.marker_name) }}</span>
+                  <span class="marker-name">{{
+                    getMarkerLabel(marker.marker_name)
+                  }}</span>
                 </div>
               </td>
 
@@ -40,7 +42,9 @@
               </td>
               <!-- Result -->
               <td class="result-cell">
-                <span class="result-value">{{ marker.marker_result }} {{ marker.unit }}</span>
+                <span class="result-value"
+                  >{{ marker.marker_result }} {{ marker.unit }}</span
+                >
               </td>
 
               <!-- Status -->
@@ -52,12 +56,12 @@
 
               <!-- Lab -->
               <td class="lab-cell">
-                {{ marker.lab_name || '-' }}
+                {{ marker.lab_name || "-" }}
               </td>
 
               <!-- Doctor -->
               <td class="doctor-cell">
-                {{ marker.doctor_name || '-' }}
+                {{ marker.doctor_name || "-" }}
               </td>
 
               <!-- Actions -->
@@ -70,7 +74,7 @@
                   >
                     <i class="fas fa-eye"></i>
                   </button>
-                  
+
                   <button
                     @click.stop="$emit('edit', marker)"
                     class="btn btn-sm btn-primary"
@@ -78,7 +82,7 @@
                   >
                     <i class="fas fa-edit"></i>
                   </button>
-                  
+
                   <button
                     @click.stop="$emit('delete', marker)"
                     class="btn btn-sm btn-danger"
@@ -103,7 +107,9 @@
       <div class="table-footer">
         <div class="table-info">
           <i class="fas fa-info-circle"></i>
-          Showing {{ healthMarkers.length }} marker{{ healthMarkers.length !== 1 ? 's' : '' }}
+          Showing {{ healthMarkers.length }} marker{{
+            healthMarkers.length !== 1 ? "s" : ""
+          }}
         </div>
         <div class="table-hint">
           <i class="fas fa-hand-pointer"></i>
@@ -115,8 +121,11 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import { useRouter } from "vue-router";
+import {
+  getHealthMarkerByName,
+  getResultStatus,
+} from "@/services/health-marker-constants";
 
 // ✅ ROUTER
 const router = useRouter();
@@ -125,12 +134,12 @@ const router = useRouter();
 defineProps({
   healthMarkers: {
     type: Array,
-    required: true
-  }
+    required: true,
+  },
 });
 
 // ✅ EMITS
-defineEmits(['edit', 'delete']);
+defineEmits(["edit", "delete"]);
 
 // ✅ METHODS
 function getMarkerLabel(markerName) {
@@ -143,59 +152,59 @@ function getStatusText(marker) {
   if (intelligentStatus) {
     return intelligentStatus.title;
   }
-  return marker.status || 'Unknown';
+  return marker.status || "Unknown";
 }
 
 function getStatusClass(marker) {
   const intelligentStatus = getResultStatus(marker.marker_name, marker.marker_result);
-  
+
   if (intelligentStatus) {
     const typeMap = {
-      'success': 'badge-success',
-      'warning': 'badge-warning',
-      'error': 'badge-danger',
-      'info': 'badge-info'
+      success: "badge-success",
+      warning: "badge-warning",
+      error: "badge-danger",
+      info: "badge-info",
     };
-    return typeMap[intelligentStatus.type] || 'badge-secondary';
+    return typeMap[intelligentStatus.type] || "badge-secondary";
   }
-  
+
   // Fallback to database status
-  if (!marker.status) return 'badge-secondary';
-  
+  if (!marker.status) return "badge-secondary";
+
   const lower = marker.status.toLowerCase();
-  if (lower === 'normal') return 'badge-success';
-  if (lower === 'high' || lower === 'low') return 'badge-warning';
-  if (lower === 'critical') return 'badge-danger';
-  return 'badge-info';
+  if (lower === "normal") return "badge-success";
+  if (lower === "high" || lower === "low") return "badge-warning";
+  if (lower === "critical") return "badge-danger";
+  return "badge-info";
 }
 
 function formatDate(dateString) {
-  if (!dateString) return '-';
-  
+  if (!dateString) return "-";
+
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   } catch (error) {
-    console.log('Date formatting error:', error);
+    console.log("Date formatting error:", error);
     return dateString;
   }
 }
 
 function viewDetails(marker) {
-  router.push({ 
-    name: 'HealthMarkerDetails', 
-    params: { id: marker.id } 
+  router.push({
+    name: "HealthMarkerDetails",
+    params: { id: marker.id },
   });
 }
 </script>
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health/health-shared.css';
+@import "@/assets/styles/health/health-shared.css";
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES
