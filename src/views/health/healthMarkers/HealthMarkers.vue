@@ -159,9 +159,96 @@
           </button>
         </div>
 
+        <!-- ✅ TEST DATE FILTER -->
+        <div v-if="(viewMode === 'markers' || viewMode === 'grouped') && uniqueTestDates.length > 0" class="date-filter-section">
+          <label class="filter-label">
+            <i class="fas fa-calendar-alt"></i>
+            Filter by Test Date:
+          </label>
+          <select v-model="selectedTestDate" class="date-filter-select">
+            <option :value="null">All Dates ({{ healthMarkers.length }} markers, {{ panels.length }} panels)</option>
+            <option v-for="date in uniqueTestDates" :key="date" :value="date">
+              {{ formatTestDate(date) }} 
+              ({{ healthMarkers.filter(m => m.marker_date === date).length }} markers, 
+              {{ panels.filter(p => p.test_date === date).length }} panels)
+            </option>
+          </select>
+          <button v-if="selectedTestDate" class="btn-clear-filter" @click="selectedTestDate = null">
+            <i class="fas fa-times"></i>
+            Clear Filter
+          </button>
+        </div>
+
+        <!-- ✅ DATE SUMMARY (when date is filtered) -->
+        <div v-if="dateSummary && (viewMode === 'markers' || viewMode === 'grouped')" class="date-summary-card">
+          <div class="summary-header">
+            <div class="header-left">
+              <h2 class="summary-title">
+                <i class="fas fa-calendar-check"></i>
+                Test Date Summary
+              </h2>
+              <div class="summary-meta">
+                <span class="meta-item">
+                  <i class="fas fa-calendar"></i>
+                  {{ formatTestDate(dateSummary.test_date) }}
+                </span>
+                <span v-if="dateSummary.panel_count > 0" class="meta-item">
+                  <i class="fas fa-folder"></i>
+                  {{ dateSummary.panel_count }} Panel{{ dateSummary.panel_count !== 1 ? 's' : '' }}
+                </span>
+                <span v-if="dateSummary.lab_name" class="meta-item">
+                  <i class="fas fa-hospital"></i>
+                  {{ dateSummary.lab_name }}
+                </span>
+                <span v-if="dateSummary.doctor_name" class="meta-item">
+                  <i class="fas fa-user-md"></i>
+                  {{ dateSummary.doctor_name }}
+                </span>
+              </div>
+            </div>
+            <span v-if="dateSummary.needs_attention" class="attention-badge">
+              <i class="fas fa-exclamation-circle"></i>
+              Needs Attention
+            </span>
+          </div>
+
+          <div class="status-summary-grid">
+            <div class="status-summary-item">
+              <i class="fas fa-vials"></i>
+              <span class="summary-value">{{ dateSummary.total }}</span>
+              <span class="summary-label">Total Markers</span>
+            </div>
+            <div v-if="dateSummary.normal > 0" class="status-summary-item status-normal">
+              <i class="fas fa-check-circle"></i>
+              <span class="summary-value">{{ dateSummary.normal }}</span>
+              <span class="summary-label">Normal</span>
+            </div>
+            <div v-if="dateSummary.borderline > 0" class="status-summary-item status-borderline">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span class="summary-value">{{ dateSummary.borderline }}</span>
+              <span class="summary-label">Borderline</span>
+            </div>
+            <div v-if="dateSummary.high > 0" class="status-summary-item status-high">
+              <i class="fas fa-arrow-up"></i>
+              <span class="summary-value">{{ dateSummary.high }}</span>
+              <span class="summary-label">High</span>
+            </div>
+            <div v-if="dateSummary.low > 0" class="status-summary-item status-low">
+              <i class="fas fa-arrow-down"></i>
+              <span class="summary-value">{{ dateSummary.low }}</span>
+              <span class="summary-label">Low</span>
+            </div>
+            <div v-if="dateSummary.critical > 0" class="status-summary-item status-critical">
+              <i class="fas fa-exclamation-circle"></i>
+              <span class="summary-value">{{ dateSummary.critical }}</span>
+              <span class="summary-label">Critical</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Grouped View (Panels + Standalone Markers) -->
-        <div v-if="viewMode === 'grouped' && mixedItems.length > 0" class="cards-grid">
-          <template v-for="item in mixedItems" :key="item.type + '-' + item.id">
+        <div v-if="viewMode === 'grouped' && filteredMixedItems.length > 0" class="cards-grid">
+          <template v-for="item in filteredMixedItems" :key="item.type + '-' + item.id">
             <HealthMarkerPanelCard
               v-if="item.type === 'panel'"
               :panel="item"
@@ -179,9 +266,9 @@
         </div>
 
         <!-- Panels Only View -->
-        <div v-else-if="viewMode === 'panels' && panels.length > 0" class="cards-grid">
+        <div v-else-if="viewMode === 'panels' && filteredPanels.length > 0" class="cards-grid">
           <HealthMarkerPanelCard
-            v-for="panel in panels"
+            v-for="panel in filteredPanels"
             :key="panel.id"
             :panel="panel"
             @view="viewPanel"
@@ -191,9 +278,9 @@
         </div>
 
         <!-- Markers Only View -->
-        <div v-else-if="viewMode === 'markers' && healthMarkers.length > 0" class="cards-grid">
+        <div v-else-if="viewMode === 'markers' && filteredMarkers.length > 0" class="cards-grid">
           <HealthMarkerCard
-            v-for="marker in healthMarkers"
+            v-for="marker in filteredMarkers"
             :key="marker.id"
             :healthMarker="marker"
             @edit="handleEdit"
@@ -266,6 +353,7 @@ const confirmDialogue = ref(null);
 const mixedItems = ref([]);
 const panels = ref([]);
 const viewMode = ref('grouped'); // 'grouped', 'markers', 'panels'
+const selectedTestDate = ref(null);
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -291,7 +379,92 @@ const uniquePanelNames = computed(() => {
 const uniqueMarkerNames = computed(() => healthMarkerStore.uniqueMarkerNames);
 const statusCounts = computed(() => healthMarkerStore.statusCounts);
 
+// ✅ TEST DATE FILTERING
+const uniqueTestDates = computed(() => {
+  const dates = new Set(healthMarkers.value.map(m => m.marker_date).filter(d => d));
+  return Array.from(dates).sort((a, b) => new Date(b) - new Date(a));
+});
+
+const filteredMarkers = computed(() => {
+  if (!selectedTestDate.value) return healthMarkers.value;
+  return healthMarkers.value.filter(m => m.marker_date === selectedTestDate.value);
+});
+
+const filteredPanels = computed(() => {
+  if (!selectedTestDate.value) return panels.value;
+  return panels.value.filter(p => p.test_date === selectedTestDate.value);
+});
+
+const filteredMixedItems = computed(() => {
+  if (!selectedTestDate.value) return mixedItems.value;
+  return mixedItems.value.filter(item => {
+    if (item.type === 'panel') return item.test_date === selectedTestDate.value;
+    if (item.type === 'marker') return item.marker_date === selectedTestDate.value;
+    return false;
+  });
+});
+
+const dateSummary = computed(() => {
+  if (!selectedTestDate.value) return null;
+  
+  const markers = filteredMarkers.value;
+  const panelCount = filteredPanels.value.length;
+  
+  if (markers.length === 0 && panelCount === 0) return null;
+  
+  const summary = {
+    test_date: selectedTestDate.value,
+    total: markers.length,
+    panel_count: panelCount,
+    normal: 0,
+    borderline: 0,
+    high: 0,
+    low: 0,
+    critical: 0,
+    unknown: 0,
+    labs: new Set(),
+    doctors: new Set()
+  };
+  
+  markers.forEach(marker => {
+    const status = marker.status?.toLowerCase() || 'unknown';
+    if (status.includes('normal')) summary.normal++;
+    else if (status.includes('borderline')) summary.borderline++;
+    else if (status.includes('high')) summary.high++;
+    else if (status.includes('low')) summary.low++;
+    else if (status.includes('critical')) summary.critical++;
+    else summary.unknown++;
+    
+    if (marker.lab_name) summary.labs.add(marker.lab_name);
+    if (marker.doctor_name) summary.doctors.add(marker.doctor_name);
+  });
+  
+  return {
+    ...summary,
+    lab_name: Array.from(summary.labs).join(', '),
+    doctor_name: Array.from(summary.doctors).join(', '),
+    needs_attention: summary.high > 0 || summary.low > 0 || summary.critical > 0
+  };
+});
+
 // ✅ METHODS
+
+// ✅ HELPER FUNCTIONS
+function formatTestDate(dateString) {
+  if (!dateString) return '-';
+  
+  try {
+    const [year, month, day] = dateString.split('-');
+    const date = new Date(Number(year), Number(month) - 1, Number(day));
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch (error) {
+    return dateString;
+  }
+}
 
 // Navigate to create page
 function handleCreate() {
@@ -526,6 +699,188 @@ onMounted(async () => {
 .toggle-btn i {
   font-size: 1rem;
 }
+
+/* Date filter section */
+.date-filter-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9375rem;
+}
+
+.filter-label i {
+  color: #667eea;
+}
+
+.date-filter-select {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.date-filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-clear-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-filter:hover {
+  background: #dc2626;
+}
+
+/* Date summary card */
+.date-summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.header-left {
+  flex: 1;
+}
+
+.summary-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.summary-title i {
+  color: #667eea;
+}
+
+.summary-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.meta-item i {
+  color: #667eea;
+}
+
+.attention-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.status-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.status-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.status-summary-item i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #667eea;
+}
+
+.summary-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-summary-item.status-normal { background: #d1fae5; }
+.status-summary-item.status-normal i { color: #065f46; }
+.status-summary-item.status-normal .summary-value { color: #065f46; }
+
+.status-summary-item.status-borderline { background: #fef3c7; }
+.status-summary-item.status-borderline i { color: #92400e; }
+.status-summary-item.status-borderline .summary-value { color: #92400e; }
+
+.status-summary-item.status-high { background: #fee2e2; }
+.status-summary-item.status-high i { color: #991b1b; }
+.status-summary-item.status-high .summary-value { color: #991b1b; }
+
+.status-summary-item.status-low { background: #dbeafe; }
+.status-summary-item.status-low i { color: #1e40af; }
+.status-summary-item.status-low .summary-value { color: #1e40af; }
+
+.status-summary-item.status-critical { background: #fee2e2; }
+.status-summary-item.status-critical i { color: #991b1b; }
+.status-summary-item.status-critical .summary-value { color: #991b1b; }
 
 /* View toggle buttons */
 .view-toggle {
