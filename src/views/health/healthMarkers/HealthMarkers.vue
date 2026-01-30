@@ -68,6 +68,16 @@
               <i class="fas fa-flask"></i>
             </div>
             <div class="stat-content">
+              <div class="stat-value">{{ uniquePanelNames.length }}</div>
+              <div class="stat-label">Panel Types</div>
+            </div>
+          </div>
+
+          <div class="stat-card stat-info">
+            <div class="stat-icon">
+              <i class="fas fa-flask"></i>
+            </div>
+            <div class="stat-content">
               <div class="stat-value">{{ uniqueMarkerNames.length }}</div>
               <div class="stat-label">Marker Types</div>
             </div>
@@ -127,23 +137,30 @@
         <!-- View Toggle -->
         <div class="view-mode-toggle">
           <button 
-            :class="['toggle-btn', { active: showMixedView }]"
-            @click="showMixedView = true"
+            :class="['toggle-btn', { active: viewMode === 'grouped' }]"
+            @click="viewMode = 'grouped'"
           >
             <i class="fas fa-layer-group"></i>
             Grouped (Panels + Markers)
           </button>
           <button 
-            :class="['toggle-btn', { active: !showMixedView }]"
-            @click="showMixedView = false"
+            :class="['toggle-btn', { active: viewMode === 'panels' }]"
+            @click="viewMode = 'panels'"
+          >
+            <i class="fas fa-folder"></i>
+            Panels Only
+          </button>
+          <button 
+            :class="['toggle-btn', { active: viewMode === 'markers' }]"
+            @click="viewMode = 'markers'"
           >
             <i class="fas fa-list"></i>
             All Markers
           </button>
         </div>
 
-        <!-- Mixed View (Panels + Standalone Markers) -->
-        <div v-if="showMixedView && mixedItems.length > 0" class="cards-grid">
+        <!-- Grouped View (Panels + Standalone Markers) -->
+        <div v-if="viewMode === 'grouped' && mixedItems.length > 0" class="cards-grid">
           <template v-for="item in mixedItems" :key="item.type + '-' + item.id">
             <HealthMarkerPanelCard
               v-if="item.type === 'panel'"
@@ -161,8 +178,20 @@
           </template>
         </div>
 
-        <!-- Flat View (All Markers) -->
-        <div v-else-if="!showMixedView && healthMarkers.length > 0" class="cards-grid">
+        <!-- Panels Only View -->
+        <div v-else-if="viewMode === 'panels' && panels.length > 0" class="cards-grid">
+          <HealthMarkerPanelCard
+            v-for="panel in panels"
+            :key="panel.id"
+            :panel="panel"
+            @view="viewPanel"
+            @edit="editPanel"
+            @delete="deletePanel"
+          />
+        </div>
+
+        <!-- Markers Only View -->
+        <div v-else-if="viewMode === 'markers' && healthMarkers.length > 0" class="cards-grid">
           <HealthMarkerCard
             v-for="marker in healthMarkers"
             :key="marker.id"
@@ -175,9 +204,15 @@
         <!-- Empty State -->
         <div v-else class="empty-state">
           <i class="fas fa-vials"></i>
-          <h3>No Health Markers Yet</h3>
-          <p>Start tracking your health by adding your first marker</p>
-          <button class="btn btn-primary" @click="handleCreate">
+          <h3 v-if="viewMode === 'panels'">No Panels Yet</h3>
+          <h3 v-else>No Health Markers Yet</h3>
+          <p v-if="viewMode === 'panels'">Create a panel to group related health markers</p>
+          <p v-else>Start tracking your health by adding your first marker</p>
+          <button v-if="viewMode === 'panels'" class="btn btn-primary" @click="handleCreatePanel">
+            <i class="fas fa-folder-plus"></i>
+            Create Your First Panel
+          </button>
+          <button v-else class="btn btn-primary" @click="handleCreate">
             <i class="fas fa-plus"></i>
             Add First Marker
           </button>
@@ -229,7 +264,8 @@ const healthMarkerStore = useHealthMarkerStore();
 const currentView = ref('cards');
 const confirmDialogue = ref(null);
 const mixedItems = ref([]);
-const showMixedView = ref(true);
+const panels = ref([]);
+const viewMode = ref('grouped'); // 'grouped', 'markers', 'panels'
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -247,6 +283,11 @@ const standaloneItems = computed(() => mixedItems.value.filter(item => item.type
 const healthMarkers = computed(() => healthMarkerStore.allHealthMarkers);
 const isLoading = computed(() => healthMarkerStore.isLoading);
 const healthMarkerCount = computed(() => healthMarkerStore.healthMarkerCount);
+const uniquePanelNames = computed(() => {
+  const names = new Set(panels.value.map(p => p.panel_name));
+  return Array.from(names);
+});
+
 const uniqueMarkerNames = computed(() => healthMarkerStore.uniqueMarkerNames);
 const statusCounts = computed(() => healthMarkerStore.statusCounts);
 
@@ -363,12 +404,24 @@ async function fetchMixedView() {
   }
 }
 
+async function fetchPanels() {
+  try {
+    const response = await EventService.getHealthMarkerPanels();
+    panels.value = response.data || [];
+    console.log('📦 Fetched panels:', panels.value.length);
+  } catch (error) {
+    console.error('❌ Fetch panels error:', error);
+    panels.value = [];
+  }
+}
+
 // ✅ LIFECYCLE
 onMounted(async () => {
   try {
     await Promise.all([
       healthMarkerStore.fetchHealthMarkers(),
-      fetchMixedView()
+      fetchMixedView(),
+      fetchPanels()
     ]);
   } catch (error) {
     console.error('❌ Fetch error:', error);

@@ -83,7 +83,18 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
     // ========================================
     // STATISTICS GETTERS
     // ========================================
-    
+ 
+    // Get unique panel names (for markers that belong to panels)
+    uniquePanelNames: (state) => {
+      const panelNames = new Set(
+        state.healthMarkers
+          .filter(m => m.health_marker_panel_id)
+          .map(m => m.panel_name)
+          .filter(name => name) // Remove null/undefined
+      );
+      return Array.from(panelNames).sort();
+    },
+
     // Get unique marker names
     uniqueMarkerNames: (state) => {
       const names = new Set(state.healthMarkers.map(m => m.marker_name));
