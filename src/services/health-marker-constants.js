@@ -37,7 +37,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-thyroid'
   },
   {
-    name: 'Total_Cholesterol',
+    name: 'Total Cholesterol',
     label: 'Total Cholesterol',
     unit: 'mg/dL',
     normalRange: '< 200 mg/dL',
@@ -85,7 +85,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
-    name: 'Cholesterol_Hdl_Ratio',
+    name: 'Cholesterol HDL Ratio',
     label: 'Chol/HDL Ratio',
     unit: '',
     normalRange: '< 6.7',
@@ -97,7 +97,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
-    name: 'Non_Cholesterol_Hdl_Calculation',
+    name: 'NonCholesterol HDL Calculation',
     label: 'Non-HDL Calculation',
     unit: '',
     normalRange: '',
@@ -121,7 +121,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
     {
-    name: 'Triglyceride_Cholesterol_Hdl_Calculation',
+    name: 'Triglyceride_Cholesterol HDL Calculation',
     label: 'Trig/HDL Calculation',
     unit: '',
     normalRange: '< 6.7',
@@ -303,7 +303,7 @@ export const getResultStatus = (markerName, testResult) => {
     };
   }
   // ✅ CHOLESTEROL LOGIC
-  if (markerName === 'Total_Cholesterol') {
+  if (markerName === 'Total Cholesterol') {
     if (result < 200) return { 
       type: 'success', 
       title: 'Normal', 

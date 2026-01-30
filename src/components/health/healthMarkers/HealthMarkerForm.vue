@@ -27,7 +27,7 @@
                   <u>Health Marker</u>
                 </label>
                 <select
-                  v-if="isEditable"
+                  v-if="isEditable && !isCustomMarker"
                   id="marker_name"
                   v-model="form.marker_name"
                   class="form-control"
@@ -42,12 +42,27 @@
                   >
                     {{ marker.label }}
                   </option>
+                  <option value="__CUSTOM__">+ Custom Marker (Enter your own)</option>
                 </select>
-                <div v-else class="form-control-static">
+                <input
+                  v-if="isEditable && isCustomMarker"
+                  id="custom_marker_name"
+                  v-model="customMarkerName"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter custom marker name..."
+                  required
+                />
+                <div v-else-if="!isEditable" class="form-control-static">
                   {{ selectedMarkerInfo?.label || form.marker_name }}
                 </div>
-                <small v-if="selectedMarkerInfo && isEditable" class="form-text">
+                <small v-if="selectedMarkerInfo && isEditable && !isCustomMarker" class="form-text">
                   {{ selectedMarkerInfo.description }}
+                </small>
+                <small v-if="isEditable && isCustomMarker" class="form-text">
+                  <a href="#" @click.prevent="isCustomMarker = false; form.marker_name = ''; customMarkerName = ''" class="text-link">
+                    ← Back to predefined markers
+                  </a>
                 </small>
               </div>
 
@@ -488,6 +503,8 @@ const form = ref({
 const isSubmitting = ref(false);
 const errorMessage = ref('');
 const panels = ref([]);
+const isCustomMarker = ref(false);
+const customMarkerName = ref('');
 
 // ✅ COMPUTED
 const isEditable = computed(() => props.mode === 'create' || props.mode === 'edit');
@@ -518,6 +535,13 @@ function getTitle() {
 }
 
 function onMarkerChange() {
+  if (form.value.marker_name === '__CUSTOM__') {
+    isCustomMarker.value = true;
+    form.value.marker_name = '';
+    customMarkerName.value = '';
+    return;
+  }
+  
   const markerInfo = selectedMarkerInfo.value;
   if (markerInfo) {
     // Auto-fill unit if not already set
@@ -610,7 +634,7 @@ async function handleSubmit() {
   try {
     // Prepare form data
     const formData = {
-      marker_name: form.value.marker_name,
+      marker_name: isCustomMarker.value ? customMarkerName.value : form.value.marker_name,
       marker_date: form.value.marker_date,
       marker_result: form.value.marker_result,
       unit: form.value.unit || null,
@@ -641,8 +665,16 @@ function handleCancel() {
 function initializeForm() {
   if (props.healthMarker) {
     // Edit/View mode - populate form with existing data
+    const markerName = props.healthMarker.marker_name || '';
+    const isKnownMarker = HEALTH_MARKERS.some(m => m.name === markerName);
+    
+    if (!isKnownMarker && markerName) {
+      isCustomMarker.value = true;
+      customMarkerName.value = markerName;
+    }
+    
     form.value = {
-      marker_name: props.healthMarker.marker_name || '',
+      marker_name: isKnownMarker ? markerName : '',
       marker_date: props.healthMarker.marker_date || '',
       marker_result: props.healthMarker.marker_result || '',
       unit: props.healthMarker.unit || '',
@@ -837,6 +869,17 @@ select.form-control {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+.text-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.text-link:hover {
+  color: #5568d3;
+  text-decoration: underline;
 }
 
 /* Status display */
