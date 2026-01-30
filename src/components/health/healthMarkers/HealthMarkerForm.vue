@@ -465,8 +465,12 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
-import { HEALTH_MARKERS, getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import { getResultStatus } from '@/services/health-marker-constants';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import EventService from '@/services/EventService';
+
+// ✅ ROUTER & STORE
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ PROPS
 const props = defineProps({
@@ -509,16 +513,18 @@ const customMarkerName = ref('');
 // ✅ COMPUTED
 const isEditable = computed(() => props.mode === 'create' || props.mode === 'edit');
 
-const availableMarkers = computed(() => HEALTH_MARKERS);
+const availableMarkers = computed(() => markerDefinitionStore.allDefinitions);
 
 const selectedMarkerInfo = computed(() => {
   if (!form.value.marker_name) return null;
-  return getHealthMarkerByName(form.value.marker_name);
+  return markerDefinitionStore.getDefinitionByName(form.value.marker_name);
 });
 
 const intelligentStatus = computed(() => {
   if (!form.value.marker_name || !form.value.marker_result) return null;
-  return getResultStatus(form.value.marker_name, form.value.marker_result);
+  const markerDef = selectedMarkerInfo.value;
+  if (!markerDef) return null;
+  return getResultStatus(markerDef, form.value.marker_result);
 });
 
 // ✅ METHODS
@@ -564,7 +570,15 @@ function calculateStatus() {
     return;
   }
 
-  const status = getResultStatus(form.value.marker_name, form.value.marker_result);
+  // Get the marker definition from the store (includes database definitions)
+  const markerDef = selectedMarkerInfo.value;
+  if (!markerDef) {
+    console.warn('No marker definition found for:', form.value.marker_name);
+    form.value.status = '';
+    return;
+  }
+
+  const status = getResultStatus(markerDef, form.value.marker_result);
   if (status) {
     form.value.status = status.title;
   }
@@ -666,7 +680,7 @@ function initializeForm() {
   if (props.healthMarker) {
     // Edit/View mode - populate form with existing data
     const markerName = props.healthMarker.marker_name || '';
-    const isKnownMarker = HEALTH_MARKERS.some(m => m.name === markerName);
+    const isKnownMarker = markerDefinitionStore.getDefinitionByName(markerName) !== undefined;
     
     if (!isKnownMarker && markerName) {
       isCustomMarker.value = true;
@@ -711,6 +725,7 @@ watch(() => props.healthMarker, () => {
 
 // ✅ LIFECYCLE
 onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
   initializeForm();
   fetchPanels();
 });

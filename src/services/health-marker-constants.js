@@ -1,5 +1,17 @@
 // ✅ COMPREHENSIVE HEALTH MARKERS
 export const HEALTH_MARKERS = [
+    {
+    name: 'Albumin, s',
+    label: 'Albumin',
+    unit: 'g/dL',
+    normalRange: '3.5 - 5.1 g/dL',
+    lowRange: '< 3.5 g/dL',
+    highRange: '≥ 5.1 g/dL',
+    description: 'An albumin blood test measures the protein made by your liver, showing how well it is working and checking overall health, nutrition, kidney function (by detecting leakage into urine), and fluid balance, as low levels can signal liver disease, malnutrition, or kidney issues, while high levels might mean dehydration.',
+    testFrequency: 'Annually or as needed',
+    category: 'Liver/Kidney',
+    icon: 'mdi-water-percent'
+  },
   {
     name: 'Hemoglobin A1c',
     label: 'Hemoglobin A1c',
@@ -248,12 +260,41 @@ export const getHealthMarkerCategoryOptions = () => {
 };
 
 // ✅ INTELLIGENT RESULT STATUS ANALYSIS
-export const getResultStatus = (markerName, testResult) => {
-  const marker = getHealthMarkerByName(markerName);
+// Can accept either markerName (string) or markerDefinition (object)
+export const getResultStatus = (markerNameOrDef, testResult) => {
+  // Handle both string (legacy) and object (new database definitions)
+  const marker = typeof markerNameOrDef === 'string' 
+    ? getHealthMarkerByName(markerNameOrDef) 
+    : markerNameOrDef;
+    
   if (!marker || !testResult) return null;
   
+  const markerName = marker.name;
   const result = parseFloat(testResult);
   
+  // ✅ Albumin, s LOGIC
+  if (markerName.includes('Albumin')) {
+    if (result < 5.1) {
+      return { 
+        type: 'success', 
+        title: 'Normal', 
+        range: marker.normalRange,
+        message: 'Albumin is in normal range' 
+      };
+    }
+    if (result <= 5.1) return { 
+      type: 'warning', 
+      title: 'Liver/Kidney Concern', 
+      range: marker.lowRange,
+      message: 'Albumin indicates potential liver or kidney concern' 
+    };
+    return { 
+      type: 'error', 
+      title: 'Liver/Kidney Concern', 
+      range: marker.highRange,
+      message: 'Albumin indicates potential liver or kidney concern' 
+    };
+  }  
   // ✅ A1C LOGIC
   if (markerName === 'Hemoglobin A1c') {
     if (result < 5.7) {
@@ -374,13 +415,90 @@ export const getResultStatus = (markerName, testResult) => {
     if (result <= 89) return { type: 'warning', title: 'Stage 1 Hypertension', range: marker.stage1Range };
     return { type: 'error', title: 'Stage 2 Hypertension', range: marker.stage2Range };
   }
+  
+  // ✅ GENERIC RANGE CHECKING FOR DATABASE MARKERS
+  // Check if marker has numeric range values (from database)
+  if (marker.normal_range_low !== undefined || marker.normal_range_high !== undefined) {
+    const normalLow = parseFloat(marker.normal_range_low);
+    const normalHigh = parseFloat(marker.normal_range_high);
+    const borderlineLow = parseFloat(marker.borderline_range_low);
+    const borderlineHigh = parseFloat(marker.borderline_range_high);
+    
+    // PRIORITY 1: Check normal range first
+    if (!isNaN(normalLow) && !isNaN(normalHigh)) {
+      if (result >= normalLow && result <= normalHigh) {
+        return {
+          type: 'success',
+          title: 'Normal',
+          range: `${normalLow} - ${normalHigh} ${marker.unit || ''}`,
+          message: `${marker.label} is in normal range`
+        };
+      }
+    }
+    
+    // PRIORITY 2: Check if we have borderline ranges for values outside normal
+    if (!isNaN(borderlineLow) && !isNaN(borderlineHigh)) {
+      // Check if result is in the borderline zone (outside normal but within borderline)
+      if (result >= borderlineLow && result <= borderlineHigh) {
+        // Only mark as borderline if it's actually outside the normal range
+        const outsideNormal = (isNaN(normalLow) || result < normalLow || result > normalHigh);
+        if (outsideNormal) {
+          return {
+            type: 'warning',
+            title: 'Borderline',
+            range: `${borderlineLow} - ${borderlineHigh} ${marker.unit || ''}`,
+            message: `${marker.label} is in borderline range`
+          };
+        }
+      }
+      
+      // Beyond borderline ranges
+      if (result < borderlineLow) {
+        return {
+          type: 'error',
+          title: 'Low',
+          range: `< ${borderlineLow} ${marker.unit || ''}`,
+          message: `${marker.label} is critically low`
+        };
+      }
+      if (result > borderlineHigh) {
+        return {
+          type: 'error',
+          title: 'High',
+          range: `> ${borderlineHigh} ${marker.unit || ''}`,
+          message: `${marker.label} is critically high`
+        };
+      }
+    }
+    
+    // PRIORITY 3: No borderline defined, just check if outside normal
+    if (!isNaN(normalLow) && !isNaN(normalHigh)) {
+      if (result < normalLow) {
+        return {
+          type: 'warning',
+          title: 'Low',
+          range: `< ${normalLow} ${marker.unit || ''}`,
+          message: `${marker.label} is below normal range`
+        };
+      }
+      if (result > normalHigh) {
+        return {
+          type: 'warning',
+          title: 'High',
+          range: `> ${normalHigh} ${marker.unit || ''}`,
+          message: `${marker.label} is above normal range`
+        };
+      }
+    }
+  }
+  
   console.log('No specific logic for marker:', markerName);
-  // ✅ DEFAULT FOR OTHER MARKERS
+  // ✅ DEFAULT FOR OTHER MARKERS (no ranges defined)
   return { 
     type: 'info', 
     title: 'Result Recorded', 
-    range: `${result} ${marker.unit}`,
-    message: `${marker.label}: ${result} ${marker.unit}` 
+    range: `${result} ${marker.unit || ''}`,
+    message: `${marker.label}: ${result} ${marker.unit || ''}` 
   };
 };
 

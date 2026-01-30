@@ -34,6 +34,10 @@
               <i class="fas fa-folder-plus"></i>
               Create Panel
             </button>
+            <button class="btn btn-success" @click="handleCreateHealthMarkerDefinition">
+              <i class="fas fa-plus"></i>
+              Add Marker Definition
+            </button>
           </div>
           
           <!-- ✅ VIEW TOGGLE -->
@@ -57,6 +61,7 @@
             <div class="stat-icon">
               <i class="fas fa-vials"></i>
             </div>
+
             <div class="stat-content">
               <div class="stat-value">{{ healthMarkerCount }}</div>
               <div class="stat-label">Total Markers</div>
@@ -106,10 +111,19 @@
               <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div class="stat-content">
+              <div class="stat-value">{{ statusCounts['Prediabetes'] }}</div>
+              <div class="stat-label">Prediabetes</div>
+            </div>
+          </div>          
+          <!--div class="stat-card stat-warning">
+            <div class="stat-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
               <div class="stat-value">{{ statusCounts.High + statusCounts.Low }}</div>
               <div class="stat-label">Abnormal</div>
             </div>
-          </div>
+          </div-->
 
           <div class="stat-card stat-danger">
             <div class="stat-icon">
@@ -475,7 +489,10 @@ function handleCreate() {
 function handleCreatePanel() {
   router.push({ name: 'HealthMarkerPanelCreate' });
 }
-
+// Navigate to create panel page
+function handleCreateHealthMarkerDefinition() {
+  router.push({ name: 'MarkerDefinitions' });
+}
 // Navigate to edit page
 function handleEdit(marker) {
   router.push({ 
@@ -581,7 +598,6 @@ async function fetchPanels() {
   try {
     const response = await EventService.getHealthMarkerPanels();
     panels.value = response.data || [];
-    console.log('📦 Fetched panels:', panels.value.length);
   } catch (error) {
     console.error('❌ Fetch panels error:', error);
     panels.value = [];

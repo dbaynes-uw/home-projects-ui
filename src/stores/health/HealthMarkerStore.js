@@ -104,7 +104,7 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
     // Count by status
     statusCounts: (state) => {
       // Define allowed statuses as literals
-        const STATUSES = ['Normal', 'Borderline', 'Borderline High', 'High', 'Low', 'Critical', 'Unknown'];
+        const STATUSES = ['Normal', 'Borderline', 'Borderline High', 'High', 'Low', 'Prediabetes', 'Critical', 'Unknown'];
         const counts = Object.fromEntries(STATUSES.map(status => [status, 0]));
         state.healthMarkers.forEach(marker => {
           const markerStatus = marker && marker.status;

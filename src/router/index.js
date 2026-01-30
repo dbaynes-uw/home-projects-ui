@@ -290,6 +290,12 @@ const routes = [
     component: () => import('@/views/health/healthMarkers/HealthMarkerPanelDetails.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path: '/health/marker-definitions',
+    name: 'MarkerDefinitions',
+    component: () => import('@/views/health/healthMarkers/MarkerDefinitions.vue'),
+    meta: { requiresAuth: true }
+  },
 
   // ========================================
   // GLUCOSE READINGS

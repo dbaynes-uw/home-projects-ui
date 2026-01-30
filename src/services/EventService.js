@@ -533,4 +533,29 @@ export default {
     // For Testing: setTimeout(5000);
     return api.delete(api_url + "waterings/" + `${watering.id}`);
   },
+
+  // ===================================
+  // MARKER DEFINITIONS
+  // ===================================
+  async getMarkerDefinitions() {
+    this.init();
+    return api.get(api_url + "marker_definitions");
+  },
+  async getMarkerDefinition(id) {
+    this.init();
+    return api.get(api_url + "marker_definitions/" + id);
+  },
+  async postMarkerDefinition(definition) {
+    this.init();
+    return api.post(api_url + "marker_definitions", { marker_definition: definition });
+  },
+  async putMarkerDefinition(definition) {
+    this.init();
+    return api.put(api_url + "marker_definitions/" + definition.id, { marker_definition: definition });
+  },
+  async deleteMarkerDefinition(definition) {
+    this.init();
+    return api.delete(api_url + "marker_definitions/" + definition.id);
+  },
 };
+
