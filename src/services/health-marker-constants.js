@@ -64,8 +64,8 @@ export const HEALTH_MARKERS = [
     name: 'HDL',
     label: 'HDL Cholesterol',
     unit: 'mg/dL',
-    normalRange: '≥ 40 mg/dL (men), ≥ 50 mg/dL (women)',
-    lowRange: '< 40 mg/dL (men), < 50 mg/dL (women)',
+    normalRange: '40 - 60 mg/dL',
+    lowRange: '< 40 mg/dL',
     description: 'Good cholesterol',
     testFrequency: 'Every 4-6 years',
     category: 'Lipids',
@@ -372,8 +372,20 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
   }
   
   if (markerName === 'HDL') {
-    if (result >= 40) return { type: 'success', title: 'Normal', range: marker.normalRange };
-    return { type: 'warning', title: 'Low', range: marker.lowRange };
+    if (result >= 40 && result <= 60) return {
+      type: 'success',
+      title: 'Normal',
+      range: marker.normalRange };
+    if (result < 40 ) return {
+      type: 'warning',
+      title: 'Low', 
+      range: marker.lowRange };
+    if (result > 60 ) return {
+      type: 'warning',
+      title: 'High', 
+      range: marker.highRange };
+
+    return { type: 'critical', title: 'Critical', range: marker.lowRange };
   }
   
   // ✅ FASTING GLUCOSE LOGIC
