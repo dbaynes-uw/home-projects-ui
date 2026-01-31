@@ -388,6 +388,29 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     return { type: 'high', title: 'Very High!', range: marker.highRange };
   }
   
+  // ✅ Triglycerides LOGIC
+  if (markerName === 'Triglycerides') {
+    if (result < 150) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'Triglycerides level is normal' 
+    };
+    if (result <= 170) return { 
+      type: 'warning', 
+      title: 'Borderline High', 
+      range: marker.borderlineRange,
+      message: 'Triglycerides level is Borderline high' 
+    };
+    return { 
+      type: 'critical', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'Triglycerides level is high' 
+    };
+  }
+
+
   // ✅ FASTING GLUCOSE LOGIC
   if (markerName === 'Fasting_Glucose') {
     if (result >= 70 && result <= 99) return { 
