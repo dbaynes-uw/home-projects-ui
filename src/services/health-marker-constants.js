@@ -380,12 +380,12 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       type: 'warning',
       title: 'Low', 
       range: marker.lowRange };
-    if (result > 60 ) return {
+    if (result > 60 && result <= 70) return {
       type: 'warning',
-      title: 'High', 
-      range: marker.highRange };
+      title: 'Borderline High', 
+      range: marker.borderlineHigh };
 
-    return { type: 'critical', title: 'Critical', range: marker.lowRange };
+    return { type: 'high', title: 'Very High!', range: marker.highRange };
   }
   
   // ✅ FASTING GLUCOSE LOGIC
