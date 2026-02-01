@@ -98,22 +98,40 @@
             </div>
           </div>
           <div class="stat-card stat-warning">
-            <div class="stat-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ statusCounts['Borderline High'] }}</div>
-              <div class="stat-label">Borderline High</div>
-            </div>
+            <router-link 
+              :to="{ 
+                name: 'HealthMarkersFiltered', 
+                params: { status: 'Borderline High' },
+                query: selectedTestDate ? { date: selectedTestDate } : {}
+              }"
+              class="stat-card-link"
+            >
+              <div class="stat-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{ statusCounts['Borderline High'] }}</div>
+                <div class="stat-label">Borderline High</div>
+              </div>
+            </router-link>
           </div>
           <div class="stat-card stat-warning">
-            <div class="stat-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ statusCounts['Prediabetes'] }}</div>
-              <div class="stat-label">Prediabetes</div>
-            </div>
+            <router-link 
+              :to="{ 
+                name: 'HealthMarkersFiltered', 
+                params: { status: 'Prediabetes' },
+                query: selectedTestDate ? { date: selectedTestDate } : {}
+              }"
+              class="stat-card-link"
+            >
+              <div class="stat-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{ statusCounts['Prediabetes'] }}</div>
+                <div class="stat-label">Prediabetes</div>
+              </div>
+            </router-link>
           </div>          
           <!--div class="stat-card stat-warning">
             <div class="stat-icon">
@@ -126,18 +144,45 @@
           </div-->
 
           <div class="stat-card stat-danger">
-            <div class="stat-icon">
-              <i class="fas fa-exclamation-circle"></i>
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ statusCounts.Critical }}</div>
-              <div class="stat-label">Critical</div>
-            </div>
+            <router-link 
+              :to="{ 
+                name: 'HealthMarkersFiltered', 
+                params: { status: 'Critical' },
+                query: selectedTestDate ? { date: selectedTestDate } : {}
+              }"
+              class="stat-card-link"
+            >
+              <div class="stat-icon">
+                <i class="fas fa-exclamation-circle"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{ statusCounts.Critical }}</div>
+                <div class="stat-label">Critical</div>
+              </div>
+            </router-link>
           </div>
         </div>
       </div>
     </div>
-
+        <!-- ✅ TEST DATE FILTER -->
+        <div v-if="uniqueTestDates.length > 0" class="date-filter-section">
+          <label class="filter-label">
+            <i class="fas fa-calendar-alt"></i>
+            Filter by Test Date:
+          </label>
+          <select v-model="selectedTestDate" class="date-filter-select">
+            <option :value="null">All Dates ({{ healthMarkers.length }} markers, {{ panels.length }} panels)</option>
+            <option v-for="date in uniqueTestDates" :key="date" :value="date">
+              {{ formatTestDate(date) }} 
+              ({{ healthMarkers.filter(m => m.marker_date === date).length }} markers, 
+              {{ panels.filter(p => p.test_date === date).length }} panels)
+            </option>
+          </select>
+          <button v-if="selectedTestDate" class="btn-clear-filter" @click="selectedTestDate = null">
+            <i class="fas fa-times"></i>
+            Clear Filter
+          </button>
+        </div>
     <!-- ✅ CONTENT AREA -->
     <div class="content-wrapper">
       <!-- ✅ LOADING STATE -->
@@ -170,26 +215,6 @@
           >
             <i class="fas fa-list"></i>
             All Markers
-          </button>
-        </div>
-
-        <!-- ✅ TEST DATE FILTER -->
-        <div v-if="(viewMode === 'markers' || viewMode === 'grouped') && uniqueTestDates.length > 0" class="date-filter-section">
-          <label class="filter-label">
-            <i class="fas fa-calendar-alt"></i>
-            Filter by Test Date:
-          </label>
-          <select v-model="selectedTestDate" class="date-filter-select">
-            <option :value="null">All Dates ({{ healthMarkers.length }} markers, {{ panels.length }} panels)</option>
-            <option v-for="date in uniqueTestDates" :key="date" :value="date">
-              {{ formatTestDate(date) }} 
-              ({{ healthMarkers.filter(m => m.marker_date === date).length }} markers, 
-              {{ panels.filter(p => p.test_date === date).length }} panels)
-            </option>
-          </select>
-          <button v-if="selectedTestDate" class="btn-clear-filter" @click="selectedTestDate = null">
-            <i class="fas fa-times"></i>
-            Clear Filter
           </button>
         </div>
 
@@ -273,6 +298,7 @@
             <HealthMarkerCard
               v-else
               :healthMarker="item"
+              :panels="panels"
               @edit="handleEdit"
               @delete="handleDelete"
             />
@@ -297,6 +323,7 @@
             v-for="marker in filteredMarkers"
             :key="marker.id"
             :healthMarker="marker"
+            :panels="panels"
             @edit="handleEdit"
             @delete="handleDelete"
           />
@@ -391,7 +418,28 @@ const uniquePanelNames = computed(() => {
 });
 
 const uniqueMarkerNames = computed(() => healthMarkerStore.uniqueMarkerNames);
-const statusCounts = computed(() => healthMarkerStore.statusCounts);
+
+// ✅ STATUS COUNTS (respects date filtering)
+const statusCounts = computed(() => {
+  const markers = filteredMarkers.value;
+  const counts = {
+    'Normal': 0,
+    'Borderline High': 0,
+    'Prediabetes': 0,
+    'High': 0,
+    'Low': 0,
+    'Critical': 0
+  };
+  
+  markers.forEach(marker => {
+    const status = marker.marker_status || marker.status || 'Unknown';
+    if (counts.hasOwnProperty(status)) {
+      counts[status]++;
+    }
+  });
+  
+  return counts;
+});
 
 // ✅ TEST DATE FILTERING
 const uniqueTestDates = computed(() => {
@@ -997,5 +1045,28 @@ onMounted(async () => {
     font-size: 1.25rem;
     margin: 0 0.25rem;
   }
+}
+
+/* Stat card link styling */
+.stat-card-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.stat-card-link:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+  color: inherit;
+}
+
+.stat-card:has(.stat-card-link):hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
 }
 </style>

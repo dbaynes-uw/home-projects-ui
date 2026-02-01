@@ -14,6 +14,17 @@
           <i class="fas fa-calendar-alt"></i>
           {{ formatDate(healthMarker.marker_date) }}
         </p>
+        <p v-if="markerPanel" class="panel-name">
+          <i class="fas fa-folder"></i>
+          Panel: 
+          <router-link 
+            :to="{ name: 'HealthMarkerPanelDetails', params: { id: markerPanel.id } }"
+            class="panel-link"
+            @click.stop
+          >
+            {{ markerPanel.panel_name }}
+          </router-link>
+        </p>
       </div>
       
       <div class="header-right">
@@ -109,6 +120,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 // ✅ ROUTER
@@ -119,11 +131,21 @@ const props = defineProps({
   healthMarker: {
     type: Object,
     required: true
+  },
+  panels: {
+    type: Array,
+    default: () => []
   }
 });
 
 // ✅ EMITS
 defineEmits(['edit', 'delete']);
+
+// ✅ COMPUTED
+const markerPanel = computed(() => {
+  if (!props.healthMarker.health_marker_panel_id) return null;
+  return props.panels.find(panel => panel.id === props.healthMarker.health_marker_panel_id);
+});
 
 // ✅ METHODS
 // ✅ ADDED THIS METHOD
@@ -224,6 +246,32 @@ function truncateNotes(notes) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.panel-name {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.8125rem;
+  color: #667eea;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.panel-name i {
+  color: #667eea;
+}
+
+.panel-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.panel-link:hover {
+  color: #5a67d8;
+  text-decoration: underline;
 }
 
 .header-right {

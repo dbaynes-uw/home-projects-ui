@@ -268,6 +268,12 @@ const routes = [
     component: () => import('@/views/health/healthMarkers/HealthMarkersByCategory.vue'),  // ✅ UPDATED
     meta: { requiresAuth: true }
   },
+  {
+    path: '/health/markers/status/:status',
+    name: 'HealthMarkersFiltered',
+    component: () => import('@/views/health/healthMarkers/HealthMarkersFiltered.vue'),
+    meta: { requiresAuth: true }
+  },
 
   // ========================================
   // HEALTH MARKER PANELS
