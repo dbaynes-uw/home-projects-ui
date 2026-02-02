@@ -1,126 +1,150 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <div class="travelEdit">
-    <br/>
-    <h2>Edit Travel Event {{ travel_event.title }}</h2>
-    <br/>
-    <button id="link-as-button">
-      <router-link  :to="{ name: 'TravelList' }">Back to Travel List</router-link>
-    </button>
-    <br/>
-    <form class="card-display" @submit.prevent="updateTravelEvent">
-      <div class="form-container">
-        <v-text-field
-          label="Title"
-          v-model="travel_event.title"
-          required
-        />
-        <v-textarea
-          label="Description"
-          v-model="travel_event.description"
-          rows="3"
-          cols="40"
-        />
-        <v-text-field
-          label="Event Information (URL)"
-          v-model="travel_event.travel_event_url"
-        />     
-        <v-text-field
-          label="Transportation"
-          v-model="travel_event.transport"
-          required
-        />
-        <v-text-field
-          label="Booking Reference"
-          v-model="travel_event.booking_reference"
-        />
-        <v-text-field
-          label="Transportation Information (URL)"
-          v-model="travel_event.transport_url"
-        />     
-        <p id="p-custom-left">Start Date Saved As: {{ formatStandardDateTime(travel_event.start_date)}}</p>
-        <v-text-field
-          label="Click calendar at right to change Start Date"
-          v-model="travel_event.start_date"
-          type="datetime-local"
-        />
-        <p id="p-custom-left">End Date Saved As: {{ formatStandardDateTime(travel_event.end_date)}}</p>
-        <v-text-field
-          label="Click calendar at right to change End Date"
-          v-model="travel_event.end_date"
-          type="datetime-local"
-        />
-        <!--v-text-field
-          label="URL to Review"
-          v-model="travel_event.url_reference"
-        /-->        
-        <v-textarea
-          label="Notes"
-          v-model="travel_event.notes"
-          rows="3"
-          cols="40"
-        />
-        <br/>
-        <button class="button" id="link-as-button" type="submit">
-          Submit
-        </button>
+  <div class="travel-event-edit">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumb">
+      <router-link to="/travels" class="breadcrumb-link">Travels</router-link>
+      <span class="breadcrumb-separator">/</span>
+      <router-link 
+        :to="{ name: 'TravelDetails', params: { id: travelEvent?.travel_id } }" 
+        class="breadcrumb-link"
+      >
+        {{ travel?.title || 'Travel Details' }}
+      </router-link>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Edit Event</span>
+    </nav>
+
+    <!-- Main Content -->
+    <BaseCard class="edit-card">
+      <template #header>
+        <h2>Edit Travel Event</h2>
+      </template>
+      
+      <TravelEventForm
+        v-if="travelEvent && !isLoading"
+        :travel-event="travelEvent"
+        :travel-id="travelEvent.travel_id"
+        :travel-title="travelTitle"
+        @save="handleUpdateEvent"
+        @cancel="handleCancel"
+      />
+      
+      <div v-else class="loading">
+        Loading event details...
       </div>
-    </form>
+    </BaseCard>
   </div>
 </template>
 
-<script>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-export default {
-  props: ["id"],
-  components: {
-    ConfirmDialogue,
-  },
-  async mounted() {},
-  created() {
-    this.$store.dispatch("fetchTravelEvent", this.id);
-  },
-  computed: {
-    travel_event() {
-      return this.$store.state.travel_event;
-    },
-    travel() {
-      return this.$store.state.travel;
-    },
-  },
-  data() {
-    return {};
-  },
-  setup() {},
-  methods: {
-    async updateTravelEvent() {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Travel Event ",
-        message:
-          "Are you sure you want to update " + 
-          this.travel_event.title,
-        okButton: "Update",
-      });
-      if (ok) {
-        const travel_event = {
-          ...this.travel_event,
-          updated_by: this.$store.state.created_by,
-        };
-        if (this.$store.dispatch("updateTravelEvent", travel_event)) {
-          this.$router.push({ name: "TravelDetails", params: { id: travel_event.travel_id } });
-        }
-      } else {
-        alert("Travel Event Update Error Code ");
-      }
-    },
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDatejs(value);
-    },
-    formatStandardDateTime(value) {
-      return DateFormatService.formatStandardDateTimejs(value);
-    },
-  },
-};
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useTravelStore } from '@/stores/travel/TravelStore'
+import TravelEventForm from '@/components/travel_events/TravelEventForm.vue'
+import BaseCard from '@/components/ui/BaseCard.vue'
+
+const router = useRouter()
+const route = useRoute()
+const travelStore = useTravelStore()
+
+// Reactive data
+const travelEvent = ref(null)
+const travel = ref({})
+const isLoading = ref(true)
+const eventId = computed(() => route.params.id)
+const travelTitle = computed(() => travel.value?.title || '')
+
+// Lifecycle
+onMounted(async () => {
+  await loadTravelEvent()
+  if (travelEvent.value?.travel_id) {
+    await loadTravel(travelEvent.value.travel_id)
+  }
+})
+
+// Methods
+const loadTravelEvent = async () => {
+  try {
+    isLoading.value = true
+    travelEvent.value = await travelStore.fetchTravelEvent(eventId.value)
+  } catch (error) {
+    console.error('Error loading travel event:', error)
+    router.push('/travels')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const loadTravel = async (travelId) => {
+  try {
+    travel.value = await travelStore.fetchTravel(travelId)
+  } catch (error) {
+    console.error('Error loading travel:', error)
+  }
+}
+
+const handleUpdateEvent = async (eventData) => {
+  try {
+    await travelStore.updateTravelEvent(eventId.value, eventData)
+    router.push({ 
+      name: 'TravelDetails', 
+      params: { id: travelEvent.value.travel_id },
+      query: { tab: 'events' }
+    })
+  } catch (error) {
+    console.error('Error updating travel event:', error)
+    // Handle error (show toast, etc.)
+  }
+}
+
+const handleCancel = () => {
+  router.push({ 
+    name: 'TravelDetails', 
+    params: { id: travelEvent.value?.travel_id },
+    query: { tab: 'events' }
+  })
+}
 </script>
-<style></style>
+
+<style scoped>
+.travel-event-edit {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 0.5rem;
+  color: #6c757d;
+}
+
+.breadcrumb-current {
+  color: #6c757d;
+}
+
+.edit-card {
+  margin-top: 0;
+}
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  color: #6c757d;
+}
+</style>

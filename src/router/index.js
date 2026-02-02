@@ -475,17 +475,10 @@ const routes = [
   */
   // ❌ TEMPORARILY DISABLED - High memory usage
   // ✅ TRAVELS
-  /*
   {
     path: "/travels",
-    name: "TravelList",
-    component: () => import('../views/travels/TravelList.vue'),
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travel/create",
-    name: "TravelCreate",
-    component: () => import('@/views/travels/TravelCreate.vue'),
+    name: "Travels",
+    component: () => import('../views/travels/Travels.vue'),
     meta: { requiresAuth: true}
   },
   {
@@ -493,13 +486,6 @@ const routes = [
     name: "TravelDetails",
     props: true,
     component: () => import('@/views/travels/TravelDetails.vue'),
-    meta: { requiresAuth: true}
-  },
-  {
-    path: "/travel/:id",
-    name: "TravelEdit",
-    props: true,
-    component: () => import('@/views/travels/TravelEdit.vue'),
     meta: { requiresAuth: true}
   },
   {
@@ -522,7 +508,7 @@ const routes = [
     component: () => import('@/views/travel_events/TravelEventDetails.vue'),
     meta: { requiresAuth: true}
   },
-  */
+
   // ✅ USERS
   {
     path: "/users",

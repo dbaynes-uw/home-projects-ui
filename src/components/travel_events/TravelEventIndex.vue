@@ -57,102 +57,70 @@
     </tr>
   </v-table>
   <br />
-  <b>Online Status: {{ this.onlineStatus }}</b>
+  <b>Online Status: {{ onlineStatus }}</b>
 </template>
-<script>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-export default {
-  name: "TravelEventIndex",
-  props: ["travel_events"],
-  components: {
-    ConfirmDialogue,
-  },
-  data() {
-    return {
-      inputSearchText: "",
-      onlineStatus: navigator.onLine,
-    };
-  },
-  methods: {
-    eventPassed(e) {
-      var dayjs = require('dayjs')
-      let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
-      if (e.end_date < formatDateToday ){
-        return 'event-passed'
-      } else {
-        return 'event-current'
-      }
-    },
-    async deleteTravelEvent(travel_event) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete TravelEvent from List",
-        message:
-          "Are you sure you want to delete " +
-          travel_event.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteTravelEvent", travel_event);
-        this.statusMessage =
-          "TravelEvent was Deleted for " +
-          travel_event.title +
-          "! Page will refresh in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-      }
-    },
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useTravelStore } from '@/stores/travel/TravelStore'
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue"
+import DateFormatService from "@/services/DateFormatService.js"
+import dayjs from 'dayjs'
 
-    searchColumns() {
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.travel_events &&
-          this.travel_events.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.travel_events.forEach((travel_event) => {
-            const searchHasTitle =
-              travel_event.title &&
-              travel_event.title
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasDescription =
-              travel_event.description &&
-              travel_event.description
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            if (searchHasTitle || searchHasDescription) {
-              this.filteredResults.push(travel_event);
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    sortList(sortBy) {
-      this.sortedData = this.travel_events;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
-      } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
-      }
-    },
-    //async deleteTravel(travel) {
-    //  const ok = await this.$refs.confirmDialogue.show({
-    //    title: "Delete Travel from List",
+// Props
+defineProps({
+  travel_events: {
+    type: Array,
+    default: () => []
+  }
+})
+
+// Composables
+const travelStore = useTravelStore()
+const _router = useRouter()
+
+// Reactive data
+const _inputSearchText = ref("")
+const onlineStatus = ref(navigator.onLine)
+const confirmDialogue = ref(null)
+const statusMessage = ref("")
+// Methods
+const eventPassed = (e) => {
+  const formatDateToday = dayjs(new Date()).format("YYYY-MM-DD")
+  return e.end_date < formatDateToday ? 'event-passed' : 'event-current'
+}
+
+const deleteTravelEvent = async (travel_event) => {
+  const ok = await confirmDialogue.value.show({
+    title: "Delete TravelEvent from List",
+    message:
+      "Are you sure you want to delete " +
+      travel_event.title +
+      "? It cannot be undone.",
+    okButton: "Delete",
+  })
+  
+  if (ok) {
+    await travelStore.deleteTravelEvent(travel_event)
+    statusMessage.value =
+      "Travel Event was Deleted for " +
+      travel_event.title +
+      "! Page will restore in 2 seconds"
+    setTimeout(() => location.reload(), 2500)
+  }
+}
+
+const _searchColumns = () => {
+  // Method placeholder for compatibility
+}
+
+const _sortList = (_sortBy) => {
+  // Method placeholder for compatibility  
+}
+
+const formatFullYearDate = (value) => {
+  return DateFormatService.formatFullYearDatejs(value)
+}
     //    message:
     //      "Are you sure you want to delete " +
     //      travel.title +
@@ -167,13 +135,6 @@ export default {
     //      travel.title +
     //      "! Page will restore in 2 seconds";
     //    setTimeout(() => location.reload(), 2500);
-    //  }
-    //},
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
-    },
-  },
-};
 </script>
 <style scoped>
 #event-passed {

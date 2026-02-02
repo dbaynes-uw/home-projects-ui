@@ -1,219 +1,594 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h2>{{ travel.title }} Details</h2>
-      Date: {{ Date() }}
-      <br/>
-      <h2 id="status-message">
-        <u>{{ this.statusMessage }}</u>
-      </h2>
-    </v-card-title>
-    <h3><router-link :to="{ name: 'TravelList' }">
-          <b>Back to List of Journies</b>
-        </router-link>
-    </h3>
-    <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'TravelEventCreate', params: { id: travel.id } }">Add Travel Event</router-link>
-        </button>
-      </li>
-      <li>
-        <button id="button-as-link" @click="requestIndexDetail">
-          <u>Index/Card View</u>
-        </button>
-      </li>
-    </ul> 
-    <br/>
-  </v-card>
-  <br/>
-  <h3>{{ this.statusMessage }}</h3>
-  <div style="width: 100%">
-    <div class="auto-search-container">
-      <v-text-field
-        clearable
-        clear-icon="fas fa-close"
-        @click:clear="showIndex"
-        type="text"
-        class="np-input-search"
-        v-model="inputSearchText"
-        placeholder="Search"
-        autocomplete="off"
-        v-on:keyup="searchColumns"
-      />
-    </div>
-  </div>
-  <h3>Click Description to Edit</h3>
-  <div class="travel-event-list">
-    <span v-if="filteredResults.length == 0">
-      <span v-if="searchResults == false">
-        <h3 id="h3-left">No Search Results Returned</h3>
-      </span>
-      <span v-else>
-        <span v-if="requestIndexDetailFlag == false">
-          <h3 id="h3-left">Total: {{ travel.travel_events.length }}</h3>
-            <!--span class="h3-left-total-child">Double click Item Below to Edit</!--span-->
-          <div class="cards">
+  <div class="travel-details">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumb">
+      <router-link to="/travels" class="breadcrumb-link">Travels</router-link>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">{{ travel?.title || 'Travel Details' }}</span>
+    </nav>
+
+    <!-- Travel Header Card -->
+    <BaseCard class="travel-header-card">
+      <template #header>
+        <div class="header-content">
+          <h2>{{ travel?.title || 'Travel' }} Details</h2>
+          <div class="header-actions">
+            <BaseButton
+              :to="{ name: 'TravelEventCreate', params: { id: travel?.id } }"
+              variant="primary"
+              size="small"
+            >
+              <i class="mdi mdi-plus"></i>
+              Add Event
+            </BaseButton>
+          </div>
+        </div>
+      </template>
+
+      <!-- Status Message -->
+      <div v-if="statusMessage" class="status-message">
+        {{ statusMessage }}
+      </div>
+
+      <!-- Travel Info Summary -->
+      <div v-if="travel" class="travel-summary">
+        <div class="summary-item">
+          <i class="mdi mdi-calendar"></i>
+          <span>{{ formatDateRange() }}</span>
+        </div>
+        <div class="summary-item">
+          <i class="mdi mdi-map-marker"></i>
+          <span>{{ travel.description || 'No description' }}</span>
+        </div>
+        <div class="summary-item">
+          <i class="mdi mdi-calendar-check"></i>
+          <span>{{ travel_events?.length || 0 }} Events</span>
+        </div>
+      </div>
+    </BaseCard>
+
+    <!-- Search and Controls -->
+    <BaseCard class="controls-card">
+      <div class="controls-container">
+        <div class="search-container">
+          <BaseInput
+            v-model="inputSearchText"
+            type="text"
+            placeholder="Search events..."
+            prepend-icon="magnify"
+            :append-icon="inputSearchText ? 'close' : null"
+            @append-click="clearSearch"
+            @input="searchColumns"
+            class="search-input"
+          />
+        </div>
+        
+        <div class="view-toggle">
+          <BaseButton
+            @click="toggleView"
+            :variant="requestIndexDetailFlag ? 'secondary' : 'primary'"
+            size="small"
+          >
+            <i :class="requestIndexDetailFlag ? 'mdi-view-grid' : 'mdi-view-list'"></i>
+            {{ requestIndexDetailFlag ? 'Card View' : 'List View' }}
+          </BaseButton>
+        </div>
+      </div>
+    </BaseCard>
+
+    <!-- Events Section -->
+    <BaseCard class="events-card">
+      <template #header>
+        <h3>Travel Events</h3>
+        <div class="events-count">
+          {{ displayedEvents.length }} of {{ travel_events?.length || 0 }} events
+        </div>
+      </template>
+
+      <!-- No Events State -->
+      <div v-if="!travel_events || travel_events.length === 0" class="empty-state">
+        <i class="mdi mdi-calendar-plus"></i>
+        <h4>No Events Yet</h4>
+        <p>Start planning your journey by adding your first travel event.</p>
+        <BaseButton
+          :to="{ name: 'TravelEventCreate', params: { id: travel?.id } }"
+          variant="primary"
+        >
+          <i class="mdi mdi-plus"></i>
+          Add First Event
+        </BaseButton>
+      </div>
+
+      <!-- No Search Results -->
+      <div v-else-if="inputSearchText && displayedEvents.length === 0" class="no-results">
+        <i class="mdi mdi-magnify"></i>
+        <h4>No Results Found</h4>
+        <p>No events match your search "{{ inputSearchText }}"</p>
+        <BaseButton @click="clearSearch" variant="secondary">
+          Clear Search
+        </BaseButton>
+      </div>
+
+      <!-- Events List/Cards -->
+      <div v-else class="events-container">
+        <!-- Card View -->
+        <div v-if="!requestIndexDetailFlag" class="events-grid">
+          <div
+            v-for="travel_event in displayedEvents"
+            :key="travel_event.id"
+            class="event-card"
+          >
             <TravelEventCard
-              v-for="travel_event in travel.travel_events"
-              :key="travel_event.id"
               :travel_event="travel_event"
+              @delete="handleDeleteEvent"
             />
           </div>
-        </span>
-        <span v-else>
-          <TravelEventIndex :travel_events="travel.travel_events" />
-        </span>
-      </span>
-    </span>
-    <span v-if="filteredResults.length > 0">
-      <span v-if="requestIndexDetailFlag == true">
-        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-        <span>Double click to Edit</span>
-        <div class="cards">
-          <TravelEventCard
-            v-for="travel_event in filteredResults"
-            :key="travel_event.id"
-            :travel_event="travel_event"
-          />
-          <br />
         </div>
-      </span>
-      <span v-else>
-        <TravelEventIndex :travel_events="filteredResults" />
-      </span>
-    </span>
-  </div> 
-</template>
-<script>
-//import { ref, computed } from "vue";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-import TravelEventIndex from "@/components/travel_events/TravelEventIndex.vue";
-import TravelEventCard from "@/components/travel_events/TravelEventCard.vue";
-import { ref } from 'vue';
-const successMessage = ref('')
-export default {
-  name: 'TravelDetails',
-  props: ["id"],
-  components: {
-    ConfirmDialogue,
-    TravelEventIndex,
-    TravelEventCard,
-  },
-  mounted() {
-    this.sortedData = this.sortedData = this.travel_events;      
-    successMessage.value = this.$route.query.success;
-    this.statusMessage = successMessage.value
-  },
-  created() {
-    this.$store.dispatch("fetchTravel", this.$route.params.id);
-    this.$store.dispatch("fetchTravelEvents");
-    this.sortedData = this.$store.dispatch("fetchTravelEvents");
-  },
-  computed: {
-    travel() {
-      return this.$store.state.travel;
-    },
-    travel_events() {
-      return this.$store.state.travel_events;
-    },
-  },
-  data() {
-    return {
-      requestIndexDetailFlag: false,
-      searchResults: null,
-      inputSearchText: "",
-      filteredResults: [],
-      columnDetails: null,
-      sortedData: [],
-      sortedbyASC: false,
-      title: null,
-      description: null,
-      completed: 0,
-      statusMessage: "",
-    };
-  },
-  methods: {
-    requestIndexDetail() {
-      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
-    },
-    editTravel(travel) {
-      this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
-    },
-    editTravelEvent(travel_event) {
-      this.$router.push({ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } });
-    },
-    showIndex() {
-      this.filteredResults = [];
-    },
-    searchColumns() {
-      this.searchResults = true;
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.travel_events &&
-          this.travel_events.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.travel_events.forEach((travel_event) => {
-            const searchHasTitle =
-              travel_event.title &&
-              travel_event.title
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasDescription =
-              travel_event.description &&
-              travel_event.description
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            
-            if (searchHasTitle|| searchHasDescription) {
-              this.filteredResults.push(travel_event);
-            }
-            if (this.filteredResults.length > 0) {
-              this.searchResults = true;
-            } else {
-              this.searchResults = false;
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    sortList(sortBy) {
-      this.sortedData = this.travel_events;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
-      } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
-      }
-    },
 
-    hasEventPassed(te) {
-      var dayjs = require('dayjs')
-      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
-      if (DateFormatService.formatYearDatejs(te.end_date) < formatDateToday) {
-        return 'event-has-passed'
-      } else {
-        return 'card'
-        }
-      }
-    },
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
-    },
-  };
+        <!-- List View -->
+        <div v-else class="events-list">
+          <TravelEventIndex :travel_events="displayedEvents" />
+        </div>
+      </div>
+    </BaseCard>
+    
+    <!-- Delete Confirmation Modal -->
+    <BaseModal
+      v-model="showDeleteDialog"
+      @close="cancelDelete"
+    >
+      <template #header>
+        <h3>Confirm Delete</h3>
+      </template>
+      
+      <div class="delete-confirmation">
+        <div class="warning-icon">
+          <i class="mdi mdi-alert-circle-outline"></i>
+        </div>
+        <p>
+          Are you sure you want to delete the event 
+          <strong>"{{ eventToDelete?.title }}"</strong>?
+        </p>
+        <p class="warning-text">
+          This action cannot be undone.
+        </p>
+        
+        <!-- Action Buttons -->
+        <div class="modal-actions">
+          <BaseButton
+            @click="cancelDelete"
+            variant="secondary"
+            :disabled="isDeleting"
+          >
+            Cancel
+          </BaseButton>
+          <BaseButton
+            @click="confirmDeleteEvent"
+            variant="danger"
+            :loading="isDeleting"
+          >
+            Delete Event
+          </BaseButton>
+        </div>
+      </div>
+    </BaseModal>
+  </div>
+</template>
+<script setup>
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useTravelStore } from '@/stores/travel/TravelStore'
+import BaseCard from '@/components/ui/BaseCard.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseModal from '@/components/ui/BaseModal.vue'
+import TravelEventIndex from "@/components/travel_events/TravelEventIndex.vue"
+import TravelEventCard from "@/components/travel_events/TravelEventCard.vue"
+import dayjs from 'dayjs'
+
+// Props
+defineProps(["id"])
+
+// Composables
+const route = useRoute()
+const router = useRouter()
+const travelStore = useTravelStore()
+
+// Reactive data
+const statusMessage = ref('')
+const requestIndexDetailFlag = ref(false)
+const inputSearchText = ref("")
+const filteredResults = ref([])
+const showDeleteDialog = ref(false)
+const eventToDelete = ref(null)
+const isDeleting = ref(false)
+
+// Computed properties
+const travel = computed(() => travelStore.currentTravel)
+const travel_events = computed(() => {
+  return travelStore.travelEventsForTravel(route.params.id)
+})
+
+const displayedEvents = computed(() => {
+  if (inputSearchText.value && inputSearchText.value.length >= 2) {
+    return filteredResults.value
+  }
+  return travel_events.value || []
+})
+
+// Lifecycle hooks
+onMounted(async () => {
+  // Handle success message from query params
+  if (route.query.success) {
+    statusMessage.value = route.query.success
+    
+    // Clear success message after 3 seconds
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 3000)
+  }
+  
+  // Fetch travel and its events
+  try {
+    await travelStore.fetchTravel(route.params.id)
+    await travelStore.fetchTravelEvents(route.params.id)
+  } catch (error) {
+    console.error('Error loading travel details:', error)
+    router.push('/travels')
+  }
+})
+
+// Watch for search input changes
+watch(inputSearchText, (newValue) => {
+  if (!newValue || newValue.length < 2) {
+    filteredResults.value = []
+    return
+  }
+  
+  searchColumns()
+}, { immediate: false })
+
+// Methods
+const toggleView = () => {
+  requestIndexDetailFlag.value = !requestIndexDetailFlag.value
+}
+
+const clearSearch = () => {
+  inputSearchText.value = ""
+  filteredResults.value = []
+}
+
+const searchColumns = () => {
+  filteredResults.value = []
+  
+  if (!inputSearchText.value || inputSearchText.value.length < 2) {
+    return
+  }
+  
+  const searchTerm = inputSearchText.value.toLowerCase()
+  const events = travel_events.value || []
+  
+  filteredResults.value = events.filter(event => {
+    const titleMatch = event.title?.toLowerCase().includes(searchTerm)
+    const descriptionMatch = event.description?.toLowerCase().includes(searchTerm)
+    const transportMatch = event.transport?.toLowerCase().includes(searchTerm)
+    const notesMatch = event.notes?.toLowerCase().includes(searchTerm)
+    
+    return titleMatch || descriptionMatch || transportMatch || notesMatch
+  })
+}
+
+const formatDateRange = () => {
+  if (!travel.value?.start_date || !travel.value?.end_date) {
+    return 'Dates not specified'
+  }
+  
+  const start = dayjs(travel.value.start_date).format('MMM D, YYYY')
+  const end = dayjs(travel.value.end_date).format('MMM D, YYYY')
+  
+  if (start === end) {
+    return start
+  }
+  
+  return `${start} - ${end}`
+}
+
+const handleDeleteEvent = (event) => {
+  eventToDelete.value = event
+  showDeleteDialog.value = true
+}
+
+const confirmDeleteEvent = async () => {
+  if (!eventToDelete.value) return
+  
+  try {
+    isDeleting.value = true
+    await travelStore.deleteTravelEvent(eventToDelete.value)
+    
+    // Show success message
+    statusMessage.value = `Event "${eventToDelete.value.title}" was successfully deleted.`
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 3000)
+    
+    // Refresh events
+    await travelStore.fetchTravelEvents(route.params.id)
+    
+    // Clear search if the deleted event was in filtered results
+    if (filteredResults.value.length > 0) {
+      searchColumns()
+    }
+    
+  } catch (error) {
+    console.error('Error deleting travel event:', error)
+    statusMessage.value = 'Failed to delete event. Please try again.'
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 5000)
+  } finally {
+    isDeleting.value = false
+    showDeleteDialog.value = false
+    eventToDelete.value = null
+  }
+}
+
+const cancelDelete = () => {
+  showDeleteDialog.value = false
+  eventToDelete.value = null
+}
 </script>
+
+<style scoped>
+.travel-details {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 0.5rem;
+  color: #6c757d;
+}
+
+.breadcrumb-current {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Header Card */
+.travel-header-card {
+  margin: 0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-content h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.status-message {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Travel Summary */
+.travel-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+}
+
+.summary-item i {
+  color: #007bff;
+  font-size: 1.1rem;
+}
+
+/* Controls Card */
+.controls-card {
+  margin: 0;
+}
+
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-container {
+  flex: 1;
+  max-width: 400px;
+}
+
+.view-toggle {
+  flex-shrink: 0;
+}
+
+/* Events Card */
+.events-card {
+  margin: 0;
+}
+
+.events-count {
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+/* Empty States */
+.empty-state,
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  gap: 1rem;
+}
+
+.empty-state i,
+.no-results i {
+  font-size: 3rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state h4,
+.no-results h4 {
+  margin: 0;
+  color: #495057;
+}
+
+.empty-state p,
+.no-results p {
+  margin: 0;
+  color: #6c757d;
+  max-width: 400px;
+}
+
+/* Events Container */
+.events-container {
+  margin-top: 1rem;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.event-card {
+  margin: 0;
+}
+
+.events-list {
+  padding: 0.5rem 0;
+}
+
+/* Delete Confirmation Modal */
+.delete-confirmation {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.warning-icon {
+  margin-bottom: 1rem;
+}
+
+.warning-icon i {
+  font-size: 3rem;
+  color: #dc3545;
+}
+
+.delete-confirmation p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.warning-text {
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .travel-details {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .controls-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .search-container {
+    max-width: none;
+  }
+  
+  .travel-summary {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .empty-state,
+  .no-results {
+    padding: 2rem 1rem;
+  }
+  
+  .breadcrumb {
+    flex-wrap: wrap;
+  }
+}
+</style>

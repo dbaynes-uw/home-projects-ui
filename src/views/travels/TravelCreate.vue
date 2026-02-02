@@ -1,202 +1,152 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h3>Create a Journey</h3>
-    </v-card-title>
-  </v-card>
-  <v-card-text>
-    <v-form @submit.prevent="onSubmit">    
-      <v-container id="form-container">
-        <v-text-field
-          v-model="travel.title"
-          :rules="[requiredTitle]"
-          label="Title"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>          
-        <v-textarea
-          label="Description"
-          v-model="travel.description"
-          clearable
-        >
-          <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-note</v-icon>
-            </template>
-        </v-textarea>
-        <v-text-field label="Departure Date"
-          v-model="travel.departure_date"
-          type="datetime-local"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field label="Return Date"
-          v-model="travel.return_date"
-          type="datetime-local"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field
-          v-model="travel.transport_type"
-          label="Type Transportation"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field
-          v-model="travel.booking_reference"
-          label="Booking Reference Number"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field
-          v-model="travel.transport_url"
-          label="Departure Booking for Check In"
-          placeholder="Link to Transportation"
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
-          </template>
-        </v-text-field>        
-        <span>
-          {{ urlMaxLength - travel.transport_url.length }} / {{ urlMaxLength }}
-        </span>
-        <v-textarea
-          label="Notes"
-          v-model="travel.notes"
-          clearable
-        >
-          <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
-          </template>
-        </v-textarea> 
-        <br/>
-        <v-btn type="submit" block class="mt-2">Submit</v-btn>
-      </v-container>
-    </v-form>
-  </v-card-text>
+  <div class="travel-create-container">
+    <!-- ✅ BREADCRUMB -->
+    <div class="breadcrumb-nav">
+      <router-link :to="{ name: 'Home' }" class="breadcrumb-link">
+        <i class="fas fa-home"></i>
+        Home
+      </router-link>
+      <i class="fas fa-chevron-right breadcrumb-separator"></i>
+      <router-link :to="{ name: 'Travels' }" class="breadcrumb-link">
+        Travels
+      </router-link>
+      <i class="fas fa-chevron-right breadcrumb-separator"></i>
+      <span class="breadcrumb-current">Create New Travel</span>
+    </div>
+
+    <!-- ✅ HEADER -->
+    <BaseCard class="header-card">
+      <template #header>
+        <div class="header-content">
+          <h2>
+            <i class="fas fa-plus animated-icon"></i>
+            Create a New Journey
+          </h2>
+          <p class="subtitle">Plan your next adventure</p>
+        </div>
+      </template>
+    </BaseCard>
+
+    <!-- ✅ FORM CARD -->
+    <BaseCard class="form-card">
+      <template #header>
+        <h3>Travel Details</h3>
+      </template>
+
+      <TravelForm
+        @save="handleSave"
+        @cancel="handleCancel"
+      />
+    </BaseCard>
+  </div>
 </template>
-<script>
-import { v4 as uuidv4 } from "uuid";
-export default {
-  components: {},
-  data()  {
-    return {
-      travel: {
-        title: "",
-        description: "",
-        departure_date: "",
-        return_date: "",
-        transport_type: "",
-        transport_url: "",
-        booking_reference: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      urlMaxLength: 255,
-      isFormValid: false,
-      isTitleValid: false,
-      num: 1,
-    };
-  },
-  methods: {
-    onSubmit() {
-      this.checkValidations();
-      if (this.isFormValid) {
-        const travel = {
-          ...this.travel,
-          id: uuidv4(),
-          created_by: this.$store.state.user.resource_owner.email,
-        };
-        if (this.$store.dispatch("createTravel", travel)) {
-          this.$router.push({ name: "TravelList" });
-        } else {
-          alert("Error adding Travel Location " + travel.title);
-        }
-      } else {
-        alert("Please correct required fields and resubmit");
-      }        
-    },
-    requiredTitle: function (value) {
-      if (value) {
-          this.isTitleValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isTitleValid = false
-          return 'Please enter Title';
-      }
-    },
-    checkValidations() {
-      if (this.isTitleValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-    }
-  },
-};
+<script setup>
+import { useRouter } from 'vue-router'
+import { useTravelStore } from '@/stores/travel/TravelStore'
+import BaseCard from '@/components/ui/BaseCard.vue'
+import TravelForm from '@/components/travels/TravelForm.vue'
+
+// ✅ COMPOSABLES
+const router = useRouter()
+const travelStore = useTravelStore()
+
+// ✅ METHODS
+const handleSave = async (travelData) => {
+  try {
+    await travelStore.createTravel(travelData)
+    router.push({ name: 'Travels' })
+  } catch (error) {
+    console.error('Error creating travel:', error)
+    alert('Failed to create travel. Please try again.')
+  }
+}
+
+const handleCancel = () => {
+  router.push({ name: 'Travels' })
+}
 </script>
-<style>
-.add-form {
+<style scoped>
+/* ✅ LAYOUT */
+.travel-create-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ✅ BREADCRUMB */
+.breadcrumb-nav {
   display: flex;
-  flex-direction: column;
-  width: 425px;
-  padding: 20px;
-  margin: 40px;
-  border: 2px solid #d8d8d8;
-  background-color: white;
-  -webkit-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  -moz-box-shadow: 0px 2px 15px -12px rgba(0, 0, 0, 0.57);
-  box-shadow: 2px 15px -12px rgba(0, 0, 0, 0.57);
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
 }
-#notes {
-  width: 100%;
-  height: 4rem;
+
+.breadcrumb-link {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: opacity 0.2s;
 }
-.button {
-  margin: 30px;
-  background-color: #39495c;
-  border-radius: 5px;
-  font-size: 18px;
-  width: 160px;
-  height: 60px;
-  color: white;
-  padding: 20px;
-  box-shadow: inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.17),
-    inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15),
-    inset 0 0 0em 0.05em rgba(255, 255, 255, 0.12);
-  text-align: center;
-  cursor: pointer;
+
+.breadcrumb-link:hover {
+  opacity: 0.8;
 }
-label {
-  font-size: 20px;
-  margin-bottom: 5px;
+
+.breadcrumb-separator {
+  font-size: 0.75rem;
 }
-input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
+
+.breadcrumb-current {
+  font-weight: 500;
 }
-fieldset {
-  border: 0;
+
+/* ✅ HEADER */
+.header-card {
+  margin-bottom: 1.5rem;
+}
+
+.header-content h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text-primary);
+}
+
+.animated-icon {
+  color: var(--color-primary);
+  transition: transform 0.3s ease;
+}
+
+.animated-icon:hover {
+  transform: scale(1.1);
+}
+
+.subtitle {
   margin: 0;
-  padding: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
 }
-select {
-  border-color: darkgreen;
+
+/* ✅ FORM CARD */
+.form-card {
+  margin-bottom: 1.5rem;
 }
-legend {
-  font-size: 28px;
-  font-weight: 700;
-  margin-top: 20px;
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .travel-create-container {
+    padding: 0.5rem;
+  }
+  
+  .header-content h2 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }
 </style>

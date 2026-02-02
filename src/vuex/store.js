@@ -54,10 +54,10 @@ export default new Vuex.Store({
     shopping_list: [],
     //trail: {},
     //trails: [],
-    //travel: [],
-    //travels: [],
-    //travel_event: [],
-    //travel_events: [],
+    travel: [],
+    travels: [],
+    travel_event: [],
+    travel_events: [],
     users: [],
     vendor: {},
     vendors: [],
@@ -287,27 +287,27 @@ export default new Vuex.Store({
     //SET_TRAILS(state, trail) {
     //  state.trails = trail;
     //},
-    //ADD_TRAVEL(state, travel) {
-    //  state.travels.push(travel);
-    //},
-    //DELETE_TRAVEL(state, travel) {
-    //  state.travel = travel;
-    //},
-    //DELETE_TRAVEL_EVENT(state, travel_event) {
-    //  state.travel_event = travel_event;
-    //},
-    //SET_TRAVEL(state, travel) {
-    //  state.travel = travel;
-    //},
-    //SET_TRAVEL_EVENT(state, travel_event) {
-    //  state.travel_event = travel_event;
-    //},
-    //SET_TRAVELS(state, travels) {
-    //  state.travels = travels;
-    //},
-    //SET_TRAVEL_EVENTS(state, travel_events) {
-    //  state.travel_events = travel_events;
-    //},
+    ADD_TRAVEL(state, travel) {
+      state.travels.push(travel);
+    },
+    DELETE_TRAVEL(state, travel) {
+      state.travel = travel;
+    },
+    DELETE_TRAVEL_EVENT(state, travel_event) {
+      state.travel_event = travel_event;
+    },
+    SET_TRAVEL(state, travel) {
+      state.travel = travel;
+    },
+    SET_TRAVEL_EVENT(state, travel_event) {
+      state.travel_event = travel_event;
+    },
+    SET_TRAVELS(state, travels) {
+      state.travels = travels;
+    },
+    SET_TRAVEL_EVENTS(state, travel_events) {
+      state.travel_events = travel_events;
+    },
     ADD_USER(state, user) {
       state.users.push(user);
     },
@@ -410,7 +410,7 @@ export default new Vuex.Store({
       state.plants = [];
       state.products = [];
       //state.trails = [];
-      //state.travels = [];
+      state.travels = [];
       state.glucoseReadings = [];
       state.waterings = [];
     }
@@ -1280,7 +1280,7 @@ actions: {
           router.push({name:'home'})
         });
     },
-    /*
+
     createTravel({ commit }, travel) {
       EventService.postTravel(travel)
         .then(() => {
@@ -1393,7 +1393,7 @@ actions: {
           alert("Travel Event Put Error: ", error.response.data )
         });
     },
-    */
+
     async createUser({ commit }, user) {
       EventService.postUser(user)
         .then(() => {
@@ -1653,8 +1653,8 @@ actions: {
       commit('SET_OOBS', []);
       commit('SET_PLANTS', []);
       commit('SET_PRODUCTS', []);
-      //commit('SET_TRAILS', []);
-      //commit('SET_TRAVELS', []);
+      commit('SET_TRAILS', []);
+      commit('SET_TRAVELS', []);
       commit('SET_GLUCOSE_READINGS', []);
       commit('SET_WATERINGS', []);
       

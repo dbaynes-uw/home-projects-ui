@@ -273,7 +273,7 @@ export default {
           icon: "fas fa-hiking"
         },
         {
-          label: "TravelList",
+          label: "Travels",
           url: "/travels",
           title: "Travels",
           icon: "fas fa-plane"

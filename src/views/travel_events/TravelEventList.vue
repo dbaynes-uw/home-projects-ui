@@ -1,13 +1,13 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <br/>
-  <h1>{{ travel_event.title }} Details</h1>
-  <router-link :to="{ name: 'TravelList' }">
+  <h1>{{ travel?.title || 'Travel' }} Details</h1>
+  <router-link :to="{ name: 'Travels' }">
       <b>Back to List of Journies</b>
     </router-link>
   <br/>
   <br/>
-  <h3>{{ this.statusMessage }}</h3>
+  <h3>{{ statusMessage }}</h3>
   <span class="h3-left-total-child">Click to Change</span>
   <span class="h3-left-total-child">Double Click Item Below to Change</span>
   <br/>
@@ -27,84 +27,75 @@
   </p>
 </template>
 
-<script>
-//import { ref, computed } from "vue";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-//import TravelCard from "@/components/travels/TravelCard.vue";
-import TravelEventCard from "@/components/travel_events/TravelEventCard.vue";
-import { ref } from 'vue';
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore as useVuexStore } from 'vuex' // For user data
+import { useTravelStore } from '@/stores/travel/TravelStore'
+import ConfirmDialogue from "@/components/ConfirmDialogue.vue"
+import DateFormatService from "@/services/DateFormatService.js"
+import TravelEventCard from "@/components/travel_events/TravelEventCard.vue"
+import dayjs from 'dayjs'
+
+// Props
+defineProps(["id"])
+
+// Composables
+const route = useRoute()
+const router = useRouter()
+const vuexStore = useVuexStore() // For user data
+const travelStore = useTravelStore()
+
+// Reactive data
+const statusMessage = ref('')
 const successMessage = ref('')
-export default {
-  name: 'TravelDetails',
-  props: ["id"],
-  components: {
-    ConfirmDialogue,
-    //TravelCard,
-    TravelEventCard,
-  },
-  mounted() {
-    this.sortedData = this.films;      
-    successMessage.value = this.$route.query.success;
-    this.statusMessage = successMessage.value
-  },
-  created() {
-    this.$store.dispatch("fetchTravel", this.$route.params.id);
-  },
-  computed: {
-    travel() {
-      return this.$store.state.travel;
-    },
-  },
-  data() {
-    return {
-      //For TESTING:
-      //travel: {
-      //  title: "TEST 1",
-      //  description: "Test Desc",
-      //  transport: 'Air France',
-      //  booking_reference: 'TCUHEG',
-      //  transport_url: 'https://wwws.airfrance.us/trip/trip-details/87c622c8-2ca6-49fe-939a-e94a77fb1d38',
-      //  departure_date: "2025-10-10 15:32:22",
-      //  return_date: "2025-11-12 12:30:22",
-      //  notes: "Notes here...",
-      //},
-      travel_event: {
-        id: "",
-        travel_id: "",
-        title: "",
-        description: "",
-        start_date: "",
-        end_date: "",
-        transport: "",
-        booking_reference: "",
-        transport_url: "",
-        travel_event_url: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      statusMessage: '',
-    };
-  },
-  methods: {
-    editTravel(travel) {
-      this.$router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } });
-    },
-    editTravelEvent(travel_event) {
-      this.$router.push({ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } });
-    },
-    hasEventPassed(te) {
-      var dayjs = require('dayjs')
-      let formatDateToday = dayjs(new Date()).format("MM-DD-YY");
-      if (DateFormatService.formatYearDatejs(te.end_date) < formatDateToday) {
-        return 'event-has-passed'
-      } else {
-        return 'card'
-        }
-      }
-    },
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
-    },
-  };
+// Computed properties
+const travel = computed(() => travelStore.currentTravel)
+const travel_events = computed(() => {
+  return travelStore.travelEventsForTravel(route.params.id)
+})
+
+// Travel event template object (for future use)
+const _travel_event = ref({
+  id: "",
+  travel_id: "",
+  title: "",
+  description: "",
+  start_date: "",
+  end_date: "",
+  transport: "",
+  booking_reference: "",
+  transport_url: "",
+  travel_event_url: "",
+  notes: "",
+  created_by: computed(() => vuexStore.state.user?.resource_owner?.email || ''),
+})
+
+// Lifecycle hooks
+onMounted(async () => {
+  successMessage.value = route.query.success
+  statusMessage.value = successMessage.value
+  
+  // Fetch travel and travel events
+  await travelStore.fetchTravel(route.params.id)
+  await travelStore.fetchTravelEvents(route.params.id)
+})
+
+// Methods (for future use if needed)
+const _editTravel = (travel) => {
+  router.push({ name: 'TravelEdit', params: { id: `${travel.id}` } })
+}
+
+const _editTravelEvent = (travel_event) => {
+  router.push({ name: 'TravelEventEdit', params: { id: `${travel_event.id}` } })
+}
+
+const _hasEventPassed = (te) => {
+  const formatDateToday = dayjs(new Date()).format("MM-DD-YY")
+  return DateFormatService.formatYearDatejs(te.end_date) < formatDateToday ? 'event-has-passed' : 'card'
+}
+
+const _formatYearDate = (value) => {
+  return DateFormatService.formatYearDatejs(value)
+}
 </script>
