@@ -44,11 +44,11 @@
       
       <!-- Transportation Type -->
       <BaseInput
-        v-model="formData.transport_type"
+        v-model="formData.transport"
         label="Type of Transportation"
         type="text"
         prepend-icon="car"
-        :error="errors.transport_type"
+        :error="errors.transport"
         placeholder="e.g. Flight, Car, Train"
       />
       
@@ -144,11 +144,11 @@ const formData = ref({
   description: '',
   departure_date: '',
   return_date: '',
-  transport_type: '',
+  transport: '',
   transport_url: '',
   booking_reference: '',
   notes: '',
-  created_by: computed(() => vuexStore.state.user?.resource_owner?.email || ''),
+  created_by: vuexStore.state.user?.resource_owner?.email || '',
 })
 
 // Form validation
@@ -170,6 +170,22 @@ const formatDateForInput = (dateString) => {
   return date.isValid() ? date.format('YYYY-MM-DDTHH:mm') : '';
 };
 
+// Methods - Define before watchers to avoid hoisting issues
+const resetForm = () => {
+  formData.value = {
+    title: '',
+    description: '',
+    departure_date: '',
+    return_date: '',
+    transport: '',
+    transport_url: '',
+    booking_reference: '',
+    notes: '',
+    created_by: vuexStore.state.user?.resource_owner?.email || '',
+  }
+  errors.value = {}
+}
+
 // Watch for travel changes (edit mode)
 watch(() => props.travel, (newTravel) => {
   if (newTravel) {
@@ -188,22 +204,6 @@ watch(() => props.travel, (newTravel) => {
     resetForm();
   }
 }, { immediate: true });
-
-// Methods
-const resetForm = () => {
-  formData.value = {
-    title: '',
-    description: '',
-    departure_date: '',
-    return_date: '',
-    transport_type: '',
-    transport_url: '',
-    booking_reference: '',
-    notes: '',
-    created_by: vuexStore.state.user?.resource_owner?.email || '',
-  }
-  errors.value = {}
-}
 
 const validateForm = () => {
   errors.value = {}
