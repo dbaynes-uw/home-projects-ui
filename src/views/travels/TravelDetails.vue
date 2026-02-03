@@ -14,12 +14,12 @@
           <h2>{{ travel?.title || 'Travel' }} Details</h2>
           <div class="header-actions">
             <BaseButton
-              :to="{ name: 'TravelEventCreate', params: { id: travel?.id } }"
               variant="primary"
               size="small"
+              icon="edit"
+              @click="openEditTravel"
             >
-              <i class="mdi mdi-plus"></i>
-              Add Event
+              Edit
             </BaseButton>
           </div>
         </div>
@@ -82,6 +82,15 @@
         <h3>Travel Events</h3>
         <div class="events-count">
           {{ displayedEvents.length }} of {{ travel_events?.length || 0 }} events
+          <BaseButton
+            @click="openAddEventDialog"
+            variant="primary"
+            size="small"
+            class="button-in-heading"
+          >
+            <i class="mdi mdi-plus"></i>
+            Add Event
+          </BaseButton>
         </div>
       </template>
 
@@ -131,6 +140,34 @@
         </div>
       </div>
     </BaseCard>
+    
+    <!-- Edit Travel Modal -->
+    <BaseModal
+      v-model="showEditDialog"
+      title="Edit Travel"
+      size="large"
+      @close="closeEditDialog"
+    >
+      <TravelForm
+        :travel="travel"
+        @save="handleSaveTravel"
+        @cancel="closeEditDialog"
+      />
+    </BaseModal>
+    
+    <!-- Add Event Modal -->
+    <BaseModal
+      v-model="showAddEventDialog"
+      title="Add Event"
+      size="large"
+      @close="closeAddEventDialog"
+    >
+      <TravelEventForm
+        :travel-id="travel?.id"
+        @save="handleSaveEvent"
+        @cancel="closeAddEventDialog"
+      />
+    </BaseModal>
     
     <!-- Delete Confirmation Modal -->
     <BaseModal
@@ -184,6 +221,8 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import TravelEventIndex from "@/components/travel_events/TravelEventIndex.vue"
 import TravelEventCard from "@/components/travel_events/TravelEventCard.vue"
+import TravelEventForm from '@/components/travel_events/TravelEventForm.vue'
+import TravelForm from '@/components/travels/TravelForm.vue'
 import dayjs from 'dayjs'
 
 // Props
@@ -200,6 +239,8 @@ const requestIndexDetailFlag = ref(false)
 const inputSearchText = ref("")
 const filteredResults = ref([])
 const showDeleteDialog = ref(false)
+const showEditDialog = ref(false)
+const showAddEventDialog = ref(false)
 const eventToDelete = ref(null)
 const isDeleting = ref(false)
 
@@ -279,18 +320,80 @@ const searchColumns = () => {
 }
 
 const formatDateRange = () => {
-  if (!travel.value?.start_date || !travel.value?.end_date) {
+  if (!travel.value?.departure_date || !travel.value?.return_date) {
     return 'Dates not specified'
   }
   
-  const start = dayjs(travel.value.start_date).format('MMM D, YYYY')
-  const end = dayjs(travel.value.end_date).format('MMM D, YYYY')
+  const start = dayjs(travel.value.departure_date).format('MMM D, YYYY')
+  const end = dayjs(travel.value.return_date).format('MMM D, YYYY')
   
   if (start === end) {
     return start
   }
   
   return `${start} - ${end}`
+}
+
+const openAddEventDialog = () => {
+  showAddEventDialog.value = true
+}
+
+const closeAddEventDialog = () => {
+  showAddEventDialog.value = false
+}
+
+const handleSaveEvent = async (eventData) => {
+  try {
+    await travelStore.createTravelEvent(eventData)
+    
+    // Show success message
+    statusMessage.value = 'Event created successfully!'
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 3000)
+    
+    // Refresh events
+    await travelStore.fetchTravelEvents(route.params.id)
+    
+    closeAddEventDialog()
+  } catch (error) {
+    console.error('Error creating travel event:', error)
+    statusMessage.value = 'Failed to create event. Please try again.'
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 5000)
+  }
+}
+
+const openEditTravel = () => {
+  showEditDialog.value = true
+}
+
+const closeEditDialog = () => {
+  showEditDialog.value = false
+}
+
+const handleSaveTravel = async (travelData) => {
+  try {
+    await travelStore.updateTravel(travel.value.id, travelData)
+    
+    // Show success message
+    statusMessage.value = 'Travel updated successfully!'
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 3000)
+    
+    // Refresh travel data
+    await travelStore.fetchTravel(route.params.id)
+    
+    closeEditDialog()
+  } catch (error) {
+    console.error('Error updating travel:', error)
+    statusMessage.value = 'Failed to update travel. Please try again.'
+    setTimeout(() => {
+      statusMessage.value = ''
+    }, 5000)
+  }
 }
 
 const handleDeleteEvent = (event) => {
@@ -396,7 +499,9 @@ const cancelDelete = () => {
   display: flex;
   gap: 0.5rem;
 }
-
+.button-in-heading {
+  margin-left: 3rem;
+}
 .status-message {
   background-color: #d4edda;
   border: 1px solid #c3e6cb;

@@ -1,35 +1,31 @@
 <template>
   <div :class="{ 'event-has-passed': hasEventPassed(props.travel_event), 'card': isEventCurrent(props.travel_event)}">
     <h2>{{ props.travel_event.title }}</h2>
-    <p id="p-custom-link-left">
-      <router-link
-        :to="{ name: 'TravelEventEdit', params: { id: `${props.travel_event.id}` } }"
-      >
-        Ref: {{ props.travel_event.description }}
-      </router-link>
-    </p>
     <ul>
+      <li class="li-left">Event Description:
+        <br/><b>{{ props.travel_event.description }}</b></li>
       <span v-if="startsWithHtml(props.travel_event.travel_event_url)">
-        <li class="li-left">Event Information: <b><a :href="props.travel_event.event_url" target="_blank">{{props.travel_event.event_url}}</a></b></li>
+        <li class="li-left">Event Information:
+          <br/><b><a :href="props.travel_event.travel_event_url" target="_blank" class="detail-link-blue">Link to {{ props.travel_event.title }} site</a></b></li>
       </span>
       <span v-if="startsWithHtml(props.travel_event.booking_reference)">
-        <li class="li-left">Booking Reference: <b><a :href="props.travel_event.booking_reference" target="_blank">Link</a></b></li>
+        <li class="li-left">Booking Reference:
+          <b><a :href="props.travel_event.booking_reference" target="_blank">Link</a></b></li>
       </span>
       <span v-if="props.travel_event.booking_reference && !startsWithHtml(props.travel_event.booking_reference)">
-        <li class="li-left">Booking Reference: <b>{{ props.travel_event.booking_reference }}</b></li>
+        <li class="li-left">Booking Reference:
+          <br/><b>{{ props.travel_event.booking_reference }}</b></li>
       </span>
-      <span v-if="!props.travel_event.booking_reference">
-        <li class="li-left">Booking Reference: <b>N/A</b></li>
+      <li class="li-left">Transportation: <b>{{ props.travel_event.transport }}</b></li>
+      <span v-if="props.travel_event.transport_url" style="margin-left: 2rem;">
+        <b><a :href="props.travel_event.transport_url" target="_blank" class="detail-link-blue">Map/Link</a></b>
       </span>
-      <li class="li-left">Transportation: {{ props.travel_event.transport }}</li>
-      <span v-if="props.travel_event.transport_url">
-        <li class="li-left"><b><a :href="props.travel_event.transport_url" target="_blank">Transport Reference</a></b></li>
+      <span v-if="props.travel_event.start_date">
+        <li class="li-left">Start: <b>{{ formatStandardDateTime(props.travel_event.start_date) }}</b></li>
       </span>
-      <span v-if="!props.travel_event.transport_url">
-        <li class="li-left">Transport Reference: <b>URL Not Available</b></li>
+      <span v-if="props.travel_event.end_date">
+        <li class="li-left">End: <b>{{ formatStandardDateTime(props.travel_event.end_date) }}</b></li>
       </span>
-      <li class="li-left">Start: <b>{{ formatStandardDateTime(props.travel_event.start_date) }}</b></li>
-      <li class="li-left">End: <b>{{ formatStandardDateTime(props.travel_event.end_date) }}</b></li>
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in 
           joinedNotes(props.travel_event)"
@@ -170,4 +166,11 @@ const isEventCurrent = (t) => {
 .btn-action i {
   font-size: 0.875rem;
 }
+.detail-link-blue {
+  margin-left: 0rem;
+  text-decoration: underline !important;
+  color: blue;
+  text-decoration: none;
+}
+
 </style>

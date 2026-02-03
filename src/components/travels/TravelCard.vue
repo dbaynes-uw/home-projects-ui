@@ -13,17 +13,21 @@
         
         <div class="travel-actions">
           <BaseButton 
-            variant="ghost" 
+            variant="primary" 
             size="small" 
             icon="edit"
             @click="$emit('edit', travel)"
-          />
+            >
+              Edit
+            </BaseButton>
           <BaseButton 
-            variant="ghost" 
+            variant="danger" 
             size="small" 
             icon="trash"
             @click="$emit('delete', travel)"
-          />
+          >
+            Delete
+          </BaseButton> 
         </div>
       </div>
     </template>
@@ -46,9 +50,9 @@
       
       <div v-if="travel.transport_url" class="detail-row">
         <span class="detail-label">Transport Link:</span>
-        <a :href="travel.transport_url" target="_blank" class="detail-link">
-          {{ travel.transport }}
-        </a>
+        <b><a :href="travel.transport_url" target="_blank" class="detail-link-blue">
+          {{travel.transport}} Website
+        </a></b>
       </div>
       
       <div class="detail-row">
@@ -64,9 +68,7 @@
       <div v-if="travel.notes" class="detail-row notes-row">
         <span class="detail-label">Notes:</span>
         <div class="detail-value notes-content">
-          <div v-for="(note, idx) in splitList(travel, splitLength)" :key="idx">
-            {{ note }}
-          </div>
+          {{ travel.notes }}
         </div>
       </div>
     </div>
@@ -224,7 +226,7 @@ const getTravelStatus = (travel) => {
 }
 
 .detail-label {
-  font-weight: 500;
+  font-weight: 900;
   color: var(--color-text-secondary);
   min-width: 100px;
   flex-shrink: 0;
@@ -243,15 +245,19 @@ const getTravelStatus = (travel) => {
 .detail-link:hover {
   text-decoration: underline;
 }
-
+.detail-link-blue {
+  margin-left: 0rem;
+  text-underline-position: below;
+  color: blue;
+  text-decoration: none;
+}
 .notes-row {
   align-items: flex-start;
 }
 
 .notes-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  white-space: pre-line;
+  line-height: 1.5;
 }
 
 /* ✅ EVENTS */

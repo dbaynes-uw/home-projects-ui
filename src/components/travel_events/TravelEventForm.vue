@@ -88,7 +88,6 @@
         label="Start Date"
         type="datetime-local"
         prepend-icon="calendar-start"
-        required
         :error="errors.start_date"
       />
       
@@ -102,14 +101,23 @@
       />
       
       <!-- Notes -->
-      <BaseInput
-        v-model="formData.notes"
-        label="Notes"
-        type="textarea"
-        prepend-icon="note-text"
-        :error="errors.notes"
-        placeholder="Additional notes or details"
-      />
+      <div class="form-field">
+        <label class="form-label">
+          <i class="mdi mdi-note-text"></i>
+          Notes
+        </label>
+        <textarea
+          v-model="formData.notes"
+          class="notes-textarea"
+          rows="4"
+          placeholder="Additional notes or details"
+        ></textarea>
+        <div v-if="errors.notes" class="form-error">
+          <i class="mdi mdi-alert-circle"></i>
+          {{ errors.notes }}
+        </div>
+      </div>
+
       
       <!-- Form Actions -->
       <div class="form-actions">
@@ -201,7 +209,7 @@ const formData = ref({
 // Form validation
 const isFormValid = computed(() => {
   return formData.value.title && 
-         formData.value.start_date &&
+         //formData.value.start_date &&
          !Object.keys(errors.value).length
 })
 
@@ -250,9 +258,9 @@ const validateForm = () => {
     errors.value.title = 'Event title is required'
   }
   
-  if (!formData.value.start_date) {
-    errors.value.start_date = 'Start date is required'
-  }
+  //if (!formData.value.start_date) {
+  //  errors.value.start_date = 'Start date is required'
+  //}
   
   if (formData.value.end_date && formData.value.start_date) {
     const startDate = new Date(formData.value.start_date)
@@ -369,4 +377,28 @@ defineExpose({
   margin-top: -1rem;
   margin-bottom: 0.5rem;
 }
+.notes-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s;
+  background: white;
+}
+
+.notes-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.notes-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
 </style>

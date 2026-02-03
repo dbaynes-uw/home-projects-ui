@@ -14,14 +14,22 @@
       />
       
       <!-- Description -->
-      <BaseInput
-        v-model="formData.description"
-        label="Description"
-        type="textarea"
-        prepend-icon="note-text"
-        :error="errors.description"
-        placeholder="Describe your travel plans"
-      />
+      <div class="form-field">
+        <label class="form-label">
+          <i class="mdi mdi-note-text"></i>
+          Description
+        </label>
+        <textarea
+          v-model="formData.description"
+          class="form-textarea"
+          rows="3"
+          placeholder="Describe your travel plans"
+        ></textarea>
+        <div v-if="errors.description" class="form-error">
+          <i class="mdi mdi-alert-circle"></i>
+          {{ errors.description }}
+        </div>
+      </div>
       
       <!-- Departure Date -->
       <BaseInput
@@ -78,14 +86,22 @@
       </span>
       
       <!-- Notes -->
-      <BaseInput
-        v-model="formData.notes"
-        label="Notes"
-        type="textarea"
-        prepend-icon="note-text"
-        :error="errors.notes"
-        placeholder="Additional notes or details"
-      />
+      <div class="form-field">
+        <label class="form-label">
+          <i class="mdi mdi-note-text"></i>
+          Notes
+        </label>
+        <textarea
+          v-model="formData.notes"
+          class="form-textarea"
+          rows="4"
+          placeholder="Additional notes or details"
+        ></textarea>
+        <div v-if="errors.notes" class="form-error">
+          <i class="mdi mdi-alert-circle"></i>
+          {{ errors.notes }}
+        </div>
+      </div>
       
       <!-- Form Actions -->
       <div class="form-actions">
@@ -279,4 +295,85 @@ defineExpose({
   color: #666;
   font-size: 0.75rem;
 }
+
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.form-label i {
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s;
+  background: white;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-error i {
+  font-size: 1rem;
+}
+
+.notes-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s;
+  background: white;
+}
+
+.notes-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.notes-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
 </style>
