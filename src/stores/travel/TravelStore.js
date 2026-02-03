@@ -201,7 +201,17 @@ export const useTravelStore = defineStore('travel', {
       this.error = null;
       
       try {
-        const response = await TravelService.updateTravel(id, travelData);
+        // Filter out read-only fields to avoid "Unpermitted parameters" warnings
+        const {
+          id: _id,
+          user_id,
+          travel_events,
+          created_at,
+          updated_at,
+          ...cleanData
+        } = travelData;
+        
+        const response = await TravelService.updateTravel(id, cleanData);
         
         const updatedTravel = calculateTravelDuration(response.data);
         
@@ -326,9 +336,16 @@ export const useTravelStore = defineStore('travel', {
       this.error = null;
       
       try {
-        console.log('🔍 TravelStore: Updating travel event:', id, travelEventData);
-        const response = await TravelService.updateTravelEvent(id, travelEventData);
-        console.log('✅ TravelStore: Travel event updated:', response.data);
+        // Filter out read-only fields to avoid "Unpermitted parameters" warnings
+        const {
+          id: _id,
+          //user_id,
+          //created_at,
+          //updated_at,
+          ...cleanData
+        } = travelEventData;
+        
+        const response = await TravelService.updateTravelEvent(id, cleanData);
         
         // Update in travel_events array
         const index = this.travel_events.findIndex(te => te.id === parseInt(id));

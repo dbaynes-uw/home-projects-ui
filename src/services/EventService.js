@@ -426,11 +426,13 @@ export default {
   },
   async putTravel(updatedTravel) {
     this.init();
-    return api.put(api_url + "travels" + `/${updatedTravel.id}`, updatedTravel);
+    const { id, ...travelData } = updatedTravel;
+    return api.put(api_url + "travels" + `/${id}`, travelData);
   },
   async putTravelEvent(updatedTravelEvent) {
     this.init();
-    return api.put(api_url + "travel_events" + `/${updatedTravelEvent.id}`, updatedTravelEvent);
+    const { id, ...travelEventData } = updatedTravelEvent;
+    return api.put(api_url + "travel_events" + `/${id}`, travelEventData);
   },
   destroyTravel(id) {
     this.init();
