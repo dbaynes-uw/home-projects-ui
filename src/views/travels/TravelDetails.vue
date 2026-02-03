@@ -128,7 +128,7 @@
             class="event-card"
           >
             <TravelEventCard
-              :travel_event="travel_event"
+              :travel-event="travel_event"
               @delete="handleDeleteEvent"
             />
           </div>

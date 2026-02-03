@@ -41,6 +41,12 @@
         </div>
       </template>
       
+      <!-- Debug: Show raw data -->
+      <!--div style="background: #f0f0f0; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
+        <strong>Debug - Raw travelEvent data:</strong>
+        <pre style="overflow-x: auto;">{{ JSON.stringify(travelEvent, null, 2) }}</pre>
+      </div-->
+      
       <TravelEventCard
         :travel-event="travelEvent"
         class="event-card-details"

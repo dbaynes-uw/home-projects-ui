@@ -1,38 +1,41 @@
 <template>
-  <div :class="{ 'event-has-passed': hasEventPassed(props.travel_event), 'card': isEventCurrent(props.travel_event)}">
-    <h2>{{ props.travel_event.title }}</h2>
+  <div 
+    :class="{ 'event-has-passed': hasEventPassed(props.travelEvent), 'card': isEventCurrent(props.travelEvent)}"
+    @dblclick="navigateToDetails"
+  >
+    <h2>{{ props.travelEvent.title }}</h2>
     <ul>
       <li class="li-left">Event Description:</li>
       <b class="li-left-none" v-for="(description, idx) in 
-          joinedDescription(props.travel_event)"
+          joinedDescription(props.travelEvent)"
           :key="idx">{{ description }}
         </b>
       
-      <span v-if="startsWithHtml(props.travel_event.travel_event_url)">
+      <span v-if="startsWithHtml(props.travelEvent.travel_event_url)">
         <li class="li-left">Event Information:
-          <br/><b><a :href="props.travel_event.travel_event_url" target="_blank" class="detail-link-blue">Link to {{ props.travel_event.title }} site</a></b></li>
+          <br/><b><a :href="props.travelEvent.travel_event_url" target="_blank" class="detail-link-blue">Link to {{ props.travelEvent.title }} site</a></b></li>
       </span>
-      <span v-if="startsWithHtml(props.travel_event.booking_reference)">
+      <span v-if="startsWithHtml(props.travelEvent.booking_reference)">
         <li class="li-left">Booking Reference:
-          <b><a :href="props.travel_event.booking_reference" target="_blank">Link</a></b></li>
+          <b><a :href="props.travelEvent.booking_reference" target="_blank">Link</a></b></li>
       </span>
-      <span v-if="props.travel_event.booking_reference && !startsWithHtml(props.travel_event.booking_reference)">
+      <span v-if="props.travelEvent.booking_reference && !startsWithHtml(props.travelEvent.booking_reference)">
         <li class="li-left">Booking Reference:
-          <br/><b>{{ props.travel_event.booking_reference }}</b></li>
+          <br/><b>{{ props.travelEvent.booking_reference }}</b></li>
       </span>
-      <li class="li-left">Transportation: <b>{{ props.travel_event.transport }}</b></li>
-      <span v-if="props.travel_event.transport_url" style="margin-left: 2rem;">
-        <b><a :href="props.travel_event.transport_url" target="_blank" class="detail-link-blue">Map/Link</a></b>
+      <li class="li-left">Transportation: <b>{{ props.travelEvent.transport }}</b></li>
+      <span v-if="props.travelEvent.transport_url" style="margin-left: 2rem;">
+        <b><a :href="props.travelEvent.transport_url" target="_blank" class="detail-link-blue">Map/Link</a></b>
       </span>
-      <span v-if="props.travel_event.start_date">
-        <li class="li-left">Start: <b>{{ formatStandardDateTime(props.travel_event.start_date) }}</b></li>
+      <span v-if="props.travelEvent.start_date">
+        <li class="li-left">Start: <b>{{ formatStandardDateTime(props.travelEvent.start_date) }}</b></li>
       </span>
-      <span v-if="props.travel_event.end_date">
-        <li class="li-left">End: <b>{{ formatStandardDateTime(props.travel_event.end_date) }}</b></li>
+      <span v-if="props.travelEvent.end_date">
+        <li class="li-left">End: <b>{{ formatStandardDateTime(props.travelEvent.end_date) }}</b></li>
       </span>
       <li class="li-left">Notes:</li>
       <b class="li-left-none" v-for="(notes, idx) in 
-          joinedNotes(props.travel_event)"
+          joinedNotes(props.travelEvent)"
           :key="idx">{{ notes }}
         </b>
     </ul>
@@ -41,7 +44,7 @@
     <div class="event-actions">
       <button 
         class="btn-action btn-edit"
-        @click="handleEdit"
+        @click.stop="handleEdit"
         title="Edit Event"
       >
         <i class="mdi mdi-pencil"></i>
@@ -49,7 +52,7 @@
       </button>
       <button 
         class="btn-action btn-delete"
-        @click="handleDelete"
+        @click.stop="handleDelete"
         title="Delete Event"
       >
         <i class="mdi mdi-delete"></i>
@@ -68,7 +71,7 @@ import dayjs from 'dayjs'
 
 // Props
 const props = defineProps({
-  travel_event: {
+  travelEvent: {
     type: Object,
     default: () => ({})
   }
@@ -87,25 +90,32 @@ const statusMessage = ref('')
 const confirmDialogue = ref(null)
 
 // Methods
+const navigateToDetails = () => {
+  router.push({ name: 'TravelEventDetails', params: { id: props.travelEvent.id } })
+}
+
 const handleEdit = () => {
   router.push({ 
     name: 'TravelEventEdit', 
-    params: { id: props.travel_event.id } 
+    params: { id: props.travelEvent.id } 
   })
 }
 
 const handleDelete = () => {
-  emit('delete', props.travel_event)
+  emit('delete', props.travelEvent)
 }
+
 const startsWithHtml = (event) => {
   return event && event.startsWith('https')
 }
+
 const joinedDescription = (e) => {
   if (e.description != null) { 
     return e.description.split('\n')
   }
   return []
 }
+
 const joinedNotes = (e) => {
   if (e.notes != null) { 
     return e.notes.split('\n')
@@ -115,10 +125,6 @@ const joinedNotes = (e) => {
 
 const formatStandardDateTime = (value) => {
   return DateFormatService.formatStandardDateTimejs(value)
-}
-
-const formatYearDate = (value) => {
-  return DateFormatService.formatYearDatejs(value)
 }
 
 const hasEventPassed = (event) => {
@@ -175,11 +181,11 @@ const isEventCurrent = (t) => {
 .btn-action i {
   font-size: 0.875rem;
 }
+
 .detail-link-blue {
   margin-left: 0rem;
   text-decoration: underline !important;
   color: blue;
   text-decoration: none;
 }
-
 </style>
