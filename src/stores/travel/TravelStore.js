@@ -119,9 +119,9 @@ export const useTravelStore = defineStore('travel', {
     // TRAVEL EVENTS GETTERS
     // ========================================
     travelEventsForTravel: (state) => (travelId) => {
-      return state.travel_events.filter(event => 
-        event.travel_id === parseInt(travelId)
-      );
+      return state.travel_events
+        .filter(event => event.travel_id === parseInt(travelId))
+        .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
     }
   },
 

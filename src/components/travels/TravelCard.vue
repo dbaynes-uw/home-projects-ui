@@ -1,5 +1,5 @@
 <template>
-  <BaseCard class="travel-card">
+  <BaseCard class="travel-card" @dblclick="navigateToDetails">
     <template #header>
       <div class="travel-card-header">
         <h3 class="travel-title">
@@ -118,11 +118,15 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import DateFormatService from '@/services/DateFormatService.js'
 import SplitStringService from '@/services/SplitStringService.js'
 import dayjs from 'dayjs'
+
+// Composables
+const router = useRouter()
 
 // Props
 const props = defineProps({
@@ -140,6 +144,10 @@ defineEmits(['edit', 'delete'])
 const splitLength = ref(30)
 
 // Methods
+const navigateToDetails = () => {
+  router.push({ name: 'TravelDetails', params: { id: props.travel.id } })
+}
+
 const splitList = (travelData, splitLength) => {
   return SplitStringService.splitList(travelData.notes, splitLength)
 }
