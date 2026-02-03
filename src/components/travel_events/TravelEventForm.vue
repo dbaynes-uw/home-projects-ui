@@ -23,15 +23,22 @@
       />
       
       <!-- Event Description -->
-      <BaseInput
-        v-model="formData.description"
-        label="Event Description"
-        type="text"
-        prepend-icon="text-box-outline"
-        :error="errors.description"
-        placeholder="Describe the event"
-      />
-      
+      <div class="form-field">
+        <label class="form-label">
+          <i class="mdi mdi-note-text"></i>
+          Event Description:
+        </label>
+        <textarea
+          v-model="formData.description"
+          class="notes-textarea"
+          rows="4"
+          placeholder="Overview with Details"
+        ></textarea>
+        <div v-if="errors.description" class="form-error">
+          <i class="mdi mdi-alert-circle"></i>
+          {{ errors.description }}
+        </div>
+      </div>
       <!-- Event Information URL -->
       <BaseInput
         v-model="formData.travel_event_url"

@@ -2,8 +2,12 @@
   <div :class="{ 'event-has-passed': hasEventPassed(props.travel_event), 'card': isEventCurrent(props.travel_event)}">
     <h2>{{ props.travel_event.title }}</h2>
     <ul>
-      <li class="li-left">Event Description:
-        <br/><b>{{ props.travel_event.description }}</b></li>
+      <li class="li-left">Event Description:</li>
+      <b class="li-left-none" v-for="(description, idx) in 
+          joinedDescription(props.travel_event)"
+          :key="idx">{{ description }}
+        </b>
+      
       <span v-if="startsWithHtml(props.travel_event.travel_event_url)">
         <li class="li-left">Event Information:
           <br/><b><a :href="props.travel_event.travel_event_url" target="_blank" class="detail-link-blue">Link to {{ props.travel_event.title }} site</a></b></li>
@@ -96,7 +100,12 @@ const handleDelete = () => {
 const startsWithHtml = (event) => {
   return event && event.startsWith('https')
 }
-
+const joinedDescription = (e) => {
+  if (e.description != null) { 
+    return e.description.split('\n')
+  }
+  return []
+}
 const joinedNotes = (e) => {
   if (e.notes != null) { 
     return e.notes.split('\n')
