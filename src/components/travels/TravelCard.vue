@@ -75,7 +75,7 @@
 
     <!-- Travel Events -->
     <div v-if="travel.travel_events && travel.travel_events.length > 0" class="travel-events">
-      <h4 class="events-title">Events:</h4>
+      <h2 style="margin-left: -1rem;">Travel Events:</h2>
       <div class="events-list">
         <router-link
           v-for="event in travel.travel_events"
@@ -181,6 +181,7 @@ const getTravelStatus = (travel) => {
 <style scoped>
 /* ✅ CARD LAYOUT */
 .travel-card {
+  font-size: 1.1rem;
   transition: all 0.2s;
 }
 
@@ -292,7 +293,7 @@ const getTravelStatus = (travel) => {
 .event-link {
   color: var(--color-primary);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: 1.1rem;
   transition: opacity 0.2s;
 }
 

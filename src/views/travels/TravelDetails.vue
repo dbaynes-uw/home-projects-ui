@@ -11,7 +11,7 @@
     <BaseCard class="travel-header-card">
       <template #header>
         <div class="header-content">
-          <h2>{{ travel?.title || 'Travel' }} Details</h2>
+          <h2>{{ travel?.title || 'Travel' }} Overview, Details and Events</h2>
           <div class="header-actions">
             <BaseButton
               variant="primary"
@@ -46,6 +46,10 @@
         </div>
       </div>
     </BaseCard>
+
+    <!-- Travel Card -->
+    <h2 class="section-title" style="margin-left: 1rem">Travel Details</h2>
+    <TravelCard v-if="travel" :travel="travel" class="travel-card-display" />
 
     <!-- Search and Controls -->
     <BaseCard class="controls-card">
@@ -212,7 +216,7 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, h } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTravelStore } from '@/stores/travel/TravelStore'
 import BaseCard from '@/components/ui/BaseCard.vue'
@@ -223,6 +227,7 @@ import TravelEventIndex from "@/components/travel_events/TravelEventIndex.vue"
 import TravelEventCard from "@/components/travel_events/TravelEventCard.vue"
 import TravelEventForm from '@/components/travel_events/TravelEventForm.vue'
 import TravelForm from '@/components/travels/TravelForm.vue'
+import TravelCard from '@/components/travels/TravelCard.vue'
 import dayjs from 'dayjs'
 
 // Props
