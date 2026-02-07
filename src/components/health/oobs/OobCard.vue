@@ -56,7 +56,7 @@
             <span class="field-value field-link-tbd">{{ formattedSleepDate }}</span>
           
         </div>
-        </!--a>
+
         <div class="field-group inline-field">
           <label class="field-label">
             <i class="fas fa-star"></i>
@@ -96,7 +96,8 @@
           </label>
           <span class="field-value">{{ props.oob.sleep_marker.formatted_deep }}</span>
         </div>
-      </div>      
+      </div>
+      <br/>  
       <div v-if="props.oob.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
         <div class="glucose-content">
           <i class="fas fa-tint"></i>
