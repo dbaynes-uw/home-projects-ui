@@ -115,14 +115,14 @@
         <!-- ✅ EMPTY STATE -->
         <div v-else-if="displayedOobs.length === 0" class="empty-state">
           <i class="fas fa-inbox"></i>
-          <h3>No OOBs Found</h3>
+          <h3>No OOBs Found for this Time Frame</h3>
           <p v-if="searchText || selectedTimeFrame">
             Try adjusting your filters or search criteria
           </p>
           <p v-else>You haven't recorded any OOBs yet</p>
           <router-link :to="{ name: 'OobCreate' }" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
-            No Oobs for this Time Frame. Add New OOB?
+            No Oobs for this Time Frame. Change Time Frame?
           </router-link>
         </div>
 
@@ -188,7 +188,7 @@ const showDialog = ref(false);
 const selectedOob = ref(null);
 const confirmDialogue = ref(null);
 const searchText = ref("");
-const selectedTimeFrame = ref("7");
+const selectedTimeFrame = ref("30"); // Default to last 30 days
 
 // ✅ COMPUTED FROM PINIA STORE
 const oobs = computed(() => oobStore.allOobs);

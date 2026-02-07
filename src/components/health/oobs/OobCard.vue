@@ -23,19 +23,40 @@
         </label>
         <p class="field-value">{{ props.oob.circumstances }}</p>
       </div>
+      <!-- Since Last (Interval) -->
+      <div v-if="hasInterval" class="interval-section">
+        <h4>Since Last:</h4>
+        <div class="interval-grid">
+          <div class="interval-item">
+            <span class="interval-value">{{ props.oob.interval_days || 0 }}</span>
+            <span class="interval-label">days</span>
+          </div>
+          <div class="interval-item">
+            <span class="interval-value">{{ props.oob.interval_hours || 0 }}</span>
+            <span class="interval-label">hours</span>
+          </div>
+          <div class="interval-item">
+            <span class="interval-value">{{ props.oob.interval_minutes || 0 }}</span>
+            <span class="interval-label">minutes</span>
+          </div>
+        </div>
+      </div>
+      <br/>
       <!-- Sleep Marker Data -->
       <div v-if="props.oob.sleep_marker" class="sleep-section">
-        <a @click.stop="handleSleepMarkerClick">
+        <!--a @click.stop="handleSleepMarkerClick"-->
+        <h3 style="text-align: left">Sleep Marker Information:</h3>
+        <br/>
         <div class="field-group inline-field">
 
             <label class="field-label">
               <i class="fas fa-calendar-day"></i>
               Sleep Date:                
             </label>       
-            <span class="field-value field-link">{{ formattedSleepDate }}</span>
+            <span class="field-value field-link-tbd">{{ formattedSleepDate }}</span>
           
         </div>
-        </a>
+        </!--a>
         <div class="field-group inline-field">
           <label class="field-label">
             <i class="fas fa-star"></i>
@@ -104,24 +125,6 @@
         <p class="field-value">{{ props.oob.created_by }}</p>
       </div>
 
-      <!-- Since Last (Interval) -->
-      <div v-if="hasInterval" class="interval-section">
-        <h4>Since Last:</h4>
-        <div class="interval-grid">
-          <div class="interval-item">
-            <span class="interval-value">{{ props.oob.interval_days || 0 }}</span>
-            <span class="interval-label">days</span>
-          </div>
-          <div class="interval-item">
-            <span class="interval-value">{{ props.oob.interval_hours || 0 }}</span>
-            <span class="interval-label">hours</span>
-          </div>
-          <div class="interval-item">
-            <span class="interval-value">{{ props.oob.interval_minutes || 0 }}</span>
-            <span class="interval-label">minutes</span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- ✅ CARD FOOTER (Actions) -->
@@ -299,6 +302,13 @@ const closeSleepMarkerModal = () => {
 
 .field-group:last-of-type {
   margin-bottom: 0;
+}
+
+/* Sleep section styling */
+.sleep-section {
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #e5e7eb;
 }
 
 /* Inline field groups (label and value on same line) */
