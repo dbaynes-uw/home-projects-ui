@@ -378,4 +378,15 @@ const getTravelStatus = (travel) => {
     gap: 0.75rem;
   }
 }
+
+/* Print Styles */
+@media print {
+  .travel-events {
+    display: none !important;
+  }
+  
+  .travel-actions {
+    display: none !important;
+  }
+}
 </style>

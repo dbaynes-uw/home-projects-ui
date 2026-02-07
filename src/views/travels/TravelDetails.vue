@@ -14,6 +14,14 @@
           <h2>{{ travel?.title || 'Travel' }} Overview, Details and Events</h2>
           <div class="header-actions">
             <BaseButton
+              variant="secondary"
+              size="small"
+              icon="printer"
+              @click="handlePrint"
+            >
+              Print
+            </BaseButton>
+            <BaseButton
               variant="primary"
               size="small"
               icon="edit"
@@ -444,6 +452,10 @@ const cancelDelete = () => {
   showDeleteDialog.value = false
   eventToDelete.value = null
 }
+
+const handlePrint = () => {
+  window.print()
+}
 </script>
 
 <style scoped>
@@ -699,6 +711,126 @@ const cancelDelete = () => {
   
   .breadcrumb {
     flex-wrap: wrap;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .travel-details {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Hide interactive elements and navigation */
+  .header-actions,
+  .controls-card,
+  .view-toggle,
+  .breadcrumb,
+  button,
+  .delete-button,
+  .edit-button,
+  .button-in-heading,
+  .events-count,
+  nav,
+  footer,
+  .footer,
+  .navigation,
+  .nav-menu,
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Optimize cards for print */
+  .travel-header-card,
+  .events-card,
+  .travel-card-display {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+
+  /* Ensure good spacing */
+  .travel-summary {
+    page-break-inside: avoid;
+  }
+
+  /* No page break before Travel Details section */
+  .section-title {
+    page-break-before: avoid;
+    page-break-after: avoid;
+  }
+  
+  .travel-card-display {
+    page-break-before: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Page break before Travel Events section - force to new page */
+  .events-card {
+    page-break-before: always !important;
+    page-break-inside: avoid;
+    margin-top: 2rem;
+    padding-top: 2rem;
+  }
+
+  /* Keep header with content */
+  .events-card h3 {
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    margin-bottom: 1rem;
+  }
+
+  /* Prevent orphaned headings */
+  h3 {
+    orphans: 3;
+    widows: 3;
+    page-break-after: avoid;
+  }
+
+  /* Print events in a clean list format */
+  .events-grid {
+    display: block;
+  }
+
+  .event-card {
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+  }
+
+  /* Ensure links are visible */
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Clean header */
+  .header-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Status messages shouldn't print */
+  .status-message {
+    display: none;
+  }
+
+  /* Optimize for black and white printing */
+  * {
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  /* Keep some color for important elements */
+  .summary-item i {
+    color: #333 !important;
   }
 }
 </style>
