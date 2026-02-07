@@ -159,9 +159,7 @@ export const useTravelStore = defineStore('travel', {
       this.error = null;
       
       try {
-        console.log('🔍 TravelStore: Fetching travel:', id);
         const response = await TravelService.fetchTravel(id);
-        console.log('✅ TravelStore: Travel fetched:', response.data);
         
         this.travel = response.data;
         return this.travel;

@@ -11,7 +11,7 @@
           </router-link>
         </h3>
         
-        <div class="travel-actions">
+        <!--div class="travel-actions">
           <BaseButton 
             variant="primary" 
             size="small" 
@@ -28,7 +28,7 @@
           >
             Delete
           </BaseButton> 
-        </div>
+        </div-->
       </div>
     </template>
 

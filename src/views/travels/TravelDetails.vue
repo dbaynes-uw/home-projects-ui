@@ -336,7 +336,7 @@ const formatDateRange = () => {
     return start
   }
   
-  return `${start} - ${end}`
+  return `Flights: ${start}, Returning ${end}`
 }
 
 const openAddEventDialog = () => {

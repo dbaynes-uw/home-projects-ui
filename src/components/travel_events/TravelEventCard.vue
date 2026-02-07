@@ -41,14 +41,14 @@
     </ul>
     
     <!-- Action Buttons -->
-    <div class="event-actions">
+    <!--div class="event-actions">
       <button 
         class="btn-action btn-edit"
         @click.stop="handleEdit"
         title="Edit Event"
       >
         <i class="mdi mdi-pencil"></i>
-        Edit
+        @@Edit
       </button>
       <button 
         class="btn-action btn-delete"
@@ -58,7 +58,7 @@
         <i class="mdi mdi-delete"></i>
         Delete
       </button>
-    </div>
+    </div-->
   </div>
 </template>
 <script setup>
