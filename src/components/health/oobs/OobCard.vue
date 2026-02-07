@@ -21,8 +21,9 @@
           <i class="fas fa-notes-medical"></i>
           Circumstances:
         </label>
-        <p class="field-value">{{ props.oob.circumstances }}</p>
+        <p class="notes-data">{{ props.oob.circumstances }}</p>
       </div>
+      <br/>
       <!-- Since Last (Interval) -->
       <div v-if="hasInterval" class="interval-section">
         <h4>Since Last:</h4>
@@ -363,6 +364,15 @@ const closeSleepMarkerModal = () => {
   margin: 0;
   padding-left: 1.5rem;
   line-height: 1.5;
+  white-space: pre-line;
+}
+.notes-data {
+  text-align: left;
+  color: #1f2937;
+  margin: 0;
+  padding-left: 1.5rem;
+  line-height: 1.5;
+  white-space: pre-line;
 }
 
 /* Card footer */
