@@ -5,7 +5,7 @@
       <!-- Sleep Date -->
       <BaseInput
         v-model="formData.sleep_date"
-        label="Night of Sleep Date"
+        :label="'Night of Sleep Date (Note: Today is ' + getTodayDateString() + ' - Default is set to the date you slept, not the date you woke up)'"
         type="date"
         prepend-icon="calendar"
         required
@@ -19,6 +19,7 @@
         prepend-icon="clock-outline"
         :error="errors.scheduled_bedtime"
         hint="What time did you go to bed?"
+        style="margin-top: 2.5rem"
       />
 
       <!-- Wake Time -->
@@ -436,7 +437,16 @@ const emit = defineEmits(['save', 'cancel']);
 const isSubmitting = ref(false);
 const errors = ref({});
 
-// Helper function to get yesterday's date
+// Helper function to get today's date in MM/DD/YY format
+function getTodayDateString() {
+  const today = new Date();
+  // normalize to local date (remove timezone offset)
+  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const yy = String(today.getFullYear()).slice(-2);
+  return `${mm}/${dd}/${yy}`;
+}
 function getYesterdayDateString() {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);

@@ -23,7 +23,7 @@
         </label>
         <p class="notes-data">{{ props.oob.circumstances }}</p>
       </div>
-      <br/>
+      <br />
       <!-- Since Last (Interval) -->
       <div v-if="hasInterval" class="interval-section">
         <h4>Since Last:</h4>
@@ -42,20 +42,18 @@
           </div>
         </div>
       </div>
-      <br/>
+      <br />
       <!-- Sleep Marker Data -->
       <div v-if="props.oob.sleep_marker" class="sleep-section">
         <!--a @click.stop="handleSleepMarkerClick"-->
         <h3 style="text-align: left">Sleep Marker Information:</h3>
-        <br/>
+        <br />
         <div class="field-group inline-field">
-
-            <label class="field-label">
-              <i class="fas fa-calendar-day"></i>
-              Sleep Date:                
-            </label>       
-            <span class="field-value field-link-tbd">{{ formattedSleepDate }}</span>
-          
+          <label class="field-label">
+            <i class="fas fa-calendar-day"></i>
+            Sleep Date:
+          </label>
+          <span class="field-value field-link-tbd">{{ formattedSleepDate }}</span>
         </div>
 
         <div class="field-group inline-field">
@@ -98,13 +96,18 @@
           <span class="field-value">{{ props.oob.sleep_marker.formatted_deep }}</span>
         </div>
       </div>
-      <br/>  
-      <div v-if="props.oob.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
+      <br />
+      <div
+        v-for="gr in props.oob.glucose_readings"
+        :key="gr.reading_type"
+        class="glucose-banner"
+        :class="getGlucoseColorClass(gr.value)"
+      >
         <div class="glucose-content">
-          <i class="fas fa-tint"></i>
+          <i :class="getGlucoseIcon(gr.reading_type)"></i>
           <div class="glucose-info">
-            <span class="glucose-label">Morning Fasting Glucose</span>
-            <span class="glucose-value">{{ oob.am_fasting_glucose_value }} mg/dL</span>
+            <span class="glucose-label">{{ gr.reading_type }} Glucose</span>
+            <span class="glucose-value">{{ gr.value }} mg/dL</span>
           </div>
         </div>
       </div>
@@ -126,7 +129,6 @@
         </label>
         <p class="field-value">{{ props.oob.created_by }}</p>
       </div>
-
     </div>
 
     <!-- ✅ CARD FOOTER (Actions) -->
@@ -149,7 +151,7 @@
         <button class="modal-close-btn" @click="closeSleepMarkerModal">
           <i class="fas fa-times"></i>
         </button>
-        <SleepMarkerCard 
+        <SleepMarkerCard
           v-if="props.oob.sleep_marker"
           :sleepMarker="props.oob.sleep_marker"
           @edit="closeSleepMarkerModal"
@@ -161,20 +163,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import SleepMarkerCard from '@/components/health/sleepMarkers/SleepMarkerCard.vue';
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import SleepMarkerCard from "@/components/health/sleepMarkers/SleepMarkerCard.vue";
 
 // ✅ PROPS
 const props = defineProps({
   oob: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
 // ✅ EMITS
-const emit = defineEmits(['edit', 'delete']);
+const emit = defineEmits(["edit", "delete"]);
 
 // ✅ ROUTER
 const router = useRouter();
@@ -184,70 +186,82 @@ const showSleepMarkerModal = ref(false);
 
 // ✅ COMPUTED
 const formattedDate = computed(() => {
-  if (!props.oob.date_of_occurrence) return 'Unknown Date';
-  
+  if (!props.oob.date_of_occurrence) return "Unknown Date";
+
   try {
     const date = new Date(props.oob.date_of_occurrence);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch (error) {
-    console.error('Error formatting date:', error);
+    console.error("Error formatting date:", error);
     return props.oob.date_of_occurrence;
   }
 });
 
 const formattedSleepDate = computed(() => {
+  if (!props.oob.sleep_marker.sleep_date) return "Sleep Date Not Present";
 
-  if (!props.oob.sleep_marker.sleep_date) return 'Sleep Date Not Present';
-  
   try {
     // Parse the date string manually to avoid timezone issues
-    const [year, month, day] = props.oob.sleep_marker.sleep_date.split('-');
+    const [year, month, day] = props.oob.sleep_marker.sleep_date.split("-");
     const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   } catch (error) {
-    console.error('Error formatting sleep date:', error);
+    console.error("Error formatting sleep date:", error);
     return props.oob.sleep_marker.sleep_date;
   }
 });
 
 const durationBadgeClass = computed(() => {
   const duration = props.oob.duration?.toLowerCase();
-  if (duration?.includes('short')) return 'badge-success';
-  if (duration?.includes('long')) return 'badge-warning';
-  if (duration?.includes('very long')) return 'badge-danger';
-  return 'badge-info';
+  if (duration?.includes("short")) return "badge-success";
+  if (duration?.includes("long")) return "badge-warning";
+  if (duration?.includes("very long")) return "badge-danger";
+  return "badge-info";
 });
 
 const hasInterval = computed(() => {
-  return props.oob.interval_days !== undefined || 
-         props.oob.interval_hours !== undefined || 
-         props.oob.interval_minutes !== undefined;
+  return (
+    props.oob.interval_days !== undefined ||
+    props.oob.interval_hours !== undefined ||
+    props.oob.interval_minutes !== undefined
+  );
 });
 
-const glucoseColorClass = computed(() => {
-  const value = parseFloat(props.oob.am_fasting_glucose_value);
-  if (value < 100) return 'glucose-good';
-  if (value >= 100 && value <= 125) return 'glucose-warning';
-  return 'glucose-high';
-});
+function getGlucoseColorClass(value) {
+  const v = parseFloat(value);
+  if (v < 100) return "glucose-good";
+  if (v >= 100 && v <= 125) return "glucose-warning";
+  return "glucose-high";
+}
+
+function getGlucoseIcon(readingType) {
+  const icons = {
+    'AM-Fasting': 'fas fa-tint',
+    'Bedtime': 'fas fa-moon',
+    'Before Meal': 'fas fa-utensils',
+    'After Meal': 'fas fa-pizza-slice',
+    'Random': 'fas fa-random'
+  };
+  return icons[readingType] || 'fas fa-tint';
+}
 
 // ✅ METHODS
 const handleEdit = () => {
-  router.push({ name: 'OobEdit', params: { id: props.oob.id } });
+  router.push({ name: "OobEdit", params: { id: props.oob.id } });
 };
 
 const handleDelete = () => {
-  emit('delete', props.oob);
+  emit("delete", props.oob);
 };
 
 const handleDoubleClick = () => {
@@ -267,7 +281,7 @@ const closeSleepMarkerModal = () => {
 
 <style scoped>
 /* ✅ IMPORT SHARED HEALTH STYLES */
-@import '@/assets/styles/health/health-shared.css';
+@import "@/assets/styles/health/health-shared.css";
 
 /* ========================================
    COMPONENT-SPECIFIC STYLES
@@ -395,7 +409,7 @@ const closeSleepMarkerModal = () => {
 }
 
 .oob-card::after {
-  content: 'Double-click to edit';
+  content: "Double-click to edit";
   position: absolute;
   top: 0.75rem;
   left: 50%;
