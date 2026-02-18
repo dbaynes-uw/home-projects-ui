@@ -5,6 +5,8 @@ import EventService from '@/services/EventService'
 import router from '../router'
 import { getAuthUrl } from '@/services/api'
 
+const MAX_NOTIFICATIONS = 5;
+
 export default new Vuex.Store({
   state: {
     id: "",
@@ -46,6 +48,8 @@ export default new Vuex.Store({
     oobsTotal: 0,
     oobsPerPage: 20,
     plant: {},
+    // UI notifications (toasts)
+    notifications: [],
     plants: [],
     location: {},
     product: [],
@@ -118,6 +122,39 @@ export default new Vuex.Store({
     //CLEAR_BOOKS(state) {
     //  state.books = [];
     //},
+
+    // Notifications (toasts)
+    ADD_NOTIFICATION(state, notification) {
+      // enforce cap so a flood can't grow the array indefinitely
+      if (!Array.isArray(state.notifications)) state.notifications = [];
+      if (state.notifications.length >= MAX_NOTIFICATIONS) {
+        const removed = state.notifications.shift();
+        if (removed && removed.timeoutId) {
+          clearTimeout(removed.timeoutId);
+        }
+      }
+      // push a lightweight object (store timeoutId as number only)
+      state.notifications.push(notification);
+    },
+    REMOVE_NOTIFICATION(state, id) {
+      const note = state.notifications.find(n => n.id === id);
+      if (note && note.timeoutId) {
+        clearTimeout(note.timeoutId);
+      }
+      state.notifications = state.notifications.filter(n => n.id !== id);
+    },
+    SET_NOTIFICATION_TIMEOUT(state, { id, timeoutId }) {
+      const idx = state.notifications.findIndex(n => n.id === id);
+      if (idx !== -1) {
+        state.notifications[idx] = { ...state.notifications[idx], timeoutId };
+      }
+    },
+    CLEAR_NOTIFICATIONS(state) {
+      // clear any pending timeouts before wiping
+      state.notifications.forEach(n => { if (n.timeoutId) clearTimeout(n.timeoutId); });
+      state.notifications = [];
+    },
+
     ADD_EVENT(state, event) {
       state.events.push(event);
     },
@@ -417,6 +454,29 @@ export default new Vuex.Store({
   
   },
 actions: {
+  // Simple toast/notification helper
+  async notify({ commit, state }, { message = '', type = 'success', timeout = 4000 } = {}) {
+    // Deduplicate identical messages: extend TTL instead of adding duplicates
+    const existing = state.notifications.find(n => n.message === message && n.type === type);
+    if (existing) {
+      if (existing.timeoutId) clearTimeout(existing.timeoutId);
+      if (timeout && timeout > 0) {
+        const timeoutId = setTimeout(() => commit('REMOVE_NOTIFICATION', existing.id), timeout);
+        commit('SET_NOTIFICATION_TIMEOUT', { id: existing.id, timeoutId });
+      }
+      return existing.id;
+    }
+
+    const id = Date.now() + Math.floor(Math.random() * 1000);
+    let timeoutId = null;
+    if (timeout && timeout > 0) {
+      timeoutId = setTimeout(() => commit('REMOVE_NOTIFICATION', id), timeout);
+    }
+
+    commit('ADD_NOTIFICATION', { id, message, type, timeoutId });
+    return id;
+  },
+
   async register ({ commit }, credentials) {
     const authUrl = getAuthUrl()
     
@@ -1107,9 +1167,16 @@ actions: {
     async createProduct({ commit }, product) {
       try {
         const response = await EventService.postProduct(product);
-        commit("ADD_PRODUCT", response.data);
-        alert("Product was successfully added for " + product.product_name);
-        return { success: true, data: response.data };
+
+        // Support both response formats: plain product OR { product: {...}, message: '...' }
+        const productData = response.data?.product || response.data;
+        const message = response.data?.message || `Product was successfully added for ${product.product_name}`;
+
+        // Commit only the actual product object
+        commit("ADD_PRODUCT", productData);
+
+        // Return message for the caller to surface (UI decides how to display)
+        return { success: true, data: productData, message };
       } catch (error) {
         const errorMessage = error.response?.data?.error || error.response?.data?.errors?.[0] || 'Failed to create product';
         console.error('Product Create Error:', error.response?.data);
@@ -1117,34 +1184,34 @@ actions: {
       }
     },
 
-    async deleteProduct({ commit }, product) {
+    async deleteProduct({ commit, dispatch }, product) {
       EventService.deleteProduct(product)
         .then((response) => {
           commit("DELETE_PRODUCT", response.data);
-          alert("Product " + product.product_name + " was deleted");
+          dispatch('notify', { message: `Product "${product.product_name}" was deleted`, type: 'success' });
         })
         .catch((error) => {
-          alert("Product Delete Error: ", error.response.data )
+          dispatch('notify', { message: `Product Delete Error: ${error.response?.data || error.message}`, type: 'error' });
         });
     },
-    async fetchProduct({ commit }, id) {
+    async fetchProduct({ commit, dispatch }, id) {
       console.log("Fetching product with ID:", id);
       try {
         const response = await EventService.getProduct(id);
         commit("SET_PRODUCT", response.data);
       } catch (error) {
-          alert("Product Error", error.data)
-        }
+        dispatch('notify', { message: `Product Error: ${error.response?.data || error.message}`, type: 'error' });
+      }
     },
 
-    async fetchProducts({ commit }) {
+    async fetchProducts({ commit, dispatch }) {
       EventService.getProducts()
         .then((response) => {
           commit("SET_PRODUCTS", response.data);
           return response.data;
         })
         .catch((error) => {
-          alert("Product Fetch: ", error.response.data )
+          dispatch('notify', { message: `Product Fetch Error: ${error.response?.data || error.message}`, type: 'error' });
         });
     },
     async fetchProductsByLocation({ commit }, products_by_location) {
@@ -1159,32 +1226,27 @@ actions: {
           alert("Products Get by Location Error: ", error.response.data )
         });
     },
-    async fetchShoppingList({ commit }) {
+    async fetchShoppingList({ commit, dispatch }) {
       EventService.getShoppingList()
         .then((response) => {
           commit("SET_SHOPPING_LIST", response.data);
           return response.data;
         })
         .catch((error) => {
-          //if (!error.response) {
-          //  router.push({name:'About'})
-          //}else {
-          //  router.push({name:'About'})
-          //}
-          alert("Shopping List Fetch Error: ", error.response.data )
+          dispatch('notify', { message: `Shopping List Fetch Error: ${error.response?.data || error.message}`, type: 'error' });
         });
     },
-    async updateProduct({ commit }, product) {
+    async updateProduct({ commit, dispatch }, product) {
       try {
         const response = await EventService.putProduct(product);
         // Handle both response formats: { product: {...}, vendor: {...} } or just the product
         const productData = response.data.product || response.data;
         commit("SET_PRODUCT", productData);
-        alert("Product " + product.product_name + " was Successfully Updated.");
+        dispatch('notify', { message: `Product "${product.product_name}" was Successfully Updated.`, type: 'success' });
         return { success: true, data: productData };
       } catch (error) {
         const errorMessage = error.response?.data?.error || error.response?.data?.errors?.[0] || error.response?.request?.statusText || 'Failed to update product';
-        alert("Product Put Error for " + product.product_name + ": " + errorMessage);
+        dispatch('notify', { message: `Product Put Error for ${product.product_name}: ${errorMessage}`, type: 'error' });
         return { success: false, error: errorMessage };
       }
     },
