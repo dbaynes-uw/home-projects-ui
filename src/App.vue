@@ -2,6 +2,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div id="nav">
+    <Toast />
     <!-- ✅ LOGIN PAGE LAYOUT -->
     <v-app v-if="this.$route.name == 'Login' || this.$route.name == 'Register' || this.$route.name == 'ForgotPassword' || this.$route.name == 'PasswordReset'">
       <v-app-bar color="teal-darken-2">
@@ -128,6 +129,7 @@
 <script>
 import { authComputed } from './vuex/helpers.js'
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import Toast from '@/components/ui/Toast.vue'
 
 // ✅ ONLY IMPORT COMPONENTS YOU ACTUALLY USE
 import {
@@ -147,6 +149,7 @@ import {
 export default {
   components: {
     ConfirmDialogue,
+    Toast,
     // ✅ ONLY REGISTER COMPONENTS YOU USE
     VApp,
     VAppBar,

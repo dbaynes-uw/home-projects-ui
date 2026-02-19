@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import EventService from '@/services/EventService';
+import { notify } from '@/composables/useNotify'
 
 // ✅ HELPER FUNCTION OUTSIDE STORE (NO 'this' needed)
 function extractTime(isoString) {
@@ -337,14 +338,14 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         
         const response = await EventService.postSleepMarker(apiData);
         
-        alert('Sleep entry created successfully!');
+        notify('Sleep entry created successfully!', 'success');
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
 
         return response.data;
         
       } catch (error) {
-        alert('Failed to create sleep entry. Please try again.');
+        notify('Failed to create sleep entry. Please try again.', 'error');
         this.error = error.message;
         throw error;
         
@@ -365,7 +366,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
       
         const response = await EventService.putSleepMarker(apiData);
       
-        alert('Sleep entry updated successfully!');
+        notify('Sleep entry updated successfully!', 'success');
       
         // Refresh list to get updated data
         await this.fetchSleepMarkers();
@@ -373,7 +374,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         return response.data;
         
       } catch (error) {
-        alert('Failed to update sleep entry. Please try again.');
+        notify('Failed to update sleep entry. Please try again.', 'error');
         this.error = error.message;
         throw error;
         
@@ -396,7 +397,7 @@ export const useSleepMarkerStore = defineStore('sleepMarker', {
         return true;
         
       } catch (error) {
-        alert('Failed to delete sleep entry. Please try again.');
+        notify('Failed to delete sleep entry. Please try again.', 'error');
         this.error = error.message;
         throw error;
         

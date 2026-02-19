@@ -641,21 +641,26 @@ const submitNewProduct = async () => {
     
     console.log('🚀 Creating new product:', productData);
     
-    await store.dispatch('createProduct', productData);
-    
-    alert(`✅ Product "${newProduct.value.product_name}" added successfully!`);
-    
-    // Refresh data
-    await Promise.all([
-      store.dispatch('fetchProducts'),
-      store.dispatch('fetchVendorsProducts')
-    ]);
-    
-    closeProductDialog();
+    const result = await store.dispatch('createProduct', productData);
+
+    // Show server message when present (backend returns message on re-activate)
+    if (result?.success) {
+      store.dispatch('notify', { message: result.message || `✅ Product "${newProduct.value.product_name}" added successfully!`, type: 'success' });
+
+      // Refresh data
+      await Promise.all([
+        store.dispatch('fetchProducts'),
+        store.dispatch('fetchVendorsProducts')
+      ]);
+
+      closeProductDialog();
+    } else {
+      throw new Error(result?.error || 'Failed to create product');
+    }
     
   } catch (error) {
     console.error('❌ Error creating product:', error);
-    alert(`❌ Error: ${error.message}`);
+    store.dispatch('notify', { message: `❌ Error: ${error.message}`, type: 'error' });
   } finally {
     isSubmittingProduct.value = false;
   }

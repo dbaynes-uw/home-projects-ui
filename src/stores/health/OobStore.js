@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import EventService from '@/services/EventService';
+import { notify } from '@/composables/useNotify' 
 
 // ✅ HELPER FUNCTION: Format timestamp for datetime-local input
 function formatDatetimeLocal(timestamp) {
@@ -340,7 +341,7 @@ export const useOobStore = defineStore('oob', {
         return response.data;
         
       } catch (error) {
-        alert('Failed to create OOB. Please try again.');
+        notify('Failed to create OOB. Please try again.', 'error');
         this.error = error.message || 'Failed to create OOB';
         throw error;
         
@@ -365,7 +366,7 @@ export const useOobStore = defineStore('oob', {
         return response.data;
         
       } catch (error) {
-        alert('Failed to update OOB. Please try again.');
+        notify('Failed to update OOB. Please try again.', 'error');
         this.error = error.message || 'Failed to update OOB';
         throw error;
         
@@ -390,7 +391,7 @@ export const useOobStore = defineStore('oob', {
         return true;
         
       } catch (error) {
-        alert('Failed to delete OOB. Please try again.');
+        notify('Failed to delete OOB. Please try again.', 'error');
         this.error = error.message || 'Failed to delete OOB';
         throw error;
         

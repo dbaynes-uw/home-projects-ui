@@ -805,6 +805,9 @@ async function submitNewProduct() {
     const result = await store.dispatch("createProduct", productData);
 
     if (result?.success) {
+      // Surface server message (reactivated / created / updated)
+      store.dispatch('notify', { message: result.message || `✅ Product "${finalProductName}" added successfully!`, type: 'success' });
+
       await Promise.all([
         store.dispatch("fetchProducts"),
         store.dispatch("fetchShoppingList"),
@@ -820,7 +823,7 @@ async function submitNewProduct() {
     }
   } catch (error) {
     console.error("❌ Error creating product:", error);
-    alert(`❌ Error: ${error.message}`);
+    store.dispatch('notify', { message: `❌ Error: ${error.message}`, type: 'error' });
   } finally {
     isSubmittingProduct.value = false;
   }

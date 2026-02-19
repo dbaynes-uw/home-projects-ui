@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import EventService from '@/services/EventService'; // ✅ Use EventService, not HealthMarkerService!
+import { notify } from '@/composables/useNotify' 
 
 // ✅ HELPER FUNCTION: Normalize date format
 function normalizeDate(dateString) {
@@ -249,7 +250,7 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
         
       } catch (error) {
         console.error('❌ Error creating health marker:', error);
-        alert('Failed to create health marker. Please try again.');
+        notify('Failed to create health marker. Please try again.', 'error');
         this.error = error.message || 'Failed to create health marker';
         throw error;
         
@@ -315,7 +316,7 @@ async updateHealthMarker(id, healthMarkerData) {
         
       } catch (error) {
         console.error('❌ Error deleting health marker:', error);
-        alert('Failed to delete health marker. Please try again.');
+        notify('Failed to delete health marker. Please try again.', 'error');
         this.error = error.message || 'Failed to delete health marker';
         throw error;
         
