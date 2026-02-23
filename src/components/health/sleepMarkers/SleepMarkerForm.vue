@@ -5,7 +5,11 @@
       <!-- Sleep Date -->
       <BaseInput
         v-model="formData.sleep_date"
-        :label="'Night of Sleep Date (Note: Today is ' + getTodayDateString() + ' - Default is set to the date you slept, not the date you woke up)'"
+        :label="
+          'Night of Sleep Date (Note: Today is ' +
+          todayStr +
+          ' - Default is set to the date you slept, not the date you woke up)'
+        "
         type="date"
         prepend-icon="calendar"
         required
@@ -72,7 +76,7 @@
         :error="errors.sleep_score_explained"
         hint="Short explanation of the score"
       />
-      <br/>
+      <br />
       <!-- Duration Score -->
       <div class="score-input-group">
         <label class="form-label">
@@ -143,7 +147,6 @@
         <div class="base-input-hint">Score for bed time (0-30)</div>
       </div>
 
-
       <!-- Bed Time Score Explained -->
       <BaseInput
         v-model="formData.bedtime_score_explained"
@@ -203,7 +206,7 @@
         :error="errors.interruptions_score_explained"
         hint="Short explanation - same amount as Awake stage below."
       />
-      <br/>
+      <br />
       <!-- From Heart Beats Per Minute -->
       <BaseInput
         v-model.number="formData.from_heart_beats_per_minute"
@@ -293,11 +296,7 @@
         :error="errors.awake"
       />
 
-      <HoursMinutesInput
-        v-model="formData.rem"
-        label="REM Sleep"
-        :error="errors.rem"
-      />
+      <HoursMinutesInput v-model="formData.rem" label="REM Sleep" :error="errors.rem" />
 
       <HoursMinutesInput
         v-model="formData.core"
@@ -310,8 +309,7 @@
         label="Deep Sleep"
         :error="errors.deep"
       />
-
-    </div>  
+    </div>
 
     <!-- ✅ DREAM NOTES TEXTAREA (Conditional, Full Width) -->
     <div class="dream-notes-section">
@@ -326,7 +324,7 @@
         placeholder="Describe your dreams..."
       ></textarea>
     </div>
-         
+
     <!-- ✅ NEW: DIET NOTES -->
     <div class="diet-section">
       <label class="form-label">
@@ -399,134 +397,141 @@
 
     <!-- Form Actions -->
     <div class="form-actions">
-      <BaseButton
-        type="button"
-        variant="ghost"
-        @click="$emit('cancel')"
-      >
+      <BaseButton type="button" variant="ghost" @click="$emit('cancel')">
         Cancel
       </BaseButton>
-      
+
       <BaseButton
         type="submit"
         variant="success"
         icon="content-save"
         :loading="isSubmitting"
       >
-        {{ sleepMarker?.id ? 'Update Entry' : 'Save Entry' }}
+        {{ sleepMarker?.id ? "Update Entry" : "Save Entry" }}
       </BaseButton>
     </div>
   </form>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import BaseInput from '@/components/ui/BaseInput.vue';
-import BaseButton from '@/components/ui/BaseButton.vue';
-import HoursMinutesInput from '@/components/ui/HoursMinutesInput.vue';
+import { ref, watch, computed } from "vue";
+import BaseInput from "@/components/ui/BaseInput.vue";
+import BaseButton from "@/components/ui/BaseButton.vue";
+import HoursMinutesInput from "@/components/ui/HoursMinutesInput.vue";
 
 const props = defineProps({
   sleepMarker: {
     type: Object,
-    default: null
-  }
+    default: null,
+  },
 });
 
-const emit = defineEmits(['save', 'cancel']);
+const emit = defineEmits(["save", "cancel"]);
 
 const isSubmitting = ref(false);
 const errors = ref({});
 
-// Helper function to get today's date in MM/DD/YY format
+// expose a reactive/computed string for template stability
+/*
+  Fix: removed the timezone adjustment from getTodayDateString() 
+  and exposed a reactive todayStr computed used by the template
+  so the label always shows the current local date.
+*/
+const todayStr = computed(() => getTodayDateString());
+// Helper function to get today's date in MM/DD/YY format (use local date parts)
 function getTodayDateString() {
   const today = new Date();
-  // normalize to local date (remove timezone offset)
-  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
+  // Use local date components directly — do NOT apply timezone offset here
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
   const yy = String(today.getFullYear()).slice(-2);
   return `${mm}/${dd}/${yy}`;
 }
+
 function getYesterdayDateString() {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   yesterday.setMinutes(yesterday.getMinutes() - yesterday.getTimezoneOffset());
-  return yesterday.toISOString().split('T')[0];
+  return yesterday.toISOString().split("T")[0];
 }
 
 const formData = ref({
   sleep_date: getYesterdayDateString(),
-  scheduled_bedtime: '22:30',
-  scheduled_waketime: '06:30',
-  actual_bedtime: '22:30',
+  scheduled_bedtime: "22:30",
+  scheduled_waketime: "06:30",
+  actual_bedtime: "22:30",
   total_sleep_hours: 8,
-  sleep_score: '',
-  sleep_score_rating: '',
-  sleep_score_explained: '',
-  duration_score: '',
-  duration_score_explained: '',
-  bedtime_score: '',
+  sleep_score: "",
+  sleep_score_rating: "",
+  sleep_score_explained: "",
+  duration_score: "",
+  duration_score_explained: "",
+  bedtime_score: "",
   bedtime_score_numerator: null,
   bedtime_score_denominator: null,
-  bedtime_score_explained: '',
+  bedtime_score_explained: "",
   interruptions: 0,
-  interruptions_score: '',
+  interruptions_score: "",
   interruptions_score_numerator: null,
   interruptions_score_denominator: null,
-  interruptions_score_explained: '',
+  interruptions_score_explained: "",
   from_breaths_per_minute: null,
   to_breaths_per_minute: null,
   breaths_per_minute_explained: null,
   from_heart_beats_per_minute: null,
   to_heart_beats_per_minute: null,
   heart_beats_per_minute_explained: null,
-  time_in_bed: '0m',
-  time_asleep: '0m',
-  deep: '0m',
-  rem: '0m',
-  core: '0m',
-  awake: '0m',
-  dream_notes: '',
+  time_in_bed: "0m",
+  time_asleep: "0m",
+  deep: "0m",
+  rem: "0m",
+  core: "0m",
+  awake: "0m",
+  dream_notes: "",
   fasting_weight_lbs: null,
   fasting_weight_oz: null,
-  exercise_notes: '',
-  alcohol_notes: '',
-  sugar_notes: '',
-  sleep_notes: ''
+  exercise_notes: "",
+  alcohol_notes: "",
+  sugar_notes: "",
+  sleep_notes: "",
 });
 
 // Helper to parse "85/100" into {numerator, denominator}
 function parseScoreField(data, field) {
-  if (data[field] && typeof data[field] === 'string' && data[field].includes('/')) {
-    const [numerator, denominator] = data[field].split('/');
+  if (data[field] && typeof data[field] === "string" && data[field].includes("/")) {
+    const [numerator, denominator] = data[field].split("/");
     data[`${field}_numerator`] = parseInt(numerator) || null;
     data[`${field}_denominator`] = parseInt(denominator) || null;
   }
 }
 
 // Watch for sleepMarker changes (edit mode)
-watch(() => props.sleepMarker, (newMarker) => {
-  if (newMarker) {
-    const data = { ...newMarker };
-    
-    // ✅ Convert decimal weight back to lbs/oz for editing
-    if (data.fasting_weight) {
-      const lbs = Math.floor(data.fasting_weight);
-      const oz = Math.round((data.fasting_weight - lbs) * 16);
-      data.fasting_weight_lbs = lbs;
-      data.fasting_weight_oz = oz;
-      delete data.fasting_weight; // Remove the decimal field
+watch(
+  () => props.sleepMarker,
+  (newMarker) => {
+    if (newMarker) {
+      const data = { ...newMarker };
+
+      // ✅ Convert decimal weight back to lbs/oz for editing
+      if (data.fasting_weight) {
+        const lbs = Math.floor(data.fasting_weight);
+        const oz = Math.round((data.fasting_weight - lbs) * 16);
+        data.fasting_weight_lbs = lbs;
+        data.fasting_weight_oz = oz;
+        delete data.fasting_weight; // Remove the decimal field
+      }
+
+      // Use helper for all score fields
+      parseScoreField(data, "bedtime_score");
+      parseScoreField(data, "duration_score");
+      parseScoreField(data, "interruptions_score");
+      formData.value = data;
+    } else {
+      resetForm();
     }
-    
-    // Use helper for all score fields
-    parseScoreField(data, 'bedtime_score');
-    parseScoreField(data, 'duration_score');
-    parseScoreField(data, 'interruptions_score');
-    formData.value = data;
-  } else {
-    resetForm();
-  }
-}, { immediate: true });
+  },
+  { immediate: true }
+);
 
 // ✅ Clear dream notes when checkbox is unchecked
 //watch(() => formData.value.had_dreams, (hasDreams) => {
@@ -538,54 +543,54 @@ watch(() => props.sleepMarker, (newMarker) => {
 function getLocalDateString() {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  return now.toISOString().split('T')[0];
+  return now.toISOString().split("T")[0];
 }
 
 function resetForm() {
   formData.value = {
     sleep_date: getYesterdayDateString(),
-    scheduled_bedtime: '22:30',
-    scheduled_waketime: '06:30',
-    actual_bedtime: '',
-    sleep_score: '',
-    sleep_score_rating: '',
-    sleep_score_explained: '',
-    duration_score: '',
+    scheduled_bedtime: "22:30",
+    scheduled_waketime: "06:30",
+    actual_bedtime: "",
+    sleep_score: "",
+    sleep_score_rating: "",
+    sleep_score_explained: "",
+    duration_score: "",
     duration_score_numerator: null,
     duration_score_denominator: 50,
-    duration_score_explained: '',
-    bedtime_score: '',
+    duration_score_explained: "",
+    bedtime_score: "",
     bedtime_score_numerator: null,
     bedtime_score_denominator: 30,
-    bedtime_score_explained: '',
+    bedtime_score_explained: "",
     interruptions: 0,
-    interruptions_score: '',
+    interruptions_score: "",
     interruptions_score_numerator: null,
     interruptions_score_denominator: 20,
-    interruptions_score_explained: '',
+    interruptions_score_explained: "",
     from_breaths_per_minute: null,
     to_breaths_per_minute: null,
     breaths_per_minute_explained: null,
     from_heart_beats_per_minute: null,
     to_heart_beats_per_minute: null,
     heart_beats_per_minute_explained: null,
-    time_in_bed: '0m',
-    time_asleep: '0m',   
-    deep: '0m',
-    rem: '0m',
-    core: '0m',
-    awake: '0m',
+    time_in_bed: "0m",
+    time_asleep: "0m",
+    deep: "0m",
+    rem: "0m",
+    core: "0m",
+    awake: "0m",
   };
   errors.value = {};
 }
 
 function validateForm() {
   errors.value = {};
-  
+
   if (!formData.value.sleep_date) {
-    errors.value.sleep_date = 'Sleep date is required';
+    errors.value.sleep_date = "Sleep date is required";
   }
-  
+
   return Object.keys(errors.value).length === 0;
 }
 
@@ -599,23 +604,29 @@ async function handleSubmit() {
 
     // Guard: Ensure scheduled_bedtime and scheduled_waketime are strings in 'HH:mm' format
     const timeRegex = /^\d{2}:\d{2}$/;
-    if (typeof submitData.scheduled_bedtime !== 'string' || !timeRegex.test(submitData.scheduled_bedtime)) {
-      submitData.scheduled_bedtime = '22:30';
+    if (
+      typeof submitData.scheduled_bedtime !== "string" ||
+      !timeRegex.test(submitData.scheduled_bedtime)
+    ) {
+      submitData.scheduled_bedtime = "22:30";
     }
-    if (typeof submitData.scheduled_waketime !== 'string' || !timeRegex.test(submitData.scheduled_waketime)) {
-      submitData.scheduled_waketime = '06:30';
+    if (
+      typeof submitData.scheduled_waketime !== "string" ||
+      !timeRegex.test(submitData.scheduled_waketime)
+    ) {
+      submitData.scheduled_waketime = "06:30";
     }
     // ✅ Convert lbs + oz to decimal before submitting
     if (submitData.fasting_weight_lbs !== null || submitData.fasting_weight_oz !== null) {
       const lbs = submitData.fasting_weight_lbs || 0;
       const oz = submitData.fasting_weight_oz || 0;
-      submitData.fasting_weight = lbs + (oz / 16);
+      submitData.fasting_weight = lbs + oz / 16;
 
       // Remove the temporary fields
       delete submitData.fasting_weight_lbs;
       delete submitData.fasting_weight_oz;
     }
-    
+
     // Helper to combine numerator/denominator for all score fields
     function combineScoreField(obj, field) {
       if (obj[`${field}_numerator`] !== null || obj[`${field}_denominator`] !== null) {
@@ -626,14 +637,14 @@ async function handleSubmit() {
         delete obj[`${field}_denominator`];
       }
     }
-    combineScoreField(submitData, 'bedtime_score');
-    combineScoreField(submitData, 'duration_score');
-    combineScoreField(submitData, 'interruptions_score');
+    combineScoreField(submitData, "bedtime_score");
+    combineScoreField(submitData, "duration_score");
+    combineScoreField(submitData, "interruptions_score");
 
-    emit('save', submitData);
+    emit("save", submitData);
     resetForm();
   } catch (error) {
-    console.error('Error submitting form:', error);
+    console.error("Error submitting form:", error);
   } finally {
     isSubmitting.value = false;
   }
@@ -721,7 +732,11 @@ function clampScore(field, max) {
 .dream-notes-section {
   margin-bottom: 24px;
   padding: 20px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.05) 0%,
+    rgba(118, 75, 162, 0.05) 100%
+  );
   border-radius: 12px;
   border: 2px solid rgba(102, 126, 234, 0.2);
 }
@@ -840,7 +855,11 @@ function clampScore(field, max) {
 .diet-section {
   margin-bottom: 24px;
   padding: 20px;
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(239, 68, 68, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(236, 72, 153, 0.05) 0%,
+    rgba(239, 68, 68, 0.05) 100%
+  );
   border-radius: 12px;
   border: 2px solid rgba(236, 72, 153, 0.2);
 }
@@ -862,7 +881,11 @@ function clampScore(field, max) {
 .notes-section {
   margin-bottom: 24px;
   padding: 20px;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.05) 0%,
+    rgba(16, 185, 129, 0.05) 100%
+  );
   border-radius: 12px;
   border: 2px solid rgba(34, 197, 94, 0.2);
 }
@@ -882,7 +905,11 @@ function clampScore(field, max) {
 
 /* ✅ ALCOHOL NOTES STYLING - Override for alcohol section */
 .notes-section:has(.fa-wine-glass) {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.05) 0%,
+    rgba(217, 119, 6, 0.05) 100%
+  );
   border: 2px solid rgba(245, 158, 11, 0.2);
 }
 
@@ -894,7 +921,11 @@ function clampScore(field, max) {
 .sugar-notes-section {
   margin-bottom: 24px;
   padding: 20px;
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(219, 39, 119, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(236, 72, 153, 0.05) 0%,
+    rgba(219, 39, 119, 0.05) 100%
+  );
   border-radius: 12px;
   border: 2px solid rgba(236, 72, 153, 0.2);
 }
@@ -914,7 +945,11 @@ function clampScore(field, max) {
 
 /* ✅ SLEEP NOTES STYLING - Override for general sleep notes */
 .notes-section:has(.fa-sticky-note) {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(249, 115, 22, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.05) 0%,
+    rgba(249, 115, 22, 0.05) 100%
+  );
   border: 2px solid rgba(245, 158, 11, 0.2);
 }
 
@@ -965,15 +1000,15 @@ function clampScore(field, max) {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
   .checkbox-group {
     grid-column: span 1;
   }
-  
+
   .form-actions {
     flex-direction: column-reverse;
   }
-  
+
   .form-actions button {
     width: 100%;
   }
