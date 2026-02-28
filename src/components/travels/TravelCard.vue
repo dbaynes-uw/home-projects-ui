@@ -50,9 +50,9 @@
       
       <div v-if="travel.transport_url" class="detail-row">
         <span class="detail-label">Transport Link:</span>
-        <b><a :href="travel.transport_url" target="_blank" class="detail-link-blue">
-          {{travel.transport}} Website
-        </a></b>
+        <b><u><a :href="travel.transport_url" target="_blank" class="detail-link-blue">
+          Website
+        </a></u></b>
       </div>
       
       <div class="detail-row">

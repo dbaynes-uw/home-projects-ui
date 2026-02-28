@@ -183,6 +183,42 @@
             Clear Filter
           </button>
         </div>
+
+        <!-- ✅ PANEL FILTER -->
+        <div v-if="panels.length > 0" class="date-filter-section">
+          <label class="filter-label">
+            <i class="fas fa-folder"></i>
+            Filter by Panel:
+          </label>
+          <select v-model="selectedPanelId" class="date-filter-select">
+            <option :value="null">All Panels</option>
+            <option v-for="panel in panels" :key="panel.id" :value="panel.id">
+              {{ panel.panel_name }} ({{ formatTestDate(panel.test_date) }})
+            </option>
+          </select>
+          <button v-if="selectedPanelId" class="btn-clear-filter" @click="selectedPanelId = null">
+            <i class="fas fa-times"></i>
+            Clear Filter
+          </button>
+        </div>
+
+        <!-- ✅ MARKER NAME FILTER -->
+        <div v-if="uniqueMarkerNames.length > 0" class="date-filter-section">
+          <label class="filter-label">
+            <i class="fas fa-vial"></i>
+            Filter by Marker:
+          </label>
+          <select v-model="selectedMarkerName" class="date-filter-select">
+            <option :value="null">All Markers</option>
+            <option v-for="name in uniqueMarkerNames" :key="name" :value="name">
+              {{ name }} ({{ healthMarkers.filter(m => m.marker_name === name).length }} readings)
+            </option>
+          </select>
+          <button v-if="selectedMarkerName" class="btn-clear-filter" @click="selectedMarkerName = null">
+            <i class="fas fa-times"></i>
+            Clear Filter
+          </button>
+        </div>
     <!-- ✅ CONTENT AREA -->
     <div class="content-wrapper">
       <!-- ✅ LOADING STATE -->
@@ -395,6 +431,8 @@ const mixedItems = ref([]);
 const panels = ref([]);
 const viewMode = ref('grouped'); // 'grouped', 'markers', 'panels'
 const selectedTestDate = ref(null);
+const selectedPanelId = ref(null);
+const selectedMarkerName = ref(null);
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -448,22 +486,38 @@ const uniqueTestDates = computed(() => {
 });
 
 const filteredMarkers = computed(() => {
-  if (!selectedTestDate.value) return healthMarkers.value;
-  return healthMarkers.value.filter(m => m.marker_date === selectedTestDate.value);
+  let markers = healthMarkers.value;
+  if (selectedTestDate.value) markers = markers.filter(m => m.marker_date === selectedTestDate.value);
+  if (selectedPanelId.value) markers = markers.filter(m => m.health_marker_panel_id === selectedPanelId.value);
+  if (selectedMarkerName.value) markers = markers.filter(m => m.marker_name === selectedMarkerName.value);
+  return markers;
 });
 
 const filteredPanels = computed(() => {
-  if (!selectedTestDate.value) return panels.value;
-  return panels.value.filter(p => p.test_date === selectedTestDate.value);
+  let panelList = panels.value;
+  if (selectedTestDate.value) panelList = panelList.filter(p => p.test_date === selectedTestDate.value);
+  if (selectedPanelId.value) panelList = panelList.filter(p => p.id === selectedPanelId.value);
+  return panelList;
 });
 
 const filteredMixedItems = computed(() => {
-  if (!selectedTestDate.value) return mixedItems.value;
-  return mixedItems.value.filter(item => {
-    if (item.type === 'panel') return item.test_date === selectedTestDate.value;
-    if (item.type === 'marker') return item.marker_date === selectedTestDate.value;
-    return false;
-  });
+  let items = mixedItems.value;
+  if (selectedTestDate.value) {
+    items = items.filter(item => {
+      if (item.type === 'panel') return item.test_date === selectedTestDate.value;
+      if (item.type === 'marker') return item.marker_date === selectedTestDate.value;
+      return false;
+    });
+  }
+  if (selectedPanelId.value) {
+    items = items.filter(item => item.type === 'panel' && item.id === selectedPanelId.value);
+  }
+  if (selectedMarkerName.value) {
+    items = items.filter(item =>
+      item.type === 'marker' && item.marker_name === selectedMarkerName.value
+    );
+  }
+  return items;
 });
 
 const dateSummary = computed(() => {
