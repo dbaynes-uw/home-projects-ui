@@ -183,7 +183,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-heart'
   },
 
-  /*
+
   {
     name: 'Blood_Pressure_Diastolic',
     label: 'Blood Pressure (Diastolic)',
@@ -197,11 +197,12 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-heart-outline'
   },
 
+
   {
     name: 'Creatinine',
     label: 'Creatinine',
     unit: 'mg/dL',
-    normalRange: '0.6-1.2 mg/dL',
+    normalRange: '0.72-1.25 mg/dL',
     description: 'Kidney function indicator',
     testFrequency: 'Annually',
     category: 'Kidney',
