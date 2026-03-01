@@ -411,7 +411,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
@@ -477,6 +477,11 @@ const statusCounts = computed(() => {
   });
   
   return counts;
+});
+
+// ✅ AUTO-SWITCH VIEW WHEN FILTERING BY MARKER NAME
+watch(selectedMarkerName, (name) => {
+  if (name) viewMode.value = 'markers';
 });
 
 // ✅ TEST DATE FILTERING
