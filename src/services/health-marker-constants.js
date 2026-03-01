@@ -218,7 +218,6 @@ export const HEALTH_MARKERS = [
     category: 'Liver',
     icon: 'mdi-liver'
   }
-  */
 ];
 
 // ✅ HEALTH MARKER CATEGORIES
