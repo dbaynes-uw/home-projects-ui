@@ -347,7 +347,7 @@ async function handleDelete() {
   if (!ok) return;
 
   try {
-    await healthMarkerStore.deleteHealthMarker(healthMarker.value.id);
+    await healthMarkerStore.deleteHealthMarker(healthMarker.value);
     
     await confirmDialogue.value.show({
       title: "Marker Deleted",

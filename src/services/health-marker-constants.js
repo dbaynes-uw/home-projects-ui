@@ -133,7 +133,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
     {
-    name: 'Triglyceride_Cholesterol HDL Calculation',
+    name: 'Triglyceride Cholesterol HDL Calculation',
     label: 'Trig/HDL Calculation',
     unit: '',
     normalRange: '< 6.7',

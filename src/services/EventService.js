@@ -226,10 +226,10 @@ export default {
     this.init();
     return api.put(api_url + "health_markers" + `/${updatedHealthMarker.id}`, updatedHealthMarker);
   },
-  deleteHealthMarker(healthMarker) {
+  deleteHealthMarker(healthMarkerById) {
     this.init();
     // For Testing: setTimeout(5000);
-    return api.delete(api_url + "health_markers/" + `${healthMarker.id}`);
+    return api.delete(api_url + "health_markers/" + `${healthMarkerById}`);
   },
 
   // Health Marker Panels
