@@ -386,7 +386,7 @@
       <!-- ✅ TABLE VIEW -->
       <HealthMarkerIndex
         v-else-if="currentView === 'table'"
-        :healthMarkers="healthMarkers"
+        :healthMarkers="filteredMarkers"
         @edit="handleEdit"
         @delete="handleDelete"
       />
