@@ -91,8 +91,7 @@
 
     <!-- Confirm Delete Dialog -->
     <BaseModal
-      v-if="showDeleteDialog"
-      @close="showDeleteDialog = false"
+      v-model="showDeleteDialog"
     >
       <template #header>
         <h3>Confirm Delete</h3>
@@ -100,7 +99,7 @@
       
       <p>Are you sure you want to delete this travel event? This action cannot be undone.</p>
       
-      <template #actions>
+      <template #footer>
         <BaseButton
           @click="showDeleteDialog = false"
           variant="secondary"

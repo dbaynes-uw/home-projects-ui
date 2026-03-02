@@ -112,7 +112,7 @@ export const HEALTH_MARKERS = [
     name: 'NonCholesterol HDL Calculation',
     label: 'Non-HDL Calculation',
     unit: '',
-    normalRange: '',
+    normalRange: '< 200',
     borderlineRange: '?',
     highRange: '?',
     description: '?',

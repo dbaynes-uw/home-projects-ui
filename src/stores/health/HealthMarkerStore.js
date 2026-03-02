@@ -245,7 +245,6 @@ export const useHealthMarkerStore = defineStore('healthMarker', {
         // Refresh list to get updated data
         await this.fetchHealthMarkers();
         
-        console.log('✅ Health marker created:', response.data);
         return response.data;
         
       } catch (error) {
