@@ -273,6 +273,7 @@ td { padding: 0.875rem 1rem; vertical-align: top; }
 .event-title { font-weight: 600; color: #1f2937; }
 
 .multiline-text {
+  text-align: left;
   max-width: 200px;
   color: #4b5563;
   line-height: 1.5;
