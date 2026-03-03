@@ -1,6 +1,6 @@
 <template>
   <div 
-    :class="{ 'event-has-passed': hasEventPassed(props.travelEvent), 'card': isEventCurrent(props.travelEvent)}"
+    :class="{ 'event-has-passed': hasEventPassed(props.travelEvent), 'event-is-current': !hasEventPassed(props.travelEvent)}"
     @dblclick="navigateToDetails"
   >
     <h2>{{ props.travelEvent.title }}</h2>
