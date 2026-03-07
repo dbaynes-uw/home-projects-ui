@@ -103,11 +103,14 @@ api.interceptors.response.use(
 )
 
 export const getAuthUrl = () => {
-  // ✅ Return base URL without /api/v1 for Devise token routes
+  // ✅ Return base URL without /api/v1 for password reset routes
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  return isLocalhost 
+  const isHeroku = window.location.hostname.includes('herokuapp.com')
+  return isLocalhost
     ? 'http://localhost:3000'
-    : 'http://10.0.0.12:3000'
+    : isHeroku
+      ? 'https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com'
+      : 'http://10.0.0.12:3000'
 }
 
 export const config = {

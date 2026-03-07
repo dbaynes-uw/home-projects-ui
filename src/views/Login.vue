@@ -125,6 +125,7 @@ async function handleLogin() {
       
       <div class="links">
         <router-link to="/forgot_password">Forgot Password?</router-link>
+        dl@ H..P..s
         <router-link to="/register">Create Account</router-link>
       </div>
     </div>
