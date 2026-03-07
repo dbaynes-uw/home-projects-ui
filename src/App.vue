@@ -4,7 +4,7 @@
   <div id="nav">
     <Toast />
     <!-- ✅ LOGIN PAGE LAYOUT -->
-    <v-app v-if="this.$route.name == 'Login' || this.$route.name == 'Register' || this.$route.name == 'ForgotPassword' || this.$route.name == 'PasswordReset'">
+    <v-app v-if="this.$route.name == 'Login' || this.$route.name == 'Register' || this.$route.name == 'ForgotPassword' || this.$route.name == 'PasswordReset' || this.$route.name == 'PasswordResetEdit'">
       <v-app-bar color="teal-darken-2">
         <v-toolbar-title>
           <router-link to="/" style="color: white; text-decoration: none;">
@@ -172,7 +172,7 @@ export default {
       return window.innerWidth <= 768;
     },
     isAuthPage() {
-      const authPages = ['Login', 'Register', 'ForgotPassword', 'PasswordReset'];
+      const authPages = ['Login', 'Register', 'ForgotPassword', 'PasswordReset', 'PasswordResetEdit'];
       return authPages.includes(this.$route.name);
     },
     

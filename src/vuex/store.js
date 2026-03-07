@@ -616,16 +616,13 @@ actions: {
 
       try {
         const response = await api.post(`${authUrl}/api/v1/password_resets/`, { email })
-        commit('SET_USER_DATA', response.data)
         return response.data
       } catch (error) {
         console.error('Forgot password error:', error)
-        alert("Invalid Login Credentials or API problem - Please try again")
-        router.back()
         throw error
       }
     },    
-    // ✅ RESET PASSWORD (FIXED!)
+    // ✅ RESET PASSWORD
     async resetPassword ({ commit }, { token, password, password_confirmation }) {
       const authUrl = getAuthUrl()
 
@@ -640,15 +637,10 @@ actions: {
           }
         )
 
-        commit('SET_USER_DATA', response.data)
-        alert('Password successfully reset!')
         return response.data
 
       } catch (error) {
         console.error('Reset password error:', error)
-        const errorMessage = error.response?.request?.statusText || error.message
-        alert("Password reset failed: " + errorMessage)
-        router.back()
         throw error
       }
     },
