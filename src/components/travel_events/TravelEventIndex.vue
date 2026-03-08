@@ -5,21 +5,28 @@
     <div class="card">
       <div class="table-container">
         <table class="data-table">
+          <colgroup>
+            <col style="width: 18%" />  <!-- Title -->
+            <col style="width: 35%" />  <!-- Description (wider) -->
+            <col style="width: 10%" />  <!-- Event Info -->
+            <col style="width: 18%" />  <!-- Dates -->
+            <col style="width: 14%" />  <!-- Transport -->
+            <col style="width: 10%" />  <!-- Actions -->
+          </colgroup>
           <thead>
             <tr>
               <th class="sortable-th" @click="toggleSort('title')">
                 Title
                 <i :class="sortIcon('title')"></i>
               </th>
-              <th>Description</th>
-              <th>Event Info</th>
+              <th class="th-center">Description</th>
+              <th class="th-center">Event Info</th>
               <th class="sortable-th" @click="toggleSort('start_date')">
                 Dates
                 <i :class="sortIcon('start_date')"></i>
               </th>
-              <th>Transport</th>
-              <th>Notes</th>
-              <th>Actions</th>
+              <th class="th-center">Transport</th>
+              <th class="th-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -67,12 +74,12 @@
                   <span v-if="!event.transport && !isUrl(event.transport_url)">—</span>
                 </div>
               </td>
-              <td class="notes-cell">
+              <!--td class="notes-cell">
                 <div class="multiline-text">
                   <span v-for="(line, idx) in splitLines(event.notes)" :key="idx">{{ line }}<br v-if="idx < splitLines(event.notes).length - 1" /></span>
                   <span v-if="!event.notes">—</span>
                 </div>
-              </td>
+              </td-->
               <td class="actions-cell">
                 <div class="action-buttons">
                   <button @click.stop="viewDetails(event)" class="btn btn-sm btn-info" title="View Details">
@@ -213,6 +220,7 @@ async function handleDelete(event) {
 .sortable-th {
   cursor: pointer;
   user-select: none;
+  text-align: center !important
 }
 
 .sortable-th:hover {
