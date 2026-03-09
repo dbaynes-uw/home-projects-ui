@@ -167,7 +167,7 @@ const travelStore = useTravelStore()
 
 // ✅ REACTIVE STATE
 const searchQuery = ref('')
-const currentView = ref('table')
+const currentView = ref('cards') // 'cards' or 'table'
 const showDialog = ref(false)
 const selectedTravel = ref(null)
 const confirmDialogue = ref(null)
