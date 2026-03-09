@@ -72,7 +72,7 @@ const vuexStore = useVuexStore()
 const travelStore = useTravelStore()
 
 // Reactive data
-const currentView = ref('cards')
+const currentView = ref('table') // 'cards' or 'table'
 // Computed properties
 const travel = computed(() => travelStore.currentTravel)
 const travel_events = computed(() => {

@@ -248,7 +248,7 @@ const travelStore = useTravelStore()
 
 // Reactive data
 const statusMessage = ref('')
-const requestIndexDetailFlag = ref(false)
+const requestIndexDetailFlag = ref(true) // true = show index (table), false = show details (cards)
 const inputSearchText = ref("")
 const filteredResults = ref([])
 const showDeleteDialog = ref(false)
