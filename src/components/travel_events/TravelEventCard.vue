@@ -6,7 +6,7 @@
     <h2>{{ props.travelEvent.title }}</h2>
     <ul>
       <li class="li-left">Event Description:</li>
-      <b class="li-left-none" v-for="(description, idx) in 
+      <b class="li-left-none pre-wrap" v-for="(description, idx) in 
           joinedDescription(props.travelEvent)"
           :key="idx">{{ description }}
         </b>
@@ -34,7 +34,7 @@
         <li class="li-left">End: <b>{{ formatStandardDateTime(props.travelEvent.end_date) }}</b></li>
       </span>
       <li class="li-left">Notes:</li>
-      <b class="li-left-none" v-for="(notes, idx) in 
+      <b class="li-left-none pre-wrap" v-for="(notes, idx) in 
           joinedNotes(props.travelEvent)"
           :key="idx">{{ notes }}
         </b>
@@ -187,5 +187,10 @@ const isEventCurrent = (t) => {
   text-decoration: underline !important;
   color: blue;
   text-decoration: none;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+  display: block;
 }
 </style>

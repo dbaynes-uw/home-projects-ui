@@ -113,11 +113,20 @@
           <i class="mdi mdi-note-text"></i>
           Notes
         </label>
+        <div class="textarea-toolbar">
+          <button type="button" @click="insertAtCursor('notes', '• ')" title="Bullet point">• Bullet</button>
+          <button type="button" @click="insertAtCursor('notes', '    • ')" title="Indented sub-bullet">&nbsp;&nbsp;↳ Sub-item</button>
+          <button type="button" @click="insertAtCursor('notes', getNextLineNumber('notes') + '. ')" title="Numbered list">1. Number</button>
+          <button type="button" @click="insertAtCursor('notes', '    ' + getNextLineNumber('notes') + '. ')" title="Indented Numbered list">&nbsp;&nbsp;↳ Sub-Number</button>
+          <button type="button" @click="insertAtCursor('notes', '    ')" title="Indent">⇥ Indent</button>
+          <button type="button" @click="insertAtCursor('notes', '\n')" title="New line">↵ Line</button>
+        </div>
         <textarea
+          ref="notesTextarea"
           v-model="formData.notes"
           class="notes-textarea"
-          rows="4"
-          placeholder="Additional notes or details"
+          rows="6"
+          placeholder="Additional notes or details&#10;  • Use the toolbar above to add bullets&#10;  • Or type • manually"
         ></textarea>
         <div v-if="errors.notes" class="form-error">
           <i class="mdi mdi-alert-circle"></i>
@@ -193,6 +202,30 @@ const formatDateForAPI = (dateString) => {
 const isSubmitting = ref(false)
 const errors = ref({})
 const urlMaxLength = ref(255)
+const notesTextarea = ref(null)
+
+// Insert text at the cursor position in a textarea
+const insertAtCursor = (field, text) => {
+  const el = notesTextarea.value
+  if (!el) return
+  const start = el.selectionStart
+  const end = el.selectionEnd
+  const current = formData.value[field] || ''
+  const needsNewline = start > 0 && current[start - 1] !== '\n'
+  const insert = needsNewline ? '\n' + text : text
+  formData.value[field] = current.substring(0, start) + insert + current.substring(end)
+  const newPos = start + insert.length
+  el.focus()
+  setTimeout(() => el.setSelectionRange(newPos, newPos), 0)
+}
+
+// Return the next available number by scanning existing numbered items in the field
+const getNextLineNumber = (field) => {
+  const text = formData.value[field] || ''
+  const matches = [...text.matchAll(/^\s*(\d+)\./gm)]
+  if (!matches.length) return 1
+  return Math.max(...matches.map(m => parseInt(m[1]))) + 1
+}
 
 // Check if we're in edit mode
 const isEditMode = computed(() => !!props.travelEvent)
@@ -406,6 +439,47 @@ defineExpose({
 .notes-textarea::placeholder {
   color: #999;
   font-style: italic;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.textarea-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.textarea-toolbar button {
+  all: unset !important;
+  padding: 4px 12px !important;
+  font-size: 0.78rem !important;
+  border: 1px solid #c8dfc9 !important;
+  border-radius: 4px !important;
+  background: rgba(141, 196, 154, 0.2) !important;
+  color: #3a6b42 !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+  white-space: nowrap !important;
+  line-height: 1.6 !important;
+}
+
+.textarea-toolbar button:hover {
+  background: rgba(141, 196, 154, 0.5) !important;
+  border-color: #8dc49a !important;
 }
 
 </style>
