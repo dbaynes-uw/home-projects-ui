@@ -6,10 +6,10 @@
     <h2>{{ props.travelEvent.title }}</h2>
     <ul>
       <li class="li-left">Event Description:</li>
-      <b class="li-left-none pre-wrap" v-for="(description, idx) in 
-          joinedDescription(props.travelEvent)"
-          :key="idx">{{ description }}
-        </b>
+      <template v-for="(description, idx) in joinedDescription(props.travelEvent)" :key="idx">
+        <br v-if="description === ''" class="blank-line" />
+        <b v-else class="li-left-none pre-wrap">{{ description }}</b>
+      </template>
       
       <span v-if="startsWithHtml(props.travelEvent.travel_event_url)">
         <li class="li-left">Event Information:
@@ -34,10 +34,10 @@
         <li class="li-left">End: <b>{{ formatStandardDateTime(props.travelEvent.end_date) }}</b></li>
       </span>
       <li class="li-left">Notes:</li>
-      <b class="li-left-none pre-wrap" v-for="(notes, idx) in 
-          joinedNotes(props.travelEvent)"
-          :key="idx">{{ notes }}
-        </b>
+      <template v-for="(notes, idx) in joinedNotes(props.travelEvent)" :key="idx">
+        <br v-if="notes === ''" class="blank-line" />
+        <b v-else class="li-left-none pre-wrap">{{ notes }}</b>
+      </template>
     </ul>
     
     <!-- Action Buttons -->
