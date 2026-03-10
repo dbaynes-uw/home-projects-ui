@@ -36,6 +36,9 @@
       <li class="li-left">Notes:</li>
       <template v-for="(notes, idx) in joinedNotes(props.travelEvent)" :key="idx">
         <br v-if="notes === ''" class="blank-line" />
+        <b v-else-if="isUrl(notes)" class="li-left-none pre-wrap">
+          <a :href="notes.trim()" target="_blank" class="detail-link-blue">{{ friendlyUrlLabel(notes) }}</a>
+        </b>
         <b v-else class="li-left-none pre-wrap">{{ notes }}</b>
       </template>
     </ul>
@@ -107,6 +110,18 @@ const handleDelete = () => {
 
 const startsWithHtml = (event) => {
   return event && event.startsWith('https')
+}
+
+const isUrl = (text) => {
+  const t = text.trim()
+  return /^https?:\/\/\S+$/.test(t) || /^\/\S+\.\w+$/.test(t)
+}
+
+const friendlyUrlLabel = (text) => {
+  const t = text.trim()
+  // Extract filename without extension for local paths, full URL otherwise
+  const match = t.match(/\/([^/]+)\.(\w+)$/)
+  return match ? match[1].replace(/-/g, ' ') : t
 }
 
 const joinedDescription = (e) => {
