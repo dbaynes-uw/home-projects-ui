@@ -224,7 +224,7 @@ const store = useStore();
 const showActiveEvents = ref(true);
 const isLoading = ref(true);
 const inputSearchText = ref('');
-const viewMode = ref('cards');
+const viewMode = ref('table');
 const apiUrl = ref('');
 const selectedLocationValue = ref(''); 
 const selectedDueByValue = ref('');    
@@ -280,18 +280,24 @@ const displayEvents = computed(() => {
 // ✅ METHODS
 function handleDueByFilter(daysValue) {
   selectedDueByValue.value = daysValue;
+  if (daysValue && daysValue !== '') {
+    store.dispatch('fetchEventsDueBy', parseInt(daysValue));
+  }
 }
 
 function handleClearDueBy() {
   selectedDueByValue.value = '';
+  store.dispatch('fetchEvents');
 }
 
 function handleLocationFilter(locationValue) {
   selectedLocationValue.value = locationValue;
+  store.dispatch('eventsLocations', locationValue);
 }
 
 function handleClearLocation() {
   selectedLocationValue.value = '';
+  store.dispatch('fetchEvents');
 }
 
 function handleStatusToggle(newActiveState) {

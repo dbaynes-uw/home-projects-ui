@@ -752,6 +752,18 @@ actions: {
           alert("Events Fetch Error: ", error.response.data )
         });
     },
+    async fetchEventsDueBy({ commit }, daysAhead) {
+      console.log("Store fetchEventsDueBy daysAhead: ", daysAhead)
+      EventService.getEventsDueBy(daysAhead)
+        .then((response) => {
+          commit("SET_EVENTS", response.data);
+          commit("SET_EVENTS_REQUEST", '');
+          return response.data;
+        })
+        .catch((error) => {
+          alert("Events Due By Fetch Error: ", error.response?.data)
+        });
+    },
     async deleteEvent({ commit }, event) {
       try {
         await EventService.deleteEvent(event.id);

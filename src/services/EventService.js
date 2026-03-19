@@ -59,12 +59,9 @@ export default {
     this.init();
     return api.get(api_url + "events_assigned/" + `?assigned=${assigned}`);
   },
-  getEventsDueBy(form) {
+  getEventsDueBy(dueFilter) {
+    console.log("ES: getEventsDueBy called with dueFilter:", dueFilter);
     this.init();
-    const dueFilter =
-      form.target.options[form.target.options.selectedIndex].innerText;
-    //form.target.options[form.target.options.selectedIndex].innerText = null
-    form.target.options.selectedIndex = 0
     return api.get(api_url + "events/" + `?due_by=${dueFilter}`)
   },
   getEventsActive() {
@@ -75,12 +72,8 @@ export default {
     this.init();
     return api.get(api_url + "events/" + `?status=${status}`)
   },
-  getEventsLocations(form) {
+  getEventsLocations(location) {
     this.init();
-    console.log("EventService Form: ", form)
-    const location =
-      form.target.options[form.target.options.selectedIndex].innerText;
-    form.target.options.selectedIndex = 0
     return api.get(api_url + "events/" + `?location=${location}`)
   },
   getEventsPastDue() {

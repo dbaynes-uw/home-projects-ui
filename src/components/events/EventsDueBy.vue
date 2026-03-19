@@ -31,10 +31,19 @@ const props = defineProps({
   }
 });
 
-//const emit = defineEmits(['events-due-by', 'clear-due-by']);
+const emit = defineEmits(['events-due-by', 'clear-due-by']);
 
 // ✅ REACTIVE STATE
 const internalValue = ref(props.selectedDueByValue);
+
+// ✅ HANDLE SELECT CHANGE
+const handleNativeChange = () => {
+  if (internalValue.value === '' || internalValue.value === null) {
+    emit('clear-due-by');
+  } else {
+    emit('events-due-by', internalValue.value);
+  }
+};
 </script>
 
 <style scoped>
