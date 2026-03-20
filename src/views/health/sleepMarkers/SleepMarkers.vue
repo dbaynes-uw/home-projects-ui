@@ -226,7 +226,7 @@ import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 const sleepMarkerStore = useSleepMarkerStore();
 
 // ✅ STATE
-const currentView = ref('cards');
+const currentView = ref('table'); // Default to table view
 const showDialog = ref(false);
 const showDetailsModal = ref(false);
 const selectedMarker = ref(null);
