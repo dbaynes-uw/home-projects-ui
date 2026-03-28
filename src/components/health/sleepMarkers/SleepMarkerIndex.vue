@@ -29,12 +29,11 @@
           <option value="duration-asc">Duration (Shortest First)</option>
         </select>
 
-        <button @click="showColumnToggle = !showColumnToggle" class="btn-toggle-columns" title="Toggle Columns">
+        <button @click="showColumnToggle = !showColumnToggle" class="btn-toggle-columns" title="Toggle Columns"> Show/Hide Visible Columns
           <i class="fas fa-columns"></i>
         </button>
       </div>
     </div>
-
     <!-- ✅ COLUMN VISIBILITY TOGGLE -->
     <transition name="slide-down">
       <div v-if="showColumnToggle" class="column-toggle-panel">
@@ -277,7 +276,13 @@ onMounted(() => {
   const saved = localStorage.getItem('sleepMarkerColumns');
   if (saved) {
     try {
-      visibleColumns.value = { ...visibleColumns.value, ...JSON.parse(saved) };
+      const parsed = JSON.parse(saved);
+      // Only restore keys that exist in current defaults to avoid stale overrides
+      Object.keys(visibleColumns.value).forEach(key => {
+        if (key in parsed) {
+          visibleColumns.value[key] = parsed[key];
+        }
+      });
     } catch (e) {
       console.error('Failed to load column preferences:', e);
     }
@@ -521,6 +526,7 @@ const averageScore = computed(() => {
 
 /* ✅ COMPACT TABLE STYLING (Option 5) */
 .compact-table {
+  margin-top: .2rem;
   font-size: 13px;
 }
 
