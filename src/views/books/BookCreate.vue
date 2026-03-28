@@ -1,12 +1,28 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h3>Add Book to Collection</h3>
-    </v-card-title>
-  </v-card>
-  <v-card-text>
-    <v-form @submit.prevent="onSubmit">
-      <v-container id="form-container">
+  <div class="book-create-container">
+    <div class="breadcrumb-nav">
+      <router-link :to="{ name: 'home' }" class="breadcrumb-link">
+        <i class="fas fa-home"></i> Home
+      </router-link>
+      <i class="fas fa-chevron-right breadcrumb-separator"></i>
+      <router-link :to="{ name: 'BookList' }" class="breadcrumb-link">Books</router-link>
+      <i class="fas fa-chevron-right breadcrumb-separator"></i>
+      <span class="breadcrumb-current">Add Book</span>
+    </div>
+
+    <BaseCard class="header-card">
+      <template #header>
+        <div class="header-content-create">
+          <h2><i class="fas fa-book animated-icon"></i> Add Book to Collection</h2>
+          <p class="subtitle">Track your reading journey</p>
+        </div>
+      </template>
+    </BaseCard>
+
+    <BaseCard class="form-card">
+      <template #header><h3>Book Details</h3></template>
+      <v-form @submit.prevent="onSubmit">
+        <v-container class="form-container">
         <v-text-field
           v-model="book.title"
           :rules="[requiredTitle]"
@@ -54,173 +70,122 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-textarea>
-        <v-btn type="submit" block class="mt-2">Submit</v-btn>
-      </v-container>
-    </v-form>
-  </v-card-text>
+          <div class="form-actions">
+            <v-btn type="submit" class="submit-btn">Submit</v-btn>
+            <router-link :to="{ name: 'BookList' }" class="cancel-link">Cancel</router-link>
+          </div>
+        </v-container>
+      </v-form>
+    </BaseCard>
+  </div>
 </template>
-<script>
-import { v4 as uuidv4 } from "uuid";
-export default {
-  data() {
-    return {
-      book: {
-        title: null,
-        author: "",
-        date_written: null,
-        date_read: null,
-        vendor_product: [],
-        audio_format: false,
-        print_format: false,
-        url_to_review: "",
-        notes: "",
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      isFormValid: false,
-      isAuthorValid: false,
-      isTitleValid: false,
-      urlMaxLength: 255,
-      num: 1,
-    };
-  },
-  methods: {
-    onSubmit() {
-      this.checkValidations();
-      if (this.isFormValid) {
-        const book = {
-          ...this.book,
-          id: uuidv4(),
-          created_by: this.$store.state.user.resource_owner.email,
-        };
-        if (this.$store.dispatch("createBook", book)) {
-          this.$router.push({ name: "BookList" });
-        } else {
-          alert("Error adding Book Title" + book.title);
-        } 
-      } else {
-        alert("Please correct required fields and resubmit");
-      }
-    },
-    requiredAuthor: function (value) {
-      if (value) {
-          this.isAuthorValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isAuthorValid = false
-          return 'Please enter Author';
-      }
-    },
-    requiredTitle: function (value) {
-      if (value) {
-          this.isTitleValid = true
-          return true;
-      } else {
-          this.isFormValid = false
-          this.isTitleValid = false
-          return 'Please enter Title';
-      }
-    },
-    checkValidations() {
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { v4 as uuidv4 } from 'uuid'
+import { useBookStore } from '@/stores/books/BookStore.js'
+import BaseCard from '@/components/ui/BaseCard.vue'
 
-      if (this.isAuthorValid && this.isTitleValid) {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-    }
-  },
-  book() {
-    return this.$store.state.book;
-  },
-};
+const store = useStore()
+const bookStore = useBookStore()
+const router = useRouter()
+
+// Reactive form data
+const book = ref({
+  title: null,
+  author: '',
+  date_written: null,
+  date_read: null,
+  vendor_product: [],
+  audio_format: false,
+  print_format: false,
+  url_to_review: '',
+  notes: '',
+})
+
+const isAuthorValid = ref(false)
+const isTitleValid = ref(false)
+
+const isFormValid = computed(() => isAuthorValid.value && isTitleValid.value)
+
+// Validation rules
+const requiredTitle = (value) => {
+  isTitleValid.value = !!value
+  return !!value || 'Please enter Title'
+}
+
+const requiredAuthor = (value) => {
+  isAuthorValid.value = !!value
+  return !!value || 'Please enter Author'
+}
+
+// Submit
+const onSubmit = async () => {
+  if (!isFormValid.value) {
+    alert('Please correct required fields and resubmit')
+    return
+  }
+  const newBook = {
+    ...book.value,
+    id: uuidv4(),
+    created_by: store.state.user?.resource_owner?.email ?? store.state.user?.email,
+  }
+  await bookStore.createBook(newBook)
+  router.push({ name: 'BookList' })
+}
 </script>
-<style lang="css">
-
-/* Create two equal columns that floats next to each other */
-.column {
-  float: left;
-  width: 33%;
-  padding: 10px;
-  /*height: 300px; /* Should be removed. Only for demonstration */
+<style scoped>
+.book-create-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-.v-icon {
-  color: darkslategrey;
-  top: -0.2rem;
-}
-#form-container {
-  text-align: left;
-  width: 75% !important;
-}
-[type="checkbox"],
-#notes {
-  width: 100%;
-  height: 4rem;
-}
-.button {
-  margin: 30px;
-  background-color: #39495c;
-  border-radius: 5px;
-  font-size: 18px;
-  width: 160px;
-  height: 60px;
+.header-content-create h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.25rem;
   color: white;
-  padding: 20px;
-  box-shadow: inset 0 -0.6em 1em -0.35em rgba(0, 0, 0, 0.17),
-    inset 0 0.6em 2em -0.3em rgba(255, 255, 255, 0.15),
-    inset 0 0 0em 0.05em rgba(255, 255, 255, 0.12);
-  text-align: center;
-  cursor: pointer;
+  font-size: 1.5rem;
 }
-label {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-}
-fieldset {
-  border: 0;
+
+.subtitle {
   margin: 0;
-  padding: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
 }
-select {
-  border-color: darkgreen;
+
+.form-card {
+  margin-top: 1.25rem;
 }
-legend {
-  font-size: 28px;
-  font-weight: 700;
-  margin-top: 20px;
+
+.form-container {
+  max-width: 560px;
+  padding: 0.5rem 0;
 }
-.label-visible {
-  top: -35px;
-  left: 4px;
-  visibility: visible;
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1rem;
 }
-.label-invisible {
-  top: -10px;
-  left: 4px;
-  visibility: hidden;
+
+.submit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 0 2rem;
 }
-.input-field {
-  margin-top: 30px;
-  position: relative;
+
+.cancel-link {
+  color: #718096;
+  text-decoration: none;
+  font-size: 0.9rem;
 }
-.input-field > input {
-  width: 100%;
-}
-.input-field > p {
-  position: absolute;
-  font-size: 14px;
-  transition: 0.3s;
-}
+.cancel-link:hover { text-decoration: underline; }
+
+.v-icon { color: #667eea; }
 </style>

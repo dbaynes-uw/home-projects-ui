@@ -17,8 +17,6 @@ export default new Vuex.Store({
     isNewUser: null,
     loggedIn: null,
     loggedOut: null,
-    //book: [],
-    //books: [],
     events: [],
     eventsRequest: [],
     eventsStatus: [],
@@ -58,10 +56,6 @@ export default new Vuex.Store({
     shopping_list: [],
     //trail: {},
     //trails: [],
-    travel: [],
-    travels: [],
-    travel_event: [],
-    travel_events: [],
     users: [],
     vendor: {},
     vendors: [],
@@ -106,23 +100,6 @@ export default new Vuex.Store({
     })
   ],
   mutations: {
-    //ADD_BOOK(state, book) {
-    //  state.books.push(book);
-    //},
-    //DELETE_BOOK(state, book) {
-    //  state.book = book;
-    //},
-    //SET_BOOK(state, book) {
-    //  state.book = book;
-    //},
-    //SET_BOOKS(state, books) {
-    //  state.books = books;
-    //},
-
-    //CLEAR_BOOKS(state) {
-    //  state.books = [];
-    //},
-
     // Notifications (toasts)
     ADD_NOTIFICATION(state, notification) {
       // enforce cap so a flood can't grow the array indefinitely
@@ -324,27 +301,6 @@ export default new Vuex.Store({
     //SET_TRAILS(state, trail) {
     //  state.trails = trail;
     //},
-    ADD_TRAVEL(state, travel) {
-      state.travels.push(travel);
-    },
-    DELETE_TRAVEL(state, travel) {
-      state.travel = travel;
-    },
-    DELETE_TRAVEL_EVENT(state, travel_event) {
-      state.travel_event = travel_event;
-    },
-    SET_TRAVEL(state, travel) {
-      state.travel = travel;
-    },
-    SET_TRAVEL_EVENT(state, travel_event) {
-      state.travel_event = travel_event;
-    },
-    SET_TRAVELS(state, travels) {
-      state.travels = travels;
-    },
-    SET_TRAVEL_EVENTS(state, travel_events) {
-      state.travel_events = travel_events;
-    },
     ADD_USER(state, user) {
       state.users.push(user);
     },
@@ -440,14 +396,12 @@ export default new Vuex.Store({
     },
     
     RESET_STATE(state) {
-      //state.books = [];
       //state.films = [];
       //state.golfs = [];
       state.events = [];
       state.plants = [];
       state.products = [];
       //state.trails = [];
-      state.travels = [];
       state.glucoseReadings = [];
       state.waterings = [];
     }
@@ -611,7 +565,7 @@ actions: {
         throw error
       }
     },
-    async forgotPassword ({ commit }, email) {
+    async forgotPassword (_context, email) {
       const authUrl = getAuthUrl()
 
       try {
@@ -623,7 +577,7 @@ actions: {
       }
     },    
     // ✅ RESET PASSWORD
-    async resetPassword ({ commit }, { token, password, password_confirmation }) {
+    async resetPassword (_context, { token, password, password_confirmation }) {
       const authUrl = getAuthUrl()
 
       try {
@@ -644,64 +598,6 @@ actions: {
         throw error
       }
     },
-    /*
-    async createBook({ commit }, book) {
-      EventService.postBook(book)
-        .then(() => {
-          commit("ADD_BOOK", book);
-          alert("Book was successfully added for " + book.title);
-        })
-        .catch((error) => {
-          alert("Book Post Error: ", error.response.data )
-        });
-    },
-    async updateBook({ commit }, book) {
-      EventService.putBook(book)
-        .then((response) => {
-          commit("SET_BOOK", response.data);
-          alert("Book " + book.title + " was Successfully Updated.")
-        })
-        .catch((error) => {
-          alert("Book Put Error for " + book.title + ": " + error.response.request.statusText)
-          location.reload();
-      });
-    },
-    async deleteBook({ commit }, book) {
-      EventService.deleteBook(book)
-        .then((response) => {
-          commit("SET_BOOKS", response.data);
-        })
-        .catch((error) => {
-          alert("Book Delete Error: ", error.response.data )
-        });
-    },
-    async fetchBook({ commit, state }, id) {
-      const existingBook = state.books.find((book) => book.id === id);
-      if (existingBook) {
-        commit("SET_BOOK", existingBook);
-      } else {
-        EventService.getBook(id)
-          .then((response) => {
-            commit("SET_BOOK", response.data);
-          })
-          .catch((error) => {
-            alert("Book Fetch Error: ",error.response.request.statusText )
-          });
-      }
-    },
-
-    async fetchBooks({ commit }) {
-      try {
-        // ✅ REPLACE WITH YOUR ACTUAL API ENDPOINT
-        const response = await EventService.getBooks()
-        commit('SET_BOOKS', response.data);
-        return response.data;
-      } catch (error) {
-        console.error('Failed to fetch books:', error);
-        commit('SET_BOOKS', []); // Set empty array on error
-      }
-    },
-    */
     async fetchGarden({ commit }, id) {
       //const existingGarden = state.gardens.find((garden) => garden.id === id);
       //if (existingGarden) {
@@ -1347,119 +1243,6 @@ actions: {
         });
     },
 
-    createTravel({ commit }, travel) {
-      EventService.postTravel(travel)
-        .then(() => {
-          commit("ADD_TRAVEL", travel);
-          alert("Travel was successfully added for " + travel.title);
-        })
-        .catch((error) => {
-          alert("Travel Post Error: ", error.response.data )       
-        });
-    },
-    async createTravelEvent({ commit }, travel_event) {
-      EventService.postTravelEvent(travel_event)
-        .then(() => {
-          commit("SET_TRAVEL_EVENT", travel_event);
-          alert("Travel Event was successfully added for " + travel_event.title);
-        })
-        .catch((error) => {
-          alert("Error in postTravelEvent of createTravelEvent Action (index.js)");
-          alert("Travel Event Post Error: ", error.response.data )
-        });
-    },
-
-    async deleteTravel({ commit }, travel) {
-      EventService.destroyTravel(travel.id)
-        .then((response) => {
-          commit("DELETE_TRAVEL", response.data);
-        })
-        .catch((error) => {
-          alert("Travel Delete Error: ", error.response.data )
-        });
-    },
-    async deleteTravelEvent({ commit }, travel_event) {
-      EventService.destroyTravelEvent(travel_event.id)
-        .then((response) => {
-          commit("DELETE_TRAVEL_EVENT", response.data);
-        })
-        .catch((error) => {
-          alert("Travel Event Delete Error: ", error.response.data )
-        });
-    },
-
-    async fetchTravel({ commit, state }, id) {
-      const existingTravel = state.travels.find((travel) => travel.id === id);
-      if (existingTravel) {
-        commit("SET_TRAVEL", existingTravel);
-      } else {
-        EventService.getTravel(id)
-          .then((response) => {
-            commit("SET_TRAVEL", response.data);
-          })
-          .catch((error) => {
-            alert("Travel Fetch Error: ", error.response.data )
-          });
-      }
-    },
-    async fetchTravelEvent({ commit, state }, id) {
-      const existingTravelEvent = state.travels.find((travel_event) => travel_event.id === id);
-      if (existingTravelEvent) {
-        commit("SET_TRAVEL_EVENT", existingTravelEvent);
-      } else {
-        EventService.getTravelEvent(id)
-          .then((response) => {
-            commit("SET_TRAVEL_EVENT", response.data);
-          })
-          .catch((error) => {
-            alert("Travel Fetch Error: ", error.response.data )
-          });
-      }
-    },
-    async fetchTravels({ commit }) {
-      EventService.getTravels()
-        .then((response) => {
-          commit("SET_TRAVELS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Travels Fetch Error: ", error.response.data )
-        });
-    },
-    async fetchTravelEvents({ commit }) {
-      EventService.getTravelEvents()
-        .then((response) => {
-          commit("SET_TRAVEL_EVENTS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Travel Events Fetch Error: ", error.response.data )
-        });
-    },
-
-    async updateTravel({ commit }, travel) {
-      EventService.putTravel(travel)
-        .then((response) => {
-          commit("SET_TRAVEL", response.data);
-          alert("Travel was successfully Updated for " + travel.title);
-          location.reload();
-        })
-        .catch((error) => {
-          alert("Travel Put Error: ", error.response.data )
-        });
-    },
-    async updateTravelEvent({ commit }, travel_event) {
-      EventService.putTravelEvent(travel_event)
-        .then((response) => {
-          commit("SET_TRAVEL_EVENT", response.data);
-          alert("Travel Event was successfully Updated for " + travel_event.title);
-          location.reload();
-        })
-        .catch((error) => {
-          alert("Travel Event Put Error: ", error.response.data )
-        });
-    },
-
     async createUser({ commit }, user) {
       EventService.postUser(user)
         .then(() => {
@@ -1712,7 +1495,6 @@ actions: {
       console.log('🧹 Clearing large datasets from memory...');
       
       // Clear arrays but keep essential data
-      //commit('SET_BOOKS', []);
       //commit('SET_FILMS', []);
       //commit('SET_GOLFS', []);
       commit('SET_EVENTS', []);
@@ -1720,7 +1502,6 @@ actions: {
       commit('SET_PLANTS', []);
       commit('SET_PRODUCTS', []);
       commit('SET_TRAILS', []);
-      commit('SET_TRAVELS', []);
       commit('SET_GLUCOSE_READINGS', []);
       commit('SET_WATERINGS', []);
       
@@ -1750,9 +1531,6 @@ actions: {
     waterings(state) {
       return state.waterings || []; // Ensure it always returns an array
     },
-    //numberOfBooks(state) {
-    //  return state.books.length
-    //},
     loggedIn (state) {
       return !!state.user
     },

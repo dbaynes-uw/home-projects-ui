@@ -1,136 +1,218 @@
-
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
-      <h2>Book List for {{ firstName }} - {{ numberOfBooks }} Books Read</h2>
-    </v-card-title>
-    <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'BookCreate' }">Add Book</router-link>
-        </button> 
-      </li>
-      <li>
-        <button id="button-as-link" @click="requestIndexDetail">
-          <u>Card or Index View</u>
-        </button>
-      </li>
-    </ul> 
-    <br/>
-  </v-card>
-  <br/>
-  <div style="width: 100%">
-    <BookSearch
-      ref="childRef"
-      @search-array-returned="handleReturnArray"
-      :inputSearchText="inputSearchText"
-      :books="books"
-      >
-    </BookSearch>
-  </div>
-  <br/>
-  <div class="book-list">
-    <span v-if="isEmptyResultsArray">
-      <span v-if="searchResults == false">
-        <h3 id="h3-left">No Search Results Returned</h3>
-      </span>
-      <span v-else>
-        <span v-if="requestIndexDetailFlag == false">
-          <!-- ✅ FIXED: Use books instead of bookStore.books -->
-          <h3 id="h3-left">&nbsp;&nbsp;Total: {{ books.length }}</h3>
-          <span class="h3-left-total-child">Double click Item Below to Edit</span>
-          <div class="cards">
-            <!-- ✅ FIXED: Use books instead of bookStore.books -->
-            <BookCard
-              v-for="book in books"
-              :key="book.id"
-              :book="book"
-              class="card"
-              @dblclick="editBook(book)"
-            />
-            <br />
+  <div class="list-view-container">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-nav">
+      <router-link :to="{ name: 'home' }" class="breadcrumb-link">
+        <i class="fas fa-home"></i> Home
+      </router-link>
+      <i class="fas fa-chevron-right breadcrumb-separator"></i>
+      <span class="breadcrumb-current">Books</span>
+    </div>
+
+    <!-- HEADER -->
+    <BaseCard class="header-card">
+      <template #header>
+        <div class="header-content">
+          <div class="title-section">
+            <h2>
+              <i class="fas fa-book animated-icon"></i>
+              {{ firstName }}'s Books
+            </h2>
           </div>
-        </span>
-        <span v-else>
-          <!-- ✅ FIXED: Use books instead of bookStore.books -->
-          <BookIndex :books="books" />
-        </span>
-      </span>
-    </span>
-    <span v-if="!isEmptyResultsArray">
-      <span v-if="requestIndexDetailFlag == false">
-        <h3 id="h3-left">Total: {{ filteredResults.length }}</h3>
-        <span>Double click to Edit!</span>
-        <br/>
-        <div class="cards">
+          <div class="controls-section">
+            <BaseButton variant="success" icon="plus" @click="goToCreate">
+              Add Book
+            </BaseButton>
+            <div class="view-toggle">
+              <button
+                :class="['view-btn', { active: !requestIndexDetailFlag }]"
+                @click="requestIndexDetailFlag = false"
+              >
+                <i class="fas fa-th-large"></i>
+                <span>Cards</span>
+              </button>
+              <button
+                :class="['view-btn', { active: requestIndexDetailFlag }]"
+                @click="requestIndexDetailFlag = true"
+              >
+                <i class="fas fa-list"></i>
+                <span>Index</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- SEARCH -->
+      <BookSearch
+        ref="childRef"
+        @search-array-returned="handleReturnArray"
+        :inputSearchText="inputSearchText"
+        :books="books"
+      />
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card stat-card-primary">
+          <div class="stat-icon"><i class="fas fa-book"></i></div>
+          <div class="stat-value">{{ numberOfBooks }}</div>
+          <div class="stat-label">Total Books</div>
+        </div>
+        <div class="stat-card stat-card-success">
+          <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-value">{{ booksReadThisYear }}</div>
+          <div class="stat-label">Read This Year</div>
+        </div>
+        <div class="stat-card stat-card-info">
+          <div class="stat-icon"><i class="fas fa-user-edit"></i></div>
+          <div class="stat-value">{{ uniqueAuthors }}</div>
+          <div class="stat-label">Authors</div>
+        </div>
+      </div>
+    </BaseCard>
+
+    <!-- LOADING -->
+    <div v-if="isLoading" class="loading-content">
+      <div class="spinner"></div>
+      <p>Loading books...</p>
+    </div>
+
+    <!-- BOOKS -->
+    <div v-else class="books-section">
+      <div v-if="displayBooks.length === 0" class="empty-content">
+        <i class="fas fa-book-open fa-3x empty-icon"></i>
+        <p>No books yet — add your first one!</p>
+        <BaseButton variant="primary" icon="plus" @click="goToCreate">Add Book</BaseButton>
+      </div>
+      <template v-else-if="!requestIndexDetailFlag">
+        <p class="hint-text">Double-click a card to edit</p>
+        <div class="books-grid">
           <BookCard
-            v-for="book in filteredResults"
+            v-for="book in displayBooks"
             :key="book.id"
             :book="book"
             @dblclick="editBook(book)"
           />
-          <br />
         </div>
-      </span>
-      <span v-else>
-        <BookIndex :books="filteredResults" />
-      </span>
-    </span>
+      </template>
+      <BookIndex v-else :books="displayBooks" />
+    </div>
+
   </div>
 </template>
 <script setup>
-// ❌ REMOVE PINIA IMPORTS
-// import { useBookStore } from '@/stores/BookStore.js'
-// const userStore = useUserStore()
-// const bookStore = useBookStore()
-
-// ✅ USE VUEX INSTEAD
 import { useStore } from 'vuex'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useBookStore } from '@/stores/books/BookStore.js'
+import BaseCard from '@/components/ui/BaseCard.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import dayjs from 'dayjs'
 
 import BookIndex from "@/components/books/BookIndex.vue"
 import BookCard from "@/components/books/BookCard.vue"
 import BookSearch from "@/components/books/BookSearch.vue"
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue"
 
-// ✅ VUEX STORE ACCESS
 const store = useStore()
+const bookStore = useBookStore()
+const router = useRouter()
 
-// ✅ ACCESS FIRSTNAME FROM VUEX GETTERS
-const firstName = computed(() => store.getters.firstName)
-
-// ✅ ACCESS BOOKS FROM VUEX STATE
-const books = computed(() => store.state.books || [])
-const numberOfBooks = computed(() => books.value.length)
-
-// ✅ FETCH BOOKS FROM VUEX ACTION
-onMounted(() => {
-  store.dispatch('fetchBooks')
+const firstName = computed(() => {
+  const user = store.state.user
+  const email = user?.resource_owner?.email ?? user?.email ?? ''
+  return email.split('@')[0]
 })
 
-// ✅ REST OF YOUR COMPONENT LOGIC
+const books = computed(() => bookStore.allBooks)
+const numberOfBooks = computed(() => bookStore.numberOfBooks)
+const isLoading = computed(() => bookStore.isLoading)
+
+const booksReadThisYear = computed(() => {
+  const year = dayjs().year()
+  return books.value.filter(b => b.date_read && dayjs(b.date_read).year() === year).length
+})
+
+const uniqueAuthors = computed(() =>
+  new Set(books.value.map(b => b.author).filter(Boolean)).size
+)
+
+onMounted(() => {
+  bookStore.fetchBooks()
+})
+
 const requestIndexDetailFlag = ref(false)
-const searchResults = ref(null)
 const inputSearchText = ref('')
 const filteredResults = ref([])
-const router = useRouter()
+
+const displayBooks = computed(() =>
+  filteredResults.value.length > 0 ? filteredResults.value : books.value
+)
 
 const handleReturnArray = (array) => {
   filteredResults.value = array
 }
 
-const isEmptyResultsArray = computed(() => filteredResults.value.length === 0)
-
-function requestIndexDetail() {
-  requestIndexDetailFlag.value = !requestIndexDetailFlag.value
-}
-
 function editBook(book) {
   router.push({ name: 'BookEdit', params: { id: `${book.id}` } })
 }
+
+function goToCreate() {
+  router.push({ name: 'BookCreate' })
+}
 </script>
 
+<style scoped>
+.books-section {
+  margin-top: 1.5rem;
+}
 
-<style></style>
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.hint-text {
+  font-size: 0.8rem;
+  color: #718096;
+  margin-bottom: 0.5rem;
+}
+
+.loading-content {
+  text-align: center;
+  padding: 4rem 1.25rem;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(102, 126, 234, 0.1);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-content {
+  text-align: center;
+  padding: 4rem 1.25rem;
+}
+
+.empty-icon {
+  color: #cbd5e0;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .books-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+</style>

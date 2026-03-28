@@ -59,9 +59,8 @@ const routes = [
     name: "About",
     component: () => import("../views/About.vue"),
   },
-  // ❌ TEMPORARILY DISABLED - High memory usage
   // ✅ BOOKS
-  /*
+  
   {
     path: "/books",
     name: "BookList",
@@ -88,7 +87,7 @@ const routes = [
     component: () => import('@/views/books/BookEdit.vue'),
     meta: { requiresAuth: true}
   },
-  */
+
   // ✅ EVENTS
   {
     path: "/events",

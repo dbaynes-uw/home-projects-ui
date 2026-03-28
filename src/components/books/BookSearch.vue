@@ -15,14 +15,12 @@
     </div>
   </div>
 </template>
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/books/BookSearch.vue -->
 <script setup>
-import { useStore } from 'vuex'
 import { ref, computed, watch } from 'vue'
+import { useBookStore } from '@/stores/books/BookStore.js'
 
-const store = useStore()
+const bookStore = useBookStore()
 
-// ✅ PROPS (READ-ONLY)
 const props = defineProps({
   inputSearchText: String,
   books: Array
@@ -30,16 +28,14 @@ const props = defineProps({
 
 const emit = defineEmits(['search-array-returned'])
 
-// ✅ LOCAL REACTIVE VARIABLE (NOT PROP!)
 const searchText = ref(props.inputSearchText || '')
 const filteredBooks = ref([])
 
-// ✅ GET BOOKS FROM VUEX OR PROPS
-const books = computed(() => props.books || store.state.books || [])
+// Props take priority; fall back to store if parent doesn't pass books
+const allBooks = computed(() => props.books?.length ? props.books : bookStore.allBooks)
 
-// ✅ SEARCH LOGIC
 const performSearch = () => {
-  const booksToSearch = books.value
+  const booksToSearch = allBooks.value
   
   if (!searchText.value || searchText.value.length < 2) {
     filteredBooks.value = booksToSearch
@@ -57,25 +53,20 @@ const performSearch = () => {
   emit('search-array-returned', filteredBooks.value)
 }
 
-// ✅ SEARCH FUNCTION FOR KEYUP EVENT
 const searchColumns = () => {
   performSearch()
 }
 
-// ✅ RESET SEARCH FUNCTION
 const resetSearch = () => {
   searchText.value = ''
   performSearch()
 }
 
-// ✅ WATCH FOR SEARCH TEXT CHANGES
 watch(searchText, performSearch)
 
-// ✅ WATCH FOR PROP CHANGES
 watch(() => props.inputSearchText, (newValue) => {
   searchText.value = newValue || ''
 })
 
-// ✅ INITIAL SEARCH
 performSearch()
 </script>
