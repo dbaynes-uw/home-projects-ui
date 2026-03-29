@@ -2,12 +2,18 @@
   <div class="list-view-container">
 
     <!-- BREADCRUMB -->
-    <div class="breadcrumb-nav">
-      <router-link :to="{ name: 'home' }" class="breadcrumb-link">
-        <i class="fas fa-home"></i> Home
-      </router-link>
-      <i class="fas fa-chevron-right breadcrumb-separator"></i>
-      <span class="breadcrumb-current">Books</span>
+    <div class="page-header">
+      <h1 class="breadcrumbs-header">
+        <router-link :to="{ name: 'About' }" class="breadcrumb-link">
+          <i class="fas fa-home"></i>
+          Home
+        </router-link>
+        <i class="fas fa-chevron-right breadcrumb-separator"></i>
+        <span>
+          <i class="fas fa-book icon-books"></i>
+          <span class="breadcrumb-current">Books</span>
+        </span>
+      </h1>
     </div>
 
     <!-- HEADER -->
@@ -174,7 +180,77 @@ function goToCreate() {
   gap: 1.25rem;
   margin-top: 0.75rem;
 }
+/* Page wrapper spacing */
+.page-wrapper {
+  padding-bottom: 2rem;
+}
+.breadcrumbs-header {
+  padding-top: 1rem;
+  font-size: 1.5rem;;
+}
+/* View toggle buttons */
+.view-toggle {
+  display: flex;
+  margin-top: .5rem;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.25rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+/* Breadcrumb styling */
+.breadcrumb-current {
+  color: navy;
+  font-weight: 600;
+}
+.breadcrumb-link {
+  color: navy;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+}
 
+.breadcrumb-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  font-size: 1.25rem;
+  opacity: 0.6;
+  margin: 0 0.5rem;
+}
+
+.view-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.view-btn:hover {
+  background: #f3f4f6;
+  color: #3b82f6;
+}
+
+.view-btn.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.view-btn i {
+  font-size: 1rem;
+}
 .hint-text {
   font-size: 0.8rem;
   color: #718096;
