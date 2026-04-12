@@ -117,6 +117,10 @@
               OOB
               <i v-if="sortBy.startsWith('oob')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
+            <th v-if="visibleColumns.glucose" class="sortable">
+              <i class="fas fa-tint"></i>
+              Glucose
+            </th>
             <th class="actions-column">Actions</th>
           </tr>
         </thead>
@@ -141,6 +145,19 @@
             <td v-if="visibleColumns.toBreaths">{{ sleepMarker.to_breaths_per_minute }}</td>
             <td v-if="visibleColumns.oob" class="oob-cell">
               <i v-if="sleepMarker.had_oob" class="fas fa-ghost oob-icon" title="Had OOB"></i>
+              <span v-else class="text-muted">-</span>
+            </td>
+            <td v-if="visibleColumns.glucose" class="glucose-cell">
+              <template v-if="glucoseForDate(sleepMarker.sleep_date).length">
+                <span
+                  v-for="r in glucoseForDate(sleepMarker.sleep_date)"
+                  :key="r.id"
+                  :class="['glucose-badge', glucoseCellClass([r])]"
+                  :title="r.reading_type || 'Reading'"
+                >
+                  {{ r.reading || r.glucose_value }}
+                </span>
+              </template>
               <span v-else class="text-muted">-</span>
             </td>
 
@@ -240,8 +257,24 @@ const props = defineProps({
   sleepMarkers: {
     type: Array,
     required: true
+  },
+  glucoseByDate: {
+    type: Object,
+    default: () => ({})
   }
 });
+
+function glucoseForDate(date) {
+  return props.glucoseByDate[date] || [];
+}
+
+function glucoseCellClass(readings) {
+  if (!readings.length) return '';
+  const v = parseFloat(readings[0].reading || readings[0].glucose_value);
+  if (v < 100) return 'glucose-good';
+  if (v <= 125) return 'glucose-warning';
+  return 'glucose-high';
+}
 
 const emit = defineEmits(['edit', 'delete']);
 
@@ -268,7 +301,8 @@ const visibleColumns = ref({
   toBpm: false,
   fromBreaths: false,
   toBreaths: false,
-  oob: true
+  oob: true,
+  glucose: true
 });
 
 // ✅ Load column preferences from localStorage
@@ -308,7 +342,8 @@ function getColumnLabel(col) {
     toBpm: 'BPM To',
     fromBreaths: 'Breaths From',
     toBreaths: 'Breaths To',
-    oob: 'OOB'
+    oob: 'OOB',
+    glucose: 'Glucose'
   };
   return labels[col] || col;
 }
@@ -506,8 +541,10 @@ function parseTime(timeStr) {
 }
 const averageScore = computed(() => {
   if (filteredMarkers.value.length === 0) return '-';
-  const total = filteredMarkers.value.reduce((sum, m) => sum + parseInt(m.sleep_score), 0);
-  return (total / filteredMarkers.value.length).toFixed(1);
+  const valid = filteredMarkers.value.filter(m => m.sleep_score != null && m.sleep_score !== '');
+  if (valid.length === 0) return '-';
+  const total = valid.reduce((sum, m) => sum + (parseInt(m.sleep_score) || 0), 0);
+  return (total / valid.length).toFixed(1);
 });
 </script>
 
@@ -776,6 +813,25 @@ const averageScore = computed(() => {
   color: #667eea;
   font-size: 18px;
 }
+
+/* Glucose column */
+.glucose-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.glucose-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 1px;
+}
+
+.glucose-good    { background: #c6f6d5; color: #22543d; }
+.glucose-warning { background: #fefcbf; color: #744210; }
+.glucose-high    { background: #fed7d7; color: #742a2a; }
 
 /* Stats summary */
 .stats-summary {

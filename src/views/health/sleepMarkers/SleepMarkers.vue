@@ -123,6 +123,7 @@
           v-for="sleepMarker in sleepMarkers"
           :key="sleepMarker.id"
           :sleepMarker="sleepMarker"
+          :glucoseByDate="glucoseByDate"
           viewMode="grid"
           @view="openDetailsModal"
           @edit="editMarker"
@@ -146,6 +147,7 @@
     <SleepMarkerIndex
       v-else-if="currentView === 'table'"
       :sleepMarkers="sleepMarkers"
+      :glucoseByDate="glucoseByDate"
       @edit="editMarker"
       @delete="deleteMarker"
     />
@@ -211,6 +213,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import { useSleepMarkerStore } from '@/stores/health/SleepMarkerStore';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
@@ -240,9 +243,26 @@ const views = [
   { value: 'charts', label: 'Charts', icon: 'chart-line' }
 ];
 
+// ✅ VUEX (for glucose readings cross-reference)
+const store = useStore();
+
 // ✅ COMPUTED
 const sleepMarkers = computed(() => sleepMarkerStore.allSleepMarkers);
 const isLoading = computed(() => sleepMarkerStore.isLoading);
+
+// Build a date-keyed map of glucose readings: { "2025-01-15": [reading, ...] }
+const glucoseByDate = computed(() => {
+  const map = {};
+  (store.state.glucoseReadings || []).forEach(r => {
+    const raw = r.reading_date || '';
+    const date = raw.split('T')[0].split(' ')[0];
+    if (date) {
+      if (!map[date]) map[date] = [];
+      map[date].push(r);
+    }
+  });
+  return map;
+});
 const averageSleepHours = computed(() => sleepMarkerStore.averageSleepHours);
 const averageSleepScore = computed(() => sleepMarkerStore.averageSleepScore);
 const averageAwakeSleep = computed(() => sleepMarkerStore.averageAwakeSleep);
@@ -342,6 +362,10 @@ onMounted(async () => {
   } catch (error) {
     console.error('❌ Fetch error:', error);
     alert('Failed to load sleep data. Please refresh the page.');
+  }
+  // Fetch glucose readings for cross-reference (silent — don't block sleep load)
+  if (!store.state.glucoseReadings?.length) {
+    store.dispatch('fetchGlucoseReadings').catch(e => console.warn('Could not load glucose readings:', e));
   }
 });
 </script>

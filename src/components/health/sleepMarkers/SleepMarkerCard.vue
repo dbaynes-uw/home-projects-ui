@@ -96,17 +96,7 @@
           <span class="stat-label">To Breaths Per Minute</span>
         </div> 
       </div>
-      <!-- Fasting Glucose Banner -->
-      <div v-if="sleepMarker.am_fasting_glucose_value" class="glucose-banner" :class="glucoseColorClass">
-        <div class="glucose-content">
-          <i class="fas fa-tint"></i>
-          <div class="glucose-info">
-            <span class="glucose-label">Morning Fasting Glucose</span>
-            <span class="glucose-value">{{ sleepMarker.am_fasting_glucose_value }} mg/dL</span>
-          </div>
-        </div>
-      </div>
-
+      <!-- Fasting Glucose Banner Removed-->
       <!-- Stats Grid -->
       <div class="stats-grid">
         <div class="stat-item">
@@ -131,16 +121,16 @@
         </div>        
       </div>
 
-      <!-- Fasting Weight Banner -->
-      <div class="weight-banner">
-        <div class="weight-content">
-          <i class="fas fa-weight"></i>
-          <div class="weight-info">
-            <span class="weight-label">Morning Fasting Weight</span>
-            <span v-if="sleepMarker.fasting_weight" class="weight-value">{{ formattedWeight }} lbs</span>
-          </div>
+      <!-- Fasting Weight Banner 
+      <div class="weight-banner"-->
+      <div class="weight-content">
+        <i class="fas fa-weight"></i>
+        <div class="weight-info">
+          <span class="weight-label">Morning Fasting Weight</span>
+          <span v-if="sleepMarker.fasting_weight" class="weight-value">{{ formattedWeight }} lbs</span>
         </div>
       </div>
+      <!--/div->
 
       <!-- OOB Section -->
       <div v-if="sleepMarker.had_oob" class="oob-details">
@@ -161,6 +151,23 @@
           <div v-else class="notes-indicator">
             <span>OOB (no notes)</span>
           </div>            
+        </div>
+      </div>
+
+      <!-- Glucose Readings Section -->
+      <div v-if="dayGlucoseReadings.length" class="glucose-readings-section">
+        <div class="glucose-readings-header">
+          <i class="fas fa-tint"></i>
+          <span>Glucose Readings</span>
+          <span class="glucose-count-badge">{{ dayGlucoseReadings.length }}</span>
+        </div>
+        <div class="glucose-readings-list">
+          <div v-for="reading in dayGlucoseReadings" :key="reading.id" class="glucose-reading-item">
+            <span class="glucose-reading-type">{{ reading.reading_type || 'Reading' }}</span>
+            <span :class="['glucose-reading-value', glucoseValueClass(reading.reading || reading.glucose_value)]">
+              {{ reading.reading || reading.glucose_value }} mg/dL
+            </span>
+          </div>
         </div>
       </div>
 
@@ -264,8 +271,21 @@ const props = defineProps({
     type: String,
     default: 'grid',
     validator: (value) => ['grid', 'detail'].includes(value)
+  },
+  glucoseByDate: {
+    type: Object,
+    default: () => ({})
   }
 });
+
+const dayGlucoseReadings = computed(() => props.glucoseByDate[props.sleepMarker.sleep_date] || []);
+
+function glucoseValueClass(value) {
+  const v = parseFloat(value);
+  if (v < 100) return 'glucose-good';
+  if (v <= 125) return 'glucose-warning';
+  return 'glucose-high';
+}
 
 defineEmits(['view', 'edit', 'delete']);
 
@@ -357,4 +377,64 @@ const formattedWeight = computed(() => {
   line-height: 1.5;
   font-style: italic;
 }
+
+/* Glucose readings cross-reference section */
+.glucose-readings-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(49, 130, 206, 0.08) 0%, rgba(49, 130, 206, 0.03) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(49, 130, 206, 0.2);
+}
+
+.glucose-readings-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #3182ce;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.glucose-readings-header i { font-size: 14px; }
+
+.glucose-count-badge {
+  background: #3182ce;
+  color: white;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.glucose-readings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.glucose-reading-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.glucose-reading-type {
+  text-transform: capitalize;
+  color: #718096;
+}
+
+.glucose-reading-value {
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.glucose-good   { background: #c6f6d5; color: #22543d; }
+.glucose-warning { background: #fefcbf; color: #744210; }
+.glucose-high   { background: #fed7d7; color: #742a2a; }
 </style>
