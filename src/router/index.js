@@ -195,7 +195,7 @@ const routes = [
   },
 
   // ❌ TEMPORARILY DISABLED - High memory usage
-  /* 
+
   // ✅ GOLF
   {
     path: "/golfs",
@@ -223,7 +223,7 @@ const routes = [
     component: () => import('@/views/golfs/GolfEdit.vue'),
     meta: { requiresAuth: true}
   },
-  */
+
   // ========================================
   // HEALTH DASHBOARD
   // ========================================

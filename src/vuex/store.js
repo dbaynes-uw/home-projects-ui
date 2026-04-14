@@ -197,18 +197,18 @@ export default new Vuex.Store({
     SET_GLUCOSE_READING(state, reading) {
       state.glucoseReading = reading;
     },
-    //ADD_GOLF(state, golf) {
-    //  state.golfs.push(golf);
-    //},
-    //DELETE_GOLF(state, golf) {
-    //  state.golf = golf;
-    //},
-    //SET_GOLF(state, golf) {
-    //  state.golf = golf;
-    //},
-    //SET_GOLFS(state, golfs) {
-    //  state.golfs = golfs;
-    //},
+    ADD_GOLF(state, golf) {
+      state.golfs.push(golf);
+    },
+    DELETE_GOLF(state, golf) {
+      state.golf = golf;
+    },
+    SET_GOLF(state, golf) {
+      state.golf = golf;
+    },
+    SET_GOLFS(state, golfs) {
+      state.golfs = golfs;
+    },
     // ✅ SLEEP_MARKER MUTATIONS
     /*
     ADD_SLEEP_MARKER(state, sleepMarker) {
@@ -397,7 +397,7 @@ export default new Vuex.Store({
     
     RESET_STATE(state) {
       //state.films = [];
-      //state.golfs = [];
+      state.golfs = [];
       state.events = [];
       state.plants = [];
       state.products = [];
@@ -1017,7 +1017,7 @@ actions: {
         alert("Failed to create glucose reading. Please try again.");
       }
     },
-    /*
+ 
     async createGolf({ commit }, golf) {
       EventService.postGolf(golf)
         .then(() => {
@@ -1063,7 +1063,7 @@ actions: {
           alert("Golf Fetch Error: ", error.response.data )
         });
     },
-    */
+    
     async createProduct({ commit }, product) {
       try {
         const response = await EventService.postProduct(product);
@@ -1496,7 +1496,7 @@ actions: {
       
       // Clear arrays but keep essential data
       //commit('SET_FILMS', []);
-      //commit('SET_GOLFS', []);
+      commit('SET_GOLFS', []);
       commit('SET_EVENTS', []);
       commit('SET_OOBS', []);
       commit('SET_PLANTS', []);
