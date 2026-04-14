@@ -54,7 +54,12 @@
           <i class="fas fa-bed"></i>
           <span class="time-label">Bedtime Score Explained</span>
           <span class="time-value">{{ sleepMarker.bedtime_score_explained }}</span>
-        </div>     
+        </div>    
+        <div class="stat-item">
+          <i class="fas fa-star stat-icon"></i>
+          <span class="stat-value">{{ sleepMarker.interruptions }}</span>
+          <span class="stat-label">Get Ups</span>
+        </div>         
         <div class="stat-item">
           <i class="fas fa-star stat-icon"></i>
           <span class="stat-value">{{ sleepMarker.interruptions_score }}</span>

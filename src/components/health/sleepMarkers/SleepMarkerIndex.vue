@@ -77,6 +77,11 @@
               Awake
               <i v-if="sortBy.startsWith('awake')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
+            <th v-if="visibleColumns.interruptions" @click="setSortBy('interruptions')" class="sortable">
+              <i class="fa-solid fa-bolt"></i>
+              Interruptions
+              <i v-if="sortBy.startsWith('interruptions')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
+            </th>            
             <th v-if="visibleColumns.rem" @click="setSortBy('rem')" class="sortable">
               <i class="fa-solid fa-brain"></i>
               REM
@@ -136,6 +141,7 @@
             <td v-if="visibleColumns.inBed">{{ sleepMarker.time_in_bed }}</td>
             <td v-if="visibleColumns.asleep">{{ sleepMarker.time_asleep }}</td>
             <td v-if="visibleColumns.awake">{{ sleepMarker.awake }}</td>
+            <td v-if="visibleColumns.interruptions">{{ sleepMarker.interruptions }}</td>
             <td v-if="visibleColumns.rem">{{ sleepMarker.rem }}</td>
             <td v-if="visibleColumns.core">{{ sleepMarker.core }}</td>
             <td v-if="visibleColumns.deep">{{ sleepMarker.deep }}</td>
@@ -294,6 +300,7 @@ const visibleColumns = ref({
   inBed: true,
   asleep: true,
   awake: true,
+  interruptions: true,
   rem: true,
   core: true,
   deep: true,
@@ -335,6 +342,7 @@ function getColumnLabel(col) {
     inBed: 'In Bed',
     asleep: 'Asleep',
     awake: 'Awake',
+    interruptions: 'Interruptions',
     rem: 'REM',
     core: 'Core',
     deep: 'Deep',
@@ -424,6 +432,10 @@ const filteredMarkers = computed(() => {
         return parseTime(b.awake) - parseTime(a.awake);
       case 'awake-asc':
         return parseTime(a.awake) - parseTime(b.awake);
+      case 'interruptions-desc':
+        return (parseTime(b.interruptions) || 0) - (parseTime(a.interruptions) || 0);
+      case 'interruptions-asc':
+        return (parseTime(a.interruptions) || 0) - (parseTime(b.interruptions) || 0);
       case 'rem-desc':
         return parseTime(b.rem) - parseTime(a.rem);
       case 'rem-asc':
@@ -436,7 +448,6 @@ const filteredMarkers = computed(() => {
         return parseTime(b.deep) - parseTime(a.deep);
       case 'deep-asc':
         return parseTime(a.deep) - parseTime(b.deep);       
-      
       case 'from-bpm-desc':
         return (parseInt(b.from_heart_beats_per_minute) || 0) - (parseFloat(a.from_heart_beats_per_minute) || 0);
       case 'from-bpm-asc':
@@ -613,7 +624,7 @@ const averageScore = computed(() => {
   font-weight: 600;
 }
 
-/* Time columns (In Bed, Asleep, Awake, REM, Core, Deep) - centered */
+/* Time columns (In Bed, Asleep, Awake, Interruptions, REM, Core, Deep) - centered */
 .compact-table table th:nth-child(3),
 .compact-table table th:nth-child(4),
 .compact-table table th:nth-child(5),
