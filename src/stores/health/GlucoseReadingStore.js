@@ -97,12 +97,16 @@ export const useGlucoseReadingStore = defineStore('glucoseReadings', {
     async updateGlucoseReading(readingData) {
       this.loading = true;
       try {
-        const response = await EventService.putGlucoseReading(readingData);
-        const idx = this.glucoseReadings.findIndex(r => r.id === readingData.id);
-        if (idx !== -1) this.glucoseReadings[idx] = response.data;
-        this.glucoseReading = response.data;
+        await EventService.putGlucoseReading(readingData);
+        // Re-fetch all readings so the store always reflects server-authoritative data,
+        // regardless of whether the API returns 200+body or 204 No Content.
+        await this.fetchGlucoseReadings();
+        const updated = this.glucoseReadings.find(
+          r => r.id === readingData.id || r.id === parseInt(readingData.id)
+        ) || readingData;
+        this.glucoseReading = updated;
         notify('Glucose reading updated successfully', 'success');
-        return response.data;
+        return updated;
       } catch (error) {
         this.error = error.message;
         console.error('❌ GlucoseReadingStore: updateGlucoseReading error:', error);

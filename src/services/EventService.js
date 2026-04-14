@@ -185,7 +185,7 @@ export default {
   },
   async putGlucoseReading(updatedGlucoseReading) {
     this.init();
-    return api.put(api_url + "glucose_readings" + `/${updatedGlucoseReading.id}`, updatedGlucoseReading);
+    return api.put(api_url + "glucose_readings" + `/${updatedGlucoseReading.id}`, { glucose_reading: updatedGlucoseReading });
   },
   async postGlucoseReading(glucose_reading) {
     this.init();
@@ -198,7 +198,7 @@ export default {
     //*  console.error("ES: postGlucoseReading - meal is null or undefined");
     //*  throw new Error("Meal is required");
     //*}
-    return api.post(api_url + 'glucose_readings', glucose_reading);
+    return api.post(api_url + 'glucose_readings', { glucose_reading: glucose_reading });
   },
   getHealthMarker(id) {
     console.log("ES GET Health Marker with ID:", id);

@@ -45,43 +45,6 @@
       </div>
     </div>
 
-    <!-- Insulin Section -->
-    <div class="card-section">
-      <h4><i class="fas fa-syringe"></i> Insulin Information</h4>
-      <div v-if="glucoseReading.insulin_units || glucoseReading.insulin_type" class="info-grid">
-        <div class="info-item">
-          <i class="fas fa-syringe"></i>
-          <div>
-            <span class="label">Units</span>
-            <span class="value">{{ glucoseReading.insulin_units || '-' }}</span>
-          </div>
-        </div>
-        <div class="info-item">
-          <i class="fas fa-tag"></i>
-          <div>
-            <span class="label">Type</span>
-            <span class="value">{{ glucoseReading.insulin_type || '-' }}</span>
-          </div>
-        </div>
-      </div>
-      <p v-else class="no-data">No insulin information recorded</p>
-    </div>
-
-    <!-- Nutrition Section -->
-    <div class="card-section">
-      <h4><i class="fas fa-bread-slice"></i> Nutrition</h4>
-      <div v-if="glucoseReading.carbs_consumed" class="info-grid">
-        <div class="info-item">
-          <i class="fas fa-bread-slice"></i>
-          <div>
-            <span class="label">Carbs Consumed</span>
-            <span class="value">{{ glucoseReading.carbs_consumed }}g</span>
-          </div>
-        </div>
-      </div>
-      <p v-else class="no-data">No nutrition information recorded</p>
-    </div>
-
     <!-- Notes Section -->
     <div class="card-section">
       <h4><i class="fas fa-sticky-note"></i> Notes</h4>

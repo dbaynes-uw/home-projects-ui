@@ -47,9 +47,6 @@
               <i v-if="sortBy.startsWith('value')" :class="sortBy.includes('desc') ? 'fas fa-sort-down' : 'fas fa-sort-up'"></i>
             </th>
             <th><i class="fas fa-utensils"></i> Type</th>
-            <th><i class="fas fa-syringe"></i> Insulin</th>
-            <th><i class="fas fa-bread-slice"></i> Carbs</th>
-            <th><i class="fas fa-pills"></i> Meds</th>
             <th class="actions-column">Actions</th>
           </tr>
         </thead>
@@ -68,12 +65,6 @@
               </span>
             </td>
             <td>{{ reading.reading_type || '-' }}</td>
-            <td>{{ reading.insulin_units ? `${reading.insulin_units}u` : '-' }}</td>
-            <td>{{ reading.carbs_consumed ? `${reading.carbs_consumed}g` : '-' }}</td>
-            <td>
-              <i v-if="reading.medication_taken" class="fas fa-check-circle text-success"></i>
-              <span v-else class="text-muted">-</span>
-            </td>
             <td class="actions-cell" @click.stop>
               <button class="action-btn edit-btn" @click="openModal(reading)" title="View Details">
                 <i class="fas fa-eye"></i>

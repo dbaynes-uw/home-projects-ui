@@ -113,10 +113,12 @@
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
+import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
 
-const store = useStore();
+const store = useStore();   // still needed for user email if required
 const route = useRoute();
 const router = useRouter();
+const glucoseReadingStore = useGlucoseReadingStore();
 
 const reading_date = ref('');
 const reading = ref('');
@@ -124,28 +126,14 @@ const unit = ref('');
 const reading_type = ref('');
 const status = ref('');
 const notes = ref('');
-  // Dropdown options for the reading_type field
-  const readingTypeOptions = ref([]);
-  // Fetch unique reading_types from Vuex store or API
-  const fetchReadingTypeOptions = async () => {
-    try {
-      // Assuming glucose readings are stored in Vuex state
-      const glucoseReadings = store.state.glucoseReadings;
-      
-      // Extract unique reading_types
-      const uniqueReadingTypes = [...new Set(glucoseReadings.map(reading => reading.reading_type))];
-      readingTypeOptions.value = uniqueReadingTypes;
-    } catch (error) {
-      console.error('Error fetching reading type options:', error);
-    }
-  };
-  // Fetch reading_type options on component mount
+const readingTypeOptions = ref(['AM-Fasting', 'Post-Meal', 'Before Meal', 'After Meal', 'Bedtime', 'Random']);
 
 onMounted(async () => {
-  await store.dispatch('fetchGlucoseReading', route.params.id);
-  const result = store.state.glucoseReading;
-  fetchReadingTypeOptions();
-  // Convert the reading_date to local timezone and format for datetime-local input
+  await glucoseReadingStore.fetchGlucoseReading(route.params.id);
+  const result = glucoseReadingStore.currentGlucoseReading;
+  if (!result) return;
+
+  // Convert reading_date to local timezone for datetime-local input
   const isoDate = new Date(result.reading_date);
   const localDate = new Date(isoDate.getTime() - isoDate.getTimezoneOffset() * 60000);
   const formattedDate = localDate.toISOString().slice(0, 16);
@@ -159,18 +147,20 @@ onMounted(async () => {
 });
 
 async function updateReading() {
-  // Determine the status based on the reading value
-  if (reading.value >= 70 && reading.value <= 99) {
+  // Derive status from reading value
+  const val = parseFloat(reading.value);
+  if (val >= 70 && val <= 99) {
     status.value = 'Good - 70-99 mg/dl';
-  } else if (reading.value >= 100 && reading.value <= 125) {
+  } else if (val >= 100 && val <= 125) {
     status.value = 'Prediabetes - 100-125 mg/dl';
-  } else if (reading.value >= 126) {
+  } else if (val >= 126) {
     status.value = 'Diabetes - 126+ mg/dl';
   } else {
     status.value = 'Invalid reading';
   }
+
   const updatedReading = {
-    id: route.params.id,
+    id: parseInt(route.params.id),
     reading_date: reading_date.value,
     reading: reading.value,
     unit: unit.value,
@@ -178,7 +168,8 @@ async function updateReading() {
     status: status.value,
     notes: notes.value,
   };
-  await store.dispatch('updateGlucoseReading', updatedReading);
+
+  await glucoseReadingStore.updateGlucoseReading(updatedReading);
   router.push({ name: 'GlucoseReadings' });
 }
 </script>

@@ -68,78 +68,6 @@
       </div>
     </div>
 
-    <!-- Insulin -->
-    <div class="form-section">
-      <h3 class="section-title">
-        <i class="fas fa-syringe"></i>
-        Insulin Information
-      </h3>
-      
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">
-            <i class="fas fa-syringe"></i>
-            Insulin Units
-          </label>
-          <input
-            v-model="formState.insulin_units"
-            type="number"
-            class="form-input"
-            min="0"
-            max="100"
-            step="0.5"
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">
-            <i class="fas fa-tag"></i>
-            Insulin Type
-          </label>
-          <select v-model="formState.insulin_type" class="form-input">
-            <option value="">Select type...</option>
-            <option value="Rapid-Acting">Rapid-Acting</option>
-            <option value="Short-Acting">Short-Acting</option>
-            <option value="Intermediate-Acting">Intermediate-Acting</option>
-            <option value="Long-Acting">Long-Acting</option>
-            <option value="Mixed">Mixed</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Carbs & Medication -->
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">
-          <i class="fas fa-bread-slice"></i>
-          Carbs Consumed (grams)
-        </label>
-        <input
-          v-model="formState.carbs_consumed"
-          type="number"
-          class="form-input"
-          min="0"
-          max="500"
-          step="1"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label checkbox-label">
-          <input
-            v-model="formState.medication_taken"
-            type="checkbox"
-            class="form-checkbox"
-          />
-          <span>
-            <i class="fas fa-pills"></i>
-            Medication Taken
-          </span>
-        </label>
-      </div>
-    </div>
-
     <!-- Notes -->
     <div class="form-group">
       <label class="form-label">
@@ -191,10 +119,6 @@ const formState = reactive({
   reading_time: new Date().toTimeString().slice(0, 5),
   glucose_value: null,
   reading_type: '',
-  insulin_units: null,
-  insulin_type: '',
-  carbs_consumed: null,
-  medication_taken: false,
   notes: ''
 });
 
@@ -213,10 +137,6 @@ watch(() => props.glucoseReading, (newReading) => {
     formState.reading_time = timeStr;
     formState.glucose_value = newReading.reading || newReading.glucose_value; // ✅ API uses 'reading'
     formState.reading_type = newReading.reading_type || '';
-    formState.insulin_units = newReading.insulin_units || null;
-    formState.insulin_type = newReading.insulin_type || '';
-    formState.carbs_consumed = newReading.carbs_consumed || null;
-    formState.medication_taken = newReading.medication_taken || false;
     formState.notes = newReading.notes || '';
     
   } else {
@@ -227,10 +147,6 @@ watch(() => props.glucoseReading, (newReading) => {
     formState.reading_time = new Date().toTimeString().slice(0, 5);
     formState.glucose_value = null;
     formState.reading_type = '';
-    formState.insulin_units = null;
-    formState.insulin_type = '';
-    formState.carbs_consumed = null;
-    formState.medication_taken = false;
     formState.notes = '';
   }
 }, { immediate: true });
@@ -243,10 +159,6 @@ function handleSubmit() {
     reading_date: `${formState.reading_date}T${formState.reading_time}:00`, // ✅ Combine date + time
     reading: parseFloat(formState.glucose_value), // ✅ API expects 'reading' not 'glucose_value'
     reading_type: formState.reading_type || null,
-    insulin_units: formState.insulin_units ? parseFloat(formState.insulin_units) : null,
-    insulin_type: formState.insulin_type || null,
-    carbs_consumed: formState.carbs_consumed ? parseInt(formState.carbs_consumed) : null,
-    medication_taken: formState.medication_taken || false,
     notes: formState.notes || ''
   };
 
