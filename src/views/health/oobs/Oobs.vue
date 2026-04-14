@@ -17,6 +17,8 @@
           </h1>
         </div>
 
+        <HealthDashboardNav />
+
         <!-- ✅ NAVIGATION BUTTONS -->
         <div class="action-bar">
           <div class="action-buttons">
@@ -171,6 +173,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useOobStore } from "@/stores/health/OobStore";
+import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 import BaseModal from "@/components/ui/BaseModal.vue";
 import OobCard from "@/components/health/oobs/OobCard.vue";
 import OobIndex from "@/components/health/oobs/OobIndex.vue";

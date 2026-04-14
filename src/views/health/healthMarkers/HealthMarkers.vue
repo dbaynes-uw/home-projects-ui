@@ -17,6 +17,8 @@
             </span>
           </h1>
         </div>
+        <HealthDashboardNav />
+
         <div class="header-link">
         <a href="https://myhealthchart.com/" target="_blank" class="btn btn-primary">
           <i class="fas fa-external-link-alt"></i>
@@ -414,6 +416,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
+import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
 import HealthMarkerPanelCard from '@/components/health/healthMarkers/HealthMarkerPanelCard.vue';
 import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';

@@ -10,6 +10,8 @@
       </router-link>
     </nav>
 
+    <HealthDashboardNav />
+
     <!-- ✅ HEADER -->
     <div class="page-header">
       <div class="header-content">
@@ -233,6 +235,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseModal from '@/components/ui/BaseModal.vue';

@@ -11,31 +11,7 @@
       <i class="fas fa-chevron-right breadcrumb-separator"></i>
       <span class="breadcrumb-current">Sleep Markers</span>
     </div>
-    <div class="navigation-buttons">
-
-      <router-link :to="{ name: 'HealthMarkers' }" class="nav-btn" id="button-as-link">
-        <i class="fas fa-heartbeat"></i>
-        <span>&nbsp;Health Markers</span>
-      </router-link>
-      
-      <router-link :to="{ name: 'SleepMarkers' }" class="nav-btn" id="button-as-link">
-        <i class="fas fa-bed" aria-hidden="true"></i>
-        <span>&nbsp;&nbsp;Sleep Markers</span>
-      </router-link>
-
-      <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
-        <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
-        <i class="fa fa-heart" aria-hidden="true"></i>
-        <span>&nbsp;Glucose</span>
-      </router-link>
-
-      <router-link :to="{ name: 'Oobs' }" class="nav-btn glucose-btn" id="button-as-link">
-        <!-- ✅ CHANGED: mdi-heart → fas fa-heartbeat -->
-        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-        <span>&nbsp;Oobs</span>
-      </router-link>
-
-    </div>
+    <HealthDashboardNav />
 
     <!-- ✅ HEADER - Now from shared CSS -->
     <BaseCard class="header-card">
@@ -240,6 +216,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useSleepMarkerStore } from '@/stores/health/SleepMarkerStore';
+import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseModal from '@/components/ui/BaseModal.vue';
