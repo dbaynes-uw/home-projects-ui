@@ -29,29 +29,9 @@
       </router-link>
 
     </div>
-    </v-card>
+  </v-card>
 </template>
 <script></script>
 <style scoped>
-.navigation-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin: 1rem;
-}
-.fa-heartbeat {
-  color: lightblue;
-}
-.fa-heart {
-  color: red;
-}
-.fa-bed {
-  color: lightgreen;
-}
-.fa-thumbs-down {
-  color: yellow;
-}
+@import '@/assets/styles/health-dashboard.css';
 </style>
