@@ -2,8 +2,7 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
-      <h3>Edit Golf Round  </h3>
-      <h4>Current User: {{ this.$store.state.user.resource_owner.email}}</h4>
+      <h3>Edit Golf Round</h3>
       <router-link :to="{ name: 'GolfList' }">
         <b>Back to Golf Rounds</b>
       </router-link>
@@ -202,337 +201,122 @@
           <v-icon class="icon-css">mdi-note</v-icon>
         </template>
       </v-text-field>
-      <v-btn type="submit" block class="mt-2" @click="onSubmit">Submit</v-btn>
+      <v-btn type="submit" block class="mt-2" @click="updateGolf">Submit</v-btn>
     </div>
   </v-form>
 </template>
-<script>
-import axios from "axios";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import GolfCalculations from "@/components/golfs/GolfCalculations.js";
+<script setup>
+import { ref, reactive, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
+import GolfCalculations from '@/components/golfs/GolfCalculations.js'
+import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 
-export default {
-  props: ["id"],
-  components: {
-    ConfirmDialogue,
-  },
-  async mounted() {
-    var work_url = ""
-    if (window.location.port == "8080") {
-      // or: "http://davids-macwatering-pro.local:3000/api/v1/";
-      work_url = "http://localhost:3000/api/v1/golfs/";
-    } else {
-      work_url =
-        "https://peaceful-waters-05327-b6d1df6b64bb.herokuapp.com/api/v1/golfs/";
+const route = useRoute()
+const store = useStore()     // still needed for user email (auth lives in Vuex)
+const golfStore = useGolfStore()
+const confirmDialogue = ref(null)
+
+const urlMaxLength = 255
+const color_tees_played = ['Black', 'Blue', 'Red', 'White']
+
+const isFormValid = ref(false)
+const isCourseValid = ref(false)
+const isCourseLocationValid = ref(false)
+const isDatePlayedValid = ref(false)
+const isTeesPlayedValid = ref(false)
+
+const golf = reactive({
+  course: '',
+  course_location: '',
+  url_to_course: '',
+  date_played: null,
+  tees_played: null,
+  players: '',
+  notes: '',
+  par_1_hole: null, par_2_hole: null, par_3_hole: null, par_4_hole: null, par_5_hole: null,
+  par_6_hole: null, par_7_hole: null, par_8_hole: null, par_9_hole: null,
+  par_10_hole: null, par_11_hole: null, par_12_hole: null, par_13_hole: null, par_14_hole: null,
+  par_15_hole: null, par_16_hole: null, par_17_hole: null, par_18_hole: null,
+  score_1_hole: null, score_2_hole: null, score_3_hole: null, score_4_hole: null, score_5_hole: null,
+  score_6_hole: null, score_7_hole: null, score_8_hole: null, score_9_hole: null,
+  score_10_hole: null, score_11_hole: null, score_12_hole: null, score_13_hole: null, score_14_hole: null,
+  score_15_hole: null, score_16_hole: null, score_17_hole: null, score_18_hole: null,
+  putts_1_hole: null, putts_2_hole: null, putts_3_hole: null, putts_4_hole: null, putts_5_hole: null,
+  putts_6_hole: null, putts_7_hole: null, putts_8_hole: null, putts_9_hole: null,
+  putts_10_hole: null, putts_11_hole: null, putts_12_hole: null, putts_13_hole: null, putts_14_hole: null,
+  putts_15_hole: null, putts_16_hole: null, putts_17_hole: null, putts_18_hole: null,
+  penalty_1_hole: null, penalty_2_hole: null, penalty_3_hole: null, penalty_4_hole: null, penalty_5_hole: null,
+  penalty_6_hole: null, penalty_7_hole: null, penalty_8_hole: null, penalty_9_hole: null,
+  penalty_10_hole: null, penalty_11_hole: null, penalty_12_hole: null, penalty_13_hole: null, penalty_14_hole: null,
+  penalty_15_hole: null, penalty_16_hole: null, penalty_17_hole: null, penalty_18_hole: null,
+  created_by: '',
+})
+
+onMounted(async () => {
+  await golfStore.fetchGolf(route.params.id)
+  const loaded = golfStore.currentGolf
+  if (loaded) Object.assign(golf, loaded)
+})
+
+async function updateGolf() {
+  const ok = await confirmDialogue.value.show({
+    title: 'Update Golf from List',
+    message: 'Are you sure you want to update ' + golf.course,
+    okButton: 'Update',
+  })
+  if (ok) {
+    const payload = {
+      ...golf,
+      updated_by: store.state.user?.resource_owner?.email ?? '',
     }
-    this.api_url = work_url
-    const result = await axios.get(this.api_url + +this.$route.params.id);
-    this.golf = result.data;
-  },
-  created() {},
-  data() {
-    return {
-      golf: {
-        course: "",
-        course_location: "",
-        url_to_course: "",
-        date_played: null,
-        tees_played: null,
-        players: "",
-        notes: "",
-        par_1_hole: null,
-        par_2_hole: null,
-        par_3_hole: null,
-        par_4_hole: null,
-        par_5_hole: null,
-        par_6_hole: null,
-        par_7_hole: null,
-        par_8_hole: null,
-        par_9_hole: null,
-        par_10_hole: null,
-        par_11_hole: null,
-        par_12_hole: null,
-        par_13_hole: null,
-        par_14_hole: null,
-        par_15_hole: null,
-        par_16_hole: null,
-        par_17_hole: null,
-        par_18_hole: null, 
-        score_1_hole: null,
-        score_2_hole: null,
-        score_3_hole: null,
-        score_4_hole: null,
-        score_5_hole: null,
-        score_6_hole: null,
-        score_7_hole: null,
-        score_8_hole: null,
-        score_9_hole: null,
-        score_10_hole: null,
-        score_11_hole: null,
-        score_12_hole: null,
-        score_13_hole: null,
-        score_14_hole: null,
-        score_15_hole: null,
-        score_16_hole: null,
-        score_17_hole: null,
-        score_18_hole: null,
-        putts_1_hole: null,
-        putts_2_hole: null,
-        putts_3_hole: null,
-        putts_4_hole: null,
-        putts_5_hole: null,
-        putts_6_hole: null,
-        putts_7_hole: null,
-        putts_8_hole: null,
-        putts_9_hole: null,
-        putts_10_hole: null,
-        putts_11_hole: null,
-        putts_12_hole: null,
-        putts_13_hole: null,
-        putts_14_hole: null,
-        putts_15_hole: null,
-        putts_16_hole: null,
-        putts_17_hole: null,
-        putts_18_hole: null,
-        penalty_1_hole: null,
-        penalty_2_hole: null,
-        penalty_3_hole: null,
-        penalty_4_hole: null,
-        penalty_5_hole: null,
-        penalty_6_hole: null,
-        penalty_7_hole: null,
-        penalty_8_hole: null,
-        penalty_9_hole: null,
-        penalty_10_hole: null,
-        penalty_11_hole: null,
-        penalty_12_hole: null,
-        penalty_13_hole: null,
-        penalty_14_hole: null,
-        penalty_15_hole: null,
-        penalty_16_hole: null,
-        penalty_17_hole: null,
-        penalty_18_hole: null,       
-        created_by: this.$store.state.user.resource_owner.email,
-      },
-      user: null,
-      color_tees_played: ["Black", "Blue", "Red", "White"],
-      front_nine_par: 0,
-      front_nine_score: 0,
-      front_nine_putts: 0,
-      front_nine_penalty: 0,
-      toggle1: false,
-      toggle2: false,
-      toggle3: false,
-      isFormValid: false,
-      isCourseValid: false,
-      isCourseLocationValid: false,
-      urlMaxLength: 255,
-      num: 1,
-      api_url: ""
-    };
-  },
-  setup() {},
-  methods: {
-    async updateGolf() {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Update Golf from List",
-        message:
-          "Are you sure you want to update " +
-          this.golf.course,
-        okButton: "Update",
-      });
-      // If you throw an error, the method will terminate here unless //you surround it wil try/catch
-      if (ok) {
-        const golf = {
-          ...this.golf,
-          updated_by: this.$store.state.user.resource_owner.email ,
-        };
-        const result = await axios.put(
-            this.api_url + 
-            this.$route.params.id,
-          {
-            course: golf.course,
-            course_location: golf.course_location,
-            date_played: golf.date_played,
-            tees_played: golf.tees_played,
-            par_1_hole: golf.par_1_hole,
-            par_2_hole: golf.par_2_hole,
-            par_3_hole: golf.par_3_hole,
-            par_4_hole: golf.par_4_hole,
-            par_5_hole: golf.par_5_hole,
-            par_6_hole: golf.par_6_hole,
-            par_7_hole: golf.par_7_hole,
-            par_8_hole: golf.par_8_hole,
-            par_9_hole: golf.par_9_hole,
-            par_10_hole: golf.par_10_hole,
-            par_11_hole: golf.par_11_hole,
-            par_12_hole: golf.par_12_hole,
-            par_13_hole: golf.par_13_hole,
-            par_14_hole: golf.par_14_hole,
-            par_15_hole: golf.par_15_hole,
-            par_16_hole: golf.par_16_hole,
-            par_17_hole: golf.par_17_hole,
-            par_18_hole: golf.par_18_hole,
-            score_1_hole: golf.score_1_hole,
-            score_2_hole: golf.score_2_hole,
-            score_3_hole: golf.score_3_hole,
-            score_4_hole: golf.score_4_hole,
-            score_5_hole: golf.score_5_hole,
-            score_6_hole: golf.score_6_hole,
-            score_7_hole: golf.score_7_hole,
-            score_8_hole: golf.score_8_hole,
-            score_9_hole: golf.score_9_hole,
-            score_10_hole: golf.score_10_hole,
-            score_11_hole: golf.score_11_hole,
-            score_12_hole: golf.score_12_hole,
-            score_13_hole: golf.score_13_hole,
-            score_14_hole: golf.score_14_hole,
-            score_15_hole: golf.score_15_hole,
-            score_16_hole: golf.score_16_hole,
-            score_17_hole: golf.score_17_hole,
-            score_18_hole: golf.score_18_hole,
-            putts_1_hole: golf.putts_1_hole,
-            putts_2_hole: golf.putts_2_hole,
-            putts_3_hole: golf.putts_3_hole,
-            putts_4_hole: golf.putts_4_hole,
-            putts_5_hole: golf.putts_5_hole,
-            putts_6_hole: golf.putts_6_hole,
-            putts_7_hole: golf.putts_7_hole,
-            putts_8_hole: golf.putts_8_hole,
-            putts_9_hole: golf.putts_9_hole,
-            putts_10_hole: golf.putts_10_hole,
-            putts_11_hole: golf.putts_11_hole,
-            putts_12_hole: golf.putts_12_hole,
-            putts_13_hole: golf.putts_13_hole,
-            putts_14_hole: golf.putts_14_hole,
-            putts_15_hole: golf.putts_15_hole,
-            putts_16_hole: golf.putts_16_hole,
-            putts_17_hole: golf.putts_17_hole,
-            putts_18_hole: golf.putts_18_hole,
-            penalty_1_hole: golf.penalty_1_hole,
-            penalty_2_hole: golf.penalty_2_hole,
-            penalty_3_hole: golf.penalty_3_hole,
-            penalty_4_hole: golf.penalty_4_hole,
-            penalty_5_hole: golf.penalty_5_hole,
-            penalty_6_hole: golf.penalty_6_hole,
-            penalty_7_hole: golf.penalty_7_hole,
-            penalty_8_hole: golf.penalty_8_hole,
-            penalty_9_hole: golf.penalty_9_hole,
-            penalty_10_hole: golf.penalty_10_hole,
-            penalty_11_hole: golf.penalty_11_hole,
-            penalty_12_hole: golf.penalty_12_hole,
-            penalty_13_hole: golf.penalty_13_hole,
-            penalty_14_hole: golf.penalty_14_hole,
-            penalty_15_hole: golf.penalty_15_hole,
-            penalty_16_hole: golf.penalty_16_hole,
-            penalty_17_hole: golf.penalty_17_hole,
-            penalty_18_hole: golf.penalty_18_hole,
-            players: golf.players,
-            url_to_course: golf.url_to_course,
-            notes: golf.notes,
-            updated_by: this.$store.state.user.resource_owner.email, 
-          }
-        );
-        if (result.status >= 200) {
-          alert("Golf has been updated!!");
-          //this.$router.push({ name: "GolfList" });
-          //this.$router.push({ name: "GolfEdit", params: { id: golf.id } });
-          window.location.reload();
-        } else {
-          alert("Update Error Code ", result.status);
-        }
-      }
-    },
-    requiredCourse: function (value) {
-      if (value) {
-        this.isCourseValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isCourseValid = false
-          return 'Please enter Course';
-      }
-    },
-    requiredCourseLocation: function (value) {
-      if (value) {
-        this.isCourseLocationValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isCourseLocationValid = false
-          return 'Please enter Course Location';
-      }
-    },
-    requiredDatePlayed: function (value) {
-      if (value) {
-        this.isDatePlayedValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isDatePlayedValid = false
-          return 'Please enter Date Round Played';
-      }
-    },
-    requiredTeesPlayed: function (value) {
-      if (value) {
-        this.isTeesPlayedValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isTeesPlayedValid = false
-          return 'Please enter Tees Played';
-      }
-    },
-    checkValidations() {
-      if (this.isCourseValid &&
-          this.isCourseLocationValid &&
-          this.isDatePlayedValid &&
-          this.isTeesPlayedValid
-        ) 
-      {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-    },
-    calculateFrontPar(golf) {
-      return GolfCalculations.calculateFrontPar(golf)
-    },
-    calculateBackPar(golf) {
-      return GolfCalculations.calculateBackPar(golf)
-    },
-    calculateTotalPar(golf) {
-      return GolfCalculations.calculateTotalPar(golf)
-    },
-    calculateFrontScore(golf) {
-      return GolfCalculations.calculateFrontScore(golf)
-    },
-    calculateBackScore(golf) {
-      return GolfCalculations.calculateBackScore(golf)
-    },
-    calculateTotalScore(golf) {
-      return GolfCalculations.calculateTotalScore(golf)
-    },
-    calculateFrontPutts(golf) {
-      return GolfCalculations.calculateFrontPutts(golf)
-    },
-    calculateBackPutts(golf) {
-      return GolfCalculations.calculateBackPutts(golf)
-    },
-    calculateTotalPutts(golf) {
-      return GolfCalculations.calculateTotalPutts(golf)
-    },
-    calculateFrontPenalty(golf) {
-      return GolfCalculations.calculateFrontPenalty(golf)
-    },
-    calculateBackPenalty(golf) {
-      return GolfCalculations.calculateBackPenalty(golf)
-    },
-    calculateTotalPenalty(golf) {
-      return GolfCalculations.calculateTotalPenalty(golf)
-    },
-  }           
-};
+    const result = await golfStore.updateGolf(payload)
+    if (result.success) {
+      alert('Golf has been updated!!')
+      window.location.reload()
+    } else {
+      alert('Update error. Please try again.')
+    }
+  }
+}
+
+function requiredCourse(value) {
+  if (value) { isCourseValid.value = true; return true }
+  isFormValid.value = false; isCourseValid.value = false
+  return 'Please enter Course'
+}
+
+function requiredCourseLocation(value) {
+  if (value) { isCourseLocationValid.value = true; return true }
+  isFormValid.value = false; isCourseLocationValid.value = false
+  return 'Please enter Course Location'
+}
+
+function requiredDatePlayed(value) {
+  if (value) { isDatePlayedValid.value = true; return true }
+  isFormValid.value = false; isDatePlayedValid.value = false
+  return 'Please enter Date Round Played'
+}
+
+function requiredTeesPlayed(value) {
+  if (value) { isTeesPlayedValid.value = true; return true }
+  isFormValid.value = false; isTeesPlayedValid.value = false
+  return 'Please enter Tees Played'
+}
+
+function calculateFrontPar(g) { return GolfCalculations.calculateFrontPar(g) }
+function calculateBackPar(g) { return GolfCalculations.calculateBackPar(g) }
+function calculateTotalPar(g) { return GolfCalculations.calculateTotalPar(g) }
+function calculateFrontScore(g) { return GolfCalculations.calculateFrontScore(g) }
+function calculateBackScore(g) { return GolfCalculations.calculateBackScore(g) }
+function calculateTotalScore(g) { return GolfCalculations.calculateTotalScore(g) }
+function calculateFrontPutts(g) { return GolfCalculations.calculateFrontPutts(g) }
+function calculateBackPutts(g) { return GolfCalculations.calculateBackPutts(g) }
+function calculateTotalPutts(g) { return GolfCalculations.calculateTotalPutts(g) }
+function calculateFrontPenalty(g) { return GolfCalculations.calculateFrontPenalty(g) }
+function calculateBackPenalty(g) { return GolfCalculations.calculateBackPenalty(g) }
+function calculateTotalPenalty(g) { return GolfCalculations.calculateTotalPenalty(g) }
 </script>
 <style>
 select {

@@ -59,10 +59,10 @@
 import GlucoseReadingCard from "@/components/health/glucoseReadings/GlucoseReadingCard.vue";
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
+import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
 
 const route = useRoute();
-const store = useStore();
+const glucoseReadingStore = useGlucoseReadingStore();
 
 const glucose_readings = ref(null);
 const isLoading = ref(true);
@@ -73,8 +73,8 @@ const filterType = ref(null);
 const filterStatus = ref(null);
 const sortOrder = ref('desc');
 
-const readingTypes = ['AM-Fasting', 'Post-Meal']; // Add your types
-const readingStatuses = ['Good - 70-99 mg/dl', 'Prediabetes - 100-125 mg/dl', 'Diabetes - 126+ mg/dl']; // Add your statuses
+const readingTypes = ['AM-Fasting', 'Post-Meal'];
+const readingStatuses = ['Good - 70-99 mg/dl', 'Prediabetes - 100-125 mg/dl', 'Diabetes - 126+ mg/dl'];
 
 const filteredSortedReadings = computed(() => {
   let readings = Array.isArray(glucose_readings.value)
@@ -98,15 +98,16 @@ const filteredSortedReadings = computed(() => {
 function toggleSortOrder() {
   sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
 }
+
 async function fetchReadingDetails() {
-  await store.dispatch("fetchGlucoseReadings");
-  glucose_readings.value = store.getters.glucoseReadings;
+  await glucoseReadingStore.fetchGlucoseReadings();
+  glucose_readings.value = glucoseReadingStore.allGlucoseReadings;
 }
+
 async function fetchReadingDetail() {
   isLoading.value = true;
-  await store.dispatch("fetchGlucoseReading", route.params.id);
-  // If the store returns a single object, wrap it in an array for the card view
-  const reading = store.state.glucoseReading;
+  await glucoseReadingStore.fetchGlucoseReading(route.params.id);
+  const reading = glucoseReadingStore.currentGlucoseReading;
   glucose_readings.value = Array.isArray(reading) ? reading : (reading ? [reading] : []);
   isLoading.value = false;
 }

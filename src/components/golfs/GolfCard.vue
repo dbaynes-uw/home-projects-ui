@@ -8,10 +8,10 @@
         <li class="li-left">Tees: <b>{{ golf.tees_played }}</b></li>
         <li class="li-left">Date Played: {{ formatYearDate(golf.date_played) }}</li>
         <li class="li-left"># Holes Played: <b>{{ determineHolesPlayed(golf) }}</b></li>
-        <li class="li-left">Par: <b>{{ this.par = calculateTotalScore(golf)}}</b></li>
+        <li class="li-left">Par: <b>{{ calculateTotalScore(golf) }}</b></li>
         <li class="li-left">URL to Course: <b> <a :href="golf.url_to_course" target="_blank">{{ golf.course }}</a></b></li>
         <li class="li-left">Notes:</li>
-        <b class="li-left-none" v-for="(notes, idx) in splitList(golf, this.splitLength)" :key="idx">{{ notes }}</b>
+        <b class="li-left-none" v-for="(notes, idx) in splitList(golf, splitLength)" :key="idx">{{ notes }}</b>
       </ul>
       <br/>
       <span class="fa-stack">
@@ -37,74 +37,67 @@
     </div>
   </div>
 </template>
-<script>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-import SplitStringService from "@/services/SplitStringService.js";
-import GolfCalculations from "@/components/golfs/GolfCalculations.js";
-import { useRoute } from 'vue-router'
-export default {
-  name: 'GolfCard',
-  props: {
-    golf: {
-      type: Object,
-      default: () => ({})
-    },
-    origin: {
-      type: String,
-      default: '',
+<script setup>
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
+import DateFormatService from '@/services/DateFormatService.js'
+import SplitStringService from '@/services/SplitStringService.js'
+import GolfCalculations from '@/components/golfs/GolfCalculations.js'
+import { useGolfStore } from '@/stores/golfs/GolfStore.js'
+
+const props = defineProps({
+  golf: {
+    type: Object,
+    default: () => ({}),
+  },
+  origin: {
+    type: String,
+    default: '',
+  },
+})
+
+const router = useRouter()
+const route = useRoute()
+const golfStore = useGolfStore()
+const confirmDialogue = ref(null)
+
+const currentUrl = route.fullPath
+const splitLength = 30
+
+async function deleteGolf(golf) {
+  const ok = await confirmDialogue.value.show({
+    title: 'Delete Golf from List',
+    message:
+      'Are you sure you want to delete entry for ' +
+      golf.course +
+      '? It cannot be undone.',
+    okButton: 'Delete',
+  })
+  if (ok) {
+    const result = await golfStore.deleteGolf(golf)
+    if (result.success) {
+      router.push({ name: 'GolfList' })
+    } else {
+      alert('Error deleting golf round.')
     }
-  },
-  components: {
-    ConfirmDialogue,
-  },
-  setup() {
-    const route = useRoute()
-    return {
-      currentUrl: route.fullPath
-    }
-  },
-  data() {
-    return {
-      splitLength: 30,
-      par: 0,
-    }
-  },
-  methods: {
-    async deleteGolf(golf) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Golf from List",
-        message:
-          "Are you sure you want to delete " +
-          golf.title +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok) {
-        this.$store.dispatch("deleteGolf", golf);
-        this.statusMessage =
-          "Golf was Deleted for " +
-          golf.title +
-          "! Page will restore in 2 seconds";
-        setTimeout(() => location.reload(), 2500);
-        this.$router.push({ name: "GolfList" });
-      }
-    },
-    //Services:
-    splitList(golfData, splitLength) {
-      return SplitStringService.splitList(golfData.notes, splitLength) 
-    },
-    formatYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
-    },
-    determineHolesPlayed(golf) {
-      return GolfCalculations.determineHolesPlayed(golf)
-    },
-    calculateTotalScore(golf) {
-      return GolfCalculations.calculateTotalScore(golf)
-    },
   }
+}
+
+function splitList(golfData, len) {
+  return SplitStringService.splitList(golfData.notes, len)
+}
+
+function formatYearDate(value) {
+  return DateFormatService.formatYearDatejs(value)
+}
+
+function determineHolesPlayed(golf) {
+  return GolfCalculations.determineHolesPlayed(golf)
+}
+
+function calculateTotalScore(golf) {
+  return GolfCalculations.calculateTotalScore(golf)
 }
 </script>
 

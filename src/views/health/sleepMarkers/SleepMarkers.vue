@@ -214,8 +214,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useSleepMarkerStore } from '@/stores/health/SleepMarkerStore';
+import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
 import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
@@ -366,8 +366,8 @@ onMounted(async () => {
     alert('Failed to load sleep data. Please refresh the page.');
   }
   // Fetch glucose readings for cross-reference (silent — don't block sleep load)
-  if (!store.state.glucoseReadings?.length) {
-    store.dispatch('fetchGlucoseReadings').catch(e => console.warn('Could not load glucose readings:', e));
+  if (!glucoseReadingStore.allGlucoseReadings.length) {
+    glucoseReadingStore.fetchGlucoseReadings().catch(e => console.warn('Could not load glucose readings:', e));
   }
 });
 </script>

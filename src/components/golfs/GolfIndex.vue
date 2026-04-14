@@ -21,7 +21,7 @@
         <th id="background-blue" @click="sortList('par')">
           Par
         </th>
-        <th id="background-blue" @click="sortList(this.par)">
+        <th id="background-blue" @click="sortList('score')">
           Score
         </th>
         <th id="background-blue">URL to Review</th>
@@ -43,13 +43,13 @@
           <td class="td-center" >{{ result.tees_played }}</td>
           <td class="td-center" >{{ formatFullYearDate(result.date_played) }}</td>
           <td class="td-center" >{{ determineHolesPlayed(result) }}</td>
-          <td class="td-center" >{{ this.par = calculateTotalPar(result)}}</td>
+          <td class="td-center" >{{ calculateTotalPar(result) }}</td>
           <td class="td-center" >{{ calculateTotalScore(result)}}</td>
           <td class="td-center" >
             <a :href="result.url_to_course" target="_blank">Review</a>
           </td>
           <td class="td-center">
-            <span v-if="this.onlineStatus">
+            <span v-if="onlineStatus">
               <span class="fa-stack">
                 <router-link
                   :to="{ name: 'GolfEdit', params: { id: `${result.id}` } }"
@@ -101,7 +101,7 @@
         <th id="background-blue" @click="sortList('par')">
           Par
         </th>
-        <th id="background-blue" @click="sortList(this.par)">
+        <th id="background-blue" @click="sortList('score')">
           Score
         </th>
         <th id="background-blue">URL to Review</th>
@@ -123,13 +123,13 @@
           <td class="td-center" >{{ result.tees_played }}</td>
           <td class="td-center" >{{ formatFullYearDate(result.date_played) }}</td>
           <td class="td-center" >{{ determineHolesPlayed(result) }}</td>
-          <td class="td-center" >{{ this.par = calculateTotalPar(result)}}</td>
+          <td class="td-center" >{{ calculateTotalPar(result) }}</td>
           <td class="td-center" >{{ calculateTotalScore(result)}}</td>
           <td class="td-center" >
             <a :href="result.url_to_course" target="_blank">Review</a>
           </td>
           <td class="td-center">
-            <span v-if="this.onlineStatus">
+            <span v-if="onlineStatus">
               <span class="fa-stack">
                 <router-link
                   :to="{ name: 'GolfEdit', params: { id: `${result.id}` } }"
@@ -173,100 +173,93 @@
   <br />
   <!--b>Online Status: {{ this.onlineStatus }}</b!-->
 </template>
-<script>
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-import GolfCalculations from "@/components/golfs/GolfCalculations.js";
+<script setup>
+import { ref } from 'vue'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
+import DateFormatService from '@/services/DateFormatService.js'
+import GolfCalculations from '@/components/golfs/GolfCalculations.js'
+import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 
-export default {
-  name: "GolfIndex",
-  props: ["golfs"],
-  components: {
-    ConfirmDialogue,
+const props = defineProps({
+  golfs: {
+    type: Array,
+    default: () => [],
   },
-  data() {
-    return {
-      inputSearchText: "",
-      onlineStatus: navigator.onLine,
-      statusMessage: "",
-      par: 0,
-      var_number: null,
-      filteredResults: [],
-      results: [],
-    };
-  },
-  methods: {
-    showVarNumber(var_num){
-      this.filteredResults = [];
-      if (
-        this.golfs &&
-        this.golfs.length > 0
-      ){
-        if (var_num > this.golfs.length ) {
-          var_num = this.golfs.length
-        }
-        for (let i = 0; i < var_num; i++) {
-          this.filteredResults.push(this.golfs[i]);
-        }
-      }
-    },
+})
 
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    sortList(sortBy) {
-      this.sortedData = this.golfs;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
-      } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
-      }
-    },
-    async deleteGolf(golf) {
-      const ok = await this.$refs.confirmDialogue.show({
-        title: "Delete Golf from List",
-        message:
-          "Are you sure you want to delete entry for " +
-          DateFormatService.formatDatejs(golf.date_played) +
-          "? It cannot be undone.",
-        okButton: "Delete",
-      });
-      // If you throw an error, the method will terminate here unless you surround it wil try/catch
-      if (ok == true) {
-        this.$store.dispatch("deleteGolf", golf);
-        // Below doesn't work because of location.reload()
-        //this.statusMessage =
-        //  "Golf was Deleted for " +
-        //  DateFormatService.formatDatejs(golf.date_played) + 
-        //  "! Page will restore in 2 seconds";
-        alert("Golf was Deleted for " +
-          DateFormatService.formatDatejs(golf.date_played))
-        //setTimeout(() => location.reload(), 2000);
-        location.reload()
-      }
-    },
-    formatFullYearDate(value) {
-      return DateFormatService.formatYearDatejs(value);
-    },
-    calculateTotalPar(golf) {
-      return GolfCalculations.calculateTotalPar(golf)
-    },
-    calculateTotalScore(golf) {
-      return GolfCalculations.calculateTotalScore(golf)
-    },
-    calculateAverageScore9(golfs) {
-      return GolfCalculations.calculateAverageScore9(golfs)
-    },
-    calculateAverageScore18(golfs) {
-      return GolfCalculations.calculateAverageScore18(golfs)
-    },
-    determineHolesPlayed(golf) {
-      return GolfCalculations.determineHolesPlayed(golf)
-    },
-  },
-};
+const golfStore = useGolfStore()
+const confirmDialogue = ref(null)
+
+const onlineStatus = navigator.onLine
+const var_number = ref(null)
+const filteredResults = ref([])
+const sortedbyASC = ref(false)
+
+function showVarNumber(var_num) {
+  filteredResults.value = []
+  if (props.golfs && props.golfs.length > 0) {
+    const limit = var_num > props.golfs.length ? props.golfs.length : var_num
+    for (let i = 0; i < limit; i++) {
+      filteredResults.value.push(props.golfs[i])
+    }
+  }
+}
+
+function sortList(sortBy) {
+  const data = [...props.golfs]
+  if (sortedbyASC.value) {
+    data.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC.value = false
+  } else {
+    data.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC.value = true
+  }
+  filteredResults.value = data
+}
+
+async function deleteGolf(golf) {
+  const ok = await confirmDialogue.value.show({
+    title: 'Delete Golf from List',
+    message:
+      'Are you sure you want to delete entry for ' +
+      DateFormatService.formatDatejs(golf.date_played) +
+      '? It cannot be undone.',
+    okButton: 'Delete',
+  })
+  if (ok === true) {
+    const result = await golfStore.deleteGolf(golf)
+    if (result.success) {
+      alert('Golf was Deleted for ' + DateFormatService.formatDatejs(golf.date_played))
+      location.reload()
+    } else {
+      alert('Error deleting golf round.')
+    }
+  }
+}
+
+function formatFullYearDate(value) {
+  return DateFormatService.formatYearDatejs(value)
+}
+
+function calculateTotalPar(golf) {
+  return GolfCalculations.calculateTotalPar(golf)
+}
+
+function calculateTotalScore(golf) {
+  return GolfCalculations.calculateTotalScore(golf)
+}
+
+function calculateAverageScore9(golfs) {
+  return GolfCalculations.calculateAverageScore9(golfs)
+}
+
+function calculateAverageScore18(golfs) {
+  return GolfCalculations.calculateAverageScore18(golfs)
+}
+
+function determineHolesPlayed(golf) {
+  return GolfCalculations.determineHolesPlayed(golf)
+}
 </script>
 <style scoped>
 .fa-stack {

@@ -1,8 +1,8 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <v-card-text>
-    <span v-if="this.action == 'edit'">
-      <h2>{{ golf.course}} on {{ formatStandardDate(golf.date_played) }} </h2>
+    <span v-if="false">
+      <!-- action prop removed — GolfInput is now create-only -->
     </span>
     <v-form id="isFormValid" @submit.prevent="onSubmit">
       <v-container id="form-container">
@@ -204,234 +204,123 @@
     </v-form>
   </v-card-text>
 </template>
-<script>
-import { v4 as uuidv4 } from "uuid";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import DateFormatService from "@/services/DateFormatService.js";
-import GolfCalculations from "@/components/golfs/GolfCalculations.js";
-export default {
-  components: {
-    ConfirmDialogue
-  },
-  computed: {
-  },
-  data() {
-    return {
-      golf: {
-        course: "",
-        course_location: "",
-        url_to_course: "",
-        date_played: null,
-        tees_played: null,
-        players: "",
-        notes: "",
-        par_1_hole: null,
-        par_2_hole: null,
-        par_3_hole: null,
-        par_4_hole: null,
-        par_5_hole: null,
-        par_6_hole: null,
-        par_7_hole: null,
-        par_8_hole: null,
-        par_9_hole: null,
-        par_10_hole: null,
-        par_11_hole: null,
-        par_12_hole: null,
-        par_13_hole: null,
-        par_14_hole: null,
-        par_15_hole: null,
-        par_16_hole: null,
-        par_17_hole: null,
-        par_18_hole: null, 
-        score_1_hole: null,
-        score_2_hole: null,
-        score_3_hole: null,
-        score_4_hole: null,
-        score_5_hole: null,
-        score_6_hole: null,
-        score_7_hole: null,
-        score_8_hole: null,
-        score_9_hole: null,
-        score_10_hole: null,
-        score_11_hole: null,
-        score_12_hole: null,
-        score_13_hole: null,
-        score_14_hole: null,
-        score_15_hole: null,
-        score_16_hole: null,
-        score_17_hole: null,
-        score_18_hole: null,
-        putts_1_hole: null,
-        putts_2_hole: null,
-        putts_3_hole: null,
-        putts_4_hole: null,
-        putts_5_hole: null,
-        putts_6_hole: null,
-        putts_7_hole: null,
-        putts_8_hole: null,
-        putts_9_hole: null,
-        putts_10_hole: null,
-        putts_11_hole: null,
-        putts_12_hole: null,
-        putts_13_hole: null,
-        putts_14_hole: null,
-        putts_15_hole: null,
-        putts_16_hole: null,
-        putts_17_hole: null,
-        putts_18_hole: null,
-        penalty_1_hole: null,
-        penalty_2_hole: null,
-        penalty_3_hole: null,
-        penalty_4_hole: null,
-        penalty_5_hole: null,
-        penalty_6_hole: null,
-        penalty_7_hole: null,
-        penalty_8_hole: null,
-        penalty_9_hole: null,
-        penalty_10_hole: null,
-        penalty_11_hole: null,
-        penalty_12_hole: null,
-        penalty_13_hole: null,
-        penalty_14_hole: null,
-        penalty_15_hole: null,
-        penalty_16_hole: null,
-        penalty_17_hole: null,
-        penalty_18_hole: null,       
-        created_by: this.$store.state.user.resource_owner.email,
-        updated_by: this.$store.state.user.resource_owner.email,
-      },
-      action: "",
-      color_tees_played: ["Black", "Blue", "Red", "White"],
-      toggle1: false,
-      toggle2: false,
-      toggle3: false,
-      isFormValid: false,
-      isCourseValid: false,
-      isCourseLocationValid: false,
-      isDatePlayedValid: false,
-      isTeesPlayedValid: false,
-      urlMaxLength: 255,
-      num: 1,
-    };
-  },
-  methods: {                     
-    onSubmit() {
-      this.checkValidations();
-      //For testing: this.isFormValid = true
-      if (this.isFormValid) {
-        const golf = {
-          ...this.golf,
-          id: uuidv4(),
-          created_by: this.$store.state.user.resource_owner.email, 
-        };
-        if (this.$store.dispatch("createGolf", golf)) {
-          this.$router.push({ name: "GolfList" });
-        } else {
-          alert("Error adding Golf Course Location " + golf.course_location);
-        }
-      } else {
-        alert("Please correct required fields and resubmit");
-      }
-    },
-    requiredCourse: function (value) {
-      if (value) {
-        this.isCourseValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isCourseValid = false
-          return 'Please enter Course';
-      }
-    },
-    requiredCourseLocation: function (value) {
-      if (value) {
-        this.isCourseLocationValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isCourseLocationValid = false
-          return 'Please enter Course Location';
-      }
-    },
-    requiredDatePlayed: function (value) {
-      if (value) {
-        this.isDatePlayedValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isDatePlayedValid = false
-          return 'Please enter Date Round Played';
-      }
-    },
-    requiredTeesPlayed: function (value) {
-      if (value) {
-        this.isTeesPlayedValid = true
-        return true;
-      } else {
-          this.isFormValid = false
-          this.isTeesPlayedValid = false
-          return 'Please enter Tees Played';
-      }
-    },
-    checkValidations() {
-      if (this.isCourseValid &&
-          this.isCourseLocationValid &&
-          this.isDatePlayedValid &&
-          this.isTeesPlayedValid
-        ) 
-      {
-        this.isFormValid = true
-      } else {
-        this.isFormValid = false
-      }
-    },
-    calculateFrontPar(golf) {
-      return GolfCalculations.calculateFrontPar(golf)
-    },
-    calculateBackPar(golf) {
-      return GolfCalculations.calculateBackPar(golf)
-    },
-    calculateTotalPar(golf) {
-      return GolfCalculations.calculateTotalPar(golf)
-    },
-    calculateFrontScore(golf) {
-      return GolfCalculations.calculateFrontScore(golf)
-    },
-    calculateBackScore(golf) {
-      return GolfCalculations.calculateBackScore(golf)
-    },
-    calculateTotalScore(golf) {
-      return GolfCalculations.calculateTotalScore(golf)
-    },
-    calculateFrontPutts(golf) {
-      return GolfCalculations.calculateFrontPutts(golf)
-    },
-    calculateBackPutts(golf) {
-      return GolfCalculations.calculateBackPutts(golf)
-    },
-    calculateTotalPutts(golf) {
-      return GolfCalculations.calculateTotalPutts(golf)
-    },
-    calculateFrontPenalty(golf) {
-      return GolfCalculations.calculateFrontPenalty(golf)
-    },
-    calculateBackPenalty(golf) {
-      return GolfCalculations.calculateBackPenalty(golf)
-    },
-    calculateTotalPenalty(golf) {
-      return GolfCalculations.calculateTotalPenalty(golf)
-    },
-    formatStandardDate(value) {
-      return DateFormatService.formatStandardDatejs(value);
-    },
-    capitalized(name) {
-      const capitalizedFirst = name.toUpperCase();
-      const  rest = name.slice(1);
-      return capitalizedFirst[0] + rest;
-      //WORKS for ALL CAPS: return name.toUpperCase();
-    }             
-  },
-};
+<script setup>
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { v4 as uuidv4 } from 'uuid'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
+import DateFormatService from '@/services/DateFormatService.js'
+import GolfCalculations from '@/components/golfs/GolfCalculations.js'
+import { useGolfStore } from '@/stores/golfs/GolfStore.js'
+
+const router = useRouter()
+const store = useStore()       // still needed for user email (auth lives in Vuex)
+const golfStore = useGolfStore()
+
+const confirmDialogue = ref(null)
+const urlMaxLength = 255
+const color_tees_played = ['Black', 'Blue', 'Red', 'White']
+
+const isFormValid = ref(false)
+const isCourseValid = ref(false)
+const isCourseLocationValid = ref(false)
+const isDatePlayedValid = ref(false)
+const isTeesPlayedValid = ref(false)
+
+const golf = reactive({
+  course: '',
+  course_location: '',
+  url_to_course: '',
+  date_played: null,
+  tees_played: null,
+  players: '',
+  notes: '',
+  par_1_hole: null, par_2_hole: null, par_3_hole: null, par_4_hole: null, par_5_hole: null,
+  par_6_hole: null, par_7_hole: null, par_8_hole: null, par_9_hole: null,
+  par_10_hole: null, par_11_hole: null, par_12_hole: null, par_13_hole: null, par_14_hole: null,
+  par_15_hole: null, par_16_hole: null, par_17_hole: null, par_18_hole: null,
+  score_1_hole: null, score_2_hole: null, score_3_hole: null, score_4_hole: null, score_5_hole: null,
+  score_6_hole: null, score_7_hole: null, score_8_hole: null, score_9_hole: null,
+  score_10_hole: null, score_11_hole: null, score_12_hole: null, score_13_hole: null, score_14_hole: null,
+  score_15_hole: null, score_16_hole: null, score_17_hole: null, score_18_hole: null,
+  putts_1_hole: null, putts_2_hole: null, putts_3_hole: null, putts_4_hole: null, putts_5_hole: null,
+  putts_6_hole: null, putts_7_hole: null, putts_8_hole: null, putts_9_hole: null,
+  putts_10_hole: null, putts_11_hole: null, putts_12_hole: null, putts_13_hole: null, putts_14_hole: null,
+  putts_15_hole: null, putts_16_hole: null, putts_17_hole: null, putts_18_hole: null,
+  penalty_1_hole: null, penalty_2_hole: null, penalty_3_hole: null, penalty_4_hole: null, penalty_5_hole: null,
+  penalty_6_hole: null, penalty_7_hole: null, penalty_8_hole: null, penalty_9_hole: null,
+  penalty_10_hole: null, penalty_11_hole: null, penalty_12_hole: null, penalty_13_hole: null, penalty_14_hole: null,
+  penalty_15_hole: null, penalty_16_hole: null, penalty_17_hole: null, penalty_18_hole: null,
+  created_by: store.state.user?.resource_owner?.email ?? '',
+  updated_by: store.state.user?.resource_owner?.email ?? '',
+})
+
+async function onSubmit() {
+  checkValidations()
+  if (isFormValid.value) {
+    const payload = {
+      ...golf,
+      id: uuidv4(),
+      created_by: store.state.user?.resource_owner?.email ?? '',
+    }
+    const result = await golfStore.createGolf(payload)
+    if (result.success) {
+      alert('Golf was successfully added for date ' + DateFormatService.formatDatejs(golf.date_played))
+      router.push({ name: 'GolfList' })
+    } else {
+      alert('Error adding Golf Course Location ' + golf.course_location)
+    }
+  } else {
+    alert('Please correct required fields and resubmit')
+  }
+}
+
+function requiredCourse(value) {
+  if (value) { isCourseValid.value = true; return true }
+  isFormValid.value = false; isCourseValid.value = false
+  return 'Please enter Course'
+}
+
+function requiredCourseLocation(value) {
+  if (value) { isCourseLocationValid.value = true; return true }
+  isFormValid.value = false; isCourseLocationValid.value = false
+  return 'Please enter Course Location'
+}
+
+function requiredDatePlayed(value) {
+  if (value) { isDatePlayedValid.value = true; return true }
+  isFormValid.value = false; isDatePlayedValid.value = false
+  return 'Please enter Date Round Played'
+}
+
+function requiredTeesPlayed(value) {
+  if (value) { isTeesPlayedValid.value = true; return true }
+  isFormValid.value = false; isTeesPlayedValid.value = false
+  return 'Please enter Tees Played'
+}
+
+function checkValidations() {
+  isFormValid.value =
+    isCourseValid.value &&
+    isCourseLocationValid.value &&
+    isDatePlayedValid.value &&
+    isTeesPlayedValid.value
+}
+
+function calculateFrontPar(g) { return GolfCalculations.calculateFrontPar(g) }
+function calculateBackPar(g) { return GolfCalculations.calculateBackPar(g) }
+function calculateTotalPar(g) { return GolfCalculations.calculateTotalPar(g) }
+function calculateFrontScore(g) { return GolfCalculations.calculateFrontScore(g) }
+function calculateBackScore(g) { return GolfCalculations.calculateBackScore(g) }
+function calculateTotalScore(g) { return GolfCalculations.calculateTotalScore(g) }
+function calculateFrontPutts(g) { return GolfCalculations.calculateFrontPutts(g) }
+function calculateBackPutts(g) { return GolfCalculations.calculateBackPutts(g) }
+function calculateTotalPutts(g) { return GolfCalculations.calculateTotalPutts(g) }
+function calculateFrontPenalty(g) { return GolfCalculations.calculateFrontPenalty(g) }
+function calculateBackPenalty(g) { return GolfCalculations.calculateBackPenalty(g) }
+function calculateTotalPenalty(g) { return GolfCalculations.calculateTotalPenalty(g) }
+function formatStandardDate(value) { return DateFormatService.formatStandardDatejs(value) }
 </script>
 <style lang="css">
 /*below to remove increment/decrement arrows for type=number*/

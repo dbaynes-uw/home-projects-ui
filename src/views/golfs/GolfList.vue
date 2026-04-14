@@ -3,9 +3,6 @@
   <v-card class="mx-auto mt-5">
     <v-card-title class="pb-0">
       <h2>Golf List</h2>
-      <h2 id="status-message">
-        <u>{{ this.$route.query.success }}</u>
-      </h2>
     </v-card-title>
     <ul>
       <li class="left">
@@ -84,139 +81,66 @@
     </span>
   </div>
 </template>
-<script>
-import DateFormatService from "@/services/DateFormatService.js";
-import GolfIndex from "@/components/golfs/GolfIndex.vue";
-import GolfCard from "@/components/golfs/GolfCard.vue";
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import dayjs from 'dayjs'
+import DateFormatService from '@/services/DateFormatService.js'
+import GolfIndex from '@/components/golfs/GolfIndex.vue'
+import GolfCard from '@/components/golfs/GolfCard.vue'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
+import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 
-//import GolfSearchResults from "@/components/golfs/GolfSearchResults.vue";
-export default {
-  name: "GolfList",
-  props: ["filteredResults[]"],
-  components: {
-    GolfIndex,
-    GolfCard,
-    ConfirmDialogue
-  //  GolfSearchResults,
-  },
-  data() {
-    return {
-      onlineStatus: navigator.onLine,
-      requestIndexDetailFlag: false,
-      searchResults: null,
-      inputSearchText: "",
-      filteredResults: [],
-      columnDetails: null,
-      sortedData: [],
-      sortedbyASC: false,
-      description: null,
-      frequency: null,
-      completed: 0,
-      var_number: null,
-      statusMessage: "",
-    };
-  },
-  mounted() {
-    this.sortedData = this.golfs;
-  },
-  created() {
-    this.$store.dispatch("fetchGolfs");
-    this.sortedData = this.golfs;
-  },
-  computed: {
-    golfs() {
-      return this.$store.state.golfs;
-    },
-  },
-  methods: {
-    editGolf(golf) {
-      this.$router.push({ name: 'GolfEdit', params: { id: `${golf.id}` } });
-    },
-    showIndex() {
-      this.filteredResults = [];
-    },
-    requestIndexDetail() {
-      this.requestIndexDetailFlag = this.requestIndexDetailFlag == true ? false : true;
-    },
-    showVarNumber(var_num){
-      this.filteredResults = [];
-      if (
-        this.golfs &&
-        this.golfs.length > 0
-      ){
-        if (var_num > this.golfs.length ) {
-          var_num = this.golfs.length
-        }
-        for (let i = 0; i < var_num; i++) {
-          this.filteredResults.push(this.golfs[i]);
-        }
-      }
-    },
-    searchColumns() {
-      this.filteredResults = [];
-      this.columnDetails = null;
-      if (
-        this.inputSearchText == null ||
-        (this.inputSearchText != null && this.inputSearchText.length === 0)
-      ) {
-        this.filteredResults = [];
-        this.columnDetails = null;
-      } else {
-        if (
-          this.golfs &&
-          this.golfs.length > 0 &&
-          this.inputSearchText.length >= 2
-        ) {
-          this.golfs.forEach((golf) => {
-            const searchHasCourse =
-              golf.course &&
-              golf.course
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase());
-            const searchHasTeesPlayed =
-              golf.tees_played &&
-              golf.tees_played
-                .toLowerCase()
-                .includes(this.inputSearchText.toLowerCase()); 
-            var dayjs = require('dayjs')
-            const searchHasDatePlayed =
-              golf.date_played &&
-              dayjs(golf.date_played).format("MM-DD-YY")
-                .includes(this.inputSearchText);
-            if (searchHasCourse ||searchHasTeesPlayed || searchHasDatePlayed) {
-              this.filteredResults.push(golf);
-            }
-          });
-        }
-      }
-    },
-    showCharacterDetails(result) {
-      this.characterDetails = result;
-    },
-    sortList(sortBy) {
+const router = useRouter()
+const golfStore = useGolfStore()
 
-      this.sortedData = this.golfs;
-      if (this.sortedbyASC) {
-        this.sortedData.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-        this.sortedbyASC = false;
-      } else {
-        this.sortedData.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-        this.sortedbyASC = true;
+// Local state
+const requestIndexDetailFlag = ref(false)
+const inputSearchText = ref('')
+const filteredResults = ref([])
+const sortedbyASC = ref(false)
+
+const golfs = computed(() => golfStore.allGolfs)
+
+onMounted(() => {
+  golfStore.fetchGolfs()
+})
+
+function editGolf(golf) {
+  router.push({ name: 'GolfEdit', params: { id: `${golf.id}` } })
+}
+
+function showIndex() {
+  filteredResults.value = []
+}
+
+function requestIndexDetail() {
+  requestIndexDetailFlag.value = !requestIndexDetailFlag.value
+}
+
+function searchColumns() {
+  filteredResults.value = []
+  if (!inputSearchText.value || inputSearchText.value.length === 0) return
+  if (golfs.value && golfs.value.length > 0 && inputSearchText.value.length >= 2) {
+    golfs.value.forEach((golf) => {
+      const searchHasCourse =
+        golf.course &&
+        golf.course.toLowerCase().includes(inputSearchText.value.toLowerCase())
+      const searchHasTeesPlayed =
+        golf.tees_played &&
+        golf.tees_played.toLowerCase().includes(inputSearchText.value.toLowerCase())
+      const searchHasDatePlayed =
+        golf.date_played &&
+        dayjs(golf.date_played).format('MM-DD-YY').includes(inputSearchText.value)
+      if (searchHasCourse || searchHasTeesPlayed || searchHasDatePlayed) {
+        filteredResults.value.push(golf)
       }
-    },
-    //isOffline() {
-    //  this.isOnline = false;
-    //  console.log("isOffline - this.isOnline = ", this.isOnline);
-    //},
-    //isOnline() {
-    //  this.isOnline = true;
-    //  console.log("isOnline - this.isOnline = ", this.isOnline);
-    //},
-    formatFullYearDate(value) {
-      return DateFormatService.formatFullYearDatejs(value);
-    },
-  },
-};
+    })
+  }
+}
+
+function formatFullYearDate(value) {
+  return DateFormatService.formatFullYearDatejs(value)
+}
 </script>
 <style></style>

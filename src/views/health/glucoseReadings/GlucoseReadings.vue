@@ -3,12 +3,14 @@
 <template>
   <div class="list-view-container">
     <!-- ✅ BREADCRUMB -->
-    <nav class="breadcrumb">
-      <router-link to="/health" class="breadcrumb-link">
+    <div class="breadcrumb-nav">
+      <router-link :to="{ name: 'HealthDashboard' }" class="breadcrumb-link">
         <i class="fas fa-heartbeat"></i>
         Health Dashboard
       </router-link>
-    </nav>
+      <i class="fas fa-chevron-right breadcrumb-separator"></i>
+      <span class="breadcrumb-current">Glucose Readings</span>
+    </div>
 
     <HealthDashboardNav />
 
@@ -234,8 +236,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
+import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 import BaseModal from '@/components/ui/BaseModal.vue';
@@ -244,7 +246,7 @@ import GlucoseReadingIndex from '@/components/health/glucoseReadings/GlucoseRead
 import GlucoseReadingForm from '@/components/health/glucoseReadings/GlucoseReadingForm.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-const store = useStore();
+const glucoseReadingStore = useGlucoseReadingStore();
 
 // ✅ STATE
 const currentView = ref('cards');
@@ -252,7 +254,6 @@ const showDialog = ref(false);
 const showDetailsModal = ref(false);
 const selectedReading = ref(null);
 const confirmDialogue = ref(null);
-const isLoading = ref(true);
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -263,33 +264,11 @@ const views = [
 ];
 
 // ✅ COMPUTED
-const glucoseReadings = computed(() => store.state.glucoseReadings || []);
-
-const averageGlucose = computed(() => {
-  if (glucoseReadings.value.length === 0) return '-';
-  const total = glucoseReadings.value.reduce((sum, r) => {
-    const value = r.reading || r.glucose_value || 0;
-    return sum + parseFloat(value);
-  }, 0);
-  return Math.round(total / glucoseReadings.value.length);
-});
-
-const inRangePercentage = computed(() => {
-  if (glucoseReadings.value.length === 0) return '-';
-  const inRange = glucoseReadings.value.filter(r => {
-    const v = parseFloat(r.reading || r.glucose_value);
-    return v >= 70 && v < 140;
-  }).length;
-  return Math.round((inRange / glucoseReadings.value.length) * 100);
-});
-
-const lastReadingValue = computed(() => {
-  if (glucoseReadings.value.length === 0) return '-';
-  const sorted = [...glucoseReadings.value].sort((a, b) => {
-    return new Date(b.reading_date) - new Date(a.reading_date);
-  });
-  return sorted[0]?.reading || sorted[0]?.glucose_value || '-';
-});
+const glucoseReadings = computed(() => glucoseReadingStore.allGlucoseReadings);
+const isLoading = computed(() => glucoseReadingStore.isLoading);
+const averageGlucose = computed(() => glucoseReadingStore.averageGlucose);
+const inRangePercentage = computed(() => glucoseReadingStore.inRangePercentage);
+const lastReadingValue = computed(() => glucoseReadingStore.lastReadingValue);
 
 // ✅ METHODS
 function openAddDialog() {
@@ -333,8 +312,7 @@ async function deleteReading(reading) {
   if (!ok) return;
 
   try {
-    await store.dispatch('deleteGlucoseReading', reading);
-    await store.dispatch('fetchGlucoseReadings');
+    await glucoseReadingStore.deleteGlucoseReading(reading);
   } catch (error) {
     console.error('❌ Delete error:', error);
     alert('Failed to delete reading. Please try again.');
@@ -342,17 +320,15 @@ async function deleteReading(reading) {
 }
 
 async function handleSave(readingData) {
-  
   try {
     if (readingData.id) {
-      await store.dispatch('updateGlucoseReading', readingData);
+      await glucoseReadingStore.updateGlucoseReading(readingData);
     } else {
-      await store.dispatch('createGlucoseReading', readingData);
+      await glucoseReadingStore.createGlucoseReading(readingData);
     }
-    await store.dispatch('fetchGlucoseReadings');
     closeDialog();
   } catch (error) {
-    console.error('❌ Delete error:', error);
+    console.error('❌ Save error:', error);
     alert('Failed to save glucose reading. Please try again.');
   }
 }
@@ -392,12 +368,10 @@ function getGlucoseClass(value) {
 // ✅ LIFECYCLE
 onMounted(async () => {
   try {
-    await store.dispatch('fetchGlucoseReadings');
+    await glucoseReadingStore.fetchGlucoseReadings();
   } catch (error) {
-    console.error('❌ Delete error:', error);
+    console.error('❌ Fetch error:', error);
     alert('Failed to load glucose readings. Please refresh the page.');
-  } finally {
-    isLoading.value = false;
   }
 });
 </script>

@@ -29,22 +29,8 @@ export default new Vuex.Store({
     films: [],
     garden: [],
     gardens: [],
-    glucoseReadings: [],
-    glucoseReading: null,
     watering: [],
     waterings: [],
-    oob: {},
-    oobs: [],
-    oobsLoading: false,
-    oobsPagination: {
-      current_page: 1,
-      per_page: 20,
-      total_count: 0,
-      total_pages: 0
-    },
-    oobsPage: 1,
-    oobsTotal: 0,
-    oobsPerPage: 20,
     plant: {},
     // UI notifications (toasts)
     notifications: [],
@@ -182,32 +168,6 @@ export default new Vuex.Store({
     },
     DELETE_GARDEN(state, garden) {
       state.gardens.push(garden);
-    },
-    ADD_GLUCOSE_READING(state, reading) {
-      //state.glucoseReadings.push(reading);
-      // Optionally update the glucoseResult if needed
-      state.glucoseResult = reading;
-    },
-    DELETE_GLUCOSE_READING(state, reading) {
-      state.glucoseReadings = state.glucoseReadings.filter(r => r.id !== reading.id);
-    },
-    SET_GLUCOSE_READINGS(state, readings) {
-      state.glucoseReadings = readings; // Ensure state is updated correctly
-    },
-    SET_GLUCOSE_READING(state, reading) {
-      state.glucoseReading = reading;
-    },
-    ADD_GOLF(state, golf) {
-      state.golfs.push(golf);
-    },
-    DELETE_GOLF(state, golf) {
-      state.golf = golf;
-    },
-    SET_GOLF(state, golf) {
-      state.golf = golf;
-    },
-    SET_GOLFS(state, golfs) {
-      state.golfs = golfs;
     },
     // ✅ SLEEP_MARKER MUTATIONS
     /*
@@ -397,12 +357,10 @@ export default new Vuex.Store({
     
     RESET_STATE(state) {
       //state.films = [];
-      state.golfs = [];
       state.events = [];
       state.plants = [];
       state.products = [];
       //state.trails = [];
-      state.glucoseReadings = [];
       state.waterings = [];
     }
   
@@ -966,104 +924,7 @@ actions: {
         throw error; // Re-throw so component can catch it
       }
     },
-    async fetchGlucoseReadings({ commit }) {
-      try {
-        const response = await EventService.getGlucoseReadings();
-        commit("SET_GLUCOSE_READINGS", response.data);
-      } catch (error) {
-        console.error("Error fetching glucose readings:", error);
-      }
-    },
-    async fetchGlucoseReading({ commit }, id) {
-      try {
-        const response = await EventService.getGlucoseReading(id); // Call the API
-        commit("SET_GLUCOSE_READING", response.data); // Commit the data to the state
-      } catch (error) {
-        console.error("Error fetching glucose reading: ", error);
-        alert("Failed to fetch glucose reading. Please try again.");
-      }
-    },
-    async createGlucoseReading({ commit, dispatch }, glucose_reading) {
-      try {
-        const response = await EventService.postGlucoseReading(glucose_reading);    
-        // Commit the new reading to Vuex state
-        commit("ADD_GLUCOSE_READING", response.data);
-        // Optionally fetch the updated list of readings
-        await dispatch("fetchGlucoseReadings");
-      } catch (error) {
-        console.error("Error creating glucose reading:", error.response.data);
-        alert("Failed to create glucose reading. Please try again.");
-      }
-    },    
-    async deleteGlucoseReading({ commit }, glucose_reading) {
-      console.log("Deleting glucose reading with ID:", glucose_reading.id);
-      try {
-        await EventService.deleteGlucoseReading(glucose_reading);
-        commit("DELETE_GLUCOSE_READING", glucose_reading); // <-- Pass the original reading!
-        alert("Glucose Reading " + glucose_reading.reading + " was deleted.");
-      } catch (error) {
-        alert("GlucoseReading Delete Error: " + (error.response?.data || error.message));
-      }
-    },
-    async updateGlucoseReading({ commit, dispatch }, glucose_reading) {
-      try {
-        const response = await EventService.putGlucoseReading(glucose_reading);   
-        // Commit the new reading to Vuex state
-        commit("SET_GLUCOSE_READING", response.data);
-        // Optionally fetch the updated list of readings
-        await dispatch("fetchGlucoseReadings");
-      } catch (error) {
-        console.error("Error creating glucose reading:", error.response.data);
-        alert("Failed to create glucose reading. Please try again.");
-      }
-    },
- 
-    async createGolf({ commit }, golf) {
-      EventService.postGolf(golf)
-        .then(() => {
-          commit("ADD_GOLF", golf);
-          alert("Golf was successfully added for date " + DateFormatService.formatDatejs(golf.date_played));
-        })
-        .catch((error) => {
-          alert("Golf Post Error: ", error.response.data )
-        });
-    },
 
-    async deleteGolf({ commit }, golf) {
-      EventService.deleteGolf(golf)
-        .then((response) => {
-          commit("DELETE_GOLF", response.data);
-          alert("Golf Round at " + golf.course + " on " + golf.date_played + " was deleted.")
-        })
-        .catch((error) => {
-          alert("Golf Delete Error: ", error.response.data )
-        });
-    },
-    async fetchGolf({ commit, state }, id) {
-      const existingGolf = state.golfs.find((golf) => golf.id === id);
-      if (existingGolf) {
-        commit("SET_GOLF", existingGolf);
-      } else {
-        EventService.getGolf(id)
-          .then((response) => {
-            commit("SET_GOLF", response.data);
-          })
-          .catch((error) => {
-          alert("Golf Get Error: ", error.response.data )
-          });
-      }
-    },
-    async fetchGolfs({ commit }) {
-      EventService.getGolfs()
-        .then((response) => {
-          commit("SET_GOLFS", response.data);
-          return response.data;
-        })
-        .catch((error) => {
-          alert("Golf Fetch Error: ", error.response.data )
-        });
-    },
-    
     async createProduct({ commit }, product) {
       try {
         const response = await EventService.postProduct(product);
@@ -1496,13 +1357,10 @@ actions: {
       
       // Clear arrays but keep essential data
       //commit('SET_FILMS', []);
-      commit('SET_GOLFS', []);
       commit('SET_EVENTS', []);
-      commit('SET_OOBS', []);
       commit('SET_PLANTS', []);
       commit('SET_PRODUCTS', []);
       commit('SET_TRAILS', []);
-      commit('SET_GLUCOSE_READINGS', []);
       commit('SET_WATERINGS', []);
       
       // Force garbage collection hint
@@ -1521,9 +1379,6 @@ actions: {
   getters: {
     gardens(state) {
       return state.gardens || []; // Ensure it always returns an array
-    },
-    glucoseReadings(state) {
-      return state.glucoseReadings || []; // Ensure it always returns an array
     },
     plants(state) {
       return state.plants || []; // Ensure it always returns an array
