@@ -7,8 +7,8 @@
         <li class="li-left">Course: <b>{{ golf.course }}</b></li>
         <li class="li-left">Tees: <b>{{ golf.tees_played }}</b></li>
         <li class="li-left">Date Played: {{ formatYearDate(golf.date_played) }}</li>
-        <li class="li-left"># Holes Played: <b>{{ determineHolesPlayed(golf) }}</b></li>
-        <li class="li-left">Par: <b>{{ calculateTotalScore(golf) }}</b></li>
+        <li class="li-left">Holes Played: <b>{{ GolfCalculations.determineHolesPlayed(golf) }}</b></li>
+        <li class="li-left">Par: <b>{{ GolfCalculations.calculateTotalScore(golf) }}</b></li>
         <li class="li-left">URL to Course: <b> <a :href="golf.url_to_course" target="_blank">{{ golf.course }}</a></b></li>
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(golf, splitLength)" :key="idx">{{ notes }}</b>
@@ -90,14 +90,6 @@ function splitList(golfData, len) {
 
 function formatYearDate(value) {
   return DateFormatService.formatYearDatejs(value)
-}
-
-function determineHolesPlayed(golf) {
-  return GolfCalculations.determineHolesPlayed(golf)
-}
-
-function calculateTotalScore(golf) {
-  return GolfCalculations.calculateTotalScore(golf)
 }
 </script>
 

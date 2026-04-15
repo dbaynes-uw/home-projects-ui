@@ -45,12 +45,15 @@
           </template>
         </v-text-field>
         <br/>
+        isTeesPlayedValid: {{ isTeesPlayedValid }}
+        <br/>
+        golf.tees_played: {{ golf.tees_played }}
         <label>Tees Played: &nbsp;&nbsp;</label>
         <select v-model="golf.tees_played" class="tees-select" @change="requiredTeesPlayed(golf.tees_played)">
           <option value="" disabled>-- Select Tees --</option>
           <option v-for="tee in color_tees_played" :key="tee" :value="tee">{{ tee }}</option>
         </select>
-        <span v-if="!isTeesPlayedValid && golf.tees_played === null" class="tees-error">Please select Tees Played</span>
+        <span v-if="submitAttempted && !isTeesPlayedValid" class="tees-error">Please select Tees Played</span>
         <br/>
         <br />
         <h3>Totals</h3>
@@ -215,6 +218,7 @@ const color_tees_played = ['Black', 'Blue', 'Silver', 'White', 'Gold', 'Green', 
 
 const isFormValid = ref(false)
 const submitting = ref(false)
+const submitAttempted = ref(false)
 const isCourseValid = ref(false)
 const isCourseLocationValid = ref(false)
 const isDatePlayedValid = ref(false)
@@ -225,7 +229,7 @@ const golf = reactive({
   course_location: '',
   url_to_course: '',
   date_played: null,
-  tees_played: null,
+  tees_played: '',
   players: '',
   notes: '',
   par_1_hole: null, par_2_hole: null, par_3_hole: null, par_4_hole: null, par_5_hole: null,
@@ -249,6 +253,7 @@ const golf = reactive({
 })
 
 function onSubmit() {
+  submitAttempted.value = true
   checkValidations()
   if (!isFormValid.value) {
     alert('Please correct required fields and resubmit')
