@@ -37,7 +37,7 @@
 
   <div class="golf-list">
     <span v-if="filteredResults.length == 0">
-      <span v-if="searchResults == false">
+      <span v-if="inputSearchText && inputSearchText.length >= 2">
         <h3 id="h3-left">No Search Results Returned</h3>
       </span>
       <span v-else>

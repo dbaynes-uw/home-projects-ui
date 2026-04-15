@@ -1,10 +1,14 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h1>{{ golf.course }}</h1>
-  <router-link :to="{ name: 'GolfList' }">
-    <b>Back to Golf List</b>
-  </router-link>
-  <br/>
+  <div class="details-nav">
+    <router-link :to="{ name: 'GolfList' }">
+      <b>← Golf List</b>
+    </router-link>
+    <router-link :to="{ name: 'GolfLiveScore', params: { id: String(golf.id) } }" class="live-score-btn">
+      ⛳ Live Score
+    </router-link>
+  </div>
   <br/>
   <h3>{{ statusMessage }}</h3>
   <div class="card-display">
@@ -47,3 +51,25 @@ function editGolf(g) {
   router.push({ name: 'GolfEdit', params: { id: `${g.id}` } })
 }
 </script>
+
+<style scoped>
+.details-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 520px;
+  margin: 0.25rem 0;
+}
+.live-score-btn {
+  background: #2d6a2d;
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.live-score-btn:hover {
+  background: #1b4a1b;
+}
+</style>

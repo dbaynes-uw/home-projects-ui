@@ -46,20 +46,11 @@
         </v-text-field>
         <br/>
         <label>Tees Played: &nbsp;&nbsp;</label>
-        <v-select
-          :items="color_tees_played"
-          v-model="golf.tees_played"
-          :rules="[requiredTeesPlayed]"
-          >
-          <option
-            v-for="option in color_tees_played"
-            :value="option"
-            :key="option"
-            :selected="option === golf.tees_played"
-          >
-            {{ option }}
-          </option>
-        </v-select>    
+        <select v-model="golf.tees_played" class="tees-select" @change="requiredTeesPlayed(golf.tees_played)">
+          <option value="" disabled>-- Select Tees --</option>
+          <option v-for="tee in color_tees_played" :key="tee" :value="tee">{{ tee }}</option>
+        </select>
+        <span v-if="!isTeesPlayedValid && golf.tees_played === null" class="tees-error">Please select Tees Played</span>
         <br/>
         <br />
         <h3>Totals</h3>
@@ -199,7 +190,7 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
-        <v-btn type="submit" block class="mt-2">Submit</v-btn>
+        <v-btn type="submit" block class="mt-2" :loading="submitting">Submit</v-btn>
       </v-container>
     </v-form>
   </v-card-text>
@@ -208,7 +199,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { v4 as uuidv4 } from 'uuid'
+
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 import DateFormatService from '@/services/DateFormatService.js'
 import GolfCalculations from '@/components/golfs/GolfCalculations.js'
@@ -220,9 +211,10 @@ const golfStore = useGolfStore()
 
 const confirmDialogue = ref(null)
 const urlMaxLength = 255
-const color_tees_played = ['Black', 'Blue', 'Red', 'White']
+const color_tees_played = ['Black', 'Blue', 'Silver', 'White', 'Gold', 'Green', 'Red']
 
 const isFormValid = ref(false)
+const submitting = ref(false)
 const isCourseValid = ref(false)
 const isCourseLocationValid = ref(false)
 const isDatePlayedValid = ref(false)
@@ -256,24 +248,25 @@ const golf = reactive({
   updated_by: store.state.user?.resource_owner?.email ?? '',
 })
 
-async function onSubmit() {
+function onSubmit() {
   checkValidations()
-  if (isFormValid.value) {
-    const payload = {
-      ...golf,
-      id: uuidv4(),
-      created_by: store.state.user?.resource_owner?.email ?? '',
-    }
-    const result = await golfStore.createGolf(payload)
+  if (!isFormValid.value) {
+    alert('Please correct required fields and resubmit')
+    return
+  }
+  submitting.value = true
+  const payload = {
+    ...golf,
+    created_by: store.state.user?.resource_owner?.email ?? '',
+  }
+  golfStore.createGolf(payload).then(result => {
+    submitting.value = false
     if (result.success) {
-      alert('Golf was successfully added for date ' + DateFormatService.formatDatejs(golf.date_played))
-      router.push({ name: 'GolfList' })
+      router.push({ name: 'GolfLiveScore', params: { id: String(result.data.id) } })
     } else {
       alert('Error adding Golf Course Location ' + golf.course_location)
     }
-  } else {
-    alert('Please correct required fields and resubmit')
-  }
+  })
 }
 
 function requiredCourse(value) {
@@ -295,6 +288,7 @@ function requiredDatePlayed(value) {
 }
 
 function requiredTeesPlayed(value) {
+  console.log('requiredTeesPlayed - value: ' + value)
   if (value) { isTeesPlayedValid.value = true; return true }
   isFormValid.value = false; isTeesPlayedValid.value = false
   return 'Please enter Tees Played'
@@ -421,6 +415,20 @@ fieldset {
 }
 select {
   border-color: darkgreen;
+}
+.tees-select {
+  width: 100%;
+  height: 44px;
+  border: 1px solid darkgreen;
+  border-radius: 4px;
+  padding: 0 8px;
+  font-size: 16px;
+  background: white;
+  margin-bottom: 4px;
+}
+.tees-error {
+  color: #b00020;
+  font-size: 12px;
 }
 legend {
   font-size: 28px;

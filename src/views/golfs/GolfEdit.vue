@@ -207,13 +207,15 @@
 </template>
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 import GolfCalculations from '@/components/golfs/GolfCalculations.js'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 
-const route = useRoute()
+const props = defineProps({
+  id: { type: String, default: '' },
+})
+
 const store = useStore()     // still needed for user email (auth lives in Vuex)
 const golfStore = useGolfStore()
 const confirmDialogue = ref(null)
@@ -255,7 +257,7 @@ const golf = reactive({
 })
 
 onMounted(async () => {
-  await golfStore.fetchGolf(route.params.id)
+  await golfStore.fetchGolf(props.id)
   const loaded = golfStore.currentGolf
   if (loaded) Object.assign(golf, loaded)
 })

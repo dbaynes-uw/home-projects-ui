@@ -223,6 +223,13 @@ const routes = [
     component: () => import('@/views/golfs/GolfEdit.vue'),
     meta: { requiresAuth: true}
   },
+  {
+    path: "/golf/:id/live",
+    name: "GolfLiveScore",
+    props: true,
+    component: () => import('@/views/golfs/GolfLiveScore.vue'),
+    meta: { requiresAuth: true}
+  },
 
   // ========================================
   // HEALTH DASHBOARD
