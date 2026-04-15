@@ -245,8 +245,8 @@ const views = [
   { value: 'charts', label: 'Charts', icon: 'chart-line' }
 ];
 
-// ✅ VUEX (for glucose readings cross-reference)
-const store = useStore();
+// ✅ PINIA (for glucose readings cross-reference)
+const glucoseReadingStore = useGlucoseReadingStore();
 
 // ✅ COMPUTED
 const sleepMarkers = computed(() => sleepMarkerStore.allSleepMarkers);
@@ -255,7 +255,7 @@ const isLoading = computed(() => sleepMarkerStore.isLoading);
 // Build a date-keyed map of glucose readings: { "2025-01-15": [reading, ...] }
 const glucoseByDate = computed(() => {
   const map = {};
-  (store.state.glucoseReadings || []).forEach(r => {
+  (glucoseReadingStore.allGlucoseReadings || []).forEach(r => {
     const raw = r.reading_date || '';
     const date = raw.split('T')[0].split(' ')[0];
     if (date) {
