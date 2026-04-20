@@ -13,11 +13,12 @@
     <v-table density="compact">
       <tr>
         <th id="background-blue" @click="sortList('course')">Course</th>
+        <th id="background-blue" @click="sortList('players')">Player</th>
         <th id="background-blue" @click="sortList('tees_played')">Tees Played</th>
         <th id="background-blue" @click="sortList('date_played')">
           Date Played
         </th>
-        <th id="background-blue">Holes Played</th>
+        <!-- th id="background-blue">Holes Played</!-->
         <th id="background-blue" @click="sortList('par')">
           Par
         </th>
@@ -28,6 +29,7 @@
         <th class="td-center" id="background-blue">Actions</th>
       </tr> 
       <tr id="averages">
+        <th id="background-blue" ></th>
         <th id="background-blue" ></th>
         <th id="background-blue"></th>
         <th id="background-blue"></th>
@@ -40,9 +42,10 @@
       </tr>   
       <tr v-for="(result, resultIndex) in golfs" :key="resultIndex">
           <td>{{ result.course }}</td>
+          <td class="td-center" >{{ result.players }}</td>
           <td class="td-center" >{{ result.tees_played }}</td>
           <td class="td-center" >{{ formatFullYearDate(result.date_played) }}</td>
-          <td class="td-center" >{{ determineHolesPlayed(result) }}</td>
+          <!-- td class="td-center" >{{ determineHolesPlayed(result) }}</td -->
           <td class="td-center" >{{ calculateTotalPar(result) }}</td>
           <td class="td-center" >{{ calculateTotalScore(result)}}</td>
           <td class="td-center" >
@@ -93,6 +96,7 @@
     <v-table density="compact">
       <tr>
         <th id="background-blue" @click="sortList('course')">Course</th>
+        <th id="background-blue" @click="sortList('players')">Player</th>
         <th id="background-blue" @click="sortList('tees_played')">Tees Played</th>
         <th id="background-blue" @click="sortList('date_played')">
           Date Played
@@ -109,6 +113,7 @@
       </tr> 
       <tr id="averages">
         <th id="background-blue" ></th>
+        <th id="background-blue" ></th>
         <th id="background-blue"></th>
         <th id="background-blue"></th>
         <th id="background-blue-right" colspan="2" >Averages:</th>
@@ -120,6 +125,7 @@
       </tr>   
       <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
           <td>{{ result.course }}</td>
+          <td>{{ result.players }}</td>
           <td class="td-center" >{{ result.tees_played }}</td>
           <td class="td-center" >{{ formatFullYearDate(result.date_played) }}</td>
           <td class="td-center" >{{ determineHolesPlayed(result) }}</td>
@@ -205,13 +211,19 @@ function showVarNumber(var_num) {
   }
 }
 
+function resolveField(golf, field) {
+  if (field === 'par') return GolfCalculations.calculateTotalPar(golf)
+  if (field === 'score') return GolfCalculations.calculateTotalScore(golf)
+  return golf[field]
+}
+
 function sortList(sortBy) {
-  const data = [...props.golfs]
+  const data = filteredResults.value.length ? [...filteredResults.value] : [...props.golfs]
   if (sortedbyASC.value) {
-    data.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    data.sort((x, y) => (resolveField(x, sortBy) > resolveField(y, sortBy) ? -1 : 1))
     sortedbyASC.value = false
   } else {
-    data.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    data.sort((x, y) => (resolveField(x, sortBy) < resolveField(y, sortBy) ? -1 : 1))
     sortedbyASC.value = true
   }
   filteredResults.value = data

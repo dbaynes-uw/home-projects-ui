@@ -5,11 +5,14 @@
       <p id="p-custom-left-u">{{ golf.course}}</p>
       <ul>
         <li class="li-left">Course: <b>{{ golf.course }}</b></li>
+        <li class="li-left">Player(s): <b>{{ golf.players }}</b></li>
         <li class="li-left">Tees: <b>{{ golf.tees_played }}</b></li>
         <li class="li-left">Date Played: {{ formatYearDate(golf.date_played) }}</li>
         <li class="li-left">Holes Played: <b>{{ GolfCalculations.determineHolesPlayed(golf) }}</b></li>
         <li class="li-left">Par: <b>{{ GolfCalculations.calculateTotalPar(golf) }}</b></li>
         <li class="li-left">Score: <b>{{ GolfCalculations.calculateTotalScore(golf) }}</b></li>        
+        <li class="li-left">Putts: <b>{{ GolfCalculations.calculateTotalPutts(golf) }}</b></li>
+        <li class="li-left">Penalties: <b>{{ GolfCalculations.calculateTotalPenalty(golf) }}</b></li>
         <li class="li-left">URL to Course: <b> <a :href="golf.url_to_course" target="_blank">{{ golf.course }}</a></b></li>
         <li class="li-left">Notes:</li>
         <b class="li-left-none" v-for="(notes, idx) in splitList(golf, splitLength)" :key="idx">{{ notes }}</b>
