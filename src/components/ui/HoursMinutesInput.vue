@@ -11,7 +11,6 @@
           class="input-field hours-input"
           placeholder="0"
           @input="updateValue"
-          @keydown="onKeydown"
         />
         <span class="input-suffix">h</span>
       </div>
@@ -27,7 +26,6 @@
           class="input-field minutes-input"
           placeholder="00"
           @input="updateValue"
-          @keydown="onKeydown"
         />
         <span class="input-suffix">m</span>
       </div>
@@ -61,22 +59,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue']);
-
-function focusNextField(el) {
-  const focusable = 'input:not([disabled]):not([readonly]), select:not([disabled]), textarea:not([disabled])';
-  const all = Array.from(document.querySelectorAll(focusable));
-  const idx = all.indexOf(el);
-  if (idx !== -1 && idx < all.length - 1) {
-    all[idx + 1].focus();
-  }
-}
-
-function onKeydown(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    focusNextField(event.target);
-  }
-}
 
 const localHours = ref(0);
 const localMinutes = ref(0);
