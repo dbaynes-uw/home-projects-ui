@@ -24,6 +24,7 @@
         :class="['base-input', { 'has-prepend': prependIcon, 'has-append': appendIcon, 'has-error': error }]"
         @blur="$emit('blur', $event)"
         @focus="$emit('focus', $event)"
+        @keydown="onKeydown"
       />
       
       <i v-if="appendIcon" :class="`mdi mdi-${appendIcon} base-input-icon-append`"></i>
@@ -114,7 +115,26 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:modelValue', 'blur', 'focus']);
+const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'keydown']);
+
+function focusNextField(el) {
+  const focusable = 'input:not([disabled]):not([readonly]), select:not([disabled]), textarea:not([disabled])';
+  const all = Array.from(document.querySelectorAll(focusable));
+  const idx = all.indexOf(el);
+  if (idx !== -1 && idx < all.length - 1) {
+    all[idx + 1].focus();
+  }
+}
+
+function onKeydown(event) {
+  emit('keydown', event);
+  if ((event.key === 'Enter' || event.key === 'ArrowDown') && event.target.type !== 'textarea') {
+    // Don't prevent ArrowDown on number inputs (it changes the value natively), only on non-number types
+    if (event.key === 'ArrowDown' && event.target.type === 'number') return;
+    event.preventDefault();
+    focusNextField(event.target);
+  }
+}
 
 const inputValue = computed({
   get: () => props.modelValue,

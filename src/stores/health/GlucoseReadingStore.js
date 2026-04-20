@@ -82,7 +82,8 @@ export const useGlucoseReadingStore = defineStore('glucoseReadings', {
       this.loading = true;
       try {
         const response = await EventService.postGlucoseReading(readingData);
-        this.glucoseReadings.push(response.data);
+        // Re-fetch so the list is server-authoritative and correctly sorted
+        await this.fetchGlucoseReadings();
         notify('Glucose reading added successfully', 'success');
         return response.data;
       } catch (error) {

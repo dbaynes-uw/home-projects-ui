@@ -100,34 +100,34 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-  const store = useStore();
+import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
+
   const router = useRouter();
+  const glucoseReadingStore = useGlucoseReadingStore();
+
   // Reactive variables for form inputs
   const reading_date = ref('');
   const reading = ref('');
-  const unit = ref('mg/dl'); // Default unit, can be changed if needed
-  const reading_type = ref('AM-Fasting'); // Default reading type, can be changed if needed
-  const status = ref(''); // Optional status field, can be used for additional information
-  const notes = ref(''); // Optional notes field  
+  const unit = ref('mg/dl');
+  const reading_type = ref('AM-Fasting');
+  const status = ref('');
+  const notes = ref('');
+
   // Dropdown options for the reading_type field
-  const readingTypeOptions = ref([]);
-  // Fetch unique reading_types from Vuex store or API
-  const fetchReadingTypeOptions = async () => {
-    try {
-      // Assuming glucose readings are stored in Vuex state
-      const glucoseReadings = store.state.glucoseReadings;
-      
-      // Extract unique reading_types
-      const uniqueReadingTypes = [...new Set(glucoseReadings.map(reading => reading.reading_type))];
-      readingTypeOptions.value = uniqueReadingTypes;
-    } catch (error) {
-      console.error('Error fetching reading type options:', error);
+  const readingTypeOptions = ref([
+    'AM-Fasting', 'PM-Fasting', 'Before Breakfast', 'After Breakfast',
+    'Before Lunch', 'After Lunch', 'Before Dinner', 'After Dinner', 'Bedtime', 'Random'
+  ]);
+
+  onMounted(async () => {
+    if (!glucoseReadingStore.allGlucoseReadings.length) {
+      await glucoseReadingStore.fetchGlucoseReadings();
     }
-  };
-  // Fetch reading_type options on component mount
-  onMounted(fetchReadingTypeOptions);
+    // Merge any extra types found in existing readings
+    const existing = [...new Set(glucoseReadingStore.allGlucoseReadings.map(r => r.reading_type).filter(Boolean))];
+    existing.forEach(t => { if (!readingTypeOptions.value.includes(t)) readingTypeOptions.value.push(t); });
+  });
   //
   // Dropdown options for the status field
   //const statusOptions = ref([
@@ -157,9 +157,7 @@ import { useRouter } from 'vue-router';
       status: status.value,
       notes: notes.value,
     };
-    // Dispatch the Vuex action with the flattened object
-    await store.dispatch('createGlucoseReading', glucose_reading);     
-    // Redirect to the list view after successful creation
+    await glucoseReadingStore.createGlucoseReading(glucose_reading);
     router.push({ name: 'GlucoseReadings' });
   } catch (error) {
     console.error("Error creating glucose reading:", error);
