@@ -17,7 +17,6 @@
         </v-text-field>
         <v-text-field
           v-model="golf.course_location"
-          :rules="[requiredCourseLocation]"
           label="Course Location"
         >
           <template v-slot:prepend-inner>
@@ -280,11 +279,11 @@ function requiredCourse(value) {
   return 'Please enter Course'
 }
 
-function requiredCourseLocation(value) {
-  if (value) { isCourseLocationValid.value = true; return true }
-  isFormValid.value = false; isCourseLocationValid.value = false
-  return 'Please enter Course Location'
-}
+//function requiredCourseLocation(value) {
+//  if (value) { isCourseLocationValid.value = true; return true }
+//  isFormValid.value = false; isCourseLocationValid.value = false
+//  return 'Please enter Course Location'
+//}
 
 function requiredDatePlayed(value) {
   if (value) { isDatePlayedValid.value = true; return true }
@@ -302,7 +301,7 @@ function requiredTeesPlayed(value) {
 function checkValidations() {
   isFormValid.value =
     isCourseValid.value &&
-    isCourseLocationValid.value &&
+    //isCourseLocationValid.value &&
     isDatePlayedValid.value &&
     isTeesPlayedValid.value
 }

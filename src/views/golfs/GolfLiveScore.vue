@@ -34,6 +34,10 @@
         <span class="chip-label">Pen.</span>
         <span class="chip-value diff-over">{{ totalPenalty }}</span>
       </div>
+      <div class="total-chip" v-if="totalHandicaps > 0">
+        <span class="chip-label">Net</span>
+        <span class="chip-value">{{ totalNetScore || '—' }}</span>
+      </div>
     </div>
 
     <!-- Hole navigation -->
@@ -60,10 +64,12 @@
       :holeNumber="currentHole"
       :par="golf[parKey]"
       :score="golf[scoreKey]"
+      :handicap="holeHandicaps[handicapKey]"
       :putts="golf[puttsKey]"
       :penalty="golf[penaltyKey]"
       @update:par="golf[parKey] = $event"
       @update:score="golf[scoreKey] = $event"
+      @update:handicap="holeHandicaps[handicapKey] = $event"
       @update:putts="golf[puttsKey] = $event"
       @update:penalty="golf[penaltyKey] = $event"
     />
@@ -126,7 +132,17 @@
           <span class="sc-score-val" :class="holeScoreClass(h)">
             {{ golf[`score_${h}_hole`] || '·' }}
           </span>
+          <span v-if="holeHandicaps[h]" class="sc-net-val">
+            {{ netHoleScore(h) }}
+          </span>
         </div>
+      </div>
+      <!-- Front 9 totals row -->
+      <div v-if="totalHandicaps > 0" class="nine-totals">
+        <span>Front:</span>
+        <span>Par {{ [1,2,3,4,5,6,7,8,9].reduce((s,h) => s + (golf[`par_${h}_hole`] || 0), 0) || '—' }}</span>
+        <span>Gross {{ [1,2,3,4,5,6,7,8,9].reduce((s,h) => s + (golf[`score_${h}_hole`] || 0), 0) || '—' }}</span>
+        <span class="net-total">Net {{ frontNetScore || '—' }}</span>
       </div>
 
       <!-- Back 9 -->
@@ -147,11 +163,21 @@
           <span class="sc-score-val" :class="holeScoreClass(h + 9)">
             {{ golf[`score_${h + 9}_hole`] || '·' }}
           </span>
+          <span v-if="holeHandicaps[h + 9]" class="sc-net-val">
+            {{ netHoleScore(h + 9) }}
+          </span>
         </div>
       </div>
-    </div>
+      <!-- Back 9 totals row -->
+      <div v-if="totalHandicaps > 0" class="nine-totals">
+        <span>Back:</span>
+        <span>Par {{ [10,11,12,13,14,15,16,17,18].reduce((s,h) => s + (golf[`par_${h}_hole`] || 0), 0) || '—' }}</span>
+        <span>Gross {{ [10,11,12,13,14,15,16,17,18].reduce((s,h) => s + (golf[`score_${h}_hole`] || 0), 0) || '—' }}</span>
+        <span class="net-total">Net {{ backNetScore || '—' }}</span>
+      </div>
 
-  </div>
+    </div><!-- /scorecard-section -->
+  </div><!-- /live-score-wrap -->
 </template>
 
 <script setup>
@@ -180,6 +206,11 @@ const parKey     = computed(() => `par_${currentHole.value}_hole`)
 const scoreKey   = computed(() => `score_${currentHole.value}_hole`)
 const puttsKey   = computed(() => `putts_${currentHole.value}_hole`)
 const penaltyKey = computed(() => `penalty_${currentHole.value}_hole`)
+
+// Handicap strokes per hole — local only, not persisted to DB
+// e.g. hole index gives 1 stroke on the hardest holes
+const holeHandicaps = reactive(Array(19).fill(0))  // index 1-18 used
+const handicapKey = computed(() => currentHole.value)
 
 const golf = reactive({
   id: null,
@@ -238,6 +269,26 @@ const scoreDiffCss = computed(() => {
   if (scoreDiff.value === 0) return 'diff-even'
   return 'diff-over'
 })
+
+// Net score helpers — subtract holeHandicaps from each hole's score
+function netHoleScore(h) {
+  const s = golf[`score_${h}_hole`]
+  if (!s) return null
+  return s - (holeHandicaps[h] || 0)
+}
+const frontNetScore = computed(() =>
+  [1,2,3,4,5,6,7,8,9].reduce((sum, h) => sum + (netHoleScore(h) || 0), 0) || null
+)
+const backNetScore = computed(() =>
+  [10,11,12,13,14,15,16,17,18].reduce((sum, h) => sum + (netHoleScore(h) || 0), 0) || null
+)
+const totalNetScore = computed(() => {
+  const f = frontNetScore.value
+  const b = backNetScore.value
+  if (!f && !b) return null
+  return (f || 0) + (b || 0)
+})
+const totalHandicaps = computed(() => holeHandicaps.slice(1).reduce((sum, v) => sum + (v || 0), 0))
 
 // Save current hole state to the API
 async function saveHole() {
@@ -450,9 +501,24 @@ function holeScoreClass(h) {
 .sc-hole-num      { font-size: 0.6rem; color: #999; }
 .sc-par-val       { font-size: 0.65rem; color: #777; }
 .sc-score-val     { font-size: 0.95rem; font-weight: 700; color: #333; }
+.sc-net-val       { font-size: 0.7rem; font-weight: 600; color: #b8860b; border-top: 1px solid #e0d0a0; margin-top: 1px; padding-top: 1px; }
 .sc-eagle         { color: #f9a825; }
 .sc-birdie        { color: #e53935; }
 .sc-par           { color: #43a047; }
 .sc-bogey         { color: #1565c0; }
 .sc-double        { color: #880e4f; }
+
+.nine-totals {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fffbf0;
+  border: 1px solid #e0d0a0;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  margin: 0.4rem 0 0.75rem;
+  font-size: 0.8rem;
+  color: #555;
+}
+.net-total { font-weight: 700; color: #b8860b; }
 </style>

@@ -24,6 +24,17 @@
         />
       </div>
       <div class="score-cell">
+        <label class="cell-label">Hdcp</label>
+        <input
+          type="number"
+          class="score-input score-hdcp"
+          :value="handicap"
+          min="0" max="3"
+          inputmode="numeric"
+          @input="$emit('update:handicap', +$event.target.value || 0)"
+        />
+      </div>
+      <div class="score-cell">
         <label class="cell-label">Putts</label>
         <input
           type="number"
@@ -49,6 +60,7 @@
 
     <div v-if="par && score" class="vs-par">
       <span :class="vsPar.css">{{ vsPar.label }}</span>
+      <span v-if="handicap" class="net-label">(net {{ netScore }})</span>
     </div>
   </div>
 </template>
@@ -60,15 +72,21 @@ const props = defineProps({
   holeNumber: { type: Number, required: true },
   par:        { type: Number, default: null },
   score:      { type: Number, default: null },
+  handicap:   { type: Number, default: 0 },
   putts:      { type: Number, default: null },
   penalty:    { type: Number, default: null },
 })
 
-defineEmits(['update:par', 'update:score', 'update:putts', 'update:penalty'])
+defineEmits(['update:par', 'update:score', 'update:handicap', 'update:putts', 'update:penalty'])
+
+const netScore = computed(() => {
+  if (!props.score) return null
+  return props.score - (props.handicap || 0)
+})
 
 const vsPar = computed(() => {
   if (!props.par || !props.score) return { label: '', css: '' }
-  const diff = props.score - props.par
+  const diff = netScore.value - props.par
   if (diff <= -2) return { label: 'Eagle 🦅',      css: 'badge eagle' }
   if (diff === -1) return { label: 'Birdie 🐦',     css: 'badge birdie' }
   if (diff ===  0) return { label: 'Par ✓',         css: 'badge par' }
@@ -90,7 +108,7 @@ const vsPar = computed(() => {
 
 .score-inputs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.75rem;
 }
 
@@ -137,6 +155,12 @@ const vsPar = computed(() => {
   background: #f0f7f0;
 }
 
+.score-hdcp {
+  border-color: #b8860b;
+  background: #fffbf0;
+  color: #7a5c00;
+}
+
 /* Hide number spinners on webkit */
 .score-input::-webkit-inner-spin-button,
 .score-input::-webkit-outer-spin-button {
@@ -147,6 +171,16 @@ const vsPar = computed(() => {
 .vs-par {
   text-align: center;
   margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.net-label {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 500;
 }
 
 .badge {
