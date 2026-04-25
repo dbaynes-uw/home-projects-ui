@@ -45,6 +45,9 @@
             <span v-if="has9Scores(p)" class="psl-stat">Net <strong>{{ playerNet(p) }}</strong></span>
           </div>
         </template>
+        <div class="psl-team-total">
+          Total Points <strong>{{ players.reduce((sum, p) => sum + stablefordTotal(p), 0) }}</strong>
+        </div>
       </div>
 
       <div class="players-grid">
@@ -573,6 +576,19 @@ onMounted(async () => {
 }
 .psl-name { font-weight: 600; color: #1565c0; margin-right: 0.2rem; }
 .psl-stat { color: #444; white-space: nowrap; }
+.psl-team-total {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: #1565c0;
+  border-radius: 6px;
+  padding: 0.2rem 0.65rem;
+  white-space: nowrap;
+}
 .players-grid { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
 .player-card { background: #f0f7ff; border: 1px solid #90caf9; border-radius: 8px; padding: 0.5rem 0.75rem; }
 .player-name-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
