@@ -8,41 +8,44 @@ function sumHoles(golf, field, from, to) {
 }
 
 export default {
-  calculateFrontPar(golf)     { return sumHoles(golf, 'par',     1,  9) },
-  calculateBackPar(golf)      { return sumHoles(golf, 'par',    10, 18) },
-  calculateTotalPar(golf)     { return sumHoles(golf, 'par',     1, 18) },
+  // ── Round-level par helpers (golf_rounds shape) ────────────────────────
+  calculateFrontPar(round)     { return sumHoles(round, 'par',     1,  9) },
+  calculateBackPar(round)      { return sumHoles(round, 'par',    10, 18) },
+  calculateTotalPar(round)     { return sumHoles(round, 'par',     1, 18) },
 
-  calculateFrontScore(golf)   { return sumHoles(golf, 'score',   1,  9) },
-  calculateBackScore(golf)    { return sumHoles(golf, 'score',  10, 18) },
-  calculateTotalScore(golf)   { return sumHoles(golf, 'score',   1, 18) },
+  // ── Player score helpers (player_scores shape) ─────────────────────────
+  calculateFrontScore(ps)   { return sumHoles(ps, 'score',   1,  9) },
+  calculateBackScore(ps)    { return sumHoles(ps, 'score',  10, 18) },
+  calculateTotalScore(ps)   { return sumHoles(ps, 'score',   1, 18) },
 
-  calculateFrontPutts(golf)   { return sumHoles(golf, 'putts',   1,  9) },
-  calculateBackPutts(golf)    { return sumHoles(golf, 'putts',  10, 18) },
-  calculateTotalPutts(golf)   { return sumHoles(golf, 'putts',   1, 18) },
+  calculateFrontPutts(ps)   { return sumHoles(ps, 'putts',   1,  9) },
+  calculateBackPutts(ps)    { return sumHoles(ps, 'putts',  10, 18) },
+  calculateTotalPutts(ps)   { return sumHoles(ps, 'putts',   1, 18) },
 
-  calculateFrontPenalty(golf) { return sumHoles(golf, 'penalty', 1,  9) },
-  calculateBackPenalty(golf)  { return sumHoles(golf, 'penalty',10, 18) },
-  calculateTotalPenalty(golf) { return sumHoles(golf, 'penalty', 1, 18) },
+  calculateFrontPenalty(ps) { return sumHoles(ps, 'penalty', 1,  9) },
+  calculateBackPenalty(ps)  { return sumHoles(ps, 'penalty',10, 18) },
+  calculateTotalPenalty(ps) { return sumHoles(ps, 'penalty', 1, 18) },
 
-  determineHolesPlayed(golf) {
+  determineHolesPlayed(ps) {
     let count = 0
     for (let i = 1; i <= 18; i++) {
-      if (Number(golf[`score_${i}_hole`]) > 0) count++
+      if (Number(ps[`score_${i}_hole`]) > 0) count++
     }
     return count
   },
 
-  calculateAverageScore9(golfs) {
-    const rounds = golfs.filter(g => this.determineHolesPlayed(g) === 9)
+  // Average score for rounds with 9 or 18 holes played (array of player_scores)
+  calculateAverageScore9(playerScoresList) {
+    const rounds = playerScoresList.filter(ps => this.determineHolesPlayed(ps) === 9)
     if (!rounds.length) return 0
-    const total = rounds.reduce((sum, g) => sum + sumHoles(g, 'score', 1, 9), 0)
+    const total = rounds.reduce((sum, ps) => sum + sumHoles(ps, 'score', 1, 9), 0)
     return (total / rounds.length).toFixed(1)
   },
 
-  calculateAverageScore18(golfs) {
-    const rounds = golfs.filter(g => this.determineHolesPlayed(g) === 18)
+  calculateAverageScore18(playerScoresList) {
+    const rounds = playerScoresList.filter(ps => this.determineHolesPlayed(ps) === 18)
     if (!rounds.length) return 0
-    const total = rounds.reduce((sum, g) => sum + sumHoles(g, 'score', 1, 18), 0)
+    const total = rounds.reduce((sum, ps) => sum + sumHoles(ps, 'score', 1, 18), 0)
     return (total / rounds.length).toFixed(1)
   },
 }

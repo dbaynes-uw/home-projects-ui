@@ -1,54 +1,40 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h1>{{ golf.course }}</h1>
+  <h1>{{ round.course || 'Loading…' }}</h1>
   <div class="details-nav">
-    <router-link :to="{ name: 'GolfList' }">
-      <b>← Golf List</b>
-    </router-link>
-    <router-link :to="{ name: 'GolfLiveScore', params: { id: String(golf.id) } }" class="live-score-btn">
-      ⛳ Live Score
-    </router-link>
+    <router-link :to="{ name: 'GolfList' }"><b>← Golf List</b></router-link>
+    <router-link
+      :to="{ name: 'GolfGroupScorecard', params: { id: String(round.id) } }"
+      class="edit-btn"
+    >✏️ Edit Round</router-link>
   </div>
   <br/>
-  <h3>{{ statusMessage }}</h3>
-  <div class="card-display">
-    <GolfCard
-      :key="golf.id"
-      :golf="golf"
-      :origin="origin"
-      class="card"
-      @dblclick="editGolf(golf)"
-    />
+
+  <div v-if="round.id" class="card-display">
+    <GolfRoundCard :round="round" class="card" @dblclick="editRound" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
-import GolfCard from '@/components/golfs/GolfCard.vue'
+import GolfRoundCard from '@/components/golfs/GolfRoundCard.vue'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 
-const props = defineProps({
-  id: { type: String, default: '' },
-})
+const props = defineProps({ id: { type: String, default: '' } })
 
-const router = useRouter()
-const route = useRoute()
+const router    = useRouter()
 const golfStore = useGolfStore()
 
-const statusMessage = ref('')
-
-const golf = computed(() => golfStore.currentGolf ?? {})
-const origin = 'GolfDetails'
+const round = computed(() => golfStore.currentRound ?? {})
 
 onMounted(() => {
-  statusMessage.value = route.query.success ?? ''
-  golfStore.fetchGolf(props.id)
+  golfStore.reloadGolfRound(props.id)
 })
 
-function editGolf(g) {
-  router.push({ name: 'GolfEdit', params: { id: `${g.id}` } })
+function editRound() {
+  router.push({ name: 'GolfGroupScorecard', params: { id: String(round.value.id) } })
 }
 </script>
 
@@ -60,8 +46,8 @@ function editGolf(g) {
   max-width: 520px;
   margin: 0.25rem 0;
 }
-.live-score-btn {
-  background: #2d6a2d;
+.edit-btn {
+  background: #1565c0;
   color: white;
   padding: 0.4rem 1rem;
   border-radius: 20px;
@@ -69,7 +55,5 @@ function editGolf(g) {
   font-size: 0.9rem;
   text-decoration: none;
 }
-.live-score-btn:hover {
-  background: #1b4a1b;
-}
+.edit-btn:hover { background: #0d47a1; }
 </style>

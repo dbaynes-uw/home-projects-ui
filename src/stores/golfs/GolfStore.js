@@ -1,97 +1,112 @@
 import { defineStore } from 'pinia'
 import EventService from '@/services/EventService.js'
 
-export const useGolfStore = defineStore('golfs', {
+export const useGolfStore = defineStore('golf', {
   state: () => ({
-    golfs: [],
-    golf: null,
+    golfRounds: [],       // list from index
+    currentRound: null,   // single round with nested player_scores
     loading: false,
     error: null,
   }),
 
   getters: {
-    allGolfs: (state) => state.golfs,
-    currentGolf: (state) => state.golf,
-    isLoading: (state) => state.loading,
+    allGolfRounds: (state) => state.golfRounds,
   },
 
   actions: {
-    async fetchGolfs() {
+    // ── Fetch all rounds ────────────────────────────────────────────────────
+    async fetchGolfRounds() {
       this.loading = true
+      this.error = null
       try {
-        const response = await EventService.getGolfs()
-        this.golfs = response.data
-      } catch (error) {
-        this.error = error
-        console.error('Golf Fetch Error:', error)
+        const response = await EventService.getGolfRounds()
+        this.golfRounds = response.data
+      } catch (err) {
+        this.error = err
+        console.error('fetchGolfRounds error', err)
       } finally {
         this.loading = false
       }
     },
 
-    async fetchGolf(id) {
-      // Cache-first: check the list before hitting the API
-      const existing = this.golfs.find(
-        (g) => g.id === parseInt(id) || g.id === id
-      )
-      if (existing) {
-        this.golf = existing
+    // ── Fetch single round (cache-first) ────────────────────────────────────
+    async fetchGolfRound(id) {
+      if (this.currentRound && String(this.currentRound.id) === String(id)) {
         return
       }
       this.loading = true
+      this.error = null
       try {
-        const response = await EventService.getGolf(id)
-        this.golf = response.data
-      } catch (error) {
-        this.error = error
-        console.error('Golf Get Error:', error)
+        const response = await EventService.getGolfRound(id)
+        this.currentRound = response.data
+      } catch (err) {
+        this.error = err
+        console.error('fetchGolfRound error', err)
       } finally {
         this.loading = false
       }
     },
 
-    async createGolf(golf) {
+    // Force reload of a single round (bypasses cache)
+    async reloadGolfRound(id) {
+      this.loading = true
       try {
-        const response = await EventService.postGolf(golf)
-        const created = response.data || golf
-        this.golfs.push(created)
+        const response = await EventService.getGolfRound(id)
+        this.currentRound = response.data
+        const idx = this.golfRounds.findIndex(r => r.id === response.data.id)
+        if (idx !== -1) this.golfRounds.splice(idx, 1, response.data)
+      } catch (err) {
+        this.error = err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // ── Create round with nested player_scores ──────────────────────────────
+    async createGolfRound(roundData) {
+      try {
+        const response = await EventService.postGolfRound(roundData)
+        const created = response.data
+        this.golfRounds.unshift(created)
+        this.currentRound = created
         return { success: true, data: created }
-      } catch (error) {
-        this.error = error
-        console.error('Golf Create Error:', error)
-        return { success: false, error }
+      } catch (err) {
+        console.error('createGolfRound error', err)
+        return { success: false, error: err }
       }
     },
 
-    async updateGolf(golf) {
+    // ── Update round with nested player_scores ──────────────────────────────
+    async updateGolfRound(roundData) {
       try {
-        const response = await EventService.putGolf(golf)
-        const updated = response.data || golf
-        const idx = this.golfs.findIndex((g) => g.id === golf.id)
-        if (idx !== -1) this.golfs[idx] = updated
-        this.golf = updated
+        const response = await EventService.putGolfRound(roundData)
+        const updated = response.data
+        this.currentRound = updated
+        const idx = this.golfRounds.findIndex(r => r.id === updated.id)
+        if (idx !== -1) this.golfRounds.splice(idx, 1, updated)
         return { success: true, data: updated }
-      } catch (error) {
-        this.error = error
-        console.error('Golf Update Error:', error)
-        return { success: false, error }
+      } catch (err) {
+        console.error('updateGolfRound error', err)
+        return { success: false, error: err }
       }
     },
 
-    async deleteGolf(golf) {
+    // ── Delete round ────────────────────────────────────────────────────────
+    async deleteGolfRound(id) {
       try {
-        await EventService.deleteGolf(golf)
-        this.golfs = this.golfs.filter((g) => g.id !== golf.id)
+        await EventService.deleteGolfRound(id)
+        this.golfRounds = this.golfRounds.filter(r => r.id !== id)
+        if (this.currentRound?.id === id) this.currentRound = null
         return { success: true }
-      } catch (error) {
-        this.error = error
-        console.error('Golf Delete Error:', error)
-        return { success: false, error }
+      } catch (err) {
+        console.error('deleteGolfRound error', err)
+        return { success: false, error: err }
       }
     },
 
-    clearGolf() {
-      this.golf = null
+    clearCurrentRound() {
+      this.currentRound = null
     },
   },
 })
+

@@ -143,26 +143,25 @@ export default {
     this.init();
     return api.put(api_url + "gardens" + `/${updatedGarden.id}`, updatedGarden);
   },
-  getGolf(id) {
+  getGolfRound(id) {
     this.init();
-    return api.get(api_url + "golfs/" + id);
+    return api.get(api_url + "golf_rounds/" + id);
   },
-  getGolfs() {
+  getGolfRounds() {
     this.init();
-    return api.get(api_url + "golfs")
+    return api.get(api_url + "golf_rounds")
   },
-  deleteGolf(golf) {
+  deleteGolfRound(id) {
     this.init();
-    // For Testing: setTimeout(5000);
-    return api.delete(api_url + "golfs/" + `${golf.id}`);
+    return api.delete(api_url + "golf_rounds/" + id);
   },
-  async putGolf(updatedGolf) {
+  async putGolfRound(round) {
     this.init();
-    return api.put(api_url + "golfs" + `/${updatedGolf.id}`, updatedGolf);
+    return api.put(api_url + "golf_rounds/" + round.id, { golf_round: round });
   },
-  async postGolf(golf) {
+  async postGolfRound(round) {
     this.init();
-    return api.post(api_url + 'golfs', golf);
+    return api.post(api_url + 'golf_rounds', { golf_round: round });
   },
 
   async putPlant(updatedPlant) {

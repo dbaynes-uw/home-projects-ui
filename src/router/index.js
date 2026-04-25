@@ -210,14 +210,14 @@ const routes = [
     meta: { requiresAuth: true}
   },
   {
-    path: "/golfs/:id",
+    path: "/golf_rounds/:id",
     name: "GolfDetails",
     props: true,
     component: () => import('@/views/golfs/GolfDetails.vue'),
     meta: { requiresAuth: true}
   },
   {
-    path: "/golf/:id",
+    path: "/golf/:id/edit",
     name: "GolfEdit",
     props: true,
     component: () => import('@/views/golfs/GolfEdit.vue'),
@@ -228,6 +228,13 @@ const routes = [
     name: "GolfLiveScore",
     props: true,
     component: () => import('@/views/golfs/GolfLiveScore.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    path: "/golf/scorecard/:id?",
+    name: "GolfGroupScorecard",
+    props: true,
+    component: () => import('@/views/golfs/GolfGroupScorecard.vue'),
     meta: { requiresAuth: true}
   },
 

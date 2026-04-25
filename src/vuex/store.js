@@ -523,11 +523,12 @@ actions: {
         throw error
       }
     },
-    async forgotPassword (_context, email) {
+    async forgotPassword (_context, emailOrObj) {
       const authUrl = getAuthUrl()
+      const emailStr = emailOrObj && typeof emailOrObj === 'object' ? emailOrObj.email : emailOrObj
 
       try {
-        const response = await api.post(`${authUrl}/api/v1/password_resets/`, { email })
+        const response = await api.post(`${authUrl}/api/v1/password_resets/`, { email: emailStr })
         return response.data
       } catch (error) {
         console.error('Forgot password error:', error)

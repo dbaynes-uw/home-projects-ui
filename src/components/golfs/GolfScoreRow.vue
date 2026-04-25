@@ -46,21 +46,16 @@
         />
       </div>
       <div class="score-cell">
-        <label class="cell-label">Penalty</label>
-        <input
-          type="number"
-          class="score-input"
-          :value="penalty"
-          min="0" max="4"
-          inputmode="numeric"
-          @input="$emit('update:penalty', +$event.target.value || null)"
-        />
+        <label class="cell-label">Net</label>
+        <div class="score-input score-net">
+          {{ netScore ?? '—' }}
+        </div>
       </div>
     </div>
 
     <div v-if="par && score" class="vs-par">
       <span :class="vsPar.css">{{ vsPar.label }}</span>
-      <span v-if="handicap" class="net-label">(net {{ netScore }})</span>
+      <span v-if="stablefordPoints !== null" class="pts-chip">{{ stablefordPoints }} pt{{ stablefordPoints !== 1 ? 's' : '' }}</span>
     </div>
   </div>
 </template>
@@ -74,14 +69,22 @@ const props = defineProps({
   score:      { type: Number, default: null },
   handicap:   { type: Number, default: 0 },
   putts:      { type: Number, default: null },
-  penalty:    { type: Number, default: null },
 })
 
-defineEmits(['update:par', 'update:score', 'update:handicap', 'update:putts', 'update:penalty'])
+defineEmits(['update:par', 'update:score', 'update:handicap', 'update:putts'])
 
 const netScore = computed(() => {
   if (!props.score) return null
   return props.score - (props.handicap || 0)
+})
+
+const stablefordPoints = computed(() => {
+  if (!props.score || !props.par) return null
+  const diff = netScore.value - props.par
+  if (diff <= -2) return 3
+  if (diff === -1) return 2
+  if (diff ===  0) return 1
+  return 0
 })
 
 const vsPar = computed(() => {
@@ -161,6 +164,18 @@ const vsPar = computed(() => {
   color: #7a5c00;
 }
 
+.score-net {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  border-color: #1565c0;
+  background: #e3f2fd;
+  color: #0d47a1;
+  cursor: default;
+}
+
 /* Hide number spinners on webkit */
 .score-input::-webkit-inner-spin-button,
 .score-input::-webkit-outer-spin-button {
@@ -177,10 +192,14 @@ const vsPar = computed(() => {
   gap: 0.5rem;
 }
 
-.net-label {
+.pts-chip {
   font-size: 0.85rem;
-  color: #888;
-  font-weight: 500;
+  font-weight: 700;
+  color: #2d6a2d;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 14px;
+  padding: 0.2rem 0.7rem;
 }
 
 .badge {
