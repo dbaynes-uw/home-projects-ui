@@ -42,7 +42,7 @@
             <span class="psl-name">{{ p.name || `P${pi + 1}` }}</span>
             <span class="psl-stat">Score <strong>{{ playerTotal(p, 'scores') }}</strong></span>
             <span class="psl-stat">Pts <strong>{{ stablefordTotal(p) }}</strong></span>
-            <span class="psl-stat">Net <strong>{{ playerNet(p) }}</strong></span>
+            <span v-if="has9Scores(p)" class="psl-stat">Net <strong>{{ playerNet(p) }}</strong></span>
           </div>
         </template>
       </div>
@@ -80,8 +80,10 @@
               <span class="pis-label">Sc</span>
               <span>{{ stablefordTotal(p) }}</span>
               <span class="pis-label">Pts</span>
-              <span>{{ playerNet(p) }}</span>
-              <span class="pis-label">Net</span>
+              <template v-if="has9Scores(p)">
+                <span>{{ playerNet(p) }}</span>
+                <span class="pis-label">Net</span>
+              </template>
             </div>
           </div>
         </div>
@@ -117,9 +119,9 @@
           {{ p.name || `Player ${pi + 1}` }}
           <span class="player-summary">
             Score {{ playerTotal(p, 'scores') }} &nbsp;|&nbsp;
-            Points {{ stablefordTotal(p) }} &nbsp;|&nbsp;
-            Net {{ playerNet(p) }}
-            <span v-if="p.courseHandicap">(hdcp {{ p.courseHandicap }})</span>
+            Points {{ stablefordTotal(p) }}
+            <template v-if="has9Scores(p)">&nbsp;|&nbsp; Net {{ playerNet(p) }}
+            <span v-if="p.courseHandicap">(hdcp {{ p.courseHandicap }})</span></template>
             &nbsp;|&nbsp; Putts {{ playerTotal(p, 'putts') }}
           </span>
         </h4>
@@ -318,6 +320,9 @@ function stablefordBack(p) {
 
 function playerNet(p) {
   return playerTotal(p, 'scores') - (p.courseHandicap || 0)
+}
+function has9Scores(p) {
+  return Array.from({ length: 9 }, (_, i) => p.scores?.[i + 1]).filter(v => v > 0).length === 9
 }
 
 // ── Score colour helper ──────────────────────────────────────────────────
