@@ -317,7 +317,7 @@ function stablefordBack(p) {
 }
 
 function playerNet(p) {
-  return playerTotal(p, 'scores') - stablefordTotal(p)
+  return playerTotal(p, 'scores') - (p.courseHandicap || 0)
 }
 
 // ── Score colour helper ──────────────────────────────────────────────────
