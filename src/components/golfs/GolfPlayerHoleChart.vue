@@ -22,7 +22,7 @@
     </div>
 
     <!-- ── Legend note ──────────────────────────────────────────── -->
-    <p class="ghc-note">Averages across {{ player.rounds.length }} round{{ player.rounds.length !== 1 ? 's' : '' }} · hole {{ holeRange[0] }}–{{ holeRange[holeRange.length-1] }}</p>
+    <p class="ghc-note">Averages across {{ rounds.length }} round{{ rounds.length !== 1 ? 's' : '' }}<template v-if="teesFilter !== 'All'"> · {{ teesFilter }} tees</template> · hole {{ holeRange[0] }}–{{ holeRange[holeRange.length-1] }}</p>
   </div>
 </template>
 
@@ -39,11 +39,19 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
 const props = defineProps({
-  player: { type: Object, required: true },
+  player:      { type: Object, required: true },
+  teesFilter:  { type: String, default: 'All' },
 })
 
 const activeTab = ref('pts')
 const nine      = ref('front')
+
+// Rounds filtered by selected tees
+const rounds = computed(() =>
+  props.teesFilter === 'All'
+    ? props.player.rounds
+    : props.player.rounds.filter(r => r.round.tees_played === props.teesFilter)
+)
 
 const tabs = [
   { key: 'pts',   label: 'Stableford Pts' },
@@ -72,7 +80,7 @@ function stablefordPts(ps, round, n) {
 
 // ── Hole range ────────────────────────────────────────────────────────────
 const hasBack9 = computed(() =>
-  props.player.rounds.some(r =>
+  rounds.value.some(r =>
     Array.from({ length: 9 }, (_, i) => Number(r.ps[`score_${i + 10}_hole`])).some(v => v > 0)
   )
 )
@@ -86,7 +94,7 @@ const holeRange = computed(() =>
 // ── Per-hole averages ─────────────────────────────────────────────────────
 function avgPerHole(field, transform) {
   return holeRange.value.map(n => {
-    const vals = props.player.rounds
+    const vals = rounds.value
       .map(r => transform ? transform(r, n) : Number(r.ps[`${field}_${n}_hole`]) || null)
       .filter(v => v !== null && v > 0)
     return vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : 0
@@ -94,7 +102,7 @@ function avgPerHole(field, transform) {
 }
 
 function avgPar(n) {
-  const vals = props.player.rounds
+  const vals = rounds.value
     .map(r => Number(r.round[`par_${n}_hole`]) || null)
     .filter(v => v !== null && v > 0)
   return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 4

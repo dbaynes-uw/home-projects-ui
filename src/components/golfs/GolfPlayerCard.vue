@@ -13,7 +13,19 @@
     </div>
 
     <!-- ── Stats grid ──────────────────────────────────────────── -->
-    <div v-if="viewMode === 'stats'" class="gpc-stats">
+    <div v-if="viewMode === 'stats'" class="gpc-stats-wrap">
+      <!-- Tees filter -->
+      <div v-if="availableTees.length > 1" class="gpc-tees-bar">
+        <button
+          v-for="t in ['All', ...availableTees]"
+          :key="t"
+          :class="['gpc-tee-btn', selectedTees === t ? 'active' : '']"
+          :style="selectedTees === t && t !== 'All' ? teeStyle(t) : {}"
+          @click="selectedTees = t"
+        >{{ t }}</button>
+        <span class="gpc-tees-count">({{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }})</span>
+      </div>
+      <div class="gpc-stats">
       <div class="gpc-stat">
         <span class="gpc-stat-val">{{ stats.avgScore }}</span>
         <span class="gpc-stat-label">Avg Score</span>
@@ -37,6 +49,7 @@
       <div class="gpc-stat">
         <span class="gpc-stat-val pts">{{ stats.bestPts }}</span>
         <span class="gpc-stat-label">Best Pts</span>
+      </div>
       </div>
     </div>
 
@@ -77,7 +90,7 @@
     </div>
 
     <!-- ── Hole charts ──────────────────────────────────────────── -->
-    <GolfPlayerHoleChart v-if="viewMode === 'chart'" :player="player" />
+    <GolfPlayerHoleChart v-if="viewMode === 'chart'" :player="player" :tees-filter="selectedTees" />
   </div>
 </template>
 
@@ -92,7 +105,36 @@ const props = defineProps({
 })
 
 // 'stats' | 'table' | 'chart'
-const viewMode = ref('stats')
+const viewMode     = ref('stats')
+const selectedTees = ref('All')
+
+// ── Tees helpers ──────────────────────────────────────────────────────────
+const TEE_COLOURS = {
+  Black:  { bg: '#212121', text: '#fff' },
+  Blue:   { bg: '#1565c0', text: '#fff' },
+  Silver: { bg: '#9e9e9e', text: '#fff' },
+  White:  { bg: '#f5f5f5', text: '#333', border: '#bbb' },
+  Gold:   { bg: '#f9a825', text: '#333' },
+  Green:  { bg: '#2e7d32', text: '#fff' },
+  Red:    { bg: '#c62828', text: '#fff' },
+}
+
+function teeStyle(tee) {
+  const c = TEE_COLOURS[tee]
+  if (!c) return {}
+  return { background: c.bg, color: c.text, borderColor: c.border || c.bg }
+}
+
+const availableTees = computed(() => {
+  const set = new Set(props.player.rounds.map(r => r.round.tees_played).filter(Boolean))
+  return [...set].sort()
+})
+
+const filteredRounds = computed(() =>
+  selectedTees.value === 'All'
+    ? props.player.rounds
+    : props.player.rounds.filter(r => r.round.tees_played === selectedTees.value)
+)
 
 function cycleView() {
   viewMode.value = viewMode.value === 'stats' ? 'table' : viewMode.value === 'table' ? 'chart' : 'stats'
@@ -166,7 +208,7 @@ function fmtDate(v) { return DateFormatService.formatYearDatejs(v) }
 
 // ── Aggregated stats ──────────────────────────────────────────────────────
 const stats = computed(() => {
-  const rounds = props.player.rounds
+  const rounds = filteredRounds.value
   if (!rounds.length) return { avgScore: '—', avgPts: '—', avgNet: '—', avgPutts: '—', bestScore: '—', bestPts: '—' }
 
   const scores = rounds.map(r => totalScore(r.ps)).filter(v => v > 0)
@@ -234,7 +276,31 @@ const stats = computed(() => {
 }
 .gpc-toggle:hover { background: rgba(255,255,255,0.35); }
 
-/* Stats grid */
+/* Tees filter bar */
+.gpc-stats-wrap { display: flex; flex-direction: column; }
+.gpc-tees-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.4rem 0.6rem;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e8e8e8;
+}
+.gpc-tee-btn {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fff;
+  color: #444;
+  transition: all 0.15s;
+}
+.gpc-tee-btn:hover  { border-color: #90caf9; background: #e3f2fd; }
+.gpc-tee-btn.active { border-color: transparent; }
+.gpc-tees-count { font-size: 0.68rem; color: #aaa; margin-left: auto; white-space: nowrap; }
 .gpc-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
