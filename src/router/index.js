@@ -237,6 +237,12 @@ const routes = [
     component: () => import('@/views/golfs/GolfGroupScorecard.vue'),
     meta: { requiresAuth: true}
   },
+  {
+    path: "/golf/players",
+    name: "GolfPlayers",
+    component: () => import('@/views/golfs/GolfPlayers.vue'),
+    meta: { requiresAuth: true}
+  },
 
   // ========================================
   // HEALTH DASHBOARD
