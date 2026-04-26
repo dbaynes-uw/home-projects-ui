@@ -7,13 +7,13 @@
         <h3 class="gpc-name">{{ player.name }}</h3>
         <span class="gpc-rounds">{{ player.rounds.length }} round{{ player.rounds.length !== 1 ? 's' : '' }}</span>
       </div>
-      <button class="gpc-toggle" @click="showTable = !showTable" :title="showTable ? 'Show stats' : 'Show rounds'">
-        <i :class="showTable ? 'fa-solid fa-chart-bar' : 'fa-solid fa-table-list'" />
+      <button class="gpc-toggle" @click="cycleView" :title="toggleTitle">
+        <i :class="toggleIcon" />
       </button>
     </div>
 
     <!-- ── Stats grid ──────────────────────────────────────────── -->
-    <div v-if="!showTable" class="gpc-stats">
+    <div v-if="viewMode === 'stats'" class="gpc-stats">
       <div class="gpc-stat">
         <span class="gpc-stat-val">{{ stats.avgScore }}</span>
         <span class="gpc-stat-label">Avg Score</span>
@@ -41,7 +41,7 @@
     </div>
 
     <!-- ── Rounds table ─────────────────────────────────────────── -->
-    <div v-else class="gpc-table-wrap">
+    <div v-else-if="viewMode === 'table'" class="gpc-table-wrap">
       <table class="gpc-table">
         <thead>
           <tr>
@@ -75,19 +75,34 @@
         </tbody>
       </table>
     </div>
+
+    <!-- ── Hole charts ──────────────────────────────────────────── -->
+    <GolfPlayerHoleChart v-if="viewMode === 'chart'" :player="player" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import DateFormatService from '@/services/DateFormatService.js'
+import GolfPlayerHoleChart from '@/components/golfs/GolfPlayerHoleChart.vue'
 
 const props = defineProps({
   // player: { name: String, rounds: [{ ps: PlayerScore, round: GolfRound }] }
   player: { type: Object, required: true },
 })
 
-const showTable = ref(false)
+// 'stats' | 'table' | 'chart'
+const viewMode = ref('stats')
+
+function cycleView() {
+  viewMode.value = viewMode.value === 'stats' ? 'table' : viewMode.value === 'table' ? 'chart' : 'stats'
+}
+const toggleTitle = computed(() =>
+  viewMode.value === 'stats' ? 'Show rounds table' : viewMode.value === 'table' ? 'Show hole charts' : 'Show stats'
+)
+const toggleIcon = computed(() =>
+  viewMode.value === 'stats' ? 'fa-solid fa-table-list' : viewMode.value === 'table' ? 'fa-solid fa-chart-bar' : 'fa-solid fa-chart-simple'
+)
 
 const initials = computed(() =>
   props.player.name
