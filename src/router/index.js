@@ -606,7 +606,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'Login' })
   } else if (to.name === 'Login' && isAuthenticated) {
-    next({ name: 'HealthMarkers' }) // Or your preferred default route
+    next({ name: 'About' })
   } else {
     next()
   }

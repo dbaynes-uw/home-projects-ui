@@ -59,7 +59,7 @@
               :key="round.id"
               :round="round"
               class="card"
-              @dblclick="editRound(round)"
+              @click="editRound(round)"
             />
             <br />
           </div>

@@ -11,7 +11,7 @@
   <br/>
 
   <div v-if="round.id" class="card-display">
-    <GolfRoundCard :round="round" class="card" @dblclick="editRound" />
+    <GolfRoundCard :round="round" class="card" @click="editRound" />
   </div>
 </template>
 
