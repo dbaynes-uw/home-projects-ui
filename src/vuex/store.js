@@ -13,6 +13,9 @@ export default new Vuex.Store({
     token: "",
     errors: null,
     user: null,
+    role: 'user',
+    approved: false,
+    allowedRoutes: [],
     message: '',
     isNewUser: null,
     loggedIn: null,
@@ -64,7 +67,7 @@ export default new Vuex.Store({
     plugins: [
     createPersistedState({
       key: 'vuex', // localStorage key name
-      paths: ['user', 'token', 'loggedIn', 'id'], // ✅ Only persist auth data
+      paths: ['user', 'token', 'loggedIn', 'id', 'role', 'approved', 'allowedRoutes'], // ✅ Only persist auth data
       storage: window.localStorage,
       // ✅ Add this to ensure it saves/restores properly
       getState: (key, storage) => {
@@ -273,6 +276,9 @@ export default new Vuex.Store({
         state.loggedIn = true
         state.token = userData.token || ''
         state.id = userData.id || ''
+        state.role = userData.role || userData.resource_owner?.role || 'user'
+        state.approved = userData.approved ?? userData.resource_owner?.approved ?? false
+        state.allowedRoutes = userData.allowed_routes || userData.resource_owner?.allowed_routes || []
         
         // ✅ Manual backup (in addition to vuex-persistedstate)
         try {
@@ -300,6 +306,9 @@ export default new Vuex.Store({
       state.loggedIn = false
       state.token = ''
       state.id = ''
+      state.role = 'user'
+      state.approved = false
+      state.allowedRoutes = []
       
       localStorage.removeItem('user')
       localStorage.removeItem('vuex')

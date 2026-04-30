@@ -2,75 +2,23 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 
-const store = useStore()
-const router = useRouter()
+const { login } = useAuth()
 
-const email = ref('')
-const password = ref('')
-const error = ref('')
+const email        = ref('')
+const password     = ref('')
+const error        = ref('')
 const showPassword = ref(false)
 
 async function handleLogin() {
-  try {
-    error.value = ''
-    
-    console.log('🔍 Login: Starting login process...')
-    
-    const result = await store.dispatch('login', {
-      email: email.value,
-      password: password.value
-    })
-    
-    console.log('✅ Login: Dispatch returned:', result)
-    
-    // ✅ CHECK STATE AFTER LOGIN
-    console.log('🔍 Login: Checking store state...')
-    console.log('Store state:', {
-      loggedIn: store.state.loggedIn,
-      hasUser: !!store.state.user,
-      hasToken: !!store.state.token,
-      token: store.state.token?.substring(0, 20) + '...'
-    })
-    
-    // ✅ CHECK LOCALSTORAGE AFTER LOGIN
-    console.log('🔍 Login: Checking localStorage...')
-    const vuexState = localStorage.getItem('vuex')
-    if (vuexState) {
-      const parsed = JSON.parse(vuexState)
-      console.log('localStorage vuex:', {
-        loggedIn: parsed.loggedIn,
-        hasUser: !!parsed.user,
-        hasToken: !!parsed.token || !!parsed.user?.token,
-        token: (parsed.token || parsed.user?.token)?.substring(0, 20) + '...'
-      })
-    }
-    
-    const userState = localStorage.getItem('user')
-    if (userState) {
-      const parsed = JSON.parse(userState)
-      console.log('localStorage user:', {
-        hasToken: !!parsed.token,
-        token: parsed.token?.substring(0, 20) + '...'
-      })
-    }
-    
-    if (result.success) {
-      console.log('✅ Login successful! Redirecting to About...')
-      
-      // ✅ WAIT A TICK FOR STATE TO SETTLE
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-      router.push({ name: 'About' })
-    }
-  } catch (err) {
-    console.error('❌ Login failed:', err)
-    error.value = err.message
+  error.value = ''
+  const result = await login(email.value, password.value)
+  if (!result.success) {
+    error.value = result.error ?? 'Login failed'
   }
+  // success → useAuth.login() handles the redirect to About
 }
-
 </script>
 
 <template>

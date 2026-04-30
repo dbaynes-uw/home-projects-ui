@@ -551,5 +551,21 @@ export default {
     this.init();
     return api.delete(api_url + "marker_definitions/" + definition.id);
   },
+
+  // ===================================
+  // ADMIN — USER MANAGEMENT
+  // ===================================
+  adminGetUsers() {
+    this.init();
+    return api.get(api_url + 'admin/users');
+  },
+  adminGetPendingUsers() {
+    this.init();
+    return api.get(api_url + 'admin/users/pending');
+  },
+  adminUpdateUser(id, payload) {
+    this.init();
+    return api.patch(api_url + `admin/users/${id}`, { user: payload });
+  },
 };
 

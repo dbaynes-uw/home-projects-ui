@@ -142,9 +142,23 @@ export default {
         {
           name: 'health',
           title: 'Health Dashboard',
-          description: 'Track your Medical History',
-          icon: 'fas fa-pills',
+          description: 'Track your health history',
+          icon: 'fas fa-heartbeat',
           url: '/health'
+        },
+        {
+          name: 'golf',
+          title: 'Golf',
+          description: 'Track rounds & scorecards',
+          icon: 'fas fa-golf-ball',
+          url: '/golfs'
+        },
+        {
+          name: 'golf-players',
+          title: 'Golf Players',
+          description: 'Player profiles & stats',
+          icon: 'fas fa-user-group',
+          url: '/golf/players'
         },
         {
           name: 'shopping',
@@ -154,11 +168,11 @@ export default {
           url: '/products'
         },
         {
-          name: 'trails',
-          title: 'Trails',
-          description: 'Explore hiking trails',
-          icon: 'fas fa-hiking',
-          url: '/trails'
+          name: 'travels',
+          title: 'Travels',
+          description: 'Log your travel adventures',
+          icon: 'fas fa-plane',
+          url: '/travels'
         }
       ]
     }

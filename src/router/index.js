@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from '@/vuex/store';
+import { canAccessRoute } from '@/services/routeGroups';
 
 // ✅ ONLY IMPORT CORE COMPONENTS (Used imoobiately)
 import Home from '../views/Home.vue'
@@ -593,6 +594,17 @@ const routes = [
     component: () => import('@/views/waterings/WateringEdit.vue'),
     meta: { requiresAuth: true}
   },
+  {
+    path: '/pending',
+    name: 'PendingApproval',
+    component: () => import('@/views/PendingApproval.vue')
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('@/views/admin/AdminDashboard.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
 ];
 
 const router = createRouter({
@@ -602,14 +614,39 @@ const router = createRouter({
 // Navigation guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.state.loggedIn
-  
+  const isApproved      = store.state.approved
+  const isAdmin         = store.state.role === 'admin'
+
+  // Not logged in → send to Login (unless already going there)
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' })
-  } else if (to.name === 'Login' && isAuthenticated) {
-    next({ name: 'About' })
-  } else {
-    next()
+    return next({ name: 'Login' })
   }
+
+  // Non-admin trying to reach an admin-only route
+  if (to.meta.requiresAdmin && !isAdmin) {
+    return next({ name: 'About' })
+  }
+
+  // Logged in but not approved → send to PendingApproval
+  // Admin always bypasses this check
+  if (isAuthenticated && !isAdmin && !isApproved && to.meta.requiresAuth) {
+    return next({ name: 'PendingApproval' })
+  }
+
+  // Approved non-admin: check feature-group access
+  if (isAuthenticated && isApproved && !isAdmin && to.meta.requiresAuth) {
+    const allowedRoutes = store.state.allowedRoutes ?? []
+    if (!canAccessRoute(to.name, allowedRoutes)) {
+      return next({ name: 'About' })
+    }
+  }
+
+  // Already logged in, trying to hit Login → send to About
+  if (to.name === 'Login' && isAuthenticated) {
+    return next({ name: 'About' })
+  }
+
+  next()
 })
 router.onError((error) => {
   console.error('Router error:', error);
