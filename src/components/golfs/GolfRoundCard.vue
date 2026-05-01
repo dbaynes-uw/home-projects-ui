@@ -78,7 +78,7 @@ function playerPoints(ps) {
   for (let n = 1; n <= 18; n++) {
     const score  = Number(ps[`score_${n}_hole`])
     const par    = Number(props.round[`par_${n}_hole`])
-    const hdcp   = Number(ps[`penalty_${n}_hole`]) || 0
+    const hdcp   = Number(ps[`handicap_${n}_hole`]) || 0
     if (score && par) {
       const netScore = score - hdcp
       const diff     = par - netScore

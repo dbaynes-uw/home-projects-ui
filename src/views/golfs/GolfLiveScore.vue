@@ -235,7 +235,7 @@ function buildPayload() {
     for (let n = 1; n <= 18; n++) {
       obj[`score_${n}_hole`]   = ps[`score_${n}_hole`]   ?? null
       obj[`putts_${n}_hole`]   = ps[`putts_${n}_hole`]   ?? null
-      obj[`penalty_${n}_hole`] = ps[`penalty_${n}_hole`] ?? null
+      obj[`handicap_${n}_hole`] = ps[`handicap_${n}_hole`] ?? null
     }
     return obj
   })
@@ -290,7 +290,7 @@ onMounted(async () => {
     playerScores.push({ id: null, player_name: '', course_handicap: null,
       ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`score_${i + 1}_hole`, null])),
       ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`putts_${i + 1}_hole`, null])),
-      ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`penalty_${i + 1}_hole`, null])),
+      ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`handicap_${i + 1}_hole`, null])),
     })
   } else {
     scores.forEach(ps => playerScores.push({ ...ps }))

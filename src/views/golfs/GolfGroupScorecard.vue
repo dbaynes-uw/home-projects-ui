@@ -373,7 +373,7 @@ function hydrateFromRound(round) {
       for (let n = 1; n <= 18; n++) {
         p.scores[n]      = ps[`score_${n}_hole`]   ?? null
         p.putts[n]       = ps[`putts_${n}_hole`]   ?? null
-        p.hdcpStrokes[n] = ps[`penalty_${n}_hole`] ?? null
+        p.hdcpStrokes[n] = ps[`handicap_${n}_hole`] ?? null
       }
       players.push(p)
     })
@@ -396,7 +396,7 @@ function buildPayload() {
       for (let n = 1; n <= 18; n++) {
         ps[`score_${n}_hole`]   = p.scores[n]      ?? null
         ps[`putts_${n}_hole`]   = p.putts[n]       ?? null
-        ps[`penalty_${n}_hole`] = p.hdcpStrokes[n] ?? null
+        ps[`handicap_${n}_hole`] = p.hdcpStrokes[n] ?? null
       }
       return ps
     }),

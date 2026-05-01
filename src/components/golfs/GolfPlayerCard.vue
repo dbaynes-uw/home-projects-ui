@@ -171,7 +171,7 @@ function holesPlayed(ps) {
 function stablefordPts(ps, round, n) {
   const score   = Number(ps[`score_${n}_hole`])   || 0
   const holePar = Number(round[`par_${n}_hole`])  || 0
-  const strokes = Number(ps[`penalty_${n}_hole`]) || 0
+  const strokes = Number(ps[`handicap_${n}_hole`]) || 0
   if (!score || !holePar) return 0
   const diff = (score - strokes) - holePar
   if (diff <= -2) return 3
