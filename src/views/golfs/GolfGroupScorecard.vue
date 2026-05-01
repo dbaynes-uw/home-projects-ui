@@ -126,6 +126,7 @@
             <template v-if="has9Scores(p)">&nbsp;|&nbsp; Net {{ playerNet(p) }}
             <span v-if="p.courseHandicap">(hdcp {{ p.courseHandicap }})</span></template>
             &nbsp;|&nbsp; Putts {{ playerTotal(p, 'putts') }}
+            <template v-if="playerTotal(p, 'penalties') > 0">&nbsp;|&nbsp; Pen {{ playerTotal(p, 'penalties') }}</template>
           </span>
         </h4>
 
@@ -139,6 +140,7 @@
             <span class="cell-readonly net-cell" :class="scoreCss(p.scores[n] ? p.scores[n] - hdcpStrokesForHole(p, n) : null, par[n])">
               {{ p.scores[n] ? p.scores[n] - hdcpStrokesForHole(p, n) : '—' }}
             </span>
+            <input type="number" v-model.number="p.penalties[n]" class="cell-input penalty-input" placeholder="Pn" min="0" max="4" title="Penalties" />
             <input type="number" v-model.number="p.putts[n]" class="cell-input putts-input" placeholder="P" min="0" max="6" />
           </div>
         </div>
@@ -154,6 +156,7 @@
               <span class="cell-readonly net-cell" :class="scoreCss(p.scores[n + 9] ? p.scores[n + 9] - hdcpStrokesForHole(p, n + 9) : null, par[n + 9])">
                 {{ p.scores[n + 9] ? p.scores[n + 9] - hdcpStrokesForHole(p, n + 9) : '—' }}
               </span>
+              <input type="number" v-model.number="p.penalties[n + 9]" class="cell-input penalty-input" placeholder="Pn" min="0" max="4" title="Penalties" />
               <input type="number" v-model.number="p.putts[n + 9]" class="cell-input putts-input" placeholder="P" min="0" max="6" />
             </div>
           </div>
@@ -262,6 +265,7 @@ function blankPlayer() {
     scores:      Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
     putts:       Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
     hdcpStrokes: Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
+    penalties:   Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
   }
 }
 
@@ -371,9 +375,10 @@ function hydrateFromRound(round) {
       p.name          = ps.player_name       || ''
       p.courseHandicap = ps.course_handicap  ?? null
       for (let n = 1; n <= 18; n++) {
-        p.scores[n]      = ps[`score_${n}_hole`]   ?? null
-        p.putts[n]       = ps[`putts_${n}_hole`]   ?? null
+        p.scores[n]      = ps[`score_${n}_hole`]    ?? null
+        p.putts[n]       = ps[`putts_${n}_hole`]    ?? null
         p.hdcpStrokes[n] = ps[`handicap_${n}_hole`] ?? null
+        p.penalties[n]   = ps[`penalty_${n}_hole`]  ?? null
       }
       players.push(p)
     })
@@ -394,9 +399,10 @@ function buildPayload() {
       }
       if (p.id) ps.id = p.id
       for (let n = 1; n <= 18; n++) {
-        ps[`score_${n}_hole`]   = p.scores[n]      ?? null
-        ps[`putts_${n}_hole`]   = p.putts[n]       ?? null
+        ps[`score_${n}_hole`]    = p.scores[n]      ?? null
+        ps[`putts_${n}_hole`]    = p.putts[n]       ?? null
         ps[`handicap_${n}_hole`] = p.hdcpStrokes[n] ?? null
+        ps[`penalty_${n}_hole`]  = p.penalties[n]   ?? null
       }
       return ps
     }),
@@ -657,6 +663,7 @@ onMounted(async () => {
   padding: 0 3px;
 }
 .hdcp-strokes-input { border-color: #7b1fa2; background: #f3e5f5; color: #4a148c; font-size: 0.75rem; }
+.penalty-input { border-color: #e65100; background: #fff3e0; color: #bf360c; font-size: 0.75rem; }
 .net-cell { background: #e3f2fd; color: #0d47a1; min-width: 26px; }
 .hdcp-input { border-color: #b8860b; background: #fffbf0; font-size: 0.75rem; }
 
