@@ -78,7 +78,10 @@ function playerPoints(ps) {
   for (let n = 1; n <= 18; n++) {
     const score = Number(ps[`score_${n}_hole`])
     const par   = Number(props.round[`par_${n}_hole`])
-    if (score && par) pts += Math.max(0, 2 - (score - par))
+    if (score && par) {
+      const diff = par - score
+      pts += diff >= 2 ? 3 : diff >= 0 ? diff + 1 : 0
+    }
   }
   return pts || '—'
 }
