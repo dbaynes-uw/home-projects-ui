@@ -66,10 +66,11 @@ const search    = ref('')
 const sortKey   = ref('name')
 
 const sorts = [
-  { key: 'name',     label: 'Name'   },
-  { key: 'rounds',   label: 'Rounds' },
-  { key: 'avgScore', label: 'Avg Score' },
-  { key: 'avgPts',   label: 'Avg Pts' },
+  { key: 'name',         label: 'Name'    },
+  { key: 'rounds',       label: 'Rounds'  },
+  { key: 'avgScore',     label: 'Avg Score' },
+  { key: 'avgPts',       label: 'Avg Pts' },
+  { key: 'avgPenalties', label: 'Avg Pen' },
 ]
 
 const loading = computed(() => golfStore.loading)
@@ -114,10 +115,11 @@ const players = computed(() => {
   })
 
   return Array.from(map.values()).map(p => {
-    const scores = p.rounds.map(r => sumHoles(r.ps, 'score', 1, 18)).filter(v => v > 0)
-    const pts    = p.rounds.map(r => stablefordTotal(r.ps, r.round))
+    const scores     = p.rounds.map(r => sumHoles(r.ps, 'score',   1, 18)).filter(v => v > 0)
+    const pts        = p.rounds.map(r => stablefordTotal(r.ps, r.round))
+    const penalties  = p.rounds.map(r => sumHoles(r.ps, 'penalty', 1, 18))
     const avg = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : Infinity
-    return { ...p, _avgScore: avg(scores), _avgPts: avg(pts) }
+    return { ...p, _avgScore: avg(scores), _avgPts: avg(pts), _avgPenalties: avg(penalties) }
   })
 })
 
@@ -128,10 +130,11 @@ const visiblePlayers = computed(() => {
     list = list.filter(p => p.name.toLowerCase().includes(q))
   }
   list.sort((a, b) => {
-    if (sortKey.value === 'name')     return a.name.localeCompare(b.name)
-    if (sortKey.value === 'rounds')   return b.rounds.length - a.rounds.length
-    if (sortKey.value === 'avgScore') return a._avgScore - b._avgScore
-    if (sortKey.value === 'avgPts')   return b._avgPts - a._avgPts
+    if (sortKey.value === 'name')         return a.name.localeCompare(b.name)
+    if (sortKey.value === 'rounds')       return b.rounds.length - a.rounds.length
+    if (sortKey.value === 'avgScore')     return a._avgScore - b._avgScore
+    if (sortKey.value === 'avgPts')       return b._avgPts - a._avgPts
+    if (sortKey.value === 'avgPenalties') return b._avgPenalties - a._avgPenalties
     return 0
   })
   return list

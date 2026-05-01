@@ -43,6 +43,10 @@
         <span class="gpc-stat-label">Avg Putts</span>
       </div>
       <div class="gpc-stat">
+        <span class="gpc-stat-val pen">{{ stats.avgPenalties }}</span>
+        <span class="gpc-stat-label">Avg Pen</span>
+      </div>
+      <div class="gpc-stat">
         <span class="gpc-stat-val">{{ stats.bestScore }}</span>
         <span class="gpc-stat-label">Best Score</span>
       </div>
@@ -66,6 +70,7 @@
             <th>Pts</th>
             <th>Net</th>
             <th>Putts</th>
+            <th>Pen</th>
             <th>Holes</th>
           </tr>
         </thead>
@@ -83,6 +88,7 @@
             <td class="tc pts-col"><strong>{{ stablefordTotal(r.ps, r.round) }}</strong></td>
             <td class="tc">{{ netScore(r.ps) }}</td>
             <td class="tc">{{ totalPutts(r.ps) || '—' }}</td>
+            <td class="tc pen-col">{{ totalPenalties(r.ps) || '—' }}</td>
             <td class="tc">{{ holesPlayed(r.ps) }}</td>
           </tr>
         </tbody>
@@ -160,8 +166,9 @@ function sumHoles(obj, field, from, to) {
   for (let i = from; i <= to; i++) t += Number(obj[`${field}_${i}_hole`]) || 0
   return t
 }
-function totalScore(ps)  { return sumHoles(ps, 'score',  1, 18) }
-function totalPutts(ps)  { return sumHoles(ps, 'putts',  1, 18) }
+function totalScore(ps)    { return sumHoles(ps, 'score',   1, 18) }
+function totalPutts(ps)    { return sumHoles(ps, 'putts',   1, 18) }
+function totalPenalties(ps){ return sumHoles(ps, 'penalty', 1, 18) }
 function holesPlayed(ps) {
   let c = 0
   for (let i = 1; i <= 18; i++) if (Number(ps[`score_${i}_hole`]) > 0) c++
@@ -209,22 +216,24 @@ function fmtDate(v) { return DateFormatService.formatYearDatejs(v) }
 // ── Aggregated stats ──────────────────────────────────────────────────────
 const stats = computed(() => {
   const rounds = filteredRounds.value
-  if (!rounds.length) return { avgScore: '—', avgPts: '—', avgNet: '—', avgPutts: '—', bestScore: '—', bestPts: '—' }
+  if (!rounds.length) return { avgScore: '—', avgPts: '—', avgNet: '—', avgPutts: '—', avgPenalties: '—', bestScore: '—', bestPts: '—' }
 
-  const scores = rounds.map(r => totalScore(r.ps)).filter(v => v > 0)
-  const nets   = rounds.map(r => { const s = totalScore(r.ps); return s ? s - (r.ps.course_handicap || 0) : null }).filter(v => v !== null)
-  const putts  = rounds.map(r => totalPutts(r.ps)).filter(v => v > 0)
-  const pts    = rounds.map(r => stablefordTotal(r.ps, r.round))
+  const scores    = rounds.map(r => totalScore(r.ps)).filter(v => v > 0)
+  const nets      = rounds.map(r => { const s = totalScore(r.ps); return s ? s - (r.ps.course_handicap || 0) : null }).filter(v => v !== null)
+  const putts     = rounds.map(r => totalPutts(r.ps))
+  const pts       = rounds.map(r => stablefordTotal(r.ps, r.round))
+  const penalties = rounds.map(r => totalPenalties(r.ps))
 
   const avg = arr => arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1) : '—'
 
   return {
-    avgScore:  avg(scores),
-    avgPts:    avg(pts),
-    avgNet:    avg(nets),
-    avgPutts:  avg(putts),
-    bestScore: scores.length ? Math.min(...scores) : '—',
-    bestPts:   pts.length    ? Math.max(...pts)    : '—',
+    avgScore:      avg(scores),
+    avgPts:        avg(pts),
+    avgNet:        avg(nets),
+    avgPutts:      avg(putts),
+    avgPenalties:  avg(penalties),
+    bestScore:     scores.length ? Math.min(...scores) : '—',
+    bestPts:       pts.length    ? Math.max(...pts)    : '—',
   }
 })
 </script>
@@ -322,6 +331,8 @@ const stats = computed(() => {
   color: #1b1b1b;
 }
 .gpc-stat-val.pts { color: #1565c0; }
+.gpc-stat-val.pen { color: #e65100; }
+.pen-col strong   { color: #e65100; }
 .gpc-stat-label {
   font-size: 0.65rem;
   color: #888;
