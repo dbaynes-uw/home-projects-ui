@@ -14,7 +14,9 @@
           {{ ps.player_name || `Player ${i + 1}` }}:
           <b>{{ playerScore(ps) }}</b>
           <span v-if="ps.course_handicap"> (hdcp {{ ps.course_handicap }})</span>
+          &nbsp;· pts: <b>{{ playerPoints(ps) }}</b>
         </li>
+        <li class="li-left">Total Points: <b>{{ totalPoints }}</b></li>
         <li v-if="round.url_to_course" class="li-left">
           URL: <a :href="round.url_to_course" target="_blank">{{ round.course }}</a>
         </li>
@@ -70,6 +72,26 @@ function playerScore(ps) {
   }
   return total || '—'
 }
+
+function playerPoints(ps) {
+  let pts = 0
+  for (let n = 1; n <= 18; n++) {
+    const score = Number(ps[`score_${n}_hole`])
+    const par   = Number(props.round[`par_${n}_hole`])
+    if (score && par) pts += Math.max(0, 2 - (score - par))
+  }
+  return pts || '—'
+}
+
+const totalPoints = computed(() => {
+  const players = props.round.player_scores || []
+  if (!players.length) return '—'
+  const sum = players.reduce((acc, ps) => {
+    const p = playerPoints(ps)
+    return acc + (p === '—' ? 0 : p)
+  }, 0)
+  return sum || '—'
+})
 
 function formatDate(value) {
   return DateFormatService.formatYearDatejs(value)
