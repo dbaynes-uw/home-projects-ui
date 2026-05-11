@@ -132,32 +132,52 @@
 
         <!-- Front 9 -->
         <div class="nine-label">Front 9 — {{ playerFront(p, 'scores') }}</div>
-        <div class="grid-9">
-          <div v-for="n in 9" :key="n" class="cell-col">
-            <span class="hole-num">{{ n }}</span>
-            <input type="number" v-model.number="p.scores[n]" class="cell-input score-main" :class="scoreCss(p.scores[n], par[n])" min="1" max="15" />
-            <input type="number" v-model.number="p.hdcpStrokes[n]" class="cell-input hdcp-strokes-input" placeholder="H" min="0" max="2" title="Hdcp strokes" />
-            <span class="cell-readonly net-cell" :class="scoreCss(p.scores[n] ? p.scores[n] - hdcpStrokesForHole(p, n) : null, par[n])">
-              {{ p.scores[n] ? p.scores[n] - hdcpStrokesForHole(p, n) : '—' }}
-            </span>
-            <input type="number" v-model.number="p.penalties[n]" class="cell-input penalty-input" placeholder="Pn" min="0" max="4" title="Penalties" />
-            <input type="number" v-model.number="p.putts[n]" class="cell-input putts-input" placeholder="P" min="0" max="6" />
+        <div class="score-grid-wrap">
+          <div class="row-labels">
+            <span class="rl-hole"></span>
+            <span class="rl-label rl-sc">Sc</span>
+            <span class="rl-label rl-hdcp">H</span>
+            <span class="rl-label rl-net">Net</span>
+            <span class="rl-label rl-put">P</span>
+            <span class="rl-label rl-pen">Pn</span>
+          </div>
+          <div class="grid-9">
+            <div v-for="n in 9" :key="n" class="cell-col">
+              <span class="hole-num">{{ n }}</span>
+              <input type="number" :id="`score-${pi}-${n}`" :value="p.scores[n] || 0" class="cell-input score-main" :class="scoreCss(p.scores[n], par[n])" min="1" max="9" @focus="$event.target.select()" @input="handleScoreInput(pi, n, $event)" />
+              <input type="number" :id="`hdcp-${pi}-${n}`" :value="p.hdcpStrokes[n] || 0" class="cell-input hdcp-strokes-input" placeholder="H" min="0" max="2" title="Hdcp strokes" @focus="$event.target.select()" @input="handleHdcpInput(pi, n, $event)" />
+              <span class="cell-readonly net-cell" :class="scoreCss(p.scores[n] ? p.scores[n] - hdcpStrokesForHole(p, n) : null, par[n])">
+                {{ p.scores[n] ? p.scores[n] - hdcpStrokesForHole(p, n) : '—' }}
+              </span>
+              <input type="number" :value="p.putts[n] || 0" class="cell-input putts-input" placeholder="P" min="0" max="6" @focus="$event.target.select()" @input="handlePuttsInput(pi, n, $event)" />
+              <input type="number" :value="p.penalties[n] || 0" class="cell-input penalty-input" placeholder="Pn" min="0" max="4" title="Penalties" @focus="$event.target.select()" @input="handlePenaltyInput(pi, n, $event)" />
+            </div>
           </div>
         </div>
 
         <!-- Back 9 -->
         <template v-if="hasBack9">
           <div class="nine-label mt-1">Back 9 — {{ playerBack(p, 'scores') }}</div>
-          <div class="grid-9">
-            <div v-for="n in 9" :key="n + 9" class="cell-col">
-              <span class="hole-num">{{ n + 9 }}</span>
-              <input type="number" v-model.number="p.scores[n + 9]" class="cell-input score-main" :class="scoreCss(p.scores[n + 9], par[n + 9])" min="1" max="15" />
-              <input type="number" v-model.number="p.hdcpStrokes[n + 9]" class="cell-input hdcp-strokes-input" placeholder="H" min="0" max="2" title="Hdcp strokes" />
-              <span class="cell-readonly net-cell" :class="scoreCss(p.scores[n + 9] ? p.scores[n + 9] - hdcpStrokesForHole(p, n + 9) : null, par[n + 9])">
-                {{ p.scores[n + 9] ? p.scores[n + 9] - hdcpStrokesForHole(p, n + 9) : '—' }}
-              </span>
-              <input type="number" v-model.number="p.penalties[n + 9]" class="cell-input penalty-input" placeholder="Pn" min="0" max="4" title="Penalties" />
-              <input type="number" v-model.number="p.putts[n + 9]" class="cell-input putts-input" placeholder="P" min="0" max="6" />
+          <div class="score-grid-wrap">
+            <div class="row-labels">
+              <span class="rl-hole"></span>
+              <span class="rl-label rl-sc">Sc</span>
+              <span class="rl-label rl-hdcp">H</span>
+              <span class="rl-label rl-net">Net</span>
+              <span class="rl-label rl-put">P</span>
+              <span class="rl-label rl-pen">Pn</span>
+            </div>
+            <div class="grid-9">
+              <div v-for="n in 9" :key="n + 9" class="cell-col">
+                <span class="hole-num">{{ n + 9 }}</span>
+                <input type="number" :id="`score-${pi}-${n + 9}`" :value="p.scores[n + 9] || 0" class="cell-input score-main" :class="scoreCss(p.scores[n + 9], par[n + 9])" min="1" max="9" @focus="$event.target.select()" @input="handleScoreInput(pi, n + 9, $event)" />
+                <input type="number" :id="`hdcp-${pi}-${n + 9}`" :value="p.hdcpStrokes[n + 9] || 0" class="cell-input hdcp-strokes-input" placeholder="H" min="0" max="2" title="Hdcp strokes" @focus="$event.target.select()" @input="handleHdcpInput(pi, n + 9, $event)" />
+                <span class="cell-readonly net-cell" :class="scoreCss(p.scores[n + 9] ? p.scores[n + 9] - hdcpStrokesForHole(p, n + 9) : null, par[n + 9])">
+                  {{ p.scores[n + 9] ? p.scores[n + 9] - hdcpStrokesForHole(p, n + 9) : '—' }}
+                </span>
+                <input type="number" :value="p.putts[n + 9] || 0" class="cell-input putts-input" placeholder="P" min="0" max="6" @focus="$event.target.select()" @input="handlePuttsInput(pi, n + 9, $event)" />
+                <input type="number" :value="p.penalties[n + 9] || 0" class="cell-input penalty-input" placeholder="Pn" min="0" max="4" title="Penalties" @focus="$event.target.select()" @input="handlePenaltyInput(pi, n + 9, $event)" />
+              </div>
             </div>
           </div>
         </template>
@@ -208,7 +228,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
@@ -262,10 +282,10 @@ function blankPlayer() {
     id: null,           // existing player_score.id (null = new)
     name: '',
     courseHandicap: null,
-    scores:      Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
-    putts:       Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
-    hdcpStrokes: Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
-    penalties:   Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])),
+    scores:      Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
+    putts:       Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
+    hdcpStrokes: Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
+    penalties:   Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
   }
 }
 
@@ -343,6 +363,48 @@ function scoreCss(score, holePar) {
   return 'double'
 }
 
+function handleHdcpInput(pi, holeNum, event) {
+  let val = event.target.value
+  if (val.length > 1) {
+    val = val.slice(-1)
+    event.target.value = val
+  }
+  players[pi].hdcpStrokes[holeNum] = val === '' ? 0 : Number(val)
+  if (val !== '' && holeNum < 18) {
+    nextTick(() => document.getElementById(`hdcp-${pi}-${holeNum + 1}`)?.focus())
+  }
+}
+
+function handleScoreInput(pi, holeNum, event) {
+  let val = event.target.value
+  if (val.length > 1) {
+    val = val.slice(-1)
+    event.target.value = val
+  }
+  players[pi].scores[holeNum] = val === '' ? 0 : Number(val)
+  if (val !== '' && holeNum < 18) {
+    nextTick(() => document.getElementById(`score-${pi}-${holeNum + 1}`)?.focus())
+  }
+}
+
+function handlePenaltyInput(pi, holeNum, event) {
+  let val = event.target.value
+  if (val.length > 1) {
+    val = val.slice(-1)
+    event.target.value = val
+  }
+  players[pi].penalties[holeNum] = val === '' ? 0 : Number(val)
+}
+
+function handlePuttsInput(pi, holeNum, event) {
+  let val = event.target.value
+  if (val.length > 1) {
+    val = val.slice(-1)
+    event.target.value = val
+  }
+  players[pi].putts[holeNum] = val === '' ? 0 : Number(val)
+}
+
 function stablefordCss(pts) {
   if (pts >= 3) return 'pts-eagle'
   if (pts === 2) return 'pts-birdie'
@@ -375,10 +437,10 @@ function hydrateFromRound(round) {
       p.name          = ps.player_name       || ''
       p.courseHandicap = ps.course_handicap  ?? null
       for (let n = 1; n <= 18; n++) {
-        p.scores[n]      = ps[`score_${n}_hole`]    ?? null
-        p.putts[n]       = ps[`putts_${n}_hole`]    ?? null
-        p.hdcpStrokes[n] = ps[`handicap_${n}_hole`] ?? null
-        p.penalties[n]   = ps[`penalty_${n}_hole`]  ?? null
+        p.scores[n]      = ps[`score_${n}_hole`]    ?? 0
+        p.putts[n]       = ps[`putts_${n}_hole`]    ?? 0
+        p.hdcpStrokes[n] = ps[`handicap_${n}_hole`] ?? 0
+        p.penalties[n]   = ps[`penalty_${n}_hole`]  ?? 0
       }
       players.push(p)
     })
@@ -399,10 +461,10 @@ function buildPayload() {
       }
       if (p.id) ps.id = p.id
       for (let n = 1; n <= 18; n++) {
-        ps[`score_${n}_hole`]    = p.scores[n]      ?? null
-        ps[`putts_${n}_hole`]    = p.putts[n]       ?? null
-        ps[`handicap_${n}_hole`] = p.hdcpStrokes[n] ?? null
-        ps[`penalty_${n}_hole`]  = p.penalties[n]   ?? null
+        ps[`score_${n}_hole`]    = p.scores[n]      || null
+        ps[`putts_${n}_hole`]    = p.putts[n]       || null
+        ps[`handicap_${n}_hole`] = p.hdcpStrokes[n] || null
+        ps[`penalty_${n}_hole`]  = p.penalties[n]   || null
       }
       return ps
     }),
@@ -634,7 +696,7 @@ onMounted(async () => {
   align-items: center;
   gap: 2px;
 }
-.hole-num { font-size: 0.6rem; color: #888; font-weight: 600; }
+.hole-num { font-size: 0.6rem; color: #888; font-weight: 600; display: block; height: 12px; line-height: 12px; }
 
 .cell-input {
   width: 100%;
@@ -646,6 +708,8 @@ onMounted(async () => {
   font-weight: 600;
   -webkit-appearance: none;
   appearance: none;
+  height: 26px;
+  box-sizing: border-box;
 }
 .cell-input::-webkit-inner-spin-button,
 .cell-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -661,6 +725,7 @@ onMounted(async () => {
   font-weight: 600;
   border-radius: 4px;
   padding: 0 3px;
+  height: 26px;
 }
 .hdcp-strokes-input { border-color: #7b1fa2; background: #f3e5f5; color: #4a148c; font-size: 0.75rem; }
 .penalty-input { border-color: #e65100; background: #fff3e0; color: #bf360c; font-size: 0.75rem; }
@@ -697,6 +762,35 @@ onMounted(async () => {
 
 /* Loading */
 .loading-state { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 3rem; color: #666; }
+
+/* Row labels sidebar */
+.score-grid-wrap { display: flex; align-items: flex-start; gap: 3px; }
+.score-grid-wrap .grid-9 { flex: 1; min-width: 0; }
+.row-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+  align-items: center;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.rl-hole { height: 12px; display: flex; align-items: center; }
+.rl-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  border-radius: 3px;
+  line-height: 1;
+  height: 26px;
+}
+.rl-sc   { color: #2d6a2d; background: #e8f5e9; }
+.rl-hdcp { color: #4a148c; background: #f3e5f5; }
+.rl-net  { color: #0d47a1; background: #e3f2fd; }
+.rl-pen  { color: #bf360c; background: #fff3e0; }
+.rl-put  { color: #1565c0; background: #e3f2fd; }
 
 /* Sections */
 .hdcp-section, .par-section, .score-section { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 10px; padding: 0.75rem; margin-bottom: 1rem; }
