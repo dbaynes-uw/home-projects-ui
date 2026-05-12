@@ -5,7 +5,7 @@
       <div class="gpc-avatar">{{ initials }}</div>
       <div class="gpc-title">
         <h3 class="gpc-name">{{ player.name }}</h3>
-        <span class="gpc-rounds">{{ player.rounds.length }} round{{ player.rounds.length !== 1 ? 's' : '' }}</span>
+        <span class="gpc-rounds">{{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }}{{ selectedTees !== 'All' ? ` (${selectedTees})` : '' }}</span>
       </div>
       <button class="gpc-toggle" @click="cycleView" :title="toggleTitle">
         <i :class="toggleIcon" />
