@@ -492,6 +492,8 @@ async function saveAndStay() {
   } else {
     result = await golfStore.createGolfRound(payload)
     if (result.success) {
+      // Hydrate player IDs so subsequent saves update rather than insert
+      hydrateFromRound(result.data)
       // Switch to edit mode so subsequent saves update the same record
       router.replace({ name: 'GolfGroupScorecard', params: { id: String(result.data.id) } })
     }
