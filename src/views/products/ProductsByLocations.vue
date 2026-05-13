@@ -565,7 +565,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 import { useStore } from "vuex";
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
@@ -578,6 +578,7 @@ const showShoppingList = ref(true);
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const confirmDialogue = ref(null);
+const hasUnsavedChanges = ref(false);
 
 // ✅ PRODUCT DIALOG STATE (THESE WERE MISSING!)
 const showProductDialog = ref(false);
@@ -1032,6 +1033,7 @@ function handleProductClick(product, event, productIndex, vendorProducts) {
     lastSelectedIndex.value = productIndex;
   } else {
     product.active = !product.active;
+    hasUnsavedChanges.value = true;
     updateProduct(product);
     selectedProducts.value.clear();
     lastSelectedIndex.value = null;
@@ -1126,6 +1128,7 @@ async function submitChanges() {
     };
     const result = await store.dispatch("putProducts", submitData);
     if (result !== false) {
+      hasUnsavedChanges.value = false;
       alert(
         `✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`
       );
@@ -1196,6 +1199,24 @@ function setSmartDefaults() {
   //showShoppingList.value = expandedVendorCount > 0;
   showShoppingList.value = true;
 }
+
+onBeforeRouteLeave(async (to, from, next) => {
+  if (!hasUnsavedChanges.value) {
+    next();
+    return;
+  }
+  const ok = await confirmDialogue.value.show({
+    title: 'Unsaved Changes',
+    message: 'You have unsaved changes that have not been saved. Are you sure you want to leave?',
+    okButton: 'Leave',
+    cancelButton: 'Stay',
+  });
+  if (ok) {
+    next();
+  } else {
+    next(false);
+  }
+});
 
 onMounted(() => {
   fetchData();

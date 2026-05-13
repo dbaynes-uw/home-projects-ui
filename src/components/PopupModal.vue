@@ -44,7 +44,7 @@ export default {
   padding: 0.5rem;
   display: flex;
   align-items: center;
-  z-index: 1;
+  z-index: 1000;
 }
 .window {
   background: #fff;
