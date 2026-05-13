@@ -59,6 +59,17 @@
 
     <!-- ── Rounds table ─────────────────────────────────────────── -->
     <div v-else-if="viewMode === 'table'" class="gpc-table-wrap">
+      <!-- Tees filter -->
+      <div v-if="availableTees.length > 1" class="gpc-tees-bar">
+        <button
+          v-for="t in ['All', ...availableTees]"
+          :key="t"
+          :class="['gpc-tee-btn', selectedTees === t ? 'active' : '']"
+          :style="selectedTees === t && t !== 'All' ? teeStyle(t) : {}"
+          @click="selectedTees = t"
+        >{{ t }}</button>
+        <span class="gpc-tees-count">({{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }})</span>
+      </div>
       <table class="gpc-table">
         <thead>
           <tr>
@@ -75,7 +86,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(r, i) in player.rounds" :key="i">
+          <tr v-for="(r, i) in filteredRounds" :key="i">
             <td class="tc nowrap">{{ fmtDate(r.round.date_played) }}</td>
             <td>
               <router-link :to="{ name: 'GolfDetails', params: { id: String(r.round.id) } }" class="gpc-link">

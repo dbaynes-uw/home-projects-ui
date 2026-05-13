@@ -21,11 +21,11 @@
         <tr>
           <th @click="sort('date_played')" class="sortable">Date {{ sortIcon('date_played') }}</th>
           <th @click="sort('course')" class="sortable">Course {{ sortIcon('course') }}</th>
-          <th>Tees</th>
+          <th @click="sort('tees_played')" class="sortable">Tees {{ sortIcon('tees_played') }}</th>
           <th class="num-col">Par</th>
-          <th>Player</th>
+          <th @click="sort('player_name')" class="sortable">Player {{ sortIcon('player_name') }}</th>
           <th class="num-col">Hdcp</th>
-          <th class="num-col">Score</th>
+          <th @click="sort('score')" class="sortable num-col">Score {{ sortIcon('score') }}</th>
           <th class="num-col">Pts</th>
           <th class="num-col">Net</th>
           <th class="num-col">Holes</th>
@@ -164,6 +164,19 @@ function roundPlayers(round) {
 function fmtDate(v) { return DateFormatService.formatYearDatejs(v) }
 
 // ── Sort & filter ─────────────────────────────────────────────────────────
+function getSortVal(r, key) {
+  if (key === 'player_name') {
+    const ps = r.player_scores || []
+    return ps.map(p => p.player_name || '').sort().join(',')
+  }
+  if (key === 'score') {
+    const ps = r.player_scores || []
+    const scores = ps.map(p => totalScore(p)).filter(v => v > 0)
+    return scores.length ? Math.min(...scores) : 9999
+  }
+  return r[key] ?? ''
+}
+
 const visibleRounds = computed(() => {
   let list = [...props.rounds]
   if (search.value?.length >= 1) {
@@ -177,8 +190,8 @@ const visibleRounds = computed(() => {
     )
   }
   list.sort((a, b) => {
-    const av = a[sortKey.value] ?? ''
-    const bv = b[sortKey.value] ?? ''
+    const av = getSortVal(a, sortKey.value)
+    const bv = getSortVal(b, sortKey.value)
     if (av < bv) return sortAsc.value ? -1 : 1
     if (av > bv) return sortAsc.value ?  1 : -1
     return 0
