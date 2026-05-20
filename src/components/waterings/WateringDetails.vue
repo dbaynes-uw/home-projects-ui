@@ -76,10 +76,10 @@ import WateringCard from "@/components/waterings/WateringCard.vue";
 import router from "@/router";
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
+import { useWateringStore } from "@/stores/waterings/WateringStore";
 
 const route = useRoute();
-const store = useStore();
+const wateringStore = useWateringStore();
 
 const waterings = ref(null);
 
@@ -158,8 +158,8 @@ function toggleSortOrder() {
 async function fetchWaterings() {
   isLoading.value = true;  // ✅ Add this
   
-  await store.dispatch("fetchWaterings");
-  waterings.value = store.getters.waterings;
+  await wateringStore.fetchWaterings();
+  waterings.value = wateringStore.allWaterings;
   
   isLoading.value = false;  // ✅ Add this
 }
@@ -167,8 +167,8 @@ async function fetchWatering() {
   isLoading.value = true;
   
   const requestedId = route.params.id;  
-  await store.dispatch("fetchWatering", requestedId);
-  const watering = store.state.watering;
+  await wateringStore.fetchWatering(requestedId);
+  const watering = wateringStore.currentWatering;
   if (watering && watering.id === parseInt(requestedId)) {
     waterings.value = [watering];
   } else {
@@ -177,8 +177,8 @@ async function fetchWatering() {
     console.error('  Received:', watering?.id);
     
     // Try to find correct watering from all waterings
-    await store.dispatch("fetchWaterings");
-    const allWaterings = store.getters.waterings;
+    await wateringStore.fetchWaterings();
+    const allWaterings = wateringStore.allWaterings;
     const correctWatering = allWaterings.find(w => w.id === parseInt(requestedId));
     
     if (correctWatering) {

@@ -113,8 +113,8 @@
     </div>  </div>
 </template>
 <script setup>
-import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 defineProps({
@@ -123,12 +123,12 @@ defineProps({
     default: () => ({})
   }
 });
-const store = useStore();
+const gardenStore = useGardenStore();
 const router = useRouter();
 const emit = defineEmits(['dblclick']);
 async function handleDelete(garden) {
   if (confirm(`Are you sure you want to delete ${garden.name}? It cannot be undone.`)) {
-    await store.dispatch("deleteGarden", garden);
+    await gardenStore.deleteGarden(garden);
     router.push({ name: "Gardens" });
   }
 }  

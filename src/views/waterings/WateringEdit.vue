@@ -124,8 +124,8 @@
           <v-btn 
             color="secondary" 
             @click="watering.id ? 
-              router.push({ name: 'WateringDetails', params: { id: watering.id } }) : 
-              router.push({ name: 'Waterings' })"
+              _router.push({ name: 'WateringDetails', params: { id: watering.id } }) : 
+              _router.push({ name: 'Waterings' })"
             aria-label="Go back"
           >
             Cancel
@@ -142,10 +142,12 @@ import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 import { computed, onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { useWateringStore } from '@/stores/waterings/WateringStore';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
 
-const store = useStore();
+const wateringStore = useWateringStore();
+const gardenStore = useGardenStore();
 const _router = useRouter();
 
 const props = defineProps(["id"]);
@@ -155,8 +157,8 @@ const confirmDialogue = ref(null);
 //const displayStartTime = ref('');
 
 // Computed
-const watering = computed(() => store.state.watering);
-const gardens = computed(() => store.state.gardens);
+const watering = computed(() => wateringStore.currentWatering || {});
+const gardens = computed(() => gardenStore.allGardens);
 
 // Methods
 const displayStartTime = computed({
@@ -228,13 +230,13 @@ async function updateWatering() {
     console.log('🔄 Updating watering:', watering.value.name);
     
     // Update the watering
-    await store.dispatch('updateWatering', watering.value);
+    await wateringStore.updateWatering(watering.value);
     
     // ✅ REFRESH THE LIST DATA
-    await store.dispatch('fetchWaterings');
+    await wateringStore.fetchWaterings();
          
     // Navigate back
-    this.$router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
+    _router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
     
   } catch (error) {
     console.error('❌ Update failed:', error);
@@ -251,9 +253,9 @@ async function updateWatering() {
 // Lifecycle
 onMounted(async () => {
   isMobile.value = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  await store.dispatch("fetchWatering", props.id);
-  if (!store.state.gardens.length) {
-    await store.dispatch("fetchGardens");
+  await wateringStore.fetchWatering(props.id);
+  if (!gardenStore.allGardens.length) {
+    await gardenStore.fetchGardens();
   }
 });
 </script>

@@ -78,10 +78,10 @@ import PlantCard from "@/components/plants/PlantCard.vue";
 import router from "@/router";
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
+import { usePlantStore } from "@/stores/plants/PlantStore";
 
 const route = useRoute();
-const store = useStore();
+const plantStore = usePlantStore();
 const props = defineProps({
   plants: {
     type: Array,
@@ -162,8 +162,8 @@ async function fetchPlant() {
   if (!route.params.id) return;
   
   isLoading.value = true;
-  await store.dispatch("fetchPlant", route.params.id);
-  singlePlant.value = store.state.plant; // ✅ Store the single plant
+  await plantStore.fetchPlant(route.params.id);
+  singlePlant.value = plantStore.currentPlant; // ✅ Store the single plant
   isLoading.value = false;
 }
 

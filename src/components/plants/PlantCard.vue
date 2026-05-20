@@ -90,8 +90,10 @@
 </template>
 <script setup>
 //let time = null;
-import { useStore } from 'vuex';
 import { computed } from "vue";
+import { useGardenStore } from '@/stores/gardens/GardenStore';
+import { useWateringStore } from '@/stores/waterings/WateringStore';
+import { usePlantStore } from '@/stores/plants/PlantStore';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 const props = defineProps({
@@ -100,24 +102,26 @@ const props = defineProps({
     default: () => ({})
   }
 });
-const store = useStore();
+const gardenStore = useGardenStore();
+const wateringStore = useWateringStore();
+const plantStore = usePlantStore();
 const emit = defineEmits(['dblclick']);
 
 const garden = computed(() => {
-  const found = store.state.gardens.find(g => g.id === props.plant.garden_id);
+  const found = gardenStore.allGardens.find(g => g.id === props.plant.garden_id);
   return found || { id: null, name: 'No Garden Assigned' };
 }); 
 
 const watering = computed(() => {
   // First try direct watering_id relationship
   if (props.plant.watering_id) {
-    const found = store.state.waterings.find(w => w.id === props.plant.watering_id);
+    const found = wateringStore.allWaterings.find(w => w.id === props.plant.watering_id);
     if (found) return found;
   }
   
   // If no direct relationship, check if watering is nested in garden
   if (props.plant.garden_id) {
-    const garden = store.state.gardens.find(g => g.id === props.plant.garden_id);
+    const garden = gardenStore.allGardens.find(g => g.id === props.plant.garden_id);
     if (garden?.waterings?.length) {
       // You might need logic here to determine which watering system
       // For now, let's return the first one or find by some criteria
@@ -141,7 +145,7 @@ async function handleDelete() {
   
   if (confirmed) {
     try {
-      await store.dispatch("deletePlant", props.plant);
+      await plantStore.deletePlant(props.plant);
       
       // Emit event to parent instead of direct navigation
       emit('delete', props.plant);

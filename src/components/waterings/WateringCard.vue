@@ -134,7 +134,9 @@
   </div>
 </template>
 <script setup>
-import { useStore } from 'vuex';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
+import { usePlantStore } from '@/stores/plants/PlantStore';
+import { useWateringStore } from '@/stores/waterings/WateringStore';
 //import { useRouter } from 'vue-router';
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
@@ -147,7 +149,9 @@ const props = defineProps({
     default: () => ({})
   },
 });
-const store = useStore();
+const gardenStore = useGardenStore();
+const plantStore = usePlantStore();
+const wateringStore = useWateringStore();
 //const _router = useRouter();
 const emit = defineEmits(['dblclick', 'delete']);
 
@@ -155,7 +159,7 @@ const garden = computed(() => {
   if (!props.watering.garden_id) {
     return null;
   }
-  return store.state.gardens.find(g => g.id === props.watering.garden_id);
+  return gardenStore.allGardens.find(g => g.id === props.watering.garden_id);
 });
 const plants = computed(() => {
   let plantList = [];
@@ -166,8 +170,8 @@ const plants = computed(() => {
   }
   
   // Method 2: Also check store for plants with matching watering_id
-  if (store.state.plants) {
-    const storePlants = store.state.plants.filter(p => 
+  if (plantStore.allPlants) {
+    const storePlants = plantStore.allPlants.filter(p => 
       parseInt(p.watering_id) === parseInt(props.watering.id)
     );
     
@@ -271,7 +275,7 @@ async function handleDelete() {
   
   if (confirmed) {
     try {
-      await store.dispatch("deleteWatering", props.watering);
+      await wateringStore.deleteWatering(props.watering);
       
       // Emit event to parent instead of direct navigation
       emit('delete', props.watering);

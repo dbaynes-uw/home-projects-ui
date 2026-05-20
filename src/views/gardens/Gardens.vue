@@ -58,18 +58,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import GardenIndex from '@/components/gardens/GardenIndex.vue';
 import GardenDetails from '@/components/gardens/GardenDetails.vue';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
 
-const store = useStore();
+const gardenStore = useGardenStore();
 const router = useRouter();
 
 // Replace the gardens computed with filtered version
 const searchQuery = ref(''); // Add search query
 const gardens = computed(() => {
-  const allGardens = store.state.gardens;
+  const allGardens = gardenStore.allGardens;
   
   if (!searchQuery.value) {
     return allGardens;
@@ -96,14 +96,14 @@ function editGarden(garden) {
 
 async function handleDeleteGarden(garden) {
   if (confirm(`Delete garden ${garden.name}?`)) {
-    await store.dispatch('deleteGarden', garden);
-    await store.dispatch('fetchGardens');
+    await gardenStore.deleteGarden(garden);
+    await gardenStore.fetchGardens();
   }
 }
 
 onMounted(async () => {
   try {
-    await store.dispatch('fetchGardens');
+    await gardenStore.fetchGardens();
   } catch (error) {
     console.error("Error fetching gardens:", error);
   } finally {

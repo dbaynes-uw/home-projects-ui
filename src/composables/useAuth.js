@@ -29,6 +29,11 @@ export function useAuth() {
     return canAccessRoute(routeName, allowedRoutes.value)
   }
 
+  // Email used for created_by / updated_by audit fields
+  const userEmail = computed(() =>
+    user.value?.resource_owner?.email ?? user.value?.email ?? ''
+  )
+
   // Friendly display name derived from email
   const userName = computed(() => {
     if (!user.value?.email) return 'Guest'
@@ -123,6 +128,7 @@ export function useAuth() {
     isApproved,
     allowedRoutes,
     userName,
+    userEmail,
     tokenExpiry,
     // actions
     login,

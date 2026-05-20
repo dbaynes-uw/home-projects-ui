@@ -54,10 +54,10 @@ import GardenCard from "@/components/gardens/GardenCard.vue";
 import router from "@/router";
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
+import { useGardenStore } from "@/stores/gardens/GardenStore";
 
 const route = useRoute();
-const store = useStore();
+const gardenStore = useGardenStore();
 
 // Make gardens prop optional
 const props = defineProps({
@@ -110,8 +110,8 @@ function toggleSortOrder() {
 // Data fetching functions for standalone usage
 async function fetchGardens() {
   try {
-    await store.dispatch("fetchGardens");
-    localGardens.value = store.getters.gardens;
+    await gardenStore.fetchGardens();
+    localGardens.value = gardenStore.allGardens;
   } catch (error) {
     console.error("Error fetching gardens:", error);
   } finally {
@@ -121,8 +121,8 @@ async function fetchGardens() {
 
 async function fetchGarden() {
   try {
-    await store.dispatch("fetchGarden", route.params.id);
-    localGardens.value = [store.state.garden];
+    await gardenStore.fetchGarden(route.params.id);
+    localGardens.value = [gardenStore.currentGarden];
   } catch (error) {
     console.error("Error fetching garden:", error);
   } finally {

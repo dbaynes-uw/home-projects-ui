@@ -33,7 +33,7 @@
   <v-col v-if="!gardenId" cols="12">
     <v-select
       v-model="plant.garden_id"
-      :items="store.state.gardens"
+      :items="gardenStore.allGardens"
       item-title="name"
       item-value="id"
       label="Select Garden (Optional)"
@@ -228,11 +228,17 @@
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
+import { useAuth } from '@/composables/useAuth'
 import { useRouter } from 'vue-router'
 import { toRaw } from 'vue';
+import { usePlantStore } from '@/stores/plants/PlantStore';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
+import { useWateringStore } from '@/stores/waterings/WateringStore';
 
-const store = useStore()
+const { userEmail } = useAuth()
+const plantStore = usePlantStore();
+const gardenStore = useGardenStore();
+const wateringStore = useWateringStore();
 const router = useRouter()
 
 const props = defineProps({
@@ -259,20 +265,20 @@ const plant = ref({
   date_harvested: "",
   duration: "",
   notes: "",
-  created_by: store.state.user.resource_owner.email, // ✅ FIXED
+  created_by: userEmail.value,
   frequency: ""
 })
 
 // ✅ FIXED - Added waterings array
 const garden = computed(() => {
   if (props.gardenId) {
-    const foundGarden = store.state.gardens.find(g => g.id === parseInt(props.gardenId));
+    const foundGarden = gardenStore.allGardens.find(g => g.id === parseInt(props.gardenId));
     if (foundGarden) {
       return foundGarden;
     }
     
-    if (store.state.garden && store.state.garden.id === parseInt(props.gardenId)) {
-      return store.state.garden;
+    if (gardenStore.currentGarden && gardenStore.currentGarden.id === parseInt(props.gardenId)) {
+      return gardenStore.currentGarden;
     }
     
     return {
@@ -294,7 +300,7 @@ const availableWaterings = computed(() => {
   } else {
     const allWaterings = [];
     
-    store.state.gardens.forEach(g => {
+    gardenStore.allGardens.forEach(g => {
       if (g.waterings && g.waterings.length > 0) {
         g.waterings.forEach(watering => {
           allWaterings.push({
@@ -306,7 +312,7 @@ const availableWaterings = computed(() => {
     });
     
     if (store.state.waterings) {
-      store.state.waterings.forEach(watering => {
+      wateringStore.allWaterings.forEach(watering => {
         if (!watering.garden_id) {
           allWaterings.push({
             ...watering,
@@ -328,15 +334,15 @@ const isWateringValid = ref(false)
 onMounted(async () => {
   if (props.gardenId) {
     try {
-      await store.dispatch("fetchGarden", props.gardenId);
+      await gardenStore.fetchGarden(props.gardenId);
     } catch (error) {
       console.error("Error fetching garden:", error);
     }
   }
   
   await Promise.all([
-    store.state.gardens.length ? Promise.resolve() : store.dispatch("fetchGardens"),
-    store.state.waterings.length ? Promise.resolve() : store.dispatch("fetchWaterings")
+    gardenStore.allGardens.length ? Promise.resolve() : gardenStore.fetchGardens(),
+    wateringStore.allWaterings.length ? Promise.resolve() : wateringStore.fetchWaterings()
   ]);
 });
 
@@ -351,17 +357,17 @@ async function createPlant() {
   try {
     const plantData = {
       ...toRaw(plant.value),
-      created_by: store.state.user.resource_owner.email,
+      created_by: userEmail.value,
     };
     
-    await store.dispatch("createPlant", plantData);
+    await plantStore.createPlant(plantData);
     
     // Navigate based on context
     if (props.gardenId) {
-      await store.dispatch("fetchGarden", props.gardenId);
+      await gardenStore.fetchGarden(props.gardenId);
       router.push({ name: 'GardenDetails', params: { id: props.gardenId } });
     } else if (plant.value.garden_id) {
-      await store.dispatch("fetchGarden", plant.value.garden_id);
+      await gardenStore.fetchGarden(plant.value.garden_id);
       router.push({ name: 'GardenDetails', params: { id: plant.value.garden_id } });
     } else {
       router.push({ name: 'Plants' });

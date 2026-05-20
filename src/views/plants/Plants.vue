@@ -56,15 +56,16 @@
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import PlantIndex from '@/components/plants/PlantIndex.vue';
 import PlantDetails from '@/components/plants/PlantDetails.vue';
+import { usePlantStore } from '@/stores/plants/PlantStore';
 
-const store = useStore();
+const plantStore = usePlantStore();
 const route = useRoute();
 const router = useRouter();
-const plants = ref([]);const isLoading = ref(true);
+const plants = ref([]);
+const isLoading = ref(true);
 const showIndex = ref(false);
 const refreshKey = ref(0); 
 const filteredPlants = computed(() => {
@@ -96,12 +97,12 @@ async function handleDeletePlant(plant) {
       isLoading.value = true;
       
       // Delete the plant
-      const result = await store.dispatch('deletePlant', plant);
+      const result = await plantStore.deletePlant(plant);
       console.log('✅ Delete result:', result);
       
       // 💥 NUCLEAR OPTION - Force everything to update
       // 1. Force fresh fetch from server
-      await store.dispatch('fetchPlants');
+      await plantStore.fetchPlants();
       console.log('🔄 Fresh fetch completed');
       
       // 2. Force component re-render
@@ -116,7 +117,7 @@ async function handleDeletePlant(plant) {
       alert(`Failed to delete plant "${plant.plant_name}". Please try again.`);
       
       // Force refresh on error too
-      await store.dispatch('fetchPlants');
+      await plantStore.fetchPlants();
       refreshKey.value++;
     } finally {
       isLoading.value = false;
@@ -126,8 +127,8 @@ async function handleDeletePlant(plant) {
 onMounted(async () => {
   try {
     // Fetch all plants
-    await store.dispatch('fetchPlants');
-    plants.value = store.getters.plants;
+    await plantStore.fetchPlants();
+    plants.value = plantStore.allPlants;
     
     // Check if we need to filter
     if (route.query.wateringId) {

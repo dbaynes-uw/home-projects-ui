@@ -153,21 +153,27 @@
 </template>
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
+import { useAuth } from '@/composables/useAuth';
 import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { usePlantStore } from '@/stores/plants/PlantStore';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
+import { useWateringStore } from '@/stores/waterings/WateringStore';
 
-const store = useStore();
+const { userEmail } = useAuth();
+const plantStore = usePlantStore();
+const gardenStore = useGardenStore();
+const wateringStore = useWateringStore();
 const router = useRouter();
 
 const props = defineProps(["id"]);
 
 // Computed properties
-const plant = computed(() => store.state.plant);
+const plant = computed(() => plantStore.currentPlant);
 
 const garden = computed(() => {
   if (plant.value.garden_id) {
-    const found = store.state.gardens.find(g => g.id === plant.value.garden_id);
+    const found = gardenStore.allGardens.find(g => g.id === plant.value.garden_id);
     return found || { id: null, name: 'Garden not found' };
   }
   return { id: null, name: 'No Garden Assigned' };
@@ -177,7 +183,7 @@ const garden = computed(() => {
 const availableGardens = computed(() => {
   return [
     { id: null, name: 'No Garden (Standalone)' },
-    ...store.state.gardens
+    ...gardenStore.allGardens
   ];
 });
 
@@ -189,13 +195,13 @@ const availableWaterings = computed(() => {
   
   if (plant.value.garden_id) {
     // If garden is selected, show that garden's waterings
-    const selectedGarden = store.state.gardens.find(g => g.id === plant.value.garden_id);
+    const selectedGarden = gardenStore.allGardens.find(g => g.id === plant.value.garden_id);
     if (selectedGarden?.waterings?.length) {
       allWaterings.push(...selectedGarden.waterings);
     }
   } else {
     // If no garden selected, show all waterings with garden context
-    store.state.gardens.forEach(g => {
+    gardenStore.allGardens.forEach(g => {
       if (g.waterings?.length) {
         g.waterings.forEach(watering => {
           allWaterings.push({
@@ -207,8 +213,8 @@ const availableWaterings = computed(() => {
     });
     
     // Add standalone waterings
-    if (store.state.waterings) {
-      store.state.waterings.forEach(watering => {
+    if (wateringStore.allWaterings) {
+      wateringStore.allWaterings.forEach(watering => {
         if (!watering.garden_id) {
           allWaterings.push({
             ...watering,
@@ -237,11 +243,11 @@ async function updatePlant() {
       const plantData = {
         ...plant.value,
         id: props.id, // ✅ Explicitly set ID from route param
-        updated_by: store.state.user.resource_owner.email,
+        updated_by: userEmail.value,
         updated_at: new Date().toISOString(), // ✅ Add timestamp
       };
             
-      const result = await store.dispatch("updatePlant", plantData);
+      const result = await plantStore.updatePlant(plantData);
       
       if (result) {
         // Navigate based on garden assignment
@@ -266,9 +272,9 @@ async function updatePlant() {
 onMounted(async () => {
   try {
     await Promise.all([
-      store.dispatch("fetchPlant", props.id),
-      store.state.gardens.length ? Promise.resolve() : store.dispatch("fetchGardens"),
-      store.state.waterings.length ? Promise.resolve() : store.dispatch("fetchWaterings")
+      plantStore.fetchPlant(props.id),
+      gardenStore.allGardens.length ? Promise.resolve() : gardenStore.fetchGardens(),
+      wateringStore.allWaterings.length ? Promise.resolve() : wateringStore.fetchWaterings()
     ]);
   } catch (error) {
     console.error('Error loading data:', error);

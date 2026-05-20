@@ -47,14 +47,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import WateringIndex from '@/components/waterings/WateringIndex.vue';
 import WateringDetails from '@/components/waterings/WateringDetails.vue';
+import { useWateringStore } from '@/stores/waterings/WateringStore';
+import { usePlantStore } from '@/stores/plants/PlantStore';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
 
-const store = useStore();
+const wateringStore = useWateringStore();
+const plantStore = usePlantStore();
+const gardenStore = useGardenStore();
 const router = useRouter();
-const waterings = computed(() => store.state.waterings);
+const waterings = computed(() => wateringStore.allWaterings);
 const isLoading = ref(true);
 const showIndex = ref(false);
 
@@ -68,17 +72,17 @@ function editWatering(watering) {
 
 async function handleDeleteWatering(watering) {
   if (confirm(`Delete watering ${watering.name}?`)) {
-    await store.dispatch('deleteWatering', watering);
-    await store.dispatch('fetchWaterings');
+    await wateringStore.deleteWatering(watering);
+    await wateringStore.fetchWaterings();
   }
 }
 
 onMounted(async () => {
   try {
     await Promise.all([
-      store.dispatch('fetchWaterings'),
-      store.dispatch('fetchPlants'),
-      store.dispatch('fetchGardens')
+      wateringStore.fetchWaterings(),
+      plantStore.fetchPlants(),
+      gardenStore.fetchGardens()
     ]);
   } catch (error) {
     console.error("Error fetching data:", error);
