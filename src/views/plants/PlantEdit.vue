@@ -169,7 +169,7 @@ const router = useRouter();
 const props = defineProps(["id"]);
 
 // Computed properties
-const plant = computed(() => plantStore.currentPlant);
+const plant = computed(() => plantStore.currentPlant || {});
 
 const garden = computed(() => {
   if (plant.value.garden_id) {
