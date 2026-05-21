@@ -49,6 +49,11 @@
         <i class="fas fa-info-circle"></i>
         <span>{{ capitalizedStatus }}</span>
       </div>
+
+      <div class="event-detail-row event-detail-notes" v-if="event.notes">
+        <i class="fas fa-sticky-note"></i>
+        <span v-html="renderMarkdown(event.notes)"></span>
+      </div>      
     </div>
     
     <!-- ✅ CARD FOOTER WITH BETTER CLICK TARGETS -->
@@ -78,8 +83,26 @@
 
 <script setup>
 import { computed } from 'vue';
+import { marked } from 'marked';
 import dayjs from 'dayjs';
 import DateFormatService from '@/services/DateFormatService.js';
+
+// Render links as labeled pills; bare URLs show hostname, markdown links show their text
+marked.use({
+  renderer: {
+    link({ href, title, text }) {
+      let displayText = text;
+      if (!displayText || displayText === href) {
+        try {
+          displayText = title || new URL(href).hostname.replace(/^www\./, '');
+        } catch {
+          displayText = title || 'Link';
+        }
+      }
+      return `<a href="${href}" title="${href}" target="_blank" rel="noopener noreferrer">${displayText}</a>`;
+    }
+  }
+});
 
 const props = defineProps({
   event: {
@@ -116,6 +139,13 @@ const getEventStatusIcon = () => {
 
 const formatDate = (value) => {
   return DateFormatService.formatStandardDatejs(value);
+};
+
+const renderMarkdown = (text) => {
+  if (!text) return '';
+  // Convert "Label: https://..." lines into markdown links so the label becomes the pill text
+  const preprocessed = text.replace(/^(.+?):\s*(https?:\/\/\S+)$/gm, '[$1]($2)');
+  return marked.parse(preprocessed);
 };
 </script>
 

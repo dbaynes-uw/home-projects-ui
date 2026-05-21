@@ -387,6 +387,34 @@
   flex-shrink: 0;
 }
 
+.event-detail-notes {
+  align-items: flex-start;
+}
+
+.event-detail-notes span {
+  text-align: left;
+}
+
+.event-detail-notes span p {
+  margin: 0;
+}
+
+.event-detail-notes span a {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  text-decoration: none;
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+
+.event-detail-notes span a:hover {
+  background: #764ba2;
+  color: white;
+}
+
 /* Event Card Footer */
 .event-card-footer {
   padding: 1.25rem;
