@@ -1,52 +1,80 @@
 <template>
   <v-container>
-    <h1>Add Watering System{{ garden.id ? ` for ${garden.name}` : '' }}</h1>
+    <h1>Add Watering System</h1>
     <v-row>
       <v-col cols="12">
         <v-card class="mx-auto mt-5">
           <v-card-text>
-            <!-- Back button logic -->
-            <router-link 
-              v-if="garden.id"
-              :to="{ name: 'GardenDetails', params: { id: garden.id } }"
-            >
-              <h2><b>Back to {{ garden.name }}</b></h2>
-            </router-link>
-            <router-link v-else :to="{ name: 'Gardens' }">
-              <h2><b>Back to Gardens</b></h2>
+            <router-link :to="{ name: 'Waterings' }">
+              <h2><b>Back to Waterings</b></h2>
             </router-link>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
 
-    <v-form @submit.prevent="createWatering" ref="form">
+    <!-- Existing waterings not yet linked to this garden -->
+    <template v-if="props.gardenId">
       <v-row>
-        <!-- Garden Selection (only show if no garden pre-selected) -->
-        <v-col v-if="!gardenId" cols="12">
-          <v-select
-            v-model="watering.garden_id"
-            :items="store.state.gardens"
-            item-title="name"
-            item-value="id"
-            label="Select Garden (Optional)"
-            outlined
-            clearable
-            aria-label="Select a garden for this watering system"
-          ></v-select>
-        </v-col>
-        
-        <!-- Show selected garden if pre-selected -->
-        <v-col v-else cols="12">
+        <v-col cols="12">
           <v-text-field
-            v-model="garden.name"
+            :model-value="selectedGarden?.name || 'Loading...'"
             label="Garden"
             outlined
             readonly
-            aria-label="Selected garden"
+            aria-label="Garden name"
           ></v-text-field>
         </v-col>
+        <v-col cols="12">
+          <label for="existing-watering-select" class="existing-watering-label">Add an Existing Watering</label>
+          <select
+            id="existing-watering-select"
+            v-model="selectedExistingWatering"
+            class="existing-watering-select"
+            aria-label="Select an existing watering to add to this garden"
+          >
+            <option value="" disabled>Select a watering to add to this garden</option>
+            <option v-for="item in wateringSelectItems" :key="item.value" :value="item.value">
+              {{ item.title }}
+            </option>
+          </select>
+        </v-col>
+        <v-col cols="12">
+          <v-btn
+            color="primary"
+            :disabled="!selectedExistingWatering"
+            @click="addToGarden()"
+            aria-label="Add selected watering to this garden"
+          >
+            Add to Garden
+          </v-btn>
+        </v-col>
+      </v-row>
 
+      <v-row>
+        <v-col cols="12">
+          <v-divider class="my-4" />
+          <h2>Create a New Watering</h2>
+        </v-col>
+      </v-row>
+    </template>
+
+    <v-form @submit.prevent="createWatering" ref="form">
+      <v-row>
+        <!-- Garden Selection: shown only when NOT navigating from a garden card -->
+        <v-col v-if="!props.gardenId" cols="12">
+          <v-select
+            v-model="watering.garden_ids"
+            :items="gardenStore.allGardens"
+            item-title="name"
+            item-value="id"
+            label="Select Gardens (Optional)"
+            outlined
+            clearable
+            multiple
+            aria-label="Select gardens for this watering system"
+          ></v-select>
+        </v-col>
         <!-- Watering Name Input -->
         <v-col cols="12">
           <v-text-field
@@ -133,9 +161,7 @@
           &nbsp;
           <v-btn 
             color="secondary" 
-            @click="garden.id ? 
-              router.push({ name: 'GardenDetails', params: { id: garden.id } }) : 
-              router.push({ name: 'Waterings' })"
+            @click="props.gardenId ? router.push({ name: 'GardenDetails', params: { id: props.gardenId } }) : router.push({ name: 'Waterings' })"
             aria-label="Go back"
           >
             Cancel
@@ -146,14 +172,17 @@
   </v-container>
 </template>
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import { useWateringStore } from '@/stores/waterings/WateringStore';
+import { useGardenStore } from '@/stores/gardens/GardenStore';
 
-const store = useStore();
 const router = useRouter();
+const vuexStore = useStore();
+const wateringStore = useWateringStore();
+const gardenStore = useGardenStore();
 
-// Accept gardenId as optional prop from route
 const props = defineProps({
   gardenId: {
     type: String,
@@ -161,9 +190,8 @@ const props = defineProps({
   }
 });
 
-// Reactive variables for form inputs
 const watering = ref({
-  garden_id: props.gardenId || null, // Set garden_id if provided
+  garden_ids: [],
   name: "",
   location: "",
   target: "",
@@ -173,54 +201,76 @@ const watering = ref({
   duration: "",
   days: "",
   notes: "",
-  created_by: store.state.user.resource_owner.email,
+  created_by: '',
 });
 
 const isFormValid = ref(false);
 const isWateringNameValid = ref(false);
+const selectedExistingWatering = ref("");
 
-// Garden computed based on whether gardenId was provided
-const garden = computed(() => {
-  if (props.gardenId) {
-    // First try to find in gardens list
-    const foundGarden = store.state.gardens.find(g => g.id === parseInt(props.gardenId));
-    if (foundGarden) {
-      return foundGarden;
-    }
-    
-    // If not in list, try individual garden state
-    if (store.state.garden && store.state.garden.id === parseInt(props.gardenId)) {
-      return store.state.garden;
-    }
-    
-    // Fallback while loading
-    return {
-      id: props.gardenId,
-      name: 'Loading garden...'
-    };
-  }  return {
-    id: null,
-    name: 'No Garden Selected'
-  };
+const selectedGarden = computed(() =>
+  gardenStore.allGardens.find(g => String(g.id) === String(props.gardenId))
+);
+
+const wateringsNotInGarden = computed(() => {
+  if (!props.gardenId) return [];
+  return wateringStore.allWaterings.filter(
+    w => !Array.isArray(w.gardens) || !w.gardens.some(g => String(g.id) === String(props.gardenId))
+  );
 });
 
-// Fetch specific garden if gardenId provided
+const wateringSelectItems = ref([]);
+
+watch(selectedExistingWatering, (newId) => {
+  if (!newId) {
+    watering.value.name = '';
+    watering.value.location = '';
+    watering.value.line = '';
+    watering.value.target = '';
+    watering.value.start_time = '';
+    watering.value.end_time = '';
+    watering.value.duration = '';
+    watering.value.days = '';
+    watering.value.notes = '';
+    isWateringNameValid.value = false;
+    return;
+  }
+  const found = wateringStore.allWaterings.find(w => w.id === newId);
+  if (found) {
+    watering.value.name = found.name || '';
+    watering.value.location = found.location || '';
+    watering.value.line = found.line || '';
+    watering.value.target = found.target || '';
+    watering.value.start_time = found.start_time || '';
+    watering.value.end_time = found.end_time || '';
+    watering.value.duration = found.duration || '';
+    watering.value.days = found.days || '';
+    watering.value.notes = found.notes || '';
+    isWateringNameValid.value = true;
+  }
+});
+
 onMounted(async () => {
-  if (props.gardenId) {
-    try {
-      await store.dispatch("fetchGarden", props.gardenId);
-    } catch (error) {
-      console.error("Error fetching garden:", error);
+  try {
+    const fetches = [];
+    if (!gardenStore.allGardens.length) {
+      fetches.push(gardenStore.fetchGardens());
     }
+    fetches.push(wateringStore.fetchWaterings());
+    await Promise.all(fetches);
+  } catch (e) {
+    console.error('WateringCreate: fetch error', e);
   }
-  
-  // Always ensure we have the gardens list for the dropdown
-  if (!store.state.gardens.length) {
-    await store.dispatch("fetchGardens");
+
+  watering.value.created_by = vuexStore.state.user?.resource_owner?.email || '';
+  if (props.gardenId) {
+    watering.value.garden_ids = [parseInt(props.gardenId)];
+    wateringSelectItems.value = wateringStore.allWaterings
+      .filter(w => !Array.isArray(w.gardens) || !w.gardens.some(g => String(g.id) === String(props.gardenId)))
+      .map(w => ({ title: w.name, value: w.id }));
   }
 });
 
-// Your existing functions remain the same...
 function requiredWateringName(value) {
   if (value) {
     isWateringNameValid.value = true;
@@ -233,11 +283,20 @@ function requiredWateringName(value) {
 }
 
 function checkValidations() {
-  if (isWateringNameValid.value) {
-    isFormValid.value = true;
-  } else {
-    isFormValid.value = false;
-  }
+  isFormValid.value = isWateringNameValid.value;
+}
+
+async function addToGarden() {
+  if (!selectedExistingWatering.value) return;
+  const existingWatering = wateringStore.allWaterings.find(w => w.id === selectedExistingWatering.value);
+  if (!existingWatering) return;
+  const existingGardenIds = existingWatering.gardens?.map(g => g.id) || [];
+  const updated = {
+    ...existingWatering,
+    garden_ids: [...existingGardenIds, parseInt(props.gardenId)]
+  };
+  await wateringStore.updateWatering(updated);
+  router.push({ name: 'GardenDetails', params: { id: props.gardenId } });
 }
 
 async function createWatering() {
@@ -246,15 +305,9 @@ async function createWatering() {
     alert("Please fill in all required fields.");
     return;
   }
-  
-  const newWatering = {
-    ...watering.value,
-    created_by: store.state.user.resource_owner.email,
-  };
-  
-  await store.dispatch("createWatering", newWatering);
-  
-  // Navigate back to appropriate place
+
+  console.log('createWatering payload:', JSON.stringify(watering.value));
+  await wateringStore.createWatering({ ...watering.value });
   if (props.gardenId) {
     router.push({ name: 'GardenDetails', params: { id: props.gardenId } });
   } else {
@@ -321,6 +374,22 @@ fieldset {
 }
 select {
   border-color: darkgreen;
+}
+.existing-watering-label {
+  display: block;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 6px;
+}
+.existing-watering-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.38);
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #fff;
+  cursor: pointer;
 }
 legend {
   font-size: 28px;

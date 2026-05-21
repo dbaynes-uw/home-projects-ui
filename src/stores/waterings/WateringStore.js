@@ -17,7 +17,7 @@ export const useWateringStore = defineStore('waterings', {
     numberOfWaterings: (state) => state.waterings.length,
 
     wateringsForGarden: (state) => (gardenId) =>
-      state.waterings.filter(w => w.garden_id == gardenId),
+      state.waterings.filter(w => Array.isArray(w.gardens) && w.gardens.some(g => g.id == gardenId)),
 
     sortedByName: (state) =>
       [...state.waterings].sort((a, b) => (a.name || '').localeCompare(b.name || '')),

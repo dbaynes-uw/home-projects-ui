@@ -3,13 +3,14 @@
   <div class="edit">
     <h2>Edit Watering {{ watering.name }}</h2>
     
-    <!-- Only show garden link if garden exists -->
-    <router-link 
-      v-if="watering.garden_id"
-      :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }"
-    >
-      <b>Garden Details</b>
-    </router-link>
+    <!-- Only show garden link if gardens exist -->
+    <span v-if="watering.gardens && watering.gardens.length > 0">
+      <span v-for="g in watering.gardens" :key="g.id">
+        <router-link :to="{ name: 'GardenDetails', params: { id: `${g.id}` } }">
+          <b>{{ g.name }} Details</b>
+        </router-link><br/>
+      </span>
+    </span>
     <p v-else><b>Garden: Not Assigned</b></p>
     <br/>
     
@@ -29,14 +30,15 @@
           label="Watering Name"
           v-model="watering.name"
         />
-        <!-- Add Garden Selection -->
+        <!-- Add Garden Selection (multi) -->
         <v-select
-          v-model="watering.garden_id"
+          v-model="selectedGardenIds"
           :items="gardens"
           item-title="name"
           item-value="id"
-          label="Select Garden (Optional)"
+          label="Select Gardens (Optional)"
           clearable
+          multiple
           outlined
         ></v-select>         
         <!-- Your existing fields -->   
@@ -159,6 +161,14 @@ const confirmDialogue = ref(null);
 // Computed
 const watering = computed(() => wateringStore.currentWatering || {});
 const gardens = computed(() => gardenStore.allGardens);
+const selectedGardenIds = computed({
+  get() {
+    return (watering.value.gardens || []).map(g => g.id);
+  },
+  set(ids) {
+    watering.value.garden_ids = ids;
+  }
+});
 
 // Methods
 const displayStartTime = computed({
@@ -229,8 +239,9 @@ async function updateWatering() {
   try {
     console.log('🔄 Updating watering:', watering.value.name);
     
-    // Update the watering
-    await wateringStore.updateWatering(watering.value);
+    // Update the watering (include garden_ids from the select)
+    const payload = { ...watering.value, garden_ids: selectedGardenIds.value };
+    await wateringStore.updateWatering(payload);
     
     // ✅ REFRESH THE LIST DATA
     await wateringStore.fetchWaterings();

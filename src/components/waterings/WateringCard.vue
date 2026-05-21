@@ -7,11 +7,13 @@
         </router-link>
     </h4>
     <ul>
-      <li v-if="watering.garden_id && garden" class="li-left">
-        <b>Garden: </b> 
-        <router-link :to="{ name: 'GardenDetails', params: { id: `${watering.garden_id}` } }">
-          <b>{{ garden.name }}</b>
-        </router-link>
+      <li v-if="watering.gardens && watering.gardens.length > 0" class="li-left">
+        <b>Gardens: </b>
+        <span v-for="(g, idx) in watering.gardens" :key="g.id">
+          <router-link :to="{ name: 'GardenDetails', params: { id: `${g.id}` } }">
+            <b>{{ g.name }}</b>
+          </router-link>{{ idx < watering.gardens.length - 1 ? ', ' : '' }}
+        </span>
       </li>
       <li v-else class="li-left">
         <b>Garden: TBD</b>
@@ -152,15 +154,6 @@ const props = defineProps({
 const gardenStore = useGardenStore();
 const plantStore = usePlantStore();
 const wateringStore = useWateringStore();
-//const _router = useRouter();
-const emit = defineEmits(['dblclick', 'delete']);
-
-const garden = computed(() => {
-  if (!props.watering.garden_id) {
-    return null;
-  }
-  return gardenStore.allGardens.find(g => g.id === props.watering.garden_id);
-});
 const plants = computed(() => {
   let plantList = [];
   
