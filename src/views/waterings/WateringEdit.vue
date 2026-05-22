@@ -161,14 +161,7 @@ const confirmDialogue = ref(null);
 // Computed
 const watering = computed(() => wateringStore.currentWatering || {});
 const gardens = computed(() => gardenStore.allGardens);
-const selectedGardenIds = computed({
-  get() {
-    return (watering.value.gardens || []).map(g => g.id);
-  },
-  set(ids) {
-    watering.value.garden_ids = ids;
-  }
-});
+const selectedGardenIds = ref([]);
 
 // Methods
 const displayStartTime = computed({
@@ -265,6 +258,7 @@ async function updateWatering() {
 onMounted(async () => {
   isMobile.value = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   await wateringStore.fetchWatering(props.id);
+  selectedGardenIds.value = (wateringStore.currentWatering?.gardens || []).map(g => g.id);
   if (!gardenStore.allGardens.length) {
     await gardenStore.fetchGardens();
   }

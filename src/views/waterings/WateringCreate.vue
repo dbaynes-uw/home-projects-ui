@@ -17,15 +17,6 @@
     <template v-if="props.gardenId">
       <v-row>
         <v-col cols="12">
-          <v-text-field
-            :model-value="selectedGarden?.name || 'Loading...'"
-            label="Garden"
-            outlined
-            readonly
-            aria-label="Garden name"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12">
           <label for="existing-watering-select" class="existing-watering-label">Add an Existing Watering</label>
           <select
             id="existing-watering-select"
@@ -61,20 +52,6 @@
 
     <v-form @submit.prevent="createWatering" ref="form">
       <v-row>
-        <!-- Garden Selection: shown only when NOT navigating from a garden card -->
-        <v-col v-if="!props.gardenId" cols="12">
-          <v-select
-            v-model="watering.garden_ids"
-            :items="gardenStore.allGardens"
-            item-title="name"
-            item-value="id"
-            label="Select Gardens (Optional)"
-            outlined
-            clearable
-            multiple
-            aria-label="Select gardens for this watering system"
-          ></v-select>
-        </v-col>
         <!-- Watering Name Input -->
         <v-col cols="12">
           <v-text-field
@@ -85,6 +62,36 @@
             required
             aria-label="Enter the name of the watering system"
           ></v-text-field>
+        </v-col>
+        <!-- Garden Selection -->
+        <v-col cols="12">
+          <div class="garden-dropdown" ref="gardenDropdownRef">
+            <button
+              type="button"
+              class="garden-dropdown-trigger"
+              @click="isGardenDropdownOpen = !isGardenDropdownOpen"
+            >
+              <span :class="{ placeholder: !selectedGardenIds.length }">{{ selectedGardenLabel }}</span>
+              <span class="garden-dropdown-arrow" :class="{ open: isGardenDropdownOpen }">&#9660;</span>
+            </button>
+            <div v-if="isGardenDropdownOpen" class="garden-dropdown-menu">
+              <label
+                v-for="g in gardens"
+                :key="g.id"
+                class="garden-dropdown-option"
+              >
+                <input type="checkbox" :value="g.id" v-model="selectedGardenIds">
+                {{ g.name }}
+              </label>
+              <div v-if="!gardens.length" class="garden-dropdown-empty">Loading...</div>
+              <button
+                v-if="selectedGardenIds.length"
+                type="button"
+                class="garden-dropdown-clear"
+                @click.stop="selectedGardenIds = []"
+              >Clear selection</button>
+            </div>
+          </div>
         </v-col>
         
         <!-- Location Input -->
@@ -172,7 +179,7 @@
   </v-container>
 </template>
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
@@ -211,6 +218,26 @@ const selectedExistingWatering = ref("");
 const selectedGarden = computed(() =>
   gardenStore.allGardens.find(g => String(g.id) === String(props.gardenId))
 );
+
+const gardens = computed(() => gardenStore.allGardens);
+const selectedGardenIds = ref([]);
+const isGardenDropdownOpen = ref(false);
+const gardenDropdownRef = ref(null);
+
+const selectedGardenLabel = computed(() => {
+  if (!selectedGardenIds.value.length) return 'Select Gardens (Optional)';
+  if (selectedGardenIds.value.length === 1) {
+    const g = gardens.value.find(g => g.id === selectedGardenIds.value[0]);
+    return g?.name || '1 garden selected';
+  }
+  return `${selectedGardenIds.value.length} gardens selected`;
+});
+
+function handleOutsideClick(e) {
+  if (gardenDropdownRef.value && !gardenDropdownRef.value.contains(e.target)) {
+    isGardenDropdownOpen.value = false;
+  }
+}
 
 const wateringsNotInGarden = computed(() => {
   if (!props.gardenId) return [];
@@ -251,24 +278,29 @@ watch(selectedExistingWatering, (newId) => {
 });
 
 onMounted(async () => {
+  document.addEventListener('click', handleOutsideClick);
   try {
-    const fetches = [];
-    if (!gardenStore.allGardens.length) {
-      fetches.push(gardenStore.fetchGardens());
-    }
-    fetches.push(wateringStore.fetchWaterings());
-    await Promise.all(fetches);
+    await gardenStore.fetchGardens();
   } catch (e) {
-    console.error('WateringCreate: fetch error', e);
+    console.error('WateringCreate: fetchGardens error', e);
+  }
+  try {
+    await wateringStore.fetchWaterings();
+  } catch (e) {
+    console.error('WateringCreate: fetchWaterings error', e);
   }
 
   watering.value.created_by = vuexStore.state.user?.resource_owner?.email || '';
   if (props.gardenId) {
-    watering.value.garden_ids = [parseInt(props.gardenId)];
+    selectedGardenIds.value = [parseInt(props.gardenId)];
     wateringSelectItems.value = wateringStore.allWaterings
       .filter(w => !Array.isArray(w.gardens) || !w.gardens.some(g => String(g.id) === String(props.gardenId)))
       .map(w => ({ title: w.name, value: w.id }));
   }
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick);
 });
 
 function requiredWateringName(value) {
@@ -307,21 +339,19 @@ async function createWatering() {
   }
 
   console.log('createWatering payload:', JSON.stringify(watering.value));
-  await wateringStore.createWatering({ ...watering.value });
+  await wateringStore.createWatering({ ...watering.value, garden_ids: selectedGardenIds.value });
   if (props.gardenId) {
     router.push({ name: 'GardenDetails', params: { id: props.gardenId } });
   } else {
     router.push({ name: 'Waterings' });
   }
 }
-</script><style lang="css">
+</script><style scoped>
 
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
-  /*width: 33%;*/
   padding: 10px;
-  /*height: 300px; /* Should be removed. Only for demonstration */
 }
 
 /* Clear floats after the columns */
@@ -358,22 +388,10 @@ async function createWatering() {
   text-align: center;
   cursor: pointer;
 }
-label {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-}
 fieldset {
   border: 0;
   margin: 0;
   padding: 0;
-}
-select {
-  border-color: darkgreen;
 }
 .existing-watering-label {
   display: block;
@@ -391,20 +409,104 @@ select {
   background-color: #fff;
   cursor: pointer;
 }
+.garden-dropdown {
+  position: relative;
+  width: 100%;
+}
+.garden-dropdown-trigger {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  border: 1px solid #9e9e9e;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #000;
+  box-sizing: border-box;
+  outline: none;
+}
+.garden-dropdown-trigger:hover {
+  border-color: rgba(0, 0, 0, 0.87);
+}
+.garden-dropdown-trigger .placeholder {
+  color: rgba(0, 0, 0, 0.42);
+}
+.garden-dropdown-arrow {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  transition: transform 0.2s;
+}
+.garden-dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+.garden-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.garden-dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 15px;
+}
+.garden-dropdown-option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+.garden-dropdown-option input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px;
+  min-height: 16px;
+  max-width: 16px;
+  max-height: 16px;
+  accent-color: #1867c0;
+  flex-shrink: 0;
+  cursor: pointer;
+  appearance: checkbox;
+  -webkit-appearance: checkbox;
+  margin: 0;
+}
+.garden-dropdown-empty {
+  padding: 12px 16px;
+  color: rgba(0,0,0,0.4);
+  font-size: 14px;
+  font-style: italic;
+}
+.garden-dropdown-clear {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  background: none;
+  color: #1867c0;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.garden-dropdown-clear:hover {
+  background: rgba(0,0,0,0.04);
+}
 legend {
   font-size: 28px;
   font-weight: 700;
   margin-top: 20px;
-}
-.label-visible {
-  top: -35px;
-  left: 4px;
-  visibility: visible;
-}
-.label-invisible {
-  top: -10px;
-  left: 4px;
-  visibility: hidden;
 }
 .input-field {
   margin-top: 30px;
