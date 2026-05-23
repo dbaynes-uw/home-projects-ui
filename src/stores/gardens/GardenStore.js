@@ -32,8 +32,13 @@ export const useGardenStore = defineStore('gardens', {
       this.error = null
       try {
         const response = await EventService.getGardens()
-        this.gardens = response.data
-        return response.data
+        const seen = new Set()
+        this.gardens = response.data.filter(g => {
+          if (seen.has(g.id)) return false
+          seen.add(g.id)
+          return true
+        })
+        return this.gardens
       } catch (error) {
         this.error = error.response?.data || 'Failed to fetch gardens'
         console.error('GardenStore fetchGardens error:', error)

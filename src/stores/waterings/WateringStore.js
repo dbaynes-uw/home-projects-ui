@@ -32,8 +32,13 @@ export const useWateringStore = defineStore('waterings', {
       this.error = null
       try {
         const response = await EventService.getWaterings()
-        this.waterings = response.data
-        return response.data
+        const seen = new Set()
+        this.waterings = response.data.filter(w => {
+          if (seen.has(w.id)) return false
+          seen.add(w.id)
+          return true
+        })
+        return this.waterings
       } catch (error) {
         this.error = error.response?.data || 'Failed to fetch waterings'
         console.error('WateringStore fetchWaterings error:', error)
