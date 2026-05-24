@@ -24,21 +24,21 @@
       <li class="li-left"><b>Days: {{ watering.days}}</b></li>
       <li class="li-left">
         <b>Start: 
+          <!-- class="flashing-active-blink"-->
           <span 
-            :class="{ 'flashing-active': isCurrentlyActive }" 
-            style="color: yellow"
+            style="color: darkgreen; font-weight: bold;"
           >
             {{ formatTime(watering.start_time) }}
           </span>
         </b>
       </li>
-      <li class="li-left"><b>End: {{ formatTime(watering.end_time) }}</b></li>
+      <li class="li-left" ><b>End: <span style="color:darkred; font-weight:bold">{{ formatTime(watering.end_time) }}</span></b></li>
       <!--li class="li-left"><b>Duration: {{ watering.duration}}</b></li-->
       <!-- ✅ REPLACE LINE 25 WITH CALCULATED DURATION -->
       <li class="li-left">
         <b>Duration: 
-          <span :class="{ 'duration-calculated': calculatedDuration !== props.watering.duration }">
-             <span style="color: yellow;">{{ calculatedDuration }}</span>
+          <span :class="{ 'flashing-active-blink': calculatedDuration !== props.watering.duration }">
+             <span><u>{{ calculatedDuration }}</u></span>
           </span>
         </b>
       </li>
@@ -307,6 +307,11 @@ onUnmounted(() => {
   font-weight: bold;
   color: #00ff00 !important; /* Bright green when active */
 }
+.duration-calculated {
+  animation: flash 1s infinite;
+  font-weight: bold;
+  color: darkblue !important; /* Bright green when active */
+}
 
 @keyframes flash {
   0%, 50% { 
@@ -340,7 +345,7 @@ onUnmounted(() => {
 /* ✅ ALTERNATIVE: SUBTLE BLINK */
 .flashing-active-blink {
   animation: blink 1.5s infinite;
-  color: #ffff00 !important; /* Bright yellow */
+  color: navy !important; 
   font-weight: bold;
 }
 
