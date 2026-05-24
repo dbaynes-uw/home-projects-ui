@@ -62,6 +62,8 @@
           label="Duration"
           v-model="watering.duration"
           style="font-weight: bold"
+          :hint="calculatedDuration ? `Auto-calculated: ${calculatedDuration}` : 'Set start & end time to auto-calculate'"
+          persistent-hint
         />
         <div class="date-field-container">
           <v-text-field
@@ -143,7 +145,7 @@ import { VSelect } from 'vuetify/components'
 import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
@@ -204,6 +206,31 @@ function clearStartTime() {
 function clearEndTime() {
   watering.value.end_time = '';
 }
+
+const calculatedDuration = computed(() => {
+  const start = displayStartTime.value;
+  const end = displayEndTime.value;
+  if (!start || !end) return '';
+
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+
+  let startMins = sh * 60 + sm;
+  let endMins = eh * 60 + em;
+  if (endMins <= startMins) endMins += 24 * 60; // handle crossing midnight
+
+  const diff = endMins - startMins;
+  const hours = Math.floor(diff / 60);
+  const mins = diff % 60;
+
+  if (hours === 0) return `${mins} min`;
+  if (mins === 0) return `${hours} hr`;
+  return `${hours} hr ${mins} min`;
+});
+
+watch(calculatedDuration, (val) => {
+  if (val) watering.value.duration = val;
+});
 
 function formatStandardDateTime(value) {
   return DateFormatService.formatStandardDateTimejs(value);
