@@ -60,7 +60,7 @@ const gardenStore = useGardenStore();
 const router = useRouter();
 const waterings = computed(() => wateringStore.allWaterings);
 const isLoading = ref(true);
-const showIndex = ref(false);
+const showIndex = ref(true);
 
 function toggleView() {
   showIndex.value = !showIndex.value;

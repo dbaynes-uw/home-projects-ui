@@ -101,39 +101,26 @@ const filteredSortedWaterings = computed(() => {
   if (filterStatus.value) {
     wateringList = wateringList.filter(watering => watering.status === filterStatus.value);
   }
-  // ✅ NEW: FILTER OUT NULL start_time WHEN SORTING BY start_time
-  if (sortField.value === 'start_time') {
-    wateringList = wateringList.filter(watering => 
-      watering.start_time && 
-      watering.start_time !== null && 
-      watering.start_time !== ''
-    );
-  }
-  
   // ✅ FLEXIBLE SORTING - Handle both name and start_time
   wateringList.sort((a, b) => {
-    let valueA, valueB;
     if (sortField.value === 'name') {
-      valueA = (a.name || '').toLowerCase();
-      valueB = (b.name || '').toLowerCase();
-      
-      if (sortOrder.value === 'asc') {
-        return valueA.localeCompare(valueB); // A-Z
-      } else {
-        return valueB.localeCompare(valueA); // Z-A
-      }
+      const valueA = (a.name || '').toLowerCase();
+      const valueB = (b.name || '').toLowerCase();
+      return sortOrder.value === 'asc'
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
     } else if (sortField.value === 'start_time') {
-      valueA = new Date(a.start_time);
-      valueB = new Date(b.start_time);
-      
-      if (sortOrder.value === 'asc') {
-        return valueA - valueB; // Oldest first
-      } else {
-        return valueB - valueA; // Newest first
-      }
+      const aVal = a.start_time;
+      const bVal = b.start_time;
+      // Nulls sort last regardless of direction
+      if (!aVal && !bVal) return 0;
+      if (!aVal) return 1;
+      if (!bVal) return -1;
+      const dateA = new Date(aVal);
+      const dateB = new Date(bVal);
+      return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
     }
-    
-    return 0; // Fallback
+    return 0;
   });
 
   return wateringList;

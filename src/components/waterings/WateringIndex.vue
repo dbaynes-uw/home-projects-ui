@@ -7,20 +7,17 @@
       <th id="background-blue" @click="sortList('target')">Target</th>
       <th id="background-blue" @click="sortList('start_time')">Start</th>
       <th id="background-blue" @click="sortList('end_time')">End</th>
-      <th id="background-blue" @click="sortList('location')">Location</th>
+      <th id="background-blue" @click="sortList('duration')">Duration</th>
       <th id="background-blue" @click="sortList('days')">Days</th>
-
-      <th id="background-blue">Notes</th>
-      <th class="th-center" id="background-blue">Actions</th>
+      <th id="background-blue">Actions</th>
     </tr>
     <tr v-for="watering in sortedWaterings" :key="watering.id">
       <td>{{ watering.name }}</td>
       <td>{{ watering.target }}</td>
       <td>{{ formatTime(watering.start_time) }}</td>
       <td>{{ formatTime(watering.end_time) }}</td>
-      <td>{{ watering.location }}</td>
+      <td>{{ watering.duration }}</td>
       <td>{{ watering.days }}</td>
-      <td>{{ watering.notes }}</td>
       <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">
@@ -65,8 +62,8 @@ const emit = defineEmits(['edit','delete']);
 // State
 const onlineStatus = ref(navigator.onLine);
 
-const sortKey = ref('name');
-const sortAsc = ref(false);
+const sortKey = ref('start_time');
+const sortAsc = ref(true);
 //?const inputSearchText = ref("");
 
 const sortedWaterings = computed(() => {
@@ -77,15 +74,15 @@ const sortedWaterings = computed(() => {
     
     // ✅ FIXED - Handle date fields specially
     if (sortKey.value === 'start_time' || sortKey.value === 'end_time') {
-      valueA = new Date(a[sortKey.value] || 0); // Convert to Date object
-      valueB = new Date(b[sortKey.value] || 0);
-      
-      // Compare as dates
-      if (sortAsc.value) {
-        return valueA - valueB; // Oldest first
-      } else {
-        return valueB - valueA; // Newest first
-      }
+      const aVal = a[sortKey.value];
+      const bVal = b[sortKey.value];
+      // Nulls sort last regardless of direction
+      if (!aVal && !bVal) return 0;
+      if (!aVal) return 1;
+      if (!bVal) return -1;
+      const dateA = new Date(aVal);
+      const dateB = new Date(bVal);
+      return sortAsc.value ? dateA - dateB : dateB - dateA;
     } else {
       // ✅ Handle text fields (name, target, location, etc.)
       valueA = (a[sortKey.value] || '').toString().toLowerCase();
