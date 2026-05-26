@@ -111,6 +111,61 @@
             </div>
           </div>
         </template>
+
+        <template v-if="meta.tees_played === 'White'">
+          <div class="nine-label mt-1">White Tees (Yds) — {{ whiteTotalYardage }}</div>
+          <div class="grid-9">
+            <div v-for="n in 9" :key="`white-yard-${n}`" class="cell-col">
+              <span class="hole-num">{{ n }}</span>
+              <input type="number" v-model.number="whiteYardage[n]" class="cell-input yardage-input white-yardage" min="0" max="999" />
+            </div>
+          </div>
+          <template v-if="hasBack9">
+            <div class="grid-9">
+              <div v-for="n in 9" :key="`white-yard-back-${n + 9}`" class="cell-col">
+                <span class="hole-num">{{ n + 9 }}</span>
+                <input type="number" v-model.number="whiteYardage[n + 9]" class="cell-input yardage-input white-yardage" min="0" max="999" />
+              </div>
+            </div>
+          </template>
+        </template>
+
+        <template v-else-if="meta.tees_played === 'Blue'">
+          <div class="nine-label mt-1">Blue Tees (Yds) — {{ blueTotalYardage }}</div>
+          <div class="grid-9">
+            <div v-for="n in 9" :key="`blue-yard-${n}`" class="cell-col">
+              <span class="hole-num">{{ n }}</span>
+              <input type="number" v-model.number="blueYardage[n]" class="cell-input yardage-input blue-yardage" min="0" max="999" />
+            </div>
+          </div>
+          <template v-if="hasBack9">
+            <div class="grid-9">
+              <div v-for="n in 9" :key="`blue-yard-back-${n + 9}`" class="cell-col">
+                <span class="hole-num">{{ n + 9 }}</span>
+                <input type="number" v-model.number="blueYardage[n + 9]" class="cell-input yardage-input blue-yardage" min="0" max="999" />
+              </div>
+            </div>
+          </template>
+        </template>
+
+        <template v-else-if="meta.tees_played === 'Red'">
+          <div class="nine-label mt-1">Red Tees (Yds) — {{ redTotalYardage }}</div>
+          <div class="grid-9">
+            <div v-for="n in 9" :key="`red-yard-${n}`" class="cell-col">
+              <span class="hole-num">{{ n }}</span>
+              <input type="number" v-model.number="redYardage[n]" class="cell-input yardage-input red-yardage" min="0" max="999" />
+            </div>
+          </div>
+          <template v-if="hasBack9">
+            <div class="grid-9">
+              <div v-for="n in 9" :key="`red-yard-back-${n + 9}`" class="cell-col">
+                <span class="hole-num">{{ n + 9 }}</span>
+                <input type="number" v-model.number="redYardage[n + 9]" class="cell-input yardage-input red-yardage" min="0" max="999" />
+              </div>
+            </div>
+          </template>
+        </template>
+
         <div class="total-bar">Total Par: <strong>{{ totalPar }}</strong></div>
       </div>
 
@@ -262,9 +317,15 @@ const meta = reactive({
 
 // par[1..18]
 const par = reactive(Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])))
+const whiteYardage = reactive(Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])))
+const blueYardage = reactive(Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])))
+const redYardage = reactive(Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, null])))
 
 const WHITE_FRONT_PARS = [4, 4, 4, 4, 4, 4, 4, 3, 5]
 const BLUE_FRONT_PARS  = [4, 4, 4, 4, 4, 3, 4, 3, 5]
+const WHITE_FRONT_YARDAGES = [345, 324, 341, 270, 350, 303, 246, 165, 411]
+const BLUE_FRONT_YARDAGES  = [357, 332, 370, 284, 381, 163, 260, 204, 429]
+const RED_FRONT_YARDAGES   = [336, 287, 306, 260, 322, 139, 232, 138, 349]
 
 watch(() => meta.tees_played, (tees) => {
   const anyFrontEntered = Array.from({ length: 9 }, (_, i) => par[i + 1]).some(v => v)
@@ -305,6 +366,25 @@ const frontPar = computed(() => Array.from({ length: 9 }, (_, i) => par[i + 1] |
 const backPar  = computed(() => Array.from({ length: 9 }, (_, i) => par[i + 10] || 0).reduce((a, b) => a + b, 0))
 const totalPar = computed(() => frontPar.value + backPar.value)
 const hasBack9 = computed(() => Array.from({ length: 9 }, (_, i) => par[i + 10]).some(v => v))
+const whiteTotalYardage = computed(() => Array.from({ length: 18 }, (_, i) => whiteYardage[i + 1] || 0).reduce((a, b) => a + b, 0))
+const blueTotalYardage = computed(() => Array.from({ length: 18 }, (_, i) => blueYardage[i + 1] || 0).reduce((a, b) => a + b, 0))
+const redTotalYardage = computed(() => Array.from({ length: 18 }, (_, i) => redYardage[i + 1] || 0).reduce((a, b) => a + b, 0))
+
+function prefillDefaultYardages() {
+  const anyWhiteEntered = Array.from({ length: 18 }, (_, i) => whiteYardage[i + 1]).some(v => v)
+  const anyBlueEntered = Array.from({ length: 18 }, (_, i) => blueYardage[i + 1]).some(v => v)
+  const anyRedEntered = Array.from({ length: 18 }, (_, i) => redYardage[i + 1]).some(v => v)
+
+  if (!anyWhiteEntered) {
+    WHITE_FRONT_YARDAGES.forEach((yards, i) => { whiteYardage[i + 1] = yards })
+  }
+  if (!anyBlueEntered) {
+    BLUE_FRONT_YARDAGES.forEach((yards, i) => { blueYardage[i + 1] = yards })
+  }
+  if (!anyRedEntered) {
+    RED_FRONT_YARDAGES.forEach((yards, i) => { redYardage[i + 1] = yards })
+  }
+}
 
 function playerFront(p, field) {
   if (!p?.[field]) return 0
@@ -576,6 +656,8 @@ onMounted(async () => {
     } finally {
       loading.value = false
     }
+  } else {
+    prefillDefaultYardages()
   }
 })
 </script>
@@ -718,6 +800,10 @@ onMounted(async () => {
 
 .score-main { border-color: #2d6a2d; background: #f0f7f0; font-size: 0.95rem; }
 .putts-input { border-color: #90caf9; background: #e3f2fd; font-size: 0.75rem; }
+.yardage-input { font-size: 0.72rem; font-weight: 700; }
+.white-yardage { border-color: #9e9e9e; background: #f5f5f5; color: #424242; }
+.blue-yardage { border-color: #1565c0; background: #e3f2fd; color: #0d47a1; }
+.red-yardage { border-color: #c62828; background: #ffebee; color: #b71c1c; }
 .cell-readonly {
   display: flex;
   align-items: center;

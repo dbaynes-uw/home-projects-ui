@@ -284,11 +284,6 @@
 .custom-input-field::placeholder {
   text-align: center;
 }
-#p-custom-link-1rem {
-  text-decoration: underline;
-  font-size: 1.15rem;
-  font-weight: bold;
-}
 #p-custom-u {
   text-decoration: underline;
   font-size: 1.25rem;
@@ -296,15 +291,10 @@
 }
 #p-custom-link {
   text-decoration: underline;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: bold;
 }
-#p-custom-link-left {
-  text-decoration: underline;
-  font-size: 1.25rem;
-  font-weight: bold;
-  text-align: left;
-}
+
 #p-left {
   text-align: left;
   font-size: 1rem;
