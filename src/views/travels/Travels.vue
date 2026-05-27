@@ -189,6 +189,90 @@ const statusMessage = computed(() => {
   return ''
 })
 
+const parseTravelDate = (value) => {
+  if (!value) return null
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value
+  }
+
+  if (typeof value !== 'string') return null
+
+  const trimmed = value.trim()
+  if (!trimmed) return null
+
+  // Treat date-only values as local midnight to avoid timezone surprises.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    const localDate = new Date(`${trimmed}T00:00:00`)
+    return Number.isNaN(localDate.getTime()) ? null : localDate
+  }
+
+  const parsed = new Date(trimmed)
+  if (!Number.isNaN(parsed.getTime())) return parsed
+
+  // Fallback for legacy MM/DD/YY(YY) with optional time and AM/PM.
+  const usDateTime = trimmed.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})(?:\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?$/i
+  )
+  if (usDateTime) {
+    const month = Number(usDateTime[1])
+    const day = Number(usDateTime[2])
+    let year = Number(usDateTime[3])
+    let hours = usDateTime[4] ? Number(usDateTime[4]) : 0
+    const minutes = usDateTime[5] ? Number(usDateTime[5]) : 0
+    const meridiem = usDateTime[6]?.toLowerCase()
+
+    if (year < 100) year += 2000
+
+    if (meridiem) {
+      if (hours < 1 || hours > 12) return null
+      if (meridiem === 'am') {
+        hours = hours === 12 ? 0 : hours
+      } else {
+        hours = hours === 12 ? 12 : hours + 12
+      }
+    } else if (hours > 23) {
+      return null
+    }
+
+    if (month < 1 || month > 12 || day < 1 || day > 31 || minutes < 0 || minutes > 59) {
+      return null
+    }
+
+    const fallback = new Date(year, month - 1, day, hours, minutes)
+    if (
+      Number.isNaN(fallback.getTime()) ||
+      fallback.getFullYear() !== year ||
+      fallback.getMonth() !== month - 1 ||
+      fallback.getDate() !== day
+    ) {
+      return null
+    }
+
+    return fallback
+  }
+
+  return null
+}
+
+const getTravelStartRaw = (travel) => {
+  return (
+    travel?.start_date ||
+    travel?.departure_date ||
+    travel?.startDate ||
+    null
+  )
+}
+
+const getTravelEndRaw = (travel) => {
+  return (
+    travel?.end_date ||
+    travel?.return_date ||
+    travel?.endDate ||
+    null
+  )
+}
+
 // ✅ FILTERED DATA
 const filteredTravels = computed(() => {
   if (!searchQuery.value) return travels.value
@@ -210,16 +294,17 @@ const totalTravels = computed(() => travels.value.length)
 const upcomingTravels = computed(() => {
   const now = new Date()
   return travels.value.filter(travel => {
-    const startDate = new Date(travel.start_date)
-    return startDate > now
+    const startDate = parseTravelDate(getTravelStartRaw(travel))
+    return startDate ? startDate > now : false
   }).length
 })
 
 const currentTravels = computed(() => {
   const now = new Date()
   return travels.value.filter(travel => {
-    const startDate = new Date(travel.start_date)
-    const endDate = new Date(travel.end_date)
+    const startDate = parseTravelDate(getTravelStartRaw(travel))
+    const endDate = parseTravelDate(getTravelEndRaw(travel))
+    if (!startDate || !endDate) return false
     return startDate <= now && endDate >= now
   }).length
 })
@@ -227,8 +312,8 @@ const currentTravels = computed(() => {
 const pastTravels = computed(() => {
   const now = new Date()
   return travels.value.filter(travel => {
-    const endDate = new Date(travel.end_date)
-    return endDate < now
+    const endDate = parseTravelDate(getTravelEndRaw(travel))
+    return endDate ? endDate < now : false
   }).length
 })
 
