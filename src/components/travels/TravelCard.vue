@@ -32,6 +32,17 @@
       </div>
     </template>
 
+    <div class="travel-map-wrap">
+      <iframe
+        class="travel-map-iframe"
+        :src="mapEmbedSrc"
+        title="Travel route map"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+
     <div class="travel-details">
       <div v-if="travel.description" class="detail-row">
         <span class="detail-label">Description:</span>
@@ -142,6 +153,7 @@ defineEmits(['edit', 'delete'])
 
 // Reactive data
 const splitLength = ref(30)
+const mapEmbedSrc = 'https://www.google.com/maps/embed?pb=!1m58!1m12!1m3!1d1582841.93617292!2d-0.9113414999999679!3d48.608503899999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m43!3e0!4m5!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C%20France!3m2!1d48.857547499999995!2d2.3513764999999998!4m5!1s0x47e0de76ca71faab%3A0x3d1cabefa49f93d6!2sRouen%2C%20France!3m2!1d49.4435261!2d1.0984308999999999!4m5!1s0x480ea454875ce32b%3A0x40ca5cd36e4aaa0!2sRoz-sur-Couesnon%2C%2035610%2C%20France!3m2!1d48.589059999999996!2d-1.5913758999999998!4m5!1s0x4816d340288ac045%3A0x152a35df164e9b35!2sLocronan%2C%20France!3m2!1d48.098710999999994!2d-4.207479!4m5!1s0x4810e7c20da135c9%3A0x40ca5cd36e56410!2sPont-Aven%2C%2029930%2C%20France!3m2!1d47.8554896!2d-3.7482712!4m5!1s0x480ede2fa7d69085%3A0x40ca5cd36e4ab30!2sRennes%2C%20France!3m2!1d48.117266!2d-1.6777925999999999!4m5!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C%20France!3m2!1d48.857547499999995!2d2.3513764999999998!5e1!3m2!1sen!2sus!4v1780435336329!5m2!1sen!2sus'
 
 // Methods
 const navigateToDetails = () => {
@@ -218,6 +230,20 @@ const getTravelStatus = (travel) => {
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
+}
+
+.travel-map-wrap {
+  margin: 0.75rem 0 0.25rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.travel-map-iframe {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  border: 0;
 }
 
 /* ✅ DETAILS */
