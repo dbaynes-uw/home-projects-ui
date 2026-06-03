@@ -9,11 +9,20 @@
         v-for="segment in allTimelineSegments"
         :key="segment.key"
         class="timeline-summary-segment"
-        :class="{ 'is-thin': segment.isThin }"
+        :class="{ 'is-thin': segment.isThin, 'is-hovered': hoveredSegmentKey === segment.key }"
         :style="timelineSegmentStyle(segment)"
-        :title="segment.label"
+        @mouseenter="handleSegmentEnter(segment, $event)"
+        @mouseleave="handleSegmentLeave"
       >
         <span class="timeline-segment-label">{{ segment.displayName }}</span>
+      </div>
+      <div
+        v-if="tooltip.visible"
+        class="timeline-tooltip"
+        :style="{ left: tooltip.x + 'px' }"
+      >
+        <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
+        <span class="timeline-tooltip-time">{{ tooltip.timeRange }}</span>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
     </div>
@@ -109,8 +118,10 @@ const onlineStatus = ref(navigator.onLine);
 const sortKey = ref('start_time');
 const sortAsc = ref(true);
 const activeLegendId = ref(null);
+const hoveredSegmentKey = ref(null);
+const tooltip = ref({ visible: false, name: '', timeRange: '', x: 0 });
 const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
-const TIMELINE_END_MIN = 17 * 60;    // 5:00 PM
+const TIMELINE_END_MIN = 12 * 60;    // 12:00 PM (noon)
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
 //?const inputSearchText = ref("");
 
@@ -203,7 +214,8 @@ const nowMarkerStyle = computed(() => {
 });
 
 const timelineTicks = computed(() => {
-  return Array.from({ length: 5 }, (_, i) => `${String(5 + (i * 3)).padStart(2, '0')}:00`);
+  // 5am to noon inclusive = 8 ticks at 1-hour intervals
+  return Array.from({ length: 8 }, (_, i) => `${String(5 + i).padStart(2, '0')}:00`);
 });
 
 const timelineLegendItems = computed(() => {
@@ -236,6 +248,25 @@ function deleteWatering(watering) {
 
 function toggleLegend(wateringId) {
   activeLegendId.value = activeLegendId.value === wateringId ? null : wateringId;
+}
+
+function handleSegmentEnter(segment, event) {
+  hoveredSegmentKey.value = segment.key;
+  const track = event.currentTarget.closest('.timeline-summary-track');
+  const trackRect = track ? track.getBoundingClientRect() : null;
+  const segRect = event.currentTarget.getBoundingClientRect();
+  const xInTrack = trackRect ? segRect.left - trackRect.left + (segRect.width / 2) : 0;
+  tooltip.value = {
+    visible: true,
+    name: segment.name,
+    timeRange: `${segment.startLabel} – ${segment.endLabel}`,
+    x: xInTrack
+  };
+}
+
+function handleSegmentLeave() {
+  hoveredSegmentKey.value = null;
+  tooltip.value.visible = false;
 }
 
 function formatTime(value) {
@@ -345,11 +376,12 @@ tr.is-complete {
   position: relative;
   height: 22px;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid #cdd5df;
   background-color: #eef3f8;
+  /* 7 interior 1-hour gridlines over a 7-hour span (5am–noon) */
   background-image: linear-gradient(to right, #dbe3ec 1px, transparent 1px);
-  background-size: 25% 100%;
+  background-size: calc(100% / 7) 100%;
 }
 
 .timeline-summary-segment {
@@ -362,6 +394,12 @@ tr.is-complete {
   padding: 0 6px;
   overflow: hidden;
   white-space: nowrap;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.timeline-summary-segment.is-hovered {
+  filter: brightness(1.15);
 }
 
 .timeline-summary-segment.is-thin {
@@ -385,6 +423,42 @@ tr.is-complete {
   background: #111827;
   opacity: 0.85;
   transform: translateX(-1px);
+}
+
+.timeline-tooltip {
+  position: absolute;
+  top: -46px;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.timeline-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #0f172a;
+}
+
+.timeline-tooltip-name {
+  font-weight: 700;
+}
+
+.timeline-tooltip-time {
+  opacity: 0.8;
 }
 
 .timeline-axis {
