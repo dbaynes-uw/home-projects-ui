@@ -9,9 +9,12 @@
         v-for="segment in allTimelineSegments"
         :key="segment.key"
         class="timeline-summary-segment"
+        :class="{ 'is-thin': segment.isThin }"
         :style="timelineSegmentStyle(segment)"
         :title="segment.label"
-      ></div>
+      >
+        <span class="timeline-segment-label">{{ segment.displayName }}</span>
+      </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
     </div>
     <div class="timeline-axis">
@@ -82,6 +85,9 @@ const onlineStatus = ref(navigator.onLine);
 
 const sortKey = ref('start_time');
 const sortAsc = ref(true);
+const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
+const TIMELINE_END_MIN = 17 * 60;    // 5:00 PM
+const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
 //?const inputSearchText = ref("");
 
 const sortedWaterings = computed(() => {
@@ -122,44 +128,36 @@ const allTimelineSegments = computed(() => {
     const endMins = timeToMinutes(watering.end_time);
     if (startMins === null || endMins === null) return;
 
-    const label = `${watering.name || 'Watering'}: ${formatTime(watering.start_time)} - ${formatTime(watering.end_time)}`;
+    const name = watering.name || 'Watering';
+    const label = `${name}: ${formatTime(watering.start_time)} - ${formatTime(watering.end_time)}`;
     const hue = (index * 47) % 360;
 
+    const daySegments = [];
     if (endMins > startMins) {
-      segments.push({
-        key: `${watering.id}-a`,
-        start: startMins,
-        end: endMins,
-        hue,
-        label
-      });
-      return;
+      daySegments.push({ start: startMins, end: endMins });
+    } else if (endMins < startMins) {
+      daySegments.push({ start: startMins, end: 24 * 60 });
+      daySegments.push({ start: 0, end: endMins });
+    } else {
+      daySegments.push({ start: startMins, end: Math.min(startMins + 15, 24 * 60) });
     }
 
-    if (endMins < startMins) {
-      segments.push({
-        key: `${watering.id}-a`,
-        start: startMins,
-        end: 24 * 60,
-        hue,
-        label
-      });
-      segments.push({
-        key: `${watering.id}-b`,
-        start: 0,
-        end: endMins,
-        hue,
-        label
-      });
-      return;
-    }
+    daySegments.forEach((part, idx) => {
+      const clippedStart = Math.max(part.start, TIMELINE_START_MIN);
+      const clippedEnd = Math.min(part.end, TIMELINE_END_MIN);
+      if (clippedEnd <= clippedStart) return;
+      const visibleDuration = clippedEnd - clippedStart;
 
-    segments.push({
-      key: `${watering.id}-a`,
-      start: startMins,
-      end: Math.min(startMins + 15, 24 * 60),
-      hue,
-      label
+      segments.push({
+        key: `${watering.id}-${idx}`,
+        name,
+        start: clippedStart,
+        end: clippedEnd,
+        hue,
+        label,
+        isThin: visibleDuration < 55,
+        displayName: compactTimelineName(name, visibleDuration)
+      });
     });
   });
 
@@ -169,12 +167,15 @@ const allTimelineSegments = computed(() => {
 const nowMarkerStyle = computed(() => {
   const now = new Date();
   const mins = (now.getHours() * 60) + now.getMinutes();
-  const left = (mins / (24 * 60)) * 100;
+  if (mins < TIMELINE_START_MIN || mins > TIMELINE_END_MIN) {
+    return { display: 'none' };
+  }
+  const left = ((mins - TIMELINE_START_MIN) / TIMELINE_RANGE_MIN) * 100;
   return { left: `${left}%` };
 });
 
 const timelineTicks = computed(() => {
-  return Array.from({ length: 9 }, (_, i) => `${String(i * 3).padStart(2, '0')}:00`);
+  return Array.from({ length: 5 }, (_, i) => `${String(5 + (i * 3)).padStart(2, '0')}:00`);
 });
 
 function sortList(key) {
@@ -210,15 +211,42 @@ function timeToMinutes(value) {
 }
 
 function timelineSegmentStyle(segment) {
-  const dayMinutes = 24 * 60;
-  const left = (segment.start / dayMinutes) * 100;
-  const width = ((segment.end - segment.start) / dayMinutes) * 100;
+  const left = ((segment.start - TIMELINE_START_MIN) / TIMELINE_RANGE_MIN) * 100;
+  const width = ((segment.end - segment.start) / TIMELINE_RANGE_MIN) * 100;
 
   return {
     left: `${left}%`,
-    width: `${Math.max(width, 0.6)}%`,
-    background: `hsla(${segment.hue}, 70%, 45%, 0.55)`
+    width: `${Math.max(width, 1.2)}%`,
+    background: `hsla(${segment.hue}, 70%, 45%, 0.65)`
   };
+}
+
+function nameInitials(name) {
+  return (name || '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(part => part[0].toUpperCase())
+    .join('')
+    .slice(0, 4) || 'W';
+}
+
+function compactTimelineName(name, visibleDuration) {
+  const safeName = (name || 'Watering').trim();
+
+  if (visibleDuration <= 45) {
+    return nameInitials(safeName);
+  }
+
+  if (visibleDuration <= 75) {
+    const firstWord = safeName.split(/\s+/)[0] || safeName;
+    return firstWord.length > 8 ? `${firstWord.slice(0, 8)}…` : firstWord;
+  }
+
+  if (safeName.length > 16) {
+    return `${safeName.slice(0, 16)}…`;
+  }
+
+  return safeName;
 }
 </script>
 <style scoped>
@@ -265,20 +293,38 @@ tr.is-complete {
 
 .timeline-summary-track {
   position: relative;
-  height: 18px;
+  height: 22px;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid #cdd5df;
   background-color: #eef3f8;
   background-image: linear-gradient(to right, #dbe3ec 1px, transparent 1px);
-  background-size: 12.5% 100%;
+  background-size: 25% 100%;
 }
 
 .timeline-summary-segment {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 2px;
+  bottom: 2px;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.timeline-summary-segment.is-thin {
+  padding: 0 2px;
+}
+
+.timeline-segment-label {
+  color: #0b1f11;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .timeline-now-marker {
