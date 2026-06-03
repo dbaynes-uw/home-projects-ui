@@ -1,6 +1,24 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h3 id="h3-left">Total: {{ sortedWaterings.length }} Watering{{ sortedWaterings.length === 1 ? '' : 's' }}</h3>
+
+  <div class="timeline-summary-wrap">
+    <div class="timeline-summary-title">All Waterings Timeline</div>
+    <div class="timeline-summary-track">
+      <div
+        v-for="segment in allTimelineSegments"
+        :key="segment.key"
+        class="timeline-summary-segment"
+        :style="timelineSegmentStyle(segment)"
+        :title="segment.label"
+      ></div>
+      <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
+    </div>
+    <div class="timeline-axis">
+      <span v-for="tick in timelineTicks" :key="tick">{{ tick }}</span>
+    </div>
+  </div>
+
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('name')">Name</th>
@@ -96,6 +114,69 @@ const sortedWaterings = computed(() => {
   return arr;
 });
 
+const allTimelineSegments = computed(() => {
+  const segments = [];
+
+  sortedWaterings.value.forEach((watering, index) => {
+    const startMins = timeToMinutes(watering.start_time);
+    const endMins = timeToMinutes(watering.end_time);
+    if (startMins === null || endMins === null) return;
+
+    const label = `${watering.name || 'Watering'}: ${formatTime(watering.start_time)} - ${formatTime(watering.end_time)}`;
+    const hue = (index * 47) % 360;
+
+    if (endMins > startMins) {
+      segments.push({
+        key: `${watering.id}-a`,
+        start: startMins,
+        end: endMins,
+        hue,
+        label
+      });
+      return;
+    }
+
+    if (endMins < startMins) {
+      segments.push({
+        key: `${watering.id}-a`,
+        start: startMins,
+        end: 24 * 60,
+        hue,
+        label
+      });
+      segments.push({
+        key: `${watering.id}-b`,
+        start: 0,
+        end: endMins,
+        hue,
+        label
+      });
+      return;
+    }
+
+    segments.push({
+      key: `${watering.id}-a`,
+      start: startMins,
+      end: Math.min(startMins + 15, 24 * 60),
+      hue,
+      label
+    });
+  });
+
+  return segments;
+});
+
+const nowMarkerStyle = computed(() => {
+  const now = new Date();
+  const mins = (now.getHours() * 60) + now.getMinutes();
+  const left = (mins / (24 * 60)) * 100;
+  return { left: `${left}%` };
+});
+
+const timelineTicks = computed(() => {
+  return Array.from({ length: 9 }, (_, i) => `${String(i * 3).padStart(2, '0')}:00`);
+});
+
 function sortList(key) {
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;
@@ -112,6 +193,32 @@ function formatTime(value) {
     return '';
   }
   return DateFormatService.formatTimejs(value);
+}
+
+function timeToMinutes(value) {
+  if (!value) return null;
+
+  if (typeof value === 'string' && /^\d{1,2}:\d{2}/.test(value)) {
+    const [h, m] = value.split(':').map(Number);
+    if (Number.isNaN(h) || Number.isNaN(m)) return null;
+    return (h * 60) + m;
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return (parsed.getHours() * 60) + parsed.getMinutes();
+}
+
+function timelineSegmentStyle(segment) {
+  const dayMinutes = 24 * 60;
+  const left = (segment.start / dayMinutes) * 100;
+  const width = ((segment.end - segment.start) / dayMinutes) * 100;
+
+  return {
+    left: `${left}%`,
+    width: `${Math.max(width, 0.6)}%`,
+    background: `hsla(${segment.hue}, 70%, 45%, 0.55)`
+  };
 }
 </script>
 <style scoped>
@@ -139,6 +246,57 @@ tr.is-complete {
 #status-message {
   text-align: center;
   color: navy;
+}
+
+.timeline-summary-wrap {
+  margin: 0.4rem 0 0.9rem;
+  padding: 0.55rem 0.75rem 0.65rem;
+  border: 1px solid #d9dee5;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.timeline-summary-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #334155;
+  margin-bottom: 0.45rem;
+}
+
+.timeline-summary-track {
+  position: relative;
+  height: 18px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #cdd5df;
+  background-color: #eef3f8;
+  background-image: linear-gradient(to right, #dbe3ec 1px, transparent 1px);
+  background-size: 12.5% 100%;
+}
+
+.timeline-summary-segment {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 8px;
+}
+
+.timeline-now-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #111827;
+  opacity: 0.85;
+  transform: translateX(-1px);
+}
+
+.timeline-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.28rem;
+  font-size: 0.7rem;
+  color: #64748b;
 }
 </style>
 
