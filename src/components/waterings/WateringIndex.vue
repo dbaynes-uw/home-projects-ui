@@ -20,6 +20,29 @@
     <div class="timeline-axis">
       <span v-for="tick in timelineTicks" :key="tick">{{ tick }}</span>
     </div>
+    <div v-if="timelineLegendItems.length" class="timeline-legend">
+      <button
+        v-for="item in timelineLegendItems"
+        :key="`legend-${item.id}`"
+        type="button"
+        class="timeline-legend-item"
+        :class="{ active: activeLegendId === item.id }"
+        @click="toggleLegend(item.id)"
+        :title="`${item.name} (${item.timeRange})`"
+      >
+        <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
+        <span class="timeline-legend-name">{{ item.name }}</span>
+        <span class="timeline-legend-time">{{ item.timeRange }}</span>
+      </button>
+      <button
+        v-if="activeLegendId !== null"
+        type="button"
+        class="timeline-legend-clear"
+        @click="activeLegendId = null"
+      >
+        Clear
+      </button>
+    </div>
   </div>
 
   <v-table density="compact">
@@ -85,6 +108,7 @@ const onlineStatus = ref(navigator.onLine);
 
 const sortKey = ref('start_time');
 const sortAsc = ref(true);
+const activeLegendId = ref(null);
 const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
 const TIMELINE_END_MIN = 17 * 60;    // 5:00 PM
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
@@ -150,11 +174,15 @@ const allTimelineSegments = computed(() => {
 
       segments.push({
         key: `${watering.id}-${idx}`,
+        wateringId: watering.id,
         name,
         start: clippedStart,
         end: clippedEnd,
         hue,
+        color: `hsla(${hue}, 70%, 45%, 0.65)`,
         label,
+        startLabel: formatTime(watering.start_time),
+        endLabel: formatTime(watering.end_time),
         isThin: visibleDuration < 55,
         displayName: compactTimelineName(name, visibleDuration)
       });
@@ -178,6 +206,22 @@ const timelineTicks = computed(() => {
   return Array.from({ length: 5 }, (_, i) => `${String(5 + (i * 3)).padStart(2, '0')}:00`);
 });
 
+const timelineLegendItems = computed(() => {
+  const seen = new Set();
+  return allTimelineSegments.value
+    .filter(segment => {
+      if (seen.has(segment.wateringId)) return false;
+      seen.add(segment.wateringId);
+      return true;
+    })
+    .map(segment => ({
+      id: segment.wateringId,
+      name: segment.name,
+      color: segment.color,
+      timeRange: `${segment.startLabel} - ${segment.endLabel}`
+    }));
+});
+
 function sortList(key) {
   if (sortKey.value === key) {
     sortAsc.value = !sortAsc.value;
@@ -189,6 +233,11 @@ function sortList(key) {
 function deleteWatering(watering) {
   emit('delete', watering);
 }
+
+function toggleLegend(wateringId) {
+  activeLegendId.value = activeLegendId.value === wateringId ? null : wateringId;
+}
+
 function formatTime(value) {
   if (!value) {
     return '';
@@ -217,7 +266,8 @@ function timelineSegmentStyle(segment) {
   return {
     left: `${left}%`,
     width: `${Math.max(width, 1.2)}%`,
-    background: `hsla(${segment.hue}, 70%, 45%, 0.65)`
+    background: segment.color,
+    opacity: activeLegendId.value === null || activeLegendId.value === segment.wateringId ? 1 : 0.18
   };
 }
 
@@ -343,6 +393,62 @@ tr.is-complete {
   margin-top: 0.28rem;
   font-size: 0.7rem;
   color: #64748b;
+}
+
+.timeline-legend {
+  margin-top: 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.timeline-legend-item {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+  border-radius: 999px;
+  padding: 0.2rem 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  cursor: pointer;
+}
+
+.timeline-legend-item.active {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 1px #0f172a inset;
+}
+
+.timeline-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  flex: 0 0 10px;
+}
+
+.timeline-legend-name {
+  font-weight: 700;
+  max-width: 90px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.timeline-legend-time {
+  color: #64748b;
+}
+
+.timeline-legend-clear {
+  border: 1px solid #94a3b8;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.66rem;
+  cursor: pointer;
 }
 </style>
 
