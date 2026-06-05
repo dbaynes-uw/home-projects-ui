@@ -507,7 +507,11 @@ function hydrateFromRound(round) {
   }
   // hydrate players
   players.splice(0, players.length)
-  const scores = round.player_scores || []
+  const scores = [...(round.player_scores || [])].sort((a, b) => {
+    const aId = Number(a?.id) || Number.MAX_SAFE_INTEGER
+    const bId = Number(b?.id) || Number.MAX_SAFE_INTEGER
+    return aId - bId
+  })
   if (scores.length === 0) {
     players.push(blankPlayer())
   } else {
@@ -525,6 +529,9 @@ function hydrateFromRound(round) {
       players.push(p)
     })
   }
+
+  // Tee yardages are currently frontend-managed, so ensure edit mode shows defaults.
+  prefillDefaultYardages()
 }
 
 // ── Build payload ────────────────────────────────────────────────────────
@@ -582,6 +589,8 @@ async function saveAndStay() {
   saving.value = false
 
   if (result.success) {
+    // Critical: refresh local nested IDs so subsequent saves update players instead of inserting duplicates.
+    if (result.data) hydrateFromRound(result.data)
     saveStatus.value = '✓ Saved! Continue entering scores.'
     saveStatusCss.value = 'status-ok'
     setTimeout(() => { saveStatus.value = '' }, 3000)
@@ -612,6 +621,7 @@ async function saveAll() {
   saving.value = false
 
   if (result.success) {
+    if (result.data) hydrateFromRound(result.data)
     saveStatus.value = '✓ Round saved!'
     saveStatusCss.value = 'status-ok'
     setTimeout(() => {

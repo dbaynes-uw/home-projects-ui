@@ -253,7 +253,12 @@ async function saveHole() {
     // sync back updated IDs for newly created player_scores
     const updated = result.data
     if (updated.player_scores) {
-      updated.player_scores.forEach((ps, i) => {
+      const sortedUpdatedScores = [...updated.player_scores].sort((a, b) => {
+        const aId = Number(a?.id) || Number.MAX_SAFE_INTEGER
+        const bId = Number(b?.id) || Number.MAX_SAFE_INTEGER
+        return aId - bId
+      })
+      sortedUpdatedScores.forEach((ps, i) => {
         if (playerScores[i]) playerScores[i].id = ps.id
       })
     }
@@ -284,7 +289,11 @@ onMounted(async () => {
 
   // hydrate player scores
   playerScores.splice(0, playerScores.length)
-  const scores = loaded.player_scores || []
+  const scores = [...(loaded.player_scores || [])].sort((a, b) => {
+    const aId = Number(a?.id) || Number.MAX_SAFE_INTEGER
+    const bId = Number(b?.id) || Number.MAX_SAFE_INTEGER
+    return aId - bId
+  })
   if (scores.length === 0) {
     // solo blank
     playerScores.push({ id: null, player_name: '', course_handicap: null,
