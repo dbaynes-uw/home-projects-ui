@@ -171,16 +171,6 @@
             aria-label="Duration in days for the plant to mature"
           ></v-text-field>
         </v-col>
-        <v-col cols="12">
-          <BaseNativeSelect
-            v-model="plant.yard_location"
-            :options="yardLocationOptions"
-            label="Yard Location"
-            hint="North, South, or specific location like 1-A-1 for Vegetable Garden"
-            :include-empty-option="true"
-            empty-option-label="Select Yard Location"
-          />
-        </v-col>        
 
         <!-- Frequency -->
         <v-col cols="12">
@@ -284,20 +274,6 @@ const effectiveGardenId = computed(() => {
   return Number(plant.value.garden_id || resolvedGardenId.value || 0)
 })
 
-const routeGardenWaterings = computed(() => {
-  try {
-    const raw = route.query.gardenWaterings
-    if (!raw || typeof raw !== 'string') return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed
-      .map(w => ({ id: Number(w?.id), name: w?.name || `Watering ${w?.id}` }))
-      .filter(w => Number.isFinite(w.id) && w.id > 0)
-  } catch {
-    return []
-  }
-})
-
 // ✅ FIXED - Added waterings array
 const garden = computed(() => {
   if (effectiveGardenId.value) {
@@ -330,31 +306,13 @@ const availableWaterings = computed(() => {
   const targetGardenId = effectiveGardenId.value
 
   if (targetGardenId) {
+    // Primary source: normalized watering store getter.
+    const scopedWaterings = wateringStore.wateringsForGarden(targetGardenId) || []
+    scopedWaterings.forEach(w => allWaterings.push(w))
 
-    // Source 1: nested garden waterings from fetchGarden/fetchGardens payloads.
-    const nestedGardenWaterings = Array.isArray(garden.value.waterings) ? garden.value.waterings : []
-    nestedGardenWaterings.forEach(w => allWaterings.push(w))
-
-    // Source 1b: waterings nested on the garden list payload.
-    const listGarden = gardenStore.allGardens.find(g => Number(g.id) === targetGardenId)
-    if (Array.isArray(listGarden?.waterings)) {
-      listGarden.waterings.forEach(w => allWaterings.push(w))
-    }
-
-    // Source 2: watering store getter (gardens association).
-    const getterWaterings = wateringStore.wateringsForGarden(targetGardenId) || []
-    getterWaterings.forEach(w => allWaterings.push(w))
-
-    // Source 3: watering store records associated to this garden.
-    wateringStore.allWaterings.forEach(w => {
-      const linkedByGardenId = Number(w.garden_id) === targetGardenId
-      const linkedByGardenIdAlt = Number(w.gardenId) === targetGardenId
-      const linkedByGardensArray = Array.isArray(w.gardens) && w.gardens.some(g => Number(g.id) === targetGardenId)
-      const linkedByGardenIdsArray = Array.isArray(w.garden_ids) && w.garden_ids.some(id => Number(id) === targetGardenId)
-      if (linkedByGardenId || linkedByGardenIdAlt || linkedByGardensArray || linkedByGardenIdsArray) {
-        allWaterings.push(w)
-      }
-    })
+    // Secondary source: hydrated current garden waterings (defensive, no shape-guessing).
+    const gardenWaterings = Array.isArray(garden.value.waterings) ? garden.value.waterings : []
+    gardenWaterings.forEach(w => allWaterings.push(w))
 
     // Deduplicate by watering id.
     const seen = new Set()
@@ -365,35 +323,36 @@ const availableWaterings = computed(() => {
       return true
     })
 
-    // Route fallback: use garden-card snapshot if API/store sources are empty.
-    if (deduped.length === 0 && routeGardenWaterings.value.length > 0) {
-      return routeGardenWaterings.value
-    }
-
     return deduped
   }
 
-  gardenStore.allGardens.forEach(g => {
-    if (g.waterings && g.waterings.length > 0) {
-      g.waterings.forEach(watering => {
-        allWaterings.push({
-          ...watering,
-          name: `${watering.name} (${g.name})`
-        })
-      })
-    }
-  })
-
   wateringStore.allWaterings.forEach(watering => {
-    if (!watering.garden_id) {
+    const hasGardenLinks = Array.isArray(watering.garden_ids)
+      ? watering.garden_ids.length > 0
+      : Array.isArray(watering.gardens) && watering.gardens.length > 0
+
+    if (!hasGardenLinks) {
       allWaterings.push({
         ...watering,
         name: `${watering.name} (Standalone)`
       })
+    } else {
+      const gardenNames = (watering.gardens || []).map(g => g.name).filter(Boolean)
+      const context = gardenNames.length ? ` (${gardenNames.join(', ')})` : ''
+      allWaterings.push({
+        ...watering,
+        name: `${watering.name}${context}`
+      })
     }
   })
 
-  return allWaterings
+  const seen = new Set()
+  return allWaterings.filter(w => {
+    const id = Number(w?.id)
+    if (!id || seen.has(id)) return false
+    seen.add(id)
+    return true
+  })
 })
 
 const gardenOptions = computed(() => {

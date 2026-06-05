@@ -108,32 +108,24 @@ const plantStore = usePlantStore();
 const emit = defineEmits(['dblclick']);
 
 const garden = computed(() => {
-  const found = gardenStore.allGardens.find(g => g.id === props.plant.garden_id);
+  const gardenId = Number(props.plant.garden_id)
+  const found = gardenStore.allGardens.find(g => Number(g.id) === gardenId);
   return found || { id: null, name: 'No Garden Assigned' };
 }); 
 
 const watering = computed(() => {
-  // First try direct watering_id relationship
-  if (props.plant.watering_id) {
-    const found = wateringStore.allWaterings.find(w => w.id === props.plant.watering_id);
-    if (found) return found;
+  const wateringId = Number(props.plant.watering_id)
+  if (wateringId) {
+    const found = wateringStore.allWaterings.find(w => Number(w.id) === wateringId)
+    if (found) return found
   }
-  
-  // If no direct relationship, check if watering is nested in garden
-  if (props.plant.garden_id) {
-    const garden = gardenStore.allGardens.find(g => g.id === props.plant.garden_id);
-    if (garden?.waterings?.length) {
-      // You might need logic here to determine which watering system
-      // For now, let's return the first one or find by some criteria
-      const wateringInGarden = garden.waterings.find(w => 
-        w.id === props.plant.watering_id || // Specific watering
-        w.is_default === true || // Default watering for garden
-        garden.waterings[0] // Or just first one
-      );
-      if (wateringInGarden) return wateringInGarden;
-    }
+
+  const gardenId = Number(props.plant.garden_id)
+  if (gardenId) {
+    const scoped = wateringStore.wateringsForGarden(gardenId) || []
+    if (scoped.length === 1) return scoped[0]
   }
-  
+
   return { id: null, name: 'No Watering Assigned' };
 });
 

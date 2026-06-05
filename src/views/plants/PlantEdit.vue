@@ -161,8 +161,9 @@ const props = defineProps(["id"]);
 const plant = computed(() => plantStore.currentPlant || {});
 
 const garden = computed(() => {
-  if (plant.value.garden_id) {
-    const found = gardenStore.allGardens.find(g => g.id === plant.value.garden_id);
+  const targetGardenId = Number(plant.value.garden_id || 0)
+  if (targetGardenId) {
+    const found = gardenStore.allGardens.find(g => Number(g.id) === targetGardenId);
     return found || { id: null, name: 'Garden not found' };
   }
   return { id: null, name: 'No Garden Assigned' };
@@ -182,40 +183,42 @@ const gardenOptions = computed(() => {
 // Available waterings based on selected garden
 const availableWaterings = computed(() => {
   const allWaterings = [];
+  const targetGardenId = Number(plant.value.garden_id || 0)
   
-  if (plant.value.garden_id) {
-    // If garden is selected, show that garden's waterings
-    const selectedGarden = gardenStore.allGardens.find(g => g.id === plant.value.garden_id);
-    if (selectedGarden?.waterings?.length) {
-      allWaterings.push(...selectedGarden.waterings);
-    }
+  if (targetGardenId) {
+    // Use normalized getter (supports both garden_ids and nested gardens).
+    const scoped = wateringStore.wateringsForGarden(targetGardenId) || []
+    allWaterings.push(...scoped)
   } else {
     // If no garden selected, show all waterings with garden context
-    gardenStore.allGardens.forEach(g => {
-      if (g.waterings?.length) {
-        g.waterings.forEach(watering => {
-          allWaterings.push({
-            ...watering,
-            name: `${watering.name} (${g.name})`
-          });
-        });
+    wateringStore.allWaterings.forEach(watering => {
+      const hasGardenLinks = Array.isArray(watering.garden_ids)
+        ? watering.garden_ids.length > 0
+        : Array.isArray(watering.gardens) && watering.gardens.length > 0
+
+      if (!hasGardenLinks) {
+        allWaterings.push({
+          ...watering,
+          name: `${watering.name} (Standalone)`
+        })
+      } else {
+        const gardenNames = (watering.gardens || []).map(g => g.name).filter(Boolean)
+        const context = gardenNames.length ? ` (${gardenNames.join(', ')})` : ''
+        allWaterings.push({
+          ...watering,
+          name: `${watering.name}${context}`
+        })
       }
-    });
-    
-    // Add standalone waterings
-    if (wateringStore.allWaterings) {
-      wateringStore.allWaterings.forEach(watering => {
-        if (!watering.garden_id) {
-          allWaterings.push({
-            ...watering,
-            name: `${watering.name} (Standalone)`
-          });
-        }
-      });
-    }
+    })
   }
-  
-  return allWaterings;
+
+  const seen = new Set()
+  return allWaterings.filter(w => {
+    const id = Number(w?.id)
+    if (!id || seen.has(id)) return false
+    seen.add(id)
+    return true
+  })
 });
 
 const wateringOptions = computed(() => {

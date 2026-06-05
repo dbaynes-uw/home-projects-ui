@@ -65,7 +65,7 @@
     </span>
     <p id="p-custom-link">
       <router-link
-        :to="buildPlantCreateRoute(garden)"
+        :to="{ name: 'PlantCreate', params: { gardenId: garden.id } }"
       >
         Add Plant to {{ garden.name }}
       </router-link>
@@ -150,18 +150,6 @@ function formatTime(value) {
     return '';
   }
   return DateFormatService.formatTimejs(value);
-}
-
-function buildPlantCreateRoute(garden) {
-  const wateringsSnapshot = (garden?.waterings || []).map(w => ({ id: w.id, name: w.name }))
-  return {
-    name: 'PlantCreate',
-    params: { gardenId: garden.id },
-    query: {
-      gardenName: garden.name || '',
-      gardenWaterings: JSON.stringify(wateringsSnapshot)
-    }
-  }
 }
 </script>
 <style scoped></style>
