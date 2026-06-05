@@ -102,10 +102,18 @@ const sortOrder = ref('asc');
 
 const singlePlant = ref(null);
 
+const displayPlants = computed(() => {
+  if (Array.isArray(props.plants) && props.plants.length > 0) {
+    return props.plants
+  }
+  if (singlePlant.value) {
+    return [singlePlant.value]
+  }
+  return []
+})
+
 const filteredSortedPlants = computed(() => {
-  let plantList = Array.isArray(props.plants)
-    ? props.plants.slice()
-    : (props.plants ? [props.plants] : []);
+  let plantList = displayPlants.value.slice();
 
   if (filterStatus.value) {
     plantList = plantList.filter(plant => plant.status === filterStatus.value);
@@ -179,7 +187,7 @@ function editPlant(plant) {
 
 // ✅ DEBUG - Watch props changes
 watch(() => props.plants, (newPlants) => {
-  console.log('🔄 PlantDetails props.plants changed:', newPlants.length);
+  console.log('🔄 PlantDetails props.plants changed:', newPlants?.length || 0);
 }, { deep: true });
 </script>
 <style scoped>

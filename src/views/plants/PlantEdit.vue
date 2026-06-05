@@ -25,38 +25,26 @@
           required
         />        
         <!-- Garden Selection -->
-        <v-select
+        <BaseNativeSelect
           v-model="plant.garden_id"
-          :items="availableGardens"
-          item-value="id"
-          item-title="name"
+          :options="gardenOptions"
           label="Select Garden"
-          outlined
-          clearable
           hint="Change garden assignment for this plant"
-          persistent-hint
-        >
-          <template v-slot:prepend-inner>
-            <v-icon>mdi-sprout</v-icon>
-          </template>
-        </v-select>
+          value-type="number"
+          :include-empty-option="true"
+          empty-option-label="No Garden (Standalone)"
+        />
         
         <!-- Dynamic Watering Selection -->
-        <v-select
+        <BaseNativeSelect
           v-model="plant.watering_id"
-          :items="availableWaterings"
-          item-value="id"
-          item-title="name"
+          :options="wateringOptions"
           label="Select Watering System"
-          outlined
-          clearable
           hint="Choose watering system for this plant"
-          persistent-hint
-        >
-          <template v-slot:prepend-inner>
-            <v-icon>mdi-water</v-icon>
-          </template>
-        </v-select>
+          value-type="number"
+          :include-empty-option="true"
+          empty-option-label="No Watering System"
+        />
         
         <v-text-field
           label="Biological Name"
@@ -156,6 +144,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue'
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
@@ -181,17 +170,18 @@ const garden = computed(() => {
 
 // Available gardens for selection
 const availableGardens = computed(() => {
-  return [
-    { id: null, name: 'No Garden (Standalone)' },
-    ...gardenStore.allGardens
-  ];
+  return [...gardenStore.allGardens];
 });
+
+const gardenOptions = computed(() => {
+  return availableGardens.value
+    .map(g => ({ value: Number(g?.id), title: g?.name || `Garden ${g?.id || ''}` }))
+    .filter(opt => Number.isFinite(opt.value) && opt.value > 0)
+})
 
 // Available waterings based on selected garden
 const availableWaterings = computed(() => {
-  const allWaterings = [
-    { id: null, name: 'No Watering System' }
-  ];
+  const allWaterings = [];
   
   if (plant.value.garden_id) {
     // If garden is selected, show that garden's waterings
@@ -227,6 +217,12 @@ const availableWaterings = computed(() => {
   
   return allWaterings;
 });
+
+const wateringOptions = computed(() => {
+  return availableWaterings.value
+    .map(w => ({ value: Number(w?.id), title: w?.name || `Watering ${w?.id || ''}` }))
+    .filter(opt => Number.isFinite(opt.value) && opt.value > 0)
+})
 const confirmDialogue = ref(null); // Add ref declaration
 const active_statuses = ["Active", "Inactive"];
 
@@ -281,7 +277,4 @@ onMounted(async () => {
   }
 });
 </script><style>
-select {
-  border-color: darkgreen;
-}
 </style>

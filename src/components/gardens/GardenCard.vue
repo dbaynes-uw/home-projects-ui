@@ -65,13 +65,26 @@
     </span>
     <p id="p-custom-link">
       <router-link
-        :to="{ name: 'PlantCreate', params: { gardenId: garden.id } }"
+        :to="buildPlantCreateRoute(garden)"
       >
         Add Plant to {{ garden.name }}
       </router-link>
     </p>
     <br/>
     <div class="action-icons">
+      <v-tooltip text="Add Plant" location="top">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            icon="mdi-sprout"
+            size="small"
+            color="green"
+            variant="text"
+            :to="{ name: 'PlantCreate', params: { gardenId: garden.id } }"
+          />
+        </template>
+      </v-tooltip>
+
       <v-tooltip text="Edit Garden" location="top">
         <template v-slot:activator="{ props }">
           <v-btn
@@ -137,6 +150,18 @@ function formatTime(value) {
     return '';
   }
   return DateFormatService.formatTimejs(value);
+}
+
+function buildPlantCreateRoute(garden) {
+  const wateringsSnapshot = (garden?.waterings || []).map(w => ({ id: w.id, name: w.name }))
+  return {
+    name: 'PlantCreate',
+    params: { gardenId: garden.id },
+    query: {
+      gardenName: garden.name || '',
+      gardenWaterings: JSON.stringify(wateringsSnapshot)
+    }
+  }
 }
 </script>
 <style scoped></style>

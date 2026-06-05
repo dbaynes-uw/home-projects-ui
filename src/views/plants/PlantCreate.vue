@@ -30,16 +30,15 @@
         <!-- Garden Selection (only show if no garden pre-selected) -->
 
   <!-- Garden Selection -->
-  <v-col v-if="!gardenId" cols="12">
-    <v-select
+  <v-col v-if="!resolvedGardenId" cols="12">
+    <BaseNativeSelect
       v-model="plant.garden_id"
-      :items="gardenStore.allGardens"
-      item-title="name"
-      item-value="id"
+      :options="gardenOptions"
       label="Select Garden (Optional)"
-      outlined
-      clearable
-    ></v-select>
+      value-type="number"
+      :include-empty-option="true"
+      empty-option-label="No Garden (Standalone)"
+    />
   </v-col>
   
   <!-- Show selected garden if pre-selected -->
@@ -51,24 +50,18 @@
       readonly
     ></v-text-field>
   </v-col>
-
-  <!-- ✅ ADD WATERING SELECTION LOGIC -->
   <!-- Watering Selection (only show if no watering pre-selected) -->
-  <v-col v-if="!wateringId" cols="12">
-    <v-select
+  <v-col v-if="!resolvedWateringId" cols="12">
+    <BaseNativeSelect
       v-model="plant.watering_id"
-      :items="availableWaterings"
-      item-value="id"
-      item-title="name"
+      :options="wateringOptions"
       label="Select Watering System"
-      outlined
-      clearable
-      :rules="[requiredWatering]"
-    >
-      <template v-slot:prepend-inner>
-        <v-icon>mdi-water</v-icon>
-      </template>
-    </v-select>
+      value-type="number"
+      :include-empty-option="true"
+      :empty-option-label="wateringNoDataText"
+      :error="fetchError"
+      required
+    />
   </v-col>
   
   <!-- Show selected watering if pre-selected -->
@@ -127,16 +120,14 @@
 
         <!-- Yard Location -->
         <v-col cols="12">
-          <v-select
+          <BaseNativeSelect
             v-model="plant.yard_location"
-            :items="yard_locations"
+            :options="yardLocationOptions"
             label="Yard Location"
             hint="North, South, or specific location like 1-A-1 for Vegetable Garden"
-            persistent-hint
-            clearable
-            outlined
-            aria-label="Select yard location for the plant"
-          ></v-select>
+            :include-empty-option="true"
+            empty-option-label="Select Yard Location"
+          />
         </v-col>
 
         <!-- Date Planted -->
@@ -180,17 +171,26 @@
             aria-label="Duration in days for the plant to mature"
           ></v-text-field>
         </v-col>
+        <v-col cols="12">
+          <BaseNativeSelect
+            v-model="plant.yard_location"
+            :options="yardLocationOptions"
+            label="Yard Location"
+            hint="North, South, or specific location like 1-A-1 for Vegetable Garden"
+            :include-empty-option="true"
+            empty-option-label="Select Yard Location"
+          />
+        </v-col>        
 
         <!-- Frequency -->
-        <v-col cols="12" md="6">
-          <v-select
+        <v-col cols="12">
+          <BaseNativeSelect
             v-model="plant.frequency"
-            :items="['Daily', 'Weekly', 'Monthly']"
-            label="Frequency of Care"
-            outlined
-            clearable
-            aria-label="Select frequency of care for the plant"
-          ></v-select>
+            :options="careFrequencyOptions"
+            label="Select Frequency of Care"
+            :include-empty-option="true"
+            empty-option-label="Select Frequency"
+          />
         </v-col>
 
         <!-- Notes -->
@@ -229,33 +229,44 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { toRaw } from 'vue';
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
+import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue'
 
 const { userEmail } = useAuth()
 const plantStore = usePlantStore();
 const gardenStore = useGardenStore();
 const wateringStore = useWateringStore();
+const route = useRoute()
 const router = useRouter()
+const fetchError = ref('')
 
 const props = defineProps({
   gardenId: {
     type: String,
     default: null
   },
-    wateringId: {
+  wateringId: {
     type: String,
     default: null
   }
 });
 
+const resolvedGardenId = computed(() => {
+  return props.gardenId || route.query.gardenId || null
+})
+
+const resolvedWateringId = computed(() => {
+  return props.wateringId || route.query.wateringId || null
+})
+
 // ✅ FIXED - No computed in data
 const plant = ref({
-  garden_id: props.gardenId || null,
-  watering_id: props.wateringId || null,
+  garden_id: resolvedGardenId.value || null,
+  watering_id: resolvedWateringId.value || null,
   plant_name: "",
   biological_name: "", // ✅ ADDED
   yard_location: "",
@@ -269,20 +280,40 @@ const plant = ref({
   frequency: ""
 })
 
+const effectiveGardenId = computed(() => {
+  return Number(plant.value.garden_id || resolvedGardenId.value || 0)
+})
+
+const routeGardenWaterings = computed(() => {
+  try {
+    const raw = route.query.gardenWaterings
+    if (!raw || typeof raw !== 'string') return []
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed
+      .map(w => ({ id: Number(w?.id), name: w?.name || `Watering ${w?.id}` }))
+      .filter(w => Number.isFinite(w.id) && w.id > 0)
+  } catch {
+    return []
+  }
+})
+
 // ✅ FIXED - Added waterings array
 const garden = computed(() => {
-  if (props.gardenId) {
-    const foundGarden = gardenStore.allGardens.find(g => g.id === parseInt(props.gardenId));
-    if (foundGarden) {
-      return foundGarden;
+  if (effectiveGardenId.value) {
+    const targetGardenId = effectiveGardenId.value
+    const currentGarden = gardenStore.currentGarden
+    if (currentGarden && currentGarden.id === targetGardenId) {
+      return currentGarden
     }
-    
-    if (gardenStore.currentGarden && gardenStore.currentGarden.id === parseInt(props.gardenId)) {
-      return gardenStore.currentGarden;
+
+    const foundGarden = gardenStore.allGardens.find(g => g.id === targetGardenId)
+    if (foundGarden) {
+      return foundGarden
     }
     
     return {
-      id: props.gardenId,
+      id: targetGardenId,
       name: 'Loading garden...',
       waterings: []
     };
@@ -295,55 +326,155 @@ const garden = computed(() => {
 });
 
 const availableWaterings = computed(() => {
-  if (props.gardenId && garden.value.waterings) {
-    return garden.value.waterings;
-  } else {
-    const allWaterings = [];
-    
-    gardenStore.allGardens.forEach(g => {
-      if (g.waterings && g.waterings.length > 0) {
-        g.waterings.forEach(watering => {
-          allWaterings.push({
-            ...watering,
-            name: `${watering.name} (${g.name})`
-          });
-        });
-      }
-    });
-    
-    if (store.state.waterings) {
-      wateringStore.allWaterings.forEach(watering => {
-        if (!watering.garden_id) {
-          allWaterings.push({
-            ...watering,
-            name: `${watering.name} (Standalone)`
-          });
-        }
-      });
-    }
-    
-    return allWaterings;
-  }
-});
+  const allWaterings = []
+  const targetGardenId = effectiveGardenId.value
 
-const yard_locations = ref(["North", "South"])
+  if (targetGardenId) {
+
+    // Source 1: nested garden waterings from fetchGarden/fetchGardens payloads.
+    const nestedGardenWaterings = Array.isArray(garden.value.waterings) ? garden.value.waterings : []
+    nestedGardenWaterings.forEach(w => allWaterings.push(w))
+
+    // Source 1b: waterings nested on the garden list payload.
+    const listGarden = gardenStore.allGardens.find(g => Number(g.id) === targetGardenId)
+    if (Array.isArray(listGarden?.waterings)) {
+      listGarden.waterings.forEach(w => allWaterings.push(w))
+    }
+
+    // Source 2: watering store getter (gardens association).
+    const getterWaterings = wateringStore.wateringsForGarden(targetGardenId) || []
+    getterWaterings.forEach(w => allWaterings.push(w))
+
+    // Source 3: watering store records associated to this garden.
+    wateringStore.allWaterings.forEach(w => {
+      const linkedByGardenId = Number(w.garden_id) === targetGardenId
+      const linkedByGardenIdAlt = Number(w.gardenId) === targetGardenId
+      const linkedByGardensArray = Array.isArray(w.gardens) && w.gardens.some(g => Number(g.id) === targetGardenId)
+      const linkedByGardenIdsArray = Array.isArray(w.garden_ids) && w.garden_ids.some(id => Number(id) === targetGardenId)
+      if (linkedByGardenId || linkedByGardenIdAlt || linkedByGardensArray || linkedByGardenIdsArray) {
+        allWaterings.push(w)
+      }
+    })
+
+    // Deduplicate by watering id.
+    const seen = new Set()
+    const deduped = allWaterings.filter(w => {
+      const id = Number(w.id)
+      if (!id || seen.has(id)) return false
+      seen.add(id)
+      return true
+    })
+
+    // Route fallback: use garden-card snapshot if API/store sources are empty.
+    if (deduped.length === 0 && routeGardenWaterings.value.length > 0) {
+      return routeGardenWaterings.value
+    }
+
+    return deduped
+  }
+
+  gardenStore.allGardens.forEach(g => {
+    if (g.waterings && g.waterings.length > 0) {
+      g.waterings.forEach(watering => {
+        allWaterings.push({
+          ...watering,
+          name: `${watering.name} (${g.name})`
+        })
+      })
+    }
+  })
+
+  wateringStore.allWaterings.forEach(watering => {
+    if (!watering.garden_id) {
+      allWaterings.push({
+        ...watering,
+        name: `${watering.name} (Standalone)`
+      })
+    }
+  })
+
+  return allWaterings
+})
+
+const gardenOptions = computed(() => {
+  return gardenStore.allGardens
+    .map(g => ({ value: Number(g?.id), title: g?.name || `Garden ${g?.id || ''}` }))
+    .filter(opt => Number.isFinite(opt.value) && opt.value > 0)
+})
+
+const wateringOptions = computed(() => {
+  return availableWaterings.value
+    .map(w => ({
+      value: Number(w?.id),
+      title: w?.name || `Watering ${w?.id || ''}`
+    }))
+    .filter(opt => Number.isFinite(opt.value) && opt.value > 0 && opt.title)
+})
+
+const watering = computed(() => {
+  if (!resolvedWateringId.value) {
+    return { id: null, name: 'No Watering Selected' }
+  }
+  const selectedId = parseInt(resolvedWateringId.value)
+  const found = availableWaterings.value.find(w => Number(w.id) === selectedId)
+  return found || { id: selectedId, name: 'Selected Watering' }
+})
+
+const yard_locations = ref(["North", "South","East", "West"])
+const yardLocationOptions = computed(() => {
+  return yard_locations.value.map(location => ({
+    value: location,
+    title: location
+  }))
+})
+const care_frequencies = ref(["Daily", "Weekly", "Monthly"])
+const careFrequencyOptions = computed(() => {
+  return care_frequencies.value.map(frequency => ({
+    value: frequency,
+    title: frequency
+  }))
+})
 const isFormValid = ref(false)
 const isPlantNameValid = ref(false)
 const isWateringValid = ref(false)
 
+const wateringNoDataText = computed(() => {
+  if (wateringOptions.value.length > 0) {
+    return 'Select a watering system'
+  }
+  if (effectiveGardenId.value) {
+    return `No waterings found for garden ${effectiveGardenId.value}.`
+  }
+  return 'No watering systems available.'
+})
+
 onMounted(async () => {
-  if (props.gardenId) {
+  fetchError.value = ''
+  if (resolvedGardenId.value) {
     try {
-      await gardenStore.fetchGarden(props.gardenId);
+      await gardenStore.fetchGarden(resolvedGardenId.value);
+      // Keep form model in sync with route-scoped garden create.
+      if (!plant.value.garden_id) {
+        plant.value.garden_id = Number(resolvedGardenId.value)
+      }
     } catch (error) {
       console.error("Error fetching garden:", error);
+      fetchError.value = `Garden fetch failed: ${error?.response?.status || error?.message || 'Unknown error'}`
     }
   }
   
-  await Promise.all([
-    gardenStore.allGardens.length ? Promise.resolve() : gardenStore.fetchGardens(),
-    wateringStore.allWaterings.length ? Promise.resolve() : wateringStore.fetchWaterings()
-  ]);
+  try {
+    await Promise.all([
+      gardenStore.fetchGardens(),
+      wateringStore.fetchWaterings()
+    ])
+  } catch (error) {
+    console.error('PlantCreate fetch failure:', error)
+    const details = error?.response?.status || error?.message || 'Unknown error'
+    fetchError.value = fetchError.value
+      ? `${fetchError.value}; Waterings/Gardens fetch failed: ${details}`
+      : `Waterings/Gardens fetch failed: ${details}`
+  }
 });
 
 // ✅ FIXED - Safe navigation
@@ -363,9 +494,9 @@ async function createPlant() {
     await plantStore.createPlant(plantData);
     
     // Navigate based on context
-    if (props.gardenId) {
-      await gardenStore.fetchGarden(props.gardenId);
-      router.push({ name: 'GardenDetails', params: { id: props.gardenId } });
+    if (resolvedGardenId.value) {
+      await gardenStore.fetchGarden(resolvedGardenId.value);
+      router.push({ name: 'GardenDetails', params: { id: resolvedGardenId.value } });
     } else if (plant.value.garden_id) {
       await gardenStore.fetchGarden(plant.value.garden_id);
       router.push({ name: 'GardenDetails', params: { id: plant.value.garden_id } });
@@ -390,7 +521,7 @@ function requiredPlantName(value) {
 }
 
 function requiredWatering(value) {
-  if (value >= 0) {
+  if (value) {
     isWateringValid.value = true
     return true
   } else {
@@ -401,6 +532,7 @@ function requiredWatering(value) {
 }
 
 function checkValidations() {
+  isWateringValid.value = Boolean(plant.value.watering_id)
   if (isPlantNameValid.value && isWateringValid.value) {
     isFormValid.value = true
   } else {
@@ -408,3 +540,6 @@ function checkValidations() {
   }
 }
 </script>
+
+<style scoped>
+</style>
