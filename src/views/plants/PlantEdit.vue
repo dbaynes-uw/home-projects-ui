@@ -192,9 +192,7 @@ const availableWaterings = computed(() => {
   } else {
     // If no garden selected, show all waterings with garden context
     wateringStore.allWaterings.forEach(watering => {
-      const hasGardenLinks = Array.isArray(watering.garden_ids)
-        ? watering.garden_ids.length > 0
-        : Array.isArray(watering.gardens) && watering.gardens.length > 0
+      const hasGardenLinks = (watering.garden_ids || []).length > 0
 
       if (!hasGardenLinks) {
         allWaterings.push({

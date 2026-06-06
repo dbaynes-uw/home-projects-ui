@@ -302,34 +302,15 @@ const garden = computed(() => {
 });
 
 const availableWaterings = computed(() => {
-  const allWaterings = []
   const targetGardenId = effectiveGardenId.value
 
   if (targetGardenId) {
-    // Primary source: normalized watering store getter.
-    const scopedWaterings = wateringStore.wateringsForGarden(targetGardenId) || []
-    scopedWaterings.forEach(w => allWaterings.push(w))
-
-    // Secondary source: hydrated current garden waterings (defensive, no shape-guessing).
-    const gardenWaterings = Array.isArray(garden.value.waterings) ? garden.value.waterings : []
-    gardenWaterings.forEach(w => allWaterings.push(w))
-
-    // Deduplicate by watering id.
-    const seen = new Set()
-    const deduped = allWaterings.filter(w => {
-      const id = Number(w.id)
-      if (!id || seen.has(id)) return false
-      seen.add(id)
-      return true
-    })
-
-    return deduped
+    return wateringStore.wateringsForGarden(targetGardenId) || []
   }
 
+  const allWaterings = []
   wateringStore.allWaterings.forEach(watering => {
-    const hasGardenLinks = Array.isArray(watering.garden_ids)
-      ? watering.garden_ids.length > 0
-      : Array.isArray(watering.gardens) && watering.gardens.length > 0
+    const hasGardenLinks = (watering.garden_ids || []).length > 0
 
     if (!hasGardenLinks) {
       allWaterings.push({

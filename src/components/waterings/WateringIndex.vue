@@ -57,6 +57,7 @@
   <v-table density="compact">
     <tr>
       <th id="background-blue" @click="sortList('name')">Name</th>
+      <th id="background-blue" @click="sortList('garden_names')">Garden</th>
       <th id="background-blue" @click="sortList('target')">Target</th>
       <th id="background-blue" @click="sortList('start_time')">Start</th>
       <th id="background-blue" @click="sortList('end_time')">End</th>
@@ -66,6 +67,7 @@
     </tr>
     <tr v-for="watering in sortedWaterings" :key="watering.id">
       <td>{{ watering.name }}</td>
+      <td>{{ getWateringGardenNames(watering) }}</td>
       <td>{{ watering.target }}</td>
       <td>{{ formatTime(watering.start_time) }}</td>
       <td>{{ formatTime(watering.end_time) }}</td>
@@ -144,8 +146,13 @@ const sortedWaterings = computed(() => {
       return sortAsc.value ? dateA - dateB : dateB - dateA;
     } else {
       // ✅ Handle text fields (name, target, location, etc.)
-      valueA = (a[sortKey.value] || '').toString().toLowerCase();
-      valueB = (b[sortKey.value] || '').toString().toLowerCase();
+      if (sortKey.value === 'garden_names') {
+        valueA = getWateringGardenNames(a).toLowerCase();
+        valueB = getWateringGardenNames(b).toLowerCase();
+      } else {
+        valueA = (a[sortKey.value] || '').toString().toLowerCase();
+        valueB = (b[sortKey.value] || '').toString().toLowerCase();
+      }
       
       if (valueA < valueB) return sortAsc.value ? -1 : 1;
       if (valueA > valueB) return sortAsc.value ? 1 : -1;
@@ -267,6 +274,21 @@ function handleSegmentEnter(segment, event) {
 function handleSegmentLeave() {
   hoveredSegmentKey.value = null;
   tooltip.value.visible = false;
+}
+
+function getWateringGardenNames(watering) {
+  if (Array.isArray(watering?.gardens) && watering.gardens.length > 0) {
+    const names = watering.gardens
+      .map(g => g?.name)
+      .filter(Boolean);
+    if (names.length > 0) return names.join(', ');
+  }
+
+  if (watering?.garden?.name) {
+    return watering.garden.name;
+  }
+
+  return 'Standalone';
 }
 
 function formatTime(value) {
