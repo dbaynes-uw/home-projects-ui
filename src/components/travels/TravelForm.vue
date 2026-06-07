@@ -84,6 +84,20 @@
       <span v-if="formData.transport_url" class="text-caption">
         {{ urlMaxLength - formData.transport_url.length }} / {{ urlMaxLength }} characters remaining
       </span>
+
+      <!-- Map Embed URL -->
+      <BaseInput
+        v-model="formData.map_embed_url"
+        label="Google Map Embed URL"
+        type="text"
+        prepend-icon="map"
+        :error="errors.map_embed_url"
+        placeholder="Paste Google Maps embed URL or full iframe HTML"
+      />
+
+      <span v-if="formData.map_embed_url" class="text-caption">
+        {{ mapUrlMaxLength - formData.map_embed_url.length }} / {{ mapUrlMaxLength }} characters remaining
+      </span>
       
       <!-- Notes -->
       <div class="form-field">
@@ -150,6 +164,7 @@ const vuexStore = useVuexStore()
 const isSubmitting = ref(false)
 const errors = ref({})
 const urlMaxLength = ref(255)
+const mapUrlMaxLength = ref(4000)
 
 // Check if we're in edit mode
 const isEditMode = computed(() => !!props.travel)
@@ -158,6 +173,7 @@ const isEditMode = computed(() => !!props.travel)
 const formData = ref({
   title: '',
   description: '',
+  map_embed_url: '',
   departure_date: '',
   return_date: '',
   transport: '',
@@ -186,11 +202,26 @@ const formatDateForInput = (dateString) => {
   return date.isValid() ? date.format('YYYY-MM-DDTHH:mm') : '';
 };
 
+const normalizeMapEmbedUrl = (value) => {
+  if (typeof value !== 'string') return ''
+  const trimmed = value.trim()
+  if (!trimmed) return ''
+
+  // Accept full iframe markup by extracting src="..."
+  if (trimmed.includes('<iframe')) {
+    const srcMatch = trimmed.match(/src\s*=\s*["']([^"']+)["']/i)
+    return srcMatch?.[1]?.trim() || ''
+  }
+
+  return trimmed
+}
+
 // Methods - Define before watchers to avoid hoisting issues
 const resetForm = () => {
   formData.value = {
     title: '',
     description: '',
+    map_embed_url: '',
     departure_date: '',
     return_date: '',
     transport: '',
@@ -235,6 +266,18 @@ const validateForm = () => {
   if (formData.value.transport_url && formData.value.transport_url.length > urlMaxLength.value) {
     errors.value.transport_url = `URL must be less than ${urlMaxLength.value} characters`
   }
+
+  if (formData.value.map_embed_url && formData.value.map_embed_url.length > mapUrlMaxLength.value) {
+    errors.value.map_embed_url = `Map URL must be less than ${mapUrlMaxLength.value} characters`
+  }
+
+  const normalizedMapUrl = normalizeMapEmbedUrl(formData.value.map_embed_url)
+
+  if (formData.value.map_embed_url && !normalizedMapUrl) {
+    errors.value.map_embed_url = 'Could not find an embed src URL in the iframe HTML'
+  } else if (normalizedMapUrl && !normalizedMapUrl.includes('google.com/maps/embed')) {
+    errors.value.map_embed_url = 'Use a Google Maps embed URL (google.com/maps/embed...)'
+  }
   
   return Object.keys(errors.value).length === 0
 }
@@ -250,6 +293,7 @@ const handleSubmit = async () => {
     // Prepare the travel data
     const travelData = {
       ...formData.value,
+      map_embed_url: normalizeMapEmbedUrl(formData.value.map_embed_url),
       created_by: vuexStore.state.user?.resource_owner?.email || ''
     }
     

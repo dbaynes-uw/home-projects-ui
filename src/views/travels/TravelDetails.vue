@@ -57,7 +57,13 @@
 
     <!-- Travel Card -->
     <h2 class="section-title" style="margin-left: 1rem">Travel Details</h2>
-    <TravelCard v-if="travel" :travel="travel" class="travel-card-display" />
+    <TravelCard
+      v-if="travel"
+      :travel="travel"
+      :show-map="true"
+      :show-event-notes="true"
+      class="travel-card-display"
+    />
 
     <!-- Search and Controls -->
     <BaseCard class="controls-card">
