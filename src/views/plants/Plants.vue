@@ -25,14 +25,14 @@
     
     <div class="plant-details" :key="refreshKey">
       <template v-if="isLoading">
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        <BaseSpinner size="large" label="Loading Plants" />
         <p>Loading Plants...</p>
       </template>
       <template v-else>
         <v-card-actions>
-          <v-btn id="indent-secondary-button" color="secondary" @click="toggleView">
+          <button id="indent-secondary-button" class="btn btn-secondary" @click="toggleView" type="button">
              {{ showIndex ? 'Show Card View' : 'Show Index View' }}
-          </v-btn>
+          </button>
         </v-card-actions>
         <!-- Add key to force re-render -->
         <PlantIndex 
@@ -59,6 +59,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PlantIndex from '@/components/plants/PlantIndex.vue';
 import PlantDetails from '@/components/plants/PlantDetails.vue';
+import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { usePlantStore } from '@/stores/plants/PlantStore';
 
 const plantStore = usePlantStore();

@@ -1,220 +1,132 @@
 <template>
-  <v-container>
+  <div>
     <h1>Add Plant{{ garden.id ? ` for ${garden.name}` : '' }}</h1>
-    <!--<template>
-      <! Add this temporarily to see plant fields >
-      <li class="li-left"><b>DEBUG - Plant fields: {{ Object.keys(plant) }}</b></li>
-      <li class="li-left"><b>DEBUG - Full plant: {{ plant }}</b></li>
-    </template-->
-    <v-row>
-      <v-col cols="12">
-        <v-card class="mx-auto mt-5">
-          <v-card-text>
-            <!-- Back button logic -->
-            <router-link 
-              v-if="garden.id"
-              :to="{ name: 'GardenDetails', params: { id: garden.id } }"
-            >
-              <h2><b>Back to {{ garden.name }}</b></h2>
-            </router-link>
-            <router-link v-else :to="{ name: 'Gardens' }">
-              <h2><b>Back to Gardens</b></h2>
-            </router-link>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
 
-    <v-form @submit.prevent="createPlant" ref="form">
-      <v-row>
-        <!-- Garden Selection (only show if no garden pre-selected) -->
+    <div class="card">
+      <router-link
+        v-if="garden.id"
+        :to="{ name: 'GardenDetails', params: { id: garden.id } }"
+      >
+        <h2><b>Back to {{ garden.name }}</b></h2>
+      </router-link>
+      <router-link v-else :to="{ name: 'Gardens' }">
+        <h2><b>Back to Gardens</b></h2>
+      </router-link>
+    </div>
 
-  <!-- Garden Selection -->
-  <v-col v-if="!resolvedGardenId" cols="12">
-    <BaseNativeSelect
-      v-model="plant.garden_id"
-      :options="gardenOptions"
-      label="Select Garden (Optional)"
-      value-type="number"
-      :include-empty-option="true"
-      empty-option-label="No Garden (Standalone)"
-    />
-  </v-col>
-  
-  <!-- Show selected garden if pre-selected -->
-  <v-col v-else cols="12">
-    <v-text-field
-      v-model="garden.name"
-      label="Garden"
-      outlined
-      readonly
-    ></v-text-field>
-  </v-col>
-  <!-- Watering Selection (only show if no watering pre-selected) -->
-  <v-col v-if="!resolvedWateringId" cols="12">
-    <BaseNativeSelect
-      v-model="plant.watering_id"
-      :options="wateringOptions"
-      label="Select Watering System"
-      value-type="number"
-      :include-empty-option="true"
-      :empty-option-label="wateringNoDataText"
-      :error="fetchError"
-      required
-    />
-  </v-col>
-  
-  <!-- Show selected watering if pre-selected -->
-  <v-col v-else cols="12">
-    <v-text-field
-      v-model="watering.name"
-      label="Watering System"
-      outlined
-      readonly
-      prepend-inner-icon="fas fa-water"
-    ></v-text-field>
-  </v-col>
-        <!-- Plant Name Input -->
-        <v-col cols="12">
-          <v-text-field
-            v-model="plant.plant_name"
-            :rules="[requiredPlantName]"
-            label="Plant Name"
-            outlined
-            required
-            aria-label="Enter the name of the plant"
-          ></v-text-field>
-        </v-col>
+    <form @submit.prevent="createPlant" class="form-card-display">
+      <div class="form-container">
+        <BaseNativeSelect
+          v-if="!resolvedGardenId"
+          v-model="plant.garden_id"
+          :options="gardenOptions"
+          label="Select Garden (Optional)"
+          value-type="number"
+          :include-empty-option="true"
+          empty-option-label="No Garden (Standalone)"
+        />
 
-        <!-- Biological Name Input -->
-        <v-col cols="12">
-          <v-text-field
-            v-model="plant.biological_name"
-            label="Biological Name"
-            outlined
-            aria-label="Enter the biological/scientific name"
-          ></v-text-field>
-        </v-col>
+        <BaseInput
+          v-else
+          :model-value="garden.name"
+          label="Garden"
+          readonly
+        />
 
-        <!-- Description -->
-        <v-col cols="12">
-          <v-textarea
-            v-model="plant.description"
-            label="Description"
-            rows="3"
-            outlined
-            aria-label="Enter a description of the plant"
-          ></v-textarea>
-        </v-col>
+        <BaseNativeSelect
+          v-if="!resolvedWateringId"
+          v-model="plant.watering_id"
+          :options="wateringOptions"
+          label="Select Watering System"
+          value-type="number"
+          :include-empty-option="true"
+          :empty-option-label="wateringNoDataText"
+          :error="fetchError"
+          required
+        />
 
-        <!-- Research Link -->
-        <v-col cols="12">
-          <v-text-field
-            v-model="plant.online_link"
-            label="URL to Research"
-            prepend-inner-icon="fas fa-link"
-            outlined
-            aria-label="Link to plant research"
-          ></v-text-field>
-        </v-col>
+        <BaseInput
+          v-else
+          :model-value="watering.name"
+          label="Watering System"
+          readonly
+        />
 
-        <!-- Yard Location -->
-        <v-col cols="12">
-          <BaseNativeSelect
-            v-model="plant.yard_location"
-            :options="yardLocationOptions"
-            label="Yard Location"
-            hint="North, South, or specific location like 1-A-1 for Vegetable Garden"
-            :include-empty-option="true"
-            empty-option-label="Select Yard Location"
-          />
-        </v-col>
+        <BaseInput
+          v-model="plant.plant_name"
+          label="Plant Name"
+          required
+        />
 
-        <!-- Date Planted -->
-        <v-col cols="12" md="6">
-          <v-text-field 
-            v-model="plant.date_planted"
-            label="Date Planted"
-            type="date"
-            outlined
-            aria-label="Select the date the plant was planted"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon>mdi-calendar</v-icon>
-            </template>
-          </v-text-field>
-        </v-col>
+        <BaseInput
+          v-model="plant.biological_name"
+          label="Biological Name"
+        />
 
-        <!-- Date Harvested -->
-        <v-col cols="12" md="6">
-          <v-text-field 
-            v-model="plant.date_harvested"
-            label="Date Harvested"
-            type="date"
-            outlined
-            aria-label="Select the date the plant was harvested"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon>mdi-calendar</v-icon>
-            </template>
-          </v-text-field>
-        </v-col>
+        <div class="form-field">
+          <label class="form-label">Description</label>
+          <textarea v-model="plant.description" class="form-textarea" rows="3"></textarea>
+        </div>
 
-        <!-- Duration -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="plant.duration"
-            label="Duration (days)"
-            type="number"
-            min="0"
-            outlined
-            aria-label="Duration in days for the plant to mature"
-          ></v-text-field>
-        </v-col>
+        <BaseInput
+          v-model="plant.online_link"
+          label="URL to Research"
+          type="url"
+        />
 
-        <!-- Frequency -->
-        <v-col cols="12">
-          <BaseNativeSelect
-            v-model="plant.frequency"
-            :options="careFrequencyOptions"
-            label="Select Frequency of Care"
-            :include-empty-option="true"
-            empty-option-label="Select Frequency"
-          />
-        </v-col>
+        <BaseNativeSelect
+          v-model="plant.yard_location"
+          :options="yardLocationOptions"
+          label="Yard Location"
+          hint="North, South, or specific location like 1-A-1 for Vegetable Garden"
+          :include-empty-option="true"
+          empty-option-label="Select Yard Location"
+        />
 
-        <!-- Notes -->
-        <v-col cols="12">
-          <v-textarea
-            v-model="plant.notes"
-            label="Notes"
-            rows="2"
-            outlined
-            aria-label="Additional notes for the plant"
-          ></v-textarea>
-        </v-col>
-      </v-row>
+        <BaseInput
+          v-model="plant.date_planted"
+          label="Date Planted"
+          type="date"
+        />
 
-      <!-- Action Buttons -->
-      <v-row>
-        <v-col cols="12">
-          <v-btn color="primary" type="submit" width="auto" aria-label="Create plant">
-            Create Plant
-          </v-btn>
-          &nbsp;
-          <v-btn 
-            color="secondary" 
-            @click="garden.id ? 
-              router.push({ name: 'GardenDetails', params: { id: garden.id } }) : 
-              router.push({ name: 'Gardens' })"
-            aria-label="Cancel and go back"
+        <BaseInput
+          v-model="plant.date_harvested"
+          label="Date Harvested"
+          type="date"
+        />
+
+        <BaseInput
+          v-model="plant.duration"
+          label="Duration (days)"
+          type="number"
+          min="0"
+        />
+
+        <BaseNativeSelect
+          v-model="plant.frequency"
+          :options="careFrequencyOptions"
+          label="Select Frequency of Care"
+          :include-empty-option="true"
+          empty-option-label="Select Frequency"
+        />
+
+        <div class="form-field">
+          <label class="form-label">Notes</label>
+          <textarea v-model="plant.notes" class="form-textarea" rows="2"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <BaseButton variant="primary" type="submit">Create Plant</BaseButton>
+          <BaseButton
+            variant="secondary"
+            @click="garden.id ? router.push({ name: 'GardenDetails', params: { id: garden.id } }) : router.push({ name: 'Gardens' })"
           >
             Cancel
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
-  </v-container>
+          </BaseButton>
+        </div>
+      </div>
+    </form>
+  </div>
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue'
@@ -225,6 +137,8 @@ import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const { userEmail } = useAuth()
 const plantStore = usePlantStore();
@@ -374,10 +288,6 @@ const careFrequencyOptions = computed(() => {
     title: frequency
   }))
 })
-const isFormValid = ref(false)
-const isPlantNameValid = ref(false)
-const isWateringValid = ref(false)
-
 const wateringNoDataText = computed(() => {
   if (wateringOptions.value.length > 0) {
     return 'Select a watering system'
@@ -419,8 +329,7 @@ onMounted(async () => {
 
 // ✅ FIXED - Safe navigation
 async function createPlant() {
-  checkValidations()
-  if (!isFormValid.value) {
+  if (!plant.value.plant_name || !plant.value.watering_id) {
     alert("Please fill in all required fields.");
     return;
   }
@@ -448,38 +357,29 @@ async function createPlant() {
     alert('Failed to create plant. Please try again.');
   }
 }
-
-function requiredPlantName(value) {
-  if (value) {
-    isPlantNameValid.value = true
-    return true
-  } else {
-    isFormValid.value = false
-    isPlantNameValid.value = false
-    return 'Please enter Plant Name'
-  }
-}
-
-function requiredWatering(value) {
-  if (value) {
-    isWateringValid.value = true
-    return true
-  } else {
-    isFormValid.value = false
-    isWateringValid.value = false
-    return 'Please Select Watering Line'
-  }
-}
-
-function checkValidations() {
-  isWateringValid.value = Boolean(plant.value.watering_id)
-  if (isPlantNameValid.value && isWateringValid.value) {
-    isFormValid.value = true
-  } else {
-    isFormValid.value = false
-  }
-}
 </script>
 
 <style scoped>
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.form-textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.6rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
 </style>

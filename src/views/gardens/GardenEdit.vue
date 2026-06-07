@@ -42,12 +42,14 @@
       <!-- Action Buttons -->
       <v-row>
         <v-col cols="12">
-          <v-btn color="primary" type="submit" aria-label="Update the Garden">
+          <BaseButton variant="primary" size="medium" type="submit" aria-label="Update the Garden">
             Update
-          </v-btn>
-          <v-btn color="secondary" :to="{ name: 'Gardens' }" aria-label="Go back to the Gardens list">
-            Back to List
-          </v-btn>
+          </BaseButton>
+          <router-link :to="{ name: 'Gardens' }" class="back-link-btn" aria-label="Go back to the Gardens list">
+            <BaseButton variant="secondary" size="medium" type="button">
+              Back to List
+            </BaseButton>
+          </router-link>
         </v-col>
       </v-row>
   </v-form>
@@ -133,6 +135,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { usePlantStore } from '@/stores/plants/PlantStore';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 const gardenStore = useGardenStore();
 const wateringStore = useWateringStore();
@@ -194,4 +197,9 @@ function formatTime(value) {
   return DateFormatService.formatTimejs(value);
 }
 </script>
-<style></style>
+<style scoped>
+.back-link-btn {
+  margin-left: 0.5rem;
+  text-decoration: none;
+}
+</style>

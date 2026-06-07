@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue> 
   <div class="card" v-bind="$attrs" @dblclick="emit('dblclick', plant)">
-     <h4 id="p-custom-link">
+     <h4 class="text-link-emphasis card-custom-link">
       <router-link
         :to="{ name: 'PlantEdit', params: { id: `${plant.id}` } }"
       >
@@ -47,44 +47,33 @@
     </ul>
     <br/>
     <div class="action-icons">
-      <v-tooltip text="Edit Plant" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-pencil"
-            size="small"
-            color="primary"
-            variant="text"
-            :to="{ name: 'PlantEdit', params: { id: plant.id } }"
-          />
-        </template>
-      </v-tooltip>
+      <router-link
+        :to="{ name: 'PlantEdit', params: { id: plant.id } }"
+        class="action-icon-btn action-icon-edit"
+        title="Edit Plant"
+        aria-label="Edit Plant"
+      >
+        <i class="fas fa-pencil"></i>
+      </router-link>
 
-      <v-tooltip text="View Details" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-eye"
-            size="small"
-            color="brown"
-            variant="text"
-            :to="{ name: 'PlantDetails', params: { id: plant.id } }"
-          />
-        </template>
-      </v-tooltip>
+      <router-link
+        :to="{ name: 'PlantDetails', params: { id: plant.id } }"
+        class="action-icon-btn action-icon-view"
+        title="View Details"
+        aria-label="View Details"
+      >
+        <i class="fas fa-eye"></i>
+      </router-link>
 
-      <v-tooltip text="Delete Plant" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-delete"
-            size="small"
-            color="error"
-            variant="text"
-            @click="handleDelete"
-          />
-        </template>
-      </v-tooltip>
+      <button
+        type="button"
+        class="action-icon-btn action-icon-delete"
+        title="Delete Plant"
+        aria-label="Delete Plant"
+        @click="handleDelete"
+      >
+        <i class="fas fa-delete"></i>
+      </button>
     </div>  
   </div>
 </template>
@@ -158,5 +147,4 @@ function formatYearDate(value) {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

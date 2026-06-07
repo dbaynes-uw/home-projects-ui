@@ -38,15 +38,15 @@
         <!-- ✅ DROPDOWN MENU BUTTON -->
         <v-menu offset-y>
           <template v-slot:activator="{ props }">
-            <v-btn 
+            <button
               v-bind="props" 
               class="menu-dropdown" 
-              variant="elevated"
+              type="button"
               :icon="isMobile"
             >
               <i v-if="isMobile" class="fas fa-bars menu-icon"></i>
               <span v-else class="menu-text">Menu</span>
-            </v-btn>
+            </button>
           </template>
           
           <!-- ✅ DROPDOWN MENU ITEMS -->
@@ -140,7 +140,6 @@ import {
   VToolbarTitle,
   VSpacer,
   VMenu,
-  VBtn,
   VList,
   VListItem,
   VTooltip
@@ -158,7 +157,6 @@ export default {
     VToolbarTitle,
     VSpacer,
     VMenu,
-    VBtn,
     VList,
     VListItem,
     VTooltip

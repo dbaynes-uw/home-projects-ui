@@ -34,12 +34,14 @@
       <!-- Action Buttons -->
       <v-row>
         <v-col cols="12">
-          <v-btn color="primary" type="submit" aria-label="Submit">
+          <BaseButton variant="primary" size="medium" type="submit" aria-label="Submit">
             Create
-          </v-btn>
-          <v-btn color="secondary" :to="{ name: 'Gardens' }" aria-label="Go back to the gardens list">
-            Back to List
-          </v-btn>
+          </BaseButton>
+          <router-link :to="{ name: 'Gardens' }" class="back-link-btn" aria-label="Go back to the gardens list">
+            <BaseButton variant="secondary" size="medium" type="button">
+              Back to List
+            </BaseButton>
+          </router-link>
         </v-col>
       </v-row>
     </v-form>
@@ -49,6 +51,7 @@
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import BaseButton from '@/components/ui/BaseButton.vue';
 import { v4 as uuidv4 } from 'uuid';
   const store = useStore();
   const router = useRouter();
@@ -190,5 +193,10 @@ legend {
   position: absolute;
   font-size: 14px;
   transition: 0.3s;
+}
+
+.back-link-btn {
+  margin-left: 0.5rem;
+  text-decoration: none;
 }
 </style>

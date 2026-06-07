@@ -1,5 +1,4 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="card" @dblclick="emit('dblclick', garden)">
     <span v-if="$route.name == 'Gardens'">
       <router-link :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }">
@@ -11,10 +10,10 @@
         <h4><b>{{garden.name}}</b></h4>
       </router-link>
     </span>
-    <p id="p-card-left">Notes:</p>
+    <p class="card-section-title">Notes:</p>
     <b class="li-left-none">{{ garden.notes }}</b>
     <br/>
-    <p id="p-card-left">
+    <p class="card-section-title">
       <router-link :to="{ name: 'Waterings' }" >
         Waterings:
       </router-link>
@@ -39,7 +38,7 @@
         </li>
       </ul>
     </span>
-    <p id="p-custom-link">
+    <p class="text-link-emphasis card-custom-link">
       <router-link :to="{ name: 'WateringCreate', params: { gardenId: garden.id } }">
         Add Watering to {{ garden.name }}
       </router-link>
@@ -49,7 +48,7 @@
       <router-link
         :to="{ name: 'Plants' }"
       >
-        <p id="p-card-left">Plants:</p>
+        <p class="card-section-title">Plants:</p>
       </router-link>
 
       <span v-for="(plant, plantIndex) in garden.plants" :key="plantIndex ">
@@ -64,7 +63,7 @@
         </ul>          
       </span>
     </span>
-    <p id="p-custom-link">
+    <p class="text-link-emphasis card-custom-link">
       <router-link
         :to="buildPlantCreateRoute(garden)"
       >
@@ -73,65 +72,49 @@
     </p>
     <br/>
     <div class="action-icons">
-      <v-tooltip text="Add Plant" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="mdi-sprout"
-            size="small"
-            color="green"
-            variant="text"
-            :to="{ name: 'PlantCreate', params: { gardenId: garden.id } }"
-          />
-        </template>
-      </v-tooltip>
+      <router-link
+        :to="{ name: 'PlantCreate', params: { gardenId: garden.id } }"
+        class="action-icon-btn action-icon-add"
+        title="Add Plant"
+        aria-label="Add Plant"
+      >
+        <i class="mdi mdi-sprout"></i>
+      </router-link>
 
-      <v-tooltip text="Edit Garden" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-pencil"
-            size="small"
-            color="primary"
-            variant="text"
-            :to="{ name: 'GardenEdit', params: { id: garden.id } }"
-          />
-        </template>
-      </v-tooltip>
+      <router-link
+        :to="{ name: 'GardenEdit', params: { id: garden.id } }"
+        class="action-icon-btn action-icon-edit"
+        title="Edit Garden"
+        aria-label="Edit Garden"
+      >
+        <i class="fas fa-pencil"></i>
+      </router-link>
 
-      <v-tooltip text="View Details" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-eye"
-            size="small"
-            color="brown"
-            variant="text"
-            :to="{ name: 'GardenDetails', params: { id: garden.id } }"
-          />
-        </template>
-      </v-tooltip>
+      <router-link
+        :to="{ name: 'GardenDetails', params: { id: garden.id } }"
+        class="action-icon-btn action-icon-view"
+        title="View Details"
+        aria-label="View Details"
+      >
+        <i class="fas fa-eye"></i>
+      </router-link>
 
-      <v-tooltip text="Delete Garden" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-delete"
-            size="small"
-            color="error"
-            variant="text"
-            @click="handleDelete"
-          />
-        </template>
-      </v-tooltip>
+      <button
+        type="button"
+        class="action-icon-btn action-icon-delete"
+        title="Delete Garden"
+        aria-label="Delete Garden"
+        @click="handleDelete"
+      >
+        <i class="fas fa-delete"></i>
+      </button>
     </div>  </div>
 </template>
 <script setup>
 import { useRouter } from 'vue-router';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
-defineProps({
+const props = defineProps({
   garden: {
     type: Object,
     default: () => ({})
@@ -140,9 +123,9 @@ defineProps({
 const gardenStore = useGardenStore();
 const router = useRouter();
 const emit = defineEmits(['dblclick']);
-async function handleDelete(garden) {
-  if (confirm(`Are you sure you want to delete ${garden.name}? It cannot be undone.`)) {
-    await gardenStore.deleteGarden(garden);
+async function handleDelete() {
+  if (confirm(`Are you sure you want to delete ${props.garden.name}? It cannot be undone.`)) {
+    await gardenStore.deleteGarden(props.garden);
     router.push({ name: "Gardens" });
   }
 }  
@@ -165,5 +148,4 @@ function buildPlantCreateRoute(garden) {
   }
 }
 </script>
-<style scoped></style>
 

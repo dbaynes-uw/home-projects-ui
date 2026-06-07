@@ -142,6 +142,45 @@
 .action-icons .v-btn:focus::before {
   opacity: 0 !important;  /* Remove the focus circle */
 }
+
+.action-icon-btn {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.action-icon-btn i {
+  font-size: 1rem;
+}
+
+.action-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.action-icon-add {
+  color: #2e7d32;
+}
+
+.action-icon-edit {
+  color: #1976d2;
+}
+
+.action-icon-view {
+  color: #6d4c41;
+}
+
+.action-icon-delete {
+  color: #d32f2f;
+}
+
 @media (max-width: 600px) {
   .action-icons {
     justify-content: center;
@@ -295,11 +334,32 @@
   font-weight: bold;
 }
 
+.text-link-emphasis {
+  text-decoration: underline;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.card-custom-link a {
+  color: #145a8e;
+}
+
+.card-custom-link a:hover {
+  color: #0f4670;
+}
+
 #p-left {
   text-align: left;
   font-size: 1rem;
 }
 #p-card-left {
+  margin-left: 0rem;
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card-section-title {
   margin-left: 0rem;
   text-align: left;
   font-size: 1.25rem;

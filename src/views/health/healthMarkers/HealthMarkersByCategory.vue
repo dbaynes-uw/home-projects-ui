@@ -1,70 +1,53 @@
 <template>
   <div class="page-wrapper">
     <div class="health-markers-category-container">
-      <!-- ✅ HEADER CARD -->
-      <v-card class="mx-auto mt-5">
-        <v-card-title class="pb-0">
+      <BaseCard class="mx-auto mt-5">
+        <div class="card-title pb-0">
           <h2>
             <i class="fas fa-layer-group"></i>
             Health Markers by Category
           </h2>
-        </v-card-title>
-        
-        <!-- ✅ NAVIGATION BUTTONS -->
-        <v-card-text>
+        </div>
+
+        <div class="card-text">
           <div class="navigation-flex">
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'HealthMarkerCreate' }"
-              prepend-icon="fas fa-plus"
-              class="nav-button"
-              color="success"
-            >
+            <router-link :to="{ name: 'HealthMarkerCreate' }" class="btn btn-outline-success nav-button">
+              <i class="fas fa-plus"></i>
               Add Health Marker
-            </v-btn>
+            </router-link>
 
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'HealthMarkers' }"
-              prepend-icon="fas fa-list"
-              class="nav-button"
-            >
+            <router-link :to="{ name: 'HealthMarkers' }" class="btn btn-outline-primary nav-button">
+              <i class="fas fa-list"></i>
               View All Results
-            </v-btn>
+            </router-link>
 
-            <!-- ✅ ADD INDEX VIEW TOGGLE BUTTON -->
-            <v-btn
-              variant="outlined"
+            <button
+              class="btn btn-outline-primary nav-button"
               @click="toggleIndexView"
-              :prepend-icon="showIndexView ? 'fas fa-th' : 'fas fa-list'"
-              class="nav-button"
-              color="primary"
               :disabled="showChartView"
             >
+              <i :class="showIndexView ? 'fas fa-th' : 'fas fa-list'"></i>
               {{ showIndexView ? 'Category View' : 'Index View' }}
-            </v-btn>
+            </button>
 
-            <!-- ✅ ADD CHART VIEW TOGGLE BUTTON -->
-            <v-btn
-              variant="outlined"
+            <button
+              class="btn btn-outline-secondary nav-button"
               @click="toggleChartView"
-              :prepend-icon="showChartView ? 'fas fa-th' : 'fas fa-chart-line'"
-              class="nav-button"
-              color="deep-purple"
             >
+              <i :class="showChartView ? 'fas fa-th' : 'fas fa-chart-line'"></i>
               {{ showChartView ? 'Category View' : 'Chart View' }}
-            </v-btn>
+            </button>
           </div>
-</v-card-text>
-      </v-card>
+        </div>
+      </BaseCard>
 
       <!-- ✅ CATEGORY OVERVIEW STATS -->
-      <v-card class="mt-4" v-if="categoryStats.length > 0">
-        <v-card-title>
+      <BaseCard class="mt-4" v-if="categoryStats.length > 0">
+        <div class="card-title">
           <i class="fas fa-chart-pie"></i>
           Category Overview ({{ totalResults }} total results)
-        </v-card-title>
-        <v-card-text>
+        </div>
+        <div class="card-text">
           <div class="stats-grid">
             <div 
               v-for="stat in categoryStats" 
@@ -74,11 +57,10 @@
               @click="toggleCategory(stat.category)"
             >
               <div class="stat-icon">
-                <v-icon 
-                  :icon="getCategoryIcon(stat.category)" 
-                  :color="getCategoryColor(stat.category)"
-                  size="large"
-                />
+                <i
+                  :class="['category-icon', getCategoryFaIcon(stat.category)]"
+                  :style="{ color: getCategoryColorHex(stat.category) }"
+                ></i>
               </div>
               <div class="stat-info">
                 <h3>{{ stat.category }}</h3>
@@ -88,12 +70,12 @@
               </div>
             </div>
           </div>
-        </v-card-text>
-      </v-card>
+        </div>
+      </BaseCard>
 
       <!-- ✅ FILTERS SECTION -->
-      <v-card class="mt-4">
-        <v-card-text>
+      <BaseCard class="mt-4">
+        <div class="card-text">
           <div class="filters-section">
             <div class="filter-group">
               <label>
@@ -123,31 +105,27 @@
             </div>
 
             <div class="search-section">
-              <v-text-field
+              <input
                 v-model="searchText"
-                clearable
-                clear-icon="fas fa-times"
-                @click:clear="clearSearch"
                 @input="applyFilters"
                 placeholder="Search health markers..."
-                prepend-inner-icon="fas fa-search"
                 class="search-field"
-                density="compact"
+                type="text"
               />
+              <button v-if="searchText" class="btn btn-outline-secondary clear-search-btn" @click="clearSearch">
+                <i class="fas fa-times"></i>
+                Clear
+              </button>
             </div>
           </div>
-        </v-card-text>
-      </v-card>
+        </div>
+      </BaseCard>
       <!-- ✅ UPDATE YOUR VIEW STATUS: -->
-      <v-card class="mt-2" v-if="filteredHealthMarkers.length > 0">
-        <v-card-text class="py-2">
+      <BaseCard class="mt-2" v-if="filteredHealthMarkers.length > 0">
+        <div class="card-text py-2">
           <div class="view-status">
             <div class="view-indicator">
-              <v-icon 
-                :icon="showChartView ? 'fas fa-chart-line' : showIndexView ? 'fas fa-table' : 'fas fa-layer-group'" 
-                size="small" 
-                class="mr-2"
-              />
+              <i :class="showChartView ? 'fas fa-chart-line mr-2' : showIndexView ? 'fas fa-table mr-2' : 'fas fa-layer-group mr-2'"></i>
               <span class="view-text">
                 {{ showChartView ? 'Chart View' : showIndexView ? 'Index View' : 'Category View' }} - 
                 {{ filteredHealthMarkers.length }} health markers
@@ -176,54 +154,47 @@
               </span>
             </div>
           </div>
-        </v-card-text>
-      </v-card>
+        </div>
+      </BaseCard>
       <!-- ✅ NO RESULTS MESSAGE -->
       <div v-if="filteredHealthMarkers.length === 0" class="no-results-container">
-        <v-card class="no-results-card">
-          <v-card-text class="text-center">
-            <v-icon icon="mdi-database-off" size="x-large" color="grey" class="mb-4" />
+        <BaseCard class="no-results-card">
+          <div class="card-text text-center">
+            <i class="fas fa-database no-results-icon"></i>
             <h3>No Health Markers Found</h3>
             <p>{{ getNoResultsMessage() }}</p>
-            <v-btn 
-              color="primary" 
-              :to="{ name: 'HealthMarkerCreate' }"
-              prepend-icon="mdi-plus"
-              class="mt-3"
-            >
+            <router-link :to="{ name: 'HealthMarkerCreate' }" class="btn btn-primary mt-3">
+              <i class="fas fa-plus"></i>
               Add Your First Health Marker
-            </v-btn>
-          </v-card-text>
-        </v-card>
+            </router-link>
+          </div>
+        </BaseCard>
       </div>
 
       <!-- ✅ CATEGORY SECTIONS -->
       <!-- ✅ INDEX VIEW -->
       <div v-if="showIndexView" class="index-view-container">
-        <v-card class="mt-4">
-          <v-card-title>
+        <BaseCard class="mt-4">
+          <div class="card-title">
             <div class="index-header">
               <h3>
                 <i class="fas fa-table"></i>
                 Health Markers Index View
               </h3>
-              <v-chip 
-                color="primary" 
-                prepend-icon="mdi-format-list-numbered"
-                size="small"
-              >
+              <span class="pill pill-primary">
+                <i class="fas fa-list-ol"></i>
                 {{ filteredHealthMarkers.length }} results
-              </v-chip>
+              </span>
             </div>
-          </v-card-title>
+          </div>
 
-          <v-card-text class="pa-0">
+          <div class="card-text pa-0">
             <HealthMarkerIndex 
               :healthMarkers="filteredHealthMarkers"
               class="category-index-table"
             />
-          </v-card-text>
-        </v-card>
+          </div>
+        </BaseCard>
       </div>
       <!-- ✅ ADD THIS CHART VIEW AFTER INDEX VIEW: -->
           
@@ -232,23 +203,20 @@
 
       <!-- ✅ SIMPLE CHART VIEW -->
       <div v-if="showChartView" class="simple-chart-view-container">
-        <v-card class="mt-4">
-          <v-card-title>
+        <BaseCard class="mt-4">
+          <div class="card-title">
             <div class="chart-header">
               <h3>
                 <i class="fas fa-chart-line"></i>
                 Health Marker Trends by Category
               </h3>
-              <v-chip 
-                color="deep-purple" 
-                prepend-icon="mdi-chart-timeline-variant"
-                size="small"
-              >
+              <span class="pill pill-secondary">
+                <i class="fas fa-chart-line"></i>
                 {{ getCategoriesWithData.length }} categories
-              </v-chip>
+              </span>
             </div>
-          </v-card-title>
-        </v-card>
+          </div>
+        </BaseCard>
       
         <!-- ✅ SIMPLE CHARTS FOR EACH CATEGORY -->
         <div class="simple-charts-container">
@@ -262,12 +230,12 @@
         </div>
       
         <!-- ✅ SUMMARY CARD -->
-        <v-card class="mt-4 simple-chart-summary">
-          <v-card-title>
+        <BaseCard class="mt-4 simple-chart-summary">
+          <div class="card-title">
             <i class="fas fa-chart-pie mr-2"></i>
             Chart Summary
-          </v-card-title>
-          <v-card-text>
+          </div>
+          <div class="card-text">
             <div class="summary-grid">
               <div class="summary-item">
                 <div class="summary-number">{{ getCategoriesWithData.length }}</div>
@@ -282,8 +250,8 @@
                 <div class="summary-label">Markers</div>
               </div>
             </div>
-          </v-card-text>
-        </v-card>
+          </div>
+        </BaseCard>
       </div>
 
       <!-- ✅ CATEGORY VIEW (EXISTING) -->
@@ -294,37 +262,30 @@
           :id="`category-${category.toLowerCase().replace(/\s+/g, '-')}`"
           class="category-section"
         >
-          <v-card class="category-card">
-            <v-card-title class="category-header">
+          <BaseCard class="category-card">
+            <div class="card-title category-header">
               <div class="category-title">
-                <v-icon 
-                  :icon="getCategoryIcon(category)" 
-                  :color="getCategoryColor(category)"
-                  size="large"
-                  class="mr-3"
-                />
+                <i
+                  :class="['category-icon mr-3', getCategoryFaIcon(category)]"
+                  :style="{ color: getCategoryColorHex(category) }"
+                ></i>
                 <h2>{{ category }}</h2>
-                <v-chip 
-                  :color="getCategoryColor(category)" 
-                  size="small"
-                  class="ml-3"
-                >
+                <span class="pill ml-3" :style="{ backgroundColor: getCategoryColorHex(category) }">
                   {{ getCategoryMarkers(category).length }} results
-                </v-chip>
+                </span>
               </div>
 
-              <v-btn
-                variant="outlined"
-                size="small"
+              <button
+                class="btn btn-outline-secondary btn-sm"
                 @click="toggleCategoryExpansion(category)"
-                :prepend-icon="isCategoryExpanded(category) ? 'mdi-chevron-up' : 'mdi-chevron-down'"
               >
+                <i :class="isCategoryExpanded(category) ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
                 {{ isCategoryExpanded(category) ? 'Collapse' : 'Expand' }}
-              </v-btn>
-            </v-card-title>
+              </button>
+            </div>
           
             <!-- ✅ CATEGORY DESCRIPTION -->
-            <v-card-text v-if="isCategoryExpanded(category)">
+            <div class="card-text" v-if="isCategoryExpanded(category)">
               <div class="category-description">
                 <p><strong>{{ getCategoryDescription(category) }}</strong></p>
                 <div class="category-info">
@@ -353,26 +314,19 @@
                   @dblclick="editHealthMarker(healthMarker)"
                 />
               </div>
-            </v-card-text>
-          </v-card>
+            </div>
+          </BaseCard>
         </div>
       </div>
 
       <!-- ✅ FLOATING ACTION BUTTON -->
-      <v-btn
-        fab
-        fixed
-        bottom
-        right
-        color="success"
-        size="large"
+      <router-link
         :to="{ name: 'HealthMarkerCreate' }"
         class="fab-button"
         :class="{ 'fab-hidden': showIndexView }"
-        elevation="8"
       >
-        <v-icon size="large">mdi-plus</v-icon>
-      </v-btn>
+        <i class="fas fa-plus"></i>
+      </router-link>
     </div>
   </div>
 </template>
@@ -387,6 +341,7 @@ import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard
 import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';
 import DateFormatService from '@/services/DateFormatService';
 import HealthMarkerCategoryChart from '@/components/health/healthMarkers/HealthMarkerCategoryChart.vue';
+import BaseCard from '@/components/ui/BaseCard.vue';
 
 // ✅ ADD CHART.JS IMPORTS
 /*import {
@@ -576,6 +531,36 @@ const getCategoryColor = (category) => {
     'Other': 'grey'
   };
   return colorMap[category] || 'grey';
+};
+
+const getCategoryColorHex = (category) => {
+  const colorMap = {
+    'Diabetes': '#dc3545',
+    'Thyroid': '#fd7e14',
+    'Lipids': '#0d6efd',
+    'Vitamins': '#198754',
+    'Heart': '#6f42c1',
+    'Liver': '#8d6e63',
+    'Kidney': '#20c997',
+    'General': '#6c757d',
+    'Other': '#9ca3af'
+  };
+  return colorMap[category] || '#9ca3af';
+};
+
+const getCategoryFaIcon = (category) => {
+  const iconMap = {
+    'Diabetes': 'fas fa-droplet',
+    'Thyroid': 'fas fa-user-doctor',
+    'Lipids': 'fas fa-heart-pulse',
+    'Vitamins': 'fas fa-capsules',
+    'Heart': 'fas fa-heart',
+    'Liver': 'fas fa-notes-medical',
+    'Kidney': 'fas fa-filter',
+    'General': 'fas fa-stethoscope',
+    'Other': 'fas fa-vial'
+  };
+  return iconMap[category] || 'fas fa-vial';
 };
 
 const getCategoryDescription = (category) => {

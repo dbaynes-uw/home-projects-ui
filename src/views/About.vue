@@ -13,31 +13,31 @@
               <div v-if="$store.state.user && $store.state.loggedIn" class="text-center">
                 <h2 class="mb-4">Hello, {{ userName }}! 👋</h2>
                 
-                <v-alert type="success" variant="tonal" class="mb-4">
+                <BaseAlert variant="success" class="mb-4">
                   <i class="fas fa-check-circle mr-2"></i>
                   You are successfully logged in!
-                </v-alert>
+                </BaseAlert>
                 
                 <div class="user-info mb-4">
-                  <v-chip color="primary" variant="elevated" class="mr-2 mb-2">
+                  <BaseChip variant="primary" class="mr-2 mb-2">
                     <i class="fas fa-user mr-2"></i>
                     ID: {{ $store.state.user.id }}
-                  </v-chip>
+                  </BaseChip>
                   
-                  <v-chip color="success" variant="elevated" class="mr-2 mb-2">
+                  <BaseChip variant="success" class="mr-2 mb-2">
                     <i class="fas fa-envelope mr-2"></i>
                     {{ $store.state.user.email }}
-                  </v-chip>
+                  </BaseChip>
                   
-                  <v-chip color="info" variant="elevated" class="mr-2 mb-2">
+                  <BaseChip variant="info" class="mr-2 mb-2">
                     <i class="fas fa-key mr-2"></i>
                     Authenticated
-                  </v-chip>
+                  </BaseChip>
                   
-                  <v-chip color="warning" variant="elevated" class="mb-2">
+                  <BaseChip variant="warning" class="mb-2">
                     <i class="fas fa-clock mr-2"></i>
                     Expires: {{ formatExpiration }}
-                  </v-chip>
+                  </BaseChip>
                 </div>
                 
                 <div class="navigation-section">
@@ -60,18 +60,18 @@
               <div v-else class="text-center">
                 <h2>❌ Not Logged In</h2>
                 <p>Please log in to access your projects.</p>
-                <v-btn @click="$router.push('/login')" color="primary" size="large">
+                <BaseButton @click="$router.push('/login')" variant="primary" size="large">
                   <i class="fas fa-sign-in-alt mr-2"></i>
                   Go to Login
-                </v-btn>
+                </BaseButton>
               </div>
             </v-card-text>
             
             <v-card-actions class="justify-center">
-              <v-btn @click="logout" variant="outlined" color="error">
+              <BaseButton @click="logout" variant="danger">
                 <i class="fas fa-sign-out-alt mr-2"></i>
                 Logout
-              </v-btn>
+              </BaseButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -81,7 +81,16 @@
 </template>
 
 <script>
+import BaseAlert from '@/components/ui/BaseAlert.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
+import BaseChip from '@/components/ui/BaseChip.vue';
+
 export default {
+  components: {
+    BaseAlert,
+    BaseButton,
+    BaseChip
+  },
   computed: {
     userName() {
       const user = this.$store.state.user;

@@ -3,9 +3,9 @@
     <div class="register-card">
       <h1>Create Account</h1>
 
-      <v-alert v-if="successMsg" type="success" variant="tonal" class="mb-4">
+      <div v-if="successMsg" class="success-alert mb-4" role="status">
         {{ successMsg }}
-      </v-alert>
+      </div>
 
       <form @submit.prevent="handleRegister">
         <div class="field">
@@ -97,6 +97,14 @@ async function handleRegister() {
   width: 100%;
   max-width: 420px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.success-alert {
+  background: #e8f8ef;
+  color: #0f5132;
+  border: 1px solid #b8e5cb;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
 }
 h1 { text-align: center; margin-bottom: 1.5rem; font-size: 1.6rem; color: #333; }
 .field { display: flex; flex-direction: column; margin-bottom: 1rem; }

@@ -88,7 +88,7 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
-        <v-btn type="submit" block class="mt-2">Submit</v-btn>
+        <button type="submit" class="btn btn-primary mt-2 w-100">Submit</button>
       </v-container>
     </v-form>
   </v-card-text>

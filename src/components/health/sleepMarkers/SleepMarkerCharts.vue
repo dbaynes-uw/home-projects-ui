@@ -1,13 +1,13 @@
 <template>
-  <v-card class="charts-card">
-    <v-card-title class="charts-header">
+  <BaseCard class="charts-card">
+    <div class="charts-header">
       <h3>
         <i class="fas fa-chart-line"></i>
         Sleep Analytics & Trends
       </h3>
-    </v-card-title>
+    </div>
     
-    <v-card-text>
+    <div class="card-content">
       <div class="charts-placeholder">
         <i class="fas fa-chart-bar" style="font-size: 64px; color: #ccc;"></i>
         <p class="mt-4">Charts & Analytics Coming Soon!</p>
@@ -20,11 +20,13 @@
           <li>Best and worst sleep nights</li>
         </ul>
       </div>
-    </v-card-text>
-  </v-card>
+    </div>
+  </BaseCard>
 </template>
 
 <script setup>
+import BaseCard from '@/components/ui/BaseCard.vue';
+
 defineProps({
   markers: {
     type: Array,
@@ -66,5 +68,9 @@ defineProps({
 
 .features-list li {
   margin: 0.5rem 0;
+}
+
+.card-content {
+  padding: 1.5rem;
 }
 </style>

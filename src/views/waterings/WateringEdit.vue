@@ -25,91 +25,75 @@
     
     <form class="form-card-display" @submit.prevent="updateWatering">
       <div class="form-container">
-
-        <v-text-field
+        <BaseInput
           label="Watering Name"
           v-model="watering.name"
         />
         <!-- Add Garden Selection (multi) -->
-        <v-select
-          v-model="selectedGardenIds"
-          :items="gardens"
-          item-title="name"
-          item-value="id"
-          label="Select Gardens (Optional)"
-          clearable
-          multiple
-          outlined
-        ></v-select>         
+        <label class="form-label">Select Gardens (Optional)</label>
+        <select v-model="selectedGardenIds" class="multi-select" multiple>
+          <option v-for="g in gardens" :key="g.id" :value="g.id">{{ g.name }}</option>
+        </select>
         <!-- Your existing fields -->   
-        <v-text-field
+        <BaseInput
           label="Location"
           v-model="watering.location"
         />
-        <v-text-field
+        <BaseInput
           label="Line"
           v-model="watering.line"
         />
-        <v-text-field
+        <BaseInput
           label="Target"
           v-model="watering.target"
         />
-        <v-text-field
+        <BaseInput
           label="Days"
           v-model="watering.days"
         />
-        <v-text-field
+        <BaseInput
           label="Duration"
           v-model="watering.duration"
-          style="font-weight: bold"
           :hint="calculatedDuration ? `Auto-calculated: ${calculatedDuration}` : 'Set start & end time to auto-calculate'"
-          persistent-hint
         />
         <div class="date-field-container">
-          <v-text-field
+          <BaseInput
             v-model="displayStartTime"
             type="time"
             label="Start Time"
+          />
+          <button
+            v-if="displayStartTime"
+            type="button"
+            class="inline-clear-btn"
+            @click="clearStartTime"
           >
-            <template v-slot:append-inner>
-              <v-btn
-                v-if="displayStartTime"
-                @click="clearStartTime"
-                icon="fas fa-close"
-                size="small"
-                variant="text"
-                color="error"
-              />
-            </template>
-          </v-text-field>
+            Clear
+          </button>
         </div>
       
         <div class="date-field-container">
-          <v-text-field
+          <BaseInput
             v-model="displayEndTime"
             type="time"
             label="End Time"
+          />
+          <button
+            v-if="displayEndTime"
+            type="button"
+            class="inline-clear-btn"
+            @click="clearEndTime"
           >
-            <template v-slot:append-inner>
-              <v-btn
-                v-if="displayEndTime"
-                @click="clearEndTime"
-                icon="fas fa-close"
-                size="small"
-                variant="text"
-                color="error"
-              />
-            </template>
-          </v-text-field>
+            Clear
+          </button>
         </div>
         <h3 id="p-custom-left">Last Updated: {{ formatStandardDateTime(watering.updated_at) }}</h3>
         <br/>
-        <v-select
+        <BaseNativeSelect
           label="Select Status to Change"
-          :items="ACTIVE_STATUSES"
+          :options="statusOptions"
           v-model="watering.status"
-          variant="outlined"
-          class="status-select"
+          :include-empty-option="false"
         />
         <br/>
         <label>Notes:</label>
@@ -119,29 +103,20 @@
           cols="40"
           class="textarea-style"
         />
-      <v-row>
-        <v-col cols="12">
-          <v-btn color="primary" type="submit" aria-label="Submit">
-            Update
-          </v-btn>
-          &nbsp;
-          <v-btn 
-            color="secondary" 
-            @click="watering.id ? 
-              _router.push({ name: 'WateringDetails', params: { id: watering.id } }) : 
-              _router.push({ name: 'Waterings' })"
-            aria-label="Go back"
-          >
-            Cancel
-          </v-btn>
-        </v-col>
-      </v-row>
+      <div class="form-actions">
+        <BaseButton variant="primary" type="submit">Update</BaseButton>
+        <BaseButton
+          variant="secondary"
+          @click="watering.id ? _router.push({ name: 'WateringDetails', params: { id: watering.id } }) : _router.push({ name: 'Waterings' })"
+        >
+          Cancel
+        </BaseButton>
+      </div>
       </div>
     </form>
   </div>
 </template>
 <script setup>
-import { VSelect } from 'vuetify/components'
 import { ACTIVE_STATUSES } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
@@ -149,6 +124,9 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
+import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 const wateringStore = useWateringStore();
 const gardenStore = useGardenStore();
@@ -164,6 +142,7 @@ const confirmDialogue = ref(null);
 const watering = computed(() => wateringStore.currentWatering || {});
 const gardens = computed(() => gardenStore.allGardens);
 const selectedGardenIds = ref([]);
+const statusOptions = computed(() => ACTIVE_STATUSES.map(status => ({ value: status, title: status })))
 
 // Methods
 const displayStartTime = computed({
@@ -292,4 +271,34 @@ onMounted(async () => {
 });
 </script>
 <style>
+.multi-select {
+  width: 100%;
+  min-height: 110px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.inline-clear-btn {
+  margin-top: -8px;
+  margin-bottom: 0.75rem;
+  border: none;
+  background: transparent;
+  color: #d32f2f;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
 </style>

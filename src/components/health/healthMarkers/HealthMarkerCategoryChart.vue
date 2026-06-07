@@ -3,12 +3,10 @@
   <div class="category-chart-container">
     <div class="chart-header">
       <h4>
-        <v-icon 
-          :icon="getCategoryIcon(category)" 
-          :color="getCategoryColor(category)"
-          size="small"
-          class="mr-2"
-        />
+        <i
+          :class="['mr-2', getCategoryIcon(category)]"
+          :style="{ color: getCategoryColor(category) }"
+        ></i>
         {{ category }} Trends
       </h4>
       <div class="chart-stats">
@@ -20,12 +18,10 @@
     <!-- ✅ SINGLE DATA POINT SPECIAL CASE -->
     <div v-if="chartData.length === 1" class="single-point-display">
       <div class="single-point-card">
-        <v-icon 
-          :icon="getCategoryIcon(category)" 
-          :color="getCategoryColor(category)"
-          size="large"
-          class="mb-2"
-        />
+        <i
+          :class="['mb-2', getCategoryIcon(category)]"
+          :style="{ color: getCategoryColor(category), fontSize: '1.5rem' }"
+        ></i>
         <h5>{{ getHealthMarkerByName(chartData[0].markerName)?.label || chartData[0].markerName }}</h5>
         <div class="single-value">
           {{ chartData[0].value }} {{ getHealthMarkerByName(chartData[0].markerName)?.unit || '' }}
@@ -150,7 +146,7 @@
 
     <!-- ✅ NO DATA CASE -->
     <div v-else class="no-chart-data">
-      <v-icon icon="mdi-chart-line" size="large" color="grey" class="mb-2" />
+      <i class="fas fa-chart-line mb-2 no-data-icon"></i>
       <p>No trend data available for {{ category }}</p>
     </div>
 
@@ -375,32 +371,32 @@ const xAxisLabels = computed(() => {
 // ✅ METHODS
 const getCategoryIcon = (category) => {
   const iconMap = {
-    'Diabetes': 'mdi-water-percent',
-    'Thyroid': 'mdi-thyroid',
-    'Lipids': 'mdi-heart-pulse',
-    'Vitamins': 'mdi-pill',
-    'Heart': 'mdi-heart',
-    'Liver': 'mdi-liver',
-    'Kidney': 'mdi-kidney',
-    'General': 'mdi-account-check',
-    'Other': 'mdi-test-tube'
+    'Diabetes': 'fas fa-droplet',
+    'Thyroid': 'fas fa-user-doctor',
+    'Lipids': 'fas fa-heart-pulse',
+    'Vitamins': 'fas fa-capsules',
+    'Heart': 'fas fa-heart',
+    'Liver': 'fas fa-notes-medical',
+    'Kidney': 'fas fa-filter',
+    'General': 'fas fa-stethoscope',
+    'Other': 'fas fa-vial'
   };
-  return iconMap[category] || 'mdi-test-tube';
+  return iconMap[category] || 'fas fa-vial';
 };
 
 const getCategoryColor = (category) => {
   const colorMap = {
-    'Diabetes': 'error',
-    'Thyroid': 'warning',
-    'Lipids': 'info',
-    'Vitamins': 'success',
-    'Heart': 'deep-purple',
-    'Liver': 'brown',
-    'Kidney': 'teal',
-    'General': 'blue-grey',
-    'Other': 'grey'
+    'Diabetes': '#dc3545',
+    'Thyroid': '#fd7e14',
+    'Lipids': '#0d6efd',
+    'Vitamins': '#198754',
+    'Heart': '#6f42c1',
+    'Liver': '#8d6e63',
+    'Kidney': '#20c997',
+    'General': '#6c757d',
+    'Other': '#9ca3af'
   };
-  return colorMap[category] || 'grey';
+  return colorMap[category] || '#9ca3af';
 };
 
 const getMarkerColor = (markerName) => {
@@ -555,11 +551,12 @@ onMounted(() => {
 
 .data-point {
   cursor: pointer;
-  transition: r 0.2s ease;
+  transition: transform 0.2s ease;
+  transform-origin: center;
 }
 
 .data-point:hover {
-  r: 8;
+  transform: scale(1.15);
 }
 
 .axis-label {
@@ -609,6 +606,11 @@ onMounted(() => {
   height: 200px;
   color: #666;
   text-align: center;
+}
+
+.no-data-icon {
+  font-size: 1.5rem;
+  color: #9ca3af;
 }
 
 .chart-tooltip {

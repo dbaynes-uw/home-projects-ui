@@ -20,16 +20,14 @@
     </span>
 
     <div v-if="!isSingle" class="controls-bar">
-      <v-btn
+      <button
         @click="toggleSortOrder"
-        variant="outlined"
-        color="primary"
-        centered
-        class="sort-btn"
-        :prepend-icon="sortOrder === 'asc' ? 'fas fa-sort-alphabetical-ascending' : 'fas fa-sort-alphabetical-descending'"
+        type="button"
+        class="btn btn-outline-primary sort-btn"
       >
+        <i :class="sortOrder === 'asc' ? 'fas fa-sort-alpha-down mr-2' : 'fas fa-sort-alpha-up mr-2'"></i>
         {{ sortOrder === 'asc' ? 'A → Z' : 'Z → A' }}
-      </v-btn>
+      </button>
       <span id="count-display">
         {{ filteredSortedGardens.length }} Gardens
       </span>

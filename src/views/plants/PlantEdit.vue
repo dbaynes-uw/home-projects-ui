@@ -17,13 +17,12 @@
     
     <form class="form-card-display" @submit.prevent="updatePlant">
       <div class="form-container">
-                
-        <v-text-field
+
+        <BaseInput
           label="Plant Name"
           v-model="plant.plant_name"
-          outlined
           required
-        />        
+        />
         <!-- Garden Selection -->
         <BaseNativeSelect
           v-model="plant.garden_id"
@@ -46,95 +45,66 @@
           empty-option-label="No Watering System"
         />
         
-        <v-text-field
+        <BaseInput
           label="Biological Name"
           v-model="plant.biological_name"
-          outlined
         />
-        
-        <v-textarea
-          label="Description"
-          v-model="plant.description"
-          rows="3"
-          outlined
-        />        
-        
-        <v-select
+
+        <div class="form-field">
+          <label class="form-label">Description</label>
+          <textarea v-model="plant.description" rows="3" class="form-textarea"></textarea>
+        </div>
+
+        <BaseNativeSelect
           label="Status"
-          :items="active_statuses"
+          :options="statusOptions"
           v-model="plant.active"
-          outlined
-        >
-          <template v-slot:prepend-inner>
-            <v-icon>mdi-list-status</v-icon>
-          </template>
-        </v-select>        
-        
-        <v-text-field
+          :include-empty-option="false"
+        />
+
+        <BaseInput
           label="Yard Location"
           v-model="plant.yard_location"
-          outlined
         />
-        
-        <v-text-field
+
+        <BaseInput
           label="Duration (days)"
           v-model="plant.duration"
           type="number"
-          outlined
         />
-        
-        <v-text-field
+
+        <BaseInput
           label="Date Planted"
           v-model="plant.date_planted"
           type="date"
-          outlined
-        >
-          <template v-slot:prepend-inner>
-            <v-icon>mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        
-        <v-text-field
+        />
+
+        <BaseInput
           label="Date Harvested"
           v-model="plant.date_harvested"
           type="date"
-          outlined
-        >
-          <template v-slot:prepend-inner>
-            <v-icon>mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
-        
-        <v-text-field
+        />
+
+        <BaseInput
           label="Reference Link"
           v-model="plant.online_link"
-          outlined
-        />           
-        
-        <v-textarea
-          label="Notes"
-          v-model="plant.notes"
-          rows="3"
-          outlined
         />
-        
+
+        <div class="form-field">
+          <label class="form-label">Notes</label>
+          <textarea v-model="plant.notes" rows="3" class="form-textarea"></textarea>
+        </div>
+
         <!-- Action Buttons -->
-        <v-row>
-          <v-col cols="12">
-            <v-btn color="primary" type="submit" width="auto" style="min-width: 120px;">
-              Update Plant
-            </v-btn>
-            &nbsp;
-            <v-btn 
-              color="secondary" 
-              size="large"
-              style="min-width: 100px;"
-              :to="{ name: 'PlantDetails', params: { id: plant.id } }"
-            >
-              Cancel
-            </v-btn>
-          </v-col>
-        </v-row>
+        <div class="form-actions">
+          <BaseButton variant="primary" type="submit">Update Plant</BaseButton>
+          <BaseButton
+            variant="secondary"
+            @click="router.push({ name: 'PlantDetails', params: { id: plant.id } })"
+          >
+            Cancel
+          </BaseButton>
+        </div>
       </div>
     </form>
   </div>
@@ -145,6 +115,8 @@ import { useAuth } from '@/composables/useAuth';
 import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
@@ -226,6 +198,7 @@ const wateringOptions = computed(() => {
 })
 const confirmDialogue = ref(null); // Add ref declaration
 const active_statuses = ["Active", "Inactive"];
+const statusOptions = computed(() => active_statuses.map(status => ({ value: status, title: status })))
 
 // Methods
 async function updatePlant() {
@@ -278,4 +251,26 @@ onMounted(async () => {
   }
 });
 </script><style>
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.form-textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.6rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
 </style>

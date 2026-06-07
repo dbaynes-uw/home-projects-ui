@@ -1,13 +1,14 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
+  <BaseCard class="mx-auto mt-5">
+    <div class="dashboard-title pb-0">
       <h2><i class="fas fa-pills"></i> Health Dashboard</h2>
-    </v-card-title>
+    </div>
      
     <HealthDashboardNav />
-  </v-card>
+  </BaseCard>
 </template>
 <script setup>
+import BaseCard from '@/components/ui/BaseCard.vue';
 import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 </script>
 <style scoped>

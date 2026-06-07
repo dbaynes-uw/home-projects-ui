@@ -9,7 +9,7 @@
 
     <!-- Loading state -->
     <div v-if="loading" class="loading-state">
-      <v-progress-circular indeterminate color="green" />
+      <BaseSpinner size="large" label="Loading round" />
       <p>Loading round…</p>
     </div>
 
@@ -33,7 +33,7 @@
       <!-- ── Players ────────────────────────────────────────────── -->
       <div class="players-header">
         <h3>Players</h3>
-        <v-btn size="small" variant="outlined" @click="addPlayer" :disabled="players.length >= 4">+ Add Player</v-btn>
+        <button class="btn btn-outline-secondary btn-sm" type="button" @click="addPlayer" :disabled="players.length >= 4">+ Add Player</button>
       </div>
 
       <div class="players-scoreline" v-if="players.some(p => playerTotal(p, 'scores') > 0)">
@@ -69,15 +69,14 @@
               style="max-width: 80px"
               class="ml-2"
             />
-            <v-btn
+            <button
               v-if="pi > 0"
-              icon="mdi-close"
-              size="x-small"
-              variant="text"
-              color="error"
-              class="ml-1"
+              type="button"
+              class="remove-player-btn ml-1"
               @click="removePlayer(pi)"
-            />
+            >
+              <i class="fas fa-times"></i>
+            </button>
             <div class="player-inline-summary" v-if="playerTotal(p, 'scores') > 0">
               <span>{{ playerTotal(p, 'scores') }}</span>
               <span class="pis-label">Sc</span>
@@ -261,21 +260,21 @@
       <p v-if="saveStatus" class="save-status" :class="saveStatusCss">{{ saveStatus }}</p>
 
       <div class="action-row">
-        <v-btn color="success" size="large" :loading="saving" @click="saveAndStay">
+        <BaseButton variant="success" size="large" :loading="saving" @click="saveAndStay">
           {{ isEditMode ? '💾 Save' : '⛳ Create & Stay' }}
-        </v-btn>
-        <v-btn color="primary" size="large" :loading="saving" @click="saveAll">
+        </BaseButton>
+        <BaseButton variant="primary" size="large" :loading="saving" @click="saveAll">
           {{ isEditMode ? '✅ Save & Done' : '⛳ Create Round' }}
-        </v-btn>
-        <v-btn
+        </BaseButton>
+        <BaseButton
           v-if="isEditMode"
-          color="error"
-          variant="outlined"
+          variant="danger"
+          size="large"
           :loading="saving"
           @click="deleteRound"
         >
           🗑 Delete Round
-        </v-btn>
+        </BaseButton>
       </div>
 
     </div><!-- /v-else -->
@@ -287,6 +286,8 @@ import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseSpinner from '@/components/ui/BaseSpinner.vue'
 
 const route     = useRoute()
 const router    = useRouter()
@@ -754,6 +755,20 @@ onMounted(async () => {
 .players-grid { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
 .player-card { background: #f0f7ff; border: 1px solid #90caf9; border-radius: 8px; padding: 0.5rem 0.75rem; }
 .player-name-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+
+.remove-player-btn {
+  border: none;
+  background: transparent;
+  color: #dc3545;
+  cursor: pointer;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 4px;
+}
+
+.remove-player-btn:hover {
+  background: #fdeaea;
+}
 
 /* Hole grids */
 .section-title { margin: 1rem 0 0.4rem; color: #1565c0; border-bottom: 2px solid #1565c0; padding-bottom: 0.2rem; font-size: 0.95rem; }

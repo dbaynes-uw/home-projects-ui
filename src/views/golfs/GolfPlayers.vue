@@ -6,7 +6,7 @@
     </div>
 
     <div v-if="loading" class="gp-loading">
-      <v-progress-circular indeterminate color="primary" />
+      <BaseSpinner size="large" label="Loading rounds" />
       <p>Loading rounds…</p>
     </div>
 
@@ -60,6 +60,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 import GolfPlayerCard from '@/components/golfs/GolfPlayerCard.vue'
+import BaseSpinner from '@/components/ui/BaseSpinner.vue'
 
 const golfStore = useGolfStore()
 const search    = ref('')

@@ -1,17 +1,14 @@
 <template>
   <div class="action-button-wrapper">
-    <v-btn
+    <button
       class="action-button"
       :class="{ 'active-state': isShowingActive }"
       @click="toggleEventsStatus"
-      variant="elevated"
-      size="default"
-      block
-      :prepend-icon="getStatusIcon()"
-      density="default"
+      type="button"
     >
+      <i :class="getStatusIcon()"></i>
       {{ getStatusLabel() }}
-    </v-btn>
+    </button>
   </div>
 </template>
 

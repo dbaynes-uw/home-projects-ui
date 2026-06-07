@@ -21,25 +21,22 @@
       <!-- ✅ NAVIGATION BUTTONS -->
       <v-card-text>
         <div class="navigation-flex">
-          <v-btn
-            variant="outlined"
-            :to="{ name: 'ProductsByLocations' }"
-            prepend-icon="fas fa-arrow-left"
-            class="nav-button"
-          >
-            Back to Shopping
-          </v-btn>
+          <router-link :to="{ name: 'ProductsByLocations' }" class="nav-link-btn">
+            <BaseButton variant="ghost" size="medium" class="nav-button" type="button">
+              <i class="fas fa-arrow-left"></i>
+              Back to Shopping
+            </BaseButton>
+          </router-link>
           
-          <v-btn
-            variant="outlined"
-            color="error"
+          <BaseButton
+            variant="danger"
             @click="handleDeleteVendor"
-            prepend-icon="fas fa-trash"
             class="nav-button"
             :disabled="!vendor.id"
           >
+            <i class="fas fa-trash"></i>
             Delete Vendor
-          </v-btn>
+          </BaseButton>
         </div>
       </v-card-text>
     </v-card>
@@ -85,18 +82,18 @@
             </v-text-field>
 
             <!-- ✅ SUBMIT BUTTON -->
-            <v-btn 
+            <BaseButton
               type="submit"
-              color="primary"
+              variant="primary"
               size="large"
-              block
+              :block="true"
               class="mt-4"
               :loading="isUpdating"
               :disabled="!isFormValid && hasAttemptedSubmit"
             >
               <i class="fas fa-save"></i>
               Update Vendor
-            </v-btn>
+            </BaseButton>
           </v-container>
         </v-form>
       </v-card-text>
@@ -109,6 +106,7 @@ import { ref, computed, watch, onMounted, onErrorCaptured } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 // ✅ COMPOSITION API SETUP
 const store = useStore();
@@ -429,6 +427,10 @@ onMounted(async () => {
 .nav-button:focus {
   outline: 2px solid #1976d2;
   outline-offset: 2px;
+}
+
+.nav-link-btn {
+  text-decoration: none;
 }
 
 /* ✅ SAFE AREA PADDING */

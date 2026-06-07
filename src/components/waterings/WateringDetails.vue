@@ -19,38 +19,35 @@
       </button> 
     </span>
     <div v-if="!isSingle" class="controls-bar">
-      <v-btn-group variant="outlined" divided>
-        <v-btn
+      <div class="sort-button-group">
+        <button
           @click="setSortField('start_time')"
-          :color="sortField === 'start_time' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'start_time' && sortOrder === 'asc' ? 'fas fa-sort-calendar-ascending' : 'fas fa-sort-calendar-descending'"
-          centered
-          class="sort-btn"
+          :class="['btn sort-btn', sortField === 'start_time' ? 'btn-primary' : 'btn-outline-secondary']"
+          type="button"
         >
+          <i :class="sortField === 'start_time' && sortOrder === 'asc' ? 'fas fa-arrow-up-wide-short mr-2' : 'fas fa-arrow-down-wide-short mr-2'"></i>
           Start Time
-        </v-btn>
-        <v-btn
+        </button>
+        <button
           @click="setSortField('name')"
-          :color="sortField === 'name' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'name' && sortOrder === 'asc' ? 'fas fa-sort-alphabetical-ascending' : 'fas fa-sort-alphabetical-descending'"
-          centered
-          class="sort-btn"
+          :class="['btn sort-btn', sortField === 'name' ? 'btn-primary' : 'btn-outline-secondary']"
+          type="button"
         >
+          <i :class="sortField === 'name' && sortOrder === 'asc' ? 'fas fa-sort-alpha-down mr-2' : 'fas fa-sort-alpha-up mr-2'"></i>
           Sort by Name
-        </v-btn>
+        </button>
                 
-      </v-btn-group>
+      </div>
       
       <!-- ✅ Optional: Separate toggle button -->
-      <v-btn
+      <button
         @click="toggleSortOrder"
-        variant="outlined"
-        :prepend-icon="sortOrder === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"
-        centered
-        class="sort-btn"
+        class="btn btn-outline-secondary sort-btn"
+        type="button"
       >
+        <i :class="sortOrder === 'asc' ? 'fas fa-arrow-up mr-2' : 'fas fa-arrow-down mr-2'"></i>
         {{ sortOrder === 'asc' ? 'Ascending' : 'Descending' }}
-      </v-btn>
+      </button>
       
       <!-- ✅ Show current sort info -->
       <span id="count-display">
@@ -227,6 +224,12 @@ onMounted(() => {
 .sort-btn {
   top: -.6rem;
   min-width: 10rem;
+}
+
+.sort-button-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 #count-display {
   font-weight: bold;

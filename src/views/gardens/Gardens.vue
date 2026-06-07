@@ -19,14 +19,14 @@
     </v-card>
     <div class="garden-details">
       <template v-if="isLoading">
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        <BaseSpinner size="large" label="Loading Gardens" />
         <p>Loading Gardens...</p>
       </template>
       <template v-else>
         <v-card-actions>
-          <v-btn id="indent-secondary-button" color="secondary" @click="toggleView">
+          <button id="indent-secondary-button" class="btn btn-secondary" @click="toggleView" type="button">
              {{ showIndex ? 'Show Card View' : 'Show Index View' }}
-          </v-btn>
+          </button>
         </v-card-actions>
 
         <!-- Add search input -->
@@ -61,6 +61,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import GardenIndex from '@/components/gardens/GardenIndex.vue';
 import GardenDetails from '@/components/gardens/GardenDetails.vue';
+import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 
 const gardenStore = useGardenStore();

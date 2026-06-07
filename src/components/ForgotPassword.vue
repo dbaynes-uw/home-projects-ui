@@ -26,32 +26,31 @@
             required
           />
           
-          <v-btn 
+          <BaseButton
             type="submit" 
-            block 
+            :block="true"
             class="mt-4" 
             :disabled="!isFormValid"
             :loading="isSubmitting"
-            color="primary"
             size="large"
+            variant="primary"
           >
             <!-- ✅ REMOVED @click - ONLY USE type="submit" -->
             <i class="fas fa-paper-plane"></i>
             Send Reset Email
-          </v-btn>
+          </BaseButton>
         </v-container>
       </v-form>
       
       <!-- ✅ ENHANCED MESSAGE DISPLAY -->
-      <v-alert
+      <BaseAlert
         v-if="message"
-        :type="error ? 'error' : 'success'"
-        :icon="error ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle'"
+        :variant="error ? 'danger' : 'success'"
         class="mt-4"
-        variant="tonal"
       >
+        <i :class="error ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle'"></i>
         {{ message }}
-      </v-alert>
+      </BaseAlert>
       
       <!-- ✅ BACK TO LOGIN LINK -->
       <div class="text-center mt-4">
@@ -67,8 +66,14 @@
 <script>
 import '../assets/authorization.css';
 import { ref, computed } from 'vue'
+import BaseAlert from '@/components/ui/BaseAlert.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 export default {
+  components: {
+    BaseAlert,
+    BaseButton
+  },
   setup() {
     const email = ref('')
     const message = ref('')
@@ -175,12 +180,12 @@ export default {
   padding: 1rem 0;
 }
 
-.v-btn[type="submit"] {
+.base-btn[type="submit"] {
   font-weight: 600;
   letter-spacing: 0.5px;
 }
 
-.v-btn[type="submit"] i {
+.base-btn[type="submit"] i {
   margin-right: 0.5rem;
 }
 

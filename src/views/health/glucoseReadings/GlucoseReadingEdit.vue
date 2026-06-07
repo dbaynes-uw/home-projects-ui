@@ -1,121 +1,71 @@
 <template>
-  <v-container>
+  <div class="page-container">
     <h1>Edit Glucose Reading</h1>
-    <v-form @submit.prevent="updateReading">
-      <v-row>
-        <!-- Name Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="reading_date"
-            label="Date"
-            type="datetime-local"
-            outlined
-            required
-            aria-label="Enter the date of the glucose reading"
-          ></v-text-field>
-        </v-col>
+    <form @submit.prevent="updateReading" class="form-card-display">
+      <div class="form-container">
+        <BaseInput
+          v-model="reading_date"
+          label="Date"
+          type="datetime-local"
+          required
+        />
 
-        <!-- Reading Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="reading"
-            label="Reading"
-            type="number"
-            outlined
-            required
-            aria-label="Enter the reading of the glucose reading"
-          ></v-text-field>
-        </v-col>
+        <BaseInput
+          v-model="reading"
+          label="Reading"
+          type="number"
+          required
+        />
 
-        <!-- Unit Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="unit"
-            label="Unit"
-            type="text"
-            outlined
-            required
-            aria-label="Enter the reading unit of the glucose reading"
-          ></v-text-field>
-        </v-col>        
+        <BaseInput
+          v-model="unit"
+          label="Unit"
+          type="text"
+          required
+        />
 
-        <!-- Reading Type Input -->
-        <v-col cols="12" md="6">
-          <v-autocomplete
+        <div class="form-field">
+          <label class="form-label">Type<span class="required">*</span></label>
+          <input
             v-model="reading_type"
-            :items="readingTypeOptions"
-            label="Type"
-            outlined
+            list="reading-type-options"
+            class="form-input"
             required
             aria-label="Select or enter the type of the glucose reading"
-            hide-no-data
-            allow-new
-          ></v-autocomplete>
-        </v-col>
-        <!-- Status or Diagnosis Bullet Points
-        <v-col cols="12" md="6" id="bullet-style">
-          <v-list dense>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>Fasting 70-99 - Normal</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>Fasting 126+ - Diabetes</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>Fasting 100-125 - Prediabetes</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-col>
-        -->
-        <!-- Status Input Calculated Below -->
-        <!--v-col cols="12" md="6">
-          <v-select
-            v-model="status"
-            :items="statusOptions"
-            label="Status"
-            outlined
-            aria-label="Select the status of the glucose reading"
-          ></v-select>
-        </v-col-->
+          />
+          <datalist id="reading-type-options">
+            <option v-for="option in readingTypeOptions" :key="option" :value="option" />
+          </datalist>
+        </div>
         <!-- Notes Input -->
-        <v-col cols="12">
-          <v-textarea
+        <div class="form-field">
+          <label class="form-label">Notes</label>
+          <textarea
             v-model="notes"
-            label="Notes"
-            outlined
             rows="3"
+            class="form-textarea"
             aria-label="Enter any notes for the glucose reading"
-          ></v-textarea>
-        </v-col>
-      </v-row>
-      <!-- Action Buttons -->
-      <v-row>
-        <v-col cols="12">
-          <v-btn color="primary" type="submit" aria-label="Update the glucose reading">
-            Update
-          </v-btn>
-          <v-btn color="secondary" :to="{ name: 'GlucoseReadings' }" aria-label="Go back to the glucose reading list">
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <BaseButton variant="primary" type="submit">Update</BaseButton>
+          <BaseButton variant="secondary" @click="router.push({ name: 'GlucoseReadings' })">
             Back to List
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
-  </v-container>
+          </BaseButton>
+        </div>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
+import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
-const store = useStore();   // still needed for user email if required
 const route = useRoute();
 const router = useRouter();
 const glucoseReadingStore = useGlucoseReadingStore();
@@ -176,7 +126,7 @@ async function updateReading() {
 
 <style scoped>
 /* Add spacing and alignment for the form */
-.v-container {
+.page-container {
   max-width: 800px;
   margin: 0 auto;
 }
@@ -186,7 +136,33 @@ h1 {
   margin-bottom: 20px;
 }
 
-.v-btn {
-  margin-right: 10px;
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.required {
+  color: #d32f2f;
+  margin-left: 0.2rem;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.6rem;
+  font-size: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 </style>

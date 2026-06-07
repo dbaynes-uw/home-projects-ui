@@ -71,15 +71,15 @@
 
     <!-- Action buttons -->
     <div class="action-row">
-      <v-btn v-if="currentHole < 18" color="success" size="large" block :loading="saving" @click="saveAndNext">
+      <BaseButton v-if="currentHole < 18" variant="success" size="large" :block="true" :loading="saving" @click="saveAndNext">
         Save &amp; Next Hole →
-      </v-btn>
-      <v-btn v-else color="primary" size="large" block :loading="saving" @click="finishRound">
+      </BaseButton>
+      <BaseButton v-else variant="primary" size="large" :block="true" :loading="saving" @click="finishRound">
         🏁 Finish Round
-      </v-btn>
-      <v-btn variant="outlined" class="mt-2" block :loading="saving" @click="saveHole">
+      </BaseButton>
+      <BaseButton variant="ghost" size="large" class="mt-2" :block="true" :loading="saving" @click="saveHole">
         Save This Hole
-      </v-btn>
+      </BaseButton>
     </div>
 
     <!-- Mini scorecard -->
@@ -124,6 +124,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import GolfScoreRow from '@/components/golfs/GolfScoreRow.vue'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const props = defineProps({ id: { type: String, default: '' } })
 

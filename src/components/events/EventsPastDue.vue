@@ -1,14 +1,13 @@
 <template>
   <div class="action-button-wrapper">
-    <v-btn
+    <button
       class="action-button"
       @click="eventsPastDue($event)"
-      variant="elevated"
-      block
+      type="button"
     >
       <i class="fas fa-exclamation-triangle"></i>
       Past Due
-    </v-btn>
+    </button>
   </div>
 </template>
 

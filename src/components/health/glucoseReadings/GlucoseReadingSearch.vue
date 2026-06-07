@@ -58,17 +58,51 @@
 <template>
   <div style="width: 100%">
     <div class="auto-search-container">
-      <v-text-field
-        clearable
-        clear-icon="fas fa-close"
-        @click:clear="resetSearch"
-        type="text"
-        class="np-input-search"
-        v-model="inputSearchText"
-        placeholder="Search"
-        autocomplete="off"
-        v-on:keyup="searchColumns"
-      />
+      <div class="search-row">
+        <input
+          type="text"
+          class="np-input-search"
+          v-model="inputSearchText"
+          placeholder="Search"
+          autocomplete="off"
+          @keyup="searchColumns"
+        />
+        <button
+          v-if="inputSearchText"
+          type="button"
+          class="btn btn-outline-secondary btn-sm clear-btn"
+          @click="resetSearch"
+        >
+          <i class="fas fa-times"></i>
+          Clear
+        </button>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.np-input-search {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+
+.np-input-search:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+}
+
+.clear-btn {
+  white-space: nowrap;
+}
+</style>

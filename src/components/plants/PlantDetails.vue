@@ -19,38 +19,35 @@
       </button>      
     </span>
     <div v-if="!isSingle" class="controls-bar">
-      <v-btn-group variant="outlined" divided>
-        <v-btn
+      <div class="sort-button-group">
+        <button
           @click="setSortField('plant_name')"
-          :color="sortField === 'plant_name' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'plant_name' && sortOrder === 'asc' ? 'fas fa-sort-alphabetical-ascending' : 'fas fa-sort-alphabetical-descending'"
-          centered
-          class="sort-btn"
+          :class="['btn sort-btn', sortField === 'plant_name' ? 'btn-primary' : 'btn-outline-secondary']"
+          type="button"
         >
+          <i :class="sortField === 'plant_name' && sortOrder === 'asc' ? 'fas fa-sort-alpha-down mr-2' : 'fas fa-sort-alpha-up mr-2'"></i>
           Sort by Name
-        </v-btn>
+        </button>
         
-        <v-btn
+        <button
           @click="setSortField('yard_location')"
-          :color="sortField === 'yard_location' ? 'primary' : 'default'"
-          :prepend-icon="sortField === 'yard_location' && sortOrder === 'asc' ? 'fas fa-sort-calendar-ascending' : 'fas fa-sort-calendar-descending'"
-          centered
-          class="sort-btn"
+          :class="['btn sort-btn', sortField === 'yard_location' ? 'btn-primary' : 'btn-outline-secondary']"
+          type="button"
         >
+          <i :class="sortField === 'yard_location' && sortOrder === 'asc' ? 'fas fa-sort-alpha-down mr-2' : 'fas fa-sort-alpha-up mr-2'"></i>
           Yard Location
-        </v-btn>
-      </v-btn-group>
+        </button>
+      </div>
       
       <!-- ✅ Optional: Separate toggle button -->
-      <v-btn
+      <button
         @click="toggleSortOrder"
-        variant="outlined"
-        :prepend-icon="sortOrder === 'asc' ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"
-        centered
-        class="sort-btn"
+        class="btn btn-outline-secondary sort-btn"
+        type="button"
       >
+        <i :class="sortOrder === 'asc' ? 'fas fa-arrow-up mr-2' : 'fas fa-arrow-down mr-2'"></i>
         {{ sortOrder === 'asc' ? 'Ascending' : 'Descending' }}
-      </v-btn>
+      </button>
       
       <!-- ✅ Show current sort info -->
       <span id="count-display">
@@ -211,6 +208,12 @@ watch(() => props.plants, (newPlants) => {
 .sort-btn {
   top: -.6rem;
   min-width: 10rem;
+}
+
+.sort-button-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 #count-display {
   font-weight: bold;

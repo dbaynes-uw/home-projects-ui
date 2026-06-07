@@ -55,8 +55,8 @@
     <br/>
     <!-- ✅ FIXED - Use computed plants instead of watering.plants -->
     <span v-if="plants && plants.length > 0">
-      <p id="p-card-left">
-        <router-link :to="{ name: 'Plants', query: { wateringId: watering.id } }">
+      <p class="card-section-title">
+          <router-link :to="{ name: 'Plants', query: { wateringId: watering.id } }">
           Plants ({{ plants.length }}):
         </router-link>
       </p>
@@ -74,10 +74,10 @@
     </span>
       <!-- ✅ ENHANCED - Show when no plants -->
     <span v-else>
-      <p id="p-card-left">No plants assigned to this watering system.</p>
+        <p class="card-section-title">No plants assigned to this watering system.</p>
     </span>
     <br/>
-      <p id="p-custom-link">
+        <p class="text-link-emphasis card-custom-link">
     <!-- ✅ ENHANCED - Pass watering context to plant creation -->
     <router-link
       :to="{ name: 'PlantCreate', query: { wateringId: watering.id } }"
@@ -85,7 +85,7 @@
       Add Plant to {{ watering.name }}
     </router-link>
   </p>
-    <p id="p-custom-link">
+      <p class="text-link-emphasis card-custom-link">
       <router-link
         :to="{ name: 'PlantCreate' }"
     >
@@ -94,44 +94,33 @@
     </p>
     <br/>
     <div class="action-icons">
-      <v-tooltip text="Edit Watering" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-pencil"
-            size="small"
-            color="primary"
-            variant="text"
-            :to="{ name: 'WateringEdit', params: { id: watering.id } }"
-          />
-        </template>
-      </v-tooltip>
+      <router-link
+        :to="{ name: 'WateringEdit', params: { id: watering.id } }"
+        class="action-icon-btn action-icon-edit"
+        title="Edit Watering"
+        aria-label="Edit Watering"
+      >
+        <i class="fas fa-pencil"></i>
+      </router-link>
 
-      <v-tooltip text="View Details" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-eye"
-            size="small"
-            color="brown"
-            variant="text"
-            :to="{ name: 'WateringDetails', params: { id: watering.id } }"
-          />
-        </template>
-      </v-tooltip>
+      <router-link
+        :to="{ name: 'WateringDetails', params: { id: watering.id } }"
+        class="action-icon-btn action-icon-view"
+        title="View Details"
+        aria-label="View Details"
+      >
+        <i class="fas fa-eye"></i>
+      </router-link>
 
-      <v-tooltip text="Delete Watering" location="top">
-        <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon="fas fa-delete"
-            size="small"
-            color="error"
-            variant="text"
-            @click="handleDelete"
-          />
-        </template>
-      </v-tooltip>
+      <button
+        type="button"
+        class="action-icon-btn action-icon-delete"
+        title="Delete Watering"
+        aria-label="Delete Watering"
+        @click="handleDelete"
+      >
+        <i class="fas fa-delete"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -151,6 +140,7 @@ const props = defineProps({
     default: () => ({})
   },
 });
+const emit = defineEmits(['dblclick', 'delete']);
 const gardenStore = useGardenStore();
 const plantStore = usePlantStore();
 const wateringStore = useWateringStore();
@@ -307,10 +297,11 @@ onUnmounted(() => {
   font-weight: bold;
   color: #00ff00 !important; /* Bright green when active */
 }
+
 .duration-calculated {
   animation: flash 1s infinite;
   font-weight: bold;
-  color: darkblue !important; /* Bright green when active */
+  color: darkblue !important;
 }
 
 @keyframes flash {

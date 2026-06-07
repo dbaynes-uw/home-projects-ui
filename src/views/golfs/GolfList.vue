@@ -4,19 +4,25 @@
     <v-card-title class="pb-0" style="display:flex; align-items:center; justify-content:space-between;">
       <h2>Golf Rounds</h2>
       <div style="display:flex; gap:0.5rem; align-items:center;">
-        <v-btn size="small" :variant="viewMode === 'cards' ? 'flat' : 'outlined'" color="primary" @click="viewMode = 'cards'">
+        <button
+          type="button"
+          :class="['btn btn-sm', viewMode === 'cards' ? 'btn-primary' : 'btn-outline-primary']"
+          @click="viewMode = 'cards'"
+        >
           <i class="fa-solid fa-th-large" /> &nbsp;Cards
-        </v-btn>
-        <v-btn size="small" :variant="viewMode === 'table' ? 'flat' : 'outlined'" color="primary" @click="viewMode = 'table'">
+        </button>
+        <button
+          type="button"
+          :class="['btn btn-sm', viewMode === 'table' ? 'btn-primary' : 'btn-outline-primary']"
+          @click="viewMode = 'table'"
+        >
           <i class="fa-solid fa-table" /> &nbsp;Table
-        </v-btn>
-        <router-link :to="{ name: 'GolfPlayers' }">
-          <v-btn size="small" color="primary" variant="outlined">
+        </button>
+        <router-link :to="{ name: 'GolfPlayers' }" class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-users" />&nbsp;Players
-          </v-btn>
         </router-link>
-        <router-link :to="{ name: 'GolfGroupScorecard' }">
-          <v-btn size="small" color="success">⛳ New Round</v-btn>
+        <router-link :to="{ name: 'GolfGroupScorecard' }" class="btn btn-success btn-sm">
+          ⛳ New Round
         </router-link>
       </div>
     </v-card-title>

@@ -13,14 +13,14 @@
     <v-card-text>
       <!-- ✅ SHOW TOKEN STATUS -->
       <div v-if="!isValidToken" class="mb-4">
-        <v-alert type="error" variant="tonal">
+        <BaseAlert variant="danger">
           <i class="fas fa-exclamation-triangle"></i>
           Invalid or expired reset link. Please request a new password reset.
-        </v-alert>
-        <v-btn @click="$router.push('/forgot_password')" color="primary" block class="mt-3">
+        </BaseAlert>
+        <BaseButton @click="$router.push('/forgot_password')" variant="primary" block class="mt-3">
           <i class="fas fa-redo"></i>
           Request New Reset Link
-        </v-btn>
+        </BaseButton>
       </div>
       
       <!-- ✅ PASSWORD RESET FORM -->
@@ -45,15 +45,13 @@
             >
               <!-- ✅ FIXED APPEND SLOT -->
               <template v-slot:append-inner>
-                <v-btn
+                <button
                   @click="showNewPassword = !showNewPassword"
-                  variant="text"
-                  size="small"
-                  icon
+                  type="button"
                   class="password-toggle"
                 >
                   <i :class="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                </v-btn>
+                </button>
               </template>
             </v-text-field>
             
@@ -71,15 +69,13 @@
             >
               <!-- ✅ FIXED APPEND SLOT -->
               <template v-slot:append-inner>
-                <v-btn
+                <button
                   @click="showConfirmPassword = !showConfirmPassword"
-                  variant="text"
-                  size="small"
-                  icon
+                  type="button"
                   class="password-toggle"
                 >
                   <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                </v-btn>
+                </button>
               </template>
             </v-text-field>
             
@@ -100,32 +96,31 @@
               </div>
             </div>
             
-            <v-btn 
+            <BaseButton 
               type="submit" 
-              block 
               class="mt-4" 
+              :block="true"
               :disabled="!isFormValid || loading"
               :loading="loading"
-              color="primary"
+              variant="primary"
               size="large"
             >
               <i class="fas fa-key"></i>
               Reset Password
-            </v-btn>
+            </BaseButton>
           </v-container>
         </v-form>
       </div>
       
       <!-- ✅ STATUS MESSAGE -->
-      <v-alert 
+      <BaseAlert 
         v-if="message" 
-        :type="error ? 'error' : 'success'" 
-        variant="tonal" 
+        :variant="error ? 'danger' : 'success'" 
         class="mt-4"
       >
         <i :class="error ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle'"></i>
         {{ message }}
-      </v-alert>
+      </BaseAlert>
     </v-card-text>
     
     <v-card-actions class="justify-center">
@@ -142,6 +137,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getApiUrl, API_ENDPOINTS } from '@/utils/apiConfig'
+import BaseAlert from '@/components/ui/BaseAlert.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 export default {
   setup() {
@@ -335,6 +332,9 @@ export default {
 <style scoped>
 /* ✅ PASSWORD TOGGLE BUTTON STYLING */
 .password-toggle {
+  border: none;
+  background: transparent;
+  cursor: pointer;
   min-width: auto !important;
   width: 32px !important;
   height: 32px !important;

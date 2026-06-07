@@ -3,25 +3,25 @@
     <br/>
     <span v-if="!isSingle">
       <div class="controls-bar">
-        <v-select
+        <BaseNativeSelect
           v-model="filterType"
-          :items="readingTypes"
+          :options="readingTypeOptions"
           label="Type"
-          clearable
+          includeEmptyOption
+          emptyOptionLabel="All Types"
           class="filter-select"
-          density="compact"
         />
-        <v-select
+        <BaseNativeSelect
           v-model="filterStatus"
-          :items="readingStatuses"
+          :options="readingStatusOptions"
           label="Status"
-          clearable
+          includeEmptyOption
+          emptyOptionLabel="All Statuses"
           class="filter-select"
-          density="compact"
         />
-        <v-btn @click="toggleSortOrder" color="primary" small class="sort-btn">
+        <button @click="toggleSortOrder" class="btn btn-primary sort-btn" type="button">
           Sort by Date {{ sortOrder === 'asc' ? '↑' : '↓' }}
-        </v-btn>
+        </button>
         <br/>
         <span id="count-display" class="filtered-count">
           Showing {{ filteredSortedReadings.length }} Glucose Reading{{ filteredSortedReadings.length === 1 ? '' : 's' }}
@@ -57,6 +57,7 @@
 
 <script setup>
 import GlucoseReadingCard from "@/components/health/glucoseReadings/GlucoseReadingCard.vue";
+import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue';
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
@@ -69,12 +70,14 @@ const isLoading = ref(true);
 const isSingle = computed(() => {
   return Array.isArray(glucose_readings.value) && glucose_readings.value.length === 1;
 });
-const filterType = ref(null);
-const filterStatus = ref(null);
+const filterType = ref('');
+const filterStatus = ref('');
 const sortOrder = ref('desc');
 
 const readingTypes = ['AM-Fasting', 'Post-Meal'];
 const readingStatuses = ['Good - 70-99 mg/dl', 'Prediabetes - 100-125 mg/dl', 'Diabetes - 126+ mg/dl'];
+const readingTypeOptions = readingTypes.map(type => ({ title: type, value: type }));
+const readingStatusOptions = readingStatuses.map(status => ({ title: status, value: status }));
 
 const filteredSortedReadings = computed(() => {
   let readings = Array.isArray(glucose_readings.value)

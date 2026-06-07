@@ -1,317 +1,145 @@
 <template>
   <div class="page-wrapper">
     <div class="health-marker-edit-container">
-      <!-- ✅ HEADER CARD -->
-      <v-card class="mx-auto mt-5">
-        <v-card-title class="pb-0">
-          <h2>
-            <i class="fas fa-edit"></i>
-            Edit Health Marker Result
-          </h2>
-        </v-card-title>
-        
-        <!-- ✅ NAVIGATION BUTTONS -->
-        <v-card-text>
-          <div class="navigation-flex">
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'HealthMarkers' }"
-              prepend-icon="fas fa-list"
-              class="nav-button"
-            >
-              View All Results
-            </v-btn>
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'HealthMarkersByCategory' }"
-              prepend-icon="fas fa-chart-line"
-              class="nav-button"
-            >
-              View by Category
-            </v-btn>
-            <v-btn
-              variant="outlined"
-              :to="{ name: 'HealthMarkerCreate' }"
-              prepend-icon="fas fa-plus"
-              class="nav-button"
-            >
-              Add New Result
-            </v-btn>
-          </div>
-        </v-card-text>
-      </v-card>
+      <div class="panel panel-header">
+        <h2>
+          <i class="fas fa-edit"></i>
+          Edit Health Marker Result
+        </h2>
 
-      <!-- ✅ LOADING STATE -->
-      <v-card v-if="isLoading" class="mt-4">
-        <v-card-text class="text-center">
-          <v-progress-circular indeterminate color="primary" size="64" />
-          <p class="mt-4">Loading health marker data...</p>
-        </v-card-text>
-      </v-card>
+        <div class="navigation-flex">
+          <router-link :to="{ name: 'HealthMarkers' }" class="nav-link-button">View All Results</router-link>
+          <router-link :to="{ name: 'HealthMarkersByCategory' }" class="nav-link-button">View by Category</router-link>
+          <router-link :to="{ name: 'HealthMarkerCreate' }" class="nav-link-button">Add New Result</router-link>
+        </div>
+      </div>
 
-      <!-- ✅ ERROR STATE -->
-      <v-card v-else-if="loadError" class="mt-4" color="error" variant="tonal">
-        <v-card-text>
-          <v-alert type="error" :text="loadError" />
-          <div class="text-center mt-4">
-            <v-btn
-              variant="outlined"
-              @click="loadHealthMarker"
-              prepend-icon="mdi-refresh"
-            >
-              Retry Loading
-            </v-btn>
-          </div>
-        </v-card-text>
-      </v-card>
+      <div v-if="isLoading" class="panel panel-loading">
+        <p>Loading health marker data...</p>
+      </div>
 
-      <!-- ✅ MAIN FORM CARD -->
-      <v-card v-else-if="healthMarker.id" class="mt-4">
-        <v-card-text>
-          <v-form @submit.prevent="onSubmit" ref="formRef">
-            <v-container id="form-container">
+      <div v-else-if="loadError" class="panel panel-error">
+        <p>{{ loadError }}</p>
+        <div class="text-center mt-4">
+          <BaseButton variant="secondary" @click="loadHealthMarker">Retry Loading</BaseButton>
+        </div>
+      </div>
+
+      <div v-else-if="healthMarker.id" class="panel panel-form">
+        <form @submit.prevent="onSubmit" id="form-container">
               
-              <!-- ✅ HEALTH MARKER SELECT -->
-              <v-autocomplete
+              <BaseNativeSelect
                 label="Health Marker"
-                :items="healthMarkerOptions"
+                :options="markerOptions"
                 v-model="healthMarker.marker_name"
-                :rules="[requiredMarkerName]"
-                variant="outlined"
-                class="mb-4"
-                clearable
-                :error="!isMarkerNameValid && hasAttemptedSubmit"
-                @update:model-value="onMarkerChange"
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-heart-pulse</v-icon>
-                </template>
-                <template v-slot:item="{ props, item }">
-                  <v-list-item v-bind="props">
-                    <template v-slot:prepend>
-                      <v-icon :icon="item.raw.icon" class="mr-3" />
-                    </template>
-                    <v-list-item-title>{{ item.raw.title }}</v-list-item-title>
-                    <v-list-item-subtitle>{{ item.raw.subtitle }}</v-list-item-subtitle>
-                  </v-list-item>
-                </template>
-              </v-autocomplete>
+                :include-empty-option="true"
+                empty-option-label="Select marker"
+                :error="!isMarkerNameValid && hasAttemptedSubmit ? 'Please select a health marker' : ''"
+              />
 
-              <!-- ✅ SELECTED MARKER INFO CARD -->
-              <v-card 
-                v-if="selectedMarkerInfo" 
-                variant="tonal" 
-                color="info" 
-                class="mb-4"
-              >
-                <v-card-text>
-                  <div class="marker-info">
-                    <div class="marker-header">
-                      <v-icon :icon="selectedMarkerInfo.icon" size="large" class="mr-2" />
-                      <h4>{{ selectedMarkerInfo.label }}</h4>
-                    </div>
-                    
-                    <div class="marker-details">
-                      <v-chip size="small" color="primary" class="mr-2 mb-2">
-                        {{ selectedMarkerInfo.category }}
-                      </v-chip>
-                      <v-chip size="small" color="secondary" class="mr-2 mb-2">
-                        {{ selectedMarkerInfo.unit }}
-                      </v-chip>
-                    </div>
-                    
-                    <p><strong>Normal Range:</strong> {{ selectedMarkerInfo.normalRange }}</p>
-                    <p><strong>Description:</strong> {{ selectedMarkerInfo.description }}</p>
-                    <p><strong>Test Frequency:</strong> {{ selectedMarkerInfo.testFrequency }}</p>
+              <div v-if="selectedMarkerInfo" class="marker-info-card mb-4">
+                <div class="marker-info">
+                  <div class="marker-header">
+                    <h4>{{ selectedMarkerInfo.label }}</h4>
                   </div>
-                </v-card-text>
-              </v-card>
 
-              <!-- ✅ MARKER DATE -->
-              <v-text-field 
+                  <div class="marker-details">
+                    <span class="pill pill-primary">{{ selectedMarkerInfo.category }}</span>
+                    <span class="pill pill-secondary">{{ selectedMarkerInfo.unit }}</span>
+                  </div>
+
+                  <p><strong>Normal Range:</strong> {{ selectedMarkerInfo.normalRange }}</p>
+                  <p><strong>Description:</strong> {{ selectedMarkerInfo.description }}</p>
+                  <p><strong>Test Frequency:</strong> {{ selectedMarkerInfo.testFrequency }}</p>
+                </div>
+              </div>
+
+              <BaseInput
                 label="Test Date"
                 v-model="healthMarker.marker_date"
                 type="date"
-                :rules="[requiredMarkerDate]"
-                variant="outlined"
-                class="mb-4"
-                :error="!isMarkerDateValid && hasAttemptedSubmit"
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-calendar</v-icon>
-                </template>
-              </v-text-field>
+                :error="!isMarkerDateValid && hasAttemptedSubmit ? 'Please enter marker date' : ''"
+              />
 
-              <!-- ✅ TEST RESULT -->
-              <v-text-field 
+              <BaseInput
                 :label="`Test Result ${selectedMarkerInfo ? '(' + selectedMarkerInfo.unit + ')' : ''}`"
                 v-model="healthMarker.marker_result"
                 type="number"
                 step="0.01"
-                :rules="[requiredMarkerResult]"
-                variant="outlined"
-                class="mb-4"
-                :error="!isMarkerResultValid && hasAttemptedSubmit"
-                @update:model-value="onResultChange"
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-chart-line</v-icon>
-                </template>
-              </v-text-field>
+                :error="!isMarkerResultValid && hasAttemptedSubmit ? 'Please enter marker result' : ''"
+              />
 
-              <!-- ✅ LAB NAME -->
-              <v-text-field 
+              <BaseInput
                 label="Lab Name (Optional)"
                 v-model="healthMarker.lab_name"
-                variant="outlined"
-                class="mb-4"
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-flask</v-icon>
-                </template>
-              </v-text-field>
+              />
 
-              <!-- ✅ DOCTOR NAME -->
-              <v-text-field 
+              <BaseInput
                 label="Doctor Name (Optional)"
                 v-model="healthMarker.doctor_name"
-                variant="outlined"
-                class="mb-4"
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-doctor</v-icon>
-                </template>
-              </v-text-field>
+              />
 
-              <!-- ✅ RESULT STATUS INDICATOR -->
-              <v-alert
-                v-if="resultStatus"
-                :type="resultStatus.type"
-                :title="resultStatus.title"
-                :text="resultStatus.message"
-                class="mb-4"
-              >
-                <template v-slot:prepend>
-                  <v-icon 
-                    :icon="getStatusIcon(resultStatus.type)" 
-                    size="large"
-                  />
-                </template>
-              </v-alert>
+              <div v-if="resultStatus" class="status-alert mb-4" :class="`status-${resultStatus.type}`">
+                <strong>{{ resultStatus.title }}</strong>
+                <p>{{ resultStatus.message }}</p>
+              </div>
 
-              <!-- ✅ NOTES TEXTAREA -->
-              <v-textarea
-                label="Notes (Optional)"
-                v-model="healthMarker.notes"
-                variant="outlined"
-                clearable
-                rows="3"
-                class="mb-4"
-                placeholder="Additional notes about the test, conditions, medications, etc..."
-              >
-                <template v-slot:prepend-inner>
-                  <v-icon class="icon-css">mdi-note</v-icon>
-                </template>
-              </v-textarea>
+              <div class="form-field mb-4">
+                <label class="form-label">Notes (Optional)</label>
+                <textarea
+                  v-model="healthMarker.notes"
+                  rows="3"
+                  class="form-textarea"
+                  placeholder="Additional notes about the test, conditions, medications, etc..."
+                ></textarea>
+              </div>
 
-              <!-- ✅ METADATA DISPLAY -->
-              <v-card variant="tonal" color="surface" class="mb-4">
-                <v-card-text>
-                  <h4 class="mb-2">Record Information</h4>
-                  <div class="metadata-grid">
-                    <div>
-                      <strong>Created by:</strong> {{ healthMarker.created_by || 'Unknown' }}
-                    </div>
-                    <div>
-                      <strong>Record ID:</strong> {{ healthMarker.id }}
-                    </div>
-                    <div v-if="healthMarker.created_at">
-                      <strong>Created:</strong> {{ formatDate(healthMarker.created_at) }}
-                    </div>
-                    <div v-if="healthMarker.updated_at">
-                      <strong>Last Updated:</strong> {{ formatDate(healthMarker.updated_at) }}
-                    </div>
+              <div class="metadata-card mb-4">
+                <h4 class="mb-2">Record Information</h4>
+                <div class="metadata-grid">
+                  <div>
+                    <strong>Created by:</strong> {{ healthMarker.created_by || 'Unknown' }}
                   </div>
-                </v-card-text>
-              </v-card>
+                  <div>
+                    <strong>Record ID:</strong> {{ healthMarker.id }}
+                  </div>
+                  <div v-if="healthMarker.created_at">
+                    <strong>Created:</strong> {{ formatDate(healthMarker.created_at) }}
+                  </div>
+                  <div v-if="healthMarker.updated_at">
+                    <strong>Last Updated:</strong> {{ formatDate(healthMarker.updated_at) }}
+                  </div>
+                </div>
+              </div>
 
-              <!-- ✅ ACTION BUTTONS -->
               <div class="action-buttons">
-                <v-btn 
+                <BaseButton
                   type="submit" 
-                  color="primary"
-                  size="large"
-                  class="mr-2"
                   :loading="isSubmitting"
                   :disabled="!isFormValid || !hasChanges"
-                  prepend-icon="mdi-content-save"
+                  variant="primary"
                 >
                   Save Changes
-                </v-btn>
+                </BaseButton>
 
-                <v-btn 
-                  variant="outlined"
-                  color="secondary"
-                  size="large"
-                  class="mr-2"
+                <BaseButton
                   @click="resetForm"
                   :disabled="isSubmitting"
-                  prepend-icon="mdi-refresh"
+                  variant="secondary"
                 >
                   Reset
-                </v-btn>
+                </BaseButton>
 
-                <v-btn 
-                  variant="outlined"
-                  color="error"
-                  size="large"
+                <BaseButton
                   @click="confirmDelete"
                   :disabled="isSubmitting"
-                  prepend-icon="mdi-delete"
+                  variant="danger"
                 >
                   Delete
-                </v-btn>
+                </BaseButton>
               </div>
-            </v-container>
-          </v-form>
-        </v-card-text>
-      </v-card>
-
-      <!-- ✅ DELETE CONFIRMATION DIALOG -->
-      <v-dialog v-model="showDeleteDialog" max-width="500px">
-        <v-card>
-          <v-card-title class="headline">
-            <v-icon icon="mdi-delete" class="mr-2" />
-            Confirm Delete
-          </v-card-title>
-          <v-card-text>
-            Are you sure you want to delete this health marker record?
-            <br><br>
-            <strong>Marker:</strong> {{ healthMarker.marker_name }}<br>
-            <strong>Result:</strong> {{ healthMarker.marker_result }}<br>
-            <strong>Date:</strong> {{ formatDate(healthMarker.marker_date) }}<br>
-            <br>
-            This action cannot be undone.
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              variant="outlined"
-              @click="showDeleteDialog = false"
-              :disabled="isDeleting"
-            >
-              Cancel
-            </v-btn>
-            <v-btn
-              color="error"
-              @click="deleteHealthMarker"
-              :loading="isDeleting"
-            >
-              Delete
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -327,6 +155,9 @@ import {
   getHealthMarkerByName 
 } from '@/services/health-marker-constants';
 import DateFormatService from '@/services/DateFormatService';
+import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 // ✅ COMPOSITION API SETUP
 const store = useStore();
@@ -342,7 +173,6 @@ const isMarkerNameValid = ref(true);
 const isMarkerDateValid = ref(true);
 const isMarkerResultValid = ref(true);
 const loadError = ref('');
-const showDeleteDialog = ref(false);
 
 // ✅ FORM DATA - FIXED FIELD NAMES TO MATCH API
 const healthMarker = ref({
@@ -350,6 +180,8 @@ const healthMarker = ref({
   marker_name: '',
   marker_date: '',        // ✅ CHANGED FROM marker_date
   marker_result: '',      // ✅ CHANGED FROM marker_result
+  lab_name: '',
+  doctor_name: '',
   notes: '',
   created_by: '',
   created_at: '',
@@ -362,6 +194,12 @@ const originalHealthMarker = ref({});
 // ✅ COMPUTED PROPERTIES
 
 const healthMarkerOptions = computed(() => getHealthMarkerOptions());
+const markerOptions = computed(() => {
+  return healthMarkerOptions.value.map(item => ({
+    value: item?.value || item?.title || item?.label || '',
+    title: item?.title || item?.label || item?.value || ''
+  }))
+})
 
 const selectedMarkerInfo = computed(() => {
   if (!healthMarker.value.marker_name) return null;
@@ -571,7 +409,7 @@ const onSubmit = async () => {
       originalHealthMarker.value = { ...updateData };
       
       // ✅ NAVIGATE TO HEALTH MARKER LIST
-      await this.$router.push({ name: 'HealthMarkers' });
+      await _router.push({ name: 'HealthMarkers' });
       
     } else {
       console.error('❌ Store returned false');
@@ -587,7 +425,17 @@ const onSubmit = async () => {
 };
 
 const confirmDelete = () => {
-  showDeleteDialog.value = true;
+  const shouldDelete = confirm(
+    `Are you sure you want to delete this health marker record?\n\n` +
+    `Marker: ${healthMarker.value.marker_name}\n` +
+    `Result: ${healthMarker.value.marker_result}\n` +
+    `Date: ${formatDate(healthMarker.value.marker_date)}\n\n` +
+    `This action cannot be undone.`
+  )
+
+  if (shouldDelete) {
+    deleteHealthMarker();
+  }
 };
 
 const deleteHealthMarker = async () => {
@@ -603,7 +451,7 @@ const deleteHealthMarker = async () => {
       alert(`✅ Health marker ${healthMarker.value.marker_name} deleted successfully`);
       
       // ✅ NAVIGATE TO HEALTH MARKER LIST
-      await this.$router.push({ name: 'HealthMarkers' });
+      await _router.push({ name: 'HealthMarkers' });
       
     } else {
       console.error('❌ Store returned false');
@@ -615,7 +463,6 @@ const deleteHealthMarker = async () => {
     alert(`❌ Error deleting health marker: ${error.message}`);
   } finally {
     isDeleting.value = false;
-    showDeleteDialog.value = false;
   }
 };
 
@@ -642,6 +489,27 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+.panel {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  background: #fff;
+}
+
+.panel-error {
+  border-color: #d32f2f;
+  background: #fdecec;
+}
+
+.panel-loading {
+  text-align: center;
+}
+
+.panel-header h2 {
+  margin-top: 0;
+}
+
 .navigation-flex {
   display: flex;
   justify-content: center;
@@ -655,6 +523,19 @@ onMounted(() => {
   height: 40px !important;
 }
 
+.nav-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+  height: 40px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  background: #fff;
+}
+
 #form-container {
   text-align: left;
   width: 100% !important;
@@ -664,6 +545,81 @@ onMounted(() => {
 .icon-css {
   color: #1976d2 !important;
   top: -0.2rem;
+}
+
+.marker-info-card {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 1rem;
+  background: #eef6ff;
+}
+
+.pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  margin-right: 0.4rem;
+}
+
+.pill-primary {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.pill-secondary {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.status-alert {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.status-success {
+  background: #ecfdf3;
+  border-color: #16a34a;
+}
+
+.status-warning {
+  background: #fffbeb;
+  border-color: #d97706;
+}
+
+.status-error {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+
+.status-info {
+  background: #eff6ff;
+  border-color: #2563eb;
+}
+
+.metadata-card {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.form-textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.6rem;
 }
 
 /* ✅ MARKER INFO STYLES */
@@ -751,8 +707,8 @@ onMounted(() => {
   .action-buttons {
     flex-direction: column;
   }
-  
-  .action-buttons .v-btn {
+
+  .action-buttons .base-btn {
     width: 100%;
   }
   

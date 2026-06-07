@@ -32,18 +32,24 @@
         <span>
           {{ password_confirmation.length }} characters used.
         </span>
-        <v-btn type="submit" block class="mt-2" @click="login">Submit</v-btn>
+        <BaseButton type="submit" :block="true" class="mt-2">Submit</BaseButton>
         <br />
         <div class="div-center">
-          <v-btn id="background-gray"><router-link to="/login">Sign in</router-link></v-btn>
+          <router-link to="/login" class="sign-in-link-btn">
+            <BaseButton id="background-gray" variant="secondary" size="medium" type="button">Sign in</BaseButton>
+          </router-link>
         </div>
       </v-container>
     </v-form>
 </template>
 <script>
 import axios from "axios";
+import BaseButton from '@/components/ui/BaseButton.vue';
 export default {
   name: 'ResetPassword',
+  components: {
+    BaseButton
+  },
   async mounted() {
     var work_url = ""
     if (window.location.port == "8080") {
@@ -128,3 +134,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.sign-in-link-btn {
+  text-decoration: none;
+}
+</style>

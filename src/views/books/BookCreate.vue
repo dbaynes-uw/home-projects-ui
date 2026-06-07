@@ -71,7 +71,7 @@
           </template>
         </v-textarea>
           <div class="form-actions">
-            <v-btn type="submit" class="submit-btn">Submit</v-btn>
+            <button type="submit" class="submit-btn">Submit</button>
             <router-link :to="{ name: 'BookList' }" class="cancel-link">Cancel</router-link>
           </div>
         </v-container>

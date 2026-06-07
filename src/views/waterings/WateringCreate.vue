@@ -1,182 +1,109 @@
 <template>
-  <v-container>
+  <div>
     <h1>Add Watering System</h1>
-    <v-row>
-      <v-col cols="12">
-        <v-card class="mx-auto mt-5">
-          <v-card-text>
-            <router-link :to="{ name: 'Waterings' }">
-              <h2><b>Back to Waterings</b></h2>
-            </router-link>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <div class="card">
+      <router-link :to="{ name: 'Waterings' }">
+        <h2><b>Back to Waterings</b></h2>
+      </router-link>
+    </div>
 
     <!-- Existing waterings not yet linked to this garden -->
     <template v-if="props.gardenId">
-      <v-row>
-        <v-col cols="12">
-          <label for="existing-watering-select" class="existing-watering-label">Add an Existing Watering</label>
-          <select
-            id="existing-watering-select"
-            v-model="selectedExistingWatering"
-            class="existing-watering-select"
-            aria-label="Select an existing watering to add to this garden"
-          >
-            <option value="" disabled>Select a watering to add to this garden</option>
-            <option v-for="item in wateringSelectItems" :key="item.value" :value="item.value">
-              {{ item.title }}
-            </option>
-          </select>
-        </v-col>
-        <v-col cols="12">
-          <v-btn
-            color="primary"
+      <div>
+        <label for="existing-watering-select" class="existing-watering-label">Add an Existing Watering</label>
+        <select
+          id="existing-watering-select"
+          v-model="selectedExistingWatering"
+          class="existing-watering-select"
+          aria-label="Select an existing watering to add to this garden"
+        >
+          <option value="" disabled>Select a watering to add to this garden</option>
+          <option v-for="item in wateringSelectItems" :key="item.value" :value="item.value">
+            {{ item.title }}
+          </option>
+        </select>
+        <div class="form-actions">
+          <BaseButton
+            variant="primary"
             :disabled="!selectedExistingWatering"
             @click="addToGarden()"
-            aria-label="Add selected watering to this garden"
           >
             Add to Garden
-          </v-btn>
-        </v-col>
-      </v-row>
+          </BaseButton>
+        </div>
+      </div>
 
-      <v-row>
-        <v-col cols="12">
-          <v-divider class="my-4" />
-          <h2>Create a New Watering</h2>
-        </v-col>
-      </v-row>
+      <hr class="section-divider" />
+      <h2>Create a New Watering</h2>
     </template>
 
-    <v-form @submit.prevent="createWatering" ref="form">
-      <v-row>
+    <form @submit.prevent="createWatering" class="form-card-display">
+      <div class="form-container">
         <!-- Watering Name Input -->
-        <v-col cols="12">
-          <v-text-field
-            v-model="watering.name"
-            :rules="[requiredWateringName]"
-            label="Watering Name"
-            outlined
-            required
-            aria-label="Enter the name of the watering system"
-          ></v-text-field>
-        </v-col>
+        <BaseInput
+          v-model="watering.name"
+          label="Watering Name"
+          required
+        />
         <!-- Garden Selection -->
-        <v-col cols="12">
-          <div class="garden-dropdown" ref="gardenDropdownRef">
-            <button
-              type="button"
-              class="garden-dropdown-trigger"
-              @click="isGardenDropdownOpen = !isGardenDropdownOpen"
+        <div class="garden-dropdown" ref="gardenDropdownRef">
+          <button
+            type="button"
+            class="garden-dropdown-trigger"
+            @click="isGardenDropdownOpen = !isGardenDropdownOpen"
+          >
+            <span :class="{ placeholder: !selectedGardenIds.length }">{{ selectedGardenLabel }}</span>
+            <span class="garden-dropdown-arrow" :class="{ open: isGardenDropdownOpen }">&#9660;</span>
+          </button>
+          <div v-if="isGardenDropdownOpen" class="garden-dropdown-menu">
+            <label
+              v-for="g in gardens"
+              :key="g.id"
+              class="garden-dropdown-option"
             >
-              <span :class="{ placeholder: !selectedGardenIds.length }">{{ selectedGardenLabel }}</span>
-              <span class="garden-dropdown-arrow" :class="{ open: isGardenDropdownOpen }">&#9660;</span>
-            </button>
-            <div v-if="isGardenDropdownOpen" class="garden-dropdown-menu">
-              <label
-                v-for="g in gardens"
-                :key="g.id"
-                class="garden-dropdown-option"
-              >
-                <input type="checkbox" :value="g.id" v-model="selectedGardenIds">
-                {{ g.name }}
-              </label>
-              <div v-if="!gardens.length" class="garden-dropdown-empty">Loading...</div>
-              <button
-                v-if="selectedGardenIds.length"
-                type="button"
-                class="garden-dropdown-clear"
-                @click.stop="selectedGardenIds = []"
-              >Clear selection</button>
-            </div>
+              <input type="checkbox" :value="g.id" v-model="selectedGardenIds">
+              {{ g.name }}
+            </label>
+            <div v-if="!gardens.length" class="garden-dropdown-empty">Loading...</div>
+            <button
+              v-if="selectedGardenIds.length"
+              type="button"
+              class="garden-dropdown-clear"
+              @click.stop="selectedGardenIds = []"
+            >Clear selection</button>
           </div>
-        </v-col>
+        </div>
         
         <!-- Location Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="watering.location"
-            label="Location"
-            outlined
-            aria-label="Enter the location of the watering system"
-          ></v-text-field>
-        </v-col>
+        <BaseInput v-model="watering.location" label="Location" />
         <!-- Line Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="watering.line"
-            label="Line"
-            outlined
-            aria-label="Enter the line of the watering system"
-          ></v-text-field>
-        </v-col>
+        <BaseInput v-model="watering.line" label="Line" />
         <!-- Target Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="watering.target"
-            label="Target"
-            outlined
-            aria-label="Enter the target of the watering system"
-          ></v-text-field>
-        </v-col>
+        <BaseInput v-model="watering.target" label="Target" />
         <!-- Start Time Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="watering.start_time"
-            label="Start Time"
-            type="time"
-            outlined
-            aria-label="Enter the start time for the watering system"
-          ></v-text-field>
-        </v-col>
+        <BaseInput v-model="watering.start_time" label="Start Time" type="time" />
         <!-- End Time Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="watering.end_time"
-            label="End Time"
-            type="time"
-            outlined
-            aria-label="Enter the end time for the watering system"
-          ></v-text-field>
-        </v-col>
+        <BaseInput v-model="watering.end_time" label="End Time" type="time" />
         <!-- Days Input -->
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="watering.days"
-            label="Days (e.g., Mon,Tue,Wed)"
-            outlined
-            aria-label="Enter the days for the watering system (e.g., Mon,Tue,Wed)"
-          ></v-text-field>
-        </v-col>
+        <BaseInput v-model="watering.days" label="Days (e.g., Mon,Tue,Wed)" />
         <!-- Notes Input -->
-        <v-col cols="12">
-          <v-textarea label="Notes" v-model="watering.notes">
-            <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-note</v-icon>
-            </template>
-          </v-textarea>
-        </v-col>
-      </v-row>
-   <!-- Action Buttons -->
-      <v-row>
-        <v-col cols="12">
-          <v-btn color="primary" type="submit" aria-label="Submit">
-            Create
-          </v-btn>
-          &nbsp;
-          <v-btn 
-            color="secondary" 
+        <div class="form-field">
+          <label class="form-label">Notes</label>
+          <textarea label="Notes" v-model="watering.notes" rows="3" class="form-textarea"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <BaseButton variant="primary" type="submit">Create</BaseButton>
+          <BaseButton
+            variant="secondary"
             @click="props.gardenId ? router.push({ name: 'GardenDetails', params: { id: props.gardenId } }) : router.push({ name: 'Waterings' })"
-            aria-label="Go back"
           >
             Cancel
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
-  </v-container>
+          </BaseButton>
+        </div>
+      </div>
+    </form>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
@@ -184,6 +111,8 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
+import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 const router = useRouter();
 const vuexStore = useStore();
@@ -211,8 +140,6 @@ const watering = ref({
   created_by: '',
 });
 
-const isFormValid = ref(false);
-const isWateringNameValid = ref(false);
 const selectedExistingWatering = ref("");
 
 const selectedGarden = computed(() =>
@@ -259,7 +186,6 @@ watch(selectedExistingWatering, (newId) => {
     watering.value.duration = '';
     watering.value.days = '';
     watering.value.notes = '';
-    isWateringNameValid.value = false;
     return;
   }
   const found = wateringStore.allWaterings.find(w => w.id === newId);
@@ -273,7 +199,6 @@ watch(selectedExistingWatering, (newId) => {
     watering.value.duration = found.duration || '';
     watering.value.days = found.days || '';
     watering.value.notes = found.notes || '';
-    isWateringNameValid.value = true;
   }
 });
 
@@ -303,21 +228,6 @@ onUnmounted(() => {
   document.removeEventListener('click', handleOutsideClick);
 });
 
-function requiredWateringName(value) {
-  if (value) {
-    isWateringNameValid.value = true;
-    return true;
-  } else {
-    isFormValid.value = false;
-    isWateringNameValid.value = false;
-    return 'Please enter Watering Name';
-  }
-}
-
-function checkValidations() {
-  isFormValid.value = isWateringNameValid.value;
-}
-
 async function addToGarden() {
   if (!selectedExistingWatering.value) return;
   const existingWatering = wateringStore.allWaterings.find(w => w.id === selectedExistingWatering.value);
@@ -332,8 +242,7 @@ async function addToGarden() {
 }
 
 async function createWatering() {
-  checkValidations();
-  if (!isFormValid.value) {
+  if (!watering.value.name) {
     alert("Please fill in all required fields.");
     return;
   }
@@ -347,6 +256,32 @@ async function createWatering() {
   }
 }
 </script><style scoped>
+.section-divider {
+  margin: 1rem 0;
+}
+
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.form-textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.6rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
 
 /* Create two equal columns that floats next to each other */
 .column {

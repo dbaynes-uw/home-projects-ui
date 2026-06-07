@@ -18,14 +18,14 @@
     </v-card>
     <div class="watering-details">
       <template v-if="isLoading">
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        <BaseSpinner size="large" label="Loading Waterings" />
         <p>Loading Waterings...</p>
       </template>
       <template v-else>
         <v-card-actions>
-          <v-btn id="indent-secondary-button" color="secondary" @click="toggleView">
+          <button id="indent-secondary-button" class="btn btn-secondary" @click="toggleView" type="button">
              {{ showIndex ? 'Show Card View' : 'Show Index View' }}
-          </v-btn>
+          </button>
         </v-card-actions>
 
         <WateringIndex :waterings="waterings"
@@ -50,6 +50,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import WateringIndex from '@/components/waterings/WateringIndex.vue';
 import WateringDetails from '@/components/waterings/WateringDetails.vue';
+import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';

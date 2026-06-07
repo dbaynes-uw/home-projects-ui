@@ -216,7 +216,7 @@
             <v-icon class="icon-css">mdi-note</v-icon>
           </template>
         </v-text-field>
-        <v-btn type="submit" block class="mt-2" :loading="submitting">Submit</v-btn>
+        <BaseButton type="submit" :block="true" class="mt-2" :loading="submitting">Submit</BaseButton>
       </v-container>
     </v-form>
   </v-card-text>
@@ -227,6 +227,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 import DateFormatService from '@/services/DateFormatService.js'
 import GolfCalculations from '@/components/golfs/GolfCalculations.js'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
