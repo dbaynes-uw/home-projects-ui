@@ -400,6 +400,14 @@
   font-weight: bold;
   color: #000;
 }
+
+#button-as-link + #button-as-link,
+#button-as-link + #link-as-button,
+#link-as-button + #button-as-link,
+#link-as-button + #link-as-button {
+  margin-left: 0.75rem !important;
+}
+
 .table-index-style {
   width: 100%;
   border-collapse: collapse;
