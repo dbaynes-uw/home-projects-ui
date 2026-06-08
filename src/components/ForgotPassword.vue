@@ -11,9 +11,9 @@
     
     <div class="forgot-body">
       <!-- ✅ FIXED: ONLY ONE SUBMIT TRIGGER -->
-      <v-form @submit.prevent="handleSubmitForgotPassword">
+      <BaseForm @submit.prevent="handleSubmitForgotPassword">
         <div id="form-container" class="forgot-password-form-container">
-          <v-text-field
+          <BaseTextField
             label="Email"
             v-model="email"
             type="email"
@@ -40,7 +40,7 @@
             Send Reset Email
           </BaseButton>
         </div>
-      </v-form>
+      </BaseForm>
       
       <!-- ✅ ENHANCED MESSAGE DISPLAY -->
       <BaseAlert

@@ -3,11 +3,11 @@
     <header class="reset-shell-header pb-0">
       <h3>Reset Password</h3>
     </header>
-    <v-form @submit.prevent="resetPassword">
+    <BaseForm @submit.prevent="resetPassword">
       <div id="form-container" class="reset-password-form-container">
         <div class="alert alert-info" v-if="notice">{{ notice }}<router-link to="/login">Sign in</router-link></div>
         <div class="alert alert-danger" v-if="error">{{ error }}</div>
-        <v-text-field
+        <BaseTextField
           label="New Password"
           v-model="password"
           id="password"
@@ -19,7 +19,7 @@
         <span>
           {{ password.length }} characters used.
         </span>
-        <v-text-field
+        <BaseTextField
           label="Password Confirmation "
           v-model="password_confirmation"
           id="password_confirmation"
@@ -39,7 +39,7 @@
           </router-link>
         </div>
       </div>
-    </v-form>
+    </BaseForm>
   </section>
 </template>
 <script>

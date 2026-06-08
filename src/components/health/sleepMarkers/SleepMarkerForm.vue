@@ -3,7 +3,7 @@
   <form @submit.prevent="handleSubmit" class="sleep-marker-form">
     <div class="form-grid">
       <!-- Sleep Date -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.sleep_date"
         :label="
           'Night of Sleep Date (Note: Today is ' +
@@ -16,7 +16,7 @@
         :error="errors.sleep_date"
       />
       <!-- Bed Time -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.scheduled_bedtime"
         label="Scheduled Bed Time"
         type="time"
@@ -27,7 +27,7 @@
       />
 
       <!-- Wake Time -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.scheduled_waketime"
         label="Wake Time"
         type="time"
@@ -37,7 +37,7 @@
       />
 
       <!-- Actual Bed Time -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.actual_bedtime"
         label="Actual Bed Time"
         type="time"
@@ -46,7 +46,7 @@
         hint="Optional"
       />
       <!-- Sleep Score -->
-      <BaseInput
+      <BaseTextField
         v-model.number="formData.sleep_score"
         label="Sleep Score"
         type="number"
@@ -58,7 +58,7 @@
       />
 
       <!-- Sleep Score Rating -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.sleep_score_rating"
         label="Sleep Score Rating"
         type="text"
@@ -68,7 +68,7 @@
       />
 
       <!-- Sleep Score Explained -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.sleep_score_explained"
         label="Sleep Score Explained"
         type="text"
@@ -84,7 +84,7 @@
           Duration Score
         </label>
         <div class="score-inputs">
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.duration_score_numerator"
             type="number"
             min="0"
@@ -94,7 +94,7 @@
             @input="clampScore('duration_score_numerator', 50)"
           />
           <span class="score-separator">/</span>
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.duration_score_denominator"
             type="number"
             min="50"
@@ -108,7 +108,7 @@
       </div>
 
       <!-- Duration Score Explained -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.duration_score_explained"
         label="Duration Score Explained"
         type="text"
@@ -124,7 +124,7 @@
           Bed Time Score
         </label>
         <div class="score-inputs">
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.bedtime_score_numerator"
             type="number"
             min="0"
@@ -134,7 +134,7 @@
             @input="clampScore('bedtime_score_numerator', 30)"
           />
           <span class="score-separator">/</span>
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.bedtime_score_denominator"
             type="number"
             min="30"
@@ -148,7 +148,7 @@
       </div>
 
       <!-- Bed Time Score Explained -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.bedtime_score_explained"
         label="Bed Time Score Explained"
         type="text"
@@ -158,7 +158,7 @@
       />
 
       <!-- Interruptions -->
-      <BaseInput
+      <BaseTextField
         v-model.number="formData.interruptions"
         label="Get Up Interruptions"
         type="number"
@@ -174,7 +174,7 @@
           Interruptions Score
         </label>
         <div class="score-inputs">
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.interruptions_score_numerator"
             type="number"
             min="0"
@@ -184,7 +184,7 @@
             @input="clampScore('interruptions_score_numerator', 20)"
           />
           <span class="score-separator">/</span>
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.interruptions_score_denominator"
             type="number"
             min="20"
@@ -198,7 +198,7 @@
       </div>
 
       <!-- Interruptions Score Explained -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.interruptions_score_explained"
         label="Interruptions Score Explained"
         type="text"
@@ -208,7 +208,7 @@
       />
       <br />
       <!-- From Heart Beats Per Minute -->
-      <BaseInput
+      <BaseTextField
         v-model.number="formData.from_heart_beats_per_minute"
         label="From Heart Beats Per Minute"
         type="number"
@@ -218,7 +218,7 @@
         hint="Number of heart beats per minute (from)"
       />
       <!-- To Heart Beats Per Minute -->
-      <BaseInput
+      <BaseTextField
         v-model.number="formData.to_heart_beats_per_minute"
         label="To Heart Beats Per Minute"
         type="number"
@@ -228,7 +228,7 @@
         hint="Number of heart beats per minute (to)"
       />
       <!-- From Breaths Per Minute -->
-      <BaseInput
+      <BaseTextField
         v-model.number="formData.from_breaths_per_minute"
         label="From Breaths Per Minute"
         type="number"
@@ -239,7 +239,7 @@
         hint="Number of breaths per minute (from)"
       />
       <!-- To Breaths Per Minute -->
-      <BaseInput
+      <BaseTextField
         v-model.number="formData.to_breaths_per_minute"
         label="To Breaths Per Minute"
         type="number"
@@ -258,7 +258,7 @@
           Fasting Weight
         </label>
         <div class="weight-inputs">
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.fasting_weight_lbs"
             type="number"
             min="0"
@@ -266,7 +266,7 @@
             :error="errors.fasting_weight_lbs"
           />
           <span class="weight-separator">lbs</span>
-          <BaseInput
+          <BaseTextField
             v-model.number="formData.fasting_weight_oz"
             type="number"
             min="0"
@@ -415,7 +415,7 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import BaseInput from "@/components/ui/BaseInput.vue";
+import BaseTextField from "@/components/ui/BaseTextField.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import HoursMinutesInput from "@/components/ui/HoursMinutesInput.vue";
 

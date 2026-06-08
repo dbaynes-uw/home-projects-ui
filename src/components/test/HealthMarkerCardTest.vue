@@ -17,7 +17,7 @@
       </div>
     </div>
     
-    <v-divider class="my-6" />
+    <BaseDivider class="my-6" />
     
     <!-- Multiple Cards Grid -->
     <div class="hm-row">

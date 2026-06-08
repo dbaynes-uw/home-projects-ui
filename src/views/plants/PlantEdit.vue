@@ -18,15 +18,15 @@
     <form class="form-card-display" @submit.prevent="updatePlant">
       <div class="form-container">
 
-        <BaseInput
+        <BaseTextField
           label="Plant Name"
           v-model="plant.plant_name"
           required
         />
         <!-- Garden Selection -->
-        <BaseNativeSelect
+        <BaseSelect
           v-model="plant.garden_id"
-          :options="gardenOptions"
+          :items="gardenOptions"
           label="Select Garden"
           hint="Change garden assignment for this plant"
           value-type="number"
@@ -35,9 +35,9 @@
         />
         
         <!-- Dynamic Watering Selection -->
-        <BaseNativeSelect
+        <BaseSelect
           v-model="plant.watering_id"
-          :options="wateringOptions"
+          :items="wateringOptions"
           label="Select Watering System"
           hint="Choose watering system for this plant"
           value-type="number"
@@ -45,7 +45,7 @@
           empty-option-label="No Watering System"
         />
         
-        <BaseInput
+        <BaseTextField
           label="Biological Name"
           v-model="plant.biological_name"
         />
@@ -55,37 +55,37 @@
           <textarea v-model="plant.description" rows="3" class="form-textarea"></textarea>
         </div>
 
-        <BaseNativeSelect
+        <BaseSelect
           label="Status"
-          :options="statusOptions"
+          :items="statusOptions"
           v-model="plant.active"
           :include-empty-option="false"
         />
 
-        <BaseInput
+        <BaseTextField
           label="Yard Location"
           v-model="plant.yard_location"
         />
 
-        <BaseInput
+        <BaseTextField
           label="Duration (days)"
           v-model="plant.duration"
           type="number"
         />
 
-        <BaseInput
+        <BaseTextField
           label="Date Planted"
           v-model="plant.date_planted"
           type="date"
         />
 
-        <BaseInput
+        <BaseTextField
           label="Date Harvested"
           v-model="plant.date_harvested"
           type="date"
         />
 
-        <BaseInput
+        <BaseTextField
           label="Reference Link"
           v-model="plant.online_link"
         />
@@ -114,8 +114,8 @@ import { computed, onMounted, ref } from 'vue';
 import { useAuth } from '@/composables/useAuth';
 import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
-import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue'
-import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseSelect from '@/components/ui/BaseSelect.vue'
+import BaseTextField from '@/components/ui/BaseTextField.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';

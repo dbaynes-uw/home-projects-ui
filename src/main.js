@@ -9,112 +9,15 @@ import './assets/styles/ui-components.css';
 import router from "./router";
 import store from "./vuex/store.js";
 
-// ✅ VUETIFY IMPORTS
-import { createVuetify } from 'vuetify'
-import 'vuetify/styles'
-import * as directives from 'vuetify/directives'
+import BaseDivider from '@/components/ui/BaseDivider.vue'
+import BaseForm from '@/components/ui/BaseForm.vue'
+import BaseIcon from '@/components/ui/BaseIcon.vue'
+import BaseSelect from '@/components/ui/BaseSelect.vue'
+import BaseTextField from '@/components/ui/BaseTextField.vue'
+import BaseTextarea from '@/components/ui/BaseTextarea.vue'
 
-// ✅ VUE-SELECT - ADD THIS IMPORT!
-import vSelect from 'vue-select'
-import "vue-select/dist/vue-select.css";
-
-// ✅ IMPORT VUETIFY COMPONENTS
-import { 
-  VCard, 
-  VCardTitle, 
-  VCardText, 
-  VCardSubtitle,
-  VCardActions,
-  VChipGroup,
-  VDialog,
-  VIcon,
-  VProgressCircular,
-  VForm, 
-  VContainer,
-  VDataTable,
-  VTextField, 
-  VBtn,
-  VBtnGroup,
-  VAlert,
-  VApp,
-  VAppBar,
-  VMain,
-  VFooter,  
-  VAutocomplete,
-  VTextarea,
-  VToolbarTitle,
-  VSpacer,
-  VMenu,
-  VList,
-  VListItem,
-  VListItemSubtitle,
-  VListItemTitle,
-  VTable,
-  VTooltip,
-  VSwitch,
-  VCheckbox,
-  VChip,
-  VDivider,
-  VExpandTransition,
-  VBtnToggle,
-  VSheet,
-  VRow,
-  VCol,
-} from 'vuetify/components'
-
-const vuetify = createVuetify({
-  components: {
-    VCard,
-    VCardTitle, 
-    VCardText,
-    VCardSubtitle,
-    VCardActions,
-    VChipGroup,
-    VDialog,
-    VIcon,
-    VProgressCircular,
-    VForm,
-    VContainer,
-    VDataTable,
-    VTable,
-    VTextField,
-    VBtn,
-    VBtnGroup,
-    VAlert,
-    VApp,
-    VAppBar,
-    VMain,
-    VFooter,
-    VAutocomplete,
-    VTextarea,
-    VToolbarTitle,
-    VSpacer,
-    VMenu,
-    VList,
-    VListItem,
-    VListItemSubtitle,
-    VListItemTitle,
-    VTooltip,
-    VSwitch,
-    VCheckbox,
-    VChip,
-    VDivider,
-    VExpandTransition,
-    VBtnToggle,
-    VSheet,
-    VRow,
-    VCol,
-  },
-  directives,
-  theme: {
-    defaultTheme: 'light',
-  },
-})
-
-// ✅ CREATE APP
-const app = createApp(App);
-
-const pinia = createPinia();
+const app = createApp(App)
+const pinia = createPinia()
 
 // ✅ DISABLE VUE DEVTOOLS IN PRODUCTION
 if (process.env.NODE_ENV === 'production') {
@@ -125,8 +28,12 @@ if (process.env.NODE_ENV === 'production') {
 app.use(pinia);
 app.use(router);
 app.use(store);
-app.use(vuetify);
-app.component("v-select", vSelect);  // ✅ Now this will work!
+app.component('BaseDivider', BaseDivider)
+app.component('BaseForm', BaseForm)
+app.component('BaseIcon', BaseIcon)
+app.component('BaseSelect', BaseSelect)
+app.component('BaseTextField', BaseTextField)
+app.component('BaseTextarea', BaseTextarea)
 
 // ✅ BASIC USER RESTORATION
 try {

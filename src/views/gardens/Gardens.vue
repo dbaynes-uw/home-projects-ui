@@ -30,7 +30,7 @@
         </div>
 
         <!-- Add search input -->
-        <v-text-field
+        <BaseTextField
           v-model="searchQuery"
           label="Search gardens..."
           prepend-inner-icon="fas fa-magnify"
@@ -39,7 +39,7 @@
           variant="outlined"
           style="max-width: 300px; margin-left: 1rem;"
           @input="console.log('Search query:', searchQuery)"
-        ></v-text-field>
+        ></BaseTextField>
   
         <GardenIndex :gardens="gardens"
           v-if="showIndex"

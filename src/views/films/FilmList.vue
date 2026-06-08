@@ -24,7 +24,7 @@
   <br/>
   <div style="width: 100%">
     <div class="auto-search-container">
-      <v-text-field
+      <BaseTextField
         clearable
         clear-icon="fas fa-close"
         @click:clear="showIndex"

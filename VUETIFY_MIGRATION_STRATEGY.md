@@ -343,18 +343,43 @@ Definition of done:
 - No runtime errors referencing Vuetify
 - No `v-*` Vuetify tags left
 
-## Execution Plan (Recommended Next 3 PRs)
-1. PR 1: Phase 1 for Plants + Waterings forms
-- `src/views/plants/PlantCreate.vue`
-- `src/views/plants/PlantEdit.vue`
-- `src/views/waterings/WateringCreate.vue`
-- `src/views/waterings/WateringEdit.vue`
+### Phase 5 status (Teardown + Final Base Components)
+- Complete.
+- Completed in this pass:
+  - Replaced the final input-related Vuetify tags with local Base-prefixed component tags across the Vue templates.
+  - Removed Vuetify bootstrap/import setup from `src/main.js`.
+  - Removed `vuetify` from `package.json`.
+  - Removed obsolete Vuetify app-shell/button CSS overrides from `src/assets/global.css`.
+  - Added the final base components in `src/components/ui` and removed the old wrapper files.
+  - Pruned the older overlapping `BaseInput` and `BaseNativeSelect` helpers after migrating their remaining call sites.
+- Validation snapshot:
+  - `npm run build` passes.
+  - Global Vue template check: 0 raw `<v-...>` tags remain in `src`.
+  - No remaining `vuetify` bootstrap/import references in `src`.
+- Current base components in use:
+  - `BaseForm`, `BaseTextField`, `BaseTextarea`, `BaseSelect`, `BaseIcon`, `BaseDivider`.
 
-2. PR 2: Phase 1 for Health forms (largest hotspot area)
-- sleep/glucose/health marker create/edit screens
+### Post-Migration UI Architecture (Canonical API)
+Final shared form/input component surface:
+- `BaseForm`
+- `BaseTextField`
+- `BaseTextarea`
+- `BaseSelect`
+- `BaseIcon`
+- `BaseDivider`
 
-3. PR 3: Phase 2 button cleanup + shared base components
-- introduce `BaseChip`/`BaseAlert`/`BaseSpinner` as needed
+Conventions:
+- Use `BaseSelect` with `items` (not `options`).
+- Prefer `BaseTextField` with `prepend-inner` / `append-inner` slots for icon layout.
+- Keep shared form controls in `src/components/ui`.
+
+Do not reintroduce:
+- Vuetify imports or plugin setup.
+- Vuetify template tags (`<v-...>`).
+- Temporary migration wrapper names/components.
+
+Validation command:
+- `npm run build`
 
 ## Guardrails
 - Keep changes scoped by domain (Plants, Waterings, Health) to reduce regression risk.

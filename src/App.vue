@@ -50,7 +50,7 @@
                 :title="!isMobile ? link.title : ''"
               >
                 <div class="nav-item-content" :class="{ 'mobile-content': isMobile }">
-                  <i :class="link.icon" class="dropdown-icon" :class="{ 'mobile-icon': isMobile }"></i>
+                  <i :class="[link.icon, 'dropdown-icon', { 'mobile-icon': isMobile }]" ></i>
                   <span v-if="isMobile" class="mobile-nav-text">{{ link.title }}</span>
                 </div>
               </button>

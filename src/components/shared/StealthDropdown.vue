@@ -1,7 +1,7 @@
 <template>
   <div class="stealth-select-wrapper">
     <label class="stealth-label">{{ label }}</label>
-    <v-select
+    <BaseSelect
       v-model="internalValue"
       :items="items"
       variant="solo"
@@ -17,7 +17,7 @@
       <!-- ✅ CUSTOM DISPLAY - Only show when there's a value -->
       <template #selection="{ item }">
         <div class="stealth-button-content">
-          <v-icon class="stealth-icon">{{ icon }}</v-icon>
+          <BaseIcon class="stealth-icon">{{ icon }}</BaseIcon>
           {{ formatSelection(item) }}
         </div>
       </template>
@@ -25,11 +25,11 @@
       <!-- ✅ FIX: Use placeholder slot instead of no-data -->
       <template #placeholder>
         <div class="stealth-button-content">
-          <v-icon class="stealth-icon">{{ icon }}</v-icon>
+          <BaseIcon class="stealth-icon">{{ icon }}</BaseIcon>
           {{ placeholder }}
         </div>
       </template>
-    </v-select>
+    </BaseSelect>
   </div>
 </template>
 

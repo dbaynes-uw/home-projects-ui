@@ -3,7 +3,7 @@
   <form @submit.prevent="handleSubmit" class="travel-form">
     <div class="form-container">
       <!-- Title -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.title"
         label="Title"
         type="text"
@@ -32,7 +32,7 @@
       </div>
       
       <!-- Departure Date -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.departure_date"
         label="Departure Date"
         type="datetime-local"
@@ -42,7 +42,7 @@
       />
       
       <!-- Return Date -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.return_date"
         label="Return Date"
         type="datetime-local"
@@ -51,7 +51,7 @@
       />
       
       <!-- Transportation Type -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.transport"
         label="Type of Transportation"
         type="text"
@@ -61,7 +61,7 @@
       />
       
       <!-- Booking Reference -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.booking_reference"
         label="Booking Reference Number"
         type="text"
@@ -71,7 +71,7 @@
       />
       
       <!-- Transport URL -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.transport_url"
         label="Transportation Booking Link"
         type="url"
@@ -86,7 +86,7 @@
       </span>
 
       <!-- Map Embed URL -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.map_embed_url"
         label="Google Map Embed URL"
         type="text"
@@ -144,7 +144,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore as useVuexStore } from 'vuex'
-import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseTextField from '@/components/ui/BaseTextField.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import dayjs from 'dayjs'
 

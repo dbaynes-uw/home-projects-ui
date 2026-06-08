@@ -25,7 +25,7 @@
     
     <form class="form-card-display" @submit.prevent="updateWatering">
       <div class="form-container">
-        <BaseInput
+        <BaseTextField
           label="Watering Name"
           v-model="watering.name"
         />
@@ -35,29 +35,29 @@
           <option v-for="g in gardens" :key="g.id" :value="g.id">{{ g.name }}</option>
         </select>
         <!-- Your existing fields -->   
-        <BaseInput
+        <BaseTextField
           label="Location"
           v-model="watering.location"
         />
-        <BaseInput
+        <BaseTextField
           label="Line"
           v-model="watering.line"
         />
-        <BaseInput
+        <BaseTextField
           label="Target"
           v-model="watering.target"
         />
-        <BaseInput
+        <BaseTextField
           label="Days"
           v-model="watering.days"
         />
-        <BaseInput
+        <BaseTextField
           label="Duration"
           v-model="watering.duration"
           :hint="calculatedDuration ? `Auto-calculated: ${calculatedDuration}` : 'Set start & end time to auto-calculate'"
         />
         <div class="date-field-container">
-          <BaseInput
+          <BaseTextField
             v-model="displayStartTime"
             type="time"
             label="Start Time"
@@ -73,7 +73,7 @@
         </div>
       
         <div class="date-field-container">
-          <BaseInput
+          <BaseTextField
             v-model="displayEndTime"
             type="time"
             label="End Time"
@@ -89,9 +89,9 @@
         </div>
         <h3 id="p-custom-left">Last Updated: {{ formatStandardDateTime(watering.updated_at) }}</h3>
         <br/>
-        <BaseNativeSelect
+        <BaseSelect
           label="Select Status to Change"
-          :options="statusOptions"
+          :items="statusOptions"
           v-model="watering.status"
           :include-empty-option="false"
         />
@@ -124,8 +124,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
-import BaseInput from '@/components/ui/BaseInput.vue';
-import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue';
+import BaseTextField from '@/components/ui/BaseTextField.vue';
+import BaseSelect from '@/components/ui/BaseSelect.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
 const wateringStore = useWateringStore();

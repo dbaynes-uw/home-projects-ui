@@ -29,10 +29,10 @@
           Enter your new password below:
         </p>
         
-        <v-form @submit.prevent="resetPassword">
+        <BaseForm @submit.prevent="resetPassword">
           <div class="reset-form-container">
             <!-- ✅ FIXED NEW PASSWORD FIELD -->
-            <v-text-field
+            <BaseTextField
               label="New Password (Minimum 8 characters)"
               v-model="newPassword"
               :type="showNewPassword ? 'text' : 'password'"
@@ -53,10 +53,10 @@
                   <i :class="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                 </button>
               </template>
-            </v-text-field>
+            </BaseTextField>
             
             <!-- ✅ FIXED CONFIRM PASSWORD FIELD -->
-            <v-text-field
+            <BaseTextField
               label="Confirm New Password"
               v-model="confirmPassword"
               :type="showConfirmPassword ? 'text' : 'password'"
@@ -77,7 +77,7 @@
                   <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                 </button>
               </template>
-            </v-text-field>
+            </BaseTextField>
             
             <!-- ✅ PASSWORD STRENGTH INDICATOR -->
             <div class="mb-3">
@@ -109,7 +109,7 @@
               Reset Password
             </BaseButton>
           </div>
-        </v-form>
+        </BaseForm>
       </div>
       
       <!-- ✅ STATUS MESSAGE -->

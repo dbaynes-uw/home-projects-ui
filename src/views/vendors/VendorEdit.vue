@@ -51,10 +51,10 @@
       </header>
       
       <div class="vendor-panel-body">
-        <v-form @submit.prevent="handleUpdateVendor" ref="formRef">
+        <BaseForm @submit.prevent="handleUpdateVendor" ref="formRef">
           <div class="vendor-form-container">
             <!-- ✅ LOCATION (READONLY) -->
-            <v-text-field
+            <BaseTextField
               label="Location"
               v-model="vendor.location"
               readonly
@@ -63,12 +63,12 @@
               :rules="[requiredLocation]"
             >
               <template v-slot:prepend-inner>
-                <v-icon class="field-icon">mdi-map-marker</v-icon>
+                <BaseIcon class="field-icon">mdi-map-marker</BaseIcon>
               </template>
-            </v-text-field>
+            </BaseTextField>
 
             <!-- ✅ VENDOR NAME -->
-            <v-text-field
+            <BaseTextField
               label="Vendor Name"
               v-model="vendor.vendor_name"
               variant="outlined"
@@ -77,9 +77,9 @@
               :error="!isVendorNameValid && hasAttemptedSubmit"
             >
               <template v-slot:prepend-inner>
-                <v-icon class="field-icon">mdi-store</v-icon>
+                <BaseIcon class="field-icon">mdi-store</BaseIcon>
               </template>
-            </v-text-field>
+            </BaseTextField>
 
             <!-- ✅ SUBMIT BUTTON -->
             <BaseButton
@@ -95,7 +95,7 @@
               Update Vendor
             </BaseButton>
           </div>
-        </v-form>
+        </BaseForm>
       </div>
     </section>
   </div>

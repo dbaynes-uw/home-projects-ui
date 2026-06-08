@@ -16,27 +16,27 @@
 
     <form @submit.prevent="createPlant" class="form-card-display">
       <div class="form-container">
-        <BaseNativeSelect
+        <BaseSelect
           v-if="!resolvedGardenId"
           v-model="plant.garden_id"
-          :options="gardenOptions"
+          :items="gardenOptions"
           label="Select Garden (Optional)"
           value-type="number"
           :include-empty-option="true"
           empty-option-label="No Garden (Standalone)"
         />
 
-        <BaseInput
+        <BaseTextField
           v-else
           :model-value="garden.name"
           label="Garden"
           readonly
         />
 
-        <BaseNativeSelect
+        <BaseSelect
           v-if="!resolvedWateringId"
           v-model="plant.watering_id"
-          :options="wateringOptions"
+          :items="wateringOptions"
           label="Select Watering System"
           value-type="number"
           :include-empty-option="true"
@@ -45,20 +45,20 @@
           required
         />
 
-        <BaseInput
+        <BaseTextField
           v-else
           :model-value="watering.name"
           label="Watering System"
           readonly
         />
 
-        <BaseInput
+        <BaseTextField
           v-model="plant.plant_name"
           label="Plant Name"
           required
         />
 
-        <BaseInput
+        <BaseTextField
           v-model="plant.biological_name"
           label="Biological Name"
         />
@@ -68,43 +68,43 @@
           <textarea v-model="plant.description" class="form-textarea" rows="3"></textarea>
         </div>
 
-        <BaseInput
+        <BaseTextField
           v-model="plant.online_link"
           label="URL to Research"
           type="url"
         />
 
-        <BaseNativeSelect
+        <BaseSelect
           v-model="plant.yard_location"
-          :options="yardLocationOptions"
+          :items="yardLocationOptions"
           label="Yard Location"
           hint="North, South, or specific location like 1-A-1 for Vegetable Garden"
           :include-empty-option="true"
           empty-option-label="Select Yard Location"
         />
 
-        <BaseInput
+        <BaseTextField
           v-model="plant.date_planted"
           label="Date Planted"
           type="date"
         />
 
-        <BaseInput
+        <BaseTextField
           v-model="plant.date_harvested"
           label="Date Harvested"
           type="date"
         />
 
-        <BaseInput
+        <BaseTextField
           v-model="plant.duration"
           label="Duration (days)"
           type="number"
           min="0"
         />
 
-        <BaseNativeSelect
+        <BaseSelect
           v-model="plant.frequency"
-          :options="careFrequencyOptions"
+          :items="careFrequencyOptions"
           label="Select Frequency of Care"
           :include-empty-option="true"
           empty-option-label="Select Frequency"
@@ -136,8 +136,8 @@ import { toRaw } from 'vue';
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
-import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue'
-import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseSelect from '@/components/ui/BaseSelect.vue'
+import BaseTextField from '@/components/ui/BaseTextField.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
 const { userEmail } = useAuth()

@@ -28,9 +28,9 @@
       <div v-else-if="healthMarker.id" class="panel panel-form">
         <form @submit.prevent="onSubmit" id="form-container">
               
-              <BaseNativeSelect
+              <BaseSelect
                 label="Health Marker"
-                :options="markerOptions"
+                :items="markerOptions"
                 v-model="healthMarker.marker_name"
                 :include-empty-option="true"
                 empty-option-label="Select marker"
@@ -54,14 +54,14 @@
                 </div>
               </div>
 
-              <BaseInput
+              <BaseTextField
                 label="Test Date"
                 v-model="healthMarker.marker_date"
                 type="date"
                 :error="!isMarkerDateValid && hasAttemptedSubmit ? 'Please enter marker date' : ''"
               />
 
-              <BaseInput
+              <BaseTextField
                 :label="`Test Result ${selectedMarkerInfo ? '(' + selectedMarkerInfo.unit + ')' : ''}`"
                 v-model="healthMarker.marker_result"
                 type="number"
@@ -69,12 +69,12 @@
                 :error="!isMarkerResultValid && hasAttemptedSubmit ? 'Please enter marker result' : ''"
               />
 
-              <BaseInput
+              <BaseTextField
                 label="Lab Name (Optional)"
                 v-model="healthMarker.lab_name"
               />
 
-              <BaseInput
+              <BaseTextField
                 label="Doctor Name (Optional)"
                 v-model="healthMarker.doctor_name"
               />
@@ -155,8 +155,8 @@ import {
   getHealthMarkerByName 
 } from '@/services/health-marker-constants';
 import DateFormatService from '@/services/DateFormatService';
-import BaseInput from '@/components/ui/BaseInput.vue';
-import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue';
+import BaseTextField from '@/components/ui/BaseTextField.vue';
+import BaseSelect from '@/components/ui/BaseSelect.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
 // ✅ COMPOSITION API SETUP

@@ -3,21 +3,21 @@
     <h1>Create Glucose Reading</h1>
     <form @submit.prevent="createReading" class="form-card-display">
       <div class="form-container">
-        <BaseInput
+        <BaseTextField
           v-model="reading_date"
           label="Date"
           type="datetime-local"
           required
         />
 
-        <BaseInput
+        <BaseTextField
           v-model="reading"
           label="Reading"
           type="number"
           required
         />
 
-        <BaseInput
+        <BaseTextField
           v-model="unit"
           label="Unit"
           type="text"
@@ -72,7 +72,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';
-import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseTextField from '@/components/ui/BaseTextField.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
   const router = useRouter();

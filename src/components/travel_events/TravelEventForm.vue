@@ -12,7 +12,7 @@
       </div>
       
       <!-- Event Title -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.title"
         label="Event Title"
         type="text"
@@ -40,7 +40,7 @@
         </div>
       </div>
       <!-- Event Information URL -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.travel_event_url"
         label="Event Information (URL)"
         type="url"
@@ -55,7 +55,7 @@
       </span>
       
       <!-- Transportation Type -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.transport"
         label="Transportation Type"
         type="text"
@@ -65,7 +65,7 @@
       />
       
       <!-- Booking Reference -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.booking_reference"
         label="Booking Reference"
         type="text"
@@ -75,7 +75,7 @@
       />
       
       <!-- Transport URL -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.transport_url"
         label="Link to Transportation"
         type="url"
@@ -90,7 +90,7 @@
       </span>
       
       <!-- Start Date -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.start_date"
         label="Start Date"
         type="datetime-local"
@@ -99,7 +99,7 @@
       />
       
       <!-- End Date -->
-      <BaseInput
+      <BaseTextField
         v-model="formData.end_date"
         label="End Date"
         type="datetime-local"
@@ -162,7 +162,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useStore as useVuexStore } from 'vuex'
-import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseTextField from '@/components/ui/BaseTextField.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import dayjs from 'dayjs'
 

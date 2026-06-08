@@ -25,31 +25,31 @@
       <template #header><h3>Book Details</h3></template>
       <form @submit.prevent="updateBook">
         <div class="form-container">
-        <v-text-field
+        <BaseTextField
           label="Title"
           v-model="editableBook.title"
           required
         />
-        <v-text-field
+        <BaseTextField
           label="Author"
           v-model="editableBook.author"
           required
         />
-        <v-text-field
+        <BaseTextField
           label="Click calendar at right to change Date Written"
           v-model="editableBook.date_written"
           type="date"
         />
-        <v-text-field
+        <BaseTextField
           label="Click calendar at right to change Date Read"
           v-model="editableBook.date_read"
           type="date"
         />
-        <v-text-field
+        <BaseTextField
           label="URL to Review"
           v-model="editableBook.url_to_review"
         />
-        <v-textarea
+        <BaseTextarea
           label="Notes"
           v-model="editableBook.notes"
           rows="3"

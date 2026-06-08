@@ -4,27 +4,27 @@
     <span v-if="false">
       <!-- action prop removed — GolfInput is now create-only -->
     </span>
-    <v-form id="isFormValid" @submit.prevent="onSubmit">
+    <BaseForm id="isFormValid" @submit.prevent="onSubmit">
       <div id="form-container" class="form-container">
-        <v-text-field
+        <BaseTextField
           v-model="golf.course"
           :rules="[requiredCourse]"
           label="Course Played"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
+            <BaseIcon class="icon-css">mdi-account-circle</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field
+        </BaseTextField>
+        <BaseTextField
           v-model="golf.course_location"
           label="Course Location"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-text-field>
+        </BaseTextField>
         <label>Reference</label>
-        <v-text-field
+        <BaseTextField
           v-model="golf.url_to_course"
           type="text"
           :maxlength="urlMaxLength"
@@ -34,15 +34,15 @@
         <span>
           {{ urlMaxLength - golf.url_to_course.length }} / {{ urlMaxLength }}
         </span>
-        <v-text-field label="Date Round Played"
+        <BaseTextField label="Date Round Played"
           v-model="golf.date_played"
           type="date"
           :rules="[requiredDatePlayed]"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
+            <BaseIcon class="icon-css">mdi-calendar</BaseIcon>
           </template>
-        </v-text-field>
+        </BaseTextField>
         <br/>
         isTeesPlayedValid: {{ isTeesPlayedValid }}
         <br/>
@@ -206,19 +206,19 @@
           <input type="number" @input="() => { if(golf.penalty_17_hole > 4) { golf.penalty_17_hole= 0 }}" v-model="golf.penalty_17_hole" id="penalty_17_hole" class="width-9" />
           <input type="number" @input="() => { if(golf.penalty_18_hole > 4) { golf.penalty_18_hole= 0 }}" v-model="golf.penalty_18_hole" id="penalty_18_hole" class="width-9" />
         </div>        
-        <v-text-field label="Players" v-model="golf.players">
+        <BaseTextField label="Players" v-model="golf.players">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
+            <BaseIcon class="icon-css">mdi-account-circle</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Notes" v-model="golf.notes">
+        </BaseTextField>
+        <BaseTextField label="Notes" v-model="golf.notes">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
+            <BaseIcon class="icon-css">mdi-note</BaseIcon>
           </template>
-        </v-text-field>
+        </BaseTextField>
         <BaseButton type="submit" :block="true" class="mt-2" :loading="submitting">Submit</BaseButton>
       </div>
-    </v-form>
+    </BaseForm>
   </div>
 </template>
 <script setup>

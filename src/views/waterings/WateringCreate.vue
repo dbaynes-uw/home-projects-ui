@@ -40,7 +40,7 @@
     <form @submit.prevent="createWatering" class="form-card-display">
       <div class="form-container">
         <!-- Watering Name Input -->
-        <BaseInput
+        <BaseTextField
           v-model="watering.name"
           label="Watering Name"
           required
@@ -75,17 +75,17 @@
         </div>
         
         <!-- Location Input -->
-        <BaseInput v-model="watering.location" label="Location" />
+        <BaseTextField v-model="watering.location" label="Location" />
         <!-- Line Input -->
-        <BaseInput v-model="watering.line" label="Line" />
+        <BaseTextField v-model="watering.line" label="Line" />
         <!-- Target Input -->
-        <BaseInput v-model="watering.target" label="Target" />
+        <BaseTextField v-model="watering.target" label="Target" />
         <!-- Start Time Input -->
-        <BaseInput v-model="watering.start_time" label="Start Time" type="time" />
+        <BaseTextField v-model="watering.start_time" label="Start Time" type="time" />
         <!-- End Time Input -->
-        <BaseInput v-model="watering.end_time" label="End Time" type="time" />
+        <BaseTextField v-model="watering.end_time" label="End Time" type="time" />
         <!-- Days Input -->
-        <BaseInput v-model="watering.days" label="Days (e.g., Mon,Tue,Wed)" />
+        <BaseTextField v-model="watering.days" label="Days (e.g., Mon,Tue,Wed)" />
         <!-- Notes Input -->
         <div class="form-field">
           <label class="form-label">Notes</label>
@@ -111,7 +111,7 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
-import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseTextField from '@/components/ui/BaseTextField.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
 const router = useRouter();

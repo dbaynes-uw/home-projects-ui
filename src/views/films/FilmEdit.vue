@@ -12,43 +12,43 @@
     <br/>
     <form class="card-display" @submit.prevent="updateFilm">
       <div class="form-container">
-        <v-text-field
+        <BaseTextField
           label="Film Title"
           v-model="film.title"
           required
         />
-        <v-text-field
+        <BaseTextField
           label="Nationality"
           v-model="film.nationality"
         />
-        <v-text-field
+        <BaseTextField
           label="Director"
           v-model="film.director"
           required
         />
-        <v-text-field
+        <BaseTextField
           label="Actors"
           v-model="film.actors"
         />
-        <v-text-field
+        <BaseTextField
           label="Seasons"
           v-model="film.seasons"
         />
-        <v-text-field
+        <BaseTextField
           label="Episodes"
           v-model="film.episodes"
         />
-        <v-text-field
+        <BaseTextField
           label="Date Released"
           v-model="film.date_released"
           type="date"
         />
-        <v-text-field
+        <BaseTextField
           label="Date Watched"
           v-model="film.date_watched"
           type="date"
         />
-        <v-select
+        <BaseSelect
           label="Rating(1-5)"
           :items="FILM_RATINGS"
           v-model="film.rating"
@@ -62,14 +62,14 @@
           >
             {{ option }}
           </option>
-        </v-select> 
-        <v-textarea
+        </BaseSelect> 
+        <BaseTextarea
           label="URL to Review"
           v-model="film.url_to_review"
           rows="3"
           cols="40"
         />
-        <v-textarea
+        <BaseTextarea
           label="Notes"
           v-model="film.notes"
           rows="3"

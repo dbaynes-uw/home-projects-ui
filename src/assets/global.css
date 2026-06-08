@@ -13,36 +13,6 @@
   width: 78%;
   text-align: center;
 }
-/* V-APP-BAR OVERRIDES (you already have these) */
-.v-app-bar,
-.v-app-bar .v-toolbar__content,
-.v-app-bar.v-toolbar,
-.v-app-bar.bg-teal-darken-2 {
-  background-color: #1972AE !important;
-  background: #1972AE !important;
-  color: white !important;
-}
-
-/* ✅ NEW: V-FOOTER OVERRIDES */
-.v-footer,
-.v-footer.bg-teal-darken-2,
-.v-footer .v-footer__content {
-  background-color: #1972AE !important;
-  background: #1972AE !important;
-  color: white !important;
-}
-
-/* ✅ ENSURE CONSISTENT THEMING FOR FOOTER */
-.v-footer {
-  --v-theme-primary: #1972AE !important;
-  --v-theme-surface: #1972AE !important;
-}
-
-/* ✅ OVERRIDE ANY FOOTER GRADIENTS OR PATTERNS */
-.v-footer::before,
-.v-footer::after {
-  background: none !important;
-}
 .menu-base {
   width: 10%;
   height: 3.1rem;
@@ -124,25 +94,6 @@
 .center-single .action-icons {
   justify-content: center !important;  /* Center icons for single items */
 }
-.action-icons .v-btn {
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px !important;
-  display: flex !important;           /* ✅ ADD THIS */
-  align-items: center !important;     /* ✅ ADD THIS */
-  justify-content: center !important; /* ✅ ADD THIS */
-}
-
-/* ✅ ADD THIS - Force icon alignment */
-.action-icons .v-btn .v-icon {
-  margin: 0 !important;              /* Remove any icon margins */
-  line-height: 1 !important;         /* Consistent line height */
-  vertical-align: middle !important; /* Force vertical alignment */
-}
-.action-icons .v-btn:focus::before {
-  opacity: 0 !important;  /* Remove the focus circle */
-}
-
 .action-icon-btn {
   display: inline-flex;
   width: 36px;

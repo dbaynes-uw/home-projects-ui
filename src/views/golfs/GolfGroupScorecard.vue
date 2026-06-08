@@ -16,9 +16,9 @@
     <div v-else>
       <!-- ── Round Meta ──────────────────────────────────────────── -->
       <div class="meta-card">
-        <v-text-field v-model="meta.course" label="Course" density="compact" hide-details class="mb-2" />
-        <v-text-field v-model="meta.course_location" label="Location" density="compact" hide-details class="mb-2" />
-        <v-text-field v-model="meta.date_played" label="Date Played" type="date" density="compact" hide-details class="mb-2" />
+        <BaseTextField v-model="meta.course" label="Course" density="compact" hide-details class="mb-2" />
+        <BaseTextField v-model="meta.course_location" label="Location" density="compact" hide-details class="mb-2" />
+        <BaseTextField v-model="meta.date_played" label="Date Played" type="date" density="compact" hide-details class="mb-2" />
         <div class="tees-row">
           <label class="tees-label">Tees</label>
           <select v-model="meta.tees_played" class="tees-select">
@@ -26,8 +26,8 @@
             <option v-for="t in TEES" :key="t" :value="t">{{ t }}</option>
           </select>
         </div>
-        <v-text-field v-model="meta.url_to_course" label="Course URL" density="compact" hide-details class="mb-2" />
-        <v-text-field v-model="meta.notes" label="Notes" density="compact" hide-details />
+        <BaseTextField v-model="meta.url_to_course" label="Course URL" density="compact" hide-details class="mb-2" />
+        <BaseTextField v-model="meta.notes" label="Notes" density="compact" hide-details />
       </div>
 
       <!-- ── Players ────────────────────────────────────────────── -->
@@ -53,14 +53,14 @@
       <div class="players-grid">
         <div v-for="(p, pi) in players" :key="pi" class="player-card">
           <div class="player-name-row">
-            <v-text-field
+            <BaseTextField
               v-model="p.name"
               :label="`Player ${pi + 1} Name`"
               density="compact"
               hide-details
               style="width: 160px; flex: 0 0 160px;"
             />
-            <v-text-field
+            <BaseTextField
               v-model.number="p.courseHandicap"
               label="Hdcp"
               type="number"

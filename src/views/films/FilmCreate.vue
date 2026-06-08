@@ -4,62 +4,62 @@
       <h3>Add Film to Films Watched Collection</h3>
     </header>
     <div class="create-shell-body">
-    <v-form @submit.prevent="onSubmit">
+    <BaseForm @submit.prevent="onSubmit">
       <div id="form-container">
-        <v-text-field
+        <BaseTextField
           v-model="film.title"
           :rules="[requiredTitle]"
           label="Title"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field
+        </BaseTextField>
+        <BaseTextField
           v-model="film.nationality"
           label="Film Nationality"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-text-field>        
-        <v-text-field label="Film Director" v-model="film.director" :rules="[requiredDirector]">
+        </BaseTextField>        
+        <BaseTextField label="Film Director" v-model="film.director" :rules="[requiredDirector]">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
+            <BaseIcon class="icon-css">mdi-account-circle</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Actors" v-model="film.actors">
+        </BaseTextField>
+        <BaseTextField label="Actors" v-model="film.actors">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
+            <BaseIcon class="icon-css">mdi-note</BaseIcon>
           </template>
-        </v-text-field>  
-        <v-text-field label="Seasons" v-model="film.seasons">
+        </BaseTextField>  
+        <BaseTextField label="Seasons" v-model="film.seasons">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
+            <BaseIcon class="icon-css">mdi-account-circle</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Episodes" v-model="film.episodes">
+        </BaseTextField>
+        <BaseTextField label="Episodes" v-model="film.episodes">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
+            <BaseIcon class="icon-css">mdi-account-circle</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Date Film Made"
+        </BaseTextField>
+        <BaseTextField label="Date Film Made"
           v-model="film.date_released"
           type="date"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
+            <BaseIcon class="icon-css">mdi-calendar</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Date Watched"
+        </BaseTextField>
+        <BaseTextField label="Date Watched"
           v-model="film.date_watched"
           type="date"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
+            <BaseIcon class="icon-css">mdi-calendar</BaseIcon>
           </template>
-        </v-text-field>
-        <v-select
+        </BaseTextField>
+        <BaseSelect
           label="Rating(1-5)"
           :items="FILM_RATINGS"
           v-model="film.rating"
@@ -73,23 +73,23 @@
           >
             {{ option }}
           </option>
-        </v-select>        
-        <v-text-field
+        </BaseSelect>        
+        <BaseTextField
           v-model="film.url_to_review"
           label="URL to Review"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
+            <BaseIcon class="icon-css">mdi-link</BaseIcon>
           </template>
-        </v-text-field>        
-        <v-text-field label="Notes" v-model="film.notes">
+        </BaseTextField>        
+        <BaseTextField label="Notes" v-model="film.notes">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
+            <BaseIcon class="icon-css">mdi-note</BaseIcon>
           </template>
-        </v-text-field>
+        </BaseTextField>
         <button type="submit" class="btn btn-primary mt-2 w-100">Submit</button>
       </div>
-    </v-form>
+    </BaseForm>
     </div>
   </section>
 </template>

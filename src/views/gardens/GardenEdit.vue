@@ -8,23 +8,23 @@
     <b>Back to Gardens</b>
    </router-link>
     <br/>
-    <v-form @submit.prevent="updateGarden">
+    <BaseForm @submit.prevent="updateGarden">
     <ConfirmDialogue ref="confirmDialogue" />
        <div class="form-row">
         <div class="form-col half-width">
-          <v-text-field
+          <BaseTextField
             v-model="garden.name"
             label="Garden Name"
             outlined
             required
             aria-label="Enter the name of the garden"
-          ></v-text-field>
+          ></BaseTextField>
         </div>
         <div class="form-col half-width">
           <span v-if="garden.status">
             <h3 id="p-custom-left">Current Status: {{ garden.status }}</h3>
           </span>
-          <v-select
+          <BaseSelect
             v-model="status"
             :items="ACTIVE_STATUSES"
             label="Select Status to Change"
@@ -32,7 +32,7 @@
         </div>
       </div>
       <div class="form-row">
-        <v-textarea
+        <BaseTextarea
           label="Notes"
           v-model="garden.notes"
           rows="3"
@@ -52,10 +52,10 @@
           </router-link>
         </div>
       </div>
-  </v-form>
+  </BaseForm>
 
   <!-- Waterings -->
-  <v-divider class="my-4" />
+  <BaseDivider class="my-4" />
   <h2>Waterings</h2>
   <div v-if="garden.waterings && garden.waterings.length > 0">
     <table class="data-table">
@@ -94,7 +94,7 @@
   <p v-else>No waterings for this garden.</p>
 
   <!-- Plants -->
-  <v-divider class="my-4" />
+  <BaseDivider class="my-4" />
   <h2>Plants</h2>
   <div v-if="garden.plants && garden.plants.length > 0">
     <table class="data-table">

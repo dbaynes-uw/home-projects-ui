@@ -21,61 +21,61 @@
 
     <BaseCard class="form-card">
       <template #header><h3>Book Details</h3></template>
-      <v-form @submit.prevent="onSubmit">
+      <BaseForm @submit.prevent="onSubmit">
         <div class="form-container">
-        <v-text-field
+        <BaseTextField
           v-model="book.title"
           :rules="[requiredTitle]"
           label="Title"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Author" v-model="book.author" :rules="[requiredAuthor]">
+        </BaseTextField>
+        <BaseTextField label="Author" v-model="book.author" :rules="[requiredAuthor]">
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-account-circle</v-icon>
+            <BaseIcon class="icon-css">mdi-account-circle</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Date Written"
+        </BaseTextField>
+        <BaseTextField label="Date Written"
           v-model="book.date_written"
           type="date"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
+            <BaseIcon class="icon-css">mdi-calendar</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field label="Date Read"
+        </BaseTextField>
+        <BaseTextField label="Date Read"
           v-model="book.date_read"
           type="date"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
+            <BaseIcon class="icon-css">mdi-calendar</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field
+        </BaseTextField>
+        <BaseTextField
           v-model="book.url_to_review"
           label="URL to Review"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-link</v-icon>
+            <BaseIcon class="icon-css">mdi-link</BaseIcon>
           </template>
-        </v-text-field>        
-        <v-textarea
+        </BaseTextField>        
+        <BaseTextarea
           label="Notes"
           v-model="book.notes"
           clearable
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-note</v-icon>
+            <BaseIcon class="icon-css">mdi-note</BaseIcon>
           </template>
-        </v-textarea>
+        </BaseTextarea>
           <div class="form-actions">
             <button type="submit" class="submit-btn">Submit</button>
             <router-link :to="{ name: 'BookList' }" class="cancel-link">Cancel</router-link>
           </div>
         </div>
-      </v-form>
+      </BaseForm>
     </BaseCard>
   </div>
 </template>

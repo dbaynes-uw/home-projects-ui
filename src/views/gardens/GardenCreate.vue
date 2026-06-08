@@ -5,30 +5,30 @@
       <h3><b>Back to Gardens</b></h3>
     </router-link>
     <br/>
-    <v-form @submit.prevent="createGarden" ref="form">
+    <BaseForm @submit.prevent="createGarden" ref="form">
       <div class="form-row">
         <!-- Garden Name Input -->
          <div class="form-col full-width">
-           <v-text-field
+           <BaseTextField
              v-model="garden.name"
              :rules="[requiredGardenName]"
              label="Garden Name"
              class="wide-input"
            >
             <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-magnify</v-icon>
+              <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
             </template>
-          </v-text-field>
+          </BaseTextField>
         </div>
         <div class="form-col full-width">
-          <v-textarea label="Notes"
+          <BaseTextarea label="Notes"
             v-model="garden.notes"
             class="wide-input"
           >
             <template v-slot:prepend-inner>
-              <v-icon class="icon-css">mdi-note</v-icon>
+              <BaseIcon class="icon-css">mdi-note</BaseIcon>
             </template>
-          </v-textarea>
+          </BaseTextarea>
         </div>
       </div>
       <!-- Action Buttons -->
@@ -44,7 +44,7 @@
           </router-link>
         </div>
       </div>
-    </v-form>
+    </BaseForm>
   </div>
 </template>
 <script setup>

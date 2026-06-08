@@ -4,68 +4,68 @@
       <h3>Create a Trail to Track</h3>
     </header>
     <div class="create-shell-body">
-    <v-form @submit.prevent="onSubmit">    
+    <BaseForm @submit.prevent="onSubmit">    
       <div id="form-container" class="form-container">
-        <v-text-field
+        <BaseTextField
           v-model="trail.trail_head_name"
           :rules="[requiredTrailName]"
           label="Trail Head"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field
+        </BaseTextField>
+        <BaseTextField
           v-model="trail.trail_location"
           label="Location"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-text-field>
-        <v-text-field
+        </BaseTextField>
+        <BaseTextField
           v-model="trail.distance"
           @keypress="onlyForDecimal"
           label="Distance (Miles)"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-text-field>
-        <v-textarea
+        </BaseTextField>
+        <BaseTextarea
           v-model="trail.url_to_map"
           :maxlength="urlMaxLength"
           clearable
           label="URL to Map"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-textarea> 
+        </BaseTextarea> 
         <span>
           {{ urlMaxLength - trail.url_to_map.length }} / {{ urlMaxLength }}
         </span>          
         <br/>
-        <v-text-field
+        <BaseTextField
           label="Date Last Hiked"
           v-model="trail.date_last_hiked"
           type="date"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-calendar</v-icon>
+            <BaseIcon class="icon-css">mdi-calendar</BaseIcon>
           </template>
-        </v-text-field>
-        <v-textarea
+        </BaseTextField>
+        <BaseTextarea
           v-model="trail.notes"
           label="Notes"
         >
           <template v-slot:prepend-inner>
-            <v-icon class="icon-css">mdi-magnify</v-icon>
+            <BaseIcon class="icon-css">mdi-magnify</BaseIcon>
           </template>
-        </v-textarea>   
+        </BaseTextarea>   
         <button type="submit" class="btn btn-primary mt-2 w-100">Submit</button>
       </div>
-    </v-form>
+    </BaseForm>
     </div>
   </section>
 </template>

@@ -2,7 +2,7 @@
   <confirm-dialogue ref="confirmDialogue" />
 
   <div class="gi-toolbar">
-    <v-text-field
+    <BaseTextField
       v-model="search"
       clearable
       clear-icon="fas fa-close"

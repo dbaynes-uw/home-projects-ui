@@ -25,7 +25,7 @@
 
       <!-- ── Search / sort ──────────────────────────────────────── -->
       <div class="gp-toolbar">
-        <v-text-field
+        <BaseTextField
           v-model="search"
           clearable
           @click:clear="search = ''"

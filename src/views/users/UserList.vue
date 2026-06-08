@@ -131,7 +131,7 @@ select {
 }
 @media (max-width: 500px) {
   .users {
-    grid-template.columns: 1fr;
+    grid-template-columns: 1fr;
   }
 }
 </style>

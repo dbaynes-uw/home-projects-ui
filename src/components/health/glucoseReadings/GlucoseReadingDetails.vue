@@ -3,17 +3,17 @@
     <br/>
     <span v-if="!isSingle">
       <div class="controls-bar">
-        <BaseNativeSelect
+        <BaseSelect
           v-model="filterType"
-          :options="readingTypeOptions"
+          :items="readingTypeOptions"
           label="Type"
           includeEmptyOption
           emptyOptionLabel="All Types"
           class="filter-select"
         />
-        <BaseNativeSelect
+        <BaseSelect
           v-model="filterStatus"
-          :options="readingStatusOptions"
+          :items="readingStatusOptions"
           label="Status"
           includeEmptyOption
           emptyOptionLabel="All Statuses"
@@ -57,7 +57,7 @@
 
 <script setup>
 import GlucoseReadingCard from "@/components/health/glucoseReadings/GlucoseReadingCard.vue";
-import BaseNativeSelect from '@/components/ui/BaseNativeSelect.vue';
+import BaseSelect from '@/components/ui/BaseSelect.vue';
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useGlucoseReadingStore } from '@/stores/health/GlucoseReadingStore.js';

@@ -9,32 +9,32 @@
     <br/>
     <form class="card-display" @submit.prevent="updateTrail">
       <div class="form-container">
-        <v-text-field
+        <BaseTextField
           label="Trail Head"
           v-model="trail.trail_head_name"
           required
         />
-        <v-text-field
+        <BaseTextField
           label="Trail Head"
           v-model="trail.location"
           required
         />
-        <v-text-field
+        <BaseTextField
           label="Distance"
           v-model="trail.distance"
         />
-        <v-text-field
+        <BaseTextField
           label="Click calendar Date"
           v-model="trail.date_last_hiked"
           type="date"
         />
-        <v-text-field
+        <BaseTextField
           label="URL to Trail Map"
           pattern="https://.*"
           v-model="trail.url_to_map"
           type="url"
         />
-        <v-textarea
+        <BaseTextarea
           label="Notes"
           v-model="trail.notes"
           rows="3"

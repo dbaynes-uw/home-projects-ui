@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%">
     <div class="auto-search-container">
-      <v-text-field
+      <BaseTextField
         clearable
         clear-icon="mdi-close"
         @click:clear="resetSearch"

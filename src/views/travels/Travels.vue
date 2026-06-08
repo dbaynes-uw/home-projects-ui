@@ -46,7 +46,7 @@
 
       <!-- ✅ SEARCH -->
       <div class="search-container">
-        <v-text-field
+        <BaseTextField
           v-model="searchQuery"
           clearable
           clear-icon="fas fa-close"
@@ -59,7 +59,7 @@
           <template v-slot:prepend-inner>
             <i class="fas fa-search"></i>
           </template>
-        </v-text-field>
+        </BaseTextField>
       </div>
 
       <!-- ✅ STATS -->

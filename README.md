@@ -23,6 +23,29 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/)
 
+## Post-Migration UI Architecture
+
+Final shared form/input component surface:
+- `BaseForm`
+- `BaseTextField`
+- `BaseTextarea`
+- `BaseSelect`
+- `BaseIcon`
+- `BaseDivider`
+
+Conventions:
+- Use `BaseSelect` with `items` (not `options`).
+- Prefer `BaseTextField` with `prepend-inner` / `append-inner` slots for icon layout.
+- Keep shared form controls in `src/components/ui`.
+
+Do not reintroduce:
+- Vuetify imports or plugin setup.
+- Vuetify template tags (`<v-...>`).
+- Temporary migration wrapper names/components.
+
+Minimum validation command:
+- `npm run build`
+
 PROJECTS:
 src/
 ├── components/

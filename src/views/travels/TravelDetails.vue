@@ -69,7 +69,7 @@
     <BaseCard class="controls-card">
       <div class="controls-container">
         <div class="search-container">
-          <BaseInput
+          <BaseTextField
             v-model="inputSearchText"
             type="text"
             placeholder="Search events..."
@@ -234,7 +234,7 @@ import { ref, computed, onMounted, watch, h } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTravelStore } from '@/stores/travel/TravelStore'
 import BaseCard from '@/components/ui/BaseCard.vue'
-import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseTextField from '@/components/ui/BaseTextField.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import TravelEventIndex from "@/components/travel_events/TravelEventIndex.vue"
