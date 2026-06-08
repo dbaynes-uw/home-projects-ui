@@ -54,26 +54,29 @@
     </div>
   </div>
 
-  <v-table density="compact">
-    <tr>
-      <th id="background-blue" @click="sortList('name')">Name</th>
-      <th id="background-blue" @click="sortList('garden_names')">Garden</th>
-      <th id="background-blue" @click="sortList('target')">Target</th>
-      <th id="background-blue" @click="sortList('start_time')">Start</th>
-      <th id="background-blue" @click="sortList('end_time')">End</th>
-      <th id="background-blue" @click="sortList('duration')">Duration</th>
-      <th id="background-blue" @click="sortList('days')">Days</th>
-      <th id="background-blue">Actions</th>
-    </tr>
-    <tr v-for="watering in sortedWaterings" :key="watering.id">
-      <td>{{ watering.name }}</td>
-      <td>{{ getWateringGardenNames(watering) }}</td>
-      <td>{{ watering.target }}</td>
-      <td>{{ formatTime(watering.start_time) }}</td>
-      <td>{{ formatTime(watering.end_time) }}</td>
-      <td>{{ watering.duration }}</td>
-      <td>{{ watering.days }}</td>
-      <td style="padding-left: 0">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th id="background-blue" @click="sortList('name')">Name</th>
+        <th id="background-blue" @click="sortList('garden_names')">Garden</th>
+        <th id="background-blue" @click="sortList('target')">Target</th>
+        <th id="background-blue" @click="sortList('start_time')">Start</th>
+        <th id="background-blue" @click="sortList('end_time')">End</th>
+        <th id="background-blue" @click="sortList('duration')">Duration</th>
+        <th id="background-blue" @click="sortList('days')">Days</th>
+        <th id="background-blue">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="watering in sortedWaterings" :key="watering.id">
+        <td>{{ watering.name }}</td>
+        <td>{{ getWateringGardenNames(watering) }}</td>
+        <td>{{ watering.target }}</td>
+        <td>{{ formatTime(watering.start_time) }}</td>
+        <td>{{ formatTime(watering.end_time) }}</td>
+        <td>{{ watering.duration }}</td>
+        <td>{{ watering.days }}</td>
+        <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">
             <router-link
@@ -99,9 +102,10 @@
               </i>
             </span>
           </span>
-      </td>
-    </tr>
-  </v-table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <br />
   <b>Online Status: {{ onlineStatus }}</b>
 </template>

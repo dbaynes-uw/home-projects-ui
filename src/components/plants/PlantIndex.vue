@@ -6,18 +6,21 @@
     </span>
     <br/>
   </div>
-  <v-table density="compact">
-    <tr>
-      <th id="background-blue" @click="sortList('plant_name')">Plant Name</th>
-      <th id="background-blue" @click="sortList('yard_location')">Yard Location</th>
-      <th id="background-blue">Notes</th>
-      <th class="th-center" id="background-blue">Actions</th>
-    </tr>
-    <tr v-for="plant in sortedPlants" :key="plant.id">
-      <td>{{ plant.plant_name }}</td>
-      <td>{{ plant.yard_location }}</td>
-      <td>{{ plant.notes }}</td>
-      <td style="padding-left: 0">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th id="background-blue" @click="sortList('plant_name')">Plant Name</th>
+        <th id="background-blue" @click="sortList('yard_location')">Yard Location</th>
+        <th id="background-blue">Notes</th>
+        <th class="th-center" id="background-blue">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="plant in sortedPlants" :key="plant.id">
+        <td>{{ plant.plant_name }}</td>
+        <td>{{ plant.yard_location }}</td>
+        <td>{{ plant.notes }}</td>
+        <td style="padding-left: 0">
         <!--span v-if="this.onlineStatus"-->
           <span class="fa-stack">
             <router-link
@@ -45,9 +48,10 @@
               </i>
             </span>
           </span>
-      </td>
-    </tr>
-  </v-table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <br />
   <b>Online Status: {{ onlineStatus }}</b>
 </template>

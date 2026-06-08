@@ -1,18 +1,18 @@
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/components/ForgotPassword.vue -->
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
+  <section class="forgot-card mx-auto mt-5">
+    <header class="forgot-header pb-0">
       <h3>
         <!-- ✅ ADD ICON -->
         <i class="fas fa-key"></i>
         Forgot or Reset Password
       </h3>
-    </v-card-title>
+    </header>
     
-    <v-card-text>
+    <div class="forgot-body">
       <!-- ✅ FIXED: ONLY ONE SUBMIT TRIGGER -->
       <v-form @submit.prevent="handleSubmitForgotPassword">
-        <v-container id="form-container">
+        <div id="form-container" class="forgot-password-form-container">
           <v-text-field
             label="Email"
             v-model="email"
@@ -39,7 +39,7 @@
             <i class="fas fa-paper-plane"></i>
             Send Reset Email
           </BaseButton>
-        </v-container>
+        </div>
       </v-form>
       
       <!-- ✅ ENHANCED MESSAGE DISPLAY -->
@@ -59,8 +59,8 @@
           Back to Login
         </router-link>
       </div>
-    </v-card-text>
-  </v-card>  
+    </div>
+  </section>
 </template>
 
 <script>
@@ -146,6 +146,25 @@ export default {
 </script>
 
 <style scoped>
+.forgot-password-form-container {
+  width: 100%;
+}
+
+.forgot-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.forgot-header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.forgot-body {
+  padding: 0.5rem 1.25rem 1rem;
+}
+
 .error-message {
   color: #f44336;
   font-weight: bold;

@@ -123,6 +123,155 @@
   - Start Phase 3 layout shell migration (`v-app`, `v-main`, `v-app-bar`, `v-footer`, `v-container`, `v-row`, `v-col`, `v-spacer`).
   - Follow with Phase 4 structural cleanup (`v-card*`, `v-list*`, `v-table`, `v-dialog`, `v-menu`, `v-tooltip`).
 
+### Phase 3 status (Layout + App Shell)
+- Complete.
+- Completed in this pass:
+  - `src/App.vue` (`v-app`, `v-main`, `v-app-bar`, `v-footer`, `v-spacer` migrated to semantic `header`/`main`/`footer`).
+  - `src/views/films/FilmCreate.vue` (`v-container` migrated to semantic wrapper)
+  - `src/views/gardens/GardenCreate.vue` (`v-container`, `v-row`, `v-col` migrated)
+  - `src/views/gardens/GardenEdit.vue` (`v-row`, `v-col` migrated)
+  - `src/views/About.vue` (`v-container`, `v-row`, `v-col` migrated)
+  - `src/components/golfs/GolfInput.vue` (`v-container` migrated)
+  - `src/views/PasswordReset.vue` (`v-container` migrated)
+  - `src/views/trails/TrailCreate.vue` (`v-container` migrated)
+  - `src/views/vendors/VendorEdit.vue` (`v-container` migrated)
+  - `src/views/books/BookCreate.vue` (`v-container` migrated)
+  - `src/components/test/HealthMarkerCardTest.vue` (`v-container`, `v-row`, `v-col` migrated)
+  - `src/views/waterings/Waterings.vue` (`v-container` migrated)
+  - `src/views/plants/Plants.vue` (`v-container` migrated)
+  - `src/views/gardens/Gardens.vue` (`v-container` migrated)
+  - `src/components/ResetPassword.vue` (`v-container` migrated)
+  - `src/components/ForgotPassword.vue` (`v-container` migrated)
+- Validation snapshot:
+  - `src/App.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/films/FilmCreate.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/gardens/GardenCreate.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/gardens/GardenEdit.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/About.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/components/golfs/GolfInput.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/PasswordReset.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/trails/TrailCreate.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/vendors/VendorEdit.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/books/BookCreate.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/components/test/HealthMarkerCardTest.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/waterings/Waterings.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/plants/Plants.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/views/gardens/Gardens.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/components/ResetPassword.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - `src/components/ForgotPassword.vue` has 0 occurrences of Phase 3 layout shell tags.
+  - Global check: 0 total occurrences of Phase 3 layout shell tags in `src`.
+- Next recommended files for immediate follow-up:
+  - Start Phase 4 structural cleanup (`v-card*`, `v-list*`, `v-table`, `v-dialog`, `v-menu`, `v-tooltip`).
+  - Suggested first slice: `src/views/gardens/Gardens.vue`, `src/views/waterings/Waterings.vue`, `src/views/plants/Plants.vue`.
+
+### Phase 4 status (Lists, Cards, Tables) - In Progress
+- First slice completed in this pass:
+  - `src/views/gardens/Gardens.vue` (`v-card`, `v-card-title`, `v-card-actions` migrated)
+  - `src/views/waterings/Waterings.vue` (`v-card`, `v-card-title`, `v-card-actions` migrated)
+  - `src/views/plants/Plants.vue` (`v-card`, `v-card-title`, `v-card-actions` migrated)
+  - `src/components/gardens/GardenIndex.vue` (`v-table` migrated)
+  - `src/components/waterings/WateringIndex.vue` (`v-table` migrated)
+  - `src/components/plants/PlantIndex.vue` (`v-table` migrated)
+- Validation snapshot after this slice:
+  - No new lint/template errors in migrated files.
+  - Tag count deltas:
+    - `v-card`: 16 -> 13
+    - `v-card-title`: 15 -> 12
+    - `v-card-actions`: 5 -> 2
+    - `v-table`: 11 -> 8
+  - Remaining Phase 4 structural tag occurrences (`v-card*`, `v-list*`, `v-table`, `v-dialog`, `v-menu`, `v-tooltip`): 49 total in `src`.
+- Next recommended files for immediate follow-up:
+  - `src/views/PasswordReset.vue`
+  - `src/components/ForgotPassword.vue`
+  - `src/views/trails/TrailCreate.vue`
+  - `src/views/films/FilmCreate.vue`
+  - `src/App.vue` (`v-menu`, `v-list`, `v-list-item`, `v-tooltip`)
+
+- Second slice completed in this pass:
+  - `src/views/PasswordReset.vue` (`v-card`, `v-card-title`, `v-card-text`, `v-card-actions` migrated)
+  - `src/components/ForgotPassword.vue` (`v-card`, `v-card-title`, `v-card-text` migrated)
+  - `src/views/trails/TrailCreate.vue` (`v-card`, `v-card-title`, `v-card-text` migrated)
+  - `src/views/films/FilmCreate.vue` (`v-card`, `v-card-title`, `v-card-text` migrated)
+  - `src/App.vue` (`v-menu`, `v-list`, `v-list-item`, `v-tooltip` migrated to native dropdown semantics)
+- Validation snapshot after second slice:
+  - No new lint/template errors in migrated files.
+  - Tag count deltas:
+    - `v-card`: 13 -> 9
+    - `v-card-title`: 12 -> 8
+    - `v-card-text`: 10 -> 6
+    - `v-card-actions`: 2 -> 1
+    - `v-menu`, `v-list`, `v-list-item`, `v-tooltip`: 1 each -> 0
+  - Remaining Phase 4 structural tag occurrences (`v-card*`, `v-list*`, `v-table`, `v-dialog`, `v-menu`, `v-tooltip`): 32 total in `src`.
+- Next recommended files for immediate follow-up:
+  - `src/views/golfs/GolfCreate.vue`
+  - `src/views/golfs/GolfList.vue`
+  - `src/views/films/FilmList.vue`
+  - `src/views/trails/TrailList.vue`
+  - `src/components/ResetPassword.vue`
+
+- Third slice completed in this pass:
+  - `src/views/golfs/GolfCreate.vue` (already migrated in prior pass; verified)
+  - `src/views/golfs/GolfList.vue` (already migrated for Phase 4 structural tags; verified)
+  - `src/views/films/FilmList.vue` (already migrated for Phase 4 structural tags; verified)
+  - `src/views/trails/TrailList.vue` (`v-card`, `v-card-title` migrated)
+  - `src/components/ResetPassword.vue` (`v-card`, `v-card-title` migrated)
+- Validation snapshot after third slice:
+  - No new lint/template errors in migrated files.
+  - No remaining Phase 4 structural tags in the queued slice files.
+  - Tag count deltas:
+    - `v-card`: 9 -> 4
+    - `v-card-title`: 8 -> 3
+    - `v-card-text`: 6 -> 5
+  - Remaining Phase 4 structural tag occurrences (`v-card*`, `v-list*`, `v-table`, `v-dialog`, `v-menu`, `v-tooltip`): 21 total in `src`.
+- Next recommended files for immediate follow-up:
+  - `src/views/vendors/VendorEdit.vue`
+  - `src/views/About.vue`
+  - `src/components/films/FilmIndex.vue`
+  - `src/components/trails/TrailIndex.vue`
+  - `src/components/trails/TrailSearchResults.vue`
+
+- Fourth slice completed in this pass:
+  - `src/views/vendors/VendorEdit.vue` (`v-card`, `v-card-title`, `v-card-text` migrated)
+  - `src/views/About.vue` (`v-card`, `v-card-title`, `v-card-text`, `v-card-actions` migrated)
+  - `src/components/films/FilmIndex.vue` (`v-table` migrated)
+  - `src/components/trails/TrailIndex.vue` (`v-table` migrated)
+  - `src/components/trails/TrailSearchResults.vue` (`v-table` migrated)
+- Validation snapshot after fourth slice:
+  - No new lint/template errors in migrated files.
+  - No remaining Phase 4 structural tags in the migrated files.
+  - Tag count deltas:
+    - `v-card`: 4 -> 0
+    - `v-card-title`: 3 -> 0
+    - `v-card-text`: 5 -> 1
+    - `v-card-actions`: 1 -> 0
+    - `v-table`: 8 -> 5
+  - Remaining Phase 4 structural tag occurrences (`v-card*`, `v-list*`, `v-table`, `v-dialog`, `v-menu`, `v-tooltip`): 6 total in `src`.
+- Next recommended files for immediate follow-up:
+  - `src/components/golfs/GolfInput.vue` (`v-card-text`)
+  - `src/components/books/BookIndex.vue` (`v-table`)
+  - `src/components/travels/TravelIndex.vue` (`v-table`)
+  - `src/views/gardens/GardenEdit.vue` (`v-table`)
+  - `src/views/events/EventStatistics.vue` (`v-table`)
+
+- Final structural slice completed in this pass:
+  - `src/components/golfs/GolfInput.vue` (`v-card-text` migrated)
+  - `src/components/books/BookIndex.vue` (`v-table` migrated)
+  - `src/components/travels/TravelIndex.vue` (`v-table` migrated)
+  - `src/views/gardens/GardenEdit.vue` (`v-table` x2 migrated)
+  - `src/views/events/EventStatistics.vue` (`v-table` migrated)
+- Validation snapshot after final structural slice:
+  - No new lint/template errors in migrated files.
+  - No remaining Phase 4 structural tags in migrated files.
+  - Global check: 0 remaining occurrences of `v-card*`, `v-list*`, `v-table`, `v-dialog`, `v-menu`, `v-tooltip` in `src`.
+
+### Phase 4 status (Lists, Cards, Tables)
+- Complete.
+- Outcome:
+  - All targeted structural Vuetify tags removed from `src`.
+  - Remaining Vuetify tags are Phase 1/input-related and not Phase 4 scope (`v-text-field`, `v-textarea`, `v-select`, `v-form`, plus `v-icon`/`v-divider`).
+- Next recommended follow-up:
+  - Begin Phase 5 teardown (`src/main.js`, package removal, global CSS cleanup, build/lint/smoke checks).
+
 ## Migration Approach
 Use a risk-first strategy: remove low-risk, high-volume components first, then layout shell, then plugin teardown last.
 

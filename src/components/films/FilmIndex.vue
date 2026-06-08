@@ -1,23 +1,26 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <h3 id="h3-left">Total: {{ films.length }}</h3>
-  <v-table density="compact">
-    <tr>
-      <th id="background-blue" @click="sortList('title')">Title</th>
-      <th id="background-blue" @click="sortList('nationality')">Nationality</th>
-      <th id="background-blue" @click="sortList('director')">Director</th>
-      <th id="background-blue">Seasons Episodes</th>
-      <th id="background-blue" @click="sortList('date_released')">
-        Date Released
-      </th>
-      <th id="background-blue" @click="sortList('date_watched')">
-        Date Watched
-      </th>
-      <th id="background-blue">Rating</th>
-      <th id="background-blue">URL to Review</th>
-      <th class="th-center" id="background-blue">Actions</th>
-    </tr>
-    <tr v-for="(result, resultIndex) in films" :key="resultIndex">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th id="background-blue" @click="sortList('title')">Title</th>
+        <th id="background-blue" @click="sortList('nationality')">Nationality</th>
+        <th id="background-blue" @click="sortList('director')">Director</th>
+        <th id="background-blue">Seasons Episodes</th>
+        <th id="background-blue" @click="sortList('date_released')">
+          Date Released
+        </th>
+        <th id="background-blue" @click="sortList('date_watched')">
+          Date Watched
+        </th>
+        <th id="background-blue">Rating</th>
+        <th id="background-blue">URL to Review</th>
+        <th class="th-center" id="background-blue">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(result, resultIndex) in films" :key="resultIndex">
       <td>{{ result.title }}</td>
       <td>{{ result.nationality }}</td>
       <td>{{ result.director }}</td>
@@ -71,8 +74,9 @@
           <span class="ok-btn" @click="deleteFilm(result)"><u>Delete</u></span>
         </span>
       </td>
-    </tr>
-  </v-table>
+      </tr>
+    </tbody>
+  </table>
   <br />
   <!--b>Online Status: {{ this.onlineStatus }}</b!-->
 </template>

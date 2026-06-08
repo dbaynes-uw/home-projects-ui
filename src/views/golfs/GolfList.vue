@@ -1,7 +1,7 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0" style="display:flex; align-items:center; justify-content:space-between;">
+  <section class="page-shell mx-auto mt-5">
+    <header class="page-shell-header pb-0" style="display:flex; align-items:center; justify-content:space-between;">
       <h2>Golf Rounds</h2>
       <div style="display:flex; gap:0.5rem; align-items:center;">
         <button
@@ -25,9 +25,9 @@
           ⛳ New Round
         </router-link>
       </div>
-    </v-card-title>
+    </header>
     <br/>
-  </v-card>
+  </section>
   <br/>
 
   <!-- ── Table view ──────────────────────────────────────────── -->
@@ -128,3 +128,16 @@ function searchColumns() {
   })
 }
 </script>
+
+<style scoped>
+.page-shell {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.page-shell-header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+</style>

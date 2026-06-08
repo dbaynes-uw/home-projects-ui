@@ -1,14 +1,14 @@
 <template>
-  <v-container>
+  <div class="garden-create-container">
     <h1>Add Garden</h1>
     <router-link :to="{ name: 'Gardens' }">
       <h3><b>Back to Gardens</b></h3>
     </router-link>
     <br/>
     <v-form @submit.prevent="createGarden" ref="form">
-      <v-row>
+      <div class="form-row">
         <!-- Garden Name Input -->
-         <v-col cols="12">
+         <div class="form-col full-width">
            <v-text-field
              v-model="garden.name"
              :rules="[requiredGardenName]"
@@ -19,8 +19,8 @@
               <v-icon class="icon-css">mdi-magnify</v-icon>
             </template>
           </v-text-field>
-        </v-col>
-        <v-col cols="12">
+        </div>
+        <div class="form-col full-width">
           <v-textarea label="Notes"
             v-model="garden.notes"
             class="wide-input"
@@ -29,11 +29,11 @@
               <v-icon class="icon-css">mdi-note</v-icon>
             </template>
           </v-textarea>
-        </v-col>
-      </v-row>
+        </div>
+      </div>
       <!-- Action Buttons -->
-      <v-row>
-        <v-col cols="12">
+      <div class="form-row">
+        <div class="form-col full-width">
           <BaseButton variant="primary" size="medium" type="submit" aria-label="Submit">
             Create
           </BaseButton>
@@ -42,10 +42,10 @@
               Back to List
             </BaseButton>
           </router-link>
-        </v-col>
-      </v-row>
+        </div>
+      </div>
     </v-form>
-  </v-container>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -112,6 +112,26 @@ import { v4 as uuidv4 } from 'uuid';
   });
 </script>
 <style lang="css">
+.garden-create-container {
+  padding: 0 1rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.full-width {
+  width: 100%;
+  flex: 0 0 100%;
+}
+
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;

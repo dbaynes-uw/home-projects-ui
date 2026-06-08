@@ -1,16 +1,19 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div class="trail-list">
-    <v-table density="compact">
-      <tr>
-        <th @click="sortList('trail_head_name')">Trail Head</th>
-        <th @click="sortList('location')">Location</th>
-        <th @click="sortList('distance')">Distance (Miles)</th>
-        <th @click="sortList('date_last_hiked')">Date Last Hiked</th>
-        <th>URL</th>
-        <th style="text-align: right">Actions</th>
-      </tr>
-      <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th @click="sortList('trail_head_name')">Trail Head</th>
+          <th @click="sortList('location')">Location</th>
+          <th @click="sortList('distance')">Distance (Miles)</th>
+          <th @click="sortList('date_last_hiked')">Date Last Hiked</th>
+          <th>URL</th>
+          <th style="text-align: right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(result, resultIndex) in filteredResults" :key="resultIndex">
         <td>{{ result.trail_head_name }}</td>
         <td>{{ result.location }}</td>
         <td>{{ result.distance }}</td>
@@ -44,8 +47,9 @@
             </span>
           </span>
         </td>
-      </tr>
-    </v-table>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 <script>

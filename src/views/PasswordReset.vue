@@ -1,16 +1,16 @@
 <!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/PasswordReset.vue -->
 <template>
-  <v-card class="mx-auto mt-5" max-width="500">
-    <v-card-title class="pb-0">
+  <section class="reset-card mx-auto mt-5" style="max-width: 500px;">
+    <header class="reset-header pb-0">
       <h1>
         <!-- ✅ ADD TITLE ICON -->
         <i class="fas fa-key"></i>
         Home Projects
       </h1>
       <h3>Reset Your Password</h3>
-    </v-card-title>
+    </header>
     
-    <v-card-text>
+    <div class="reset-body">
       <!-- ✅ SHOW TOKEN STATUS -->
       <div v-if="!isValidToken" class="mb-4">
         <BaseAlert variant="danger">
@@ -30,7 +30,7 @@
         </p>
         
         <v-form @submit.prevent="resetPassword">
-          <v-container>
+          <div class="reset-form-container">
             <!-- ✅ FIXED NEW PASSWORD FIELD -->
             <v-text-field
               label="New Password (Minimum 8 characters)"
@@ -108,7 +108,7 @@
               <i class="fas fa-key"></i>
               Reset Password
             </BaseButton>
-          </v-container>
+          </div>
         </v-form>
       </div>
       
@@ -121,16 +121,16 @@
         <i :class="error ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle'"></i>
         {{ message }}
       </BaseAlert>
-    </v-card-text>
+    </div>
     
-    <v-card-actions class="justify-center">
+    <footer class="reset-footer justify-center">
       <div class="text-center">
         <i class="fas fa-arrow-left"></i>
         Remember your password? 
         <router-link to="/login">Back to Login</router-link>
       </div>
-    </v-card-actions>
-  </v-card>
+    </footer>
+  </section>
 </template>
 
 <script>
@@ -351,6 +351,31 @@ export default {
   color: rgb(var(--v-theme-primary)) !important;
 }
 
+.reset-form-container {
+  width: 100%;
+}
+
+.reset-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.reset-header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.reset-body {
+  padding: 0.5rem 1.25rem 1rem;
+}
+
+.reset-footer {
+  padding: 0.75rem 1.25rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+
 /* ✅ PASSWORD STRENGTH STYLING */
 .password-strength {
   height: 4px;
@@ -394,7 +419,7 @@ export default {
 }
 
 /* ✅ ICON STYLING */
-.v-card-title i {
+.reset-header i {
   color: rgb(var(--v-theme-primary));
   margin-right: 0.5rem;
 }
@@ -407,7 +432,7 @@ export default {
   margin-right: 0.5rem;
 }
 
-.v-card-actions i {
+.reset-footer i {
   margin-right: 0.3rem;
   font-size: 0.9em;
 }

@@ -1,11 +1,10 @@
 <template>
-    <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
+  <section class="reset-shell mx-auto mt-5">
+    <header class="reset-shell-header pb-0">
       <h3>Reset Password</h3>
-    </v-card-title>
-  </v-card>
+    </header>
     <v-form @submit.prevent="resetPassword">
-      <v-container id="form-container">
+      <div id="form-container" class="reset-password-form-container">
         <div class="alert alert-info" v-if="notice">{{ notice }}<router-link to="/login">Sign in</router-link></div>
         <div class="alert alert-danger" v-if="error">{{ error }}</div>
         <v-text-field
@@ -39,8 +38,9 @@
             <BaseButton id="background-gray" variant="secondary" size="medium" type="button">Sign in</BaseButton>
           </router-link>
         </div>
-      </v-container>
+      </div>
     </v-form>
+  </section>
 </template>
 <script>
 import axios from "axios";
@@ -136,6 +136,22 @@ export default {
 </script>
 
 <style scoped>
+.reset-shell {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  padding: 0.5rem 1.25rem 1rem;
+}
+
+.reset-shell-header {
+  padding: 0.5rem 0 0.5rem;
+}
+
+.reset-password-form-container {
+  width: 100%;
+}
+
 .sign-in-link-btn {
   text-decoration: none;
 }

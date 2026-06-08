@@ -1,14 +1,15 @@
 <template>
   <div class="event-statistics">
     <h1 class="center" style="padding-bottom: 2rem">Event Statistics</h1>
-    <v-table>
-      <tr>
-        <td style="width: 30%">
-          <h3>Event Assignments:</h3>
-        </td>
-        <td><h3>Count</h3></td>
-      </tr> 
-      <tr v-for="(v, k) in events.assigned" :key="k">
+    <table class="data-table">
+      <tbody>
+        <tr>
+          <td style="width: 30%">
+            <h3>Event Assignments:</h3>
+          </td>
+          <td><h3>Count</h3></td>
+        </tr> 
+        <tr v-for="(v, k) in events.assigned" :key="k">
         <td>
           &nbsp;&nbsp;
           --
@@ -22,8 +23,8 @@
           </router-link>
         </td>
         <td>{{ v }}</td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -37,8 +38,8 @@
         <td>
           {{ events.active }}
         </td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -52,8 +53,8 @@
         <td>
           {{ events.inactive }}
         </td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -65,8 +66,8 @@
           </router-link>
         </td>
         <td>{{ events.notAssigned }}</td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -78,8 +79,8 @@
           </router-link>
         </td>
         <td>{{ events.pastDue }}</td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -93,8 +94,8 @@
         <td>
           {{ events.dueToday }}
         </td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -108,8 +109,8 @@
         <td>
           {{ events.dueThisWeek }}
         </td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -123,8 +124,8 @@
         <td>
           {{ events.dueNextWeek }}
         </td>
-      </tr>
-      <tr>
+        </tr>
+        <tr>
         <td>
           <router-link
             :to="{
@@ -138,8 +139,9 @@
         <td>
           {{ events.futureDue }}
         </td>
-      </tr>      
-    </v-table>
+        </tr>
+      </tbody>
+    </table>
     <br />
     <span class="fa-stack">
       <router-link :to="{ name: 'EventList' }">

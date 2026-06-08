@@ -1,12 +1,12 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
+  <section class="page-shell mx-auto mt-5">
+    <header class="page-shell-header pb-0">
       <h2>Trail List</h2>
       <h2 id="status-message">
         <u>{{ this.statusMessage }}</u>
       </h2>
-    </v-card-title>
+    </header>
     <ul>
       <li class="left">
         <button id="button-as-link">
@@ -20,7 +20,7 @@
       </li>
     </ul> 
     <br/>
-  </v-card>
+  </section>
   <br/>
   <div style="width: 100%">
     <div class="auto-search-container">
@@ -191,6 +191,17 @@ export default {
 };
 </script>
 <style scoped>
+.page-shell {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.page-shell-header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
 th {
   background-color: #7ba8bd;
   text-align: left;

@@ -1,10 +1,10 @@
 <template>
-  <v-container>
-    <v-card class="mx-auto mt-5">
-      <v-card-title>
+  <div class="gardens-page-container">
+    <section class="page-shell mx-auto mt-5">
+      <div class="page-shell-title-row">
         <h2>Gardens</h2>
         <router-link :to="{ name: 'GardenCreate' }">Create New Garden</router-link>
-      </v-card-title>
+      </div>
 
       <button id="button-as-link" @click="requestIndexDetail">
         <router-link :to="{ name: 'Waterings' }">
@@ -16,18 +16,18 @@
           <b>Plants</b>
         </router-link>
       </button> 
-    </v-card>
+    </section>
     <div class="garden-details">
       <template v-if="isLoading">
         <BaseSpinner size="large" label="Loading Gardens" />
         <p>Loading Gardens...</p>
       </template>
       <template v-else>
-        <v-card-actions>
+        <div class="page-shell-actions">
           <button id="indent-secondary-button" class="btn btn-secondary" @click="toggleView" type="button">
              {{ showIndex ? 'Show Card View' : 'Show Index View' }}
           </button>
-        </v-card-actions>
+        </div>
 
         <!-- Add search input -->
         <v-text-field
@@ -53,7 +53,7 @@
         />
       </template>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -113,6 +113,29 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.gardens-page-container {
+  width: 100%;
+}
+
+.page-shell {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.page-shell-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-shell-actions {
+  margin: 0.5rem 0;
+}
+
 #indent-primary-button {
   margin-left: 5.8rem;
 }

@@ -10,8 +10,8 @@
     <br/>
     <v-form @submit.prevent="updateGarden">
     <ConfirmDialogue ref="confirmDialogue" />
-       <v-row>
-        <v-col cols="12" md="6">
+       <div class="form-row">
+        <div class="form-col half-width">
           <v-text-field
             v-model="garden.name"
             label="Garden Name"
@@ -19,8 +19,8 @@
             required
             aria-label="Enter the name of the garden"
           ></v-text-field>
-        </v-col>
-        <v-col cols="12" md="6">
+        </div>
+        <div class="form-col half-width">
           <span v-if="garden.status">
             <h3 id="p-custom-left">Current Status: {{ garden.status }}</h3>
           </span>
@@ -29,19 +29,19 @@
             :items="ACTIVE_STATUSES"
             label="Select Status to Change"
           />
-        </v-col>
-      </v-row>
-      <v-row>
+        </div>
+      </div>
+      <div class="form-row">
         <v-textarea
           label="Notes"
           v-model="garden.notes"
           rows="3"
           cols="40"
         />
-      </v-row>
+      </div>
       <!-- Action Buttons -->
-      <v-row>
-        <v-col cols="12">
+      <div class="form-row">
+        <div class="form-col full-width">
           <BaseButton variant="primary" size="medium" type="submit" aria-label="Update the Garden">
             Update
           </BaseButton>
@@ -50,15 +50,15 @@
               Back to List
             </BaseButton>
           </router-link>
-        </v-col>
-      </v-row>
+        </div>
+      </div>
   </v-form>
 
   <!-- Waterings -->
   <v-divider class="my-4" />
   <h2>Waterings</h2>
   <div v-if="garden.waterings && garden.waterings.length > 0">
-    <v-table density="compact">
+    <table class="data-table">
       <thead>
         <tr>
           <th>Name</th>
@@ -89,7 +89,7 @@
           </td>
         </tr>
       </tbody>
-    </v-table>
+    </table>
   </div>
   <p v-else>No waterings for this garden.</p>
 
@@ -97,7 +97,7 @@
   <v-divider class="my-4" />
   <h2>Plants</h2>
   <div v-if="garden.plants && garden.plants.length > 0">
-    <v-table density="compact">
+    <table class="data-table">
       <thead>
         <tr>
           <th>Name</th>
@@ -122,7 +122,7 @@
           </td>
         </tr>
       </tbody>
-    </v-table>
+    </table>
   </div>
   <p v-else>No plants for this garden.</p>
 </template>
@@ -198,8 +198,34 @@ function formatTime(value) {
 }
 </script>
 <style scoped>
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.half-width {
+  flex: 1 1 calc(50% - 0.5rem);
+}
+
+.full-width {
+  width: 100%;
+  flex: 0 0 100%;
+}
+
 .back-link-btn {
   margin-left: 0.5rem;
   text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .half-width {
+    flex: 0 0 100%;
+  }
 }
 </style>

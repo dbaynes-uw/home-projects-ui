@@ -3,106 +3,81 @@
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
   <div id="nav">
     <Toast />
-    <!-- ✅ LOGIN PAGE LAYOUT -->
-    <v-app v-if="this.$route.name == 'Login' || this.$route.name == 'Register' || this.$route.name == 'ForgotPassword' || this.$route.name == 'PasswordReset' || this.$route.name == 'PasswordResetEdit'">
-      <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>
-          <router-link to="/" style="color: white; text-decoration: none;">
+    <div v-if="isAuthPage" class="app-shell auth-shell">
+      <header class="top-header">
+        <h1 class="app-title">
+          <router-link to="/" class="title-link">
             Home Projects
           </router-link>
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <p style="color: white;">{{ this.onlineStatus ? "Online" : "Offline" }}</p>
-      </v-app-bar>
-      <v-main>
+        </h1>
+        <p class="online-status">{{ this.onlineStatus ? "Online" : "Offline" }}</p>
+      </header>
+      <main class="app-main">
         <router-view></router-view>
-      </v-main>
-    </v-app>
+      </main>
+    </div>
 
-    <!-- ✅ HOME PAGE SIMPLE LAYOUT -->
-    <v-app v-else-if="this.$route.name == 'home'">
-      <v-app-bar color="teal-darken-2">
-        <v-toolbar-title>Home Projects</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <p style="color: white;">{{ this.onlineStatus ? "Online" : "Offline" }}</p>
-      </v-app-bar>
-      <v-main>
+    <div v-else-if="isHomePage" class="app-shell home-shell">
+      <header class="top-header">
+        <h1 class="app-title">Home Projects</h1>
+        <p class="online-status">{{ this.onlineStatus ? "Online" : "Offline" }}</p>
+      </header>
+      <main class="app-main">
         <router-view></router-view>
-      </v-main>
-    </v-app>
+      </main>
+    </div>
 
-    <!-- ✅ MAIN APP LAYOUT WITH NAVIGATION -->
-    <v-app v-else>
-      <!-- ✅ TOP HEADER WITH DROPDOWN MENU -->
-      <v-app-bar color="teal-darken-2">
-        <!-- ✅ DROPDOWN MENU BUTTON -->
-        <v-menu offset-y>
-          <template v-slot:activator="{ props }">
-            <button
-              v-bind="props" 
-              class="menu-dropdown" 
-              type="button"
-              :icon="isMobile"
-            >
+    <div v-else class="app-shell main-shell">
+      <header class="top-header">
+        <div class="header-left">
+        <details class="menu-dropdown-wrap" ref="menuDropdown" @toggle="onMenuToggle">
+          <summary class="menu-dropdown" role="button" aria-label="Open navigation menu">
               <i v-if="isMobile" class="fas fa-bars menu-icon"></i>
               <span v-else class="menu-text">Menu</span>
-            </button>
-          </template>
-          
-          <!-- ✅ DROPDOWN MENU ITEMS -->
-          <v-list class="navigation-menu">
-            <v-list-item
+          </summary>
+
+          <ul class="navigation-menu" role="menu">
+            <li
               v-for="link in links"
               :key="`${link.label}-header-link`"
-              @click="navigateToPage(link)"
               class="nav-menu-item"
               :class="{ 'mobile-nav-item': isMobile }"
             >
-              <!-- ✅ DESKTOP: ICON WITH TOOLTIP -->
-              <template v-if="!isMobile">
-                <v-tooltip location="right" :text="link.title">
-                  <template v-slot:activator="{ props }">
-                    <div v-bind="props" class="nav-item-content">
-                      <i :class="link.icon" class="dropdown-icon"></i>
-                    </div>
-                  </template>
-                </v-tooltip>
-              </template>
-
-              <!-- ✅ MOBILE: ICON + TEXT -->
-              <template v-else>
-                <div class="nav-item-content mobile-content">
-                  <i :class="link.icon" class="dropdown-icon mobile-icon"></i>
-                  <span class="mobile-nav-text">{{ link.title }}</span>
+              <button
+                type="button"
+                class="nav-menu-button"
+                @click="navigateFromMenu(link)"
+                :title="!isMobile ? link.title : ''"
+              >
+                <div class="nav-item-content" :class="{ 'mobile-content': isMobile }">
+                  <i :class="link.icon" class="dropdown-icon" :class="{ 'mobile-icon': isMobile }"></i>
+                  <span v-if="isMobile" class="mobile-nav-text">{{ link.title }}</span>
                 </div>
-              </template>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+              </button>
+            </li>
+          </ul>
+        </details>
 
         <!-- ✅ APP TITLE -->
-        <v-toolbar-title class="app-title">
+        <h1 class="app-title">
           <router-link to="/about" class="title-link">
             Home Projects
           </router-link>
-        </v-toolbar-title>
-
-        <v-spacer></v-spacer>
+        </h1>
+        </div>
 
         <!-- ✅ ONLINE STATUS -->
         <p class="online-status">{{ this.onlineStatus ? "Online" : "Offline" }}</p>
-      </v-app-bar>
+      </header>
 
       <!-- ✅ MAIN CONTENT AREA -->
-      <v-main>
+      <main class="app-main">
         <router-view></router-view>
-      </v-main>
+      </main>
 
       <!-- ✅ BOTTOM FOOTER NAVIGATION -->
       <!-- ✅ SIMPLIFIED FOOTER -->
-      <v-footer 
-        color="teal-darken-2" 
-        app 
+      <footer
         class="smart-footer"
         :class="{ 'footer-visible': showFooter, 'footer-hidden': !showFooter }"
       >
@@ -120,8 +95,8 @@
             </div>
           </button>
         </div>
-      </v-footer>
-    </v-app>
+      </footer>
+    </div>
   </div>
 </template>
 
@@ -131,43 +106,16 @@ import { authComputed } from './vuex/helpers.js'
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import Toast from '@/components/ui/Toast.vue'
 
-// ✅ ONLY IMPORT COMPONENTS YOU ACTUALLY USE
-import {
-  VApp,
-  VAppBar,
-  VMain,
-  VFooter,
-  VToolbarTitle,
-  VSpacer,
-  VMenu,
-  VList,
-  VListItem,
-  VTooltip
-} from 'vuetify/components'
-
 export default {
   components: {
     ConfirmDialogue,
-    Toast,
-    // ✅ ONLY REGISTER COMPONENTS YOU USE
-    VApp,
-    VAppBar,
-    VMain,
-    VFooter,
-    VToolbarTitle,
-    VSpacer,
-    VMenu,
-    VList,
-    VListItem,
-    VTooltip
-    // ❌ REMOVED: VBtnToggle (not used)
-    // ❌ REMOVED: VProgressCircular (not used)
+    Toast
   },
   
   computed: {
     ...authComputed,
     isMobile() {
-      return window.innerWidth <= 768;
+      return this.windowWidth <= 768;
     },
     isAuthPage() {
       const authPages = ['Login', 'Register', 'ForgotPassword', 'PasswordReset', 'PasswordResetEdit'];
@@ -192,6 +140,29 @@ export default {
       } else {
         this.$router.push({ name: link.label });
       }
+    },
+
+    navigateFromMenu(link) {
+      this.navigateToPage(link);
+      this.closeMenu();
+    },
+
+    closeMenu() {
+      if (this.$refs.menuDropdown) {
+        this.$refs.menuDropdown.removeAttribute('open');
+      }
+    },
+
+    handleDocumentClick(event) {
+      const menu = this.$refs.menuDropdown;
+      if (!menu || !menu.hasAttribute('open')) return;
+      if (!menu.contains(event.target)) {
+        this.closeMenu();
+      }
+    },
+
+    onMenuToggle() {
+      // no-op hook retained for future telemetry/debugging.
     },
 
     handleResize() {
@@ -291,9 +262,7 @@ export default {
 
   mounted() {
     // ✅ LISTEN FOR WINDOW RESIZE
-    window.addEventListener('resize', () => {
-      this.$forceUpdate(); // Force re-render on resize
-    });
+    window.addEventListener('resize', this.handleResize);
     
     // ✅ LISTEN FOR SCROLL EVENTS
     window.addEventListener('scroll', this.handleScroll, { passive: true });
@@ -306,12 +275,15 @@ export default {
     window.addEventListener('offline', () => {
       this.onlineStatus = false;
     });
+
+    document.addEventListener('click', this.handleDocumentClick);
   },
   
   beforeUnmount() {
     // ✅ CLEANUP EVENT LISTENERS
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('scroll', this.handleScroll);
+    document.removeEventListener('click', this.handleDocumentClick);
   }
 }
 </script>
@@ -319,7 +291,27 @@ export default {
 <style scoped>
 /* ✅ APP TITLE STYLING */
 .app-title {
-  margin-left: 1rem;
+  margin: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.top-header {
+  background: #00796b;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  gap: 1rem;
+}
+
+.app-main {
+  min-height: calc(100vh - 56px);
 }
 
 .title-link {
@@ -341,11 +333,27 @@ export default {
 
 /* ✅ MENU DROPDOWN BUTTON */
 .menu-dropdown {
+  border: none;
   background-color: #ffffff !important;
   color: #333 !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   border-radius: 8px;
   margin-right: 1rem;
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  min-height: 36px;
+}
+
+.menu-dropdown::-webkit-details-marker {
+  display: none;
+}
+
+.menu-dropdown-wrap {
+  position: relative;
 }
 
 .menu-icon {
@@ -361,19 +369,36 @@ export default {
 
 /* ✅ DROPDOWN NAVIGATION MENU */
 .navigation-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
   min-width: 160px;
+  background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   max-height: 420px;
   overflow-y: auto;
+  padding: 0.4rem 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1010;
 }
 
 .nav-menu-item {
-  padding: 12px 16px;
+  padding: 0;
   transition: all 0.3s ease;
-  cursor: pointer;
   border-radius: 8px;
   margin: 4px 8px;
+}
+
+.nav-menu-button {
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .nav-menu-item:hover {
@@ -610,30 +635,19 @@ export default {
 }
 
 /* ✅ MAIN CONTENT PADDING (for fixed footer) */
-.v-main {
+.app-main {
   padding-bottom: 80px !important;
 }
 
 @media (max-width: 768px) {
-  .v-main {
+  .app-main {
     padding-bottom: 70px !important;
   }
 }
 
 @media (max-width: 480px) {
-  .v-main {
+  .app-main {
     padding-bottom: 60px !important;
   }
-}
-
-/* ✅ VUETIFY OVERRIDES */
-.v-footer {
-  height: auto !important;
-  min-height: auto !important;
-  flex: 0 0 auto !important;
-}
-
-.v-application {
-  padding-bottom: 0 !important;
 }
 </style>

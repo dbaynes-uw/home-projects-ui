@@ -22,7 +22,7 @@
     <BaseCard class="form-card">
       <template #header><h3>Book Details</h3></template>
       <v-form @submit.prevent="onSubmit">
-        <v-container class="form-container">
+        <div class="form-container">
         <v-text-field
           v-model="book.title"
           :rules="[requiredTitle]"
@@ -74,7 +74,7 @@
             <button type="submit" class="submit-btn">Submit</button>
             <router-link :to="{ name: 'BookList' }" class="cancel-link">Cancel</router-link>
           </div>
-        </v-container>
+        </div>
       </v-form>
     </BaseCard>
   </div>

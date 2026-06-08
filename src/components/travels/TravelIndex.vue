@@ -5,7 +5,7 @@
       <p>No travels to display</p>
     </div>
     
-    <v-table v-else density="compact" class="travel-table">
+    <table v-else class="travel-table">
       <thead>
         <tr>
           <th class="table-header" @click="sortList('title')">
@@ -119,7 +119,7 @@
           </td>
         </tr>
       </tbody>
-    </v-table>
+    </table>
   </div>
 </template>
 <script setup>

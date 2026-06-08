@@ -1,15 +1,15 @@
 
 <template>
   <div class="about-page">
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="12" md="8">
-          <v-card class="mx-auto mt-5">
-            <v-card-title class="text-center">
+    <div class="about-container">
+      <div class="about-row about-row-center">
+        <div class="about-col about-col-12 about-col-md-8">
+          <section class="about-panel mx-auto mt-5">
+            <header class="about-panel-header text-center">
               <h1>✅ Welcome to Home Projects!</h1>
-            </v-card-title>
+            </header>
             
-            <v-card-text>
+            <div class="about-panel-body">
               <div v-if="$store.state.user && $store.state.loggedIn" class="text-center">
                 <h2 class="mb-4">Hello, {{ userName }}! 👋</h2>
                 
@@ -43,17 +43,17 @@
                 <div class="navigation-section">
                   <h3 class="mb-3">🚀 What would you like to do?</h3>
                   
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4" v-for="link in navigationLinks" :key="link.name">
-                      <v-card class="nav-card" @click="navigateTo(link.url)" hover>
-                        <v-card-text class="text-center">
+                  <div class="about-row">
+                    <div class="about-col about-col-12 about-col-sm-6 about-col-md-4" v-for="link in navigationLinks" :key="link.name">
+                      <button type="button" class="nav-card" @click="navigateTo(link.url)">
+                        <div class="nav-card-body text-center">
                           <i :class="link.icon" class="nav-icon mb-2"></i>
                           <h4>{{ link.title }}</h4>
                           <p class="text-caption">{{ link.description }}</p>
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -65,18 +65,18 @@
                   Go to Login
                 </BaseButton>
               </div>
-            </v-card-text>
+            </div>
             
-            <v-card-actions class="justify-center">
+            <footer class="about-panel-footer justify-center">
               <BaseButton @click="logout" variant="danger">
                 <i class="fas fa-sign-out-alt mr-2"></i>
                 Logout
               </BaseButton>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+            </footer>
+          </section>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -211,12 +211,84 @@ export default {
   padding: 20px 0;
 }
 
+.about-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.about-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+}
+
+.about-row-center {
+  justify-content: center;
+}
+
+.about-col {
+  box-sizing: border-box;
+  padding: 8px;
+}
+
+.about-col-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.about-col-sm-6 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.about-col-md-8 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.about-col-md-4 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.about-panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.about-panel-header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.about-panel-body {
+  padding: 0.5rem 1.25rem 1rem;
+}
+
+.about-panel-footer {
+  padding: 0.75rem 1.25rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+
 .nav-card {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  width: 100%;
   cursor: pointer;
   transition: all 0.3s ease;
   height: 120px;
   display: flex;
   align-items: center;
+  border-radius: 0.75rem;
+}
+
+.nav-card-body {
+  width: 100%;
 }
 
 .nav-card:hover {
@@ -246,6 +318,25 @@ export default {
   
   .nav-card {
     height: 100px;
+  }
+}
+
+@media (min-width: 600px) {
+  .about-col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 960px) {
+  .about-col-md-8 {
+    flex: 0 0 66.6667%;
+    max-width: 66.6667%;
+  }
+
+  .about-col-md-4 {
+    flex: 0 0 33.3333%;
+    max-width: 33.3333%;
   }
 }
 </style>

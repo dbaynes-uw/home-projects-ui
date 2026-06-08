@@ -1,7 +1,7 @@
 <template>
-  <v-container>
-    <v-card class="mx-auto mt-5">
-      <v-card-title>
+  <div class="waterings-page-container">
+    <section class="page-shell mx-auto mt-5">
+      <div class="page-shell-title-row">
         <h2>Waterings</h2>
         <router-link :to="{ name: 'WateringCreate' }">Create New Watering</router-link>
               <button id="button-as-link" @click="requestIndexDetail">
@@ -14,19 +14,19 @@
           <b>Plants</b>
         </router-link>
       </button> 
-      </v-card-title>
-    </v-card>
+      </div>
+    </section>
     <div class="watering-details">
       <template v-if="isLoading">
         <BaseSpinner size="large" label="Loading Waterings" />
         <p>Loading Waterings...</p>
       </template>
       <template v-else>
-        <v-card-actions>
+        <div class="page-shell-actions">
           <button id="indent-secondary-button" class="btn btn-secondary" @click="toggleView" type="button">
              {{ showIndex ? 'Show Card View' : 'Show Index View' }}
           </button>
-        </v-card-actions>
+        </div>
 
         <WateringIndex :waterings="waterings"
           v-if="showIndex"
@@ -42,7 +42,7 @@
         
       </template>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -94,6 +94,28 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
+.waterings-page-container {
+  width: 100%;
+}
+
+.page-shell {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.page-shell-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-shell-actions {
+  margin: 0.5rem 0;
+}
+
 #indent-primary-button {
   margin-left: 5.8rem;
 }

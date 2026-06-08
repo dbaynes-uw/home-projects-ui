@@ -1,12 +1,11 @@
 <template>
-  <v-card class="mx-auto mt-5">
-    <v-card-title class="pb-0">
+  <section class="create-shell mx-auto mt-5">
+    <header class="create-shell-header pb-0">
       <h3>Add Film to Films Watched Collection</h3>
-    </v-card-title>
-  </v-card>
-  <v-card-text>
+    </header>
+    <div class="create-shell-body">
     <v-form @submit.prevent="onSubmit">
-      <v-container id="form-container">
+      <div id="form-container">
         <v-text-field
           v-model="film.title"
           :rules="[requiredTitle]"
@@ -89,9 +88,10 @@
           </template>
         </v-text-field>
         <button type="submit" class="btn btn-primary mt-2 w-100">Submit</button>
-      </v-container>
+      </div>
     </v-form>
-  </v-card-text>
+    </div>
+  </section>
 </template>
 <script setup>
   import { FILM_RATINGS } from "@/services/constants";
@@ -186,6 +186,21 @@ export default {
   width: 33%;
   padding: 10px;
   /*height: 300px; /* Should be removed. Only for demonstration */
+}
+
+.create-shell {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.create-shell-header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.create-shell-body {
+  padding: 0.5rem 1.25rem 1rem;
 }
 
 /* Clear floats after the columns */

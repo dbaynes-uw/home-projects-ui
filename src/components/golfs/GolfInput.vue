@@ -1,11 +1,11 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <v-card-text>
+  <div class="golf-input-body">
     <span v-if="false">
       <!-- action prop removed — GolfInput is now create-only -->
     </span>
     <v-form id="isFormValid" @submit.prevent="onSubmit">
-      <v-container id="form-container">
+      <div id="form-container" class="form-container">
         <v-text-field
           v-model="golf.course"
           :rules="[requiredCourse]"
@@ -217,9 +217,9 @@
           </template>
         </v-text-field>
         <BaseButton type="submit" :block="true" class="mt-2" :loading="submitting">Submit</BaseButton>
-      </v-container>
+      </div>
     </v-form>
-  </v-card-text>
+  </div>
 </template>
 <script setup>
 import { ref, reactive } from 'vue'
@@ -350,6 +350,10 @@ function calculateTotalPenalty(g) { return GolfCalculations.calculateTotalPenalt
 function formatStandardDate(value) { return DateFormatService.formatStandardDatejs(value) }
 </script>
 <style lang="css">
+.golf-input-body {
+  padding: 0.5rem 0;
+}
+
 /*below to remove increment/decrement arrows for type=number*/
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {

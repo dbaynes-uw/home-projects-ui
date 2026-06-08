@@ -5,8 +5,8 @@
     <ConfirmDialogue ref="confirmDialogue" />
     
     <!-- ✅ HEADER CARD -->
-    <v-card class="mx-auto mt-5">
-      <v-card-title class="pb-0">
+    <section class="vendor-panel mx-auto mt-5">
+      <header class="vendor-panel-header pb-0">
         <div class="title-section">
           <h2>
             <i class="fas fa-edit"></i>
@@ -16,10 +16,10 @@
             <u>{{ statusMessage }}</u>
           </p>
         </div>
-      </v-card-title>
+      </header>
       
       <!-- ✅ NAVIGATION BUTTONS -->
-      <v-card-text>
+      <div class="vendor-panel-body">
         <div class="navigation-flex">
           <router-link :to="{ name: 'ProductsByLocations' }" class="nav-link-btn">
             <BaseButton variant="ghost" size="medium" class="nav-button" type="button">
@@ -38,21 +38,21 @@
             Delete Vendor
           </BaseButton>
         </div>
-      </v-card-text>
-    </v-card>
+      </div>
+    </section>
 
     <!-- ✅ EDIT FORM CARD -->
-    <v-card class="mt-4">
-      <v-card-title>
+    <section class="vendor-panel mt-4">
+      <header class="vendor-panel-header">
         <h3>
           <i class="fas fa-store"></i>
           Edit Vendor Details
         </h3>
-      </v-card-title>
+      </header>
       
-      <v-card-text>
+      <div class="vendor-panel-body">
         <v-form @submit.prevent="handleUpdateVendor" ref="formRef">
-          <v-container>
+          <div class="vendor-form-container">
             <!-- ✅ LOCATION (READONLY) -->
             <v-text-field
               label="Location"
@@ -94,10 +94,10 @@
               <i class="fas fa-save"></i>
               Update Vendor
             </BaseButton>
-          </v-container>
+          </div>
         </v-form>
-      </v-card-text>
-    </v-card>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -372,6 +372,25 @@ onMounted(async () => {
 
 <style scoped>
 /* ✅ MODERN CONSISTENT STYLES */
+.vendor-form-container {
+  width: 100%;
+}
+
+.vendor-panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.vendor-panel-header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.vendor-panel-body {
+  padding: 0.5rem 1.25rem 1rem;
+}
+
 .vendor-edit-wrapper {
   width: 100%;
   max-width: 800px;
