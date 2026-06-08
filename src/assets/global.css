@@ -1,3 +1,9 @@
+html,
+body,
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+}
+
 .header-base {
   display: flex;
   /*height: 3.25rem;*/
@@ -21,7 +27,7 @@
 .menu-dropdown {
   font-weight: bold;
   color: #000;
-  font-family: system-ui;
+  font-family: inherit;
 }
 .cards {
   display: grid;
