@@ -32,6 +32,7 @@
             <th>Description</th>
             <th>Assigned</th>
             <th>Frequency</th>
+            <th>Notify</th>
             <th>Date Due</th>
             <th>Status</th>
             <th style="text-align: right">Actions</th>
@@ -48,6 +49,7 @@
             <td>{{ event.description }}</td>
             <td>{{ event.assigned }}</td>
             <td>Every {{ event.frequency }} days</td>
+            <td>{{ Number(event.notify) === 1 ? 'Yes' : 'No' }}</td>
             <td>{{ formatStandardDate(event.action_due_date) }}</td>
             <td>{{ event.status[0].toUpperCase() + event.status.slice(1) }}</td>
             <td>

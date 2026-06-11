@@ -102,6 +102,23 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-bell"></i>
+              Overdue Notification
+            </label>
+            <div class="select-wrapper">
+              <select
+                v-model.number="event.notify"
+                class="form-select"
+              >
+                <option :value="0">Do not notify when overdue</option>
+                <option :value="1">Notify when overdue</option>
+              </select>
+              <i class="fas fa-chevron-down select-icon"></i>
+            </div>
+          </div>
+
           <!-- ✅ NOTES -->
           <div class="form-group">
             <label class="form-label">
@@ -155,6 +172,7 @@ const event = ref({
   action_due_date: '',
   action_completed_date: '',
   status: '',
+  notify: 0,
   notes: '',
   created_by: '',
 });

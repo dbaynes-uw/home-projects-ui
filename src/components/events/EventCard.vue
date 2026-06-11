@@ -50,6 +50,11 @@
         <span>{{ capitalizedStatus }}</span>
       </div>
 
+      <div class="event-detail-row">
+        <i class="fas fa-bell"></i>
+        <span>{{ notifyLabel }}</span>
+      </div>
+
       <div class="event-detail-row event-detail-notes" v-if="event.notes">
         <i class="fas fa-sticky-note"></i>
         <span v-html="renderMarkdown(event.notes)"></span>
@@ -122,6 +127,12 @@ const capitalizedStatus = computed(() => {
 const isEventPastDue = computed(() => {
   const today = dayjs().format("YYYY-MM-DD");
   return props.event.status === 'active' && props.event.action_due_date < today;
+});
+
+const notifyLabel = computed(() => {
+  return Number(props.event?.notify) === 1
+    ? 'Notify when overdue'
+    : 'Do not notify when overdue';
 });
 
 // ✅ METHODS

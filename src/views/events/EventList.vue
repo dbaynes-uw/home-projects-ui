@@ -392,7 +392,7 @@ async function notifyEventsDue() {
   try {
     const result = await axios.put(apiUrl.value + "notification_events_due");
     
-    if (result.statusText.toLowerCase() === 'ok') {
+    if (result.data?.statusText?.toLowerCase() === 'success') {
       alert('✅ Notification emails sent successfully');
     } else {
       alert('❌ Error sending notification emails');

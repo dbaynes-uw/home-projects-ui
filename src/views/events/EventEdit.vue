@@ -155,6 +155,23 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-bell"></i>
+              Overdue Notification
+            </label>
+            <div class="select-wrapper">
+              <select
+                v-model.number="event.notify"
+                class="form-select"
+              >
+                <option :value="0">Do not notify when overdue</option>
+                <option :value="1">Notify when overdue</option>
+              </select>
+              <i class="fas fa-chevron-down select-icon"></i>
+            </div>
+          </div>
+
           <!-- ✅ NOTES -->
           <div class="form-group">
             <label class="form-label">
@@ -313,6 +330,9 @@ const formatDueDate = (dateString) => {
 // ✅ LIFECYCLE
 onMounted(async () => {
   await store.dispatch("fetchEvent", props.id);
+  if (event.value?.notify === null || event.value?.notify === undefined) {
+    event.value.notify = 0;
+  }
 });
 </script>
 <style scoped>
