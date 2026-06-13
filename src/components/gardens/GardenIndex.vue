@@ -96,6 +96,11 @@ function deleteGarden(garden) {
   -webkit-overflow-scrolling: touch;
 }
 
+.data-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
 .actions-column,
 .actions-cell {
   width: 1%;
@@ -126,6 +131,7 @@ function deleteGarden(garden) {
   max-width: 34ch;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 i {
@@ -147,15 +153,29 @@ tr.is-complete {
     font-size: 0.82rem;
   }
 
+  .data-table th:nth-child(2),
+  .data-table td:nth-child(2) {
+    display: none;
+  }
+
   .garden-name-cell,
-  .notes-cell {
-    max-width: 18ch;
+  .actions-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .garden-name-cell {
+    max-width: 16ch;
   }
 
   .action-link,
   .action-button {
     width: 1.7rem;
     height: 1.7rem;
+  }
+
+  .action-icons {
+    gap: 0.2rem;
   }
 }
 </style>
