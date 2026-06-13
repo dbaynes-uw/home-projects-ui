@@ -17,9 +17,9 @@
       </thead>
       <tbody>
         <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
-          <td class="garden-name-cell">{{ garden.name }}</td>
-          <td class="notes-cell">{{ garden.notes }}</td>
-          <td class="actions-cell">
+          <td class="garden-name-cell" data-label="Garden Name">{{ garden.name }}</td>
+          <td class="notes-cell" data-label="Notes">{{ garden.notes }}</td>
+          <td class="actions-cell" data-label="Actions">
             <div class="action-icons">
               <router-link
                 :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
@@ -153,29 +153,67 @@ tr.is-complete {
     font-size: 0.82rem;
   }
 
-  .data-table th:nth-child(2),
-  .data-table td:nth-child(2) {
+  .data-table thead {
     display: none;
   }
 
-  .garden-name-cell,
-  .actions-cell {
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .data-table,
+  .data-table tbody,
+  .data-table tr,
+  .data-table td {
+    display: block;
+    width: 100%;
   }
 
-  .garden-name-cell {
-    max-width: 16ch;
+  .data-table tr {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background: #fff;
+  }
+
+  .data-table td {
+    padding: 0.35rem 0;
+    border: 0;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin-bottom: 0.15rem;
+  }
+
+  .notes-cell {
+    white-space: normal;
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .actions-cell {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .action-icons {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.35rem;
   }
 
   .action-link,
   .action-button {
-    width: 1.7rem;
-    height: 1.7rem;
+    width: 2.15rem;
+    height: 2.15rem;
   }
 
-  .action-icons {
-    gap: 0.2rem;
+  .garden-name-cell {
+    font-weight: 700;
   }
 }
 </style>

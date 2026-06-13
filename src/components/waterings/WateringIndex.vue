@@ -54,58 +54,63 @@
     </div>
   </div>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th id="background-blue" @click="sortList('name')">Name</th>
-        <th id="background-blue" @click="sortList('garden_names')">Garden</th>
-        <th id="background-blue" @click="sortList('target')">Target</th>
-        <th id="background-blue" @click="sortList('start_time')">Start</th>
-        <th id="background-blue" @click="sortList('end_time')">End</th>
-        <th id="background-blue" @click="sortList('duration')">Duration</th>
-        <th id="background-blue" @click="sortList('days')">Days</th>
-        <th id="background-blue">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="watering in sortedWaterings" :key="watering.id">
-        <td>{{ watering.name }}</td>
-        <td>{{ getWateringGardenNames(watering) }}</td>
-        <td>{{ watering.target }}</td>
-        <td>{{ formatTime(watering.start_time) }}</td>
-        <td>{{ formatTime(watering.end_time) }}</td>
-        <td>{{ watering.duration }}</td>
-        <td>{{ watering.days }}</td>
-        <td style="padding-left: 0">
-        <!--span v-if="this.onlineStatus"-->
-          <span class="fa-stack">
-            <router-link
-              :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
-            >
-              <i
-                id="travel-icon-edit"
-                class="fa-solid fa-pen-to-square fa-stack-1x"
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th id="background-blue" @click="sortList('name')">Name</th>
+          <th id="background-blue" @click="sortList('garden_names')">Garden</th>
+          <th id="background-blue" @click="sortList('target')">Target</th>
+          <th id="background-blue" @click="sortList('start_time')">Start</th>
+          <th id="background-blue" @click="sortList('end_time')">End</th>
+          <th id="background-blue" @click="sortList('duration')">Duration</th>
+          <th id="background-blue" @click="sortList('days')">Days</th>
+          <th id="background-blue">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="watering in sortedWaterings" :key="watering.id">
+          <td data-label="Name">{{ watering.name }}</td>
+          <td data-label="Garden">{{ getWateringGardenNames(watering) }}</td>
+          <td data-label="Target">{{ watering.target }}</td>
+          <td data-label="Start">{{ formatTime(watering.start_time) }}</td>
+          <td data-label="End">{{ formatTime(watering.end_time) }}</td>
+          <td data-label="Duration">{{ watering.duration }}</td>
+          <td data-label="Days">{{ watering.days }}</td>
+          <td class="watering-actions-cell" data-label="Actions">
+          <!--span v-if="this.onlineStatus"-->
+            <span class="action-icons">
+              <router-link
+                :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
+                class="action-link"
+                title="Edit Watering"
+                aria-label="Edit Watering"
               >
-              </i>
-            </router-link>
-            <span class="fa-stack fa-table-stack">
-              <router-link :to="{ name: 'Waterings' }">
-                <i class="fa fa-eye" id="action-eye-icon"></i>
+                <i class="fa-solid fa-pen-to-square"></i>
               </router-link>
-            </span>
-            <span class="fa-table-stack" id="action-delete-icon">
-              <i
-                @click="deleteWatering(watering)"
-                class="fas fa-trash-alt fa-stack-1x"
-                id="travel-icon-delete"
+              <router-link
+                :to="{ name: 'Waterings' }"
+                class="action-link"
+                title="View Waterings"
+                aria-label="View Waterings"
               >
-              </i>
+                <i class="fa fa-eye"></i>
+              </router-link>
+              <button
+                type="button"
+                @click="deleteWatering(watering)"
+                class="action-button"
+                title="Delete Watering"
+                aria-label="Delete Watering"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
             </span>
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <br />
   <b>Online Status: {{ onlineStatus }}</b>
 </template>
@@ -357,23 +362,46 @@ function compactTimelineName(name, visibleDuration) {
 }
 </script>
 <style scoped>
-#action-eye-icon {
-  top: 0.4rem;
-  font-size: 18px;
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-#action-delete-icon {
-  position: relative;
-  top: 0.5rem;
-  left: 2.3rem;
+
+.data-table {
+  width: 100%;
+  table-layout: fixed;
 }
-.fa-table-stack {
-  position: relative;
-  left: 2rem;
-}
+
 i {
-  bottom: 0px;
   color: gray;
 }
+
+.action-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.action-link,
+.action-button {
+  width: 1.9rem;
+  height: 1.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.watering-actions-cell {
+  width: 1%;
+  white-space: nowrap;
+}
+
 tr.is-complete {
   background: #35495e;
   color: #fff;
@@ -549,6 +577,58 @@ tr.is-complete {
   padding: 0.15rem 0.5rem;
   font-size: 0.66rem;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr,
+  .data-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table tr {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background: #fff;
+  }
+
+  .data-table td {
+    padding: 0.35rem 0;
+    border: 0;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin-bottom: 0.15rem;
+  }
+
+  .watering-actions-cell {
+    white-space: normal;
+  }
+
+  .action-icons {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .action-link,
+  .action-button {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
 }
 </style>
 
