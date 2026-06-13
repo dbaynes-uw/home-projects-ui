@@ -6,50 +6,52 @@
     </span>
     <br/>
   </div>
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th id="background-blue" @click="sortList('name')">Garden Name</th>
-        <th id="background-blue">Notes</th>
-        <th class="th-center" id="background-blue">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
-        <td>{{ garden.name }}</td>
-        <td>{{ garden.notes }}</td>
-        <td style="padding-left: 0">
-        <!--span v-if="this.onlineStatus"-->
-          <span class="fa-stack">
-            <router-link
-              :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
-            >
-              <i
-                id="travel-icon-edit"
-                class="fa-solid fa-pen-to-square fa-stack-1x"
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th id="background-blue" @click="sortList('name')">Garden Name</th>
+          <th id="background-blue">Notes</th>
+          <th class="th-center actions-column" id="background-blue">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
+          <td class="garden-name-cell">{{ garden.name }}</td>
+          <td class="notes-cell">{{ garden.notes }}</td>
+          <td class="actions-cell">
+            <div class="action-icons">
+              <router-link
+                :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
+                class="action-link"
+                title="Edit Garden"
+                aria-label="Edit Garden"
               >
-              </i>
-            </router-link>
-            <span class="fa-stack fa-table-stack">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </router-link>
               <router-link
                 :to="{ name: 'GardenDetails', params: { id: `${garden.id}` } }"
+                class="action-link"
+                title="View Garden"
+                aria-label="View Garden"
               >
-                <i class="fa fa-eye" id="action-eye-icon"></i>
+                <i class="fa fa-eye"></i>
               </router-link>
-            </span>
-            <span class="fa-table-stack" id="action-delete-icon">
-              <i
+              <button
+                type="button"
                 @click="deleteGarden(garden)"
-                class="fas fa-trash-alt fa-stack-1x"
-                id="travel-icon-delete"
+                class="action-button"
+                title="Delete Garden"
+                aria-label="Delete Garden"
               >
-              </i>
-            </span>
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <br />
   <b>Online Status: {{ onlineStatus }}</b>
 </template>
@@ -88,30 +90,73 @@ function deleteGarden(garden) {
 }
 </script>
 <style scoped>
-#action-eye-icon {
-  top: 0.4rem;
-  font-size: 18px;
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-#action-delete-icon {
-  position: relative;
-  top: 0.5rem;
-  left: 2.3rem;
+
+.actions-column,
+.actions-cell {
+  width: 1%;
+  white-space: nowrap;
 }
-.fa-table-stack {
-  position: relative;
-  left: 2rem;
+
+.action-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
+
+.action-link,
+.action-button {
+  width: 1.9rem;
+  height: 1.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.notes-cell {
+  max-width: 34ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 i {
-  bottom: 0px;
   color: gray;
 }
+
 tr.is-complete {
   background: #35495e;
   color: #fff;
 }
+
 #status-message {
   text-align: center;
   color: navy;
+}
+
+@media (max-width: 768px) {
+  .data-table {
+    font-size: 0.82rem;
+  }
+
+  .garden-name-cell,
+  .notes-cell {
+    max-width: 18ch;
+  }
+
+  .action-link,
+  .action-button {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
 }
 </style>
 
