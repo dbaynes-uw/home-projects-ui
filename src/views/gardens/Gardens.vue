@@ -85,7 +85,7 @@ const gardens = computed(() => {
 });
 
 const isLoading = ref(true);
-const showIndex = ref(false);
+const showIndex = ref(true);
 
 function toggleView() {
   showIndex.value = !showIndex.value;
