@@ -17,9 +17,9 @@
       </thead>
       <tbody>
         <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
-          <td class="garden-name-cell" data-label="Garden Name">{{ garden.name }}</td>
-          <td class="notes-cell" data-label="Notes">{{ garden.notes }}</td>
-          <td class="actions-cell" data-label="Actions">
+          <td class="garden-name-cell">{{ garden.name }}</td>
+          <td class="notes-cell">{{ garden.notes }}</td>
+          <td class="actions-cell">
             <div class="action-icons">
               <router-link
                 :to="{ name: 'GardenEdit', params: { id: `${garden.id}` } }"
@@ -98,13 +98,32 @@ function deleteGarden(garden) {
 
 .data-table {
   width: 100%;
-  table-layout: fixed;
+  min-width: 560px;
+  table-layout: auto;
 }
 
-.actions-column,
+.actions-column {
+  position: sticky;
+  right: 0;
+  z-index: 3;
+  min-width: 8.5rem;
+  width: 8.5rem;
+  background: #375a7f;
+}
+
 .actions-cell {
-  width: 1%;
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  min-width: 8.5rem;
+  width: 8.5rem;
+  background: inherit;
+  box-shadow: -6px 0 8px -8px rgba(15, 23, 42, 0.45);
   white-space: nowrap;
+}
+
+.garden-name-cell {
+  min-width: 11rem;
 }
 
 .action-icons {
@@ -128,6 +147,7 @@ function deleteGarden(garden) {
 }
 
 .notes-cell {
+  min-width: 16rem;
   max-width: 34ch;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -151,69 +171,18 @@ tr.is-complete {
 @media (max-width: 768px) {
   .data-table {
     font-size: 0.82rem;
-  }
-
-  .data-table thead {
-    display: none;
-  }
-
-  .data-table,
-  .data-table tbody,
-  .data-table tr,
-  .data-table td {
-    display: block;
-    width: 100%;
-  }
-
-  .data-table tr {
-    margin-bottom: 0.75rem;
-    padding: 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    background: #fff;
-  }
-
-  .data-table td {
-    padding: 0.35rem 0;
-    border: 0;
-  }
-
-  .data-table td::before {
-    content: attr(data-label);
-    display: block;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #64748b;
-    margin-bottom: 0.15rem;
-  }
-
-  .notes-cell {
-    white-space: normal;
-    max-width: none;
-    overflow: visible;
-    text-overflow: clip;
-  }
-
-  .actions-cell {
-    white-space: normal;
-    overflow: visible;
+    min-width: 520px;
   }
 
   .action-icons {
     justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.2rem;
   }
 
   .action-link,
   .action-button {
-    width: 2.15rem;
-    height: 2.15rem;
-  }
-
-  .garden-name-cell {
-    font-weight: 700;
+    width: 1.8rem;
+    height: 1.8rem;
   }
 }
 </style>

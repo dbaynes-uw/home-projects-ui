@@ -65,19 +65,19 @@
           <th id="background-blue" @click="sortList('end_time')">End</th>
           <th id="background-blue" @click="sortList('duration')">Duration</th>
           <th id="background-blue" @click="sortList('days')">Days</th>
-          <th id="background-blue">Actions</th>
+          <th id="background-blue" class="actions-column">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="watering in sortedWaterings" :key="watering.id">
-          <td data-label="Name">{{ watering.name }}</td>
-          <td data-label="Garden">{{ getWateringGardenNames(watering) }}</td>
-          <td data-label="Target">{{ watering.target }}</td>
-          <td data-label="Start">{{ formatTime(watering.start_time) }}</td>
-          <td data-label="End">{{ formatTime(watering.end_time) }}</td>
-          <td data-label="Duration">{{ watering.duration }}</td>
-          <td data-label="Days">{{ watering.days }}</td>
-          <td class="watering-actions-cell" data-label="Actions">
+          <td>{{ watering.name }}</td>
+          <td>{{ getWateringGardenNames(watering) }}</td>
+          <td>{{ watering.target }}</td>
+          <td>{{ formatTime(watering.start_time) }}</td>
+          <td>{{ formatTime(watering.end_time) }}</td>
+          <td>{{ watering.duration }}</td>
+          <td>{{ watering.days }}</td>
+          <td class="watering-actions-cell">
           <!--span v-if="this.onlineStatus"-->
             <span class="action-icons">
               <router-link
@@ -370,11 +370,25 @@ function compactTimelineName(name, visibleDuration) {
 
 .data-table {
   width: 100%;
-  table-layout: fixed;
+  min-width: 960px;
+  table-layout: auto;
+}
+
+.data-table td {
+  vertical-align: middle;
 }
 
 i {
   color: gray;
+}
+
+.actions-column {
+  position: sticky;
+  right: 0;
+  z-index: 3;
+  min-width: 8.5rem;
+  width: 8.5rem;
+  background: #375a7f;
 }
 
 .action-icons {
@@ -398,8 +412,22 @@ i {
 }
 
 .watering-actions-cell {
-  width: 1%;
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  min-width: 8.5rem;
+  width: 8.5rem;
+  background: inherit;
+  box-shadow: inset 1px 0 0 rgba(15, 23, 42, 0.08);
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
   white-space: nowrap;
+}
+
+.watering-actions-cell .action-icons {
+  display: flex;
+  align-items: center;
+  min-height: 1.9rem;
 }
 
 tr.is-complete {
@@ -580,54 +608,19 @@ tr.is-complete {
 }
 
 @media (max-width: 768px) {
-  .data-table thead {
-    display: none;
-  }
-
-  .data-table,
-  .data-table tbody,
-  .data-table tr,
-  .data-table td {
-    display: block;
-    width: 100%;
-  }
-
-  .data-table tr {
-    margin-bottom: 0.75rem;
-    padding: 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    background: #fff;
-  }
-
-  .data-table td {
-    padding: 0.35rem 0;
-    border: 0;
-  }
-
-  .data-table td::before {
-    content: attr(data-label);
-    display: block;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #64748b;
-    margin-bottom: 0.15rem;
-  }
-
-  .watering-actions-cell {
-    white-space: normal;
+  .data-table {
+    min-width: 860px;
+    font-size: 0.82rem;
   }
 
   .action-icons {
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    gap: 0.2rem;
   }
 
   .action-link,
   .action-button {
-    width: 2.15rem;
-    height: 2.15rem;
+    width: 1.8rem;
+    height: 1.8rem;
   }
 }
 </style>

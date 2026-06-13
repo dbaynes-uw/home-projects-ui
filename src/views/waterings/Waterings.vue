@@ -3,17 +3,16 @@
     <section class="page-shell mx-auto mt-5">
       <div class="page-shell-title-row">
         <h2>Waterings</h2>
-        <router-link :to="{ name: 'WateringCreate' }">Create New Watering</router-link>
-              <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Gardens' }">
-          <b>Gardens</b>
+        <router-link class="page-link-button" :to="{ name: 'WateringCreate' }">Create New Watering</router-link>
+      </div>
+
+      <div class="page-shell-nav-row">
+        <router-link class="page-link-button" :to="{ name: 'Gardens' }">
+          Gardens
         </router-link>
-      </button>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Plants' }">
-          <b>Plants</b>
+        <router-link class="page-link-button" :to="{ name: 'Plants' }">
+          Plants
         </router-link>
-      </button> 
       </div>
     </section>
     <div class="watering-details">
@@ -107,9 +106,35 @@ onMounted(async () => {
 
 .page-shell-title-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.page-shell-nav-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.page-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.6rem;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.page-link-button:hover {
+  background: #e2e8f0;
 }
 
 .page-shell-actions {
@@ -121,5 +146,27 @@ onMounted(async () => {
 }
 #indent-secondary-button {
   margin-left: 2rem;
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    padding: 0.85rem;
+  }
+
+  .page-shell-title-row,
+  .page-shell-nav-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-shell-title-row h2 {
+    margin-bottom: 0;
+  }
+
+  .page-link-button,
+  #indent-secondary-button {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 </style>
