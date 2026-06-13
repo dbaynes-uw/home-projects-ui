@@ -89,10 +89,10 @@
                 <i class="fa-solid fa-pen-to-square"></i>
               </router-link>
               <router-link
-                :to="{ name: 'Waterings' }"
+                :to="{ name: 'WateringDetails', params: { id: `${watering.id}` }  }"
                 class="action-link"
-                title="View Waterings"
-                aria-label="View Waterings"
+                title="View Watering"
+                aria-label="View Watering"
               >
                 <i class="fa fa-eye"></i>
               </router-link>
