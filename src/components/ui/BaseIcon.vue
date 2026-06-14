@@ -1,5 +1,5 @@
 <template>
-  <i :class="iconClasses" v-bind="iconAttrs"><slot /></i>
+  <i :class="iconClasses" v-bind="iconAttrs"></i>
 </template>
 
 <script setup>
