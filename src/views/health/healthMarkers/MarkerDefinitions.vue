@@ -205,11 +205,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
-const router = useRouter();
 const definitionStore = useMarkerDefinitionStore();
 const confirmDialogue = ref(null);
 

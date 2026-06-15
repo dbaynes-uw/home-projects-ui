@@ -445,10 +445,6 @@ const views = [
   { value: 'charts', label: 'Charts', icon: 'chart-line' }
 ];
 
-// ✅ COMPUTED FOR MIXED VIEW
-const panelItems = computed(() => mixedItems.value.filter(item => item.type === 'panel'));
-const standaloneItems = computed(() => mixedItems.value.filter(item => item.type === 'marker'));
-
 // ✅ COMPUTED FROM STORE
 const healthMarkers = computed(() => healthMarkerStore.allHealthMarkers);
 const isLoading = computed(() => healthMarkerStore.isLoading);
@@ -474,7 +470,7 @@ const statusCounts = computed(() => {
   
   markers.forEach(marker => {
     const status = marker.marker_status || marker.status || 'Unknown';
-    if (counts.hasOwnProperty(status)) {
+    if (Object.prototype.hasOwnProperty.call(counts, status)) {
       counts[status]++;
     }
   });
@@ -585,7 +581,7 @@ function formatTestDate(dateString) {
       day: 'numeric',
       year: 'numeric'
     });
-  } catch (error) {
+  } catch {
     return dateString;
   }
 }

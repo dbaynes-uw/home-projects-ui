@@ -125,7 +125,6 @@
   </div>
 </template>
 <script setup>
-import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 //import { useRouter } from 'vue-router';
@@ -141,7 +140,6 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['dblclick', 'delete']);
-const gardenStore = useGardenStore();
 const plantStore = usePlantStore();
 const wateringStore = useWateringStore();
 const plants = computed(() => {
@@ -172,41 +170,6 @@ const plants = computed(() => {
 const currentTime = ref(new Date());
 let timeInterval = null;
 
-// ✅ COMPUTED TO CHECK IF WATERING IS ACTIVE
-const isCurrentlyActive = computed(() => {
-  const startTime = props.watering.start_time;
-  const endTime = props.watering.end_time;
-  
-  if (!startTime || !endTime) return false;
-  
-  try {
-    const now = currentTime.value;
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-    
-    // Check if dates are valid
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
-    
-    // For daily recurring times, we need to check today's schedule
-    const todayStart = new Date();
-    todayStart.setHours(start.getHours(), start.getMinutes(), start.getSeconds(), 0);
-    
-    const todayEnd = new Date();
-    todayEnd.setHours(end.getHours(), end.getMinutes(), end.getSeconds(), 0);
-    
-    // Handle overnight watering (end time is next day)
-    if (todayEnd <= todayStart) {
-      todayEnd.setDate(todayEnd.getDate() + 1);
-    }
-    
-    // Check if current time is within the watering window
-    return now >= todayStart && now <= todayEnd;
-    
-  } catch (error) {
-    console.warn('Active time calculation error:', error);
-    return false;
-  }
-});
 // ✅ ADD COMPUTED DURATION
 const calculatedDuration = computed(() => {
   const startTime = props.watering.start_time;

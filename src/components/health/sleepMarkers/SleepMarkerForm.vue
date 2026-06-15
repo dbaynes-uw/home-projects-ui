@@ -540,12 +540,6 @@ watch(
 //  }
 //});
 
-function getLocalDateString() {
-  const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  return now.toISOString().split("T")[0];
-}
-
 function resetForm() {
   formData.value = {
     sleep_date: getYesterdayDateString(),

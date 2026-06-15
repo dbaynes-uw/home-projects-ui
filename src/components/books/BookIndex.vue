@@ -1,5 +1,5 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <ConfirmDialogue ref="confirmDialogue" />
   <h3 id="h3-left">Total: {{ sortedBooks.length }}</h3>
   <table class="data-table">
     <thead>

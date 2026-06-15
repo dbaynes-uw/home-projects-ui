@@ -141,6 +141,10 @@ import BaseAlert from '@/components/ui/BaseAlert.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 
 export default {
+  components: {
+    BaseAlert,
+    BaseButton,
+  },
   setup() {
     const router = useRouter()
     const route = useRoute()

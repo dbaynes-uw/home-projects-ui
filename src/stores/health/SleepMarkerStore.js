@@ -62,17 +62,6 @@ function hoursMinutesToMinutes(hoursMinutesString) {
   }
 }
 
-// ✅ Convert 'HH:mm' string to minutes since midnight
-function hhmmToMinutes(hhmm) {
-  if (!hhmm || typeof hhmm !== 'string') return null;
-  const match = hhmm.match(/^(\d{2}):(\d{2})$/);
-  if (!match) return null;
-  const hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2], 10);
-  console.log(`Converting HH:MM ${hhmm} to minutes:`, hours * 60 + minutes);
-  return hours * 60 + minutes;
-}
-
 // ✅ NEW: Prepare data for API (convert back to minutes)
 function prepareForApi(markerData) {
   return {

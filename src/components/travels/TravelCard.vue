@@ -135,12 +135,10 @@
   </BaseCard>
 </template>
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseCard from '@/components/ui/BaseCard.vue'
-import BaseButton from '@/components/ui/BaseButton.vue'
 import DateFormatService from '@/services/DateFormatService.js'
-import SplitStringService from '@/services/SplitStringService.js'
 import dayjs from 'dayjs'
 
 // Composables
@@ -166,9 +164,6 @@ const props = defineProps({
 // Emits
 defineEmits(['edit', 'delete'])
 
-// Reactive data
-const splitLength = ref(30)
-
 const mapEmbedSrc = computed(() => {
   const rawUrl = props.travel?.map_embed_url
   if (typeof rawUrl !== 'string') return ''
@@ -184,10 +179,6 @@ const showRouteMap = computed(() => props.showMap && !!mapEmbedSrc.value)
 // Methods
 const navigateToDetails = () => {
   router.push({ name: 'TravelDetails', params: { id: props.travel.id } })
-}
-
-const splitList = (travelData, splitLength) => {
-  return SplitStringService.splitList(travelData.notes, splitLength)
 }
 
 const formatStandardDateTime = (value) => {

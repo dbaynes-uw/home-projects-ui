@@ -37,22 +37,19 @@
       <p>Book not found.</p>
     </div>
   </div>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
-import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 import BookCard from '@/components/books/BookCard.vue'
 import { useBookStore } from '@/stores/books/BookStore.js'
 
 const props = defineProps(['id'])
 const router = useRouter()
 const bookStore = useBookStore()
-const confirmDialogue = ref(null)
 
 const book = computed(() => bookStore.currentBook)
 const isLoading = computed(() => bookStore.isLoading)

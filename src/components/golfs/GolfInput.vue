@@ -1,5 +1,5 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <ConfirmDialogue ref="confirmDialogue" />
   <div class="golf-input-body">
     <span v-if="false">
       <!-- action prop removed — GolfInput is now create-only -->
@@ -228,7 +228,6 @@ import { useStore } from 'vuex'
 
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
-import DateFormatService from '@/services/DateFormatService.js'
 import GolfCalculations from '@/components/golfs/GolfCalculations.js'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 
@@ -244,7 +243,6 @@ const isFormValid = ref(false)
 const submitting = ref(false)
 const submitAttempted = ref(false)
 const isCourseValid = ref(false)
-const isCourseLocationValid = ref(false)
 const isDatePlayedValid = ref(false)
 const isTeesPlayedValid = ref(false)
 
@@ -347,7 +345,6 @@ function calculateTotalPutts(g) { return GolfCalculations.calculateTotalPutts(g)
 function calculateFrontPenalty(g) { return GolfCalculations.calculateFrontPenalty(g) }
 function calculateBackPenalty(g) { return GolfCalculations.calculateBackPenalty(g) }
 function calculateTotalPenalty(g) { return GolfCalculations.calculateTotalPenalty(g) }
-function formatStandardDate(value) { return DateFormatService.formatStandardDatejs(value) }
 </script>
 <style lang="css">
 .golf-input-body {

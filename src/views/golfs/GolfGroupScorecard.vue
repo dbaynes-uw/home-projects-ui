@@ -419,12 +419,6 @@ function stablefordPts(p, n) {
 function stablefordTotal(p) {
   return Array.from({ length: 18 }, (_, i) => stablefordPts(p, i + 1)).reduce((a, b) => a + b, 0)
 }
-function stablefordFront(p) {
-  return Array.from({ length: 9 }, (_, i) => stablefordPts(p, i + 1)).reduce((a, b) => a + b, 0)
-}
-function stablefordBack(p) {
-  return Array.from({ length: 9 }, (_, i) => stablefordPts(p, i + 10)).reduce((a, b) => a + b, 0)
-}
 
 function playerNet(p) {
   return playerTotal(p, 'scores') - (p.courseHandicap || 0)

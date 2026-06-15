@@ -67,7 +67,7 @@
       </div>
     </template>
   </BaseCard>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <ConfirmDialogue ref="confirmDialogue" />
   </div>
 </template>
 

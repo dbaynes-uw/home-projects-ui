@@ -65,10 +65,7 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useTravelStore } from '@/stores/travel/TravelStore'
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue"
 import DateFormatService from "@/services/DateFormatService.js"
 import dayjs from 'dayjs'
 
@@ -80,32 +77,12 @@ const props = defineProps({
   }
 })
 
-// Emit events
-const emit = defineEmits(['delete'])
-
 // Composables
-const travelStore = useTravelStore()
 const router = useRouter()
-
-// Reactive data
-const splitLength = ref(30)
-const statusMessage = ref('')
-const confirmDialogue = ref(null)
 
 // Methods
 const navigateToDetails = () => {
   router.push({ name: 'TravelEventDetails', params: { id: props.travelEvent.id } })
-}
-
-const handleEdit = () => {
-  router.push({ 
-    name: 'TravelEventEdit', 
-    params: { id: props.travelEvent.id } 
-  })
-}
-
-const handleDelete = () => {
-  emit('delete', props.travelEvent)
 }
 
 const startsWithHtml = (event) => {
@@ -145,11 +122,6 @@ const formatStandardDateTime = (value) => {
 const hasEventPassed = (event) => {
   const formatDateTime = dayjs(new Date()).format("MM-DD-YY H:mma")
   return DateFormatService.formatDateTimejs(event.end_date) < formatDateTime
-}
-
-const isEventCurrent = (t) => {
-  const formatDateToday = dayjs(new Date()).format("MM-DD-YY")
-  return DateFormatService.formatYearDatejs(t.return_date) < formatDateToday
 }
 </script>
 <style scoped>

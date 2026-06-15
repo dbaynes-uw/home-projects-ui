@@ -1,5 +1,5 @@
 <template>
-  <confirm-dialogue ref="confirmDialogue" />
+  <ConfirmDialogue ref="confirmDialogue" />
 
   <div class="gi-toolbar">
     <BaseTextField

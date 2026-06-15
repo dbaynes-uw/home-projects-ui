@@ -1172,7 +1172,6 @@ function setSmartDefaults() {
   locations.value.forEach((location, index) => {
     expandedLocations.value.add(index);
   });
-  let expandedVendorCount = 0;
   locations.value.forEach((location) => {
     const vendors = getVendorsForLocation(location);
     vendors.forEach((vendor) => {
@@ -1182,7 +1181,6 @@ function setSmartDefaults() {
         expandedVendors.value.add(getVendorKey(location, vendor));
         const vendorId = vendor.vendor_id || vendor.id;
         vendorProductFilters.value.set(vendorId, true);
-        expandedVendorCount++;
       } else {
         const vendorId = vendor.vendor_id || vendor.id;
         vendorProductFilters.value.set(vendorId, false);

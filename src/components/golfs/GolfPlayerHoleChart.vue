@@ -59,13 +59,6 @@ const tabs = [
   { key: 'putts', label: 'Putts'          },
 ]
 
-// ── Helpers ──────────────────────────────────────────────────────────────
-function sumHoles(obj, field, from, to) {
-  let t = 0
-  for (let i = from; i <= to; i++) t += Number(obj[`${field}_${i}_hole`]) || 0
-  return t
-}
-
 function stablefordPts(ps, round, n) {
   const score   = Number(ps[`score_${n}_hole`])   || 0
   const holePar = Number(round[`par_${n}_hole`])  || 0

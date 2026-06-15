@@ -8,7 +8,7 @@
 import { computed, useAttrs } from 'vue'
 
 const attrs = useAttrs()
-const props = defineProps({
+defineProps({
   id: {
     type: String,
     default: undefined,

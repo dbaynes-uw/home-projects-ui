@@ -168,7 +168,6 @@ const holeHdcpStrokes = computed(() => {
 })
 
 // Totals for active player
-const totalPar   = computed(() => { let t = 0; for (let n = 1; n <= 18; n++) t += Number(round[`par_${n}_hole`]) || 0; return t })
 const totalScore = computed(() => { let t = 0; for (let n = 1; n <= 18; n++) t += Number(activeScore.value[`score_${n}_hole`]) || 0; return t })
 const totalPutts = computed(() => { let t = 0; for (let n = 1; n <= 18; n++) t += Number(activeScore.value[`putts_${n}_hole`]) || 0; return t })
 

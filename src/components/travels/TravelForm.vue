@@ -183,11 +183,6 @@ const formData = ref({
   created_by: vuexStore.state.user?.resource_owner?.email || '',
 })
 
-// Form validation
-const requiredTitle = (value) => {
-  return !!value || 'Title is required'
-}
-
 const isFormValid = computed(() => {
   return formData.value.title && 
          formData.value.departure_date &&

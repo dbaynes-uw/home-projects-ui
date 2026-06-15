@@ -1,6 +1,6 @@
 <template>
   <div id="required-to-prevent-vue-warning">
-    <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+    <ConfirmDialogue ref="confirmDialogue" />
     <div class="card">
       <p id="p-custom-left-u">{{ round.course }}</p>
       <ul>

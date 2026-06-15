@@ -330,32 +330,6 @@ const loadHealthMarker = async () => {
   }
 };
 
-const onMarkerChange = (markerName) => {
-  console.log('🎯 Selected marker:', markerName);
-  
-  if (hasAttemptedSubmit.value) {
-    requiredMarkerName(markerName);
-  }
-};
-
-const onResultChange = (result) => {
-  console.log('📊 Test result entered:', result);
-  
-  if (hasAttemptedSubmit.value) {
-    requiredMarkerResult(result);
-  }
-};
-
-const getStatusIcon = (type) => {
-  switch (type) {
-    case 'success': return 'mdi-check-circle';
-    case 'warning': return 'mdi-alert-circle';
-    case 'error': return 'mdi-close-circle';
-    case 'info': 
-    default: return 'mdi-information-circle';
-  }
-};
-
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   return DateFormatService.formatDatejs(dateString);

@@ -126,8 +126,7 @@
         </div>        
       </div>
 
-      <!-- Fasting Weight Banner 
-      <div class="weight-banner"-->
+      <!-- Fasting Weight Banner -->
       <div class="weight-content">
         <i class="fas fa-weight"></i>
         <div class="weight-info">
@@ -135,7 +134,6 @@
           <span v-if="sleepMarker.fasting_weight" class="weight-value">{{ formattedWeight }} lbs</span>
         </div>
       </div>
-      <!--/div->
 
       <!-- OOB Section -->
       <div v-if="sleepMarker.had_oob" class="oob-details">
@@ -185,9 +183,11 @@
         <div v-if="sleepMarker.dream_notes" class="dreams-notes">
           <p>{{ sleepMarker.dream_notes }}</p>
         </div>
-        <!--div v-else class="notes-indicator">
+        <!--
+        <div v-else class="notes-indicator">
           <span>Dreams occurred (no notes)</span>
-        <div-->
+        </div>
+        -->
       </div>      
 
       <!-- Diet Section -->
@@ -312,13 +312,6 @@ const oobDurationLabel = computed(() => {
     'long': 'Long (> 2 mins)'
   };
   return durations[props.sleepMarker.oob_duration] || props.sleepMarker.oob_duration;
-});
-
-const glucoseColorClass = computed(() => {
-  const value = parseFloat(props.sleepMarker.am_fasting_glucose_value);
-  if (value < 100) return 'glucose-good';
-  if (value >= 100 && value <= 125) return 'glucose-warning';
-  return 'glucose-high';
 });
 
 const formattedWeight = computed(() => {

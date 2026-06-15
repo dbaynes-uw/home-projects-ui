@@ -268,12 +268,6 @@ const handleDoubleClick = () => {
   handleEdit();
 };
 
-const handleSleepMarkerClick = () => {
-  if (props.oob.sleep_marker?.id) {
-    showSleepMarkerModal.value = true;
-  }
-};
-
 const closeSleepMarkerModal = () => {
   showSleepMarkerModal.value = false;
 };

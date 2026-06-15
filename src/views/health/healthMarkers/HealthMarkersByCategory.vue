@@ -503,36 +503,6 @@ const getMarkerCategory = (markerName) => {
   return markerInfo?.category || 'Other';
 };
 
-const getCategoryIcon = (category) => {
-  const iconMap = {
-    'Diabetes': 'mdi-water-percent',
-    'Thyroid': 'mdi-thyroid',
-    'Lipids': 'mdi-heart-pulse',
-    'Vitamins': 'mdi-pill',
-    'Heart': 'mdi-heart',
-    'Liver': 'mdi-liver',
-    'Kidney': 'mdi-kidney',
-    'General': 'mdi-account-check',
-    'Other': 'mdi-test-tube'
-  };
-  return iconMap[category] || 'mdi-test-tube';
-};
-
-const getCategoryColor = (category) => {
-  const colorMap = {
-    'Diabetes': 'error',
-    'Thyroid': 'warning',
-    'Lipids': 'info',
-    'Vitamins': 'success',
-    'Heart': 'deep-purple',
-    'Liver': 'brown',
-    'Kidney': 'teal',
-    'General': 'blue-grey',
-    'Other': 'grey'
-  };
-  return colorMap[category] || 'grey';
-};
-
 const getCategoryColorHex = (category) => {
   const colorMap = {
     'Diabetes': '#dc3545',

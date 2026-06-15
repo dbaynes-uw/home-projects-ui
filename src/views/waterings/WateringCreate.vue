@@ -142,10 +142,6 @@ const watering = ref({
 
 const selectedExistingWatering = ref("");
 
-const selectedGarden = computed(() =>
-  gardenStore.allGardens.find(g => String(g.id) === String(props.gardenId))
-);
-
 const gardens = computed(() => gardenStore.allGardens);
 const selectedGardenIds = ref([]);
 const isGardenDropdownOpen = ref(false);
@@ -165,13 +161,6 @@ function handleOutsideClick(e) {
     isGardenDropdownOpen.value = false;
   }
 }
-
-const wateringsNotInGarden = computed(() => {
-  if (!props.gardenId) return [];
-  return wateringStore.allWaterings.filter(
-    w => !Array.isArray(w.gardens) || !w.gardens.some(g => String(g.id) === String(props.gardenId))
-  );
-});
 
 const wateringSelectItems = ref([]);
 

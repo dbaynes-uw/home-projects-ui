@@ -92,7 +92,7 @@
         <BaseButton variant="primary" icon="plus" @click="goToCreate">Add Book</BaseButton>
       </div>
       <template v-else-if="!requestIndexDetailFlag">
-        <p class="hint-text">Double-click a card to edit</p>
+        <span class="list-intro-center">Double-click a card to edit</span>
         <div class="books-grid">
           <BookCard
             v-for="book in displayBooks"
@@ -119,7 +119,6 @@ import dayjs from 'dayjs'
 import BookIndex from "@/components/books/BookIndex.vue"
 import BookCard from "@/components/books/BookCard.vue"
 import BookSearch from "@/components/books/BookSearch.vue"
-import ConfirmDialogue from "@/components/ConfirmDialogue.vue"
 
 const store = useStore()
 const bookStore = useBookStore()

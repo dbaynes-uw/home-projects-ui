@@ -202,10 +202,10 @@ export const useTravelStore = defineStore('travel', {
         // Filter out read-only fields to avoid "Unpermitted parameters" warnings
         const {
           id: _id,
-          user_id,
-          travel_events,
-          created_at,
-          updated_at,
+          user_id: _user_id,
+          travel_events: _travel_events,
+          created_at: _created_at,
+          updated_at: _updated_at,
           ...cleanData
         } = travelData;
         

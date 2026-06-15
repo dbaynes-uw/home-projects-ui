@@ -63,7 +63,7 @@
       </form>
     </BaseCard>
   </div>
-  <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
+  <ConfirmDialogue ref="confirmDialogue" />
 </template>
 
 <script setup>
