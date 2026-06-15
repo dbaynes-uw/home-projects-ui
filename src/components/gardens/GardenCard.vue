@@ -10,6 +10,10 @@
         <h4><b>{{garden.name}}</b></h4>
       </router-link>
     </span>
+    <p class="card-section-title">Status:</p>
+    <GardenStatusBadge :status="garden.status" />
+    <br/>
+    
     <p class="card-section-title">Notes:</p>
     <b class="li-left-none">{{ garden.notes }}</b>
     <br/>
@@ -114,6 +118,7 @@
 import { useRouter } from 'vue-router';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
 import DateFormatService from "@/services/DateFormatService.js";
+import GardenStatusBadge from '@/components/gardens/GardenStatusBadge.vue';
 const props = defineProps({
   garden: {
     type: Object,

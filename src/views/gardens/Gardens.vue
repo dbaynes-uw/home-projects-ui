@@ -27,17 +27,26 @@
           </button>
         </div>
 
-        <!-- Add search input -->
-        <BaseTextField
-          v-model="searchQuery"
-          label="Search gardens..."
-          prepend-inner-icon="fas fa-magnify"
-          clearable
-          density="compact"
-          variant="outlined"
-          style="max-width: 300px; margin-left: 1rem;"
-          @input="console.log('Search query:', searchQuery)"
-        ></BaseTextField>
+        <div class="filter-row">
+          <BaseTextField
+            v-model="searchQuery"
+            label="Search gardens..."
+            prepend-inner-icon="fas fa-magnify"
+            clearable
+            density="compact"
+            variant="outlined"
+            class="garden-search-input"
+          />
+
+          <BaseSelect
+            v-model="statusFilter"
+            :items="statusFilterOptions"
+            label="Status Filter"
+            :include-empty-option="true"
+            empty-option-label="All statuses"
+            class="garden-status-filter"
+          />
+        </div>
   
         <GardenIndex :gardens="gardens"
           v-if="showIndex"
@@ -60,26 +69,32 @@ import { useRouter } from 'vue-router';
 import GardenIndex from '@/components/gardens/GardenIndex.vue';
 import GardenDetails from '@/components/gardens/GardenDetails.vue';
 import BaseSpinner from '@/components/ui/BaseSpinner.vue';
+import BaseSelect from '@/components/ui/BaseSelect.vue';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
+import { ACTIVE_STATUSES } from '@/services/constants';
 
 const gardenStore = useGardenStore();
 const router = useRouter();
 
 // Replace the gardens computed with filtered version
 const searchQuery = ref(''); // Add search query
+const statusFilter = ref(null);
+const statusFilterOptions = ACTIVE_STATUSES.map(status => ({ value: status, title: status }));
+
 const gardens = computed(() => {
-  const allGardens = gardenStore.allGardens;
-  
-  if (!searchQuery.value) {
-    return allGardens;
-  }
-  
-  const query = searchQuery.value.toLowerCase();
-  return allGardens.filter(garden => 
-    garden.name?.toLowerCase().includes(query) ||
-    garden.location?.toLowerCase().includes(query) ||
-    garden.description?.toLowerCase().includes(query)
-  );
+  const allGardens = gardenStore.allGardens || [];
+  const query = String(searchQuery.value || '').trim().toLowerCase();
+
+  return allGardens.filter((garden) => {
+    const matchesSearch = !query ||
+      garden.name?.toLowerCase().includes(query) ||
+      garden.location?.toLowerCase().includes(query) ||
+      garden.description?.toLowerCase().includes(query);
+
+    const matchesStatus = !statusFilter.value || garden.status === statusFilter.value;
+
+    return matchesSearch && matchesStatus;
+  });
 });
 
 const isLoading = ref(true);
@@ -159,6 +174,23 @@ onMounted(async () => {
   margin: 0.5rem 0;
 }
 
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.garden-search-input {
+  max-width: 300px;
+  margin-left: 1rem;
+}
+
+.garden-status-filter {
+  min-width: 200px;
+}
+
 #indent-primary-button {
   margin-left: 5.8rem;
 }
@@ -184,6 +216,19 @@ onMounted(async () => {
   .page-link-button,
   #indent-secondary-button {
     width: 100%;
+    margin-left: 0;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .garden-search-input,
+  .garden-status-filter {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
     margin-left: 0;
   }
 }

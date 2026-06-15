@@ -1,23 +1,29 @@
 <template>
   <div>
-    <span v-if="isSingle">
+    <div v-if="isSingle" class="single-header">
       <h1>Garden Details</h1>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Gardens' }">
-          <b>All Gardens</b>
-        </router-link>
-      </button>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Waterings' }">
-          <b>All Waterings</b>
-        </router-link>
-      </button>     
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Plants' }">
-          <b>All Plants</b>
-        </router-link>
-      </button> 
-    </span>
+      <div class="single-header-status" v-if="singleGarden">
+        <span>Status:</span>
+        <GardenStatusBadge :status="singleGarden.status" />
+      </div>
+      <div class="single-header-links">
+        <button id="button-as-link" @click="requestIndexDetail">
+          <router-link :to="{ name: 'Gardens' }">
+            <b>All Gardens</b>
+          </router-link>
+        </button>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <router-link :to="{ name: 'Waterings' }">
+            <b>All Waterings</b>
+          </router-link>
+        </button>
+        <button id="button-as-link" @click="requestIndexDetail">
+          <router-link :to="{ name: 'Plants' }">
+            <b>All Plants</b>
+          </router-link>
+        </button>
+      </div>
+    </div>
 
     <div v-if="!isSingle" class="controls-bar">
       <button
@@ -32,8 +38,9 @@
         {{ filteredSortedGardens.length }} Gardens
       </span>
     </div>
+    <div class="list-intro">
       <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
-    <br/>
+    </div>
     
     <div :class="['cards', { 'center-single': isSingle }]">
       <GardenCard 
@@ -49,6 +56,7 @@
 </template>
 <script setup>
 import GardenCard from "@/components/gardens/GardenCard.vue";
+import GardenStatusBadge from "@/components/gardens/GardenStatusBadge.vue";
 import router from "@/router";
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -76,6 +84,11 @@ const gardens = computed(() => props.gardens || localGardens.value);
 const isSingle = computed(() => {
   return Array.isArray(gardens.value) && gardens.value.length === 1;
 });
+
+const singleGarden = computed(() => {
+  if (!isSingle.value) return null
+  return Array.isArray(gardens.value) ? gardens.value[0] : null
+})
 
 const filteredSortedGardens = computed(() => {
   let gardenList = Array.isArray(gardens.value)
@@ -160,6 +173,26 @@ watch(() => route.params.id, (newId) => {
   align-items: center;
   min-height: 60vh; /* Adjust as needed */
 }
+
+.single-header {
+  margin-bottom: 0.75rem;
+}
+
+.single-header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.single-header-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .controls-bar {
   display: flex;
   flex-wrap: wrap;
@@ -167,6 +200,11 @@ watch(() => route.params.id, (newId) => {
   align-items: center;
   margin-bottom: 1.5rem;
 }
+
+.list-intro {
+  margin-bottom: 0.9rem;
+}
+
 .filter-select {
   min-width: 180px;
   max-width: 220px;
@@ -180,6 +218,11 @@ watch(() => route.params.id, (newId) => {
   font-size: 1.25rem;
 }
 @media (max-width: 600px) {
+  .single-header-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .controls-bar {
     flex-direction: column;
     gap: 0.5rem;

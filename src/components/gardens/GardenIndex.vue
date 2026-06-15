@@ -11,6 +11,7 @@
       <thead>
         <tr>
           <th id="background-blue" @click="sortList('name')">Garden Name</th>
+          <th id="background-blue" @click="sortList('status')">Status</th>
           <th id="background-blue">Notes</th>
           <th class="th-center actions-column" id="background-blue">Actions</th>
         </tr>
@@ -18,6 +19,9 @@
       <tbody>
         <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
           <td class="garden-name-cell">{{ garden.name }}</td>
+          <td class="status-cell">
+            <GardenStatusBadge :status="garden.status" />
+          </td>
           <td class="notes-cell">{{ garden.notes }}</td>
           <td class="actions-cell">
             <div class="action-icons">
@@ -58,6 +62,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import GardenStatusBadge from '@/components/gardens/GardenStatusBadge.vue';
 //import DateFormatService from "@/services/DateFormatService.js";
 // Props
 const props = defineProps({
@@ -124,6 +129,10 @@ function deleteGarden(garden) {
 
 .garden-name-cell {
   min-width: 11rem;
+}
+
+.status-cell {
+  min-width: 8rem;
 }
 
 .action-icons {

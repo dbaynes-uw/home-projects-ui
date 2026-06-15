@@ -31,6 +31,10 @@
               :items="ACTIVE_STATUSES"
               label="Status"
             />
+            <div class="status-preview-row">
+              <span class="status-preview-label">Current:</span>
+              <GardenStatusBadge :status="garden.status" />
+            </div>
           </div>
         </div>
 
@@ -155,6 +159,7 @@ import { useGardenStore } from '@/stores/gardens/GardenStore';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import GardenStatusBadge from '@/components/gardens/GardenStatusBadge.vue';
 
 const gardenStore = useGardenStore();
 const wateringStore = useWateringStore();
@@ -272,6 +277,18 @@ async function deletePlant(plant) {
 .full-width {
   width: 100%;
   flex: 0 0 100%;
+}
+
+.status-preview-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+}
+
+.status-preview-label {
+  font-size: 0.84rem;
+  color: #475569;
 }
 
 .action-row {
