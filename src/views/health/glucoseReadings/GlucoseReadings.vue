@@ -92,7 +92,7 @@
         </button>
       </div>
     </div>
-    <h3>Double Click to see Details and Edit</h3>
+    <span class="list-intro-center">Double Click Items Below for Details and Edit</span>
     <!-- ✅ LOADING -->
     <BaseCard v-if="isLoading" class="loading-card">
       <div class="loading-content">

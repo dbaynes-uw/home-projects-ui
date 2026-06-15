@@ -55,7 +55,7 @@
         <small>(by {{ sortField === 'plant_name' ? 'Name' : 'Yard Location' }}, {{ sortOrder === 'asc' ? (sortField === 'plant_name' ? 'A-Z' : 'A-Z') : (sortField === 'plant_name' ? 'Z-A' : 'Z-A') }})</small>
       </span>
     </div>
-    <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
+    <span class="list-intro-center"><b>Double click Item Below to Edit</b></span>
     <br/>
     <br/>
     <div :class="['cards', { 'center-single': isSingle }]">

@@ -237,6 +237,18 @@ async function deletePlant(plant) {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.page-shell-title-row h1,
+.section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.section-header h2 {
+  font-size: 1.2rem;
 }
 
 .page-shell-nav-row {
@@ -263,6 +275,7 @@ async function deletePlant(plant) {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-bottom: 0.35rem;
 }
 
 .form-col {
@@ -295,6 +308,7 @@ async function deletePlant(plant) {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-top: 0.25rem;
 }
 
 .back-link-btn {
@@ -306,7 +320,13 @@ async function deletePlant(plant) {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.data-shell p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.95rem;
 }
 
 .table-wrap {

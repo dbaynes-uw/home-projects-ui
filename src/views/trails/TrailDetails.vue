@@ -5,7 +5,7 @@
     <button id="link-as-button">
       <router-link  :to="{ name: 'TrailList' }">Back to Trail List</router-link>
     </button>
-    <span class="h3-left-total-child">Double click Item Below to Edit</span>
+    <span class="list-intro-center">Double click Item Below to Edit</span>
     <br/><br/>
     <div class="card-display">
       <TrailCard

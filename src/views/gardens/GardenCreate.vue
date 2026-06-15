@@ -118,6 +118,13 @@ const createGarden = async () => {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.page-shell-title-row h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.25;
 }
 
 .page-shell-nav-row {
@@ -144,6 +151,7 @@ const createGarden = async () => {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-bottom: 0.35rem;
 }
 
 .form-col {
@@ -160,6 +168,7 @@ const createGarden = async () => {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-top: 0.25rem;
 }
 
 .back-link-btn {

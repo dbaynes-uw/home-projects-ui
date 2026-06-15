@@ -55,7 +55,7 @@
         <small>(by {{ sortField === 'name' ? 'Name' : 'Time' }}, {{ sortOrder === 'asc' ? (sortField === 'name' ? 'A-Z' : 'Earliest to Latest') : (sortField === 'name' ? 'Z-A' : 'Latest to Earliest') }})</small>
       </span>
     </div>
-    <h3 class="h3-left-total-child"><b>Double click Item Below to Edit</b></h3>
+    <span class="list-intro-center">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <WateringCard 
         v-for="watering in filteredSortedWaterings"

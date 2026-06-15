@@ -2,7 +2,7 @@
   <div class="gardens-page-container">
     <section class="page-shell mx-auto mt-5">
       <div class="page-shell-title-row">
-        <h2>Gardens</h2>
+        <h1>Gardens</h1>
         <router-link class="page-link-button" :to="{ name: 'GardenCreate' }">Create New Garden</router-link>
       </div>
 
@@ -145,6 +145,12 @@ onMounted(async () => {
   flex-wrap: wrap;
 }
 
+.page-shell-title-row h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
 .page-shell-nav-row {
   display: flex;
   flex-wrap: wrap;
@@ -171,7 +177,7 @@ onMounted(async () => {
 }
 
 .page-shell-actions {
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
 }
 
 .filter-row {

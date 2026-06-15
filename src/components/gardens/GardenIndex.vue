@@ -101,6 +101,16 @@ function deleteGarden(garden) {
   -webkit-overflow-scrolling: touch;
 }
 
+#index-count-display {
+  margin-bottom: 0.5rem;
+}
+
+.filtered-count {
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
 .data-table {
   width: 100%;
   min-width: 560px;
@@ -175,6 +185,11 @@ tr.is-complete {
 #status-message {
   text-align: center;
   color: navy;
+}
+
+b {
+  color: #334155;
+  font-size: 0.95rem;
 }
 
 @media (max-width: 768px) {

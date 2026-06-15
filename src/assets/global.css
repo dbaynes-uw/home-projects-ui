@@ -212,7 +212,15 @@ body,
   text-align: center;
   font-weight: normal;
   font-size: 1rem;
-
+}
+.list-intro-center {
+  display: block;
+  font-size: 1rem !important;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.85rem;
+  color: #334155;
+  font-size: 0.95rem;
 }
 .div-frame {
   padding: .25rem;

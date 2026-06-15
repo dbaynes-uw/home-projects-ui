@@ -28,7 +28,7 @@
         </span>
       </div>
     </span>
-    <span class="h3-left-total-child">Double click Item Below to Edit</span>
+    <span class="list-intro-center">Double click Item Below to Edit</span>
     <div :class="['cards', { 'center-single': isSingle }]">
       <!--
         Below is a conditional rendering logic for glucose_readings:

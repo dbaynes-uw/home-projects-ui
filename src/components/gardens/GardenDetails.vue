@@ -38,8 +38,8 @@
         {{ filteredSortedGardens.length }} Gardens
       </span>
     </div>
-    <div class="list-intro">
-      <span class="h3-left-total-child"><b>Double click Item Below to Edit</b></span>
+    <div class="list-intro-center">
+      <span><b>Double click Item Below to Edit</b></span>
     </div>
     
     <div :class="['cards', { 'center-single': isSingle }]">
@@ -175,16 +175,22 @@ watch(() => route.params.id, (newId) => {
 }
 
 .single-header {
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.single-header h1 {
+  margin: 0 0 0.45rem;
+  font-size: 1.5rem;
+  line-height: 1.25;
 }
 
 .single-header-status {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
   color: #475569;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .single-header-links {
@@ -198,10 +204,6 @@ watch(() => route.params.id, (newId) => {
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.list-intro {
   margin-bottom: 0.9rem;
 }
 
@@ -215,7 +217,7 @@ watch(() => route.params.id, (newId) => {
 }
 #count-display {
   font-weight: bold;
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 @media (max-width: 600px) {
   .single-header-links {

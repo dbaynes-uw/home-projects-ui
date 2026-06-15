@@ -45,7 +45,7 @@
       <span v-else>
         <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">Total: {{ trails.length }}</h3>
-            <span class="h3-left-total-child">Double click Item Below to Edit</span>
+            <span class="list-intro-center">Double click Item Below to Edit</span>
           <div class="cards">
             <TrailCard
               v-for="trail in trails"

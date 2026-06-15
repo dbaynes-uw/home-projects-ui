@@ -45,7 +45,7 @@
       <span v-else>
         <span v-if="requestIndexDetailFlag == false">
           <h3 id="h3-left">&nbsp;&nbsp;Total: {{ films.length }}</h3>
-          <span class="h3-left-total-child">Double click Item Below to Edit</span>
+          <span class="list-intro-center">Double click Item Below to Edit</span>
           <div class="cards">
             <FilmCard
               v-for="film in films"
