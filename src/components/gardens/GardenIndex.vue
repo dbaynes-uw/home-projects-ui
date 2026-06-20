@@ -13,7 +13,7 @@
           <th id="background-blue" @click="sortList('name')">Garden Name</th>
           <th id="background-blue" @click="sortList('status')">Status</th>
           <th id="background-blue" @click="sortList('waterings')">Waterings</th>
-          <th id="background-blue">Plants</th>
+          <th id="background-blue" @click="sortList('plants')">Plants</th>
           <th id="background-blue">Notes</th>
           <th class="th-center actions-column" id="background-blue">Actions</th>
         </tr>
@@ -84,6 +84,7 @@ const sortAsc = ref(false);
 
 function getSortValue(garden, key) {
   if (key === 'waterings') return Array.isArray(garden?.waterings) ? garden.waterings.length : 0;
+  if (key === 'plants') return Array.isArray(garden?.plants) ? garden.plants.length : 0;
   return garden?.[key] ?? '';
 }
 
