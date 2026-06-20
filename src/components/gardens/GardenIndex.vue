@@ -11,26 +11,24 @@
       <thead>
         <tr>
           <th id="background-blue" @click="sortList('name')">Garden Name</th>
-          <th id="background-blue" @click="sortList('status')">Status</th>
           <th id="background-blue" @click="sortList('waterings')">Waterings</th>
           <th id="background-blue" @click="sortList('plants')">Plants</th>
-          <th id="background-blue">Notes</th>
+          <th id="background-blue" @click="sortList('status')">Status</th>
           <th class="th-center actions-column" id="background-blue">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
           <td class="garden-name-cell">{{ garden.name }}</td>
-          <td class="status-cell">
-            <GardenStatusBadge :status="garden.status" />
-          </td>
           <td class="waterings-cell" :title="formatWateringNames(garden)">
             {{ formatWateringNames(garden) }}
           </td>
           <td class="plants-cell" :title="formatPlantNames(garden)">
             {{ formatPlantNames(garden) }}
           </td>
-          <td class="notes-cell">{{ garden.notes }}</td>
+          <td class="status-cell">
+            <GardenStatusBadge :status="garden.status" />
+          </td>
           <td class="actions-cell">
             <div class="action-icons">
               <router-link
@@ -83,7 +81,15 @@ const sortKey = ref('name');
 const sortAsc = ref(false);
 
 function getSortValue(garden, key) {
-  if (key === 'waterings') return Array.isArray(garden?.waterings) ? garden.waterings.length : 0;
+  if (key === 'waterings') {
+    const names = Array.isArray(garden?.waterings)
+      ? garden.waterings
+        .map((watering) => watering?.name)
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b))
+      : [];
+    return names.join(', ');
+  }
   if (key === 'plants') return Array.isArray(garden?.plants) ? garden.plants.length : 0;
   return garden?.[key] ?? '';
 }
@@ -197,14 +203,6 @@ function formatPlantNames(garden) {
   background: transparent;
   padding: 0;
   cursor: pointer;
-}
-
-.notes-cell {
-  min-width: 16rem;
-  max-width: 34ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .waterings-cell,
