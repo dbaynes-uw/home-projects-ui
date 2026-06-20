@@ -12,6 +12,8 @@
         <tr>
           <th id="background-blue" @click="sortList('name')">Garden Name</th>
           <th id="background-blue" @click="sortList('status')">Status</th>
+          <th id="background-blue">Waterings</th>
+          <th id="background-blue">Plants</th>
           <th id="background-blue">Notes</th>
           <th class="th-center actions-column" id="background-blue">Actions</th>
         </tr>
@@ -21,6 +23,12 @@
           <td class="garden-name-cell">{{ garden.name }}</td>
           <td class="status-cell">
             <GardenStatusBadge :status="garden.status" />
+          </td>
+          <td class="waterings-cell" :title="formatWateringNames(garden)">
+            {{ formatWateringNames(garden) }}
+          </td>
+          <td class="plants-cell" :title="formatPlantNames(garden)">
+            {{ formatPlantNames(garden) }}
           </td>
           <td class="notes-cell">{{ garden.notes }}</td>
           <td class="actions-cell">
@@ -92,6 +100,22 @@ function sortList(key) {
 }
 function deleteGarden(garden) {
   emit('delete', garden);
+}
+
+function formatWateringNames(garden) {
+  if (!Array.isArray(garden?.waterings) || garden.waterings.length === 0) return '—';
+  const names = garden.waterings
+    .map((watering) => watering?.name)
+    .filter(Boolean);
+  return names.length ? names.join('\n') : '—';
+}
+
+function formatPlantNames(garden) {
+  if (!Array.isArray(garden?.plants) || garden.plants.length === 0) return '—';
+  const names = garden.plants
+    .map((plant) => plant?.plant_name || plant?.name)
+    .filter(Boolean);
+  return names.length ? names.join('\n') : '—';
 }
 </script>
 <style scoped>
@@ -171,6 +195,14 @@ function deleteGarden(garden) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.waterings-cell,
+.plants-cell {
+  min-width: 14rem;
+  white-space: pre-line;
+  vertical-align: top;
+  line-height: 1.35;
 }
 
 i {
