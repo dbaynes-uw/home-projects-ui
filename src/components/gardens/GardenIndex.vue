@@ -12,7 +12,7 @@
         <tr>
           <th id="background-blue" @click="sortList('name')">Garden Name</th>
           <th id="background-blue" @click="sortList('status')">Status</th>
-          <th id="background-blue">Waterings</th>
+          <th id="background-blue" @click="sortList('waterings')">Waterings</th>
           <th id="background-blue">Plants</th>
           <th id="background-blue">Notes</th>
           <th class="th-center actions-column" id="background-blue">Actions</th>
@@ -81,11 +81,20 @@ const emit = defineEmits(['edit','delete']);
 const onlineStatus = ref(navigator.onLine);
 const sortKey = ref('name');
 const sortAsc = ref(false);
+
+function getSortValue(garden, key) {
+  if (key === 'waterings') return Array.isArray(garden?.waterings) ? garden.waterings.length : 0;
+  return garden?.[key] ?? '';
+}
+
 const sortedGardens = computed(() => {
   const arr = [...props.gardens];
   arr.sort((a, b) => {
-    if (a[sortKey.value] < b[sortKey.value]) return sortAsc.value ? -1 : 1;
-    if (a[sortKey.value] > b[sortKey.value]) return sortAsc.value ? 1 : -1;
+    const aValue = getSortValue(a, sortKey.value);
+    const bValue = getSortValue(b, sortKey.value);
+
+    if (aValue < bValue) return sortAsc.value ? -1 : 1;
+    if (aValue > bValue) return sortAsc.value ? 1 : -1;
     return 0;
   });
   return arr;
