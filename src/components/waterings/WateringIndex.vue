@@ -22,6 +22,7 @@
         :style="{ left: tooltip.x + 'px' }"
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
+        <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">{{ tooltip.gardenNames }}</span>
         <span class="timeline-tooltip-time">{{ tooltip.timeRange }}</span>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
@@ -130,7 +131,7 @@ const sortKey = ref('start_time');
 const sortAsc = ref(true);
 const activeLegendId = ref(null);
 const hoveredSegmentKey = ref(null);
-const tooltip = ref({ visible: false, name: '', timeRange: '', x: 0 });
+const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', x: 0 });
 const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
 const TIMELINE_END_MIN = 12 * 60;    // 12:00 PM (noon)
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
@@ -175,11 +176,13 @@ const allTimelineSegments = computed(() => {
   const segments = [];
 
   sortedWaterings.value.forEach((watering, index) => {
+    console.log("Garden Names for Watering:", getWateringGardenNames(watering));
     const startMins = timeToMinutes(watering.start_time);
     const endMins = timeToMinutes(watering.end_time);
     if (startMins === null || endMins === null) return;
 
     const name = watering.name || 'Watering';
+    const gardenNames = getWateringGardenNames(watering);
     const label = `${name}: ${formatTime(watering.start_time)} - ${formatTime(watering.end_time)}`;
     const hue = (index * 47) % 360;
 
@@ -203,6 +206,7 @@ const allTimelineSegments = computed(() => {
         key: `${watering.id}-${idx}`,
         wateringId: watering.id,
         name,
+        gardenNames,
         start: clippedStart,
         end: clippedEnd,
         hue,
@@ -275,6 +279,7 @@ function handleSegmentEnter(segment, event) {
   tooltip.value = {
     visible: true,
     name: segment.name,
+    gardenNames: segment.gardenNames,
     timeRange: `${segment.startLabel} – ${segment.endLabel}`,
     x: xInTrack
   };
@@ -537,6 +542,10 @@ tr.is-complete {
 
 .timeline-tooltip-name {
   font-weight: 700;
+}
+
+.timeline-tooltip-garden {
+  opacity: 0.9;
 }
 
 .timeline-tooltip-time {
