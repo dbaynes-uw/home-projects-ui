@@ -4,23 +4,17 @@
       <div class="page-shell-title-row">
         <h2>Plants</h2>
       </div>
-      <span>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Gardens' }">
+      <div class="details-top-links">
+        <router-link class="details-top-link" :to="{ name: 'Gardens' }">
           <b>All Gardens</b>
         </router-link>
-      </button>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Waterings' }">
+        <router-link class="details-top-link" :to="{ name: 'Waterings' }">
           <b>All Waterings</b>
         </router-link>
-      </button>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Plants' }">
+        <router-link class="details-top-link" :to="{ name: 'Plants' }">
           <b>All Plants</b>
         </router-link>
-      </button>      
-    </span>      
+      </div>
     </section>
     
     <div class="plant-details" :key="refreshKey">
@@ -161,6 +155,40 @@ onMounted(async () => {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.details-top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.details-top-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.details-top-link:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 640px) {
+  .details-top-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .details-top-link {
+    width: 100%;
+  }
 }
 
 .page-shell-actions {

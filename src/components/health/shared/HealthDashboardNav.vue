@@ -1,21 +1,21 @@
 <template>
   <div class="health-dashboard-nav">
-    <router-link :to="{ name: 'HealthMarkers' }" class="nav-btn" id="button-as-link">
+    <router-link :to="{ name: 'HealthMarkers' }" class="nav-btn health-dashboard-link">
       <i class="fas fa-heartbeat"></i>
       <span>&nbsp;Health Markers</span>
     </router-link>
 
-    <router-link :to="{ name: 'SleepMarkers' }" class="nav-btn" id="button-as-link">
+    <router-link :to="{ name: 'SleepMarkers' }" class="nav-btn health-dashboard-link">
       <i class="fas fa-bed" aria-hidden="true"></i>
       <span>&nbsp;Sleep Markers</span>
     </router-link>
 
-    <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn" id="button-as-link">
+    <router-link :to="{ name: 'GlucoseReadings' }" class="nav-btn glucose-btn health-dashboard-link">
       <i class="fa fa-heart" aria-hidden="true"></i>
       <span>&nbsp;Glucose</span>
     </router-link>
 
-    <router-link :to="{ name: 'Oobs' }" class="nav-btn glucose-btn" id="button-as-link">
+    <router-link :to="{ name: 'Oobs' }" class="nav-btn glucose-btn health-dashboard-link">
       <i class="fa fa-thumbs-down" aria-hidden="true"></i>
       <span>&nbsp;Oobs</span>
     </router-link>

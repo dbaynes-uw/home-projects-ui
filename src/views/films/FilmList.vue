@@ -7,18 +7,18 @@
         <u>{{ this.$route.query.success }}</u>
       </h2>
     </header>
-    <ul>
-      <li class="left">
-        <button id="button-as-link">
-          <router-link  :to="{ name: 'FilmCreate' }">Add Films Viewed</router-link>
-        </button>
-      </li>
-      <li>
-        <button id="button-as-link" @click="requestIndexDetail">
-          <u>Film Marquee</u>
-        </button>
-      </li>
-    </ul> 
+    <div class="details-top-links">
+      <router-link class="details-top-link" :to="{ name: 'FilmCreate' }">
+        Add Films Viewed
+      </router-link>
+      <button
+        type="button"
+        class="details-top-link details-top-toggle"
+        @click="requestIndexDetail"
+      >
+        Film Marquee
+      </button>
+    </div>
     <br/>
   </section>
   <br/>
@@ -211,5 +211,44 @@ export default {
 
 .page-shell-header {
   padding: 1rem 1.25rem 0.5rem;
+}
+
+.details-top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 1.25rem 1rem;
+}
+
+.details-top-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  color: #0f172a;
+  text-decoration: none;
+  font: inherit;
+}
+
+.details-top-link:hover {
+  background: #e2e8f0;
+}
+
+.details-top-toggle {
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .details-top-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .details-top-link {
+    width: 100%;
+  }
 }
 </style>

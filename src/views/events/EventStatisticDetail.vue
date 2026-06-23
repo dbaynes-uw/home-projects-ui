@@ -3,10 +3,15 @@
     <h2>
       <router-link :to="{ name: 'EventStatistics' }">Event Statistics</router-link>
     </h2>
-    <br/>
-    <button id="button-as-link" @click="requestIndexDetail">
-        <u>Toggle Card/Index</u>
-    </button>
+    <div class="details-top-links">
+      <button
+        type="button"
+        class="details-top-link details-top-toggle"
+        @click="requestIndexDetail"
+      >
+        Toggle Card/Index
+      </button>
+    </div>
     <div class="legend">
       <span>Double click to mark as complete.</span>
       <span><span class="incomplete-box"></span> = Incomplete</span>
@@ -137,6 +142,46 @@ export default {
   },
 };
 </script>
+<style scoped>
+.details-top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.details-top-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  color: #0f172a;
+  text-decoration: none;
+  font: inherit;
+}
+
+.details-top-link:hover {
+  background: #e2e8f0;
+}
+
+.details-top-toggle {
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .details-top-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .details-top-link {
+    width: 100%;
+  }
+}
+</style>
 <style scoped>
 .events {
   display: grid;

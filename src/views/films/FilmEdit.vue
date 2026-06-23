@@ -3,12 +3,14 @@
   <br/>
   <div class="filmEdit">
     <h2>Edit Film {{ film.title }}</h2>
-    <button id="link-as-button">
-      <router-link  :to="{ name: 'FilmList' }">Back to Film List</router-link>
-    </button>
-    <button id="link-as-button">
-      <router-link  :to="{ name: 'FilmDetails' }">View the Card</router-link>
-    </button>
+    <div class="details-top-links">
+      <router-link class="details-top-link" :to="{ name: 'FilmList' }">
+        Back to Film List
+      </router-link>
+      <router-link class="details-top-link" :to="{ name: 'FilmDetails' }">
+        View the Card
+      </router-link>
+    </div>
     <br/>
     <form class="card-display" @submit.prevent="updateFilm">
       <div class="form-container">
@@ -86,6 +88,42 @@
 import { FILM_RATINGS } from "@/services/constants";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 </script>
+<style scoped>
+.details-top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.details-top-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  color: #0f172a;
+  text-decoration: none;
+  font: inherit;
+}
+
+.details-top-link:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 600px) {
+  .details-top-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .details-top-link {
+    width: 100%;
+  }
+}
+</style>
 <script>
 export default {
   props: ["id"],
