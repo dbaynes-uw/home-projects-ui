@@ -19,7 +19,11 @@
       <div
         v-if="tooltip.visible"
         class="timeline-tooltip"
-        :style="{ left: tooltip.x + 'px' }"
+        :class="{
+          'is-edge-left': tooltip.align === 'left',
+          'is-edge-right': tooltip.align === 'right'
+        }"
+        :style="tooltipStyle"
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
         <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">{{ tooltip.gardenNames }}</span>
@@ -37,11 +41,12 @@
         type="button"
         class="timeline-legend-item"
         :class="{ active: activeLegendId === item.id }"
-        @click="toggleLegend(item.id)"
-        :title="`${item.name} (${item.timeRange})`"
+        @click="goToWateringDetails(item.id)"
+        :title="`${item.name} • ${item.gardenNames} (${item.timeRange})`"
       >
         <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
         <span class="timeline-legend-name">{{ item.name }}</span>
+        <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
         <span class="timeline-legend-time">{{ item.timeRange }}</span>
       </button>
       <button
@@ -117,8 +122,10 @@
 </template>
 <script setup>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
+const router = useRouter();
 const props = defineProps({
   waterings: { type: Array, required: true }
 });
@@ -126,49 +133,48 @@ const props = defineProps({
 const emit = defineEmits(['edit','delete']);
 // State
 const onlineStatus = ref(navigator.onLine);
-
 const sortKey = ref('start_time');
 const sortAsc = ref(true);
 const activeLegendId = ref(null);
 const hoveredSegmentKey = ref(null);
-const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', x: 0 });
+const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', x: 0, align: 'center' });
 const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
 const TIMELINE_END_MIN = 12 * 60;    // 12:00 PM (noon)
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
+const TOOLTIP_EDGE_GUTTER = 8;
+const TOOLTIP_EDGE_THRESHOLD = 110;
 //?const inputSearchText = ref("");
 
 const sortedWaterings = computed(() => {
   const arr = [...props.waterings];
-  
+
   arr.sort((a, b) => {
     let valueA, valueB;
-    
-    // ✅ FIXED - Handle date fields specially
+
     if (sortKey.value === 'start_time' || sortKey.value === 'end_time') {
       const aVal = a[sortKey.value];
       const bVal = b[sortKey.value];
-      // Nulls sort last regardless of direction
       if (!aVal && !bVal) return 0;
       if (!aVal) return 1;
       if (!bVal) return -1;
       const dateA = new Date(aVal);
       const dateB = new Date(bVal);
       return sortAsc.value ? dateA - dateB : dateB - dateA;
-    } else {
-      // ✅ Handle text fields (name, target, location, etc.)
-      if (sortKey.value === 'garden_names') {
-        valueA = getWateringGardenNames(a).toLowerCase();
-        valueB = getWateringGardenNames(b).toLowerCase();
-      } else {
-        valueA = (a[sortKey.value] || '').toString().toLowerCase();
-        valueB = (b[sortKey.value] || '').toString().toLowerCase();
-      }
-      
-      if (valueA < valueB) return sortAsc.value ? -1 : 1;
-      if (valueA > valueB) return sortAsc.value ? 1 : -1;
-      return 0;
     }
+
+    if (sortKey.value === 'garden_names') {
+      valueA = getWateringGardenNames(a).toLowerCase();
+      valueB = getWateringGardenNames(b).toLowerCase();
+    } else {
+      valueA = (a[sortKey.value] || '').toString().toLowerCase();
+      valueB = (b[sortKey.value] || '').toString().toLowerCase();
+    }
+
+    if (valueA < valueB) return sortAsc.value ? -1 : 1;
+    if (valueA > valueB) return sortAsc.value ? 1 : -1;
+    return 0;
   });
+
   return arr;
 });
 
@@ -249,9 +255,25 @@ const timelineLegendItems = computed(() => {
     .map(segment => ({
       id: segment.wateringId,
       name: segment.name,
+      gardenNames: segment.gardenNames,
       color: segment.color,
       timeRange: `${segment.startLabel} - ${segment.endLabel}`
     }));
+});
+
+const tooltipStyle = computed(() => {
+  let transform = 'translateX(-50%)';
+
+  if (tooltip.value.align === 'left') {
+    transform = 'translateX(0)';
+  } else if (tooltip.value.align === 'right') {
+    transform = 'translateX(-100%)';
+  }
+
+  return {
+    left: `${tooltip.value.x}px`,
+    transform
+  };
 });
 
 function sortList(key) {
@@ -266,8 +288,9 @@ function deleteWatering(watering) {
   emit('delete', watering);
 }
 
-function toggleLegend(wateringId) {
-  activeLegendId.value = activeLegendId.value === wateringId ? null : wateringId;
+function goToWateringDetails(wateringId) {
+  activeLegendId.value = wateringId;
+  router.push({ name: 'WateringDetails', params: { id: `${wateringId}` } });
 }
 
 function handleSegmentEnter(segment, event) {
@@ -276,12 +299,27 @@ function handleSegmentEnter(segment, event) {
   const trackRect = track ? track.getBoundingClientRect() : null;
   const segRect = event.currentTarget.getBoundingClientRect();
   const xInTrack = trackRect ? segRect.left - trackRect.left + (segRect.width / 2) : 0;
+
+  let align = 'center';
+  let tooltipX = xInTrack;
+
+  if (trackRect) {
+    if (xInTrack <= TOOLTIP_EDGE_THRESHOLD) {
+      align = 'left';
+      tooltipX = TOOLTIP_EDGE_GUTTER;
+    } else if (xInTrack >= trackRect.width - TOOLTIP_EDGE_THRESHOLD) {
+      align = 'right';
+      tooltipX = trackRect.width - TOOLTIP_EDGE_GUTTER;
+    }
+  }
+
   tooltip.value = {
     visible: true,
     name: segment.name,
     gardenNames: segment.gardenNames,
     timeRange: `${segment.startLabel} – ${segment.endLabel}`,
-    x: xInTrack
+    x: tooltipX,
+    align
   };
 }
 
@@ -515,7 +553,6 @@ tr.is-complete {
 .timeline-tooltip {
   position: absolute;
   top: -46px;
-  transform: translateX(-50%);
   background: #0f172a;
   color: #fff;
   border-radius: 6px;
@@ -538,6 +575,16 @@ tr.is-complete {
   transform: translateX(-50%);
   border: 5px solid transparent;
   border-top-color: #0f172a;
+}
+
+.timeline-tooltip.is-edge-left::after {
+  left: 14px;
+  transform: none;
+}
+
+.timeline-tooltip.is-edge-right::after {
+  left: calc(100% - 14px);
+  transform: none;
 }
 
 .timeline-tooltip-name {
@@ -597,6 +644,14 @@ tr.is-complete {
 .timeline-legend-name {
   font-weight: 700;
   max-width: 90px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.timeline-legend-garden {
+  color: #475569;
+  max-width: 135px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

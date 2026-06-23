@@ -2,21 +2,17 @@
   <div>
     <span v-if="isSingle">
       <h1>Watering Details</h1>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Gardens' }">
+      <div class="details-top-links">
+        <router-link class="details-top-link" :to="{ name: 'Gardens' }">
           <b>All Gardens</b>
         </router-link>
-      </button>
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Waterings' }">
+        <router-link class="details-top-link" :to="{ name: 'Waterings' }">
           <b>All Waterings</b>
         </router-link>
-      </button>     
-      <button id="button-as-link" @click="requestIndexDetail">
-        <router-link :to="{ name: 'Plants' }">
+        <router-link class="details-top-link" :to="{ name: 'Plants' }">
           <b>All Plants</b>
         </router-link>
-      </button> 
+      </div>
     </span>
     <div v-if="!isSingle" class="controls-bar">
       <div class="sort-button-group">
@@ -201,6 +197,29 @@ onMounted(() => {
   align-items: center;
   min-height: 60vh; /* Adjust as needed */
 }
+
+.details-top-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.details-top-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.details-top-link:hover {
+  background: #e2e8f0;
+}
 /* ✅ TEMPORARY DEBUG BORDERS */
 .controls-bar {
   display: flex;
@@ -237,6 +256,15 @@ onMounted(() => {
 }
 
 @media (max-width: 600px) {
+  .details-top-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .details-top-link {
+    width: 100%;
+  }
+
   .controls-bar {
     flex-direction: column;
     gap: 0.5rem;
