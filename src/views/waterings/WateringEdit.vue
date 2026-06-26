@@ -246,7 +246,10 @@ async function updateWatering() {
     await wateringStore.fetchWaterings();
          
     // Navigate back
-    _router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
+    //_router.push({ name: 'WateringDetails', params: { id: watering.value.id } });
+    
+    // Navigate to Waterings
+    _router.push({ name: 'Waterings' });
     
   } catch (error) {
     console.error('❌ Update failed:', error);
@@ -300,5 +303,21 @@ onMounted(async () => {
   display: flex;
   gap: 0.75rem;
   margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  /* iOS Safari zooms the viewport when focused form controls are below 16px. */
+  .edit input,
+  .edit select,
+  .edit textarea,
+  .edit textarea,
+  .edit .multi-select {
+    font-size: 16px !important;
+  }
+
+  .edit .textarea-style {
+    font-size: 16px !important;
+    line-height: 1.35;
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <popup-modal ref="popup">
-    <h2 style="margin-top: 0">{{ title }}</h2>
-    <p>{{ message }}</p>
+    <h2 class="confirm-title">{{ title }}</h2>
+    <p class="confirm-message">{{ message }}</p>
     <div class="btns">
       <button class="cancel-btn" @click="_cancel">{{ cancelButton }}</button>
       <span class="ok-btn" @click="_confirm">{{ okButton }}</span>
@@ -54,16 +54,30 @@ export default {
 };
 </script>
 <style scoped>
+.confirm-title {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+  line-height: 1.25;
+}
+
+.confirm-message {
+  margin: 0 0 0.6rem;
+  line-height: 1.35;
+}
+
 .btns {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
 .ok-btn {
   color: red;
   text-decoration: underline;
   line-height: 2.5rem;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .cancel-btn {
@@ -76,5 +90,36 @@ export default {
   font-size: 16px;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .btns {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .confirm-title {
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .confirm-message {
+    margin-bottom: 0.45rem;
+    font-size: 0.95rem;
+  }
+
+  .ok-btn {
+    line-height: 1.9rem;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .cancel-btn {
+    padding: 0.42em 0.72em;
+    font-size: 0.86rem;
+    text-transform: none;
+  }
 }
 </style>
