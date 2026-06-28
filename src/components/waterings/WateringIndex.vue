@@ -27,6 +27,8 @@
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
         <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">{{ tooltip.gardenNames }}</span>
+        <span v-if="tooltip.target" class="timeline-tooltip-target">Target: {{ tooltip.target }}</span>
+        <span v-if="tooltip.days" class="timeline-tooltip-days">Days: {{ tooltip.days }}</span>
         <span class="timeline-tooltip-time">{{ tooltip.timeRange }}</span>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
@@ -42,11 +44,13 @@
         class="timeline-legend-item"
         :class="{ active: activeLegendId === item.id }"
         @click="goToWateringDetails(item.id)"
-        :title="`${item.name} • ${item.gardenNames} (${item.timeRange})`"
+        :title="`${item.name} • ${item.gardenNames} • Target: ${item.target} • Days: ${item.days} (${item.timeRange})`"
       >
         <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
         <span class="timeline-legend-name">{{ item.name }}</span>
         <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
+        <span v-if="item.target" class="timeline-legend-target">{{ item.target }}</span>
+        <span v-if="item.days" class="timeline-legend-days">{{ item.days }}</span>
         <span class="timeline-legend-time">{{ item.timeRange }}</span>
       </button>
       <button
@@ -213,6 +217,8 @@ const allTimelineSegments = computed(() => {
         wateringId: watering.id,
         name,
         gardenNames,
+        target: watering.target,
+        days: watering.days,
         start: clippedStart,
         end: clippedEnd,
         hue,
@@ -256,6 +262,8 @@ const timelineLegendItems = computed(() => {
       id: segment.wateringId,
       name: segment.name,
       gardenNames: segment.gardenNames,
+      target: segment.target,
+      days: segment.days,
       color: segment.color,
       timeRange: `${segment.startLabel} - ${segment.endLabel}`
     }));
@@ -317,6 +325,8 @@ function handleSegmentEnter(segment, event) {
     visible: true,
     name: segment.name,
     gardenNames: segment.gardenNames,
+    target: segment.target,
+    days: segment.days,
     timeRange: `${segment.startLabel} – ${segment.endLabel}`,
     x: tooltipX,
     align
@@ -595,6 +605,16 @@ tr.is-complete {
   opacity: 0.9;
 }
 
+.timeline-tooltip-target {
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+.timeline-tooltip-days {
+  opacity: 0.85;
+  font-weight: 600;
+}
+
 .timeline-tooltip-time {
   opacity: 0.8;
 }
@@ -610,22 +630,23 @@ tr.is-complete {
 .timeline-legend {
   margin-top: 0.45rem;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.35rem;
-  align-items: center;
+  align-items: stretch;
 }
 
 .timeline-legend-item {
   border: 1px solid #cbd5e1;
   background: #fff;
   color: #334155;
-  border-radius: 999px;
-  padding: 0.2rem 0.45rem;
-  display: inline-flex;
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  display: flex;
   align-items: center;
   gap: 0.35rem;
   font-size: 0.68rem;
   cursor: pointer;
+  width: 100%;
 }
 
 .timeline-legend-item.active {
@@ -643,7 +664,7 @@ tr.is-complete {
 
 .timeline-legend-name {
   font-weight: 700;
-  max-width: 90px;
+  min-width: 80px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -651,7 +672,25 @@ tr.is-complete {
 
 .timeline-legend-garden {
   color: #475569;
-  max-width: 135px;
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.timeline-legend-target {
+  color: #1e293b;
+  font-weight: 600;
+  min-width: 60px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.timeline-legend-days {
+  color: #1e293b;
+  font-weight: 600;
+  min-width: 60px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -659,16 +698,20 @@ tr.is-complete {
 
 .timeline-legend-time {
   color: #64748b;
+  min-width: 85px;
+  text-align: right;
 }
 
 .timeline-legend-clear {
   border: 1px solid #94a3b8;
   background: #f8fafc;
   color: #334155;
-  border-radius: 999px;
-  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
   font-size: 0.66rem;
   cursor: pointer;
+  width: 100%;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
