@@ -79,7 +79,11 @@
       <!-- ✅ SIMPLIFIED FOOTER -->
       <footer
         class="smart-footer"
-        :class="{ 'footer-visible': showFooter, 'footer-hidden': !showFooter }"
+        :class="{
+          'footer-visible': showFooter,
+          'footer-hidden': !showFooter,
+          'footer-contrast': isGardenOrWateringIndexPage
+        }"
       >
         <div class="footer-nav">
           <button
@@ -124,6 +128,10 @@ export default {
     
     isHomePage() {
       return this.$route.name === 'home';
+    },
+
+    isGardenOrWateringIndexPage() {
+      return this.$route.name === 'Gardens' || this.$route.name === 'Waterings' || this.$route.name === 'Plants';
     }
   },
   
@@ -455,6 +463,12 @@ export default {
   right: 0 !important;
   z-index: 1005 !important;
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out !important;
+}
+
+.smart-footer.footer-contrast {
+  background: #00796b !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.35) !important;
+  box-shadow: 0 -4px 14px rgba(15, 23, 42, 0.3) !important;
 }
 
 /* ✅ FOOTER VISIBILITY STATES */
