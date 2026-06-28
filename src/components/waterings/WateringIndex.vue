@@ -27,7 +27,6 @@
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
         <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">{{ tooltip.gardenNames }}</span>
-        <span v-if="tooltip.target" class="timeline-tooltip-target">Target: {{ tooltip.target }}</span>
         <span v-if="tooltip.days" class="timeline-tooltip-days">Days: {{ tooltip.days }}</span>
         <span class="timeline-tooltip-time">{{ tooltip.timeRange }}</span>
       </div>
@@ -44,12 +43,11 @@
         class="timeline-legend-item"
         :class="{ active: activeLegendId === item.id }"
         @click="goToWateringDetails(item.id)"
-        :title="`${item.name} • ${item.gardenNames} • Target: ${item.target} • Days: ${item.days} (${item.timeRange})`"
+        :title="`${item.name} • ${item.gardenNames} • Days: ${item.days} (${item.timeRange})`"
       >
         <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
         <span class="timeline-legend-name">{{ item.name }}</span>
         <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
-        <span v-if="item.target" class="timeline-legend-target">{{ item.target }}</span>
         <span v-if="item.days" class="timeline-legend-days">{{ item.days }}</span>
         <span class="timeline-legend-time">{{ item.timeRange }}</span>
       </button>
@@ -217,7 +215,6 @@ const allTimelineSegments = computed(() => {
         wateringId: watering.id,
         name,
         gardenNames,
-        target: watering.target,
         days: watering.days,
         start: clippedStart,
         end: clippedEnd,
@@ -262,7 +259,6 @@ const timelineLegendItems = computed(() => {
       id: segment.wateringId,
       name: segment.name,
       gardenNames: segment.gardenNames,
-      target: segment.target,
       days: segment.days,
       color: segment.color,
       timeRange: `${segment.startLabel} - ${segment.endLabel}`
@@ -325,7 +321,6 @@ function handleSegmentEnter(segment, event) {
     visible: true,
     name: segment.name,
     gardenNames: segment.gardenNames,
-    target: segment.target,
     days: segment.days,
     timeRange: `${segment.startLabel} – ${segment.endLabel}`,
     x: tooltipX,
@@ -605,11 +600,6 @@ tr.is-complete {
   opacity: 0.9;
 }
 
-.timeline-tooltip-target {
-  opacity: 0.85;
-  font-weight: 600;
-}
-
 .timeline-tooltip-days {
   opacity: 0.85;
   font-weight: 600;
@@ -631,7 +621,7 @@ tr.is-complete {
   margin-top: 0.45rem;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.25rem;
   align-items: stretch;
 }
 
@@ -640,13 +630,14 @@ tr.is-complete {
   background: #fff;
   color: #334155;
   border-radius: 6px;
-  padding: 0.35rem 0.5rem;
-  display: flex;
+  padding: 0.25rem 0.25rem;
+  display: grid;
+  grid-template-columns: 10px 55px 100px 35px 110px;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.25rem;
   font-size: 0.68rem;
   cursor: pointer;
-  width: 100%;
+  width: fit-content;
 }
 
 .timeline-legend-item.active {
@@ -655,51 +646,46 @@ tr.is-complete {
 }
 
 .timeline-legend-swatch {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  flex: 0 0 10px;
+  grid-column: 1;
 }
 
 .timeline-legend-name {
   font-weight: 700;
-  min-width: 80px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  grid-column: 2;
+  text-align: left;
 }
 
 .timeline-legend-garden {
   color: #475569;
-  flex: 1;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-}
-
-.timeline-legend-target {
-  color: #1e293b;
-  font-weight: 600;
-  min-width: 60px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+  grid-column: 3;
+  text-align: left;
 }
 
 .timeline-legend-days {
   color: #1e293b;
   font-weight: 600;
-  min-width: 60px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  grid-column: 4;
+  text-align: left;
 }
 
 .timeline-legend-time {
   color: #64748b;
-  min-width: 85px;
-  text-align: right;
+  white-space: nowrap;
+  grid-column: 5;
+  text-align: left;
 }
 
 .timeline-legend-clear {
