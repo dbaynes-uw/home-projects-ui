@@ -632,7 +632,7 @@ tr.is-complete {
   border-radius: 6px;
   padding: 0.25rem 0.25rem;
   display: grid;
-  grid-template-columns: 10px 55px 100px 60px 110px;
+  grid-template-columns: 10px 55px 100px 75px 110px;
   align-items: center;
   gap: 0.25rem;
   font-size: 0.68rem;
