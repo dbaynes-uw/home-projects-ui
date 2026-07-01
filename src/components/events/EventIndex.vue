@@ -28,6 +28,10 @@
               <i class="fas fa-sort"></i>
               Assigned
             </th>
+            <th @click="sortList('notify')" class="sortable">
+              <i class="fas fa-sort"></i>
+              Notify
+            </th>
             <th @click="sortList('status')" class="sortable">
               <i class="fas fa-sort"></i>
               Status
@@ -39,24 +43,17 @@
           <tr 
             v-for="event in sortedEvents" 
             :key="event.id"
-            :class="getRowClass(event)"
           >
             <td class="description-cell">{{ event.description }}</td>
             <td class="text-center">Every {{ event.frequency }} days</td>
-            <td class="text-center">
+            <td class="text-center" :class="{ 'due-date-overdue': isEventPastDue(event) }">
               {{ formatYearDate(event.action_due_date) }}
-              <span 
-                v-if="isEventPastDue(event)"
-                class="chip chip-danger chip-tiny ml-1"
-              >
-                <i class="fas fa-exclamation-triangle"></i>
-                PAST DUE
-              </span>
             </td>
             <td class="text-center">{{ formatYearDate(event.action_completed_date) }}</td>
             <td class="text-center">{{ event.assigned }}</td>
+            <td class="text-center">{{ formatNotifyFlag(event.notify) }}</td>
             <td class="text-center">
-              <span :class="['status-badge', `status-${event.status}`]">
+              <span :class="['status-text', `status-${event.status}`]">
                 {{ capitalizeStatus(event.status) }}
               </span>
             </td>
@@ -170,12 +167,6 @@ const isEventPastDue = (event) => {
   return event.status === 'active' && event.action_due_date < today;
 };
 
-const getRowClass = (event) => {
-  if (event.status === 'inactive') return 'row-inactive';
-  if (isEventPastDue(event)) return 'row-pastdue';
-  return '';
-};
-
 const capitalizeStatus = (status) => {
   if (!status) return '';
   return status.charAt(0).toUpperCase() + status.slice(1);
@@ -213,6 +204,10 @@ const deleteEvent = async (event) => {
 
 const formatYearDate = (value) => {
   return DateFormatService.formatYearDatejs(value);
+};
+
+const formatNotifyFlag = (value) => {
+  return value === true || value === 1 || value === '1' ? 'Yes' : 'No';
 };
 </script>
 
@@ -265,6 +260,23 @@ const formatYearDate = (value) => {
 
 .separator {
   color: #ccc;
+}
+
+.status-text {
+  font-weight: 600;
+}
+
+.status-active {
+  color: #16a34a;
+}
+
+.status-inactive {
+  color: #dc2626;
+}
+
+.data-table td.due-date-overdue {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
 }
 
 /* Hide frequency and assigned columns on small screens */

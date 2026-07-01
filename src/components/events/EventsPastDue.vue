@@ -1,78 +1,81 @@
 <template>
-  <div class="action-button-wrapper">
-    <button
-      class="action-button"
-      @click="eventsPastDue($event)"
-      type="button"
-    >
-      <i class="fas fa-exclamation-triangle"></i>
-      Past Due
-    </button>
+  <div class="pastdue-wrapper">
+    <select v-model="internalValue" @change="handlePastDueChange" class="native-select">
+      <option value="">All Events</option>
+      <option value="pastdue">Past Due Only</option>
+    </select>
   </div>
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
+const internalValue = ref('');
 
-function eventsPastDue() {
-  store.dispatch('eventsPastDue');
-  store.commit('SET_EVENTS_REQUEST', 'PastDue');
-}
+const props = defineProps({
+  selectedPastDueValue: {
+    type: String,
+    default: ''
+  }
+});
+
+const emit = defineEmits(['past-due-filter', 'clear-past-due']);
+
+const handlePastDueChange = () => {
+  if (internalValue.value === '') {
+    emit('clear-past-due');
+    store.commit('SET_EVENTS_REQUEST', 'All');
+  } else if (internalValue.value === 'pastdue') {
+    emit('past-due-filter', 'pastdue');
+    store.dispatch('eventsPastDue');
+    store.commit('SET_EVENTS_REQUEST', 'PastDue');
+  }
+};
+
+watch(() => props.selectedPastDueValue, (newVal) => {
+  internalValue.value = newVal;
+});
 </script>
 
 <style scoped>
-.action-button-wrapper {
-  /*position: relative; 
-  left: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  max-width: 250px;
-  height: 56px;
-  */
+.pastdue-wrapper {
   position: relative;
-  width: 200px !important;
-  height: 48px !important;
+  width: 200px;
+  height: 48px;
 }
 
-.action-label {
-  color: #1a1a1a !important;
-  font-weight: 800 !important;
-  font-size: 15px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.8px !important;
-  text-align: center !important;
-  margin-bottom: 6px !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+.native-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: linear-gradient(to right, #16c0b0, #84cf6a);
+  color: black;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.action-button :deep(.v-btn__content) {
-  color: black !important;
-  font-weight: 800 !important;
-  font-size: 20px !important;
-  text-transform: none !important;
-}
-
-.action-button {
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
-  border-radius: 12px !important;
-  height: 48px !important;
-  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-}
-
-.action-button:hover {
-  background: linear-gradient(to right, #14a89a, #72b558) !important;
+.native-select:hover {
+  background: linear-gradient(to right, #14a89a, #72b558);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4);
 }
 
-.action-button-wrapper:hover .action-label {
-  color: #16c0b0 !important;
-  transform: translateY(-1px);
+.native-select:focus {
+  outline: none;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: white;
+}
+
+.native-select option {
+  background: white;
+  color: black;
+  font-weight: 600;
+  padding: 8px;
 }
 </style>

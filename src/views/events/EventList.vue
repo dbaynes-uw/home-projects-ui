@@ -12,10 +12,10 @@
       
       <!-- ✅ NAVIGATION -->
       <div class="card-body">
-        <div class="navigation-flex">
+        <div class="page-shell-nav-row">
           <router-link
             :to="{ name: 'EventStatistics' }"
-            class="btn btn-outlined"
+            class="page-link-button"
           >
             <i class="fas fa-chart-bar"></i>
             Statistics
@@ -23,7 +23,7 @@
 
           <router-link
             :to="{ name: 'EventCreate' }"
-            class="btn btn-primary"
+            class="page-link-button"
           >
             <i class="fas fa-plus"></i>
             New Event
@@ -44,22 +44,16 @@
       <div class="card-body">
         <!-- ✅ FILTER COMPONENTS ROW -->
         <div class="filters-grid mb-4">
-          <div class="filter-with-counter">
-            <EventsPastDue />
-            <div class="counter-badge counter-badge-red pulse-animation">
-              {{ pastDueCount }}
-            </div>
-          </div>
+          <EventsPastDue 
+            :selectedPastDueValue="selectedPastDueValue"
+            @past-due-filter="handlePastDueFilter"
+            @clear-past-due="handleClearPastDue"
+          />
 
-          <div class="filter-with-counter">
-            <EventsStatus 
-              :show-active-events="showActiveEvents"
-              @toggle-status="handleStatusToggle"
-            />
-            <div :class="getStatusBadgeClass()">
-              {{ displayEvents.length }}
-            </div>
-          </div>
+          <EventsStatus 
+            :show-active-events="showActiveEvents"
+            @toggle-status="handleStatusToggle"
+          />
 
           <!-- ✅ DUE BY FILTER -->
           <EventsDueBy 
@@ -105,37 +99,6 @@
           </div>
         </div>
         
-        <!-- ✅ VIEW TOGGLE (NO VUETIFY) -->
-        <div class="view-toggle-section">
-          <div class="btn-group">
-            <button
-              @click="viewMode = 'cards'"
-              class="btn"
-              :class="{ 'btn-primary': viewMode === 'cards', 'btn-outlined': viewMode !== 'cards' }"
-            >
-              <i class="fas fa-th"></i>
-              Cards View
-            </button>
-
-            <button
-              @click="viewMode = 'table'"
-              class="btn"
-              :class="{ 'btn-primary': viewMode === 'table', 'btn-outlined': viewMode !== 'table' }"
-            >
-              <i class="fas fa-table"></i>
-              Table View
-            </button>
-
-            <button
-              v-if="isAdmin"
-              @click="notifyEventsDue"
-              class="btn btn-success"
-            >
-              <i class="fas fa-envelope"></i>
-              Notify Due
-            </button>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -181,7 +144,40 @@
         </div>
       </div>
 
-            <div class="card-body">
+      <!-- ✅ VIEW TOGGLE (NO VUETIFY) -->
+      <div class="page-shell-actions">
+        <button
+          @click="viewMode = 'cards'"
+          :class="{ 'page-link-button-active': viewMode === 'cards' }"
+          class="page-link-button"
+          type="button"
+        >
+          <i class="fas fa-th"></i>
+          Cards View
+        </button>
+
+        <button
+          @click="viewMode = 'table'"
+          :class="{ 'page-link-button-active': viewMode === 'table' }"
+          class="page-link-button"
+          type="button"
+        >
+          <i class="fas fa-table"></i>
+          Table View
+        </button>
+
+        <button
+          v-if="isAdmin"
+          @click="notifyEventsDue"
+          class="page-link-button"
+          type="button"
+        >
+          <i class="fas fa-envelope"></i>
+          Notify Due
+        </button>
+      </div>
+
+      <div class="card-body">
         <!-- ✅ CARDS VIEW - NOW USING EventCard COMPONENT -->
         <div v-if="viewMode === 'cards'" class="events-grid">
           <EventCard
@@ -200,6 +196,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -228,6 +225,7 @@ const viewMode = ref('table');
 const apiUrl = ref('');
 const selectedLocationValue = ref(''); 
 const selectedDueByValue = ref('');    
+const selectedPastDueValue = ref('');    
 const filteredResults = ref([]);
 const searchFocused = ref(false);
 
@@ -278,6 +276,16 @@ const displayEvents = computed(() => {
 });
 
 // ✅ METHODS
+function handlePastDueFilter(pastDueValue) {
+  selectedPastDueValue.value = pastDueValue;
+  store.dispatch('eventsPastDue');
+}
+
+function handleClearPastDue() {
+  selectedPastDueValue.value = '';
+  store.dispatch('fetchEvents');
+}
+
 function handleDueByFilter(daysValue) {
   selectedDueByValue.value = daysValue;
   if (daysValue && daysValue !== '') {
@@ -437,15 +445,11 @@ onMounted(async () => {
 }
 
 /* Navigation */
-.navigation-flex {
+.page-shell-nav-row {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
-}
-
-.navigation-flex .btn {
-  flex: 1;
-  min-width: 200px;
+  margin-top: 0.75rem;
 }
 
 /* Filters Grid */
@@ -554,16 +558,35 @@ onMounted(async () => {
 }
 
 /* View Toggle */
-.view-toggle-section {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: center;
+.page-shell-actions {
+  margin: 0.75rem 0;
 }
 
-.btn-group {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+.page-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.6rem;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-link-button:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.page-link-button-active {
+  background: #667eea !important;
+  color: white !important;
+  border-color: #667eea !important;
 }
 
 /* Legend */

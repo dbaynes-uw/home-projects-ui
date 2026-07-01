@@ -1,225 +1,85 @@
 <template>
-  <div class="action-button-wrapper">
-    <button
-      class="action-button"
-      :class="{ 'active-state': isShowingActive }"
-      @click="toggleEventsStatus"
-      type="button"
-    >
-      <i :class="getStatusIcon()"></i>
-      {{ getStatusLabel() }}
-    </button>
+  <div class="status-wrapper">
+    <select v-model="internalValue" @change="handleStatusChange" class="native-select">
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
+const internalValue = ref('active');
 
-// ✅ RECEIVE PROPS FROM PARENT
 const props = defineProps({
   showActiveEvents: {
     type: Boolean,
-    default: true // ✅ CHANGED TO START WITH ACTIVE
+    default: true
   }
 });
 
-// ✅ EMIT TO PARENT
 const emit = defineEmits(['toggle-status']);
 
-// ✅ USE COMPUTED TO SYNC WITH PARENT
-const isShowingActive = computed(() => props.showActiveEvents);
+const handleStatusChange = () => {
+  const newActiveState = internalValue.value === 'active';
 
-// ✅ FIXED TOGGLE FUNCTION
-function toggleEventsStatus() {
-  const newActiveState = !props.showActiveEvents; // ✅ TOGGLE BASED ON PROPS
-    
-  // Call appropriate store action with status parameter
   if (newActiveState) {
-    // Switch to Active Events
     store.dispatch('eventsStatus', 'active');
     store.commit('SET_EVENTS_REQUEST', 'Active');
   } else {
-    // Switch to Inactive Events
     store.dispatch('eventsStatus', 'inactive');
     store.commit('SET_EVENTS_REQUEST', 'Inactive');
   }
-  
-  // ✅ EMIT NEW STATE TO PARENT
+
   emit('toggle-status', newActiveState);
-  
-  // ✅ DEBUG - CHECK STORE STATE AFTER DISPATCH
-  setTimeout(() => {
-  }, 1000);
-}
+};
 
-// ✅ DYNAMIC LABEL BASED ON PROPS
-function getStatusLabel() {
-  return isShowingActive.value ? 'Now Active' : 'Now Inactive';
-}
-
-// ✅ DYNAMIC ICON BASED ON PROPS  
-function getStatusIcon() {
-  return isShowingActive.value ? 'fas fa-play-circle' : 'fas fa-pause-circle';
-}
+watch(() => props.showActiveEvents, (newVal) => {
+  internalValue.value = newVal ? 'active' : 'inactive';
+});
 </script>
 
 <style scoped>
-.action-button-wrapper {
-  /*position: relative; 
-  left: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  max-width: 250px;
-  height: 56px;*/
+.status-wrapper {
   position: relative;
-  width: 200px !important;
-  height: 48px !important;
-}
-/* ✅ FORCE FILTER BUTTON ALIGNMENT */
-.filters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  align-items: end; /* ✅ ALIGN TO BOTTOM */
+  width: 200px;
+  height: 48px;
 }
 
-.filter-button-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: flex-end; /* ✅ PUSH TO BOTTOM */
-}
-
-/* ✅ ENSURE ALL FILTER COMPONENTS HAVE SAME STRUCTURE */
-.filters-grid > * {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* ✅ FORCE CONSISTENT HEIGHTS */
-.filters-grid .action-button-wrapper,
-.filters-grid .dropdown-wrapper,
-.filters-grid > div {
-  min-height: 76px; /* ✅ LABEL + BUTTON HEIGHT */
-  max-height: 76px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.action-button-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.native-select {
   width: 100%;
-  max-width: 15.8rem !important;
-  max-width: 150px;
-  height: auto; /* ✅ LET IT SIZE NATURALLY */
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: linear-gradient(to right, #16c0b0, #84cf6a);
+  color: black;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.action-label {
-  color: #1a1a1a !important;
-  font-weight: 800 !important;
-  font-size: 12px !important; /* ✅ MATCH OTHER LABELS */
-  text-transform: uppercase !important;
-  letter-spacing: 0.8px !important;
-  text-align: center !important;
-  margin-bottom: 6px !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
-}
-
-/* ✅ MATCH THE EXACT SIZING OF OTHER FILTER BUTTONS */
-.action-button {
-  background: linear-gradient(to right, #16c0b0, #84cf6a) !important;
-  border-radius: 12px !important;
-  height: 48px !important; /* ✅ SAME AS OTHER DROPDOWNS */
-  box-shadow: 0 2px 8px rgba(22, 192, 176, 0.3) !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  width: 100% !important;
-  min-height: 48px !important; /* ✅ PREVENT EXPANSION */
-  max-height: 48px !important; /* ✅ PREVENT EXPANSION */
-}
-
-.action-button:hover {
-  background: linear-gradient(to right, #14a89a, #72b558) !important;
+.native-select:hover {
+  background: linear-gradient(to right, #14a89a, #72b558);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(22, 192, 176, 0.4);
 }
 
-/* ✅ BUTTON CONTENT SIZING TO MATCH DROPDOWNS */
-.action-button :deep(.v-btn__content) {
-  color: black !important;
-  font-weight: 800 !important;
-  font-size: 1.25rem !important; /* ✅ MATCH DROPDOWN TEXT SIZE */
-  text-transform: none !important;
-  letter-spacing: 0.5px !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 16px !important; /* ✅ MATCH DROPDOWN PADDING */
+.native-select:focus {
+  outline: none;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: white;
 }
 
-.action-button :deep(.v-icon) {
-  color: black !important;
-  font-size: 18px !important; /* ✅ MATCH DROPDOWN ICON SIZE */
-  margin-right: 8px !important;
-}
-
-/* ✅ INACTIVE STATE - PURPLE GRADIENT */
-.action-button:not(.active-state) {
-  background: linear-gradient(to right, #667eea, #764ba2) !important;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
-}
-
-.action-button:not(.active-state):hover {
-  background: linear-gradient(to right, #5a6fd8, #6a42a0) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
-}
-
-/* ✅ INACTIVE STATE TEXT */
-.action-button:not(.active-state) :deep(.v-btn__content) {
-  color: white !important;
-}
-
-.action-button:not(.active-state) :deep(.v-icon) {
-  color: white !important;
-}
-
-/* ✅ HOVER LABEL EFFECTS */
-.action-button-wrapper:hover .action-label {
-  color: #16c0b0 !important;
-  transform: translateY(-1px);
-}
-
-.action-button-wrapper:has(.action-button:not(.active-state)):hover .action-label {
-  color: #667eea !important;
-}
-
-/* ✅ ANIMATED SHINE EFFECT */
-.action-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.6s;
-  z-index: 1;
-  pointer-events: none;
-  border-radius: 12px;
-}
-
-.action-button:hover::before {
-  left: 100%;
+.native-select option {
+  background: white;
+  color: black;
+  font-weight: 600;
+  padding: 8px;
 }
 
 /* ✅ OVERRIDE ANY VUETIFY DEFAULT PADDING/MARGIN */
