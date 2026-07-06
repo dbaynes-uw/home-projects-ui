@@ -79,9 +79,9 @@
             <th>Hdcp</th>
             <th>Score</th>
             <th>Pts</th>
+            <th>Pen</th>
             <th>Net</th>
             <th>Putts</th>
-            <th>Pen</th>
             <th>Holes</th>
           </tr>
         </thead>
@@ -97,9 +97,9 @@
             <td class="tc">{{ r.ps.course_handicap ?? '—' }}</td>
             <td class="tc" :class="scoreClass(r)"><strong>{{ totalScore(r.ps) || '—' }}</strong></td>
             <td class="tc pts-col"><strong>{{ stablefordTotal(r.ps, r.round) }}</strong></td>
+            <td class="tc pen-col">{{ totalPenalties(r.ps) || '—' }}</td>
             <td class="tc">{{ netScore(r.ps) }}</td>
             <td class="tc">{{ totalPutts(r.ps) || '—' }}</td>
-            <td class="tc pen-col">{{ totalPenalties(r.ps) || '—' }}</td>
             <td class="tc">{{ holesPlayed(r.ps) }}</td>
           </tr>
         </tbody>

@@ -238,9 +238,9 @@ const isAdmin = computed(() =>
   user.value?.email === 'dlbaynes@gmail.com'
 );
 
-const pastDueCount = computed(() => {
-  return events.value.filter(event => isEventPastDue(event)).length;
-});
+//const pastDueCount = computed(() => {
+//  return events.value.filter(event => isEventPastDue(event)).length;
+//});
 
 const displayEvents = computed(() => {
   let filtered = events.value;
@@ -316,9 +316,9 @@ function handleStatusToggle(newActiveState) {
   selectedDueByValue.value = '';
 }
 
-function getStatusBadgeClass() {
-  return showActiveEvents.value ? 'counter-badge counter-badge-green' : 'counter-badge counter-badge-purple';
-}
+//function getStatusBadgeClass() {
+//  return showActiveEvents.value ? 'counter-badge counter-badge-green' : 'counter-badge counter-badge-purple';
+//}
 
 function getResultsTitle() {
   const statusText = showActiveEvents.value ? 'Active' : 'Inactive';
@@ -363,10 +363,10 @@ function showIndex() {
   inputSearchText.value = '';
 }
 
-function isEventPastDue(event) {
-  const today = dayjs().format("YYYY-MM-DD");
-  return event.status === 'active' && event.action_due_date < today;
-}
+//function isEventPastDue(event) {
+//  const today = dayjs().format("YYYY-MM-DD");
+//  return event.status === 'active' && event.action_due_date < today;
+//}
 
 function getResultsCount() {
   return displayEvents.value.length;

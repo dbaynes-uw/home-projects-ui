@@ -27,6 +27,7 @@
           <th class="num-col">Hdcp</th>
           <th @click="sort('score')" class="sortable num-col">Score {{ sortIcon('score') }}</th>
           <th class="num-col">Pts</th>
+          <th class="num-col">Pens</th>
           <th class="num-col">Net</th>
           <th class="num-col">Holes</th>
           <th class="act-col">Actions</th>
@@ -60,6 +61,7 @@
             <td class="td-center num-col pts-col">
               <strong>{{ stablefordTotal(ps, round) }}</strong>
             </td>
+            <td class="td-center num-col">{{ totalPenalties(ps) || '—' }}</td>
             <td class="td-center num-col">{{ netScore(ps) }}</td>
             <td class="td-center num-col">{{ holesPlayed(ps) }}</td>
             <td v-if="pIdx === 0" :rowspan="roundPlayers(round).length" class="td-center act-col">
@@ -74,7 +76,7 @@
           </tr>
         </template>
         <tr v-if="visibleRounds.length === 0">
-          <td colspan="11" class="td-empty">No rounds found.</td>
+          <td colspan="12" class="td-empty">No rounds found.</td>
         </tr>
       </tbody>
       <tfoot v-if="visibleRounds.length > 0">
@@ -82,7 +84,7 @@
           <td colspan="6" class="td-avg-label">Averages (9-hole / 18-hole):</td>
           <td class="td-center num-col td-avg">{{ avgScore9 }} / {{ avgScore18 }}</td>
           <td class="td-center num-col td-avg">{{ avgPts9 }} / {{ avgPts18 }}</td>
-          <td colspan="3" />
+          <td colspan="4" />
         </tr>
       </tfoot>
     </table>
@@ -114,6 +116,7 @@ function sumHoles(obj, field, from, to) {
 
 function totalPar(round)  { return sumHoles(round, 'par',   1, 18) }
 function totalScore(ps)   { return sumHoles(ps,    'score', 1, 18) }
+function totalPenalties(ps) { return sumHoles(ps, 'penalty', 1, 18) }
 
 function holesPlayed(ps) {
   let c = 0
