@@ -3,7 +3,7 @@
     :class="{ 'event-has-passed': hasEventPassed(props.travelEvent), 'event-is-current': !hasEventPassed(props.travelEvent)}"
     @dblclick="navigateToDetails"
   >
-    <h2>{{ props.travelEvent.title }}</h2>
+    <h2>@@@{{ props.travelEvent.title }}</h2>
     <ul>
       <li class="li-left">Event Description:</li>
       <template v-for="(description, idx) in joinedDescription(props.travelEvent)" :key="idx">

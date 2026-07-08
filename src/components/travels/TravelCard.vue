@@ -97,8 +97,8 @@
             :to="{ name: 'TravelEventDetails', params: { id: `${event.id}` } }"
             class="event-link"
           >
-            • {{ event.title }}
-          </router-link>
+            <b>• {{ event.title }}</b>
+           </router-link>
           <div v-if="showEventNotes && event.notes" class="event-notes">
             {{ event.notes }}
           </div>
