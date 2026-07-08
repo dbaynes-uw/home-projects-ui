@@ -141,7 +141,7 @@ const activeLegendId = ref(null);
 const hoveredSegmentKey = ref(null);
 const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', x: 0, align: 'center' });
 const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
-const TIMELINE_END_MIN = 12 * 60;    // 12:00 PM (noon)
+const TIMELINE_END_MIN = 10 * 60;    // 10:00 AM
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
 const TOOLTIP_EDGE_GUTTER = 8;
 const TOOLTIP_EDGE_THRESHOLD = 110;
@@ -243,8 +243,8 @@ const nowMarkerStyle = computed(() => {
 });
 
 const timelineTicks = computed(() => {
-  // 5am to noon inclusive = 8 ticks at 1-hour intervals
-  return Array.from({ length: 8 }, (_, i) => `${String(5 + i).padStart(2, '0')}:00`);
+  // 5am to 10am inclusive = 6 ticks at 1-hour intervals
+  return Array.from({ length: 6 }, (_, i) => `${String(5 + i).padStart(2, '0')}:00`);
 });
 
 const timelineLegendItems = computed(() => {
@@ -509,9 +509,9 @@ tr.is-complete {
   overflow: visible;
   border: 1px solid #cdd5df;
   background-color: #eef3f8;
-  /* 7 interior 1-hour gridlines over a 7-hour span (5am–noon) */
+  /* 5 interior 1-hour gridlines over a 5-hour span (5am–10am) */
   background-image: linear-gradient(to right, #dbe3ec 1px, transparent 1px);
-  background-size: calc(100% / 7) 100%;
+  background-size: calc(100% / 5) 100%;
 }
 
 .timeline-summary-segment {
@@ -632,7 +632,7 @@ tr.is-complete {
   border-radius: 6px;
   padding: 0.25rem 0.25rem;
   display: grid;
-  grid-template-columns: 10px 55px 100px 100px 110px;
+  grid-template-columns: 10px 100px 100px 100px 110px;
   align-items: center;
   gap: 0.25rem;
   font-size: 0.68rem;
