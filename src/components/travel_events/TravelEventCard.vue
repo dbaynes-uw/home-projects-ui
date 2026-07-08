@@ -1,9 +1,9 @@
 <template>
   <div 
     :class="{ 'event-has-passed': hasEventPassed(props.travelEvent), 'event-is-current': !hasEventPassed(props.travelEvent)}"
-    @dblclick="navigateToDetails"
+    @dblclick="navigateToEdit"
   >
-    <h2>@@@{{ props.travelEvent.title }}</h2>
+    <h2>{{ props.travelEvent.title }}</h2>
     <ul>
       <li class="li-left">Event Description:</li>
       <template v-for="(description, idx) in joinedDescription(props.travelEvent)" :key="idx">
@@ -81,8 +81,8 @@ const props = defineProps({
 const router = useRouter()
 
 // Methods
-const navigateToDetails = () => {
-  router.push({ name: 'TravelEventDetails', params: { id: props.travelEvent.id } })
+const navigateToEdit = () => {
+  router.push({ name: 'TravelEventEdit', params: { id: props.travelEvent.id } })
 }
 
 const startsWithHtml = (event) => {
