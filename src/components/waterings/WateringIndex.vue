@@ -701,6 +701,30 @@ tr.is-complete {
 }
 
 @media (max-width: 768px) {
+  .timeline-summary-wrap {
+    overflow-x: auto;
+  }
+
+  .timeline-summary-track,
+  .timeline-axis,
+  .timeline-legend {
+    min-width: 360px;
+  }
+
+  .timeline-legend-item {
+    grid-template-columns: 10px 80px 86px 68px 92px;
+    font-size: 0.64rem;
+  }
+
+  .timeline-legend-time {
+    white-space: normal;
+    line-height: 1.05;
+  }
+
+  .timeline-legend-clear {
+    width: 100%;
+  }
+
   .data-table {
     min-width: 860px;
     font-size: 0.82rem;

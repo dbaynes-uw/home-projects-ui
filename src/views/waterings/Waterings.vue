@@ -124,6 +124,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   padding: 0.55rem 0.9rem;
+  box-sizing: border-box;
   border-radius: 0.6rem;
   border: 1px solid #cbd5e1;
   background: #f8fafc;
@@ -139,13 +140,15 @@ onMounted(async () => {
 
 .page-shell-actions {
   margin: 0.5rem 0;
+  display: flex;
+  justify-content: center;
 }
 
 #indent-primary-button {
   margin-left: 5.8rem;
 }
 #indent-secondary-button {
-  margin-left: 2rem;
+  margin-left: 0;
 }
 
 @media (max-width: 640px) {
@@ -166,6 +169,7 @@ onMounted(async () => {
   .page-link-button,
   #indent-secondary-button {
     width: 100%;
+    box-sizing: border-box;
     margin-left: 0;
   }
 }
