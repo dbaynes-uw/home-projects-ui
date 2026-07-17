@@ -858,7 +858,7 @@ onMounted(async () => {
 
 /* Stableford */
 .stableford-row { display: flex; flex-wrap: wrap; gap: 3px; margin: 0.4rem 0 0.75rem; align-items: center; }
-.stableford-grid { display: flex; align-items: center; gap: 4px; margin-bottom: 0.2rem; }
+.stableford-grid { display: flex; align-items: center; gap: 4px; margin-bottom: 0.2rem; margin-left: 1rem;}
 .stableford-grid .grid-9 { flex: 1; margin-bottom: 0; }
 .pts-chip { min-width: 22px; text-align: center; border-radius: 10px; padding: 1px 4px; font-size: 0.72rem; font-weight: 700; }
 .pts-eagle  { background: #ffd700; color: #333; }
