@@ -27,6 +27,19 @@
           </button>
         </div>
 
+        <div class="view-note-wrap">
+          <label for="view-note" class="view-note-label">Shared view note (saved in this browser)</label>
+          <input
+            id="view-note"
+            v-model="viewNote"
+            type="text"
+            class="view-note-input"
+            placeholder="Add quick note about Card/Index view"
+            @input="onViewNoteInput"
+          />
+          <div class="view-note-meta">{{ viewNoteBytes }}/80 bytes</div>
+        </div>
+
         <WateringIndex :waterings="waterings"
           v-if="showIndex"
           @edit="editWatering"
@@ -45,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import WateringIndex from '@/components/waterings/WateringIndex.vue';
 import WateringDetails from '@/components/waterings/WateringDetails.vue';
@@ -53,14 +66,27 @@ import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { useWateringStore } from '@/stores/waterings/WateringStore';
 import { usePlantStore } from '@/stores/plants/PlantStore';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
+import { useViewNoteStore } from '@/stores/ui/ViewNoteStore';
 
 const wateringStore = useWateringStore();
 const plantStore = usePlantStore();
 const gardenStore = useGardenStore();
+const viewNoteStore = useViewNoteStore();
 const router = useRouter();
 const waterings = computed(() => wateringStore.allWaterings);
 const isLoading = ref(true);
 const showIndex = ref(true);
+
+const viewNote = computed({
+  get: () => viewNoteStore.note,
+  set: (value) => viewNoteStore.setNote(value),
+});
+
+const viewNoteBytes = computed(() => viewNoteStore.noteBytes);
+
+function onViewNoteInput() {
+  viewNoteStore.setNote(viewNote.value);
+}
 
 function toggleView() {
   showIndex.value = !showIndex.value;

@@ -27,6 +27,19 @@
           </button>
         </div>
 
+        <div class="view-note-wrap">
+          <label for="view-note" class="view-note-label">Shared view note (saved in this browser)</label>
+          <input
+            id="view-note"
+            v-model="viewNote"
+            type="text"
+            class="view-note-input"
+            placeholder="Add quick note about Card/Index view"
+            @input="onViewNoteInput"
+          />
+          <div class="view-note-meta">{{ viewNoteBytes }}/80 bytes</div>
+        </div>
+
         <div class="filter-row">
           <BaseTextField
             v-model="searchQuery"
@@ -71,9 +84,12 @@ import GardenDetails from '@/components/gardens/GardenDetails.vue';
 import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import BaseSelect from '@/components/ui/BaseSelect.vue';
 import { useGardenStore } from '@/stores/gardens/GardenStore';
+//import { computed } from 'vue';
+import { useViewNoteStore } from '@/stores/ui/ViewNoteStore';
 import { ACTIVE_STATUSES } from '@/services/constants';
 
 const gardenStore = useGardenStore();
+const viewNoteStore = useViewNoteStore();
 const router = useRouter();
 
 // Replace the gardens computed with filtered version
@@ -99,9 +115,18 @@ const gardens = computed(() => {
 
 const isLoading = ref(true);
 const showIndex = ref(true);
+const viewNote = computed({
+  get: () => viewNoteStore.note,
+  set: (value) => viewNoteStore.setNote(value),
+});
+const viewNoteBytes = computed(() => viewNoteStore.noteBytes);
 
 function toggleView() {
   showIndex.value = !showIndex.value;
+}
+
+function onViewNoteInput() {
+  viewNoteStore.setNote(viewNote.value);
 }
 
 function editGarden(garden) {
