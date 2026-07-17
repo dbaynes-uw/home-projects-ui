@@ -298,11 +298,19 @@ onMounted(async () => {
     // solo blank
     playerScores.push({ id: null, player_name: '', course_handicap: null,
       ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`score_${i + 1}_hole`, null])),
-      ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`putts_${i + 1}_hole`, null])),
+      ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`putts_${i + 1}_hole`, 2])),
       ...Object.fromEntries(Array.from({ length: 18 }, (_, i) => [`handicap_${i + 1}_hole`, null])),
     })
   } else {
-    scores.forEach(ps => playerScores.push({ ...ps }))
+    scores.forEach(ps => {
+      const hydrated = { ...ps }
+      for (let n = 1; n <= 18; n++) {
+        const key = `putts_${n}_hole`
+        const existingPutt = Number(ps[key])
+        hydrated[key] = existingPutt > 0 ? existingPutt : 2
+      }
+      playerScores.push(hydrated)
+    })
   }
 
   // Jump to first unscored hole

@@ -345,7 +345,7 @@ function blankPlayer() {
     name: '',
     courseHandicap: null,
     scores:      Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
-    putts:       Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
+    putts:       Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 2])),
     hdcpStrokes: Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
     penalties:   Object.fromEntries(Array.from({ length: 18 }, (_, i) => [i + 1, 0])),
   }
@@ -389,11 +389,19 @@ function prefillDefaultYardages() {
 
 function playerFront(p, field) {
   if (!p?.[field]) return 0
-  return Array.from({ length: 9 }, (_, i) => p[field][i + 1] || 0).reduce((a, b) => a + b, 0)
+  return Array.from({ length: 9 }, (_, i) => {
+    const hole = i + 1
+    if (field === 'putts' && (!p.scores?.[hole] || Number(p.scores[hole]) <= 0)) return 0
+    return p[field][hole] || 0
+  }).reduce((a, b) => a + b, 0)
 }
 function playerBack(p, field) {
   if (!p?.[field]) return 0
-  return Array.from({ length: 9 }, (_, i) => p[field][i + 10] || 0).reduce((a, b) => a + b, 0)
+  return Array.from({ length: 9 }, (_, i) => {
+    const hole = i + 10
+    if (field === 'putts' && (!p.scores?.[hole] || Number(p.scores[hole]) <= 0)) return 0
+    return p[field][hole] || 0
+  }).reduce((a, b) => a + b, 0)
 }
 function playerTotal(p, field) {
   return playerFront(p, field) + playerBack(p, field)
@@ -517,7 +525,8 @@ function hydrateFromRound(round) {
       p.courseHandicap = ps.course_handicap  ?? null
       for (let n = 1; n <= 18; n++) {
         p.scores[n]      = ps[`score_${n}_hole`]    ?? 0
-        p.putts[n]       = ps[`putts_${n}_hole`]    ?? 0
+        const existingPutt = Number(ps[`putts_${n}_hole`])
+        p.putts[n]       = existingPutt > 0 ? existingPutt : 2
         p.hdcpStrokes[n] = ps[`handicap_${n}_hole`] ?? 0
         p.penalties[n]   = ps[`penalty_${n}_hole`]  ?? 0
       }
@@ -543,8 +552,9 @@ function buildPayload() {
       }
       if (p.id) ps.id = p.id
       for (let n = 1; n <= 18; n++) {
+        const played = p.scores[n] && Number(p.scores[n]) > 0
         ps[`score_${n}_hole`]    = p.scores[n]      || null
-        ps[`putts_${n}_hole`]    = p.putts[n]       || null
+        ps[`putts_${n}_hole`]    = played ? (p.putts[n] ?? null) : null
         ps[`handicap_${n}_hole`] = p.hdcpStrokes[n] || null
         ps[`penalty_${n}_hole`]  = p.penalties[n]   || null
       }
