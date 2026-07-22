@@ -242,8 +242,7 @@
             >
               <!-- ✅ VENDOR HEADER -->
               <div 
-                class="vendor-header" 
-                @click="toggleVendor(vendors.indexOf(vendor))"
+                class="vendor-header"
               >
                 <i class="fas fa-store vendor-store-icon"></i>
                 
@@ -262,23 +261,25 @@
 
                 <!-- ✅ VENDOR CONTROLS -->
                 <div class="vendor-controls">
-                  <span class="chip chip-small chip-grey">
+                  <span class="chip chip-grey vendor-location-chip">
                     <i class="fas fa-map-marker-alt chip-icon"></i>
-                    {{ vendor.location }}
+                    <span class="vendor-location-text">{{ vendor.location }}</span>
                   </span>
+
+                  <button
+                    type="button"
+                    :class="['btn', 'btn-small', isShowingAllProductsForVendor(vendor) ? 'btn-success' : 'btn-outlined']"
+                    @click.stop="toggleVendorProductsView(vendor)"
+                    :title="getVendorToggleButtonTitle(vendor)"
+                  >
+                    <i :class="getVendorToggleButtonIcon(vendor)"></i>
+                    {{ getVendorToggleButtonLabel(vendor) }}
+                  </button>
                   
                   <span class="chip chip-small chip-primary">
                     <i class="fas fa-box chip-icon"></i>
                     {{ getVendorProductsCount(vendor) }} products
                   </span>
-                  
-                  <i 
-                    :class="[
-                      'fas', 
-                      'chevron-icon',
-                      expandedVendors.has(vendors.indexOf(vendor)) ? 'fa-chevron-up' : 'fa-chevron-down'
-                    ]"
-                  ></i>
                 </div>
               </div>
 
@@ -412,8 +413,9 @@ onErrorCaptured((error, instance, info) => {
 });
 
 // ✅ REACTIVE STATE
-const showShoppingList = ref(false);
+const showShoppingList = ref(true);
 const expandedVendors = ref(new Set());
+const vendorShowAllOverrides = ref(new Set());
 const isSubmitting = ref(false);
 const isLoading = ref(true);
 
@@ -477,10 +479,41 @@ const getVendorProductsCount = (vendor) => {
   return (vendor.products || []).length;
 };
 
+const getVendorFilterKey = (vendor) => {
+  const id = vendor.vendor_id || vendor.id;
+  const location = vendor.location || '';
+  return `${id}::${location}`;
+};
+
+const getVendorIndex = (vendor) => vendors.value.indexOf(vendor);
+
+const isVendorExpanded = (vendor) => expandedVendors.value.has(getVendorIndex(vendor));
+
+const isShowingAllProductsForVendor = (vendor) => {
+  return vendorShowAllOverrides.value.has(getVendorFilterKey(vendor));
+};
+
+const getVendorToggleButtonLabel = (vendor) => {
+  if (!isVendorExpanded(vendor)) return 'Show Selected';
+  return isShowingAllProductsForVendor(vendor) ? 'Show Selected' : 'Show All Products';
+};
+
+const getVendorToggleButtonIcon = (vendor) => {
+  if (!isVendorExpanded(vendor)) return 'fas fa-filter';
+  return isShowingAllProductsForVendor(vendor) ? 'fas fa-filter' : 'fas fa-list';
+};
+
+const getVendorToggleButtonTitle = (vendor) => {
+  if (!isVendorExpanded(vendor)) return 'Show selected products for this vendor/location';
+  return isShowingAllProductsForVendor(vendor)
+    ? 'Currently showing all products. Click to show selected only.'
+    : 'Currently showing selected products. Click to show all products.';
+};
+
 // Get filtered products for a vendor (respects shopping list toggle)
 const getFilteredProducts = (vendor) => {
   const products = vendor.products || [];
-  if (showShoppingList.value) {
+  if (showShoppingList.value && !isShowingAllProductsForVendor(vendor)) {
     return products.filter(p => p.active);
   }
   return products;
@@ -532,15 +565,6 @@ const getProductHint = computed(() => {
 
 // ✅ METHODS
 
-// Toggle vendor expansion
-const toggleVendor = (vendorIndex) => {
-  if (expandedVendors.value.has(vendorIndex)) {
-    expandedVendors.value.delete(vendorIndex);
-  } else {
-    expandedVendors.value.add(vendorIndex);
-  }
-};
-
 // Toggle all vendors
 const toggleAllVendors = () => {
   if (allVendorsExpanded.value) {
@@ -556,6 +580,28 @@ const toggleAllVendors = () => {
 const toggleProduct = (product) => {
   product.active = !product.active;
   console.log(`🔄 Toggled product: ${product.product_name} -> ${product.active}`);
+};
+
+const toggleVendorProductsView = (vendor) => {
+  const key = getVendorFilterKey(vendor);
+  const idx = getVendorIndex(vendor);
+
+  // First click opens this vendor in selected-only mode.
+  if (!expandedVendors.value.has(idx)) {
+    expandedVendors.value.add(idx);
+    vendorShowAllOverrides.value.delete(key);
+    console.log(`📋 Expanded ${vendor.vendor_name} (${vendor.location}) in selected-only mode`);
+    return;
+  }
+
+  // Subsequent clicks toggle selected/all modes.
+  if (vendorShowAllOverrides.value.has(key)) {
+    vendorShowAllOverrides.value.delete(key);
+    console.log(`📋 Showing selected-only products for ${vendor.vendor_name} (${vendor.location})`);
+  } else {
+    vendorShowAllOverrides.value.add(key);
+    console.log(`📋 Showing all products for ${vendor.vendor_name} (${vendor.location})`);
+  }
 };
 
 // Edit vendor
@@ -787,6 +833,15 @@ onMounted(async () => {
 .mt-5 { margin-top: 1.5rem; }
 .mb-4 { margin-bottom: 1rem; }
 .chip-icon { margin-right: 0.25rem; }
+
+.vendor-location-chip {
+  padding: 0.375rem 0.875rem;
+  font-size: 0.85rem;
+}
+
+.vendor-location-text {
+  font-weight: 900;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
