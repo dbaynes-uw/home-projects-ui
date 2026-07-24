@@ -59,11 +59,27 @@
         <span class="gpc-stat-label">Avg Pen</span>
       </div>
       <div class="gpc-stat">
-        <span class="gpc-stat-val">{{ stats.bestScore }}</span>
+        <router-link
+          v-if="bestScoreRound?.round?.id != null"
+          :to="golfDetailsRoute(bestScoreRound.round.id)"
+          class="gpc-stat-val gpc-stat-link"
+          :title="roundLinkTitle(bestScoreRound, 'Best score')"
+        >
+          {{ stats.bestScore }}
+        </router-link>
+        <span v-else class="gpc-stat-val">{{ stats.bestScore }}</span>
         <span class="gpc-stat-label">Best Score</span>
       </div>
       <div class="gpc-stat">
-        <span class="gpc-stat-val pts">{{ stats.bestPts }}</span>
+        <router-link
+          v-if="bestPtsRound?.round?.id != null"
+          :to="golfDetailsRoute(bestPtsRound.round.id)"
+          class="gpc-stat-val gpc-stat-link pts"
+          :title="roundLinkTitle(bestPtsRound, 'Best points')"
+        >
+          {{ stats.bestPts }}
+        </router-link>
+        <span v-else class="gpc-stat-val pts">{{ stats.bestPts }}</span>
         <span class="gpc-stat-label">Best Pts</span>
       </div>
       </div>
@@ -113,7 +129,7 @@
           <tr v-for="(r, i) in filteredRounds" :key="i">
             <td class="tc nowrap">{{ fmtDate(r.round.date_played) }}</td>
             <td>
-              <router-link :to="{ name: 'GolfDetails', params: { id: String(r.round.id) } }" class="gpc-link">
+              <router-link :to="golfDetailsRoute(r.round.id)" class="gpc-link">
                 {{ r.round.course }}
               </router-link>
             </td>
@@ -142,6 +158,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import DateFormatService from '@/services/DateFormatService.js'
 import GolfPlayerHoleChart from '@/components/golfs/GolfPlayerHoleChart.vue'
 
@@ -149,6 +166,8 @@ const props = defineProps({
   // player: { name: String, rounds: [{ ps: PlayerScore, round: GolfRound }] }
   player: { type: Object, required: true },
 })
+
+const route = useRoute()
 
 // 'stats' | 'table' | 'chart'
 const viewMode     = ref('stats')
@@ -298,6 +317,40 @@ const stats = computed(() => {
     bestPts:       pts.length    ? Math.max(...pts)    : '—',
   }
 })
+
+const bestScoreRound = computed(() => {
+  const scoredRounds = filteredRounds.value.filter(r => totalScore(r.ps) > 0)
+  if (!scoredRounds.length) return null
+
+  const minScore = Math.min(...scoredRounds.map(r => totalScore(r.ps)))
+  return scoredRounds.find(r => totalScore(r.ps) === minScore) || null
+})
+
+const bestPtsRound = computed(() => {
+  const rounds = filteredRounds.value
+  if (!rounds.length) return null
+
+  const maxPts = Math.max(...rounds.map(r => stablefordTotal(r.ps, r.round)))
+  return rounds.find(r => stablefordTotal(r.ps, r.round) === maxPts) || null
+})
+
+function roundLinkTitle(entry, label) {
+  if (!entry?.round) return ''
+  const course = entry.round.course || 'round'
+  const date = fmtDate(entry.round.date_played)
+  return `${label}: ${course} (${date})`
+}
+
+function golfDetailsRoute(roundId) {
+  return {
+    name: 'GolfDetails',
+    params: { id: String(roundId) },
+    query: {
+      from: route.fullPath,
+      player: props.player.name,
+    },
+  }
+}
 </script>
 
 <style scoped>
@@ -401,6 +454,8 @@ const stats = computed(() => {
   font-weight: 700;
   color: #1b1b1b;
 }
+.gpc-stat-link { text-decoration: none; }
+.gpc-stat-link:hover { text-decoration: underline; }
 .gpc-stat-val.pts { color: #1565c0; }
 .gpc-stat-val.pen { color: #e65100; }
 .pen-col strong   { color: #e65100; }

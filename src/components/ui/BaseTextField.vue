@@ -44,7 +44,7 @@
         @click="clearValue"
       >
         <slot name="clear-icon">
-          <span>{{ clearIcon }}</span>
+          <i :class="clearIconClasses"></i>
         </slot>
       </button>
 
@@ -177,6 +177,7 @@ const inputValue = computed({
 const hasValue = computed(() => String(props.modelValue ?? '').length > 0)
 const prependIconClasses = computed(() => normalizeIconClasses(props.prependIcon))
 const appendIconClasses = computed(() => normalizeIconClasses(props.appendIcon))
+const clearIconClasses = computed(() => normalizeIconClasses(props.clearIcon))
 const errorText = computed(() => {
   if (Array.isArray(props.errorMessages)) {
     return props.errorMessages[0] || ''

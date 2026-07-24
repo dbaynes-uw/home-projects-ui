@@ -57,14 +57,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useGolfStore } from '@/stores/golfs/GolfStore.js'
 import GolfPlayerCard from '@/components/golfs/GolfPlayerCard.vue'
 import BaseSpinner from '@/components/ui/BaseSpinner.vue'
 
 const golfStore = useGolfStore()
-const search    = ref('')
-const sortKey   = ref('name')
+const route = useRoute()
+const router = useRouter()
 
 const sorts = [
   { key: 'name',         label: 'Name'    },
@@ -73,6 +74,15 @@ const sorts = [
   { key: 'avgPts',       label: 'Avg Pts' },
   { key: 'avgPenalties', label: 'Avg Pen' },
 ]
+
+const sortKeys = new Set(sorts.map(s => s.key))
+const querySearch = typeof route.query.q === 'string' ? route.query.q : ''
+const querySort = typeof route.query.sort === 'string' && sortKeys.has(route.query.sort)
+  ? route.query.sort
+  : 'name'
+
+const search    = ref(querySearch)
+const sortKey   = ref(querySort)
 
 const loading = computed(() => golfStore.loading)
 
@@ -142,6 +152,22 @@ const visiblePlayers = computed(() => {
 })
 
 function setSort(key) { sortKey.value = key }
+
+watch([search, sortKey], ([q, sort]) => {
+  const nextQuery = {
+    ...route.query,
+    q: q || undefined,
+    sort: sort !== 'name' ? sort : undefined,
+  }
+
+  const currentQ = typeof route.query.q === 'string' ? route.query.q : ''
+  const currentSort = typeof route.query.sort === 'string' ? route.query.sort : ''
+  const nextQ = typeof nextQuery.q === 'string' ? nextQuery.q : ''
+  const nextSort = typeof nextQuery.sort === 'string' ? nextQuery.sort : ''
+
+  if (currentQ === nextQ && currentSort === nextSort) return
+  router.replace({ query: nextQuery })
+})
 
 // ── Summary stats ─────────────────────────────────────────────────────────
 const totalRounds = computed(() => golfStore.golfRounds.length)
