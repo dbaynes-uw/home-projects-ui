@@ -41,6 +41,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineEleme
 const props = defineProps({
   player:      { type: Object, required: true },
   teesFilter:  { type: String, default: 'All' },
+  rounds:      { type: Array, default: null },
 })
 
 const activeTab = ref('pts')
@@ -48,9 +49,11 @@ const nine      = ref('front')
 
 // Rounds filtered by selected tees
 const rounds = computed(() =>
-  props.teesFilter === 'All'
-    ? props.player.rounds
-    : props.player.rounds.filter(r => r.round.tees_played === props.teesFilter)
+  Array.isArray(props.rounds)
+    ? props.rounds
+    : props.teesFilter === 'All'
+      ? props.player.rounds
+      : props.player.rounds.filter(r => r.round.tees_played === props.teesFilter)
 )
 
 const tabs = [

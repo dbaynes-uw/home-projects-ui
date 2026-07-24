@@ -15,14 +15,26 @@
     <!-- ── Stats grid ──────────────────────────────────────────── -->
     <div v-if="viewMode === 'stats'" class="gpc-stats-wrap">
       <!-- Tees filter -->
-      <div v-if="availableTees.length > 1" class="gpc-tees-bar">
-        <button
-          v-for="t in ['All', ...availableTees]"
-          :key="t"
-          :class="['gpc-tee-btn', selectedTees === t ? 'active' : '']"
-          :style="selectedTees === t && t !== 'All' ? teeStyle(t) : {}"
-          @click="selectedTees = t"
-        >{{ t }}</button>
+      <div v-if="player.rounds?.length" class="gpc-tees-bar">
+        <template v-if="availableTees.length > 1">
+          <button
+            v-for="t in ['All', ...availableTees]"
+            :key="t"
+            :class="['gpc-tee-btn', selectedTees === t ? 'active' : '']"
+            :style="selectedTees === t && t !== 'All' ? teeStyle(t) : {}"
+            @click="selectedTees = t"
+          >{{ t }}</button>
+        </template>
+        <label class="gpc-rounds-filter-label" for="gpc-rounds-filter-stats">Rounds:</label>
+        <select
+          id="gpc-rounds-filter-stats"
+          v-model.number="selectedRoundsLimit"
+          class="gpc-rounds-select"
+          :disabled="maxRoundCount === 0"
+        >
+          <option :value="0">All</option>
+          <option v-for="n in roundLimitOptions" :key="`stats-${n}`" :value="n">Last {{ n }}</option>
+        </select>
         <span class="gpc-tees-count">({{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }})</span>
       </div>
       <div class="gpc-stats">
@@ -60,14 +72,26 @@
     <!-- ── Rounds table ─────────────────────────────────────────── -->
     <div v-else-if="viewMode === 'table'" class="gpc-table-wrap">
       <!-- Tees filter -->
-      <div v-if="availableTees.length > 1" class="gpc-tees-bar">
-        <button
-          v-for="t in ['All', ...availableTees]"
-          :key="t"
-          :class="['gpc-tee-btn', selectedTees === t ? 'active' : '']"
-          :style="selectedTees === t && t !== 'All' ? teeStyle(t) : {}"
-          @click="selectedTees = t"
-        >{{ t }}</button>
+      <div v-if="player.rounds?.length" class="gpc-tees-bar">
+        <template v-if="availableTees.length > 1">
+          <button
+            v-for="t in ['All', ...availableTees]"
+            :key="t"
+            :class="['gpc-tee-btn', selectedTees === t ? 'active' : '']"
+            :style="selectedTees === t && t !== 'All' ? teeStyle(t) : {}"
+            @click="selectedTees = t"
+          >{{ t }}</button>
+        </template>
+        <label class="gpc-rounds-filter-label" for="gpc-rounds-filter-table">Rounds:</label>
+        <select
+          id="gpc-rounds-filter-table"
+          v-model.number="selectedRoundsLimit"
+          class="gpc-rounds-select"
+          :disabled="maxRoundCount === 0"
+        >
+          <option :value="0">All</option>
+          <option v-for="n in roundLimitOptions" :key="`table-${n}`" :value="n">Last {{ n }}</option>
+        </select>
         <span class="gpc-tees-count">({{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }})</span>
       </div>
       <table class="gpc-table">
@@ -107,7 +131,12 @@
     </div>
 
     <!-- ── Hole charts ──────────────────────────────────────────── -->
-    <GolfPlayerHoleChart v-if="viewMode === 'chart'" :player="player" :tees-filter="selectedTees" />
+    <GolfPlayerHoleChart
+      v-if="viewMode === 'chart'"
+      :player="player"
+      :tees-filter="selectedTees"
+      :rounds="filteredRounds"
+    />
   </div>
 </template>
 
@@ -124,6 +153,7 @@ const props = defineProps({
 // 'stats' | 'table' | 'chart'
 const viewMode     = ref('stats')
 const selectedTees = ref('All')
+const selectedRoundsLimit = ref(0)
 
 // ── Tees helpers ──────────────────────────────────────────────────────────
 const TEE_COLOURS = {
@@ -143,14 +173,35 @@ function teeStyle(tee) {
 }
 
 const availableTees = computed(() => {
-  const set = new Set(props.player.rounds.map(r => r.round.tees_played).filter(Boolean))
+  const set = new Set(sortedRounds.value.map(r => r.round.tees_played).filter(Boolean))
   return [...set].sort()
 })
 
-const filteredRounds = computed(() =>
+function dateMillis(v) {
+  const t = new Date(v).getTime()
+  return Number.isFinite(t) ? t : 0
+}
+
+const sortedRounds = computed(() =>
+  [...(props.player.rounds || [])].sort((a, b) => dateMillis(b?.round?.date_played) - dateMillis(a?.round?.date_played))
+)
+
+const teesFilteredRounds = computed(() =>
   selectedTees.value === 'All'
-    ? props.player.rounds
-    : props.player.rounds.filter(r => r.round.tees_played === selectedTees.value)
+    ? sortedRounds.value
+    : sortedRounds.value.filter(r => r.round.tees_played === selectedTees.value)
+)
+
+const maxRoundCount = computed(() => teesFilteredRounds.value.length)
+
+const roundLimitOptions = computed(() =>
+  Array.from({ length: maxRoundCount.value }, (_, i) => i + 1)
+)
+
+const filteredRounds = computed(() =>
+  selectedRoundsLimit.value > 0
+    ? teesFilteredRounds.value.slice(0, Math.min(selectedRoundsLimit.value, maxRoundCount.value))
+    : teesFilteredRounds.value
 )
 
 function cycleView() {
@@ -320,6 +371,15 @@ const stats = computed(() => {
 }
 .gpc-tee-btn:hover  { border-color: #90caf9; background: #e3f2fd; }
 .gpc-tee-btn.active { border-color: transparent; }
+.gpc-rounds-filter-label { font-size: 0.7rem; color: #666; margin-left: 0.35rem; }
+.gpc-rounds-select {
+  border: 1px solid #ccc;
+  border-radius: 18px;
+  padding: 0.12rem 0.45rem;
+  font-size: 0.72rem;
+  background: #fff;
+  color: #444;
+}
 .gpc-tees-count { font-size: 0.68rem; color: #aaa; margin-left: auto; white-space: nowrap; }
 .gpc-stats {
   display: grid;
