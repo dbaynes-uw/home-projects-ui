@@ -94,6 +94,7 @@
 <script>
 import DateFormatService from "@/services/DateFormatService.js";
 import EventCard from '@/components/events/EventCard.vue'
+import dayjs from 'dayjs'
 export default {
   name: "EventStatisticDetail",
   components: {
@@ -121,7 +122,6 @@ export default {
       this.$router.push({ name: 'EventEdit', params: { id: `${event.id}` } });
     },
     duePastDueOrInactive(e) {
-      var dayjs = require('dayjs')
       let formatDateToday = dayjs(new Date()).format("YYYY-MM-DD");
       if (e.status == 'active') {
         if (e.action_due_date < formatDateToday ){
@@ -200,7 +200,7 @@ export default {
 }
 .event-inactive {
   border: 1px solid #ccc;
-  background: red;
+  background: lightgray;
   padding: 1rem;
   padding-top: 0em;
   border-radius: 5px;

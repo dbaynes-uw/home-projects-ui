@@ -68,5 +68,7 @@ watch(() => props.inputSearchText, (newValue) => {
   searchText.value = newValue || ''
 })
 
+watch(allBooks, performSearch)
+
 performSearch()
 </script>
