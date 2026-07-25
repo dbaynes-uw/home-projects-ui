@@ -201,7 +201,7 @@
             </button>
 
             <router-link 
-              :to="{ name: 'EventShow', params: { id: event?.id } }" 
+              :to="{ name: 'EventDetails', params: { id: event?.id } }" 
               class="details-btn"
             >
               <i class="fas fa-info-circle"></i>
@@ -297,7 +297,7 @@ const updateEvent = async () => {
         cancelButton: null
       });
       
-      router.push({ name: "EventShow", params: { id: updatedEvent.id } });
+      router.push({ name: "EventDetails", params: { id: updatedEvent.id } });
     } else {
       throw new Error('Update failed');
     }

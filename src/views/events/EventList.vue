@@ -377,7 +377,7 @@ function editEvent(event) {
 }
 
 function showEvent(event) {
-  router.push({ name: 'EventShow', params: { id: event.id } });
+  router.push({ name: 'EventDetails', params: { id: event.id } });
 }
 
 async function deleteEvent(event) {

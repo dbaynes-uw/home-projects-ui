@@ -105,9 +105,9 @@ const routes = [
   },
   {
     path: "/events/:id",
-    name: "EventShow",
+    name: "EventDetails",
     props: true,
-    component: () => import('@/views/events/EventShow.vue'),
+    component: () => import('@/views/events/EventDetails.vue'),
     meta: { requiresAuth: true}
   },
   {

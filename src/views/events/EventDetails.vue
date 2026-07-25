@@ -1,4 +1,4 @@
-<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/events/EventShow.vue -->
+<!-- filepath: /Users/davidbaynes/sites/home-projects-ui/src/views/events/EventDetails.vue -->
 
 <template>
   <div class="event-show-container">
@@ -206,7 +206,7 @@ const formatStandardDateTime = (value) => {
 
 // ✅ LIFECYCLE
 onMounted(async () => {
-  console.log('✅ EventShow mounted, fetching event:', props.id);
+  console.log('✅ EventDetails mounted, fetching event:', props.id);
   await store.dispatch("fetchEvent", props.id);
 });
 </script>

@@ -69,7 +69,7 @@
                   style="position: relative; top: -0.4rem"
                 >
                   <router-link
-                    :to="{ name: 'EventShow', params: { id: `${event.id}` } }"
+                    :to="{ name: 'EventDetails', params: { id: `${event.id}` } }"
                   >
                     <i class="fa fa-eye" style="font-size: 18px"></i>
                   </router-link>

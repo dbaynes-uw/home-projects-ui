@@ -1,7 +1,7 @@
 <template>
   <div class="pastdue-wrapper">
     <select v-model="internalValue" @change="handlePastDueChange" class="native-select">
-      <option value="">All Events</option>
+      <option value="">Future Events</option>
       <option value="pastdue">Past Due Only</option>
     </select>
   </div>

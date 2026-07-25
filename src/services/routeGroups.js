@@ -21,7 +21,7 @@ export const ROUTE_GROUPS = {
   events: {
     label: '📅 Events',
     routes: [
-      'EventList', 'EventShow', 'EventEdit', 'EventCreate',
+      'EventList', 'EventDetails', 'EventEdit', 'EventCreate',
       'EventStatistics', 'EventStatisticDetail', 'EventsAssigned',
     ],
   },

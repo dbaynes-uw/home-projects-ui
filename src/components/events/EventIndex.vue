@@ -44,7 +44,13 @@
             v-for="event in sortedEvents" 
             :key="event.id"
           >
-            <td class="description-cell">{{ event.description }}</td>
+            <td
+              class="description-cell description-link"
+              @click="eventDetails(event)"
+              title="View event details"
+            >
+              {{ event.description }}
+            </td>
             <td class="text-center">Every {{ event.frequency }} days</td>
             <td class="text-center" :class="{ 'due-date-overdue': isEventPastDue(event) }">
               {{ formatYearDate(event.action_due_date) }}
@@ -60,7 +66,7 @@
             <td class="actions-cell">
               <div v-if="onlineStatus" class="action-icons">
                 <router-link
-                  :to="{ name: 'EventShow', params: { id: event.id } }"
+                  :to="{ name: 'EventDetails', params: { id: event.id } }"
                   class="action-icon action-icon-view"
                   title="View Details"
                 >
@@ -86,7 +92,7 @@
               </div>
               
               <div v-else class="action-links">
-                <router-link :to="{ name: 'EventShow', params: { id: event.id } }">
+                <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
                   View
                 </router-link>
                 <span class="separator">|</span>
@@ -115,7 +121,7 @@ import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 
 const store = useStore();
-const _router = useRouter();
+const router = useRouter();
 
 // ✅ PROPS
 const props = defineProps({
@@ -170,6 +176,10 @@ const isEventPastDue = (event) => {
 const capitalizeStatus = (status) => {
   if (!status) return '';
   return status.charAt(0).toUpperCase() + status.slice(1);
+};
+
+const eventDetails = (event) => {
+  router.push({ name: 'EventDetails', params: { id: event.id } });
 };
 
 const deleteEvent = async (event) => {
@@ -256,6 +266,15 @@ const formatNotifyFlag = (value) => {
 
 .link-button:hover {
   color: #dc2626;
+}
+
+.description-link {
+  cursor: pointer;
+  color: #2563eb;
+}
+
+.description-link:hover {
+  text-decoration: underline;
 }
 
 .separator {
