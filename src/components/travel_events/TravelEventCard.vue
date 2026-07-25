@@ -24,8 +24,8 @@
           <br/><b>{{ props.travelEvent.booking_reference }}</b></li>
       </span>
       <li class="li-left">Transportation: <b>{{ props.travelEvent.transport }}</b></li>
-      <span v-if="props.travelEvent.transport_url" style="margin-left: 2rem;">
-        <b><a :href="props.travelEvent.transport_url" target="_blank" class="detail-link-blue">Map/Link</a></b>
+      <span class="li-left-none" v-if="props.travelEvent.transport_url">
+        <b>~ <a :href="props.travelEvent.transport_url" target="_blank" class="detail-link-blue">Map/Link</a></b>
       </span>
       <span v-if="props.travelEvent.start_date">
         <li class="li-left">Start: <b>{{ formatStandardDateTime(props.travelEvent.start_date) }}</b></li>

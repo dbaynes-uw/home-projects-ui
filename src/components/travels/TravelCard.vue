@@ -98,10 +98,17 @@
             class="event-link"
           >
             <b>• {{ event.title }}</b>
-           </router-link>
-          <div v-if="showEventNotes && event.notes" class="event-notes">
+          </router-link>
+          <span v-if="event.transport" class="event-sub-item">
+            <b>{{ event.transport }}</b>
+            <a :href="event.transport_url" target="_blank" class="detail-link-blue">
+              ~ {{event.transport}} Map/Link
+            </a>
+          </span>
+          <b class="event-sub-item">Notes:</b>
+          <div v-if="showEventNotes && event.notes" class="event-sub-item event-notes">
             {{ event.notes }}
-          </div>
+          </div>          
         </div>
       </div>
     </div>
@@ -337,6 +344,12 @@ const getTravelStatus = (travel) => {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+.event-sub-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-left: 1.25rem;
 }
 
 .event-link {
