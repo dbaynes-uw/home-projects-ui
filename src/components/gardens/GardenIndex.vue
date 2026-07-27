@@ -19,7 +19,10 @@
       </thead>
       <tbody>
         <tr v-for="garden in sortedGardens" :key="garden.id" garden="garden">
-          <td class="garden-name-cell">{{ garden.name }}</td>
+          <td class="garden-name-cell description-link"
+              @click="gardenDetails(garden)"
+              title="View garden details"
+          >{{ garden.name }}</td>
           <td class="waterings-cell" :title="formatWateringNames(garden)">
             {{ formatWateringNames(garden) }}
           </td>
@@ -69,6 +72,8 @@
 import { ref, computed } from 'vue';
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import GardenStatusBadge from '@/components/gardens/GardenStatusBadge.vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 //import DateFormatService from "@/services/DateFormatService.js";
 // Props
 const props = defineProps({
@@ -79,7 +84,9 @@ const emit = defineEmits(['edit','delete']);
 const onlineStatus = ref(navigator.onLine);
 const sortKey = ref('name');
 const sortAsc = ref(false);
-
+const gardenDetails = (garden) => {
+  router.push({ name: 'GardenDetails', params: { id: garden.id } });
+};
 function getSortValue(garden, key) {
   if (key === 'waterings') {
     const names = Array.isArray(garden?.waterings)
@@ -204,7 +211,6 @@ function formatPlantNames(garden) {
   padding: 0;
   cursor: pointer;
 }
-
 .waterings-cell,
 .plants-cell {
   min-width: 14rem;

@@ -88,6 +88,13 @@ body,
   width: 100%;
   grid-gap: 1rem;
 }
+.description-link {
+  cursor: pointer;
+  color: #2563eb !important;
+}
+.description-link:hover {
+  text-decoration: underline;
+}
 .action-icons {
   display: flex;
   gap: 4px;

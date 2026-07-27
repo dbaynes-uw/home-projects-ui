@@ -268,15 +268,6 @@ const formatNotifyFlag = (value) => {
   color: #dc2626;
 }
 
-.description-link {
-  cursor: pointer;
-  color: #2563eb;
-}
-
-.description-link:hover {
-  text-decoration: underline;
-}
-
 .separator {
   color: #ccc;
 }

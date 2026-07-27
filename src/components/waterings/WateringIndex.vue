@@ -78,7 +78,10 @@
       </thead>
       <tbody>
         <tr v-for="watering in sortedWaterings" :key="watering.id">
-          <td>{{ watering.name }}</td>
+          <td class="description-link"
+              @click="wateringDetails(watering)"
+              title="View details for {{ watering.name }}"
+            >{{ watering.name }}</td>
           <td>{{ getWateringGardenNames(watering) }}</td>
           <td>{{ watering.target }}</td>
           <td>{{ formatTime(watering.start_time) }}</td>
@@ -146,7 +149,9 @@ const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
 const TOOLTIP_EDGE_GUTTER = 8;
 const TOOLTIP_EDGE_THRESHOLD = 110;
 //?const inputSearchText = ref("");
-
+const wateringDetails = (watering) => {
+  router.push({ name: 'WateringDetails', params: { id: watering.id } });
+};
 const sortedWaterings = computed(() => {
   const arr = [...props.waterings];
 

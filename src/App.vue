@@ -32,16 +32,14 @@
         <div class="header-left">
         <details class="menu-dropdown-wrap" ref="menuDropdown" @toggle="onMenuToggle">
           <summary class="menu-dropdown" role="button" aria-label="Open navigation menu">
-              <i v-if="isMobile" class="fas fa-bars menu-icon"></i>
-              <span v-else class="menu-text">Menu</span>
+              <i class="fas fa-bars menu-icon"></i>
           </summary>
 
           <ul class="navigation-menu" role="menu">
             <li
               v-for="link in links"
               :key="`${link.label}-header-link`"
-              class="nav-menu-item"
-              :class="{ 'mobile-nav-item': isMobile }"
+              class="mobile-nav-item@@@"
             >
               <button
                 type="button"
@@ -49,9 +47,9 @@
                 @click="navigateFromMenu(link)"
                 :title="!isMobile ? link.title : ''"
               >
-                <div class="nav-item-content" :class="{ 'mobile-content': isMobile }">
-                  <i :class="[link.icon, 'dropdown-icon', { 'mobile-icon': isMobile }]" ></i>
-                  <span v-if="isMobile" class="mobile-nav-text">{{ link.title }}</span>
+                <div class="nav-content">
+                  <i :class="[link.icon, 'dropdown-icon']" ></i>
+                  <span><b>{{ link.title }}</b></span>
                 </div>
               </button>
             </li>
@@ -237,7 +235,7 @@ export default {
         {
           label: "HealthDashboard",
           url: "/health_dashboard", 
-          title: "Health Dashboard",
+          title: "Health",
           icon: "fas fa-pills"
         },
         {
@@ -384,7 +382,7 @@ export default {
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  max-height: 420px;
+  max-height: 500px;
   overflow-y: auto;
   padding: 0.4rem 0;
   margin: 0;
@@ -429,12 +427,9 @@ export default {
 /* ✅ DROPDOWN ICONS */
 .dropdown-icon {
   color: #8b0000 !important;
-  font-size: 18px;
+  font-size: 20px;
   transition: all 0.3s ease;
-}
-
-.mobile-icon {
-  font-size: 20px !important;
+  padding-right: 0.5rem;
 }
 
 .mobile-nav-text {
