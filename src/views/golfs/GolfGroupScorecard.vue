@@ -171,7 +171,7 @@
 
 
       <!-- ── Score Grid per player ──────────────────────────────── -->
-      <div v-for="(p, pi) in players" :key="`scores-${pi}`" class="score-section">
+      <div v-for="(p, pi) in players" :key="`scores-${pi}-${parRefreshKey}`" class="score-section">
         <h4 class="section-title player-title">
           {{ p.name || `Player ${pi + 1}` }}
           <span class="player-summary">
@@ -306,6 +306,7 @@ const loading = ref(false)
 const saving  = ref(false)
 const saveStatus    = ref('')
 const saveStatusCss = ref('')
+const parRefreshKey = ref(0)
 
 const meta = reactive({
   course: '',
@@ -328,15 +329,24 @@ const WHITE_FRONT_YARDAGES = [345, 324, 341, 270, 350, 303, 246, 165, 411]
 const BLUE_FRONT_YARDAGES  = [357, 332, 370, 284, 381, 163, 260, 204, 429]
 const RED_FRONT_YARDAGES   = [336, 287, 306, 260, 322, 139, 232, 138, 349]
 
+function applyParDefaultsForTee(tees) {
+  const defaults = tees === 'White'
+    ? WHITE_FRONT_PARS
+    : tees === 'Blue'
+      ? BLUE_FRONT_PARS
+      : null
+
+  if (!defaults) return
+
+  defaults.forEach((p, i) => {
+    par[i + 1] = p
+  })
+
+  parRefreshKey.value += 1
+}
+
 watch(() => meta.tees_played, (tees) => {
-  const anyFrontEntered = Array.from({ length: 9 }, (_, i) => par[i + 1]).some(v => v)
-  if (!anyFrontEntered) {
-    if (tees === 'White') {
-      WHITE_FRONT_PARS.forEach((p, i) => { par[i + 1] = p })
-    } else if (tees === 'Blue') {
-      BLUE_FRONT_PARS.forEach((p, i) => { par[i + 1] = p })
-    }
-  }
+  applyParDefaultsForTee(tees)
 })
 
 function blankPlayer() {
