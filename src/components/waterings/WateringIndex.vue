@@ -26,10 +26,14 @@
         :style="tooltipStyle"
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
-        <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">{{ tooltip.gardenNames }}</span>
-        <span class="timeline-tooltip-time">{{ tooltip.timeRange }}</span>
-        <span v-if="tooltip.duration" class="timeline-tooltip-duration">Duration: {{ tooltip.duration }}</span>
-        <span v-if="tooltip.days" class="timeline-tooltip-days">Days: {{ tooltip.days }}</span>
+        <div class="timeline-tooltip-details">
+          <span v-if="tooltip.gardenNames" class="timeline-tooltip-line">Garden: {{ tooltip.gardenNames }}</span>
+          <span v-if="tooltip.target" class="timeline-tooltip-line">Target: {{ tooltip.target }}</span>
+          <span class="timeline-tooltip-line">Start: {{ tooltip.startLabel }}</span>
+          <span class="timeline-tooltip-line">End: {{ tooltip.endLabel }}</span>
+          <span v-if="tooltip.duration" class="timeline-tooltip-line">Duration: {{ tooltip.duration }}</span>
+          <span v-if="tooltip.days" class="timeline-tooltip-line">Days: {{ tooltip.days }}</span>
+        </div>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
     </div>
@@ -46,12 +50,18 @@
         @click="goToWateringEdit(item.id)"
         :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${item.duration ? ` • Duration: ${item.duration}` : ''}${item.days ? ` • Days: ${item.days}` : ''}`"
       >
-        <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
-        <span class="timeline-legend-name">{{ item.name }}</span>
-        <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
-        <span class="timeline-legend-time">{{ item.timeRange }}</span>
-        <span v-if="item.duration" class="timeline-legend-duration">{{ item.duration }}</span>
-        <span v-if="item.days" class="timeline-legend-days">{{ item.days }}</span>
+        <div class="timeline-legend-header">
+          <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
+          <span class="timeline-legend-name">{{ item.name }}</span>
+        </div>
+        <div class="timeline-legend-details">
+          <span v-if="item.gardenNames" class="timeline-legend-line">Garden: {{ item.gardenNames }}</span>
+          <span v-if="item.target" class="timeline-legend-line">Target: {{ item.target }}</span>
+          <span class="timeline-legend-line">Start: {{ item.startLabel }}</span>
+          <span class="timeline-legend-line">End: {{ item.endLabel }}</span>
+          <span v-if="item.duration" class="timeline-legend-line">Duration: {{ item.duration }}</span>
+          <span v-if="item.days" class="timeline-legend-line">Days: {{ item.days }}</span>
+        </div>
       </button>
       <button
         v-if="activeLegendId !== null"
@@ -222,6 +232,7 @@ const allTimelineSegments = computed(() => {
         wateringId: watering.id,
         name,
         gardenNames,
+        target: watering.target,
         duration: watering.duration,
         days: watering.days,
         start: clippedStart,
@@ -267,6 +278,9 @@ const timelineLegendItems = computed(() => {
       id: segment.wateringId,
       name: segment.name,
       gardenNames: segment.gardenNames,
+      target: segment.target,
+      startLabel: segment.startLabel,
+      endLabel: segment.endLabel,
       duration: segment.duration,
       days: segment.days,
       color: segment.color,
@@ -330,6 +344,9 @@ function handleSegmentEnter(segment, event) {
     visible: true,
     name: segment.name,
     gardenNames: segment.gardenNames,
+    target: segment.target,
+    startLabel: segment.startLabel,
+    endLabel: segment.endLabel,
     duration: segment.duration,
     days: segment.days,
     timeRange: `${segment.startLabel} – ${segment.endLabel}`,
@@ -606,17 +623,41 @@ tr.is-complete {
   font-weight: 700;
 }
 
-.timeline-tooltip-garden {
-  opacity: 0.9;
+.timeline-tooltip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
 }
 
-.timeline-tooltip-days {
+.timeline-tooltip-line {
   opacity: 0.85;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.timeline-tooltip-time {
-  opacity: 0.8;
+.timeline-legend-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.timeline-legend-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  padding-left: 0.2rem;
+}
+
+.timeline-legend-line {
+  color: #64748b;
+  white-space: normal;
+  line-height: 1.1;
+}
+
+.timeline-legend-name {
+  font-weight: 700;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .timeline-axis {
@@ -641,10 +682,10 @@ tr.is-complete {
   color: #334155;
   border-radius: 6px;
   padding: 0.25rem 0.25rem;
-  display: grid;
-  grid-template-columns: 10px 100px 100px 100px 72px 72px;
-  align-items: center;
-  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
   font-size: 0.68rem;
   cursor: pointer;
   width: fit-content;
@@ -660,52 +701,6 @@ tr.is-complete {
   height: 12px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  grid-column: 1;
-}
-
-.timeline-legend-name {
-  font-weight: 700;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 2;
-  text-align: left;
-}
-
-.timeline-legend-garden {
-  color: #475569;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 3;
-  text-align: left;
-}
-
-.timeline-legend-duration {
-  color: #334155;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 5;
-  text-align: left;
-}
-
-.timeline-legend-days {
-  color: #1e293b;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 6;
-  text-align: left;
-}
-
-.timeline-legend-time {
-  color: #64748b;
-  white-space: nowrap;
-  grid-column: 4;
-  text-align: left;
 }
 
 .timeline-legend-clear {
@@ -732,13 +727,7 @@ tr.is-complete {
   }
 
   .timeline-legend-item {
-    grid-template-columns: 10px 80px 86px 92px 62px 56px;
     font-size: 0.64rem;
-  }
-
-  .timeline-legend-time {
-    white-space: normal;
-    line-height: 1.05;
   }
 
   .timeline-legend-clear {
