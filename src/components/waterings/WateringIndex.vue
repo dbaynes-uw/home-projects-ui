@@ -27,8 +27,8 @@
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
         <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">{{ tooltip.gardenNames }}</span>
-        <span v-if="tooltip.days" class="timeline-tooltip-days">Days: {{ tooltip.days }}</span>
         <span class="timeline-tooltip-time">{{ tooltip.timeRange }}</span>
+        <span v-if="tooltip.days" class="timeline-tooltip-days">Days: {{ tooltip.days }}</span>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
     </div>
@@ -42,14 +42,14 @@
         type="button"
         class="timeline-legend-item"
         :class="{ active: activeLegendId === item.id }"
-        @click="goToWateringDetails(item.id)"
-        :title="`${item.name} • ${item.gardenNames} • Days: ${item.days} (${item.timeRange})`"
+        @click="goToWateringEdit(item.id)"
+        :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${item.days ? ` • Days: ${item.days}` : ''}`"
       >
         <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
         <span class="timeline-legend-name">{{ item.name }}</span>
         <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
-        <span v-if="item.days" class="timeline-legend-days">{{ item.days }}</span>
         <span class="timeline-legend-time">{{ item.timeRange }}</span>
+        <span v-if="item.days" class="timeline-legend-days">{{ item.days }}</span>
       </button>
       <button
         v-if="activeLegendId !== null"
@@ -297,9 +297,9 @@ function deleteWatering(watering) {
   emit('delete', watering);
 }
 
-function goToWateringDetails(wateringId) {
+function goToWateringEdit(wateringId) {
   activeLegendId.value = wateringId;
-  router.push({ name: 'WateringDetails', params: { id: `${wateringId}` } });
+  router.push({ name: 'WateringEdit', params: { id: `${wateringId}` } });
 }
 
 function handleSegmentEnter(segment, event) {
@@ -682,14 +682,14 @@ tr.is-complete {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  grid-column: 4;
+  grid-column: 5;
   text-align: left;
 }
 
 .timeline-legend-time {
   color: #64748b;
   white-space: nowrap;
-  grid-column: 5;
+  grid-column: 4;
   text-align: left;
 }
 
