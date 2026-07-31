@@ -28,6 +28,7 @@
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
         <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">{{ tooltip.gardenNames }}</span>
         <span class="timeline-tooltip-time">{{ tooltip.timeRange }}</span>
+        <span v-if="tooltip.duration" class="timeline-tooltip-duration">Duration: {{ tooltip.duration }}</span>
         <span v-if="tooltip.days" class="timeline-tooltip-days">Days: {{ tooltip.days }}</span>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
@@ -43,12 +44,13 @@
         class="timeline-legend-item"
         :class="{ active: activeLegendId === item.id }"
         @click="goToWateringEdit(item.id)"
-        :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${item.days ? ` • Days: ${item.days}` : ''}`"
+        :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${item.duration ? ` • Duration: ${item.duration}` : ''}${item.days ? ` • Days: ${item.days}` : ''}`"
       >
         <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
         <span class="timeline-legend-name">{{ item.name }}</span>
         <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
         <span class="timeline-legend-time">{{ item.timeRange }}</span>
+        <span v-if="item.duration" class="timeline-legend-duration">{{ item.duration }}</span>
         <span v-if="item.days" class="timeline-legend-days">{{ item.days }}</span>
       </button>
       <button
@@ -142,7 +144,7 @@ const sortKey = ref('start_time');
 const sortAsc = ref(true);
 const activeLegendId = ref(null);
 const hoveredSegmentKey = ref(null);
-const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', x: 0, align: 'center' });
+const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', duration: '', days: '', x: 0, align: 'center' });
 const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
 const TIMELINE_END_MIN = 10 * 60;    // 10:00 AM
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
@@ -220,6 +222,7 @@ const allTimelineSegments = computed(() => {
         wateringId: watering.id,
         name,
         gardenNames,
+        duration: watering.duration,
         days: watering.days,
         start: clippedStart,
         end: clippedEnd,
@@ -264,6 +267,7 @@ const timelineLegendItems = computed(() => {
       id: segment.wateringId,
       name: segment.name,
       gardenNames: segment.gardenNames,
+      duration: segment.duration,
       days: segment.days,
       color: segment.color,
       timeRange: `${segment.startLabel} - ${segment.endLabel}`
@@ -326,6 +330,7 @@ function handleSegmentEnter(segment, event) {
     visible: true,
     name: segment.name,
     gardenNames: segment.gardenNames,
+    duration: segment.duration,
     days: segment.days,
     timeRange: `${segment.startLabel} – ${segment.endLabel}`,
     x: tooltipX,
@@ -637,7 +642,7 @@ tr.is-complete {
   border-radius: 6px;
   padding: 0.25rem 0.25rem;
   display: grid;
-  grid-template-columns: 10px 100px 100px 100px 110px;
+  grid-template-columns: 10px 100px 100px 100px 72px 72px;
   align-items: center;
   gap: 0.25rem;
   font-size: 0.68rem;
@@ -676,13 +681,23 @@ tr.is-complete {
   text-align: left;
 }
 
+.timeline-legend-duration {
+  color: #334155;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  grid-column: 5;
+  text-align: left;
+}
+
 .timeline-legend-days {
   color: #1e293b;
   font-weight: 600;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  grid-column: 5;
+  grid-column: 6;
   text-align: left;
 }
 
@@ -717,7 +732,7 @@ tr.is-complete {
   }
 
   .timeline-legend-item {
-    grid-template-columns: 10px 80px 86px 68px 92px;
+    grid-template-columns: 10px 80px 86px 92px 62px 56px;
     font-size: 0.64rem;
   }
 
