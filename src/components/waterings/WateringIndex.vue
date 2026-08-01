@@ -39,14 +39,6 @@
       <span v-for="tick in timelineTicks" :key="tick">{{ tick }}</span>
     </div>
     <div v-if="timelineLegendItems.length" class="timeline-legend">
-      <div class="timeline-legend-header-row" aria-hidden="true">
-        <span>Watering Name</span>
-        <span>Garden</span>
-        <span>Start time</span>
-        <span>End time</span>
-        <span>Duration</span>
-        <span>Days</span>
-      </div>
       <button
         v-for="item in timelineLegendItems"
         :key="`legend-${item.id}`"
@@ -56,6 +48,7 @@
         @click="goToWateringEdit(item.id)"
         :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${item.duration ? ` • ${item.duration}` : ''}${item.days ? ` • ${item.days}` : ''}`"
       >
+        <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
         <span class="timeline-legend-name">{{ item.name }}</span>
         <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
         <span class="timeline-legend-time">{{ item.timeRange }}</span>
@@ -282,7 +275,8 @@ const timelineLegendItems = computed(() => {
       endLabel: segment.endLabel,
       duration: segment.duration,
       days: segment.days,
-      color: segment.color
+      color: segment.color,
+      timeRange: `${segment.startLabel} - ${segment.endLabel}`
     }));
 });
 
@@ -347,6 +341,7 @@ function handleSegmentEnter(segment, event) {
     endLabel: segment.endLabel,
     duration: segment.duration,
     days: segment.days,
+    timeRange: `${segment.startLabel} – ${segment.endLabel}`,
     x: tooltipX,
     align
   };
@@ -653,18 +648,6 @@ tr.is-complete {
   flex-direction: column;
   gap: 0.25rem;
   align-items: stretch;
-}
-
-.timeline-legend-header-row {
-  display: grid;
-  grid-template-columns: 140px 130px 88px 88px 82px 72px;
-  gap: 0.25rem;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #334155;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  padding: 0 0.15rem;
 }
 
 .timeline-legend-item {
