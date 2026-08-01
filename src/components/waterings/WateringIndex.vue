@@ -192,7 +192,7 @@ const sortedWaterings = computed(() => {
 const allTimelineSegments = computed(() => {
   const segments = [];
 
-  sortedWaterings.value.forEach((watering, index) => {
+  sortedWaterings.value.forEach((watering) => {
     console.log("Garden Names for Watering:", getWateringGardenNames(watering));
     const startMins = timeToMinutes(watering.start_time);
     const endMins = timeToMinutes(watering.end_time);
@@ -201,7 +201,7 @@ const allTimelineSegments = computed(() => {
     const name = watering.name || 'Watering';
     const gardenNames = getWateringGardenNames(watering);
     const label = `${name}: ${formatTime(watering.start_time)} - ${formatTime(watering.end_time)}`;
-    const hue = (index * 47) % 360;
+    const hue = getWateringHue(watering);
 
     const daySegments = [];
     if (endMins > startMins) {
@@ -426,6 +426,21 @@ function compactTimelineName(name, visibleDuration) {
   }
 
   return safeName;
+}
+
+function getWateringHue(watering) {
+  const idNumber = Number(watering?.id);
+  if (!Number.isNaN(idNumber)) {
+    return Math.abs((idNumber * 53) % 360);
+  }
+
+  const seed = `${watering?.name || ''}|${watering?.start_time || ''}|${watering?.end_time || ''}`;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash % 360);
 }
 </script>
 <style scoped>
