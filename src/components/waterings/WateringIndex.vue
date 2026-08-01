@@ -26,11 +26,12 @@
         :style="tooltipStyle"
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
-        <span v-if="tooltip.gardenNames" class="timeline-tooltip-garden">Garden: {{ tooltip.gardenNames }}</span>
-        <span class="timeline-tooltip-time">Start: {{ tooltip.startLabel }}</span>
-        <span class="timeline-tooltip-time">End: {{ tooltip.endLabel }}</span>
-        <span v-if="tooltip.duration" class="timeline-tooltip-days">Duration: {{ tooltip.duration }}</span>
-        <span v-if="tooltip.days" class="timeline-tooltip-days">Days: {{ tooltip.days }}</span>
+        <div class="timeline-tooltip-details">
+          <span v-if="tooltip.gardenNames" class="timeline-tooltip-line">{{ tooltip.gardenNames }}</span>
+          <span class="timeline-tooltip-line">{{ tooltip.startLabel }} - {{ tooltip.endLabel }}</span>
+          <span v-if="tooltip.duration" class="timeline-tooltip-line">{{ tooltip.duration }}</span>
+          <span v-if="tooltip.days" class="timeline-tooltip-line">{{ tooltip.days }}</span>
+        </div>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
     </div>
@@ -52,13 +53,12 @@
         type="button"
         class="timeline-legend-item"
         :class="{ active: activeLegendId === item.id }"
-        @click="goToWateringDetails(item.id)"
-        :title="`${item.name} • ${item.gardenNames} • Start: ${item.startLabel} • End: ${item.endLabel}${item.duration ? ` • Duration: ${item.duration}` : ''}${item.days ? ` • Days: ${item.days}` : ''}`"
+        @click="goToWateringEdit(item.id)"
+        :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${item.duration ? ` • ${item.duration}` : ''}${item.days ? ` • ${item.days}` : ''}`"
       >
         <span class="timeline-legend-name">{{ item.name }}</span>
         <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
-        <span class="timeline-legend-time">{{ item.startLabel }}</span>
-        <span class="timeline-legend-time">{{ item.endLabel }}</span>
+        <span class="timeline-legend-time">{{ item.timeRange }}</span>
         <span class="timeline-legend-duration">{{ item.duration || '-' }}</span>
         <span class="timeline-legend-days">{{ item.days || '-' }}</span>
       </button>
@@ -153,7 +153,7 @@ const sortKey = ref('start_time');
 const sortAsc = ref(true);
 const activeLegendId = ref(null);
 const hoveredSegmentKey = ref(null);
-const tooltip = ref({ visible: false, name: '', gardenNames: '', startLabel: '', endLabel: '', duration: '', days: '', x: 0, align: 'center' });
+const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', duration: '', days: '', x: 0, align: 'center' });
 const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
 const TIMELINE_END_MIN = 10 * 60;    // 10:00 AM
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
@@ -231,6 +231,7 @@ const allTimelineSegments = computed(() => {
         wateringId: watering.id,
         name,
         gardenNames,
+        target: watering.target,
         duration: watering.duration,
         days: watering.days,
         start: clippedStart,
@@ -276,6 +277,7 @@ const timelineLegendItems = computed(() => {
       id: segment.wateringId,
       name: segment.name,
       gardenNames: segment.gardenNames,
+      target: segment.target,
       startLabel: segment.startLabel,
       endLabel: segment.endLabel,
       duration: segment.duration,
@@ -311,9 +313,9 @@ function deleteWatering(watering) {
   emit('delete', watering);
 }
 
-function goToWateringDetails(wateringId) {
+function goToWateringEdit(wateringId) {
   activeLegendId.value = wateringId;
-  router.push({ name: 'WateringDetails', params: { id: `${wateringId}` } });
+  router.push({ name: 'WateringEdit', params: { id: `${wateringId}` } });
 }
 
 function handleSegmentEnter(segment, event) {
@@ -340,6 +342,7 @@ function handleSegmentEnter(segment, event) {
     visible: true,
     name: segment.name,
     gardenNames: segment.gardenNames,
+    target: segment.target,
     startLabel: segment.startLabel,
     endLabel: segment.endLabel,
     duration: segment.duration,
@@ -617,17 +620,23 @@ tr.is-complete {
   font-weight: 700;
 }
 
-.timeline-tooltip-garden {
-  opacity: 0.9;
+.timeline-tooltip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
 }
 
-.timeline-tooltip-days {
+.timeline-tooltip-line {
   opacity: 0.85;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.timeline-tooltip-time {
-  opacity: 0.8;
+.timeline-legend-name {
+  font-weight: 700;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
 }
 
 .timeline-axis {
@@ -663,63 +672,43 @@ tr.is-complete {
   background: transparent;
   color: #334155;
   border-radius: 0;
-  padding: 0.16rem 0.15rem;
+  padding: 0.15rem 0.1rem;
   display: grid;
-  grid-template-columns: 140px 130px 88px 88px 82px 72px;
+  grid-template-columns: 12px 110px 130px 120px 88px 70px;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.35rem;
   font-size: 0.68rem;
   cursor: pointer;
   width: 100%;
   text-align: left;
+  white-space: nowrap;
 }
 
 .timeline-legend-item.active {
-  background: rgba(15, 23, 42, 0.06);
+  background: rgba(15, 23, 42, 0.03);
 }
 
-.timeline-legend-name {
-  font-weight: 700;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 2;
-  text-align: left;
+.timeline-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-.timeline-legend-garden {
-  color: #475569;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 2;
-  text-align: left;
-}
-
+.timeline-legend-garden,
+.timeline-legend-time,
+.timeline-legend-duration,
 .timeline-legend-days {
-  color: #1e293b;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 6;
-  text-align: left;
-}
-
-.timeline-legend-duration {
-  color: #1e293b;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  grid-column: 5;
-  text-align: left;
-}
-
-.timeline-legend-time {
   color: #64748b;
+  text-overflow: ellipsis;
+  overflow: hidden;
   white-space: nowrap;
   text-align: left;
+}
+
+.timeline-legend-duration,
+.timeline-legend-days {
+  font-weight: 600;
 }
 
 .timeline-legend-clear {
@@ -746,18 +735,9 @@ tr.is-complete {
   }
 
   .timeline-legend-item {
-    grid-template-columns: 120px 112px 78px 78px 72px 56px;
+    grid-template-columns: 12px 96px 104px 104px 72px 56px;
     font-size: 0.64rem;
-  }
-
-  .timeline-legend-header-row {
-    grid-template-columns: 120px 112px 78px 78px 72px 56px;
-    min-width: 516px;
-  }
-
-  .timeline-legend-time {
-    white-space: normal;
-    line-height: 1.05;
+    gap: 0.28rem;
   }
 
   .timeline-legend-clear {

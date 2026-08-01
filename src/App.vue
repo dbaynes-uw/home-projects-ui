@@ -41,7 +41,46 @@
               :key="`${link.label}-header-link`"
               class="mobile-nav-item@@@"
             >
+              <template v-if="link.children && link.children.length">
+                <button
+                  type="button"
+                  class="nav-menu-button"
+                  @click="toggleSubmenu(link.label)"
+                  :title="!isMobile ? link.title : ''"
+                >
+                  <div class="nav-content">
+                    <i :class="[link.icon, 'dropdown-icon']"></i>
+                    <span><b>{{ link.title }}</b></span>
+                    <i
+                      class="fas fa-chevron-down submenu-chevron"
+                      :class="{ open: openSubmenu === link.label }"
+                    ></i>
+                  </div>
+                </button>
+
+                <ul v-show="openSubmenu === link.label" class="submenu-menu" role="menu">
+                  <li
+                    v-for="child in link.children"
+                    :key="`${child.label}-submenu-link`"
+                    class="submenu-item"
+                  >
+                    <button
+                      type="button"
+                      class="nav-menu-button submenu-button"
+                      @click="navigateFromMenu(child)"
+                      :title="!isMobile ? child.title : ''"
+                    >
+                      <div class="nav-content submenu-content">
+                        <i :class="[child.icon, 'dropdown-icon']"></i>
+                        <span>{{ child.title }}</span>
+                      </div>
+                    </button>
+                  </li>
+                </ul>
+              </template>
+
               <button
+                v-else
                 type="button"
                 class="nav-menu-button"
                 @click="navigateFromMenu(link)"
@@ -153,10 +192,15 @@ export default {
       this.closeMenu();
     },
 
+    toggleSubmenu(label) {
+      this.openSubmenu = this.openSubmenu === label ? null : label;
+    },
+
     closeMenu() {
       if (this.$refs.menuDropdown) {
         this.$refs.menuDropdown.removeAttribute('open');
       }
+      this.openSubmenu = null;
     },
 
     handleDocumentClick(event) {
@@ -195,10 +239,11 @@ export default {
       onlineStatus: navigator.onLine,
       windowWidth: window.innerWidth,
       showFooter: false,
+      openSubmenu: null,
       links: [
         {
-            label: "About",
-            url: "/about",
+          label: "About",
+          url: "/about",
           title: "About",
           icon: "fas fa-info-circle"
         },
@@ -224,7 +269,14 @@ export default {
           label: "Gardens",
           url: "/gardens",
           title: "Gardens",
-          icon: "fas fa-seedling"
+          icon: "fas fa-seedling",
+          children: [
+            {
+              label: "Waterings",
+              title: "Waterings",
+              icon: "fas fa-tint"
+            }
+          ]
         },
         {
           label: "GolfList", 
@@ -410,6 +462,36 @@ export default {
 .nav-menu-item:hover {
   background-color: rgba(139, 0, 0, 0.1) !important;
   transform: translateX(5px);
+}
+
+.submenu-menu {
+  list-style: none;
+  margin: 0 0 0.35rem;
+  padding: 0;
+}
+
+.submenu-item {
+  margin: 0 8px 4px;
+  border-radius: 8px;
+}
+
+.submenu-button {
+  padding-left: 28px;
+}
+
+.submenu-content {
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.submenu-chevron {
+  margin-left: auto;
+  font-size: 0.8rem;
+  transition: transform 0.2s ease;
+}
+
+.submenu-chevron.open {
+  transform: rotate(180deg);
 }
 
 .nav-item-content {
