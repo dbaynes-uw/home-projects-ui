@@ -168,7 +168,10 @@ export default {
     },
 
     isGardenOrWateringIndexPage() {
-      return this.$route.name === 'Gardens' || this.$route.name === 'Waterings' || this.$route.name === 'Plants';
+      //DLB
+      //return this.$route.name === 'Gardens' || this.$route.name === 'Waterings' || this.$route.name === 'Plants';
+      //DLB:
+      return true;
     }
   },
   
