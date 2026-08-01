@@ -635,21 +635,24 @@ tr.is-complete {
 }
 
 .timeline-legend-header {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  flex: 0 0 auto;
 }
 
 .timeline-legend-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.08rem;
-  padding-left: 0.2rem;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45rem;
+  padding-left: 0;
+  flex: 0 0 auto;
 }
 
 .timeline-legend-line {
   color: #64748b;
-  white-space: normal;
+  white-space: nowrap;
   line-height: 1.1;
 }
 
@@ -677,23 +680,26 @@ tr.is-complete {
 }
 
 .timeline-legend-item {
-  border: 1px solid #cbd5e1;
-  background: #fff;
+  border: 0;
+  background: transparent;
   color: #334155;
-  border-radius: 6px;
-  padding: 0.25rem 0.25rem;
+  border-radius: 0;
+  padding: 0.15rem 0;
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.2rem;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.45rem;
   font-size: 0.68rem;
   cursor: pointer;
-  width: fit-content;
+  width: 100%;
+  text-align: left;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .timeline-legend-item.active {
-  border-color: #0f172a;
-  box-shadow: 0 0 0 1px #0f172a inset;
+  background: rgba(15, 23, 42, 0.03);
 }
 
 .timeline-legend-swatch {
@@ -728,6 +734,7 @@ tr.is-complete {
 
   .timeline-legend-item {
     font-size: 0.64rem;
+    gap: 0.35rem;
   }
 
   .timeline-legend-clear {
