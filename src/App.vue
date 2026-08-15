@@ -39,13 +39,14 @@
             <li
               v-for="link in links"
               :key="`${link.label}-header-link`"
-              class="mobile-nav-item@@@"
+              class="mobile-nav-item"
             >
               <template v-if="link.children && link.children.length">
                 <button
                   type="button"
                   class="nav-menu-button"
                   @click="toggleSubmenu(link.label)"
+                  @dblclick.stop="navigateFromMenu(link)"
                   :title="!isMobile ? link.title : ''"
                 >
                   <div class="nav-content">
