@@ -42,22 +42,32 @@
               class="mobile-nav-item"
             >
               <template v-if="link.children && link.children.length">
-                <button
-                  type="button"
-                  class="nav-menu-button"
-                  @click="toggleSubmenu(link.label)"
-                  @dblclick.stop="navigateFromMenu(link)"
-                  :title="!isMobile ? link.title : ''"
-                >
-                  <div class="nav-content">
-                    <i :class="[link.icon, 'dropdown-icon']"></i>
-                    <span><b>{{ link.title }}</b></span>
+                <div class="nav-parent-row">
+                  <button
+                    type="button"
+                    class="nav-menu-button nav-parent-link"
+                    @click="navigateFromMenu(link)"
+                    :title="!isMobile ? link.title : ''"
+                  >
+                    <div class="nav-content">
+                      <i :class="[link.icon, 'dropdown-icon']"></i>
+                      <span><b>{{ link.title }}</b></span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="submenu-toggle-button"
+                    @click.stop="toggleSubmenu(link.label)"
+                    :aria-expanded="openSubmenu === link.label"
+                    :aria-label="`Toggle ${link.title} submenu`"
+                  >
                     <i
                       class="fas fa-chevron-down submenu-chevron"
                       :class="{ open: openSubmenu === link.label }"
                     ></i>
-                  </div>
-                </button>
+                  </button>
+                </div>
 
                 <ul v-show="openSubmenu === link.label" class="submenu-menu" role="menu">
                   <li
@@ -461,6 +471,35 @@ export default {
   padding: 12px 16px;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.nav-parent-row {
+  display: flex;
+  align-items: center;
+  margin: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.nav-parent-row:hover {
+  background-color: rgba(139, 0, 0, 0.1);
+  transform: translateX(5px);
+}
+
+.nav-parent-link {
+  flex: 1;
+  padding-right: 8px;
+}
+
+.submenu-toggle-button {
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 12px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-menu-item:hover {
