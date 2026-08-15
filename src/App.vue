@@ -302,7 +302,29 @@ export default {
           label: "HealthDashboard",
           url: "/health_dashboard", 
           title: "Health",
-          icon: "fas fa-pills"
+          icon: "fas fa-pills",
+          children: [
+            {
+              label: "HealthMarkers",
+              title: "Health Markers",
+              icon: "fas fa-heartbeat"
+            },
+            {
+              label: "SleepMarkers",
+              title: "Sleep Markers",
+              icon: "fas fa-bed"
+            },
+            {
+              label: "GlucoseReadings",
+              title: "Glucose",
+              icon: "fas fa-tint"
+            },
+            {
+              label: "Oobs",
+              title: "Oobs",
+              icon: "fas fa-exclamation-triangle"
+            }
+          ]
         },
         {
           label: "ProductsByLocations",
@@ -476,7 +498,7 @@ export default {
 .nav-parent-row {
   display: flex;
   align-items: center;
-  margin: 4px 8px;
+  margin: 0;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
