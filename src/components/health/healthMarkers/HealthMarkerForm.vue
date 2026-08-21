@@ -168,7 +168,7 @@
               </div>
             </div>
 
-            <div class="form-row">
+            <div v-if="!isBloodPressureMarker" class="form-row">
               <!-- Normal Range Low -->
               <div class="form-group">
                 <label for="normal_range_low" class="form-label">
@@ -520,6 +520,21 @@ const selectedMarkerInfo = computed(() => {
   return markerDefinitionStore.getDefinitionByName(form.value.marker_name);
 });
 
+const isBloodPressureMarker = computed(() => {
+  const markerName = String(form.value.marker_name || '').toLowerCase();
+  const markerDef = selectedMarkerInfo.value;
+  const defName = String(markerDef?.name || '').toLowerCase();
+  const defLabel = String(markerDef?.label || '').toLowerCase();
+  const combined = `${markerName} ${defName} ${defLabel}`;
+
+  return (
+    combined.includes('blood pressure') ||
+    combined.includes('blood_pressure') ||
+    combined.includes('systolic') ||
+    combined.includes('diastolic')
+  );
+});
+
 const intelligentStatus = computed(() => {
   if (!form.value.marker_name || !form.value.marker_result) return null;
   const markerDef = selectedMarkerInfo.value;
@@ -668,8 +683,8 @@ async function handleSubmit() {
       marker_date: form.value.marker_date,
       marker_result: form.value.marker_result,
       unit: form.value.unit || null,
-      normal_range_low: form.value.normal_range_low || null,
-      normal_range_high: form.value.normal_range_high || null,
+      normal_range_low: isBloodPressureMarker.value ? null : (form.value.normal_range_low || null),
+      normal_range_high: isBloodPressureMarker.value ? null : (form.value.normal_range_high || null),
       status: form.value.status || derivedStatus || null,
       marker_facts: form.value.marker_facts || null,
       notes: form.value.notes || null,

@@ -177,6 +177,7 @@ export const HEALTH_MARKERS = [
     elevatedRange: '120-129 mm Hg',
     stage1Range: '130-139 mm Hg',
     stage2Range: '≥ 140 mm Hg',
+    crisisRange: '> 180 mm Hg',
     description: 'Systolic blood pressure',
     testFrequency: 'Every visit',
     category: 'Heart',
@@ -191,6 +192,7 @@ export const HEALTH_MARKERS = [
     normalRange: '< 80 mm Hg',
     stage1Range: '80-89 mm Hg',
     stage2Range: '≥ 90 mm Hg',
+    crisisRange: '> 120 mm Hg',
     description: 'Diastolic blood pressure',
     testFrequency: 'Every visit',
     category: 'Heart',
@@ -269,7 +271,9 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     
   if (!marker || !testResult) return null;
   
-  const markerName = marker.name;
+  const markerName = marker.name || '';
+  const markerLabel = marker.label || '';
+  const markerText = `${markerName} ${markerLabel}`.toLowerCase();
   const result = parseFloat(testResult);
   
   // ✅ Albumin, s LOGIC
@@ -438,17 +442,94 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
   }
   
   // ✅ BLOOD PRESSURE LOGIC
-  if (markerName === 'Blood_Pressure_Systolic') {
-    if (result < 120) return { type: 'success', title: 'Normal', range: marker.normalRange };
-    if (result <= 129) return { type: 'info', title: 'Elevated', range: marker.elevatedRange };
-    if (result <= 139) return { type: 'warning', title: 'Stage 1 Hypertension', range: marker.stage1Range };
-    return { type: 'error', title: 'Stage 2 Hypertension', range: marker.stage2Range };
+  // Systolic and Diastolic have different ranges, so we handle them separately
+  // Normal: Less than 120 / 80 mm Hg
+  // Elevated: 120–129 / less than 80 mm Hg
+  // Stage 1 High: 130–139 / 80–89 mm Hg
+  // Stage 2 High: 140 or higher / 90 or higher mm Hg
+  // Crisis: Higher than 180 / 120 mm Hg (seek care now)
+  const bpRanges = {
+    normal: 'Less than 120 / 80 mm Hg',
+    elevated: '120-129 / less than 80 mm Hg',
+    stage1: '130-139 / 80-89 mm Hg',
+    stage2: '140 or higher / 90 or higher mm Hg',
+    crisis: 'Higher than 180 / 120 mm Hg (seek care now)'
+  };
+
+  const classifyBloodPressure = (systolic, diastolic) => {
+    console.log('Classifying blood pressure:', systolic, diastolic);
+    if (systolic > 180 || diastolic > 120) {
+      return {
+        type: 'error',
+        title: 'Crisis',
+        range: bpRanges.crisis,
+        message: 'Higher than 180 / 120 mm Hg (seek care now)'
+      };
+    }
+    if (systolic <= 120 && diastolic <= 80) {
+      return { type: 'success', title: 'Normal', range: bpRanges.normal };
+    }    
+    if (systolic >= 140 || diastolic >= 90) {
+      return { type: 'error', title: 'Stage 2 High', range: bpRanges.stage2 };
+    }
+    if ((systolic >= 130 && systolic <= 139) || (diastolic >= 80 && diastolic <= 89)) {
+      return { type: 'warning', title: 'Stage 1 High', range: bpRanges.stage1 };
+    }
+    if (systolic > 120 && systolic <= 129 && diastolic < 80) {
+      return { type: 'info', title: 'Elevated', range: bpRanges.elevated };
+    }
+    return { type: 'success', title: 'Normal', range: bpRanges.normal };
+  };
+
+  const isSystolicMarker = markerName === 'Blood_Pressure_Systolic' || markerText.includes('systolic');
+  const isDiastolicMarker = markerName === 'Blood_Pressure_Diastolic' || markerText.includes('diastolic');
+  const isGenericBloodPressure = markerText.includes('blood pressure') && !isSystolicMarker && !isDiastolicMarker;
+
+  if (isSystolicMarker) {
+    if (result < 120) return { type: 'success', title: 'Normal', range: bpRanges.normal };
+    if (result <= 129) return { type: 'info', title: 'Elevated', range: bpRanges.elevated };
+    if (result <= 139) return { type: 'warning', title: 'Stage 1 High', range: bpRanges.stage1 };
+    if (result <= 180) return { type: 'error', title: 'Stage 2 High', range: bpRanges.stage2 };
+    return {
+      type: 'error',
+      title: 'Crisis',
+      range: bpRanges.crisis,
+      message: 'Higher than 180 / 120 mm Hg (seek care now)'
+    };
   }
   
-  if (markerName === 'Blood_Pressure_Diastolic') {
-    if (result < 80) return { type: 'success', title: 'Normal', range: marker.normalRange };
-    if (result <= 89) return { type: 'warning', title: 'Stage 1 Hypertension', range: marker.stage1Range };
-    return { type: 'error', title: 'Stage 2 Hypertension', range: marker.stage2Range };
+  if (isDiastolicMarker) {
+    if (result < 80) return { type: 'success', title: 'Normal', range: bpRanges.normal };
+    if (result <= 89) return { type: 'warning', title: 'Stage 1 High', range: bpRanges.stage1 };
+    if (result <= 120) return { type: 'error', title: 'Stage 2 High', range: bpRanges.stage2 };
+    return {
+      type: 'error',
+      title: 'Crisis',
+      range: bpRanges.crisis,
+      message: 'Higher than 180 / 120 mm Hg (seek care now)'
+    };
+  }
+
+  if (isGenericBloodPressure) {
+    const bpMatch = String(testResult).match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+    if (bpMatch) {
+      const systolic = parseFloat(bpMatch[1]);
+      const diastolic = parseFloat(bpMatch[2]);
+      if (!isNaN(systolic) && !isNaN(diastolic)) {
+        return classifyBloodPressure(systolic, diastolic);
+      }
+    }
+
+    if (!isNaN(result)) {
+      return classifyBloodPressure(result, 0);
+    }
+
+    return {
+      type: 'info',
+      title: 'Result Recorded',
+      range: bpRanges.normal,
+      message: 'Use format systolic/diastolic (e.g., 120/80) for full blood pressure classification'
+    };
   }
   
   // ✅ GENERIC RANGE CHECKING FOR DATABASE MARKERS
