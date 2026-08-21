@@ -27,13 +27,14 @@
 
     <!-- ✅ FORM CONTENT -->
     <div class="content-wrapper">
-      <div v-if="isLoading" class="loading-state">
-        <i class="fas fa-spinner fa-spin"></i>
-        <p>Loading panel...</p>
-      </div>
+      <div class="page-container">
+        <div v-if="isLoading" class="loading-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading panel...</p>
+        </div>
 
-      <div v-else class="form-container">
-        <form @submit.prevent="handleSubmit">
+        <div v-else class="form-container">
+          <form @submit.prevent="handleSubmit">
           <!-- Panel Information Section -->
           <div class="form-section">
             <h2 class="section-title">
@@ -177,25 +178,26 @@
           </div>
 
           <!-- Form Actions -->
-          <div class="form-actions">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="handleCancel"
-            >
-              <i class="fas fa-times"></i>
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              :disabled="isSaving"
-            >
-              <i :class="['fas', isSaving ? 'fa-spinner fa-spin' : 'fa-save']"></i>
-              {{ isSaving ? 'Saving...' : (isNewPanel ? 'Create Panel' : 'Save Changes') }}
-            </button>
-          </div>
-        </form>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="handleCancel"
+              >
+                <i class="fas fa-times"></i>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="isSaving"
+              >
+                <i :class="['fas', isSaving ? 'fa-spinner fa-spin' : 'fa-save']"></i>
+                {{ isSaving ? 'Saving...' : (isNewPanel ? 'Create Panel' : 'Save Changes') }}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -401,8 +403,35 @@ onMounted(() => {
   min-height: 100vh;
 }
 
+.panel-edit-wrapper .page-container {
+  width: min(1000px, calc(100% - 2rem));
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .page-wrapper {
+  padding-left: 0;
+  padding-right: 0;
   padding-bottom: 2rem;
+}
+
+.panel-edit-wrapper .page-wrapper.gradient-health {
+  background: linear-gradient(135deg, #00695c 0%, #00796b 55%, #00897b 100%);
+  min-height: auto;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.panel-edit-wrapper .page-header {
+  margin-bottom: 0;
+}
+
+.panel-edit-wrapper .page-header h1 {
+  font-size: 1.25rem;
+  line-height: 1.35;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .breadcrumb-link {
@@ -420,15 +449,13 @@ onMounted(() => {
 }
 
 .breadcrumb-separator {
-  font-size: 1.5rem;
+  font-size: 1rem;
   opacity: 0.6;
-  margin: 0 0.5rem;
+  margin: 0 0.25rem;
 }
 
 .content-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 0;
 }
 
 .loading-state {

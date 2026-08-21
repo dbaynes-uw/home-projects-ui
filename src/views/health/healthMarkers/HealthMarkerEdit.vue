@@ -1,8 +1,8 @@
 <template>
   <div class="health-marker-edit-wrapper">
     <!-- ✅ PAGE HEADER WITH GRADIENT -->
-    <div class="page-wrapper gradient-health">
-      <div class="page-container">
+    <div class="page-wrapper">
+      <div class="page-container hm-track header-track gradient-health">
         <!-- ✅ BREADCRUMB -->
         <div class="page-header">
           <h1>
@@ -22,7 +22,11 @@
             </span>
           </h1>
         </div>
+      </div>
+    </div>
 
+    <div class="content-wrapper">
+      <div class="page-container hm-track">
         <!-- ✅ LOADING STATE -->
         <div v-if="isLoading" class="loading-state">
           <i class="fas fa-spinner fa-spin"></i>
@@ -114,13 +118,43 @@ onMounted(async () => {
    ======================================== */
 
 .health-marker-edit-wrapper {
+  --hm-track-width: 980px;
   width: 100%;
   min-height: 100vh;
 }
 
+.hm-track {
+  width: min(var(--hm-track-width), calc(100% - 2rem));
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Page wrapper spacing */
 .page-wrapper {
-  padding-bottom: 120px;
+  min-height: auto;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.header-track {
+  border-radius: 12px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.header-track .page-header {
+  margin-bottom: 0;
+}
+
+.header-track .page-header h1 {
+  font-size: 1.25rem;
+}
+
+.content-wrapper {
+  padding: 0.75rem 0 2rem;
 }
 
 /* Breadcrumb styling */
@@ -133,32 +167,69 @@ onMounted(async () => {
   transition: opacity 0.3s ease;
 }
 
+.header-track .page-header h1 .breadcrumb-link i,
+.header-track .page-header h1 > span i {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
 .breadcrumb-link:hover {
   opacity: 0.8;
   text-decoration: underline;
 }
 
 .breadcrumb-separator {
-  font-size: 1.5rem;
-  opacity: 0.6;
-  margin: 0 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.45;
+  margin: 0 0.35rem;
 }
 
 /* Form card */
 .form-card {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .header-track {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .header-track .page-header h1 {
+    font-size: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    line-height: 1.3;
+    text-align: left;
+  }
+
+  .breadcrumb-link {
+    gap: 0.35rem;
+  }
+
+  .breadcrumb-link i {
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+
+  .header-track .page-header h1 > span {
+    flex: 1 1 100%;
+    margin-top: 0.15rem;
+    font-weight: 700;
+  }
+
   .form-card {
     max-width: 100%;
   }
 
   .breadcrumb-separator {
-    font-size: 1.25rem;
-    margin: 0 0.25rem;
+    font-size: 0.8rem;
+    opacity: 0.4;
+    margin: 0 0.1rem;
   }
 }
 </style>

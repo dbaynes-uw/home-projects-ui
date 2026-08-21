@@ -24,11 +24,11 @@ export const useMarkerDefinitionStore = defineStore('markerDefinition', {
     getDefinitionByName: (state) => {
       return (name) => {
         // Try database first
-        const dbDef = state.definitions.find(d => d.name === name);
+        const dbDef = state.definitions.find(d => d.name === name || d.label === name);
         if (dbDef) return dbDef;
         
         // Fallback to constants
-        return HEALTH_MARKERS.find(m => m.name === name);
+        return HEALTH_MARKERS.find(m => m.name === name || m.label === name);
       };
     },
 

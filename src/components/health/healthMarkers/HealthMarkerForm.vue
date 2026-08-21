@@ -564,6 +564,16 @@ function onMarkerChange() {
   calculateStatus();
 }
 
+function deriveStatusTitle() {
+  if (!form.value.marker_name || !form.value.marker_result) return null;
+
+  const markerDef = selectedMarkerInfo.value;
+  if (!markerDef) return null;
+
+  const status = getResultStatus(markerDef, form.value.marker_result);
+  return status?.title || null;
+}
+
 function calculateStatus() {
   if (!form.value.marker_name || !form.value.marker_result) {
     form.value.status = '';
@@ -578,9 +588,9 @@ function calculateStatus() {
     return;
   }
 
-  const status = getResultStatus(markerDef, form.value.marker_result);
-  if (status) {
-    form.value.status = status.title;
+  const derivedTitle = deriveStatusTitle();
+  if (derivedTitle) {
+    form.value.status = derivedTitle;
   }
 }
 
@@ -646,6 +656,12 @@ async function handleSubmit() {
   isSubmitting.value = true;
 
   try {
+    // Keep DB status in sync with the computed status card when status is blank.
+    const derivedStatus = deriveStatusTitle();
+    if (!form.value.status && derivedStatus) {
+      form.value.status = derivedStatus;
+    }
+
     // Prepare form data
     const formData = {
       marker_name: isCustomMarker.value ? customMarkerName.value : form.value.marker_name,
@@ -654,7 +670,7 @@ async function handleSubmit() {
       unit: form.value.unit || null,
       normal_range_low: form.value.normal_range_low || null,
       normal_range_high: form.value.normal_range_high || null,
-      status: form.value.status || null,
+      status: form.value.status || derivedStatus || null,
       marker_facts: form.value.marker_facts || null,
       notes: form.value.notes || null,
       lab_name: form.value.lab_name || null,
@@ -706,6 +722,13 @@ function initializeForm() {
     const today = new Date().toISOString().split('T')[0];
     form.value.marker_date = today;
   }
+
+  if (!form.value.status) {
+    const derivedStatus = deriveStatusTitle();
+    if (derivedStatus) {
+      form.value.status = derivedStatus;
+    }
+  }
 }
 
 async function fetchPanels() {
@@ -722,6 +745,13 @@ async function fetchPanels() {
 watch(() => props.healthMarker, () => {
   initializeForm();
 }, { immediate: true, deep: true });
+
+watch(intelligentStatus, (status) => {
+  if (!status || !status.title) return;
+  if (!form.value.status) {
+    form.value.status = status.title;
+  }
+});
 
 // ✅ LIFECYCLE
 onMounted(() => {
@@ -900,7 +930,7 @@ select.form-control {
 /* Status display */
 .status-display {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
   padding: 1.25rem;
   border-radius: 12px;
@@ -921,6 +951,9 @@ select.form-control {
 
 .status-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .status-content strong {
