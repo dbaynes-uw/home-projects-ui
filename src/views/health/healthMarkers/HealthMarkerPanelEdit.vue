@@ -121,9 +121,21 @@
                     <div class="marker-info">
                       <i class="fas fa-vial"></i>
                       <span class="marker-name">{{ marker.marker_name }}</span>
-                      <span class="marker-result">{{ marker.marker_result }} {{ marker.unit }}</span>
-                      <span :class="['marker-status', getStatusClass(marker.status)]">
-                        {{ marker.status || 'Unknown' }}
+                      <input
+                        v-model="marker.marker_result"
+                        type="text"
+                        class="form-input inline-input"
+                        placeholder="Result"
+                        @input="syncMarkerStatus(marker)"
+                      />
+                      <input
+                        v-model="marker.unit"
+                        type="text"
+                        class="form-input inline-unit"
+                        placeholder="Unit"
+                      />
+                      <span :class="['marker-status', getStatusClass(getMarkerStatus(marker))]">
+                        {{ getMarkerStatus(marker) }}
                       </span>
                     </div>
                     <button
@@ -142,36 +154,83 @@
                 </div>
               </div>
 
-              <!-- Available Standalone Markers -->
-              <div class="available-markers">
-                <h3>Available Standalone Markers ({{ availableMarkers.length }})</h3>
-                <div v-if="availableMarkers.length > 0" class="marker-list">
-                  <div
-                    v-for="marker in availableMarkers"
-                    :key="marker.id"
-                    class="marker-item"
-                  >
-                    <div class="marker-info">
-                      <i class="fas fa-vial"></i>
-                      <span class="marker-name">{{ marker.marker_name }}</span>
-                      <span class="marker-result">{{ marker.marker_result }} {{ marker.unit }}</span>
-                      <span :class="['marker-status', getStatusClass(marker.status)]">
-                        {{ marker.status || 'Unknown' }}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-success"
-                      @click="addMarker(marker)"
-                      title="Add to panel"
+              <!-- Add Custom Marker -->
+              <div class="custom-marker-box">
+                <h3>Quick Add Marker to This Panel</h3>
+                <div class="custom-marker-form">
+                  <div class="custom-field">
+                    <label class="form-label">Marker</label>
+                    <select
+                      v-model="newCustomMarker.marker_name"
+                      class="form-input"
                     >
-                      <i class="fas fa-plus"></i>
-                    </button>
+                      <option value="">Select a marker</option>
+                      <option
+                        v-for="option in quickAddMarkerOptions"
+                        :key="option.value"
+                        :value="option.value"
+                      >
+                        {{ option.title }}
+                      </option>
+                    </select>
                   </div>
-                </div>
-                <div v-else class="empty-markers">
-                  <i class="fas fa-inbox"></i>
-                  <p>No standalone markers available</p>
+
+                  <div v-if="newCustomMarker.marker_name === 'Other'" class="custom-field">
+                    <label class="form-label">Select a known marker</label>
+                    <select
+                      v-model="newCustomMarker.custom_marker_choice"
+                      class="form-input"
+                    >
+                      <option value="">Select a known marker</option>
+                      <option
+                        v-for="option in allKnownMarkerOptions"
+                        :key="option.value"
+                        :value="option.value"
+                      >
+                        {{ option.title }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div v-if="newCustomMarker.marker_name === 'Other' && newCustomMarker.custom_marker_choice === 'Other'" class="custom-field">
+                    <label class="form-label">Add new marker name</label>
+                    <input
+                      v-model="newCustomMarker.custom_name"
+                      type="text"
+                      class="form-input"
+                      placeholder="e.g., Ferritin, Vitamin K, HbA1c"
+                    />
+                  </div>
+
+                  <div class="custom-field small">
+                    <label class="form-label">Result</label>
+                    <input
+                      v-model="newCustomMarker.marker_result"
+                      type="text"
+                      class="form-input"
+                      placeholder="e.g., 125 or 120/80"
+                    />
+                  </div>
+
+                  <div class="custom-field small">
+                    <label class="form-label">Unit</label>
+                    <input
+                      v-model="newCustomMarker.unit"
+                      type="text"
+                      class="form-input"
+                      placeholder="mg/dL, %, mm Hg"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-success"
+                    @click="addCustomMarker"
+                    :disabled="!getCustomMarkerName() || !newCustomMarker.marker_result"
+                  >
+                    <i class="fas fa-plus"></i>
+                    Add Marker
+                  </button>
                 </div>
               </div>
             </div>
@@ -206,10 +265,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import EventService from '@/services/EventService';
+import {
+  getResultStatus,
+  getHealthMarkerOptions,
+  getHealthMarkerByName
+} from '@/services/health-marker-constants';
 
 const router = useRouter();
 const route = useRoute();
@@ -230,27 +294,234 @@ const formData = ref({
 
 const currentMarkers = ref([]);
 const availableMarkers = ref([]);
+const allPanels = ref([]);
+const newCustomMarker = ref({
+  marker_name: '',
+  custom_marker_choice: '',
+  custom_name: '',
+  marker_result: '',
+  unit: ''
+});
+
+function normalizeMarkerName(name) {
+  return String(name || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function normalizePanelNameForMatching(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+
+  const withoutTrailingDate = raw
+    .replace(/\s*\(?\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\)?\s*$/i, ' ')
+    .replace(/\s*\(?\d{4}[/-]\d{1,2}[/-]\d{1,2}\)?\s*$/i, ' ')
+    .trim();
+
+  return withoutTrailingDate
+    .toLowerCase()
+    .replace(/[_]+/g, ' ')
+    .replace(/[()]/g, ' ')
+    .replace(/[-/]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getSameNameMarkerNames() {
+  const baseName = normalizePanelNameForMatching(formData.value.panel_name);
+  if (!baseName) return [];
+
+  const nameMap = new Map();
+
+  (currentMarkers.value || []).forEach(marker => {
+    const rawName = marker && marker.marker_name ? marker.marker_name.trim() : '';
+    if (!rawName) return;
+    const key = normalizeMarkerName(rawName);
+    if (!nameMap.has(key)) {
+      nameMap.set(key, rawName);
+    }
+  });
+
+  (allPanels.value || []).forEach(panel => {
+    const panelName = panel && panel.panel_name ? panel.panel_name : '';
+    if (!panelName) return;
+    if (normalizePanelNameForMatching(panelName) !== baseName) return;
+
+    const markers = Array.isArray(panel.health_markers) ? panel.health_markers : [];
+    markers.forEach(marker => {
+      const rawName = marker && marker.marker_name ? marker.marker_name.trim() : '';
+      if (!rawName) return;
+      const key = normalizeMarkerName(rawName);
+      if (!nameMap.has(key)) {
+        nameMap.set(key, rawName);
+      }
+    });
+  });
+
+  return [...nameMap.values()].sort((a, b) => a.localeCompare(b));
+}
+
+const allKnownMarkerOptions = computed(() => {
+  const uniqueNames = new Map();
+
+  getSameNameMarkerNames().forEach(name => uniqueNames.set(normalizeMarkerName(name), name));
+
+  getHealthMarkerOptions().forEach(option => {
+    const value = option?.value || '';
+    if (!value) return;
+    uniqueNames.set(normalizeMarkerName(value), value);
+  });
+
+  (allPanels.value || []).forEach(panel => {
+    const markers = Array.isArray(panel?.health_markers) ? panel.health_markers : [];
+    markers.forEach(marker => {
+      const name = marker && marker.marker_name ? marker.marker_name.trim() : '';
+      if (!name) return;
+      uniqueNames.set(normalizeMarkerName(name), name);
+    });
+  });
+
+  return [
+    ...[...uniqueNames.values()].sort((a, b) => a.localeCompare(b)).map(name => ({ value: name, title: name })),
+    { value: 'Other', title: 'Other (custom)' }
+  ];
+});
+
+const quickAddMarkerOptions = computed(() => {
+  const currentFamilyMarkers = getSameNameMarkerNames();
+
+  return [
+    ...currentFamilyMarkers
+      .sort((a, b) => a.localeCompare(b))
+      .map(name => ({ value: name, title: name })),
+    { value: 'Other', title: 'Other (custom)' }
+  ];
+});
+
+function getCustomMarkerName() {
+  if (!newCustomMarker.value.marker_name) return '';
+  if (newCustomMarker.value.marker_name === 'Other') {
+    if (newCustomMarker.value.custom_marker_choice === 'Other') {
+      return (newCustomMarker.value.custom_name || '').trim();
+    }
+    if (newCustomMarker.value.custom_marker_choice) {
+      return String(newCustomMarker.value.custom_marker_choice).trim();
+    }
+    return '';
+  }
+  return newCustomMarker.value.marker_name.trim();
+}
+
+watch(
+  () => newCustomMarker.value.marker_name,
+  (nextName) => {
+    if (!nextName || nextName === 'Other') {
+      if (nextName === 'Other') {
+        newCustomMarker.value.custom_marker_choice = newCustomMarker.value.custom_marker_choice || '';
+        newCustomMarker.value.custom_name = newCustomMarker.value.custom_name || '';
+      }
+      return;
+    }
+    const selected = getHealthMarkerByName(nextName);
+    if (selected?.unit && !newCustomMarker.value.unit) {
+      newCustomMarker.value.unit = selected.unit;
+    }
+  }
+);
+
+function getMarkerStatus(marker) {
+  if (!marker) return 'Unknown';
+  if (marker.status) return marker.status;
+  if (!marker.marker_name || !marker.marker_result) return 'Unknown';
+
+  try {
+    const resultStatus = getResultStatus(marker.marker_name, marker.marker_result);
+    return resultStatus?.title || 'Unknown';
+  } catch (error) {
+    return 'Unknown';
+  }
+}
+
+function syncMarkerStatus(marker) {
+  if (!marker) return;
+  const resultStatus = getResultStatus(marker.marker_name, marker.marker_result);
+  marker.status = resultStatus?.title || marker.status || 'Unknown';
+}
 
 function getStatusClass(status) {
   if (!status) return 'status-unknown';
-  const lower = status.toLowerCase();
+  const lower = String(status).toLowerCase();
   if (lower === 'normal') return 'status-normal';
-  if (lower.includes('borderline')) return 'status-borderline';
-  if (lower === 'high' || lower === 'low') return 'status-warning';
-  if (lower === 'critical') return 'status-critical';
+  if (lower.includes('borderline') || lower.includes('elevated')) return 'status-borderline';
+  if (lower.includes('stage 1 high') || lower.includes('stage 2 high') || lower === 'high' || lower === 'low') return 'status-warning';
+  if (lower.includes('crisis') || lower.includes('critical')) return 'status-critical';
   return 'status-unknown';
+}
+
+async function addCustomMarker() {
+  const chosenMarkerName = getCustomMarkerName();
+
+  if (!chosenMarkerName || !newCustomMarker.value.marker_result) {
+    alert('Please choose a marker and enter a result before adding it to the panel.');
+    return;
+  }
+
+  const alreadyExists = (currentMarkers.value || []).some(marker => {
+    return marker && marker.marker_name && normalizeMarkerName(marker.marker_name) === normalizeMarkerName(chosenMarkerName);
+  });
+
+  if (alreadyExists) {
+    alert(`${chosenMarkerName} is already in this panel.`);
+    return;
+  }
+
+  try {
+    const selectedMarker = getHealthMarkerByName(newCustomMarker.value.marker_name === 'Other' ? chosenMarkerName : newCustomMarker.value.marker_name);
+    const status = getResultStatus(chosenMarkerName, newCustomMarker.value.marker_result)?.title || 'Unknown';
+    const payload = {
+      marker_name: chosenMarkerName,
+      marker_date: formData.value.test_date,
+      marker_result: newCustomMarker.value.marker_result,
+      unit: newCustomMarker.value.unit || selectedMarker?.unit || '',
+      lab_name: formData.value.lab_name || '',
+      doctor_name: formData.value.doctor_name || '',
+      notes: formData.value.notes || '',
+      health_marker_panel_id: route.params.id,
+      status
+    };
+
+    const response = await EventService.postHealthMarker(payload);
+    const createdMarker = response.data || payload;
+    currentMarkers.value.push({
+      ...createdMarker,
+      marker_name: createdMarker.marker_name || chosenMarkerName,
+      marker_result: createdMarker.marker_result || newCustomMarker.value.marker_result,
+      unit: createdMarker.unit || newCustomMarker.value.unit || selectedMarker?.unit || '',
+      status: createdMarker.status || status,
+      lab_name: createdMarker.lab_name || formData.value.lab_name || '',
+      doctor_name: createdMarker.doctor_name || formData.value.doctor_name || '',
+      health_marker_panel_id: route.params.id
+    });
+
+    newCustomMarker.value = { marker_name: '', custom_marker_choice: '', custom_name: '', marker_result: '', unit: '' };
+  } catch (error) {
+    console.error('❌ Add custom marker error:', error);
+    alert('Failed to create unique panel marker.');
+  }
 }
 
 async function addMarker(marker) {
   try {
     await EventService.putHealthMarker({
       id: marker.id,
-      health_marker_panel_id: route.params.id
+      health_marker_panel_id: route.params.id,
+      marker_date: formData.value.test_date,
+      marker_result: marker.marker_result || '',
+      unit: marker.unit || '',
+      status: marker.status || 'Unknown'
     });
 
     // Move marker from available to current
     availableMarkers.value = availableMarkers.value.filter(m => m.id !== marker.id);
-    currentMarkers.value.push(marker);
+    currentMarkers.value.push({ ...marker, marker_date: formData.value.test_date });
   } catch (error) {
     console.error('❌ Add marker error:', error);
     alert('Failed to add marker to panel');
@@ -270,7 +541,11 @@ async function removeMarker(marker) {
   try {
     await EventService.putHealthMarker({
       id: marker.id,
-      health_marker_panel_id: null
+      health_marker_panel_id: null,
+      marker_date: marker.marker_date || formData.value.test_date,
+      marker_result: marker.marker_result || '',
+      unit: marker.unit || '',
+      status: marker.status || 'Unknown'
     });
 
     // Move marker from current to available
@@ -289,6 +564,19 @@ async function handleSubmit() {
     const panelData = {
       health_marker_panel: formData.value
     };
+
+    for (const marker of currentMarkers.value) {
+      if (!marker || !marker.id) continue;
+      await EventService.putHealthMarker({
+        id: marker.id,
+        marker_name: marker.marker_name,
+        marker_date: formData.value.test_date,
+        marker_result: marker.marker_result || '',
+        unit: marker.unit || '',
+        status: getMarkerStatus(marker),
+        health_marker_panel_id: route.params.id || null
+      });
+    }
 
     if (isNewPanel.value) {
       const response = await EventService.postHealthMarkerPanel(panelData);
@@ -371,6 +659,9 @@ async function fetchData() {
       const today = new Date();
       formData.value.test_date = today.toISOString().split('T')[0];
     }
+
+    const panelsResponse = await EventService.getHealthMarkerPanels();
+    allPanels.value = panelsResponse.data || [];
 
     // Fetch available standalone markers (not in any panel)
     const markersResponse = await EventService.getHealthMarkers();
@@ -560,39 +851,28 @@ onMounted(() => {
   gap: 0.75rem;
   flex: 1;
   min-width: 0;
-}
+    flex-wrap: wrap;
+  }
 
-.marker-info i {
-  color: #667eea;
-  flex-shrink: 0;
-}
+  .inline-input,
+  .inline-unit {
+    max-width: 120px;
+    min-width: 90px;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+  }
 
-.marker-name {
-  font-weight: 600;
-  color: #1f2937;
-  flex-shrink: 0;
-}
+  .inline-unit {
+    max-width: 90px;
+  }
 
-.marker-result {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.marker-status {
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  flex-shrink: 0;
-}
-
-.status-normal {
-  background: #d1fae5;
-  color: #065f46;
-}
-
+  .marker-name {
+    font-weight: 600;
+    color: #1f2937;
+    flex-shrink: 0;
+  }
 .status-borderline,
 .status-warning {
   background: #fef3c7;
