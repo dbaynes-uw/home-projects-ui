@@ -913,7 +913,16 @@ select.form-control {
   color: #9ca3af;
 }
 
-.facts-display,
+.facts-display {
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  text-align: left;
+}
+
 .notes-display {
   padding: 1rem;
   background: #f9fafb;

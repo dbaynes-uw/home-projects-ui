@@ -28,8 +28,8 @@
       </div>
       
       <div class="header-right">
-        <span :class="['status-badge', getStatusClass(healthMarker.status)]">
-          {{ healthMarker.status || 'Unknown' }}
+        <span :class="['status-badge', getStatusClass(displayStatus)]">
+          {{ displayStatus }}
         </span>
       </div>
     </div>
@@ -122,6 +122,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { getResultStatus } from '@/services/health-marker-constants';
 
 // ✅ ROUTER
 const router = useRouter();
@@ -145,6 +146,16 @@ defineEmits(['edit', 'delete']);
 const markerPanel = computed(() => {
   if (!props.healthMarker.health_marker_panel_id) return null;
   return props.panels.find(panel => panel.id === props.healthMarker.health_marker_panel_id);
+});
+
+const derivedStatus = computed(() => {
+  if (!props.healthMarker?.marker_name || !props.healthMarker?.marker_result) return null;
+  const resultStatus = getResultStatus(props.healthMarker.marker_name, props.healthMarker.marker_result);
+  return resultStatus?.title || null;
+});
+
+const displayStatus = computed(() => {
+  return props.healthMarker.status || derivedStatus.value || 'Unknown';
 });
 
 // ✅ METHODS
@@ -174,12 +185,13 @@ function formatDate(dateString) {
 
 function getStatusClass(status) {
   if (!status) return 'badge-secondary';
-  
-  const lower = status.toLowerCase();
+
+  const lower = String(status).toLowerCase();
   if (lower === 'normal') return 'badge-success';
   if (lower.includes('borderline')) return 'badge-warning';
-  if (lower === 'high' || lower === 'low' ) return 'badge-warning';
-  if (lower === 'critical') return 'badge-danger';
+  if (lower.includes('elevated')) return 'badge-info';
+  if (lower.includes('stage 1 high') || lower.includes('stage 2 high') || lower.includes('high') || lower.includes('low')) return 'badge-warning';
+  if (lower.includes('crisis') || lower.includes('critical')) return 'badge-danger';
   return 'badge-info';
 }
 

@@ -170,6 +170,20 @@ export const HEALTH_MARKERS = [
   },
   */
   {
+    name: 'Blood Pressure',
+    label: 'Blood Pressure',
+    unit: 'mm Hg',
+    normalRange: 'Less than 120 / 80 mm Hg',
+    elevatedRange: '120-129 / less than 80 mm Hg',
+    stage1Range: '130-139 / 80-89 mm Hg',
+    stage2Range: '140 or higher / 90 or higher mm Hg',
+    crisisRange: 'Higher than 180 / 120 mm Hg (seek care now)',
+    description: 'Combined systolic/diastolic blood pressure reading',
+    testFrequency: 'Every visit',
+    category: 'Heart',
+    icon: 'mdi-heart-pulse'
+  },
+  {
     name: 'Blood_Pressure_Systolic',
     label: 'Blood Pressure (Systolic)',
     unit: 'mm Hg',
@@ -237,7 +251,32 @@ export const HEALTH_MARKER_CATEGORIES = [
 
 // ✅ HELPER FUNCTIONS
 export const getHealthMarkerByName = (name) => {
-  return HEALTH_MARKERS.find(marker => marker.name === name);
+  if (!name) return undefined;
+
+  const normalized = String(name).trim();
+  if (!normalized) return undefined;
+
+  const direct = HEALTH_MARKERS.find(marker => marker.name === normalized || marker.label === normalized);
+  if (direct) return direct;
+
+  const aliases = {
+    'Blood Pressure (Systolic)': 'Blood_Pressure_Systolic',
+    'Blood Pressure (Diastolic)': 'Blood_Pressure_Diastolic',
+    'Blood_Pressure_Systolic': 'Blood_Pressure_Systolic',
+    'Blood_Pressure_Diastolic': 'Blood_Pressure_Diastolic',
+    'Blood Pressure': 'Blood Pressure'
+  };
+
+  const aliasMatch = aliases[normalized];
+  if (aliasMatch) {
+    return HEALTH_MARKERS.find(marker => marker.name === aliasMatch || marker.label === aliasMatch);
+  }
+
+  const lower = normalized.toLowerCase();
+  return HEALTH_MARKERS.find((marker) => {
+    const matchText = `${marker.name} ${marker.label}`.toLowerCase();
+    return matchText.includes(lower);
+  });
 };
 
 export const getHealthMarkersByCategory = (category) => {
@@ -265,12 +304,28 @@ export const getHealthMarkerCategoryOptions = () => {
 // Can accept either markerName (string) or markerDefinition (object)
 export const getResultStatus = (markerNameOrDef, testResult) => {
   // Handle both string (legacy) and object (new database definitions)
-  const marker = typeof markerNameOrDef === 'string' 
-    ? getHealthMarkerByName(markerNameOrDef) 
+  let marker = typeof markerNameOrDef === 'string'
+    ? getHealthMarkerByName(markerNameOrDef)
     : markerNameOrDef;
-    
+
+  if (!marker && typeof markerNameOrDef === 'string') {
+    const name = String(markerNameOrDef).trim();
+    if (/blood\s*[_ ]?pressure/i.test(name)) {
+      marker = {
+        name,
+        label: name,
+        unit: 'mm Hg',
+        normalRange: 'Less than 120 / 80 mm Hg',
+        elevatedRange: '120-129 / less than 80 mm Hg',
+        stage1Range: '130-139 / 80-89 mm Hg',
+        stage2Range: '140 or higher / 90 or higher mm Hg',
+        crisisRange: 'Higher than 180 / 120 mm Hg (seek care now)'
+      };
+    }
+  }
+
   if (!marker || !testResult) return null;
-  
+
   const markerName = marker.name || '';
   const markerLabel = marker.label || '';
   const markerText = `${markerName} ${markerLabel}`.toLowerCase();
@@ -457,7 +512,6 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
   };
 
   const classifyBloodPressure = (systolic, diastolic) => {
-    console.log('Classifying blood pressure:', systolic, diastolic);
     if (systolic > 180 || diastolic > 120) {
       return {
         type: 'error',
@@ -472,7 +526,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     if (systolic >= 140 || diastolic >= 90) {
       return { type: 'error', title: 'Stage 2 High', range: bpRanges.stage2 };
     }
-    if ((systolic >= 130 && systolic <= 139) || (diastolic >= 80 && diastolic <= 89)) {
+    if ((systolic >= 120 && systolic <= 139) || (diastolic >= 80 && diastolic <= 89)) {
       return { type: 'warning', title: 'Stage 1 High', range: bpRanges.stage1 };
     }
     if (systolic > 120 && systolic <= 129 && diastolic < 80) {
