@@ -101,8 +101,8 @@ export const HEALTH_MARKERS = [
     label: 'Chol/HDL Ratio',
     unit: '',
     normalRange: '< 6.7',
-    borderlineRange: '?',
-    highRange: '?',
+    borderlineRange: '6.7-7.9',
+    highRange: '> 7.9',
     description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood',
     testFrequency: '?',
     category: 'Lipids',
@@ -133,13 +133,13 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
     {
-    name: 'Triglyceride Cholesterol HDL Calculation',
+    name: 'Triglyceride-to-HDL ratio',
     label: 'Trig/HDL Calculation',
-    unit: '',
-    normalRange: '< 6.7',
+    unit: 'Trig/HDL',
+    normalRange: '< 2.0',
     borderlineRange: '?',
     highRange: '?',
-    description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood',
+    description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood. values under 1.0 considered ideal. This number is calculated by dividing your triglyceride level by your HDL ("good") cholesterol level using the same unit of measurement (typically mg/dL).',
     testFrequency: '?',
     category: 'Lipids',
     icon: 'mdi-water'
@@ -436,17 +436,52 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       title: 'Normal',
       range: marker.normalRange };
     if (result < 40 ) return {
-      type: 'warning',
-      title: 'Low', 
+      type: 'critical',
+      title: 'Low - Risk of Heart Disease', 
       range: marker.lowRange };
-    if (result > 60 && result <= 70) return {
-      type: 'warning',
-      title: 'Borderline High', 
-      range: marker.borderlineHigh };
-
-    return { type: 'high', title: 'Very High!', range: marker.highRange };
+    if (result > 60 ) return {
+      type: 'critical',
+      title: 'High - Risk of Heart Disease', 
+      range: marker.borderlineHigh
+    };
   }
-  
+    // ✅ Cholesterol HDL Ratio LOGIC
+  if (markerName === 'Cholesterol HDL Ratio') {
+    if (result < 6.7) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'Cholesterol HDL Ratio is normal'
+    };
+    if (result > 6.7) return { 
+      type: 'warning', 
+      title: 'Borderline High', 
+      range: marker.borderlineRange,
+      message: 'Cholesterol HDL Ratio is Borderline high' 
+    };
+    return { 
+      type: 'error', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'Total cholesterol is high' 
+    };
+  }
+
+    // ✅ NonCholesterol HDL Calculation LOGIC
+  if (markerName === 'NonCholesterol HDL Calculation') {
+    if (result < 130) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'NonCholesterol HDL Calculation is normal'
+    };
+    if (result >= 130) return { 
+      type: 'error', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'NonCholesterol HDL Calculation is high'     };
+  }
+
   // ✅ Triglycerides LOGIC
   if (markerName === 'Triglycerides') {
     if (result < 150) return { 
@@ -466,6 +501,21 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       title: 'High', 
       range: marker.highRange,
       message: 'Triglycerides level is high' 
+    };
+  }
+  // ✅ Triglycerides LOGIC
+  if (markerName === 'Triglyceride-to-HDL ratio') {
+    if (result < 2.0) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'Triglycerides level is normal' 
+    };
+    if (result > 2.0) return { 
+      type: 'critical', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'Triglycerides level is high'  
     };
   }
 
