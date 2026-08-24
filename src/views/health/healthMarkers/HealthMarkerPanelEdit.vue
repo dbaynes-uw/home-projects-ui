@@ -208,8 +208,11 @@
                       v-model="newCustomMarker.marker_result"
                       type="text"
                       class="form-input"
-                      placeholder="e.g., 125 or 120/80"
+                      :placeholder="quickAddResultPlaceholder"
                     />
+                    <small v-if="isQuickAddBloodPressure" class="form-text">
+                      BP format: 120/80 (68 bpm). Normal: 60 to 100 bpm
+                    </small>
                   </div>
 
                   <div class="custom-field small">
@@ -394,6 +397,32 @@ const quickAddMarkerOptions = computed(() => {
       .map(name => ({ value: name, title: name })),
     { value: 'Other', title: 'Other (custom)' }
   ];
+});
+
+const quickAddSelectedMarkerName = computed(() => {
+  if (!newCustomMarker.value.marker_name) return '';
+  if (newCustomMarker.value.marker_name !== 'Other') {
+    return String(newCustomMarker.value.marker_name || '').trim();
+  }
+  if (newCustomMarker.value.custom_marker_choice && newCustomMarker.value.custom_marker_choice !== 'Other') {
+    return String(newCustomMarker.value.custom_marker_choice || '').trim();
+  }
+  if (newCustomMarker.value.custom_marker_choice === 'Other') {
+    return String(newCustomMarker.value.custom_name || '').trim();
+  }
+  return '';
+});
+
+const isQuickAddBloodPressure = computed(() => {
+  const text = normalizeMarkerName(quickAddSelectedMarkerName.value);
+  return text.includes('blood pressure') || text.includes('systolic') || text.includes('diastolic');
+});
+
+const quickAddResultPlaceholder = computed(() => {
+  if (isQuickAddBloodPressure.value) {
+    return 'e.g., 120/80 (68 bpm). Normal = 60 to 100 bpm';
+  }
+  return 'e.g., 125 or 120/80';
 });
 
 function getCustomMarkerName() {

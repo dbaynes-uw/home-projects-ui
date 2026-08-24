@@ -107,7 +107,7 @@
                   v-model="form.marker_result"
                   type="text"
                   class="form-control"
-                  placeholder="Enter test result"
+                  :placeholder="resultValuePlaceholder"
                   required
                   @input="calculateStatus"
                 />
@@ -115,6 +115,9 @@
                   <span class="result-value">{{ form.marker_result }}</span>
                   <span v-if="form.unit" class="result-unit">{{ form.unit }}</span>
                 </div>
+                <small v-if="isEditable && isBloodPressureMarker" class="form-text">
+                  Format: 120/80. Optional pulse: 120/80 (68 bpm). Normal: 60 to 100 bpm
+                </small>
               </div>
 
               <!-- Unit -->
@@ -540,6 +543,13 @@ const intelligentStatus = computed(() => {
   const markerDef = selectedMarkerInfo.value;
   if (!markerDef) return null;
   return getResultStatus(markerDef, form.value.marker_result);
+});
+
+const resultValuePlaceholder = computed(() => {
+  if (isBloodPressureMarker.value) {
+    return 'e.g., 120/80 (68 bpm). Normal = 60 to 100 bpm';
+  }
+  return 'Enter test result';
 });
 
 // ✅ METHODS

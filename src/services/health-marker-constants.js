@@ -632,7 +632,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       type: 'info',
       title: 'Result Recorded',
       range: bpRanges.normal,
-      message: 'Use format systolic/diastolic (e.g., 120/80) for full blood pressure classification'
+      message: 'Use format systolic/diastolic (e.g., 120/80). Optional pulse can be appended, e.g., 120/80 (68 bpm).'
     };
   }
   
