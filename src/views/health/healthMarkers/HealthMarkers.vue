@@ -221,6 +221,24 @@
             Clear Filter
           </button>
         </div>
+
+        <!-- ✅ SEARCH FILTER -->
+        <div class="date-filter-section">
+          <label class="filter-label">
+            <i class="fas fa-search"></i>
+            Search:
+          </label>
+          <input
+            v-model.trim="searchQuery"
+            type="text"
+            class="date-filter-select"
+            placeholder="Search panel, marker, status, lab, doctor, or result"
+          />
+          <button v-if="searchQuery" class="btn-clear-filter" @click="searchQuery = ''">
+            <i class="fas fa-times"></i>
+            Clear Search
+          </button>
+        </div>
     <!-- ✅ CONTENT AREA -->
     <div class="content-wrapper">
       <!-- ✅ LOADING STATE -->
@@ -428,7 +446,7 @@ const router = useRouter();
 const healthMarkerStore = useHealthMarkerStore();
 
 // ✅ STATE
-const currentView = ref('cards');
+const currentView = ref('table');
 const confirmDialogue = ref(null);
 const mixedItems = ref([]);
 const panels = ref([]);
@@ -436,6 +454,7 @@ const viewMode = ref('grouped'); // 'grouped', 'markers', 'panels'
 const selectedTestDate = ref(null);
 const selectedPanelId = ref(null);
 const selectedMarkerName = ref(null);
+const searchQuery = ref('');
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -494,6 +513,23 @@ const filteredMarkers = computed(() => {
   if (selectedTestDate.value) markers = markers.filter(m => m.marker_date === selectedTestDate.value);
   if (selectedPanelId.value) markers = markers.filter(m => m.health_marker_panel_id === selectedPanelId.value);
   if (selectedMarkerName.value) markers = markers.filter(m => m.marker_name === selectedMarkerName.value);
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    markers = markers.filter(marker => {
+      const searchableFields = [
+        marker.panel_name,
+        marker.marker_name,
+        marker.status,
+        marker.marker_result,
+        marker.unit,
+        marker.lab_name,
+        marker.doctor_name,
+        marker.marker_date
+      ];
+
+      return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
+    });
+  }
   return markers;
 });
 
@@ -501,6 +537,19 @@ const filteredPanels = computed(() => {
   let panelList = panels.value;
   if (selectedTestDate.value) panelList = panelList.filter(p => p.test_date === selectedTestDate.value);
   if (selectedPanelId.value) panelList = panelList.filter(p => p.id === selectedPanelId.value);
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    panelList = panelList.filter(panel => {
+      const searchableFields = [
+        panel.panel_name,
+        panel.lab_name,
+        panel.doctor_name,
+        panel.test_date
+      ];
+
+      return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
+    });
+  }
   return panelList;
 });
 
@@ -520,6 +569,16 @@ const filteredMixedItems = computed(() => {
     items = items.filter(item =>
       item.type === 'marker' && item.marker_name === selectedMarkerName.value
     );
+  }
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    items = items.filter(item => {
+      const searchableFields = item.type === 'panel'
+        ? [item.panel_name, item.lab_name, item.doctor_name, item.test_date]
+        : [item.panel_name, item.marker_name, item.status, item.marker_result, item.unit, item.lab_name, item.doctor_name, item.marker_date];
+
+      return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
+    });
   }
   return items;
 });
