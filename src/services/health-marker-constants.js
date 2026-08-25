@@ -98,7 +98,7 @@ export const HEALTH_MARKERS = [
   },
   {
     name: 'Chol/HDL Ratio',
-    label: 'Cholesterol HDL Ratio',
+    label: 'Chol/HDL Ratio',
     unit: '',
     normalRange: '< 6.7',
     borderlineRange: '6.7-7.9',
@@ -110,7 +110,7 @@ export const HEALTH_MARKERS = [
   },
   {
     name: 'Non-HDL (calc)',
-    label: 'NonCholesterol HDL Calculation',
+    label: 'Non-HDL (calc)',
     unit: '',
     normalRange: '< 200',
     borderlineRange: '?',
@@ -261,8 +261,6 @@ export const getHealthMarkerByName = (name) => {
   if (direct) return direct;
 
   const aliases = {
-    'Total Cholesterol': 'Cholesterol',
-    'Cholesterol': 'Cholesterol',
     'Blood Pressure (Systolic)': 'Blood_Pressure_Systolic',
     'Blood Pressure (Diastolic)': 'Blood_Pressure_Diastolic',
     'Blood_Pressure_Systolic': 'Blood_Pressure_Systolic',
@@ -434,7 +432,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     return { type: 'error', title: 'High', range: marker.highRange };
   }
   
-  if (markerName === 'HDL') {
+  /*if (markerName === 'HDL Cholesterol') {
     if (result >= 40 && result <= 60) return {
       type: 'success',
       title: 'Normal',
@@ -448,20 +446,20 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       title: 'High - Risk of Heart Disease', 
       range: marker.borderlineHigh
     };
-  }
-    // ✅ Cholesterol HDL Ratio LOGIC
-  if (markerName === 'Cholesterol HDL Ratio') {
+  }*/
+    // ✅ Chol/HDL Ratio LOGIC
+  if (markerName === 'Chol/HDL Ratio') {
     if (result < 6.7) return { 
       type: 'success', 
       title: 'Normal', 
       range: marker.normalRange,
-      message: 'Cholesterol HDL Ratio is normal'
+      message: 'Chol/HDL Ratio is normal'
     };
     if (result > 6.7) return { 
       type: 'warning', 
       title: 'Borderline High', 
       range: marker.borderlineRange,
-      message: 'Cholesterol HDL Ratio is Borderline high' 
+      message: 'Chol/HDL Ratio is Borderline high' 
     };
     return { 
       type: 'error', 
@@ -471,23 +469,23 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     };
   }
 
-    // ✅ NonCholesterol HDL Calculation LOGIC
-  if (markerName === 'NonCholesterol HDL Calculation') {
+    // ✅ Non-HDL (calc) LOGIC
+  if (markerName === 'Non-HDL (calc)') {
     if (result < 130) return { 
       type: 'success', 
       title: 'Normal', 
       range: marker.normalRange,
-      message: 'NonCholesterol HDL Calculation is normal'
+      message: 'Non-HDL (calc) is normal'
     };
     if (result >= 130) return { 
       type: 'error', 
       title: 'High', 
       range: marker.highRange,
-      message: 'NonCholesterol HDL Calculation is high'     };
+      message: 'Non-HDL (calc) is high'     };
   }
 
-  // ✅ Triglycerides LOGIC
-  if (markerName === 'Triglycerides') {
+  // ✅ Triglyceride LOGIC
+  if (markerName === 'Triglyceride') {
     if (result < 150) return { 
       type: 'success', 
       title: 'Normal', 

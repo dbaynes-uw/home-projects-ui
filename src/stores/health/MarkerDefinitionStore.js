@@ -2,32 +2,6 @@ import { defineStore } from 'pinia';
 import EventService from '@/services/EventService';
 import { HEALTH_MARKERS } from '@/services/health-marker-constants';
 
-const MARKER_NAME_ALIASES = {
-  'Total Cholesterol': 'Cholesterol',
-  Cholesterol: 'Cholesterol'
-};
-
-function canonicalMarkerName(name) {
-  const trimmed = String(name || '').trim();
-  return MARKER_NAME_ALIASES[trimmed] || trimmed;
-}
-
-function withCanonicalCholesterol(definition) {
-  if (!definition) return definition;
-
-  const canonicalName = canonicalMarkerName(definition.name);
-  const canonicalLabel = canonicalMarkerName(definition.label);
-  if (canonicalName === definition.name && canonicalLabel === definition.label) {
-    return definition;
-  }
-
-  return {
-    ...definition,
-    name: canonicalName || definition.name,
-    label: canonicalLabel || definition.label
-  };
-}
-
 export const useMarkerDefinitionStore = defineStore('markerDefinition', {
   state: () => ({
     definitions: [],
@@ -40,31 +14,21 @@ export const useMarkerDefinitionStore = defineStore('markerDefinition', {
     allDefinitions: (state) => {
       // If we have database definitions, use those
       if (state.definitions.length > 0) {
-        return state.definitions.map(withCanonicalCholesterol);
+        return state.definitions;
       }
       // Otherwise fallback to constants
-      return HEALTH_MARKERS.map(withCanonicalCholesterol);
+      return HEALTH_MARKERS;
     },
 
     // Get definition by name
     getDefinitionByName: (state) => {
       return (name) => {
-        const canonical = canonicalMarkerName(name);
-
         // Try database first
-        const dbDef = state.definitions.find((d) => {
-          const defName = canonicalMarkerName(d.name);
-          const defLabel = canonicalMarkerName(d.label);
-          return defName === canonical || defLabel === canonical;
-        });
+        const dbDef = state.definitions.find(d => d.name === name || d.label === name);
         if (dbDef) return dbDef;
         
         // Fallback to constants
-        return HEALTH_MARKERS.find((m) => {
-          const markerName = canonicalMarkerName(m.name);
-          const markerLabel = canonicalMarkerName(m.label);
-          return markerName === canonical || markerLabel === canonical;
-        });
+        return HEALTH_MARKERS.find(m => m.name === name || m.label === name);
       };
     },
 
@@ -78,7 +42,7 @@ export const useMarkerDefinitionStore = defineStore('markerDefinition', {
 
     // Get dropdown options
     definitionOptions: (state) => {
-      const defs = (state.definitions.length > 0 ? state.definitions : HEALTH_MARKERS).map(withCanonicalCholesterol);
+      const defs = state.definitions.length > 0 ? state.definitions : HEALTH_MARKERS;
       return defs.map(d => ({
         name: d.name,
         label: d.label,
