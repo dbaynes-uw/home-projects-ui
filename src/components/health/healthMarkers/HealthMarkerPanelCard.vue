@@ -85,8 +85,8 @@
                 <i class="fas fa-vial"></i>
                 {{ marker.marker_name }}
               </span>
-              <span :class="['marker-status', getStatusClass(marker.status)]">
-                {{ marker.status || 'Unknown' }}
+              <span :class="['marker-status', getStatusClass(getDisplayStatus(marker))]">
+                {{ getDisplayStatus(marker) }}
               </span>
             </div>
             <div class="marker-item-body">
@@ -146,6 +146,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import EventService from '@/services/EventService';
+import { getResultStatus } from '@/services/health-marker-constants';
 
 const router = useRouter();
 
@@ -157,7 +158,6 @@ const props = defineProps({
   }
 });
 
-// ✅ EMITS
 defineEmits(['edit', 'delete']);
 
 // ✅ STATE
@@ -203,6 +203,18 @@ function getStatusClass(status) {
   if (lower === 'high' || lower === 'low') return 'badge-warning';
   if (lower === 'critical') return 'badge-danger';
   return 'badge-info';
+}
+
+function getDisplayStatus(marker) {
+  if (!marker) return 'Unknown';
+  if (!marker.marker_name || !marker.marker_result) return marker.status || 'Unknown';
+
+  try {
+    const derived = getResultStatus(marker.marker_name, marker.marker_result);
+    return derived?.title || marker.status || 'Unknown';
+  } catch (error) {
+    return marker.status || 'Unknown';
+  }
 }
 
 function formatDate(dateString) {

@@ -134,8 +134,8 @@ export const HEALTH_MARKERS = [
   },
   // PSA Serum (Prostate-Specific Antigen) is a blood test used to screen for prostate cancer and other prostate conditions. It measures the level of PSA, a protein produced by the prostate gland, in the blood. Elevated PSA levels can indicate prostate cancer, benign prostatic hyperplasia (BPH), or inflammation of the prostate (prostatitis). However, PSA levels can also be influenced
   {
-    name: 'PSA Serum',
-    label: 'PSA Serum',
+    name: 'PSA,Serum',
+    label: 'PSA,Serum',
     unit: 'ng/ml',
     normalRange: '< 4.0 ng/ml',
     borderlineRange: '4.0- 6.0 ng/ml',
@@ -257,6 +257,14 @@ export const getHealthMarkerByName = (name) => {
   const normalized = String(name).trim();
   if (!normalized) return undefined;
 
+  const normalizeLookupText = (value) => {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
   const direct = HEALTH_MARKERS.find(marker => marker.name === normalized || marker.label === normalized);
   if (direct) return direct;
 
@@ -273,10 +281,10 @@ export const getHealthMarkerByName = (name) => {
     return HEALTH_MARKERS.find(marker => marker.name === aliasMatch || marker.label === aliasMatch);
   }
 
-  const lower = normalized.toLowerCase();
+  const normalizedLookup = normalizeLookupText(normalized);
   return HEALTH_MARKERS.find((marker) => {
-    const matchText = `${marker.name} ${marker.label}`.toLowerCase();
-    return matchText.includes(lower);
+    const matchText = normalizeLookupText(`${marker.name} ${marker.label}`);
+    return matchText.includes(normalizedLookup);
   });
 };
 
@@ -379,7 +387,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     };
   }
     // ✅ PSA PROSTATE LOGIC
-  if (markerName === 'PSA Serum') {
+  if (markerName === 'PSA,Serum') {
     if (result < 4.0) {
       return { 
       type: 'success', 

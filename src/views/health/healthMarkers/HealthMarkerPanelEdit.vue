@@ -458,14 +458,13 @@ watch(
 
 function getMarkerStatus(marker) {
   if (!marker) return 'Unknown';
-  if (marker.status) return marker.status;
   if (!marker.marker_name || !marker.marker_result) return 'Unknown';
 
   try {
     const resultStatus = getResultStatus(marker.marker_name, marker.marker_result);
-    return resultStatus?.title || 'Unknown';
+    return resultStatus?.title || marker.status || 'Unknown';
   } catch (error) {
-    return 'Unknown';
+    return marker.status || 'Unknown';
   }
 }
 
