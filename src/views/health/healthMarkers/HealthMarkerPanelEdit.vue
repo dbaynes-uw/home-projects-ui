@@ -1095,7 +1095,7 @@ onMounted(() => {
 .form-actions {
   display: flex;
   gap: 1rem;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 2px solid #e5e7eb;
