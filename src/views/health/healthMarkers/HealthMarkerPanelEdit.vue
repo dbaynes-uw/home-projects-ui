@@ -152,7 +152,7 @@
                     </div>
                     <button
                       type="button"
-                      class="btn btn-sm btn-danger"
+                      class="btn btn-sm btn-danger marker-remove-button"
                       @click="removeMarker(marker)"
                       title="Remove from panel"
                     >
@@ -397,6 +397,14 @@ const allKnownMarkerOptions = computed(() => {
     uniqueNames.set(normalizeMarkerName(value), value);
   });
 
+  markerDefinitionStore.allDefinitions.forEach(definition => {
+    const name = definition && (definition.name || definition.label)
+      ? String(definition.name || definition.label).trim()
+      : '';
+    if (!name) return;
+    uniqueNames.set(normalizeMarkerName(name), name);
+  });
+
   (availableMarkers.value || []).forEach(marker => {
     const name = marker && marker.marker_name ? marker.marker_name.trim() : '';
     if (!name) return;
@@ -508,7 +516,8 @@ function getMarkerStatus(marker) {
   if (!marker.marker_name || !marker.marker_result) return 'Unknown';
 
   try {
-    const resultStatus = getResultStatus(marker.marker_name, marker.marker_result);
+    const markerDefinition = getMarkerDefinitionByName(marker.marker_name);
+    const resultStatus = getResultStatus(markerDefinition || marker.marker_name, marker.marker_result);
     return resultStatus?.title || marker.status || 'Unknown';
   } catch (error) {
     return marker.status || 'Unknown';
@@ -517,7 +526,8 @@ function getMarkerStatus(marker) {
 
 function syncMarkerStatus(marker) {
   if (!marker) return;
-  const resultStatus = getResultStatus(marker.marker_name, marker.marker_result);
+  const markerDefinition = getMarkerDefinitionByName(marker.marker_name);
+  const resultStatus = getResultStatus(markerDefinition || marker.marker_name, marker.marker_result);
   marker.status = resultStatus?.title || marker.status || 'Unknown';
 }
 
@@ -550,7 +560,7 @@ async function addCustomMarker() {
 
   try {
     const selectedMarker = getMarkerDefinitionByName(chosenMarkerName);
-    const status = getResultStatus(chosenMarkerName, newCustomMarker.value.marker_result)?.title || 'Unknown';
+    const status = getResultStatus(selectedMarker || chosenMarkerName, newCustomMarker.value.marker_result)?.title || 'Unknown';
     const payload = {
       marker_name: chosenMarkerName,
       marker_date: formData.value.test_date,
@@ -987,9 +997,9 @@ onMounted(() => {
 
 .marker-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
   padding: 1rem;
   background: white;
   border-radius: 6px;
@@ -1005,15 +1015,25 @@ onMounted(() => {
     flex-wrap: wrap;
   }
 
+  .marker-remove-button {
+    align-self: center;
+    width: .5rem;
+  }
+  .marker-status {
+    font-weight: bold;
+  }
   .marker-name-block {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    min-width: 180px;
-    flex: 1 1 220px;
+    min-width: 0;
+    flex: 1 1 auto;
   }
 
   .marker-definition-description {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
     color: #6b7280;
     font-size: 0.8125rem;
     line-height: 1.4;

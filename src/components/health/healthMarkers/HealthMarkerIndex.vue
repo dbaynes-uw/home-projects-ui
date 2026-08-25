@@ -157,8 +157,9 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useMarkerDefinitionStore } from "@/stores/health/MarkerDefinitionStore";
 import {
   getHealthMarkerByName,
   getResultStatus,
@@ -166,6 +167,7 @@ import {
 
 // ✅ ROUTER
 const router = useRouter();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ PROPS
 const props = defineProps({
@@ -215,12 +217,15 @@ const sortedHealthMarkers = computed(() => {
 
 // ✅ METHODS
 function getMarkerLabel(markerName) {
-  const markerInfo = getHealthMarkerByName(markerName);
+  const markerInfo = getMarkerDefinition(markerName) || getHealthMarkerByName(markerName);
   return markerInfo?.label || markerName;
 }
 
 function getStatusText(marker) {
-  const intelligentStatus = getResultStatus(marker.marker_name, marker.marker_result);
+  const intelligentStatus = getResultStatus(
+    getMarkerDefinition(marker.marker_name) || marker.marker_name,
+    marker.marker_result
+  );
   if (intelligentStatus) {
     return intelligentStatus.title;
   }
@@ -228,7 +233,10 @@ function getStatusText(marker) {
 }
 
 function getStatusClass(marker) {
-  const intelligentStatus = getResultStatus(marker.marker_name, marker.marker_result);
+  const intelligentStatus = getResultStatus(
+    getMarkerDefinition(marker.marker_name) || marker.marker_name,
+    marker.marker_result
+  );
 
   if (intelligentStatus) {
     const typeMap = {
@@ -248,6 +256,10 @@ function getStatusClass(marker) {
   if (lower === "high" || lower === "low") return "badge-warning";
   if (lower === "critical") return "badge-danger";
   return "badge-info";
+}
+
+function getMarkerDefinition(markerName) {
+  return markerDefinitionStore.getDefinitionByName(markerName);
 }
 
 function setSort(field) {
@@ -299,6 +311,10 @@ function viewPanelEdit(marker) {
     params: { id: marker.health_marker_panel_id },
   });
 }
+
+onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
+});
 </script>
 
 <style scoped>

@@ -28,7 +28,7 @@
         <!-- ✅ CONTROLS ROW -->
         <div class="controls-row">
           <div class="controls-left">
-            <button class="btn btn-success" @click="handleCreate">
+            <button class="btn btn-success" @click="handleCreateMarker">
               <i class="fas fa-plus"></i>
               Add Health Marker
             </button>
@@ -646,7 +646,7 @@ function formatTestDate(dateString) {
 }
 
 // Navigate to create page
-function handleCreate() {
+function handleCreateMarker() {
   router.push({ name: 'HealthMarkerCreate' });
 }
 
@@ -656,7 +656,7 @@ function handleCreatePanel() {
 }
 // Navigate to create panel page
 function handleCreateHealthMarkerDefinition() {
-  router.push({ name: 'MarkerDefinitions' });
+  router.push({ name: 'MarkerDefinitionCreate' });
 }
 // Navigate to edit page
 function handleEdit(marker) {
