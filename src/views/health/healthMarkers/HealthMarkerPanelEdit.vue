@@ -53,6 +53,10 @@
                   placeholder="e.g., Lipid Panel, Thyroid Panel"
                   required
                 />
+                <div v-if="isNewPanel && currentMarkers.length" class="marker-association-note">
+                  <i class="fas fa-vial"></i>
+                  <span>Marker: {{ currentMarkers[0].marker_name }}</span>
+                </div>
               </div>
 
               <div class="form-group">
@@ -120,7 +124,15 @@
                   >
                     <div class="marker-info">
                       <i class="fas fa-vial"></i>
-                      <span class="marker-name">{{ marker.marker_name }}</span>
+                      <div class="marker-name-block">
+                        <span class="marker-name">{{ marker.marker_name }}</span>
+                        <span
+                          v-if="getMarkerDefinitionByName(marker.marker_name)?.description"
+                          class="marker-definition-description"
+                        >
+                          {{ getMarkerDefinitionByName(marker.marker_name).description }}
+                        </span>
+                      </div>
                       <input
                         v-model="marker.marker_result"
                         type="text"
@@ -272,6 +284,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import EventService from '@/services/EventService';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import {
   getResultStatus,
   getHealthMarkerOptions,
@@ -280,6 +293,7 @@ import {
 
 const router = useRouter();
 const route = useRoute();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 const isLoading = ref(true);
 const isSaving = ref(false);
@@ -308,6 +322,16 @@ const newCustomMarker = ref({
 
 function normalizeMarkerName(name) {
   return String(name || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function getMarkerDefinitionByName(name) {
+  const normalizedName = normalizeMarkerName(name);
+  if (!normalizedName) return undefined;
+
+  return markerDefinitionStore.allDefinitions.find(definition => {
+    return [definition.name, definition.label]
+      .some(value => normalizeMarkerName(value) === normalizedName);
+  }) || getHealthMarkerByName(name);
 }
 
 function normalizePanelNameForMatching(value) {
@@ -373,6 +397,12 @@ const allKnownMarkerOptions = computed(() => {
     uniqueNames.set(normalizeMarkerName(value), value);
   });
 
+  (availableMarkers.value || []).forEach(marker => {
+    const name = marker && marker.marker_name ? marker.marker_name.trim() : '';
+    if (!name) return;
+    uniqueNames.set(normalizeMarkerName(name), name);
+  });
+
   (allPanels.value || []).forEach(panel => {
     const markers = Array.isArray(panel?.health_markers) ? panel.health_markers : [];
     markers.forEach(marker => {
@@ -413,6 +443,23 @@ const quickAddSelectedMarkerName = computed(() => {
   return '';
 });
 
+function getRouteMarkerPreset() {
+  const markerName = typeof route.query.marker_name === 'string' ? route.query.marker_name.trim() : '';
+  if (!markerName) return null;
+
+  return {
+    marker_name: markerName,
+    panel_name: '',
+    marker_date: typeof route.query.marker_date === 'string' ? route.query.marker_date : '',
+    marker_result: typeof route.query.marker_result === 'string' ? route.query.marker_result : '',
+    unit: typeof route.query.unit === 'string' ? route.query.unit : '',
+    lab_name: typeof route.query.lab_name === 'string' ? route.query.lab_name : '',
+    doctor_name: typeof route.query.doctor_name === 'string' ? route.query.doctor_name : '',
+    notes: typeof route.query.notes === 'string' ? route.query.notes : '',
+    status: typeof route.query.status === 'string' ? route.query.status : ''
+  };
+}
+
 const isQuickAddBloodPressure = computed(() => {
   const text = normalizeMarkerName(quickAddSelectedMarkerName.value);
   return text.includes('blood pressure') || text.includes('systolic') || text.includes('diastolic');
@@ -449,7 +496,7 @@ watch(
       }
       return;
     }
-    const selected = getHealthMarkerByName(nextName);
+    const selected = getMarkerDefinitionByName(nextName);
     if (selected?.unit && !newCustomMarker.value.unit) {
       newCustomMarker.value.unit = selected.unit;
     }
@@ -502,7 +549,7 @@ async function addCustomMarker() {
   }
 
   try {
-    const selectedMarker = getHealthMarkerByName(newCustomMarker.value.marker_name === 'Other' ? chosenMarkerName : newCustomMarker.value.marker_name);
+    const selectedMarker = getMarkerDefinitionByName(chosenMarkerName);
     const status = getResultStatus(chosenMarkerName, newCustomMarker.value.marker_result)?.title || 'Unknown';
     const payload = {
       marker_name: chosenMarkerName,
@@ -512,6 +559,7 @@ async function addCustomMarker() {
       lab_name: formData.value.lab_name || '',
       doctor_name: formData.value.doctor_name || '',
       notes: formData.value.notes || '',
+      marker_facts: selectedMarker?.description || '',
       health_marker_panel_id: route.params.id,
       status
     };
@@ -526,6 +574,7 @@ async function addCustomMarker() {
       status: createdMarker.status || status,
       lab_name: createdMarker.lab_name || formData.value.lab_name || '',
       doctor_name: createdMarker.doctor_name || formData.value.doctor_name || '',
+      marker_facts: createdMarker.marker_facts || selectedMarker?.description || '',
       health_marker_panel_id: route.params.id
     });
 
@@ -593,21 +642,37 @@ async function handleSubmit() {
       health_marker_panel: formData.value
     };
 
-    for (const marker of currentMarkers.value) {
-      if (!marker || !marker.id) continue;
-      await EventService.putHealthMarker({
-        id: marker.id,
-        marker_name: marker.marker_name,
-        marker_date: formData.value.test_date,
-        marker_result: marker.marker_result || '',
-        unit: marker.unit || '',
-        status: getMarkerStatus(marker),
-        health_marker_panel_id: route.params.id || null
-      });
-    }
-
     if (isNewPanel.value) {
       const response = await EventService.postHealthMarkerPanel(panelData);
+      const createdPanelId = response.data?.id;
+
+      for (const marker of currentMarkers.value) {
+        if (!marker || !marker.marker_name) continue;
+
+        if (marker.id) {
+          await EventService.putHealthMarker({
+            id: marker.id,
+            marker_name: marker.marker_name,
+            marker_date: formData.value.test_date,
+            marker_result: marker.marker_result || '',
+            unit: marker.unit || '',
+            status: getMarkerStatus(marker),
+            health_marker_panel_id: createdPanelId || null
+          });
+        } else {
+          await EventService.postHealthMarker({
+            marker_name: marker.marker_name,
+            marker_date: marker.marker_date || formData.value.test_date,
+            marker_result: marker.marker_result || '',
+            unit: marker.unit || '',
+            lab_name: marker.lab_name || formData.value.lab_name || '',
+            doctor_name: marker.doctor_name || formData.value.doctor_name || '',
+            notes: marker.notes || formData.value.notes || '',
+            status: marker.status || getMarkerStatus(marker),
+            health_marker_panel_id: createdPanelId || null
+          });
+        }
+      }
       
       await confirmDialogue.value.show({
         title: "Panel Created",
@@ -618,9 +683,22 @@ async function handleSubmit() {
 
       router.push({ 
         name: 'HealthMarkerPanelDetails', 
-        params: { id: response.data.id } 
+        params: { id: createdPanelId } 
       });
     } else {
+      for (const marker of currentMarkers.value) {
+        if (!marker || !marker.id) continue;
+        await EventService.putHealthMarker({
+          id: marker.id,
+          marker_name: marker.marker_name,
+          marker_date: formData.value.test_date,
+          marker_result: marker.marker_result || '',
+          unit: marker.unit || '',
+          status: getMarkerStatus(marker),
+          health_marker_panel_id: route.params.id || null
+        });
+      }
+
       await EventService.putHealthMarkerPanel({
         id: route.params.id,
         ...formData.value
@@ -668,6 +746,8 @@ async function fetchData() {
   isLoading.value = true;
 
   try {
+    const routeMarkerPreset = getRouteMarkerPreset();
+
     if (!isNewPanel.value) {
       // Fetch panel data
       const panelResponse = await EventService.getHealthMarkerPanel(route.params.id);
@@ -685,7 +765,30 @@ async function fetchData() {
     } else {
       // Set default test date to today
       const today = new Date();
-      formData.value.test_date = today.toISOString().split('T')[0];
+      const defaultDate = today.toISOString().split('T')[0];
+      formData.value.test_date = routeMarkerPreset?.marker_date || defaultDate;
+
+      if (routeMarkerPreset) {
+        formData.value.panel_name = '';
+        formData.value.lab_name = routeMarkerPreset.lab_name || '';
+        formData.value.doctor_name = routeMarkerPreset.doctor_name || '';
+        formData.value.notes = routeMarkerPreset.notes || '';
+
+        currentMarkers.value = [{
+          id: null,
+          marker_name: routeMarkerPreset.marker_name,
+          marker_date: routeMarkerPreset.marker_date || defaultDate,
+          marker_result: routeMarkerPreset.marker_result || '',
+          unit: routeMarkerPreset.unit || '',
+          lab_name: routeMarkerPreset.lab_name || '',
+          doctor_name: routeMarkerPreset.doctor_name || '',
+          notes: routeMarkerPreset.notes || '',
+          status: routeMarkerPreset.status || 'Unknown',
+          health_marker_panel_id: null
+        }];
+      } else {
+        currentMarkers.value = [];
+      }
     }
 
     const panelsResponse = await EventService.getHealthMarkerPanels();
@@ -710,6 +813,7 @@ async function fetchData() {
 }
 
 onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
   fetchData();
 });
 </script>
@@ -826,6 +930,25 @@ onMounted(() => {
   gap: 1.5rem;
 }
 
+.marker-association-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(102, 126, 234, 0.08);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.marker-association-note i {
+  color: #667eea;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -880,6 +1003,20 @@ onMounted(() => {
   flex: 1;
   min-width: 0;
     flex-wrap: wrap;
+  }
+
+  .marker-name-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 180px;
+    flex: 1 1 220px;
+  }
+
+  .marker-definition-description {
+    color: #6b7280;
+    font-size: 0.8125rem;
+    line-height: 1.4;
   }
 
   .inline-input,

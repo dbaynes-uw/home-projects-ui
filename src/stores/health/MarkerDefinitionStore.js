@@ -2,6 +2,14 @@ import { defineStore } from 'pinia';
 import EventService from '@/services/EventService';
 import { HEALTH_MARKERS } from '@/services/health-marker-constants';
 
+function normalizeDefinitionName(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export const useMarkerDefinitionStore = defineStore('markerDefinition', {
   state: () => ({
     definitions: [],
@@ -23,12 +31,21 @@ export const useMarkerDefinitionStore = defineStore('markerDefinition', {
     // Get definition by name
     getDefinitionByName: (state) => {
       return (name) => {
+        const normalizedName = normalizeDefinitionName(name);
+        if (!normalizedName) return undefined;
+
         // Try database first
-        const dbDef = state.definitions.find(d => d.name === name || d.label === name);
+        const dbDef = state.definitions.find(d => {
+          return normalizeDefinitionName(d.name) === normalizedName ||
+            normalizeDefinitionName(d.label) === normalizedName;
+        });
         if (dbDef) return dbDef;
         
         // Fallback to constants
-        return HEALTH_MARKERS.find(m => m.name === name || m.label === name);
+        return HEALTH_MARKERS.find(m => {
+          return normalizeDefinitionName(m.name) === normalizedName ||
+            normalizeDefinitionName(m.label) === normalizedName;
+        });
       };
     },
 

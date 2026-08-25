@@ -313,11 +313,29 @@
                     {{ panel.panel_name }} - {{ formatDate(panel.test_date) }}
                   </option>
                 </select>
-                <div v-else class="form-control-static">
+                <div v-else class="form-control-static panel-display-static">
                   <span v-if="form.health_marker_panel_id">
-                    {{ panels.find(p => p.id === form.health_marker_panel_id)?.panel_name || 'Unknown Panel' }}
+                    {{ selectedPanel?.panel_name || 'Unknown Panel' }}
                   </span>
                   <span v-else>-</span>
+                  <router-link
+                    v-if="form.health_marker_panel_id && selectedPanel"
+                    :to="{ name: 'HealthMarkerPanelDetails', params: { id: selectedPanel.id } }"
+                    class="panel-link"
+                    @click.stop
+                  >
+                    <i class="fas fa-external-link-alt"></i>
+                    Open panel
+                  </router-link>
+                  <router-link
+                    v-else
+                    :to="{ name: 'HealthMarkerPanelCreate', query: panelCreateQuery }"
+                    class="panel-link"
+                    @click.stop
+                  >
+                    <i class="fas fa-folder-plus"></i>
+                    Create a panel for this marker
+                  </router-link>
                 </div>
                 <small v-if="isEditable" class="form-text">
                   Associate this marker with a panel, or leave as standalone
@@ -538,6 +556,11 @@ const isBloodPressureMarker = computed(() => {
   );
 });
 
+const selectedPanel = computed(() => {
+  if (!form.value.health_marker_panel_id) return null;
+  return panels.value.find(panel => panel.id === form.value.health_marker_panel_id) || null;
+});
+
 const intelligentStatus = computed(() => {
   if (!form.value.marker_name || !form.value.marker_result) return null;
   const markerDef = selectedMarkerInfo.value;
@@ -551,6 +574,17 @@ const resultValuePlaceholder = computed(() => {
   }
   return 'Enter test result';
 });
+
+const panelCreateQuery = computed(() => ({
+  marker_name: isCustomMarker.value ? customMarkerName.value : (form.value.marker_name || ''),
+  marker_date: form.value.marker_date || '',
+  marker_result: form.value.marker_result || '',
+  unit: form.value.unit || '',
+  lab_name: form.value.lab_name || '',
+  doctor_name: form.value.doctor_name || '',
+  notes: form.value.notes || '',
+  status: form.value.status || ''
+}));
 
 // ✅ METHODS
 function getTitleIcon() {
@@ -903,6 +937,28 @@ select.form-control {
 .form-control-static.text-muted {
   color: #9ca3af;
   font-style: italic;
+}
+
+.panel-display-static {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.panel-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.panel-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
 .result-display {

@@ -82,6 +82,14 @@
         </label>
         <p class="notes-text">{{ truncateNotes(healthMarker.marker_facts) }}</p>
       </div>
+      <!-- Marker Definition Description -->
+      <div v-if="markerDefinition?.description" class="notes-section">
+        <label class="notes-label">
+          <i class="fas fa-book-medical"></i>
+          Marker Definition
+        </label>
+        <p class="notes-text">{{ truncateNotes(markerDefinition.description) }}</p>
+      </div>
       <!-- Notes Preview -->
       <div v-if="healthMarker.notes" class="notes-section">
         <label class="notes-label">
@@ -122,7 +130,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { getResultStatus } from '@/services/health-marker-constants';
+import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 
 // ✅ ROUTER
 const router = useRouter();
@@ -147,6 +155,8 @@ const markerPanel = computed(() => {
   if (!props.healthMarker.health_marker_panel_id) return null;
   return props.panels.find(panel => panel.id === props.healthMarker.health_marker_panel_id);
 });
+
+const markerDefinition = computed(() => getHealthMarkerByName(props.healthMarker?.marker_name));
 
 const derivedStatus = computed(() => {
   if (!props.healthMarker?.marker_name || !props.healthMarker?.marker_result) return null;

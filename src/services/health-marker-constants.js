@@ -121,7 +121,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
-    name: 'Trig-HDL (calc)',
+    name: 'Trig/HDL (calc)',
     label: 'Triglyceride HDL Calculation',
     unit: '',
     normalRange: '< 2.0',
@@ -339,6 +339,92 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
   const markerLabel = marker.label || '';
   const markerText = `${markerName} ${markerLabel}`.toLowerCase();
   const result = parseFloat(testResult);
+
+  const statusRules = marker.status_rules;
+  if (statusRules && Object.keys(statusRules).length > 0) {
+    const getRuleRange = (rule) => {
+      if (!rule || typeof rule !== 'object') return '';
+      const low = rule.low ?? rule.systolic_low ?? rule.diastolic_low;
+      const high = rule.high ?? rule.systolic_high ?? rule.diastolic_high;
+      if (low !== undefined && high !== undefined) return `${low} - ${high} ${marker.unit || ''}`.trim();
+      if (low !== undefined) return `>= ${low} ${marker.unit || ''}`.trim();
+      if (high !== undefined) return `< ${high} ${marker.unit || ''}`.trim();
+      return '';
+    };
+
+    const getRuleStatus = (ruleName, rule, message) => {
+      const normalizedRuleName = ruleName.toLowerCase();
+      const isNormal = normalizedRuleName === 'normal';
+      const isWarning = normalizedRuleName.includes('borderline') || normalizedRuleName.includes('prediabetes') || normalizedRuleName.includes('elevated');
+      const titleMap = {
+        borderline: 'Borderline High',
+        diabetes: 'Diabetes',
+        elevated: 'Elevated',
+        high: 'High',
+        low: 'Low',
+        normal: 'Normal',
+        prediabetes: 'Prediabetes',
+        stage1: 'Stage 1 High',
+        stage2: 'Stage 2 High',
+        crisis: 'Crisis',
+        deficient: 'Deficient',
+        insufficient: 'Insufficient'
+      };
+      const title = titleMap[normalizedRuleName] || (ruleName.charAt(0).toUpperCase() + ruleName.slice(1));
+      return {
+        type: isNormal ? 'success' : (isWarning ? 'warning' : 'error'),
+        title,
+        range: getRuleRange(rule),
+        message: message || `${marker.label || marker.name} is in the ${title.toLowerCase()} range`
+      };
+    };
+
+    const hasBloodPressureRules = Object.values(statusRules).some(rule => {
+      return rule && (rule.systolic_low !== undefined || rule.systolic_high !== undefined || rule.diastolic_low !== undefined || rule.diastolic_high !== undefined);
+    });
+
+    if (hasBloodPressureRules) {
+      const bpMatch = String(testResult).match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+      const systolic = markerText.includes('systolic') ? result : (bpMatch ? parseFloat(bpMatch[1]) : null);
+      const diastolic = markerText.includes('diastolic') ? result : (bpMatch ? parseFloat(bpMatch[2]) : null);
+
+      if (systolic !== null || diastolic !== null) {
+        const matchesThreshold = (value, rule, threshold, direction = 'min') => {
+          if (!rule || rule[threshold] === undefined) return false;
+          return direction === 'max' ? value <= rule[threshold] : value >= rule[threshold];
+        };
+        const crisis = statusRules.crisis || {};
+        const stage2 = statusRules.stage2 || {};
+        const stage1 = statusRules.stage1 || {};
+        const elevated = statusRules.elevated || {};
+        let matchedRule = null;
+
+        if ((systolic !== null && matchesThreshold(systolic, crisis, 'systolic_low')) || (diastolic !== null && matchesThreshold(diastolic, crisis, 'diastolic_low'))) {
+          matchedRule = 'crisis';
+        } else if ((systolic !== null && matchesThreshold(systolic, stage2, 'systolic_low')) || (diastolic !== null && matchesThreshold(diastolic, stage2, 'diastolic_low'))) {
+          matchedRule = 'stage2';
+        } else if ((systolic !== null && matchesThreshold(systolic, stage1, 'systolic_low')) || (diastolic !== null && matchesThreshold(diastolic, stage1, 'diastolic_low'))) {
+          matchedRule = 'stage1';
+        } else if (systolic !== null && matchesThreshold(systolic, elevated, 'systolic_low') && matchesThreshold(systolic, elevated, 'systolic_high', 'max') && (diastolic === null || matchesThreshold(diastolic, elevated, 'diastolic_high', 'max'))) {
+          matchedRule = 'elevated';
+        } else if ((systolic === null || systolic <= (statusRules.normal?.systolic_high ?? Number.POSITIVE_INFINITY)) && (diastolic === null || diastolic <= (statusRules.normal?.diastolic_high ?? Number.POSITIVE_INFINITY))) {
+          matchedRule = 'normal';
+        }
+
+        if (matchedRule) return getRuleStatus(matchedRule, statusRules[matchedRule]);
+      }
+    } else if (!isNaN(result)) {
+      const ruleOrder = ['diabetes', 'high', 'deficient', 'borderline', 'prediabetes', 'insufficient', 'low', 'normal'];
+      const matchesRule = (rule) => {
+        if (!rule || typeof rule !== 'object') return false;
+        const low = rule.low;
+        const high = rule.high;
+        return (low === undefined || result >= low) && (high === undefined || result <= high);
+      };
+      const matchedRule = ruleOrder.find(ruleName => matchesRule(statusRules[ruleName]));
+      if (matchedRule) return getRuleStatus(matchedRule, statusRules[matchedRule]);
+    }
+  }
   
   // ✅ Albumin, s LOGIC
   if (markerName.includes('Albumin')) {
