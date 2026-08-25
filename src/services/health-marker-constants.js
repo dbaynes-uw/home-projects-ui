@@ -48,9 +48,10 @@ export const HEALTH_MARKERS = [
     category: 'Thyroid',
     icon: 'mdi-thyroid'
   },
+  // ✅ LIPID PANEL MARKERS (7)
   {
-    name: 'Total Cholesterol',
-    label: 'Total Cholesterol',
+    name: 'Cholesterol',
+    label: 'Cholesterol',
     unit: 'mg/dL',
     normalRange: '< 200 mg/dL',
     borderlineRange: '200-239 mg/dL',
@@ -61,7 +62,19 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-heart-pulse'
   },
   {
-    name: 'HDL',
+    name: 'Triglyceride',
+    label: 'Triglyceride',
+    unit: 'mg/dL',
+    normalRange: '< 150 mg/dL',
+    borderlineRange: '150-199 mg/dL',
+    highRange: '≥ 200 mg/dL',
+    description: 'Blood fat levels',
+    testFrequency: 'Every 4-6 years',
+    category: 'Lipids',
+    icon: 'mdi-water'
+  },
+    {
+    name: 'HDL Cholesterol',
     label: 'HDL Cholesterol',
     unit: 'mg/dL',
     normalRange: '40 - 60 mg/dL',
@@ -72,7 +85,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-arrow-up-circle'
   },
   {
-    name: 'LDL',
+    name: 'LDL Cholesterol',
     label: 'LDL Cholesterol',
     unit: 'mg/dL',
     normalRange: '< 100 mg/dL',
@@ -83,22 +96,9 @@ export const HEALTH_MARKERS = [
     category: 'Lipids',
     icon: 'mdi-arrow-down-circle'
   },
-
   {
-    name: 'Triglycerides',
-    label: 'Triglycerides',
-    unit: 'mg/dL',
-    normalRange: '< 150 mg/dL',
-    borderlineRange: '150-199 mg/dL',
-    highRange: '≥ 200 mg/dL',
-    description: 'Blood fat levels',
-    testFrequency: 'Every 4-6 years',
-    category: 'Lipids',
-    icon: 'mdi-water'
-  },
-  {
-    name: 'Cholesterol HDL Ratio',
-    label: 'Chol/HDL Ratio',
+    name: 'Chol/HDL Ratio',
+    label: 'Cholesterol HDL Ratio',
     unit: '',
     normalRange: '< 6.7',
     borderlineRange: '6.7-7.9',
@@ -109,8 +109,8 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
-    name: 'NonCholesterol HDL Calculation',
-    label: 'Non-HDL Calculation',
+    name: 'Non-HDL (calc)',
+    label: 'NonCholesterol HDL Calculation',
     unit: '',
     normalRange: '< 200',
     borderlineRange: '?',
@@ -121,6 +121,19 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
+    name: 'Trig-HDL (calc)',
+    label: 'Triglyceride HDL Calculation',
+    unit: '',
+    normalRange: '< 2.0',
+    borderlineRange: '?',
+    highRange: '?',
+    description: '?',
+    testFrequency: '?',
+    category: 'Lipids',
+    icon: 'mdi-water'
+  },
+  // PSA Serum (Prostate-Specific Antigen) is a blood test used to screen for prostate cancer and other prostate conditions. It measures the level of PSA, a protein produced by the prostate gland, in the blood. Elevated PSA levels can indicate prostate cancer, benign prostatic hyperplasia (BPH), or inflammation of the prostate (prostatitis). However, PSA levels can also be influenced
+  {
     name: 'PSA Serum',
     label: 'PSA Serum',
     unit: 'ng/ml',
@@ -130,18 +143,6 @@ export const HEALTH_MARKERS = [
     description: 'The PSA blood test can be used to look for prostate cancer',
     testFrequency: 'Annually',
     category: 'Prostate',
-    icon: 'mdi-water'
-  },
-    {
-    name: 'Triglyceride-to-HDL ratio',
-    label: 'Trig/HDL Calculation',
-    unit: 'Trig/HDL',
-    normalRange: '< 2.0',
-    borderlineRange: '?',
-    highRange: '?',
-    description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood. values under 1.0 considered ideal. This number is calculated by dividing your triglyceride level by your HDL ("good") cholesterol level using the same unit of measurement (typically mg/dL).',
-    testFrequency: '?',
-    category: 'Lipids',
     icon: 'mdi-water'
   },
   /*
@@ -260,6 +261,8 @@ export const getHealthMarkerByName = (name) => {
   if (direct) return direct;
 
   const aliases = {
+    'Total Cholesterol': 'Cholesterol',
+    'Cholesterol': 'Cholesterol',
     'Blood Pressure (Systolic)': 'Blood_Pressure_Systolic',
     'Blood Pressure (Diastolic)': 'Blood_Pressure_Diastolic',
     'Blood_Pressure_Systolic': 'Blood_Pressure_Systolic',
@@ -402,25 +405,26 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       message: 'PSA is high' 
     };
   }
+  // LIPID PANEL LOGIC
   // ✅ CHOLESTEROL LOGIC
-  if (markerName === 'Total Cholesterol') {
+  if (markerName === 'Cholesterol') {
     if (result < 200) return { 
       type: 'success', 
       title: 'Normal', 
       range: marker.normalRange,
-      message: 'Total cholesterol is normal' 
+      message: 'Cholesterol is normal' 
     };
     if (result <= 239) return { 
       type: 'warning', 
       title: 'Borderline High', 
       range: marker.borderlineRange,
-      message: 'Total cholesterol is Borderline high' 
+      message: 'Cholesterol is Borderline high' 
     };
     return { 
       type: 'error', 
       title: 'High', 
       range: marker.highRange,
-      message: 'Total cholesterol is high' 
+      message: 'Cholesterol is high' 
     };
   }
   
@@ -463,7 +467,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       type: 'error', 
       title: 'High', 
       range: marker.highRange,
-      message: 'Total cholesterol is high' 
+      message: 'Cholesterol is high' 
     };
   }
 
@@ -504,7 +508,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     };
   }
   // ✅ Triglycerides LOGIC
-  if (markerName === 'Triglyceride-to-HDL ratio') {
+  if (markerName === 'Trig/HDL (calc)') {
     if (result < 2.0) return { 
       type: 'success', 
       title: 'Normal', 
