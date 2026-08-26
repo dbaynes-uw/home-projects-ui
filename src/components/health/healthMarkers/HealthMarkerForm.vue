@@ -718,7 +718,7 @@ async function handleSubmit() {
   try {
     // Keep DB status in sync with the computed status card when status is blank.
     const derivedStatus = deriveStatusTitle();
-    if (!form.value.status && derivedStatus) {
+    if (derivedStatus && (!form.value.status || form.value.status === 'Result Recorded')) {
       form.value.status = derivedStatus;
     }
 
@@ -730,7 +730,7 @@ async function handleSubmit() {
       unit: form.value.unit || null,
       normal_range_low: isBloodPressureMarker.value ? null : (form.value.normal_range_low || null),
       normal_range_high: isBloodPressureMarker.value ? null : (form.value.normal_range_high || null),
-      status: form.value.status || derivedStatus || null,
+      status: derivedStatus || form.value.status || null,
       marker_facts: form.value.marker_facts || null,
       notes: form.value.notes || null,
       lab_name: form.value.lab_name || null,
@@ -783,7 +783,7 @@ function initializeForm() {
     form.value.marker_date = today;
   }
 
-  if (!form.value.status) {
+  if (!form.value.status || form.value.status === 'Result Recorded') {
     const derivedStatus = deriveStatusTitle();
     if (derivedStatus) {
       form.value.status = derivedStatus;
@@ -808,7 +808,7 @@ watch(() => props.healthMarker, () => {
 
 watch(intelligentStatus, (status) => {
   if (!status || !status.title) return;
-  if (!form.value.status) {
+  if (!form.value.status || form.value.status === 'Result Recorded') {
     form.value.status = status.title;
   }
 });
