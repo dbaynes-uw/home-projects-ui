@@ -128,12 +128,14 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 
 // ✅ ROUTER
 const router = useRouter();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ PROPS
 const props = defineProps({
@@ -156,16 +158,19 @@ const markerPanel = computed(() => {
   return props.panels.find(panel => panel.id === props.healthMarker.health_marker_panel_id);
 });
 
-const markerDefinition = computed(() => getHealthMarkerByName(props.healthMarker?.marker_name));
+const markerDefinition = computed(() => {
+  return markerDefinitionStore.getDefinitionByName(props.healthMarker?.marker_name) ||
+    getHealthMarkerByName(props.healthMarker?.marker_name);
+});
 
 const derivedStatus = computed(() => {
   if (!props.healthMarker?.marker_name || !props.healthMarker?.marker_result) return null;
-  const resultStatus = getResultStatus(props.healthMarker.marker_name, props.healthMarker.marker_result);
+  const resultStatus = getResultStatus(markerDefinition.value || props.healthMarker.marker_name, props.healthMarker.marker_result);
   return resultStatus?.title || null;
 });
 
 const displayStatus = computed(() => {
-  return props.healthMarker.status || derivedStatus.value || 'Unknown';
+  return derivedStatus.value || props.healthMarker.status || 'Unknown';
 });
 
 // ✅ METHODS
@@ -210,6 +215,10 @@ function truncateNotes(notes) {
   if (notes.length <= 100) return notes;
   return notes.substring(0, 100) + '...';
 }
+
+onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
+});
 </script>
 
 <style scoped>

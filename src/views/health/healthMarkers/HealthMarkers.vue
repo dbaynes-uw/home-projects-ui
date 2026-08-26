@@ -434,6 +434,8 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { getResultStatus } from '@/services/health-marker-constants';
 import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
 import HealthMarkerPanelCard from '@/components/health/healthMarkers/HealthMarkerPanelCard.vue';
@@ -444,9 +446,10 @@ import EventService from '@/services/EventService';
 // ✅ ROUTER & STORE
 const router = useRouter();
 const healthMarkerStore = useHealthMarkerStore();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ STATE
-const currentView = ref('table');
+const currentView = ref('cards');
 const confirmDialogue = ref(null);
 const mixedItems = ref([]);
 const panels = ref([]);
@@ -475,6 +478,18 @@ const uniquePanelNames = computed(() => {
 
 const uniqueMarkerNames = computed(() => healthMarkerStore.uniqueMarkerNames);
 
+function getMarkerDisplayStatus(marker) {
+  const definition = markerDefinitionStore.getDefinitionByName(marker?.marker_name);
+  const derivedStatus = getResultStatus(
+    definition || marker?.marker_name,
+    marker?.marker_result
+  );
+  if (derivedStatus?.title && derivedStatus.title !== 'Result Recorded') {
+    return derivedStatus.title;
+  }
+  return marker?.marker_status || marker?.status || derivedStatus?.title || 'Unknown';
+}
+
 // ✅ STATUS COUNTS (respects date filtering)
 const statusCounts = computed(() => {
   const markers = filteredMarkers.value;
@@ -488,7 +503,7 @@ const statusCounts = computed(() => {
   };
   
   markers.forEach(marker => {
-    const status = marker.marker_status || marker.status || 'Unknown';
+    const status = getMarkerDisplayStatus(marker);
     if (Object.prototype.hasOwnProperty.call(counts, status)) {
       counts[status]++;
     }
@@ -606,7 +621,7 @@ const dateSummary = computed(() => {
   };
   
   markers.forEach(marker => {
-    const status = marker.status?.toLowerCase() || 'unknown';
+    const status = getMarkerDisplayStatus(marker).toLowerCase();
     if (status.includes('normal')) summary.normal++;
     else if (status.includes('borderline')) summary.borderline++;
     else if (status.includes('high')) summary.high++;
@@ -774,6 +789,7 @@ onMounted(async () => {
   try {
     await Promise.all([
       healthMarkerStore.fetchHealthMarkers(),
+      markerDefinitionStore.fetchDefinitions(),
       fetchMixedView(),
       fetchPanels()
     ]);

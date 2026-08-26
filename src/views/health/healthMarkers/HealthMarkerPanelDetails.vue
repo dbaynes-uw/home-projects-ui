@@ -56,37 +56,37 @@
           </div>
 
           <!-- Status Summary -->
-          <div v-if="panel.status_summary" class="status-summary-section">
+          <div v-if="panelStatusSummary" class="status-summary-section">
             <h3>Status Summary</h3>
             <div class="status-grid">
               <div class="status-item">
                 <i class="fas fa-vials"></i>
-                <span class="status-value">{{ panel.status_summary.total }}</span>
+                <span class="status-value">{{ panelStatusSummary.total }}</span>
                 <span class="status-label">Total Markers</span>
               </div>
-              <div v-if="panel.status_summary.normal > 0" class="status-item status-normal">
+              <div v-if="panelStatusSummary.normal > 0" class="status-item status-normal">
                 <i class="fas fa-check-circle"></i>
-                <span class="status-value">{{ panel.status_summary.normal }}</span>
+                <span class="status-value">{{ panelStatusSummary.normal }}</span>
                 <span class="status-label">Normal</span>
               </div>
-              <div v-if="panel.status_summary.borderline > 0" class="status-item status-borderline">
+              <div v-if="panelStatusSummary.borderline > 0" class="status-item status-borderline">
                 <i class="fas fa-exclamation-triangle"></i>
-                <span class="status-value">{{ panel.status_summary.borderline }}</span>
+                <span class="status-value">{{ panelStatusSummary.borderline }}</span>
                 <span class="status-label">Borderline</span>
               </div>
-              <div v-if="panel.status_summary.high > 0" class="status-item status-high">
+              <div v-if="panelStatusSummary.high > 0" class="status-item status-high">
                 <i class="fas fa-arrow-up"></i>
-                <span class="status-value">{{ panel.status_summary.high }}</span>
+                <span class="status-value">{{ panelStatusSummary.high }}</span>
                 <span class="status-label">High</span>
               </div>
-              <div v-if="panel.status_summary.low > 0" class="status-item status-low">
+              <div v-if="panelStatusSummary.low > 0" class="status-item status-low">
                 <i class="fas fa-arrow-down"></i>
-                <span class="status-value">{{ panel.status_summary.low }}</span>
+                <span class="status-value">{{ panelStatusSummary.low }}</span>
                 <span class="status-label">Low</span>
               </div>
-              <div v-if="panel.status_summary.critical > 0" class="status-item status-critical">
+              <div v-if="panelStatusSummary.critical > 0" class="status-item status-critical">
                 <i class="fas fa-exclamation-circle"></i>
-                <span class="status-value">{{ panel.status_summary.critical }}</span>
+                <span class="status-value">{{ panelStatusSummary.critical }}</span>
                 <span class="status-label">Critical</span>
               </div>
             </div>
@@ -144,10 +144,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import EventService from '@/services/EventService';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 
 const router = useRouter();
 const route = useRoute();
@@ -155,6 +158,36 @@ const route = useRoute();
 const panel = ref(null);
 const isLoading = ref(true);
 const confirmDialogue = ref(null);
+const markerDefinitionStore = useMarkerDefinitionStore();
+
+const panelStatusSummary = computed(() => {
+  const markers = panel.value?.health_markers;
+  if (!Array.isArray(markers)) return null;
+
+  const summary = {
+    total: markers.length,
+    normal: 0,
+    borderline: 0,
+    high: 0,
+    low: 0,
+    critical: 0
+  };
+
+  markers.forEach(marker => {
+    const definition = markerDefinitionStore.getDefinitionByName(marker.marker_name) ||
+      getHealthMarkerByName(marker.marker_name);
+    const derivedStatus = getResultStatus(definition || marker.marker_name, marker.marker_result);
+    const status = (derivedStatus?.title || marker.status || 'Unknown').toLowerCase();
+
+    if (status.includes('critical') || status.includes('crisis')) summary.critical++;
+    else if (status.includes('borderline')) summary.borderline++;
+    else if (status.includes('high')) summary.high++;
+    else if (status.includes('low')) summary.low++;
+    else if (status.includes('normal')) summary.normal++;
+  });
+
+  return summary;
+});
 
 function formatDate(dateString) {
   if (!dateString) return '-';
@@ -276,6 +309,7 @@ async function fetchPanel() {
 }
 
 onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
   fetchPanel();
 });
 </script>

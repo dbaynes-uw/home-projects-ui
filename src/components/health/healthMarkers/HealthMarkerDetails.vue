@@ -247,6 +247,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
@@ -254,6 +255,7 @@ import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 const router = useRouter();
 const route = useRoute();
 const healthMarkerStore = useHealthMarkerStore();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ REFS
 const confirmDialogue = ref(null);
@@ -266,16 +268,20 @@ const healthMarker = computed(() => {
 
 const isLoading = computed(() => healthMarkerStore.isLoading);
 
-// ✅ GET MARKER INFO FROM CONSTANTS
+// ✅ GET MARKER INFO FROM DATABASE, WITH CONSTANTS FALLBACK
 const markerInfo = computed(() => {
   if (!healthMarker.value) return null;
-  return getHealthMarkerByName(healthMarker.value.marker_name);
+  return markerDefinitionStore.getDefinitionByName(healthMarker.value.marker_name) ||
+    getHealthMarkerByName(healthMarker.value.marker_name);
 });
 
 // ✅ GET INTELLIGENT STATUS
 const intelligentStatus = computed(() => {
   if (!healthMarker.value) return null;
-  return getResultStatus(healthMarker.value.marker_name, healthMarker.value.marker_result);
+  return getResultStatus(
+    markerInfo.value || healthMarker.value.marker_name,
+    healthMarker.value.marker_result
+  );
 });
 
 // ✅ METHODS
@@ -371,6 +377,8 @@ async function handleDelete() {
 
 // ✅ LIFECYCLE
 onMounted(async () => {
+  const definitionsPromise = markerDefinitionStore.fetchDefinitions();
+
   if (healthMarkerStore.allHealthMarkers.length === 0) {
     try {
       await healthMarkerStore.fetchHealthMarkers();
@@ -378,6 +386,8 @@ onMounted(async () => {
       console.error('❌ Failed to load health markers:', error);
     }
   }
+
+  await definitionsPromise;
   
   if (!healthMarker.value) {
     console.warn('⚠️ Health marker not found:', route.params.id);

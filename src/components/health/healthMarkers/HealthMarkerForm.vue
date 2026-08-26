@@ -227,7 +227,7 @@
               />
               <div v-else class="form-control-static">
                 <span :class="['badge', 'badge-lg', getStatusBadgeClass()]">
-                  {{ form.status || 'Unknown' }}
+                  {{ intelligentStatus?.title || form.status || 'Unknown' }}
                 </span>
               </div>
               <small v-if="isEditable" class="form-text">
@@ -664,9 +664,10 @@ function getStatusIcon(type) {
 }
 
 function getStatusBadgeClass() {
-  if (!form.value.status) return 'badge-secondary';
+  const status = intelligentStatus.value?.title || form.value.status;
+  if (!status) return 'badge-secondary';
   
-  const lower = form.value.status.toLowerCase();
+  const lower = status.toLowerCase();
   if (lower.includes('normal') || lower.includes('optimal')) return 'badge-success';
   if (lower.includes('high') || lower.includes('low') || lower.includes('elevated')) return 'badge-warning';
   if (lower.includes('critical') || lower.includes('danger')) return 'badge-danger';

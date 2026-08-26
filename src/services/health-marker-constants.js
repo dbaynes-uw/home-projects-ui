@@ -520,10 +520,31 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     };
   }
   
-  if (markerName === 'LDL') {
+  if (markerName === 'LDL' || markerName.toLowerCase() === 'ldl' || markerText.includes('ldl cholesterol')) {
     if (result < 100) return { type: 'success', title: 'Normal', range: marker.normalRange };
     if (result <= 159) return { type: 'warning', title: 'Borderline High', range: marker.borderlineRange };
     return { type: 'error', title: 'High', range: marker.highRange };
+  }
+
+  if (markerName === 'HDL Cholesterol' || markerName.toLowerCase() === 'hdl' || markerText.includes('hdl cholesterol')) {
+    if (result < 40) return {
+      type: 'warning',
+      title: 'Low',
+      range: marker.lowRange || '< 40 mg/dL',
+      message: 'HDL cholesterol is below the normal range'
+    };
+    if (result <= 60) return {
+      type: 'success',
+      title: 'Normal',
+      range: marker.normalRange || '40 - 60 mg/dL',
+      message: 'HDL cholesterol is in the normal range'
+    };
+    return {
+      type: 'info',
+      title: 'High',
+      range: marker.highRange || '> 60 mg/dL',
+      message: 'HDL cholesterol is above the standard range'
+    };
   }
   
   /*if (markerName === 'HDL Cholesterol') {
