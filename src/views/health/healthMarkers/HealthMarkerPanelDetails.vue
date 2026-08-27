@@ -217,7 +217,7 @@ async function handleDelete() {
 
   const ok = await confirmDialogue.value.show({
     title: "Delete Panel",
-    message: `Are you sure you want to delete "${panel.value.panel_name}"? The markers will not be deleted, only ungrouped.`,
+    message: `Are you sure you want to delete "${panel.value.panel_name}"? This will also permanently delete all ${panel.value.health_markers?.length || 0} marker(s) in this panel. This cannot be undone.`,
     okButton: "Delete Panel",
     cancelButton: "Cancel"
   });
@@ -225,7 +225,7 @@ async function handleDelete() {
   if (!ok) return;
 
   try {
-    await EventService.deleteHealthMarkerPanel({ id: route.params.id });
+    await EventService.deleteHealthMarkerPanel(route.params.id);
     
     await confirmDialogue.value.show({
       title: "Panel Deleted",

@@ -247,7 +247,8 @@ export default {
   },
   deleteHealthMarkerPanel(id) {
     this.init();
-    return api.delete(api_url + "health_marker_panels/" + id);
+    const panelId = (id && typeof id === 'object') ? id.id : id;
+    return api.delete(api_url + "health_marker_panels/" + panelId);
   },
 
   deleteOob(oob) {

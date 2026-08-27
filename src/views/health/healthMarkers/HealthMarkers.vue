@@ -735,7 +735,7 @@ async function deletePanel(panel) {
 
   const ok = await confirmDialogue.value.show({
     title: "Delete Panel",
-    message: `Are you sure you want to delete "${panel.panel_name}"? This will not delete the markers, only ungroup them.`,
+    message: `Are you sure you want to delete "${panel.panel_name}"? This will also permanently delete all markers in this panel. This cannot be undone.`,
     okButton: "Delete Panel",
     cancelButton: "Cancel"
   });
@@ -743,7 +743,7 @@ async function deletePanel(panel) {
   if (!ok) return;
 
   try {
-    await EventService.deleteHealthMarkerPanel(panel);
+    await EventService.deleteHealthMarkerPanel(panel.id);
     await fetchMixedView();
     
     await confirmDialogue.value.show({
