@@ -740,6 +740,7 @@ async function handleSubmit() {
 
     // Emit to parent
     await emit('submit', formData);
+    await syncMarkerDefinition(formData);
   } catch (error) {
     console.error('❌ Form submission error:', error);
     errorMessage.value = error.message || 'Failed to save health marker. Please try again.';
@@ -750,6 +751,60 @@ async function handleSubmit() {
 
 function handleCancel() {
   emit('cancel');
+}
+
+// Auto-create/fill a custom marker definition so status can be calculated going forward.
+async function syncMarkerDefinition(payload) {
+  const markerName = String(payload.marker_name || '').trim();
+  if (!markerName) return;
+
+  try {
+    const existing = markerDefinitionStore.getDefinitionByName(markerName);
+    if (existing?.is_global) return;
+
+    const hasRangeData = Boolean(payload.normal_range_low || payload.normal_range_high || payload.unit || payload.marker_facts);
+
+    if (!existing) {
+      if (!hasRangeData) return;
+      await markerDefinitionStore.createDefinition({
+        name: markerName,
+        label: markerName,
+        unit: payload.unit || '',
+        normal_range_low: payload.normal_range_low || '',
+        normal_range_high: payload.normal_range_high || '',
+        description: payload.marker_facts || '',
+        category: 'Other',
+        icon: 'mdi-test-tube'
+      });
+    } else if (hasRangeData) {
+      const needsUpdate =
+        (!existing.normal_range_low && payload.normal_range_low) ||
+        (!existing.normal_range_high && payload.normal_range_high) ||
+        (!existing.unit && payload.unit) ||
+        (!existing.description && payload.marker_facts);
+
+      if (needsUpdate) {
+        await markerDefinitionStore.updateDefinition({
+          id: existing.id,
+          name: existing.name,
+          label: existing.label,
+          unit: existing.unit || payload.unit || '',
+          normal_range_low: existing.normal_range_low || payload.normal_range_low || '',
+          normal_range_high: existing.normal_range_high || payload.normal_range_high || '',
+          borderline_range_low: existing.borderline_range_low || '',
+          borderline_range_high: existing.borderline_range_high || '',
+          description: existing.description || payload.marker_facts || '',
+          test_frequency: existing.test_frequency || '',
+          category: existing.category || 'Other',
+          icon: existing.icon || 'mdi-test-tube'
+        });
+      }
+    }
+
+    await markerDefinitionStore.fetchDefinitions();
+  } catch (error) {
+    console.error('⚠️ Failed to sync marker definition:', error);
+  }
 }
 
 function initializeForm() {

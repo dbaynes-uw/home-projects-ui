@@ -150,14 +150,24 @@
                         {{ getMarkerStatus(marker) }}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-danger marker-remove-button"
-                      @click="removeMarker(marker)"
-                      title="Remove from panel"
-                    >
-                      <i class="fas fa-times"></i>
-                    </button>
+                    <div class="marker-item-actions">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-secondary"
+                        @click="editMarkerDetails(marker)"
+                        title="Edit full marker details (ranges, facts, etc.)"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-danger marker-remove-button"
+                        @click="removeMarker(marker)"
+                        title="Remove from panel"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div v-else class="empty-markers">
@@ -588,11 +598,32 @@ async function addCustomMarker() {
       health_marker_panel_id: route.params.id
     });
 
+    // Brand new marker name with no known definition yet - create a starter definition
+    if (!selectedMarker) {
+      try {
+        await markerDefinitionStore.createDefinition({
+          name: chosenMarkerName,
+          label: chosenMarkerName,
+          unit: payload.unit || '',
+          category: 'Other',
+          icon: 'mdi-test-tube'
+        });
+        await markerDefinitionStore.fetchDefinitions();
+      } catch (definitionError) {
+        console.error('⚠️ Failed to auto-create marker definition:', definitionError);
+      }
+    }
+
     newCustomMarker.value = { marker_name: '', custom_marker_choice: '', custom_name: '', marker_result: '', unit: '' };
   } catch (error) {
     console.error('❌ Add custom marker error:', error);
     alert('Failed to create unique panel marker.');
   }
+}
+
+function editMarkerDetails(marker) {
+  if (!marker?.id) return;
+  router.push({ name: 'HealthMarkerEdit', params: { id: marker.id } });
 }
 
 async function addMarker(marker) {
@@ -1015,8 +1046,13 @@ onMounted(() => {
     flex-wrap: wrap;
   }
 
+  .marker-item-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
   .marker-remove-button {
-    align-self: center;
     width: .5rem;
   }
   .marker-status {
