@@ -400,6 +400,44 @@
                 Your personal observations or notes about this specific test
               </small>
             </div>
+
+            <!-- Trends Image -->
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-chart-line"></i>
+                Trends Image
+              </label>
+              <div v-if="isEditable">
+                <input
+                  type="file"
+                  accept="image/png,image/gif"
+                  class="form-control"
+                  @change="handleTrendsImageChange"
+                />
+                <small class="form-text">
+                  Upload a PNG or GIF trends snapshot from your patient portal (max 3 MB)
+                </small>
+                <div v-if="form.trends_image" class="trends-image-preview">
+                  <img :src="form.trends_image" :alt="form.trends_image_filename || 'Trends image'" />
+                  <button type="button" class="btn btn-secondary btn-sm" @click="removeTrendsImage">
+                    <i class="fas fa-trash"></i>
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <a
+                v-else-if="form.trends_image"
+                href="#"
+                class="trends-image-link"
+                @click.prevent="openDataUrlImage(form.trends_image)"
+              >
+                <img :src="form.trends_image" :alt="form.trends_image_filename || 'Trends image'" />
+                <span>View Trends Image</span>
+              </a>
+              <div v-else class="form-control-static text-muted">
+                No trends image uploaded
+              </div>
+            </div>
           </div>
 
           <!-- ✅ METADATA (VIEW MODE ONLY) -->
@@ -489,6 +527,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { getResultStatus } from '@/services/health-marker-constants';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import EventService from '@/services/EventService';
+import { openDataUrlImage } from '@/utils/openDataUrlImage';
 
 // ✅ ROUTER & STORE
 const markerDefinitionStore = useMarkerDefinitionStore();
@@ -522,7 +561,9 @@ const form = ref({
   notes: '',
   lab_name: '',
   doctor_name: '',
-  health_marker_panel_id: null
+  health_marker_panel_id: null,
+  trends_image: '',
+  trends_image_filename: ''
 });
 
 const isSubmitting = ref(false);
@@ -735,7 +776,9 @@ async function handleSubmit() {
       notes: form.value.notes || null,
       lab_name: form.value.lab_name || null,
       doctor_name: form.value.doctor_name || null,
-      health_marker_panel_id: form.value.health_marker_panel_id || null
+      health_marker_panel_id: form.value.health_marker_panel_id || null,
+      trends_image: form.value.trends_image || null,
+      trends_image_filename: form.value.trends_image_filename || null
     };
 
     // Emit to parent
@@ -751,6 +794,34 @@ async function handleSubmit() {
 
 function handleCancel() {
   emit('cancel');
+}
+
+const MAX_TRENDS_IMAGE_BYTES = 3 * 1024 * 1024;
+
+function handleTrendsImageChange(event) {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file) return;
+
+  if (file.size > MAX_TRENDS_IMAGE_BYTES) {
+    alert('Trends image must be 3 MB or smaller.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    form.value.trends_image = reader.result;
+    form.value.trends_image_filename = file.name;
+  };
+  reader.onerror = () => {
+    alert('Failed to read the selected image. Please try again.');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeTrendsImage() {
+  form.value.trends_image = '';
+  form.value.trends_image_filename = '';
 }
 
 // Auto-create/fill a custom marker definition so status can be calculated going forward.
@@ -830,7 +901,9 @@ function initializeForm() {
       notes: props.healthMarker.notes || '',
       lab_name: props.healthMarker.lab_name || '',
       doctor_name: props.healthMarker.doctor_name || '',
-      health_marker_panel_id: props.healthMarker.health_marker_panel_id || null
+      health_marker_panel_id: props.healthMarker.health_marker_panel_id || null,
+      trends_image: props.healthMarker.trends_image || '',
+      trends_image_filename: props.healthMarker.trends_image_filename || ''
     };
   } else if (props.mode === 'create') {
     // Create mode - set default date to today
@@ -1052,6 +1125,33 @@ select.form-control {
   border: 1px solid #e5e7eb;
   white-space: pre-wrap;
   line-height: 1.6;
+}
+
+.trends-image-preview,
+.trends-image-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.trends-image-preview img,
+.trends-image-link img {
+  max-width: 160px;
+  max-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  object-fit: contain;
+}
+
+.trends-image-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.trends-image-link:hover {
+  text-decoration: underline;
 }
 
 .form-text {

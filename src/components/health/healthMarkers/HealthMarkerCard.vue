@@ -98,6 +98,16 @@
         </label>
         <p class="notes-text">{{ truncateNotes(healthMarker.notes) }}</p>
       </div>
+      <!-- Trends Image Link -->
+      <a
+        v-if="healthMarker.trends_image"
+        href="#"
+        class="trends-link"
+        @click.stop.prevent="openDataUrlImage(healthMarker.trends_image)"
+      >
+        <i class="fas fa-chart-line"></i>
+        View Trends
+      </a>
     </div>
 
     <!-- ✅ CARD FOOTER -->
@@ -132,6 +142,7 @@ import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import { openDataUrlImage } from '@/utils/openDataUrlImage';
 
 // ✅ ROUTER
 const router = useRouter();
@@ -408,6 +419,20 @@ onMounted(() => {
   border-radius: 4px;
   margin: 0;
   line-height: 1.5;
+}
+
+.trends-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.trends-link:hover {
+  text-decoration: underline;
 }
 
 /* Notes preview (deprecated - replaced by notes-section) */
