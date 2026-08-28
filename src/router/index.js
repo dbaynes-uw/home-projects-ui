@@ -279,7 +279,7 @@ const routes = [
   {
     path: '/health/markers/:id',
     name: 'HealthMarkerDetails',
-    component: () => import('@/views/health/healthMarkers/HealthMarkerDetailsWrapper.vue'),  // ✅ UPDATED
+    component: () => import('@/views/health/healthMarkers/HealthMarkerDetails.vue'),
     meta: { requiresAuth: true }
   },
   {

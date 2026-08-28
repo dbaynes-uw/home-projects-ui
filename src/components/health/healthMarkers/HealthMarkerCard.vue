@@ -16,7 +16,7 @@
         </p>
         <p v-if="markerPanel" class="panel-name">
           <i class="fas fa-folder"></i>
-          Panel: 
+          @@@Panel: 
           <router-link 
             :to="{ name: 'HealthMarkerPanelDetails', params: { id: markerPanel.id } }"
             class="panel-link"
@@ -47,13 +47,13 @@
             <span class="metric-unit">{{ healthMarker.unit }}</span>
           </span>
         </div>
-        <div class="metric-item">
+        <div v-if="normalRangeLow || normalRangeHigh" class="metric-item">
           <span class="metric-label">
             <i class="fas fa-tachometer-alt"></i>
             Normal Values
           </span>
           <span class="metric-value">
-            {{ healthMarker.normal_range_low }} - {{ healthMarker.normal_range_high }}
+            {{ normalRangeLow }} - {{ normalRangeHigh }}
             <span class="metric-unit">{{ healthMarker.unit }}</span>
           </span>
         </div>    
@@ -172,6 +172,15 @@ const markerPanel = computed(() => {
 const markerDefinition = computed(() => {
   return markerDefinitionStore.getDefinitionByName(props.healthMarker?.marker_name) ||
     getHealthMarkerByName(props.healthMarker?.marker_name);
+});
+
+// Fall back to the marker definition's range when the marker itself wasn't saved with one
+const normalRangeLow = computed(() => {
+  return props.healthMarker.normal_range_low || markerDefinition.value?.normal_range_low || '';
+});
+
+const normalRangeHigh = computed(() => {
+  return props.healthMarker.normal_range_high || markerDefinition.value?.normal_range_high || '';
 });
 
 const derivedStatus = computed(() => {

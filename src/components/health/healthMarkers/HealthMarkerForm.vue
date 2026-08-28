@@ -22,12 +22,12 @@
             <div class="form-row">
               <!-- Marker Name Dropdown (or display) -->
               <div class="form-group">
-                <label for="marker_name" class="form-label" :class="{ required: isEditable }">
+                <label for="marker_name" class="form-label required">
                   <i class="fas fa-tag"></i>
                   <u>Health Marker</u>
                 </label>
                 <select
-                  v-if="isEditable && !isCustomMarker"
+                  v-if="!isCustomMarker"
                   id="marker_name"
                   v-model="form.marker_name"
                   class="form-control"
@@ -45,7 +45,7 @@
                   <option value="__CUSTOM__">+ Custom Marker (Enter your own)</option>
                 </select>
                 <input
-                  v-if="isEditable && isCustomMarker"
+                  v-else
                   id="custom_marker_name"
                   v-model="customMarkerName"
                   type="text"
@@ -53,36 +53,29 @@
                   placeholder="Enter custom marker name..."
                   required
                 />
-                <div v-else-if="!isEditable" class="form-control-static">
-                  {{ selectedMarkerInfo?.label || form.marker_name }}
-                </div>
-                <small v-if="selectedMarkerInfo && isEditable && !isCustomMarker" class="form-text">
+                <small v-if="selectedMarkerInfo && !isCustomMarker" class="form-text">
                   {{ selectedMarkerInfo.description }}
                 </small>
-                <small v-if="isEditable && isCustomMarker" class="form-text">
+                <small v-if="isCustomMarker" class="form-text">
                   <a href="#" @click.prevent="isCustomMarker = false; form.marker_name = ''; customMarkerName = ''" class="text-link">
                     ← Back to predefined markers
                   </a>
                 </small>
               </div>
 
-              <!-- Test Date (editable or display) -->
+              <!-- Test Date -->
               <div class="form-group">
-                <label for="marker_date" class="form-label" :class="{ required: isEditable }">
+                <label for="marker_date" class="form-label required">
                   <i class="fas fa-calendar-alt"></i>
                   <u>Test Date</u>  
                 </label>
                 <input
-                  v-if="isEditable"
                   id="marker_date"
                   v-model="form.marker_date"
                   type="date"
                   class="form-control"
                   required
                 />
-                <div v-else class="form-control-static">
-                  {{ formatDate(form.marker_date) }}
-                </div>
               </div>
             </div>
           </div>
@@ -97,12 +90,11 @@
             <div class="form-row">
               <!-- Marker Result -->
               <div class="form-group">
-                <label for="marker_result" class="form-label" :class="{ required: isEditable }">
+                <label for="marker_result" class="form-label required">
                   <i class="fas fa-tachometer-alt"></i>
                   Result Value
                 </label>
                 <input
-                  v-if="isEditable"
                   id="marker_result"
                   v-model="form.marker_result"
                   type="text"
@@ -111,11 +103,7 @@
                   required
                   @input="calculateStatus"
                 />
-                <div v-else class="form-control-static result-display">
-                  <span class="result-value">{{ form.marker_result }}</span>
-                  <span v-if="form.unit" class="result-unit">{{ form.unit }}</span>
-                </div>
-                <small v-if="isEditable && isBloodPressureMarker" class="form-text">
+                <small v-if="isBloodPressureMarker" class="form-text">
                   Format: 120/80. Optional pulse: 120/80 (68 bpm). Normal: 60 to 100 bpm
                 </small>
               </div>
@@ -127,17 +115,13 @@
                   Unit
                 </label>
                 <input
-                  v-if="isEditable"
                   id="unit"
                   v-model="form.unit"
                   type="text"
                   class="form-control"
                   :placeholder="selectedMarkerInfo?.unit || 'e.g., mg/dL, %, mIU/L'"
                 />
-                <div v-else class="form-control-static">
-                  {{ form.unit || '-' }}
-                </div>
-                <small v-if="selectedMarkerInfo?.unit && isEditable" class="form-text">
+                <small v-if="selectedMarkerInfo?.unit" class="form-text">
                   Standard unit: {{ selectedMarkerInfo.unit }}
                 </small>
               </div>
@@ -158,19 +142,6 @@
               </div>
             </div>
 
-            <!-- ✅ MARKER DESCRIPTION (VIEW MODE ONLY) -->
-            <div v-if="mode === 'view' && selectedMarkerInfo?.description" class="info-box">
-              <div class="info-box-header">
-                <i class="fas fa-info-circle"></i>
-                <h4>About {{ selectedMarkerInfo.label }}</h4>
-              </div>
-              <p>{{ selectedMarkerInfo.description }}</p>
-              <div v-if="selectedMarkerInfo.testFrequency" class="info-box-footer">
-                <i class="fas fa-calendar-check"></i>
-                <span>Recommended frequency: {{ selectedMarkerInfo.testFrequency }}</span>
-              </div>
-            </div>
-
             <div v-if="!isBloodPressureMarker" class="form-row">
               <!-- Normal Range Low -->
               <div class="form-group">
@@ -179,16 +150,12 @@
                   Normal Range (Low)
                 </label>
                 <input
-                  v-if="isEditable"
                   id="normal_range_low"
                   v-model="form.normal_range_low"
                   type="text"
                   class="form-control"
                   placeholder="Lower bound"
                 />
-                <div v-else class="form-control-static">
-                  {{ form.normal_range_low || '-' }}
-                </div>
               </div>
 
               <!-- Normal Range High -->
@@ -198,39 +165,29 @@
                   Normal Range (High)
                 </label>
                 <input
-                  v-if="isEditable"
                   id="normal_range_high"
                   v-model="form.normal_range_high"
                   type="text"
                   class="form-control"
                   placeholder="Upper bound"
                 />
-                <div v-else class="form-control-static">
-                  {{ form.normal_range_high || '-' }}
-                </div>
               </div>
             </div>
 
-            <!-- Status (Auto-filled but editable or display) -->
+            <!-- Status (Auto-filled but editable) -->
             <div class="form-group">
               <label for="status" class="form-label">
                 <i class="fas fa-info-circle"></i>
                 Status
               </label>
               <input
-                v-if="isEditable"
                 id="status"
                 v-model="form.status"
                 type="text"
                 class="form-control"
                 placeholder="e.g., Normal, High, Low"
               />
-              <div v-else class="form-control-static">
-                <span :class="['badge', 'badge-lg', getStatusBadgeClass()]">
-                  {{ intelligentStatus?.title || form.status || 'Unknown' }}
-                </span>
-              </div>
-              <small v-if="isEditable" class="form-text">
+              <small class="form-text">
                 Auto-calculated based on result and ranges, but you can override
               </small>
             </div>
@@ -251,16 +208,12 @@
                   Laboratory Name
                 </label>
                 <input
-                  v-if="isEditable"
                   id="lab_name"
                   v-model="form.lab_name"
                   type="text"
                   class="form-control"
                   placeholder="e.g., Quest Diagnostics"
                 />
-                <div v-else class="form-control-static">
-                  {{ form.lab_name || '-' }}
-                </div>
               </div>
 
               <!-- Doctor Name -->
@@ -270,16 +223,12 @@
                   Doctor Name
                 </label>
                 <input
-                  v-if="isEditable"
                   id="doctor_name"
                   v-model="form.doctor_name"
                   type="text"
                   class="form-control"
                   placeholder="e.g., Dr. Smith"
                 />
-                <div v-else class="form-control-static">
-                  {{ form.doctor_name || '-' }}
-                </div>
               </div>
             </div>
           </div>
@@ -299,7 +248,6 @@
                   Health Marker Panel
                 </label>
                 <select
-                  v-if="isEditable"
                   id="health_marker_panel_id"
                   v-model="form.health_marker_panel_id"
                   class="form-control"
@@ -313,31 +261,7 @@
                     {{ panel.panel_name }} - {{ formatDate(panel.test_date) }}
                   </option>
                 </select>
-                <div v-else class="form-control-static panel-display-static">
-                  <span v-if="form.health_marker_panel_id">
-                    {{ selectedPanel?.panel_name || 'Unknown Panel' }}
-                  </span>
-                  <span v-else>-</span>
-                  <router-link
-                    v-if="form.health_marker_panel_id && selectedPanel"
-                    :to="{ name: 'HealthMarkerPanelDetails', params: { id: selectedPanel.id } }"
-                    class="panel-link"
-                    @click.stop
-                  >
-                    <i class="fas fa-external-link-alt"></i>
-                    Open panel
-                  </router-link>
-                  <router-link
-                    v-else
-                    :to="{ name: 'HealthMarkerPanelCreate', query: panelCreateQuery }"
-                    class="panel-link"
-                    @click.stop
-                  >
-                    <i class="fas fa-folder-plus"></i>
-                    Create a panel for this marker
-                  </router-link>
-                </div>
-                <small v-if="isEditable" class="form-text">
+                <small class="form-text">
                   Associate this marker with a panel, or leave as standalone
                 </small>
               </div>
@@ -358,20 +282,13 @@
                 Marker Facts
               </label>
               <textarea
-                v-if="isEditable"
                 id="marker_facts"
                 v-model="form.marker_facts"
                 class="form-control"
                 rows="3"
                 placeholder="Educational information about this marker..."
               ></textarea>
-              <div v-else-if="form.marker_facts" class="form-control-static facts-display">
-                {{ form.marker_facts }}
-              </div>
-              <div v-else class="form-control-static text-muted">
-                No marker facts recorded
-              </div>
-              <small v-if="isEditable" class="form-text">
+              <small class="form-text">
                 General information about what this marker measures
               </small>
             </div>
@@ -383,20 +300,13 @@
                 Personal Notes
               </label>
               <textarea
-                v-if="isEditable"
                 id="notes"
                 v-model="form.notes"
                 class="form-control"
                 rows="4"
                 placeholder="Your personal notes about this test..."
               ></textarea>
-              <div v-else-if="form.notes" class="form-control-static notes-display">
-                {{ form.notes }}
-              </div>
-              <div v-else class="form-control-static text-muted">
-                No personal notes recorded
-              </div>
-              <small v-if="isEditable" class="form-text">
+              <small class="form-text">
                 Your personal observations or notes about this specific test
               </small>
             </div>
@@ -407,53 +317,21 @@
                 <i class="fas fa-chart-line"></i>
                 Trends Image
               </label>
-              <div v-if="isEditable">
-                <input
-                  type="file"
-                  accept="image/png,image/gif"
-                  class="form-control"
-                  @change="handleTrendsImageChange"
-                />
-                <small class="form-text">
-                  Upload a PNG or GIF trends snapshot from your patient portal (max 3 MB)
-                </small>
-                <div v-if="form.trends_image" class="trends-image-preview">
-                  <img :src="form.trends_image" :alt="form.trends_image_filename || 'Trends image'" />
-                  <button type="button" class="btn btn-secondary btn-sm" @click="removeTrendsImage">
-                    <i class="fas fa-trash"></i>
-                    Remove
-                  </button>
-                </div>
-              </div>
-              <a
-                v-else-if="form.trends_image"
-                href="#"
-                class="trends-image-link"
-                @click.prevent="openDataUrlImage(form.trends_image)"
-              >
+              <input
+                type="file"
+                accept="image/png,image/gif"
+                class="form-control"
+                @change="handleTrendsImageChange"
+              />
+              <small class="form-text">
+                Upload a PNG or GIF trends snapshot from your patient portal (max 3 MB)
+              </small>
+              <div v-if="form.trends_image" class="trends-image-preview">
                 <img :src="form.trends_image" :alt="form.trends_image_filename || 'Trends image'" />
-                <span>View Trends Image</span>
-              </a>
-              <div v-else class="form-control-static text-muted">
-                No trends image uploaded
-              </div>
-            </div>
-          </div>
-
-          <!-- ✅ METADATA (VIEW MODE ONLY) -->
-          <div v-if="mode === 'view' && (healthMarker?.created_at || healthMarker?.updated_at)" class="form-section">
-            <h3 class="section-title">
-              <i class="fas fa-clock"></i>
-              Record Information
-            </h3>
-            <div class="metadata-grid">
-              <div v-if="healthMarker.created_at" class="metadata-item">
-                <i class="fas fa-plus-circle"></i>
-                <span>Created: {{ formatDateTime(healthMarker.created_at) }}</span>
-              </div>
-              <div v-if="healthMarker.updated_at" class="metadata-item">
-                <i class="fas fa-sync"></i>
-                <span>Updated: {{ formatDateTime(healthMarker.updated_at) }}</span>
+                <button type="button" class="btn btn-secondary btn-sm" @click="removeTrendsImage">
+                  <i class="fas fa-trash"></i>
+                  Remove
+                </button>
               </div>
             </div>
           </div>
@@ -466,55 +344,24 @@
 
           <!-- ✅ FORM ACTIONS -->
           <div class="form-actions">
-            <!-- EDIT/CREATE MODE BUTTONS -->
-            <template v-if="isEditable">
-              <button
-                type="submit"
-                class="btn btn-primary btn-lg"
-                :disabled="isSubmitting"
-              >
-                <i :class="isSubmitting ? 'fas fa-spinner fa-spin' : (mode === 'edit' ? 'fas fa-save' : 'fas fa-plus-circle')"></i>
-                {{ isSubmitting ? 'Saving...' : (mode === 'edit' ? 'Update Marker' : 'Create Marker') }}
-              </button>
+            <button
+              type="submit"
+              class="btn btn-primary btn-lg"
+              :disabled="isSubmitting"
+            >
+              <i :class="isSubmitting ? 'fas fa-spinner fa-spin' : (mode === 'edit' ? 'fas fa-save' : 'fas fa-plus-circle')"></i>
+              {{ isSubmitting ? 'Saving...' : (mode === 'edit' ? 'Update Marker' : 'Create Marker') }}
+            </button>
 
-              <button
-                type="button"
-                class="btn btn-secondary btn-lg"
-                @click="handleCancel"
-                :disabled="isSubmitting"
-              >
-                <i class="fas fa-times"></i>
-                Cancel
-              </button>
-            </template>
-
-            <!-- VIEW MODE BUTTONS -->
-            <template v-else>
-              <router-link
-                :to="{ name: 'HealthMarkerEdit', params: { id: healthMarker.id } }"
-                class="btn btn-primary btn-lg"
-              >
-                <i class="fas fa-edit"></i>
-                Edit Marker
-              </router-link>
-
-              <button
-                type="button"
-                class="btn btn-danger btn-lg"
-                @click="$emit('delete', healthMarker)"
-              >
-                <i class="fas fa-trash"></i>
-                Delete Marker
-              </button>
-
-              <router-link
-                :to="{ name: 'HealthMarkers' }"
-                class="btn btn-secondary btn-lg"
-              >
-                <i class="fas fa-arrow-left"></i>
-                Back to List
-              </router-link>
-            </template>
+            <button
+              type="button"
+              class="btn btn-secondary btn-lg"
+              @click="handleCancel"
+              :disabled="isSubmitting"
+            >
+              <i class="fas fa-times"></i>
+              Cancel
+            </button>
           </div>
         </form>
       </div>
@@ -527,7 +374,6 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { getResultStatus } from '@/services/health-marker-constants';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import EventService from '@/services/EventService';
-import { openDataUrlImage } from '@/utils/openDataUrlImage';
 
 // ✅ ROUTER & STORE
 const markerDefinitionStore = useMarkerDefinitionStore();
@@ -541,12 +387,12 @@ const props = defineProps({
   mode: {
     type: String,
     default: 'create',
-    validator: (value) => ['view', 'create', 'edit'].includes(value)
+    validator: (value) => ['create', 'edit'].includes(value)
   }
 });
 
 // ✅ EMITS
-const emit = defineEmits(['submit', 'cancel', 'delete']);
+const emit = defineEmits(['submit', 'cancel']);
 
 // ✅ REFS
 const form = ref({
@@ -573,8 +419,6 @@ const isCustomMarker = ref(false);
 const customMarkerName = ref('');
 
 // ✅ COMPUTED
-const isEditable = computed(() => props.mode === 'create' || props.mode === 'edit');
-
 const availableMarkers = computed(() => markerDefinitionStore.allDefinitions);
 
 const selectedMarkerInfo = computed(() => {
@@ -597,11 +441,6 @@ const isBloodPressureMarker = computed(() => {
   );
 });
 
-const selectedPanel = computed(() => {
-  if (!form.value.health_marker_panel_id) return null;
-  return panels.value.find(panel => panel.id === form.value.health_marker_panel_id) || null;
-});
-
 const intelligentStatus = computed(() => {
   if (!form.value.marker_name || !form.value.marker_result) return null;
   const markerDef = selectedMarkerInfo.value;
@@ -616,26 +455,13 @@ const resultValuePlaceholder = computed(() => {
   return 'Enter test result';
 });
 
-const panelCreateQuery = computed(() => ({
-  marker_name: isCustomMarker.value ? customMarkerName.value : (form.value.marker_name || ''),
-  marker_date: form.value.marker_date || '',
-  marker_result: form.value.marker_result || '',
-  unit: form.value.unit || '',
-  lab_name: form.value.lab_name || '',
-  doctor_name: form.value.doctor_name || '',
-  notes: form.value.notes || '',
-  status: form.value.status || ''
-}));
-
 // ✅ METHODS
 function getTitleIcon() {
-  if (props.mode === 'view') return 'fas fa-eye';
   if (props.mode === 'edit') return 'fas fa-edit';
   return 'fas fa-plus-circle';
 }
 
 function getTitle() {
-  if (props.mode === 'view') return 'Health Marker Details';
   if (props.mode === 'edit') return 'Edit Health Marker';
   return 'New Health Marker';
 }
@@ -657,6 +483,13 @@ function onMarkerChange() {
     // Auto-fill marker facts if not already set
     if (!form.value.marker_facts) {
       form.value.marker_facts = markerInfo.description || '';
+    }
+    // Auto-fill normal range if not already set
+    if (!form.value.normal_range_low) {
+      form.value.normal_range_low = markerInfo.normal_range_low || '';
+    }
+    if (!form.value.normal_range_high) {
+      form.value.normal_range_high = markerInfo.normal_range_high || '';
     }
   }
   
@@ -704,17 +537,6 @@ function getStatusIcon(type) {
   return iconMap[type] || 'fas fa-info-circle';
 }
 
-function getStatusBadgeClass() {
-  const status = intelligentStatus.value?.title || form.value.status;
-  if (!status) return 'badge-secondary';
-  
-  const lower = status.toLowerCase();
-  if (lower.includes('normal') || lower.includes('optimal')) return 'badge-success';
-  if (lower.includes('high') || lower.includes('low') || lower.includes('elevated')) return 'badge-warning';
-  if (lower.includes('critical') || lower.includes('danger')) return 'badge-danger';
-  return 'badge-info';
-}
-
 function formatDate(dateString) {
   if (!dateString) return '-';
   
@@ -732,26 +554,8 @@ function formatDate(dateString) {
   }
 }
 
-function formatDateTime(dateString) {
-  if (!dateString) return '-';
-  
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  } catch (error) {
-    console.log('Date format error:', error);
-    return dateString;
-  }
-}
-
 async function handleSubmit() {
-  if (isSubmitting.value || props.mode === 'view') return;
+  if (isSubmitting.value) return;
 
   errorMessage.value = '';
   isSubmitting.value = true;
@@ -1052,106 +856,19 @@ select.form-control {
   cursor: pointer;
 }
 
-/* Static display for view mode */
-.form-control-static {
-  padding: 0.75rem 0;
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #1f2937;
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-}
-
-.form-control-static.text-muted {
-  color: #9ca3af;
-  font-style: italic;
-}
-
-.panel-display-static {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.panel-link {
-  color: #3b82f6;
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.panel-link:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
-}
-
-.result-display {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.result-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #667eea;
-}
-
-.result-unit {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #9ca3af;
-}
-
-.facts-display {
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  white-space: pre-wrap;
-  line-height: 1.6;
-  text-align: left;
-}
-
-.notes-display {
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  white-space: pre-wrap;
-  line-height: 1.6;
-}
-
-.trends-image-preview,
-.trends-image-link {
+.trends-image-preview {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
 
-.trends-image-preview img,
-.trends-image-link img {
+.trends-image-preview img {
   max-width: 160px;
   max-height: 120px;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   object-fit: contain;
-}
-
-.trends-image-link {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.trends-image-link:hover {
-  text-decoration: underline;
 }
 
 .form-text {
@@ -1296,72 +1013,6 @@ select.form-control {
   color: #2563eb;
 }
 
-/* Info box */
-.info-box {
-  padding: 1.5rem;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-}
-
-.info-box-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  color: #667eea;
-}
-
-.info-box-header h4 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.info-box p {
-  margin: 0 0 1rem 0;
-  color: #4b5563;
-  line-height: 1.6;
-}
-
-.info-box-footer {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.info-box-footer i {
-  color: #667eea;
-}
-
-/* Metadata grid */
-.metadata-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.metadata-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.metadata-item i {
-  color: #667eea;
-  font-size: 1.25rem;
-}
-
 /* Alert */
 .alert {
   padding: 1rem;
@@ -1400,10 +1051,6 @@ select.form-control {
 /* Responsive */
 @media (max-width: 768px) {
   .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .metadata-grid {
     grid-template-columns: 1fr;
   }
 

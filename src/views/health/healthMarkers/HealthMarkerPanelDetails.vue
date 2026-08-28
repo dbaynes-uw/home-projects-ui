@@ -121,6 +121,7 @@
             v-for="marker in panel.health_markers"
             :key="marker.id"
             :healthMarker="marker"
+            :panels="panel ? [panel] : []"
             @edit="editMarker"
             @delete="deleteMarker"
           />

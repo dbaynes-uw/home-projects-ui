@@ -17,10 +17,17 @@
             </router-link>
             <i class="fas fa-chevron-right breadcrumb-separator"></i>
             <span>
-              <i class="fas fa-vial"></i>
-              {{ markerInfo?.label || healthMarker?.marker_name || 'Details' }}
+              <i class="fas fa-vial breadcrumb-marker-name-icon"></i>
+              <span class="breadcrumb-marker-name">{{ markerInfo?.label || healthMarker?.marker_name || 'Details' }}</span>
             </span>
           </h1>
+          <p v-if="markerPanel" class="panel-breadcrumb">
+            <i class="fas fa-folder"></i>
+            Panel:
+            <router-link :to="{ name: 'HealthMarkerPanelDetails', params: { id: markerPanel.id } }" class="breadcrumb-link">
+              {{ markerPanel.panel_name }}
+            </router-link>
+          </p>
         </div>
 
         <!-- ✅ LOADING STATE -->
@@ -148,6 +155,19 @@
                   </div>
                 </div>
 
+                <!-- Panel Name -->
+                <div v-if="markerPanel" class="detail-item">
+                  <div class="detail-label">
+                    <i class="fas fa-folder"></i>
+                    Panel Name
+                  </div>
+                  <div class="detail-value">
+                    <router-link :to="{ name: 'HealthMarkerPanelDetails', params: { id: markerPanel.id } }" class="detail-link">
+                      {{ markerPanel.panel_name }}
+                    </router-link>
+                  </div>
+                </div>
+
                 <!-- Lab Name -->
                 <div v-if="healthMarker.lab_name" class="detail-item">
                   <div class="detail-label">
@@ -224,7 +244,16 @@
                   <i class="fas fa-trash"></i>
                   Delete Marker
                 </button>
-                
+
+                <router-link
+                  v-if="markerPanel"
+                  :to="{ name: 'HealthMarkerPanelDetails', params: { id: markerPanel.id } }"
+                  class="btn btn-outline-primary"
+                >
+                  <i class="fas fa-folder-open"></i>
+                  Panel Details
+                </router-link>
+
                 <router-link
                   :to="{ name: 'HealthMarkers' }"
                   class="btn btn-secondary"
@@ -250,6 +279,7 @@ import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
+import EventService from '@/services/EventService';
 
 // ✅ ROUTER, ROUTE & STORE
 const router = useRouter();
@@ -259,6 +289,7 @@ const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ REFS
 const confirmDialogue = ref(null);
+const fetchedPanel = ref(null);
 
 // ✅ COMPUTED
 const healthMarker = computed(() => {
@@ -282,6 +313,11 @@ const intelligentStatus = computed(() => {
     markerInfo.value || healthMarker.value.marker_name,
     healthMarker.value.marker_result
   );
+});
+
+// The list endpoint embeds the panel on each marker; prefer that over the separate fetch
+const markerPanel = computed(() => {
+  return healthMarker.value?.health_marker_panel || fetchedPanel.value;
 });
 
 // ✅ METHODS
@@ -391,6 +427,13 @@ onMounted(async () => {
   
   if (!healthMarker.value) {
     console.warn('⚠️ Health marker not found:', route.params.id);
+  } else if (healthMarker.value.health_marker_panel_id && !healthMarker.value.health_marker_panel) {
+    try {
+      const response = await EventService.getHealthMarkerPanel(healthMarker.value.health_marker_panel_id);
+      fetchedPanel.value = response.data;
+    } catch (error) {
+      console.error('❌ Failed to load panel:', error);
+    }
   }
 });
 </script>
@@ -415,6 +458,7 @@ onMounted(async () => {
 
 /* Breadcrumb styling */
 .breadcrumb-link {
+  font-size: 1.5rem !important;
   color: white;
   text-decoration: none;
   display: inline-flex;
@@ -432,6 +476,28 @@ onMounted(async () => {
   font-size: 1.5rem;
   opacity: 0.6;
   margin: 0 0.5rem;
+}
+.breadcrumb-marker-name-icon {
+  margin-right: 0.25rem;
+  font-size: 1.5rem !important;
+}
+.breadcrumb-marker-name {
+
+  font-size: 1.5rem !important;
+}
+.panel-breadcrumb {
+  margin: 0.5rem 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.panel-breadcrumb .breadcrumb-link {
+  color: navy !important;
+  font-weight: 600;
 }
 
 /* Details card */
@@ -459,7 +525,9 @@ onMounted(async () => {
   gap: 0.5rem;
   flex-wrap: wrap;
 }
-
+.card-title {
+  font-size: 2.0rem;  
+}
 /* Metrics section */
 .metrics-section {
   display: grid;
@@ -715,6 +783,15 @@ onMounted(async () => {
   font-size: 1rem;
   font-weight: 600;
   color: #1f2937;
+}
+
+.detail-link {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.detail-link:hover {
+  text-decoration: underline;
 }
 
 /* Marker Facts section */
