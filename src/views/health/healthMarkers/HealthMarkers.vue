@@ -28,7 +28,7 @@
         <!-- ✅ CONTROLS ROW -->
         <div class="controls-row">
           <div class="controls-left">
-            <button class="btn btn-success" @click="handleCreate">
+            <button class="btn btn-success" @click="handleCreateMarker">
               <i class="fas fa-plus"></i>
               Add Health Marker
             </button>
@@ -219,6 +219,24 @@
           <button v-if="selectedMarkerName" class="btn-clear-filter" @click="selectedMarkerName = null">
             <i class="fas fa-times"></i>
             Clear Filter
+          </button>
+        </div>
+
+        <!-- ✅ SEARCH FILTER -->
+        <div class="date-filter-section">
+          <label class="filter-label">
+            <i class="fas fa-search"></i>
+            Search:
+          </label>
+          <input
+            v-model.trim="searchQuery"
+            type="text"
+            class="date-filter-select"
+            placeholder="Search panel, marker, status, lab, doctor, or result"
+          />
+          <button v-if="searchQuery" class="btn-clear-filter" @click="searchQuery = ''">
+            <i class="fas fa-times"></i>
+            Clear Search
           </button>
         </div>
     <!-- ✅ CONTENT AREA -->
@@ -416,6 +434,8 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { getResultStatus } from '@/services/health-marker-constants';
 import HealthDashboardNav from '@/components/health/shared/HealthDashboardNav.vue';
 import HealthMarkerCard from '@/components/health/healthMarkers/HealthMarkerCard.vue';
 import HealthMarkerPanelCard from '@/components/health/healthMarkers/HealthMarkerPanelCard.vue';
@@ -426,6 +446,7 @@ import EventService from '@/services/EventService';
 // ✅ ROUTER & STORE
 const router = useRouter();
 const healthMarkerStore = useHealthMarkerStore();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ STATE
 const currentView = ref('cards');
@@ -436,6 +457,7 @@ const viewMode = ref('grouped'); // 'grouped', 'markers', 'panels'
 const selectedTestDate = ref(null);
 const selectedPanelId = ref(null);
 const selectedMarkerName = ref(null);
+const searchQuery = ref('');
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -456,6 +478,18 @@ const uniquePanelNames = computed(() => {
 
 const uniqueMarkerNames = computed(() => healthMarkerStore.uniqueMarkerNames);
 
+function getMarkerDisplayStatus(marker) {
+  const definition = markerDefinitionStore.getDefinitionByName(marker?.marker_name);
+  const derivedStatus = getResultStatus(
+    definition || marker?.marker_name,
+    marker?.marker_result
+  );
+  if (derivedStatus?.title && derivedStatus.title !== 'Result Recorded') {
+    return derivedStatus.title;
+  }
+  return marker?.marker_status || marker?.status || derivedStatus?.title || 'Unknown';
+}
+
 // ✅ STATUS COUNTS (respects date filtering)
 const statusCounts = computed(() => {
   const markers = filteredMarkers.value;
@@ -469,7 +503,7 @@ const statusCounts = computed(() => {
   };
   
   markers.forEach(marker => {
-    const status = marker.marker_status || marker.status || 'Unknown';
+    const status = getMarkerDisplayStatus(marker);
     if (Object.prototype.hasOwnProperty.call(counts, status)) {
       counts[status]++;
     }
@@ -494,6 +528,23 @@ const filteredMarkers = computed(() => {
   if (selectedTestDate.value) markers = markers.filter(m => m.marker_date === selectedTestDate.value);
   if (selectedPanelId.value) markers = markers.filter(m => m.health_marker_panel_id === selectedPanelId.value);
   if (selectedMarkerName.value) markers = markers.filter(m => m.marker_name === selectedMarkerName.value);
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    markers = markers.filter(marker => {
+      const searchableFields = [
+        marker.panel_name,
+        marker.marker_name,
+        marker.status,
+        marker.marker_result,
+        marker.unit,
+        marker.lab_name,
+        marker.doctor_name,
+        marker.marker_date
+      ];
+
+      return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
+    });
+  }
   return markers;
 });
 
@@ -501,6 +552,19 @@ const filteredPanels = computed(() => {
   let panelList = panels.value;
   if (selectedTestDate.value) panelList = panelList.filter(p => p.test_date === selectedTestDate.value);
   if (selectedPanelId.value) panelList = panelList.filter(p => p.id === selectedPanelId.value);
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    panelList = panelList.filter(panel => {
+      const searchableFields = [
+        panel.panel_name,
+        panel.lab_name,
+        panel.doctor_name,
+        panel.test_date
+      ];
+
+      return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
+    });
+  }
   return panelList;
 });
 
@@ -520,6 +584,16 @@ const filteredMixedItems = computed(() => {
     items = items.filter(item =>
       item.type === 'marker' && item.marker_name === selectedMarkerName.value
     );
+  }
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    items = items.filter(item => {
+      const searchableFields = item.type === 'panel'
+        ? [item.panel_name, item.lab_name, item.doctor_name, item.test_date]
+        : [item.panel_name, item.marker_name, item.status, item.marker_result, item.unit, item.lab_name, item.doctor_name, item.marker_date];
+
+      return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
+    });
   }
   return items;
 });
@@ -547,7 +621,7 @@ const dateSummary = computed(() => {
   };
   
   markers.forEach(marker => {
-    const status = marker.status?.toLowerCase() || 'unknown';
+    const status = getMarkerDisplayStatus(marker).toLowerCase();
     if (status.includes('normal')) summary.normal++;
     else if (status.includes('borderline')) summary.borderline++;
     else if (status.includes('high')) summary.high++;
@@ -587,7 +661,7 @@ function formatTestDate(dateString) {
 }
 
 // Navigate to create page
-function handleCreate() {
+function handleCreateMarker() {
   router.push({ name: 'HealthMarkerCreate' });
 }
 
@@ -597,7 +671,7 @@ function handleCreatePanel() {
 }
 // Navigate to create panel page
 function handleCreateHealthMarkerDefinition() {
-  router.push({ name: 'MarkerDefinitions' });
+  router.push({ name: 'MarkerDefinitionCreate' });
 }
 // Navigate to edit page
 function handleEdit(marker) {
@@ -661,7 +735,7 @@ async function deletePanel(panel) {
 
   const ok = await confirmDialogue.value.show({
     title: "Delete Panel",
-    message: `Are you sure you want to delete "${panel.panel_name}"? This will not delete the markers, only ungroup them.`,
+    message: `Are you sure you want to delete "${panel.panel_name}"? This will also permanently delete all markers in this panel. This cannot be undone.`,
     okButton: "Delete Panel",
     cancelButton: "Cancel"
   });
@@ -669,7 +743,7 @@ async function deletePanel(panel) {
   if (!ok) return;
 
   try {
-    await EventService.deleteHealthMarkerPanel(panel);
+    await EventService.deleteHealthMarkerPanel(panel.id);
     await fetchMixedView();
     
     await confirmDialogue.value.show({
@@ -715,6 +789,7 @@ onMounted(async () => {
   try {
     await Promise.all([
       healthMarkerStore.fetchHealthMarkers(),
+      markerDefinitionStore.fetchDefinitions(),
       fetchMixedView(),
       fetchPanels()
     ]);

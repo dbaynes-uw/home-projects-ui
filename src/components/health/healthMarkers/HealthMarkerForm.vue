@@ -107,7 +107,7 @@
                   v-model="form.marker_result"
                   type="text"
                   class="form-control"
-                  placeholder="Enter test result"
+                  :placeholder="resultValuePlaceholder"
                   required
                   @input="calculateStatus"
                 />
@@ -115,6 +115,9 @@
                   <span class="result-value">{{ form.marker_result }}</span>
                   <span v-if="form.unit" class="result-unit">{{ form.unit }}</span>
                 </div>
+                <small v-if="isEditable && isBloodPressureMarker" class="form-text">
+                  Format: 120/80. Optional pulse: 120/80 (68 bpm). Normal: 60 to 100 bpm
+                </small>
               </div>
 
               <!-- Unit -->
@@ -168,7 +171,7 @@
               </div>
             </div>
 
-            <div class="form-row">
+            <div v-if="!isBloodPressureMarker" class="form-row">
               <!-- Normal Range Low -->
               <div class="form-group">
                 <label for="normal_range_low" class="form-label">
@@ -224,7 +227,7 @@
               />
               <div v-else class="form-control-static">
                 <span :class="['badge', 'badge-lg', getStatusBadgeClass()]">
-                  {{ form.status || 'Unknown' }}
+                  {{ intelligentStatus?.title || form.status || 'Unknown' }}
                 </span>
               </div>
               <small v-if="isEditable" class="form-text">
@@ -310,11 +313,29 @@
                     {{ panel.panel_name }} - {{ formatDate(panel.test_date) }}
                   </option>
                 </select>
-                <div v-else class="form-control-static">
+                <div v-else class="form-control-static panel-display-static">
                   <span v-if="form.health_marker_panel_id">
-                    {{ panels.find(p => p.id === form.health_marker_panel_id)?.panel_name || 'Unknown Panel' }}
+                    {{ selectedPanel?.panel_name || 'Unknown Panel' }}
                   </span>
                   <span v-else>-</span>
+                  <router-link
+                    v-if="form.health_marker_panel_id && selectedPanel"
+                    :to="{ name: 'HealthMarkerPanelDetails', params: { id: selectedPanel.id } }"
+                    class="panel-link"
+                    @click.stop
+                  >
+                    <i class="fas fa-external-link-alt"></i>
+                    Open panel
+                  </router-link>
+                  <router-link
+                    v-else
+                    :to="{ name: 'HealthMarkerPanelCreate', query: panelCreateQuery }"
+                    class="panel-link"
+                    @click.stop
+                  >
+                    <i class="fas fa-folder-plus"></i>
+                    Create a panel for this marker
+                  </router-link>
                 </div>
                 <small v-if="isEditable" class="form-text">
                   Associate this marker with a panel, or leave as standalone
@@ -378,6 +399,44 @@
               <small v-if="isEditable" class="form-text">
                 Your personal observations or notes about this specific test
               </small>
+            </div>
+
+            <!-- Trends Image -->
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-chart-line"></i>
+                Trends Image
+              </label>
+              <div v-if="isEditable">
+                <input
+                  type="file"
+                  accept="image/png,image/gif"
+                  class="form-control"
+                  @change="handleTrendsImageChange"
+                />
+                <small class="form-text">
+                  Upload a PNG or GIF trends snapshot from your patient portal (max 3 MB)
+                </small>
+                <div v-if="form.trends_image" class="trends-image-preview">
+                  <img :src="form.trends_image" :alt="form.trends_image_filename || 'Trends image'" />
+                  <button type="button" class="btn btn-secondary btn-sm" @click="removeTrendsImage">
+                    <i class="fas fa-trash"></i>
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <a
+                v-else-if="form.trends_image"
+                href="#"
+                class="trends-image-link"
+                @click.prevent="openDataUrlImage(form.trends_image)"
+              >
+                <img :src="form.trends_image" :alt="form.trends_image_filename || 'Trends image'" />
+                <span>View Trends Image</span>
+              </a>
+              <div v-else class="form-control-static text-muted">
+                No trends image uploaded
+              </div>
             </div>
           </div>
 
@@ -468,6 +527,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { getResultStatus } from '@/services/health-marker-constants';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import EventService from '@/services/EventService';
+import { openDataUrlImage } from '@/utils/openDataUrlImage';
 
 // ✅ ROUTER & STORE
 const markerDefinitionStore = useMarkerDefinitionStore();
@@ -501,7 +561,9 @@ const form = ref({
   notes: '',
   lab_name: '',
   doctor_name: '',
-  health_marker_panel_id: null
+  health_marker_panel_id: null,
+  trends_image: '',
+  trends_image_filename: ''
 });
 
 const isSubmitting = ref(false);
@@ -520,12 +582,50 @@ const selectedMarkerInfo = computed(() => {
   return markerDefinitionStore.getDefinitionByName(form.value.marker_name);
 });
 
+const isBloodPressureMarker = computed(() => {
+  const markerName = String(form.value.marker_name || '').toLowerCase();
+  const markerDef = selectedMarkerInfo.value;
+  const defName = String(markerDef?.name || '').toLowerCase();
+  const defLabel = String(markerDef?.label || '').toLowerCase();
+  const combined = `${markerName} ${defName} ${defLabel}`;
+
+  return (
+    combined.includes('blood pressure') ||
+    combined.includes('blood_pressure') ||
+    combined.includes('systolic') ||
+    combined.includes('diastolic')
+  );
+});
+
+const selectedPanel = computed(() => {
+  if (!form.value.health_marker_panel_id) return null;
+  return panels.value.find(panel => panel.id === form.value.health_marker_panel_id) || null;
+});
+
 const intelligentStatus = computed(() => {
   if (!form.value.marker_name || !form.value.marker_result) return null;
   const markerDef = selectedMarkerInfo.value;
   if (!markerDef) return null;
   return getResultStatus(markerDef, form.value.marker_result);
 });
+
+const resultValuePlaceholder = computed(() => {
+  if (isBloodPressureMarker.value) {
+    return 'e.g., 120/80 (68 bpm). Normal = 60 to 100 bpm';
+  }
+  return 'Enter test result';
+});
+
+const panelCreateQuery = computed(() => ({
+  marker_name: isCustomMarker.value ? customMarkerName.value : (form.value.marker_name || ''),
+  marker_date: form.value.marker_date || '',
+  marker_result: form.value.marker_result || '',
+  unit: form.value.unit || '',
+  lab_name: form.value.lab_name || '',
+  doctor_name: form.value.doctor_name || '',
+  notes: form.value.notes || '',
+  status: form.value.status || ''
+}));
 
 // ✅ METHODS
 function getTitleIcon() {
@@ -564,6 +664,16 @@ function onMarkerChange() {
   calculateStatus();
 }
 
+function deriveStatusTitle() {
+  if (!form.value.marker_name || !form.value.marker_result) return null;
+
+  const markerDef = selectedMarkerInfo.value;
+  if (!markerDef) return null;
+
+  const status = getResultStatus(markerDef, form.value.marker_result);
+  return status?.title || null;
+}
+
 function calculateStatus() {
   if (!form.value.marker_name || !form.value.marker_result) {
     form.value.status = '';
@@ -578,9 +688,9 @@ function calculateStatus() {
     return;
   }
 
-  const status = getResultStatus(markerDef, form.value.marker_result);
-  if (status) {
-    form.value.status = status.title;
+  const derivedTitle = deriveStatusTitle();
+  if (derivedTitle) {
+    form.value.status = derivedTitle;
   }
 }
 
@@ -595,9 +705,10 @@ function getStatusIcon(type) {
 }
 
 function getStatusBadgeClass() {
-  if (!form.value.status) return 'badge-secondary';
+  const status = intelligentStatus.value?.title || form.value.status;
+  if (!status) return 'badge-secondary';
   
-  const lower = form.value.status.toLowerCase();
+  const lower = status.toLowerCase();
   if (lower.includes('normal') || lower.includes('optimal')) return 'badge-success';
   if (lower.includes('high') || lower.includes('low') || lower.includes('elevated')) return 'badge-warning';
   if (lower.includes('critical') || lower.includes('danger')) return 'badge-danger';
@@ -646,24 +757,33 @@ async function handleSubmit() {
   isSubmitting.value = true;
 
   try {
+    // Keep DB status in sync with the computed status card when status is blank.
+    const derivedStatus = deriveStatusTitle();
+    if (derivedStatus && (!form.value.status || form.value.status === 'Result Recorded')) {
+      form.value.status = derivedStatus;
+    }
+
     // Prepare form data
     const formData = {
       marker_name: isCustomMarker.value ? customMarkerName.value : form.value.marker_name,
       marker_date: form.value.marker_date,
       marker_result: form.value.marker_result,
       unit: form.value.unit || null,
-      normal_range_low: form.value.normal_range_low || null,
-      normal_range_high: form.value.normal_range_high || null,
-      status: form.value.status || null,
+      normal_range_low: isBloodPressureMarker.value ? null : (form.value.normal_range_low || null),
+      normal_range_high: isBloodPressureMarker.value ? null : (form.value.normal_range_high || null),
+      status: derivedStatus || form.value.status || null,
       marker_facts: form.value.marker_facts || null,
       notes: form.value.notes || null,
       lab_name: form.value.lab_name || null,
       doctor_name: form.value.doctor_name || null,
-      health_marker_panel_id: form.value.health_marker_panel_id || null
+      health_marker_panel_id: form.value.health_marker_panel_id || null,
+      trends_image: form.value.trends_image || null,
+      trends_image_filename: form.value.trends_image_filename || null
     };
 
     // Emit to parent
     await emit('submit', formData);
+    await syncMarkerDefinition(formData);
   } catch (error) {
     console.error('❌ Form submission error:', error);
     errorMessage.value = error.message || 'Failed to save health marker. Please try again.';
@@ -674,6 +794,88 @@ async function handleSubmit() {
 
 function handleCancel() {
   emit('cancel');
+}
+
+const MAX_TRENDS_IMAGE_BYTES = 3 * 1024 * 1024;
+
+function handleTrendsImageChange(event) {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file) return;
+
+  if (file.size > MAX_TRENDS_IMAGE_BYTES) {
+    alert('Trends image must be 3 MB or smaller.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    form.value.trends_image = reader.result;
+    form.value.trends_image_filename = file.name;
+  };
+  reader.onerror = () => {
+    alert('Failed to read the selected image. Please try again.');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeTrendsImage() {
+  form.value.trends_image = '';
+  form.value.trends_image_filename = '';
+}
+
+// Auto-create/fill a custom marker definition so status can be calculated going forward.
+async function syncMarkerDefinition(payload) {
+  const markerName = String(payload.marker_name || '').trim();
+  if (!markerName) return;
+
+  try {
+    const existing = markerDefinitionStore.getDefinitionByName(markerName);
+    if (existing?.is_global) return;
+
+    const hasRangeData = Boolean(payload.normal_range_low || payload.normal_range_high || payload.unit || payload.marker_facts);
+
+    if (!existing) {
+      if (!hasRangeData) return;
+      await markerDefinitionStore.createDefinition({
+        name: markerName,
+        label: markerName,
+        unit: payload.unit || '',
+        normal_range_low: payload.normal_range_low || '',
+        normal_range_high: payload.normal_range_high || '',
+        description: payload.marker_facts || '',
+        category: 'Other',
+        icon: 'mdi-test-tube'
+      });
+    } else if (hasRangeData) {
+      const needsUpdate =
+        (!existing.normal_range_low && payload.normal_range_low) ||
+        (!existing.normal_range_high && payload.normal_range_high) ||
+        (!existing.unit && payload.unit) ||
+        (!existing.description && payload.marker_facts);
+
+      if (needsUpdate) {
+        await markerDefinitionStore.updateDefinition({
+          id: existing.id,
+          name: existing.name,
+          label: existing.label,
+          unit: existing.unit || payload.unit || '',
+          normal_range_low: existing.normal_range_low || payload.normal_range_low || '',
+          normal_range_high: existing.normal_range_high || payload.normal_range_high || '',
+          borderline_range_low: existing.borderline_range_low || '',
+          borderline_range_high: existing.borderline_range_high || '',
+          description: existing.description || payload.marker_facts || '',
+          test_frequency: existing.test_frequency || '',
+          category: existing.category || 'Other',
+          icon: existing.icon || 'mdi-test-tube'
+        });
+      }
+    }
+
+    await markerDefinitionStore.fetchDefinitions();
+  } catch (error) {
+    console.error('⚠️ Failed to sync marker definition:', error);
+  }
 }
 
 function initializeForm() {
@@ -699,12 +901,21 @@ function initializeForm() {
       notes: props.healthMarker.notes || '',
       lab_name: props.healthMarker.lab_name || '',
       doctor_name: props.healthMarker.doctor_name || '',
-      health_marker_panel_id: props.healthMarker.health_marker_panel_id || null
+      health_marker_panel_id: props.healthMarker.health_marker_panel_id || null,
+      trends_image: props.healthMarker.trends_image || '',
+      trends_image_filename: props.healthMarker.trends_image_filename || ''
     };
   } else if (props.mode === 'create') {
     // Create mode - set default date to today
     const today = new Date().toISOString().split('T')[0];
     form.value.marker_date = today;
+  }
+
+  if (!form.value.status || form.value.status === 'Result Recorded') {
+    const derivedStatus = deriveStatusTitle();
+    if (derivedStatus) {
+      form.value.status = derivedStatus;
+    }
   }
 }
 
@@ -722,6 +933,13 @@ async function fetchPanels() {
 watch(() => props.healthMarker, () => {
   initializeForm();
 }, { immediate: true, deep: true });
+
+watch(intelligentStatus, (status) => {
+  if (!status || !status.title) return;
+  if (!form.value.status || form.value.status === 'Result Recorded') {
+    form.value.status = status.title;
+  }
+});
 
 // ✅ LIFECYCLE
 onMounted(() => {
@@ -850,6 +1068,28 @@ select.form-control {
   font-style: italic;
 }
 
+.panel-display-static {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.panel-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.panel-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
 .result-display {
   display: flex;
   align-items: baseline;
@@ -868,7 +1108,16 @@ select.form-control {
   color: #9ca3af;
 }
 
-.facts-display,
+.facts-display {
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  text-align: left;
+}
+
 .notes-display {
   padding: 1rem;
   background: #f9fafb;
@@ -876,6 +1125,33 @@ select.form-control {
   border: 1px solid #e5e7eb;
   white-space: pre-wrap;
   line-height: 1.6;
+}
+
+.trends-image-preview,
+.trends-image-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.trends-image-preview img,
+.trends-image-link img {
+  max-width: 160px;
+  max-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  object-fit: contain;
+}
+
+.trends-image-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.trends-image-link:hover {
+  text-decoration: underline;
 }
 
 .form-text {
@@ -900,7 +1176,7 @@ select.form-control {
 /* Status display */
 .status-display {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
   padding: 1.25rem;
   border-radius: 12px;
@@ -921,6 +1197,9 @@ select.form-control {
 
 .status-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .status-content strong {

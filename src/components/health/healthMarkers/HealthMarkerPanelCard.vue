@@ -32,29 +32,29 @@
     <div class="panel-summary">
       <div class="summary-item">
         <i class="fas fa-vials"></i>
-        <span class="summary-label">{{ panel.marker_count }} marker{{ panel.marker_count !== 1 ? 's' : '' }}</span>
+        <span class="summary-label">{{ markerCount }} marker{{ markerCount !== 1 ? 's' : '' }}</span>
       </div>
       
-      <div v-if="panel.status_summary" class="status-summary">
-        <span v-if="panel.status_summary.normal > 0" class="status-count status-normal">
+      <div v-if="statusSummary" class="status-summary">
+        <span v-if="statusSummary.normal > 0" class="status-count status-normal">
           <i class="fas fa-check-circle"></i>
-          {{ panel.status_summary.normal }} Normal
+          {{ statusSummary.normal }} Normal
         </span>
-        <span v-if="panel.status_summary.borderline > 0" class="status-count status-borderline">
+        <span v-if="statusSummary.borderline > 0" class="status-count status-borderline">
           <i class="fas fa-exclamation-triangle"></i>
-          {{ panel.status_summary.borderline }} Borderline
+          {{ statusSummary.borderline }} Borderline
         </span>
-        <span v-if="panel.status_summary.high > 0" class="status-count status-high">
+        <span v-if="statusSummary.high > 0" class="status-count status-high">
           <i class="fas fa-arrow-up"></i>
-          {{ panel.status_summary.high }} High
+          {{ statusSummary.high }} High
         </span>
-        <span v-if="panel.status_summary.low > 0" class="status-count status-low">
+        <span v-if="statusSummary.low > 0" class="status-count status-low">
           <i class="fas fa-arrow-down"></i>
-          {{ panel.status_summary.low }} Low
+          {{ statusSummary.low }} Low
         </span>
-        <span v-if="panel.status_summary.critical > 0" class="status-count status-critical">
+        <span v-if="statusSummary.critical > 0" class="status-count status-critical">
           <i class="fas fa-exclamation-circle"></i>
-          {{ panel.status_summary.critical }} Critical
+          {{ statusSummary.critical }} Critical
         </span>
       </div>
     </div>
@@ -85,8 +85,8 @@
                 <i class="fas fa-vial"></i>
                 {{ marker.marker_name }}
               </span>
-              <span :class="['marker-status', getStatusClass(marker.status)]">
-                {{ marker.status || 'Unknown' }}
+              <span :class="['marker-status', getStatusClass(getDisplayStatus(marker))]">
+                {{ getDisplayStatus(marker) }}
               </span>
             </div>
             <div class="marker-item-body">
@@ -143,11 +143,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import EventService from '@/services/EventService';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { getResultStatus } from '@/services/health-marker-constants';
 
 const router = useRouter();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ PROPS
 const props = defineProps({
@@ -157,20 +160,44 @@ const props = defineProps({
   }
 });
 
-// ✅ EMITS
 defineEmits(['edit', 'delete']);
 
 // ✅ STATE
 const isExpanded = ref(false);
 const panelMarkers = ref([]);
 const loading = ref(false);
+const panelMarkersLoaded = ref(false);
+
+const markerCount = computed(() => {
+  if (Array.isArray(props.panel?.health_markers)) return props.panel.health_markers.length;
+  if (panelMarkersLoaded.value) return panelMarkers.value.length;
+  return props.panel?.marker_count ?? props.panel?.status_summary?.total ?? 0;
+});
+
+const statusSummary = computed(() => {
+  const markers = Array.isArray(props.panel?.health_markers)
+    ? props.panel.health_markers
+    : panelMarkers.value;
+  if (markers.length === 0) return props.panel?.status_summary || null;
+
+  const summary = { total: markers.length, normal: 0, borderline: 0, high: 0, low: 0, critical: 0 };
+  markers.forEach(marker => {
+    const status = getDisplayStatus(marker).toLowerCase();
+    if (status.includes('critical') || status.includes('crisis')) summary.critical++;
+    else if (status.includes('borderline')) summary.borderline++;
+    else if (status.includes('high')) summary.high++;
+    else if (status.includes('low')) summary.low++;
+    else if (status.includes('normal')) summary.normal++;
+  });
+  return summary;
+});
 
 // ✅ METHODS
 function toggleExpanded() {
   isExpanded.value = !isExpanded.value;
   
   // Fetch full panel details when expanded
-  if (isExpanded.value && panelMarkers.value.length === 0) {
+  if (isExpanded.value && !panelMarkersLoaded.value) {
     fetchPanelDetails();
   }
 }
@@ -180,6 +207,7 @@ async function fetchPanelDetails() {
   try {
     const response = await EventService.getHealthMarkerPanel(props.panel.id);
     panelMarkers.value = response.data.health_markers || [];
+    panelMarkersLoaded.value = true;
   } catch (error) {
     console.error('Error fetching panel details:', error);
   } finally {
@@ -204,6 +232,25 @@ function getStatusClass(status) {
   if (lower === 'critical') return 'badge-danger';
   return 'badge-info';
 }
+
+function getDisplayStatus(marker) {
+  if (!marker) return 'Unknown';
+  if (!marker.marker_name || !marker.marker_result) return marker.status || 'Unknown';
+
+  try {
+    const definition = markerDefinitionStore.getDefinitionByName(marker.marker_name);
+    const derived = getResultStatus(definition || marker.marker_name, marker.marker_result);
+    if (derived?.title && derived.title !== 'Result Recorded') return derived.title;
+    return marker.status || derived?.title || 'Unknown';
+  } catch (error) {
+    return marker.status || 'Unknown';
+  }
+}
+
+onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
+  fetchPanelDetails();
+});
 
 function formatDate(dateString) {
   if (!dateString) return '-';

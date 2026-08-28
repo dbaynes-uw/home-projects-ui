@@ -8,11 +8,32 @@
           <!-- Table Header -->
           <thead>
             <tr>
-              <th>Marker Name</th>
-              <th>Test Date</th>
+              <th class="sortable-header" @click="setSort('panelName')">
+                <span class="sort-header-content">
+                  Panel Name
+                  <i :class="getSortIcon('panelName')"></i>
+                </span>
+              </th>
+              <th class="sortable-header" @click="setSort('markerName')">
+                <span class="sort-header-content">
+                  Marker Name
+                  <i :class="getSortIcon('markerName')"></i>
+                </span>
+              </th>
+              <th class="sortable-header" @click="setSort('testDate')">
+                <span class="sort-header-content">
+                  Test Date
+                  <i :class="getSortIcon('testDate')"></i>
+                </span>
+              </th>
               <th></th>
               <th>Result</th>
-              <th>Status</th>
+              <th class="sortable-header" @click="setSort('status')">
+                <span class="sort-header-content">
+                  Status
+                  <i :class="getSortIcon('status')"></i>
+                </span>
+              </th>
               <th>Lab</th>
               <th>Doctor</th>
               <th>Actions</th>
@@ -22,11 +43,24 @@
           <!-- Table Body -->
           <tbody>
             <tr
-              v-for="marker in healthMarkers"
+              v-for="marker in sortedHealthMarkers"
               :key="marker.id"
               @dblclick="viewDetails(marker)"
               class="table-row-clickable"
             >
+              <!-- Panel Name -->
+              <td class="panel-name-cell">
+                <button
+                  v-if="marker.health_marker_panel_id"
+                  @click.stop="viewPanelEdit(marker)"
+                  class="panel-link-btn"
+                  :title="`Edit ${marker.panel_name || 'panel'}`"
+                >
+                  {{ marker.panel_name || '-' }}
+                </button>
+                <span v-else>-</span>
+              </td>
+
               <!-- Marker Name -->
               <td class="marker-name-cell">
                 <div class="cell-content">
@@ -123,7 +157,9 @@
 </template>
 
 <script setup>
+import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useMarkerDefinitionStore } from "@/stores/health/MarkerDefinitionStore";
 import {
   getHealthMarkerByName,
   getResultStatus,
@@ -131,9 +167,10 @@ import {
 
 // ✅ ROUTER
 const router = useRouter();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ PROPS
-defineProps({
+const props = defineProps({
   healthMarkers: {
     type: Array,
     required: true,
@@ -143,14 +180,52 @@ defineProps({
 // ✅ EMITS
 defineEmits(["edit", "delete"]);
 
+// ✅ SORTING
+const sortField = ref("testDate");
+const sortDirection = ref("desc");
+
+const sortedHealthMarkers = computed(() => {
+  const markers = [...props.healthMarkers];
+
+  const getSortValue = (marker) => {
+    if (sortField.value === "panelName") return (marker.panel_name || "").toLowerCase();
+    if (sortField.value === "markerName") return (getMarkerLabel(marker.marker_name) || "").toLowerCase();
+    if (sortField.value === "status") return (getStatusText(marker) || "").toLowerCase();
+    if (sortField.value === "testDate") {
+      const parsedDate = marker.marker_date ? new Date(marker.marker_date).getTime() : 0;
+      return Number.isNaN(parsedDate) ? 0 : parsedDate;
+    }
+    return "";
+  };
+
+  markers.sort((a, b) => {
+    const valueA = getSortValue(a);
+    const valueB = getSortValue(b);
+
+    let comparison = 0;
+    if (typeof valueA === "number" && typeof valueB === "number") {
+      comparison = valueA - valueB;
+    } else {
+      comparison = String(valueA).localeCompare(String(valueB), undefined, { sensitivity: "base" });
+    }
+
+    return sortDirection.value === "asc" ? comparison : -comparison;
+  });
+
+  return markers;
+});
+
 // ✅ METHODS
 function getMarkerLabel(markerName) {
-  const markerInfo = getHealthMarkerByName(markerName);
+  const markerInfo = getMarkerDefinition(markerName) || getHealthMarkerByName(markerName);
   return markerInfo?.label || markerName;
 }
 
 function getStatusText(marker) {
-  const intelligentStatus = getResultStatus(marker.marker_name, marker.marker_result);
+  const intelligentStatus = getResultStatus(
+    getMarkerDefinition(marker.marker_name) || marker.marker_name,
+    marker.marker_result
+  );
   if (intelligentStatus) {
     return intelligentStatus.title;
   }
@@ -158,7 +233,10 @@ function getStatusText(marker) {
 }
 
 function getStatusClass(marker) {
-  const intelligentStatus = getResultStatus(marker.marker_name, marker.marker_result);
+  const intelligentStatus = getResultStatus(
+    getMarkerDefinition(marker.marker_name) || marker.marker_name,
+    marker.marker_result
+  );
 
   if (intelligentStatus) {
     const typeMap = {
@@ -178,6 +256,27 @@ function getStatusClass(marker) {
   if (lower === "high" || lower === "low") return "badge-warning";
   if (lower === "critical") return "badge-danger";
   return "badge-info";
+}
+
+function getMarkerDefinition(markerName) {
+  return markerDefinitionStore.getDefinitionByName(markerName);
+}
+
+function setSort(field) {
+  if (sortField.value === field) {
+    sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+    return;
+  }
+
+  sortField.value = field;
+  sortDirection.value = field === "testDate" ? "desc" : "asc";
+}
+
+function getSortIcon(field) {
+  if (sortField.value !== field) return "fas fa-sort sort-icon";
+  return sortDirection.value === "asc"
+    ? "fas fa-sort-up sort-icon sort-icon-active"
+    : "fas fa-sort-down sort-icon sort-icon-active";
 }
 
 function formatDate(dateString) {
@@ -203,6 +302,19 @@ function viewDetails(marker) {
     params: { id: marker.id },
   });
 }
+
+function viewPanelEdit(marker) {
+  if (!marker?.health_marker_panel_id) return;
+
+  router.push({
+    name: "HealthMarkerPanelEdit",
+    params: { id: marker.health_marker_panel_id },
+  });
+}
+
+onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
+});
 </script>
 
 <style scoped>
@@ -248,6 +360,26 @@ function viewDetails(marker) {
   border-bottom: 2px solid #667eea;
 }
 
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sort-header-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sort-icon {
+  opacity: 0.5;
+  font-size: 0.75rem;
+}
+
+.sort-icon-active {
+  opacity: 1;
+}
+
 .data-table thead th:first-child {
   border-radius: 8px 0 0 0;
 }
@@ -276,6 +408,28 @@ function viewDetails(marker) {
   font-size: 0.875rem;
   color: #374151;
   vertical-align: middle;
+}
+
+/* Panel name cell */
+.panel-name-cell {
+  min-width: 180px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.panel-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #3b82f6;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.panel-link-btn:hover {
+  color: #1d4ed8;
 }
 
 /* Marker name cell */

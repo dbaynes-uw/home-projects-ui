@@ -1,6 +1,10 @@
 <template>
   <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
-  <h3 id="h3-left">Total: {{ sortedWaterings.length }} Watering{{ sortedWaterings.length === 1 ? '' : 's' }}</h3>
+  <h3 id="h3-left">
+    Total: {{ sortedWaterings.length }} Watering{{
+      sortedWaterings.length === 1 ? "" : "s"
+    }}
+  </h3>
 
   <div class="timeline-summary-wrap">
     <div class="timeline-summary-title">All Waterings Timeline</div>
@@ -9,7 +13,10 @@
         v-for="segment in allTimelineSegments"
         :key="segment.key"
         class="timeline-summary-segment"
-        :class="{ 'is-thin': segment.isThin, 'is-hovered': hoveredSegmentKey === segment.key }"
+        :class="{
+          'is-thin': segment.isThin,
+          'is-hovered': hoveredSegmentKey === segment.key,
+        }"
         :style="timelineSegmentStyle(segment)"
         @mouseenter="handleSegmentEnter(segment, $event)"
         @mouseleave="handleSegmentLeave"
@@ -21,16 +28,24 @@
         class="timeline-tooltip"
         :class="{
           'is-edge-left': tooltip.align === 'left',
-          'is-edge-right': tooltip.align === 'right'
+          'is-edge-right': tooltip.align === 'right',
         }"
         :style="tooltipStyle"
       >
         <span class="timeline-tooltip-name">{{ tooltip.name }}</span>
         <div class="timeline-tooltip-details">
-          <span v-if="tooltip.gardenNames" class="timeline-tooltip-line">{{ tooltip.gardenNames }}</span>
-          <span class="timeline-tooltip-line">{{ tooltip.startLabel }} - {{ tooltip.endLabel }}</span>
-          <span v-if="tooltip.duration" class="timeline-tooltip-line">{{ tooltip.duration }}</span>
-          <span v-if="tooltip.days" class="timeline-tooltip-line">{{ tooltip.days }}</span>
+          <span v-if="tooltip.gardenNames" class="timeline-tooltip-line">{{
+            tooltip.gardenNames
+          }}</span>
+          <span class="timeline-tooltip-line"
+            >{{ tooltip.startLabel }} - {{ tooltip.endLabel }}</span
+          >
+          <span v-if="tooltip.duration" class="timeline-tooltip-line">{{
+            tooltip.duration
+          }}</span>
+          <span v-if="tooltip.days" class="timeline-tooltip-line">{{
+            tooltip.days
+          }}</span>
         </div>
       </div>
       <div class="timeline-now-marker" :style="nowMarkerStyle" title="Current time"></div>
@@ -46,14 +61,16 @@
         class="timeline-legend-item"
         :class="{ active: activeLegendId === item.id }"
         @click="goToWateringEdit(item.id)"
-        :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${item.duration ? ` • ${item.duration}` : ''}${item.days ? ` • ${item.days}` : ''}`"
+        :title="`${item.name} • ${item.gardenNames} • ${item.timeRange}${
+          item.duration ? ` • ${item.duration}` : ''
+        }${item.days ? ` • ${item.days}` : ''}`"
       >
         <span class="timeline-legend-swatch" :style="{ background: item.color }"></span>
         <span class="timeline-legend-name">{{ item.name }}</span>
         <span class="timeline-legend-garden">{{ item.gardenNames }}</span>
         <span class="timeline-legend-time">{{ item.timeRange }}</span>
-        <span class="timeline-legend-duration">{{ item.duration || '-' }}</span>
-        <span class="timeline-legend-days">{{ item.days || '-' }}</span>
+        <span class="timeline-legend-duration">{{ item.duration || "-" }}</span>
+        <span class="timeline-legend-days">{{ item.days || "-" }}</span>
       </button>
       <button
         v-if="activeLegendId !== null"
@@ -82,10 +99,13 @@
       </thead>
       <tbody>
         <tr v-for="watering in sortedWaterings" :key="watering.id">
-          <td class="description-link"
-              @click="wateringDetails(watering)"
-              title="View details for {{ watering.name }}"
-            >{{ watering.name }}</td>
+          <td
+            class="description-link"
+            @click="wateringDetails(watering)"
+            title="View details for {{ watering.name }}"
+          >
+            {{ watering.name }}
+          </td>
           <td>{{ getWateringGardenNames(watering) }}</td>
           <td>{{ watering.target }}</td>
           <td>{{ formatTime(watering.start_time) }}</td>
@@ -93,7 +113,7 @@
           <td>{{ watering.duration }}</td>
           <td>{{ watering.days }}</td>
           <td class="watering-actions-cell">
-          <!--span v-if="this.onlineStatus"-->
+            <!--span v-if="this.onlineStatus"-->
             <span class="action-icons">
               <router-link
                 :to="{ name: 'WateringEdit', params: { id: `${watering.id}` } }"
@@ -104,7 +124,7 @@
                 <i class="fa-solid fa-pen-to-square"></i>
               </router-link>
               <router-link
-                :to="{ name: 'WateringDetails', params: { id: `${watering.id}` }  }"
+                :to="{ name: 'WateringDetails', params: { id: `${watering.id}` } }"
                 class="action-link"
                 title="View Watering"
                 aria-label="View Watering"
@@ -130,31 +150,40 @@
   <b>Online Status: {{ onlineStatus }}</b>
 </template>
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
 import DateFormatService from "@/services/DateFormatService.js";
 const router = useRouter();
 const props = defineProps({
-  waterings: { type: Array, required: true }
+  waterings: { type: Array, required: true },
 });
 // Emits
-const emit = defineEmits(['edit','delete']);
+const emit = defineEmits(["edit", "delete"]);
 // State
 const onlineStatus = ref(navigator.onLine);
-const sortKey = ref('start_time');
+const sortKey = ref("start_time");
 const sortAsc = ref(true);
 const activeLegendId = ref(null);
 const hoveredSegmentKey = ref(null);
-const tooltip = ref({ visible: false, name: '', gardenNames: '', timeRange: '', duration: '', days: '', x: 0, align: 'center' });
-const TIMELINE_START_MIN = 5 * 60;   // 5:00 AM
-const TIMELINE_END_MIN = 10 * 60;    // 10:00 AM
+const tooltip = ref({
+  visible: false,
+  name: "",
+  gardenNames: "",
+  timeRange: "",
+  duration: "",
+  days: "",
+  x: 0,
+  align: "center",
+});
+const TIMELINE_START_MIN = 5 * 60; // 5:00 AM
+const TIMELINE_END_MIN = 10 * 60; // 10:00 AM
 const TIMELINE_RANGE_MIN = TIMELINE_END_MIN - TIMELINE_START_MIN;
 const TOOLTIP_EDGE_GUTTER = 8;
 const TOOLTIP_EDGE_THRESHOLD = 110;
 //?const inputSearchText = ref("");
 const wateringDetails = (watering) => {
-  router.push({ name: 'WateringDetails', params: { id: watering.id } });
+  router.push({ name: "WateringDetails", params: { id: watering.id } });
 };
 const sortedWaterings = computed(() => {
   const arr = [...props.waterings];
@@ -162,7 +191,7 @@ const sortedWaterings = computed(() => {
   arr.sort((a, b) => {
     let valueA, valueB;
 
-    if (sortKey.value === 'start_time' || sortKey.value === 'end_time') {
+    if (sortKey.value === "start_time" || sortKey.value === "end_time") {
       const aVal = a[sortKey.value];
       const bVal = b[sortKey.value];
       if (!aVal && !bVal) return 0;
@@ -173,12 +202,12 @@ const sortedWaterings = computed(() => {
       return sortAsc.value ? dateA - dateB : dateB - dateA;
     }
 
-    if (sortKey.value === 'garden_names') {
+    if (sortKey.value === "garden_names") {
       valueA = getWateringGardenNames(a).toLowerCase();
       valueB = getWateringGardenNames(b).toLowerCase();
     } else {
-      valueA = (a[sortKey.value] || '').toString().toLowerCase();
-      valueB = (b[sortKey.value] || '').toString().toLowerCase();
+      valueA = (a[sortKey.value] || "").toString().toLowerCase();
+      valueB = (b[sortKey.value] || "").toString().toLowerCase();
     }
 
     if (valueA < valueB) return sortAsc.value ? -1 : 1;
@@ -198,9 +227,11 @@ const allTimelineSegments = computed(() => {
     const endMins = timeToMinutes(watering.end_time);
     if (startMins === null || endMins === null) return;
 
-    const name = watering.name || 'Watering';
+    const name = watering.name || "Watering";
     const gardenNames = getWateringGardenNames(watering);
-    const label = `${name}: ${formatTime(watering.start_time)} - ${formatTime(watering.end_time)}`;
+    const label = `${name}: ${formatTime(watering.start_time)} - ${formatTime(
+      watering.end_time
+    )}`;
     const hue = getWateringHue(watering);
 
     const daySegments = [];
@@ -235,7 +266,7 @@ const allTimelineSegments = computed(() => {
         startLabel: formatTime(watering.start_time),
         endLabel: formatTime(watering.end_time),
         isThin: visibleDuration < 55,
-        displayName: compactTimelineName(name, visibleDuration)
+        displayName: compactTimelineName(name, visibleDuration),
       });
     });
   });
@@ -245,9 +276,9 @@ const allTimelineSegments = computed(() => {
 
 const nowMarkerStyle = computed(() => {
   const now = new Date();
-  const mins = (now.getHours() * 60) + now.getMinutes();
+  const mins = now.getHours() * 60 + now.getMinutes();
   if (mins < TIMELINE_START_MIN || mins > TIMELINE_END_MIN) {
-    return { display: 'none' };
+    return { display: "none" };
   }
   const left = ((mins - TIMELINE_START_MIN) / TIMELINE_RANGE_MIN) * 100;
   return { left: `${left}%` };
@@ -255,18 +286,18 @@ const nowMarkerStyle = computed(() => {
 
 const timelineTicks = computed(() => {
   // 5am to 10am inclusive = 6 ticks at 1-hour intervals
-  return Array.from({ length: 6 }, (_, i) => `${String(5 + i).padStart(2, '0')}:00`);
+  return Array.from({ length: 6 }, (_, i) => `${String(5 + i).padStart(2, "0")}:00`);
 });
 
 const timelineLegendItems = computed(() => {
   const seen = new Set();
   return allTimelineSegments.value
-    .filter(segment => {
+    .filter((segment) => {
       if (seen.has(segment.wateringId)) return false;
       seen.add(segment.wateringId);
       return true;
     })
-    .map(segment => ({
+    .map((segment) => ({
       id: segment.wateringId,
       name: segment.name,
       gardenNames: segment.gardenNames,
@@ -276,22 +307,22 @@ const timelineLegendItems = computed(() => {
       duration: segment.duration,
       days: segment.days,
       color: segment.color,
-      timeRange: `${segment.startLabel} - ${segment.endLabel}`
+      timeRange: `${segment.startLabel} - ${segment.endLabel}`,
     }));
 });
 
 const tooltipStyle = computed(() => {
-  let transform = 'translateX(-50%)';
+  let transform = "translateX(-50%)";
 
-  if (tooltip.value.align === 'left') {
-    transform = 'translateX(0)';
-  } else if (tooltip.value.align === 'right') {
-    transform = 'translateX(-100%)';
+  if (tooltip.value.align === "left") {
+    transform = "translateX(0)";
+  } else if (tooltip.value.align === "right") {
+    transform = "translateX(-100%)";
   }
 
   return {
     left: `${tooltip.value.x}px`,
-    transform
+    transform,
   };
 });
 
@@ -304,30 +335,30 @@ function sortList(key) {
   }
 }
 function deleteWatering(watering) {
-  emit('delete', watering);
+  emit("delete", watering);
 }
 
 function goToWateringEdit(wateringId) {
   activeLegendId.value = wateringId;
-  router.push({ name: 'WateringEdit', params: { id: `${wateringId}` } });
+  router.push({ name: "WateringEdit", params: { id: `${wateringId}` } });
 }
 
 function handleSegmentEnter(segment, event) {
   hoveredSegmentKey.value = segment.key;
-  const track = event.currentTarget.closest('.timeline-summary-track');
+  const track = event.currentTarget.closest(".timeline-summary-track");
   const trackRect = track ? track.getBoundingClientRect() : null;
   const segRect = event.currentTarget.getBoundingClientRect();
-  const xInTrack = trackRect ? segRect.left - trackRect.left + (segRect.width / 2) : 0;
+  const xInTrack = trackRect ? segRect.left - trackRect.left + segRect.width / 2 : 0;
 
-  let align = 'center';
+  let align = "center";
   let tooltipX = xInTrack;
 
   if (trackRect) {
     if (xInTrack <= TOOLTIP_EDGE_THRESHOLD) {
-      align = 'left';
+      align = "left";
       tooltipX = TOOLTIP_EDGE_GUTTER;
     } else if (xInTrack >= trackRect.width - TOOLTIP_EDGE_THRESHOLD) {
-      align = 'right';
+      align = "right";
       tooltipX = trackRect.width - TOOLTIP_EDGE_GUTTER;
     }
   }
@@ -343,7 +374,7 @@ function handleSegmentEnter(segment, event) {
     days: segment.days,
     timeRange: `${segment.startLabel} – ${segment.endLabel}`,
     x: tooltipX,
-    align
+    align,
   };
 }
 
@@ -354,22 +385,20 @@ function handleSegmentLeave() {
 
 function getWateringGardenNames(watering) {
   if (Array.isArray(watering?.gardens) && watering.gardens.length > 0) {
-    const names = watering.gardens
-      .map(g => g?.name)
-      .filter(Boolean);
-    if (names.length > 0) return names.join(', ');
+    const names = watering.gardens.map((g) => g?.name).filter(Boolean);
+    if (names.length > 0) return names.join(", ");
   }
 
   if (watering?.garden?.name) {
     return watering.garden.name;
   }
 
-  return 'Standalone';
+  return "Standalone";
 }
 
 function formatTime(value) {
   if (!value) {
-    return '';
+    return "";
   }
   return DateFormatService.formatTimejs(value);
 }
@@ -377,15 +406,15 @@ function formatTime(value) {
 function timeToMinutes(value) {
   if (!value) return null;
 
-  if (typeof value === 'string' && /^\d{1,2}:\d{2}/.test(value)) {
-    const [h, m] = value.split(':').map(Number);
+  if (typeof value === "string" && /^\d{1,2}:\d{2}/.test(value)) {
+    const [h, m] = value.split(":").map(Number);
     if (Number.isNaN(h) || Number.isNaN(m)) return null;
-    return (h * 60) + m;
+    return h * 60 + m;
   }
 
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return null;
-  return (parsed.getHours() * 60) + parsed.getMinutes();
+  return parsed.getHours() * 60 + parsed.getMinutes();
 }
 
 function timelineSegmentStyle(segment) {
@@ -396,21 +425,26 @@ function timelineSegmentStyle(segment) {
     left: `${left}%`,
     width: `${Math.max(width, 1.2)}%`,
     background: segment.color,
-    opacity: activeLegendId.value === null || activeLegendId.value === segment.wateringId ? 1 : 0.18
+    opacity:
+      activeLegendId.value === null || activeLegendId.value === segment.wateringId
+        ? 1
+        : 0.18,
   };
 }
 
 function nameInitials(name) {
-  return (name || '')
-    .split(/\s+/)
-    .filter(Boolean)
-    .map(part => part[0].toUpperCase())
-    .join('')
-    .slice(0, 4) || 'W';
+  return (
+    (name || "")
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part[0].toUpperCase())
+      .join("")
+      .slice(0, 4) || "W"
+  );
 }
 
 function compactTimelineName(name, visibleDuration) {
-  const safeName = (name || 'Watering').trim();
+  const safeName = (name || "Watering").trim();
 
   if (visibleDuration <= 45) {
     return nameInitials(safeName);
@@ -434,10 +468,12 @@ function getWateringHue(watering) {
     return Math.abs((idNumber * 53) % 360);
   }
 
-  const seed = `${watering?.name || ''}|${watering?.start_time || ''}|${watering?.end_time || ''}`;
+  const seed = `${watering?.name || ""}|${watering?.start_time || ""}|${
+    watering?.end_time || ""
+  }`;
   let hash = 0;
   for (let i = 0; i < seed.length; i += 1) {
-    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
     hash |= 0;
   }
   return Math.abs(hash % 360);
@@ -603,11 +639,11 @@ tr.is-complete {
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .timeline-tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;
@@ -758,4 +794,3 @@ tr.is-complete {
   }
 }
 </style>
-

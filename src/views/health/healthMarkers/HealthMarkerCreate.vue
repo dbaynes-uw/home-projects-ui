@@ -1,8 +1,8 @@
 <template>
   <div class="health-marker-create-wrapper">
     <!-- ✅ PAGE HEADER WITH GRADIENT -->
-    <div class="page-wrapper gradient-health">
-      <div class="page-container">
+    <div class="page-wrapper">
+      <div class="page-container hm-track header-track gradient-health">
         <!-- ✅ BREADCRUMB -->
         <div class="page-header">
           <h1>
@@ -22,8 +22,12 @@
             </span>
           </h1>
         </div>
+      </div>
+    </div>
 
-        <!-- ✅ FORM CARD - ADD mode="create" -->
+    <div class="content-wrapper">
+      <div class="page-container hm-track">
+        <!-- ✅ FORM CARD -->
         <div class="form-card">
           <HealthMarkerForm
             mode="create"
@@ -70,13 +74,43 @@ function handleCancel() {
    ======================================== */
 
 .health-marker-create-wrapper {
+  --hm-track-width: 980px;
   width: 100%;
   min-height: 100vh;
 }
 
+.hm-track {
+  width: min(var(--hm-track-width), calc(100% - 2rem));
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Page wrapper spacing */
 .page-wrapper {
-  padding-bottom: 120px;
+  min-height: auto;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.header-track {
+  border-radius: 12px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.header-track .page-header {
+  margin-bottom: 0;
+}
+
+.header-track .page-header h1 {
+  font-size: 1.25rem;
+}
+
+.content-wrapper {
+  padding: 0.75rem 0 2rem;
 }
 
 /* Breadcrumb styling */
@@ -102,8 +136,7 @@ function handleCancel() {
 
 /* Form card */
 .form-card {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 /* Responsive */

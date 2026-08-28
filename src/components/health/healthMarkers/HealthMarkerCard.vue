@@ -28,8 +28,8 @@
       </div>
       
       <div class="header-right">
-        <span :class="['status-badge', getStatusClass(healthMarker.status)]">
-          {{ healthMarker.status || 'Unknown' }}
+        <span :class="['status-badge', getStatusClass(displayStatus)]">
+          {{ displayStatus }}
         </span>
       </div>
     </div>
@@ -82,6 +82,14 @@
         </label>
         <p class="notes-text">{{ truncateNotes(healthMarker.marker_facts) }}</p>
       </div>
+      <!-- Marker Definition Description -->
+      <div v-if="markerDefinition?.description" class="notes-section">
+        <label class="notes-label">
+          <i class="fas fa-book-medical"></i>
+          Marker Definition
+        </label>
+        <p class="notes-text">{{ truncateNotes(markerDefinition.description) }}</p>
+      </div>
       <!-- Notes Preview -->
       <div v-if="healthMarker.notes" class="notes-section">
         <label class="notes-label">
@@ -90,6 +98,16 @@
         </label>
         <p class="notes-text">{{ truncateNotes(healthMarker.notes) }}</p>
       </div>
+      <!-- Trends Image Link -->
+      <a
+        v-if="healthMarker.trends_image"
+        href="#"
+        class="trends-link"
+        @click.stop.prevent="openDataUrlImage(healthMarker.trends_image)"
+      >
+        <i class="fas fa-chart-line"></i>
+        View Trends
+      </a>
     </div>
 
     <!-- ✅ CARD FOOTER -->
@@ -120,11 +138,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import { openDataUrlImage } from '@/utils/openDataUrlImage';
 
 // ✅ ROUTER
 const router = useRouter();
+const markerDefinitionStore = useMarkerDefinitionStore();
 
 // ✅ PROPS
 const props = defineProps({
@@ -145,6 +167,21 @@ defineEmits(['edit', 'delete']);
 const markerPanel = computed(() => {
   if (!props.healthMarker.health_marker_panel_id) return null;
   return props.panels.find(panel => panel.id === props.healthMarker.health_marker_panel_id);
+});
+
+const markerDefinition = computed(() => {
+  return markerDefinitionStore.getDefinitionByName(props.healthMarker?.marker_name) ||
+    getHealthMarkerByName(props.healthMarker?.marker_name);
+});
+
+const derivedStatus = computed(() => {
+  if (!props.healthMarker?.marker_name || !props.healthMarker?.marker_result) return null;
+  const resultStatus = getResultStatus(markerDefinition.value || props.healthMarker.marker_name, props.healthMarker.marker_result);
+  return resultStatus?.title || null;
+});
+
+const displayStatus = computed(() => {
+  return derivedStatus.value || props.healthMarker.status || 'Unknown';
 });
 
 // ✅ METHODS
@@ -174,12 +211,13 @@ function formatDate(dateString) {
 
 function getStatusClass(status) {
   if (!status) return 'badge-secondary';
-  
-  const lower = status.toLowerCase();
+
+  const lower = String(status).toLowerCase();
   if (lower === 'normal') return 'badge-success';
   if (lower.includes('borderline')) return 'badge-warning';
-  if (lower === 'high' || lower === 'low' ) return 'badge-warning';
-  if (lower === 'critical') return 'badge-danger';
+  if (lower.includes('elevated')) return 'badge-info';
+  if (lower.includes('stage 1 high') || lower.includes('stage 2 high') || lower.includes('high') || lower.includes('low')) return 'badge-warning';
+  if (lower.includes('crisis') || lower.includes('critical')) return 'badge-danger';
   return 'badge-info';
 }
 
@@ -188,6 +226,10 @@ function truncateNotes(notes) {
   if (notes.length <= 100) return notes;
   return notes.substring(0, 100) + '...';
 }
+
+onMounted(() => {
+  markerDefinitionStore.fetchDefinitions();
+});
 </script>
 
 <style scoped>
@@ -377,6 +419,20 @@ function truncateNotes(notes) {
   border-radius: 4px;
   margin: 0;
   line-height: 1.5;
+}
+
+.trends-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.trends-link:hover {
+  text-decoration: underline;
 }
 
 /* Notes preview (deprecated - replaced by notes-section) */

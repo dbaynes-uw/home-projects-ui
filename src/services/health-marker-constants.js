@@ -48,9 +48,10 @@ export const HEALTH_MARKERS = [
     category: 'Thyroid',
     icon: 'mdi-thyroid'
   },
+  // ✅ LIPID PANEL MARKERS (7)
   {
-    name: 'Total Cholesterol',
-    label: 'Total Cholesterol',
+    name: 'Cholesterol',
+    label: 'Cholesterol',
     unit: 'mg/dL',
     normalRange: '< 200 mg/dL',
     borderlineRange: '200-239 mg/dL',
@@ -61,7 +62,19 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-heart-pulse'
   },
   {
-    name: 'HDL',
+    name: 'Triglyceride',
+    label: 'Triglyceride',
+    unit: 'mg/dL',
+    normalRange: '< 150 mg/dL',
+    borderlineRange: '150-199 mg/dL',
+    highRange: '≥ 200 mg/dL',
+    description: 'Blood fat levels',
+    testFrequency: 'Every 4-6 years',
+    category: 'Lipids',
+    icon: 'mdi-water'
+  },
+    {
+    name: 'HDL Cholesterol',
     label: 'HDL Cholesterol',
     unit: 'mg/dL',
     normalRange: '40 - 60 mg/dL',
@@ -72,7 +85,7 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-arrow-up-circle'
   },
   {
-    name: 'LDL',
+    name: 'LDL Cholesterol',
     label: 'LDL Cholesterol',
     unit: 'mg/dL',
     normalRange: '< 100 mg/dL',
@@ -83,34 +96,21 @@ export const HEALTH_MARKERS = [
     category: 'Lipids',
     icon: 'mdi-arrow-down-circle'
   },
-
   {
-    name: 'Triglycerides',
-    label: 'Triglycerides',
-    unit: 'mg/dL',
-    normalRange: '< 150 mg/dL',
-    borderlineRange: '150-199 mg/dL',
-    highRange: '≥ 200 mg/dL',
-    description: 'Blood fat levels',
-    testFrequency: 'Every 4-6 years',
-    category: 'Lipids',
-    icon: 'mdi-water'
-  },
-  {
-    name: 'Cholesterol HDL Ratio',
+    name: 'Chol/HDL Ratio',
     label: 'Chol/HDL Ratio',
     unit: '',
     normalRange: '< 6.7',
-    borderlineRange: '?',
-    highRange: '?',
+    borderlineRange: '6.7-7.9',
+    highRange: '> 7.9',
     description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood',
     testFrequency: '?',
     category: 'Lipids',
     icon: 'mdi-water'
   },
   {
-    name: 'NonCholesterol HDL Calculation',
-    label: 'Non-HDL Calculation',
+    name: 'Non-HDL (calc)',
+    label: 'Non-HDL (calc)',
     unit: '',
     normalRange: '< 200',
     borderlineRange: '?',
@@ -121,8 +121,21 @@ export const HEALTH_MARKERS = [
     icon: 'mdi-water'
   },
   {
-    name: 'PSA Serum',
-    label: 'PSA Serum',
+    name: 'Trig/HDL (calc)',
+    label: 'Triglyceride HDL Calculation',
+    unit: '',
+    normalRange: '< 2.0',
+    borderlineRange: '?',
+    highRange: '?',
+    description: '?',
+    testFrequency: '?',
+    category: 'Lipids',
+    icon: 'mdi-water'
+  },
+  // PSA Serum (Prostate-Specific Antigen) is a blood test used to screen for prostate cancer and other prostate conditions. It measures the level of PSA, a protein produced by the prostate gland, in the blood. Elevated PSA levels can indicate prostate cancer, benign prostatic hyperplasia (BPH), or inflammation of the prostate (prostatitis). However, PSA levels can also be influenced
+  {
+    name: 'PSA,Serum',
+    label: 'PSA,Serum',
     unit: 'ng/ml',
     normalRange: '< 4.0 ng/ml',
     borderlineRange: '4.0- 6.0 ng/ml',
@@ -130,18 +143,6 @@ export const HEALTH_MARKERS = [
     description: 'The PSA blood test can be used to look for prostate cancer',
     testFrequency: 'Annually',
     category: 'Prostate',
-    icon: 'mdi-water'
-  },
-    {
-    name: 'Triglyceride Cholesterol HDL Calculation',
-    label: 'Trig/HDL Calculation',
-    unit: '',
-    normalRange: '< 6.7',
-    borderlineRange: '?',
-    highRange: '?',
-    description: 'A measure that compares the levels of total cholesterol and high-density lipoprotein (HDL) cholesterol in the blood',
-    testFrequency: '?',
-    category: 'Lipids',
     icon: 'mdi-water'
   },
   /*
@@ -170,13 +171,28 @@ export const HEALTH_MARKERS = [
   },
   */
   {
+    name: 'Blood Pressure',
+    label: 'Blood Pressure',
+    unit: 'mm Hg',
+    normalRange: 'Less than 120 / 80 mm Hg',
+    elevatedRange: '120-129 / less than 80 mm Hg',
+    stage1Range: '130-139 / 80-89 mm Hg',
+    stage2Range: '140 or higher / 90 or higher mm Hg',
+    crisisRange: 'Higher than 180 / 120 mm Hg (seek care now)',
+    description: 'Combined systolic/diastolic blood pressure reading',
+    testFrequency: 'Every visit',
+    category: 'Heart',
+    icon: 'mdi-heart-pulse'
+  },
+  {
     name: 'Blood_Pressure_Systolic',
     label: 'Blood Pressure (Systolic)',
-    unit: 'mmHg',
-    normalRange: '< 120 mmHg',
-    elevatedRange: '120-129 mmHg',
-    stage1Range: '130-139 mmHg',
-    stage2Range: '≥ 140 mmHg',
+    unit: 'mm Hg',
+    normalRange: '< 120 mm Hg',
+    elevatedRange: '120-129 mm Hg',
+    stage1Range: '130-139 mm Hg',
+    stage2Range: '≥ 140 mm Hg',
+    crisisRange: '> 180 mm Hg',
     description: 'Systolic blood pressure',
     testFrequency: 'Every visit',
     category: 'Heart',
@@ -187,10 +203,11 @@ export const HEALTH_MARKERS = [
   {
     name: 'Blood_Pressure_Diastolic',
     label: 'Blood Pressure (Diastolic)',
-    unit: 'mmHg',
-    normalRange: '< 80 mmHg',
-    stage1Range: '80-89 mmHg',
-    stage2Range: '≥ 90 mmHg',
+    unit: 'mm Hg',
+    normalRange: '< 80 mm Hg',
+    stage1Range: '80-89 mm Hg',
+    stage2Range: '≥ 90 mm Hg',
+    crisisRange: '> 120 mm Hg',
     description: 'Diastolic blood pressure',
     testFrequency: 'Every visit',
     category: 'Heart',
@@ -235,7 +252,40 @@ export const HEALTH_MARKER_CATEGORIES = [
 
 // ✅ HELPER FUNCTIONS
 export const getHealthMarkerByName = (name) => {
-  return HEALTH_MARKERS.find(marker => marker.name === name);
+  if (!name) return undefined;
+
+  const normalized = String(name).trim();
+  if (!normalized) return undefined;
+
+  const normalizeLookupText = (value) => {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const direct = HEALTH_MARKERS.find(marker => marker.name === normalized || marker.label === normalized);
+  if (direct) return direct;
+
+  const aliases = {
+    'Blood Pressure (Systolic)': 'Blood_Pressure_Systolic',
+    'Blood Pressure (Diastolic)': 'Blood_Pressure_Diastolic',
+    'Blood_Pressure_Systolic': 'Blood_Pressure_Systolic',
+    'Blood_Pressure_Diastolic': 'Blood_Pressure_Diastolic',
+    'Blood Pressure': 'Blood Pressure'
+  };
+
+  const aliasMatch = aliases[normalized];
+  if (aliasMatch) {
+    return HEALTH_MARKERS.find(marker => marker.name === aliasMatch || marker.label === aliasMatch);
+  }
+
+  const normalizedLookup = normalizeLookupText(normalized);
+  return HEALTH_MARKERS.find((marker) => {
+    const matchText = normalizeLookupText(`${marker.name} ${marker.label}`);
+    return matchText.includes(normalizedLookup);
+  });
 };
 
 export const getHealthMarkersByCategory = (category) => {
@@ -263,14 +313,118 @@ export const getHealthMarkerCategoryOptions = () => {
 // Can accept either markerName (string) or markerDefinition (object)
 export const getResultStatus = (markerNameOrDef, testResult) => {
   // Handle both string (legacy) and object (new database definitions)
-  const marker = typeof markerNameOrDef === 'string' 
-    ? getHealthMarkerByName(markerNameOrDef) 
+  let marker = typeof markerNameOrDef === 'string'
+    ? getHealthMarkerByName(markerNameOrDef)
     : markerNameOrDef;
-    
+
+  if (!marker && typeof markerNameOrDef === 'string') {
+    const name = String(markerNameOrDef).trim();
+    if (/blood\s*[_ ]?pressure/i.test(name)) {
+      marker = {
+        name,
+        label: name,
+        unit: 'mm Hg',
+        normalRange: 'Less than 120 / 80 mm Hg',
+        elevatedRange: '120-129 / less than 80 mm Hg',
+        stage1Range: '130-139 / 80-89 mm Hg',
+        stage2Range: '140 or higher / 90 or higher mm Hg',
+        crisisRange: 'Higher than 180 / 120 mm Hg (seek care now)'
+      };
+    }
+  }
+
   if (!marker || !testResult) return null;
-  
-  const markerName = marker.name;
+
+  const markerName = marker.name || '';
+  const markerLabel = marker.label || '';
+  const markerText = `${markerName} ${markerLabel}`.toLowerCase();
   const result = parseFloat(testResult);
+
+  const statusRules = marker.status_rules;
+  if (statusRules && Object.keys(statusRules).length > 0) {
+    const getRuleRange = (rule) => {
+      if (!rule || typeof rule !== 'object') return '';
+      const low = rule.low ?? rule.systolic_low ?? rule.diastolic_low;
+      const high = rule.high ?? rule.systolic_high ?? rule.diastolic_high;
+      if (low !== undefined && high !== undefined) return `${low} - ${high} ${marker.unit || ''}`.trim();
+      if (low !== undefined) return `>= ${low} ${marker.unit || ''}`.trim();
+      if (high !== undefined) return `< ${high} ${marker.unit || ''}`.trim();
+      return '';
+    };
+
+    const getRuleStatus = (ruleName, rule, message) => {
+      const normalizedRuleName = ruleName.toLowerCase();
+      const isNormal = normalizedRuleName === 'normal';
+      const isWarning = normalizedRuleName.includes('borderline') || normalizedRuleName.includes('prediabetes') || normalizedRuleName.includes('elevated');
+      const titleMap = {
+        borderline: 'Borderline High',
+        diabetes: 'Diabetes',
+        elevated: 'Elevated',
+        high: 'High',
+        low: 'Low',
+        normal: 'Normal',
+        prediabetes: 'Prediabetes',
+        stage1: 'Stage 1 High',
+        stage2: 'Stage 2 High',
+        crisis: 'Crisis',
+        deficient: 'Deficient',
+        insufficient: 'Insufficient'
+      };
+      const title = titleMap[normalizedRuleName] || (ruleName.charAt(0).toUpperCase() + ruleName.slice(1));
+      return {
+        type: isNormal ? 'success' : (isWarning ? 'warning' : 'error'),
+        title,
+        range: getRuleRange(rule),
+        message: message || `${marker.label || marker.name} is in the ${title.toLowerCase()} range`
+      };
+    };
+
+    const hasBloodPressureRules = Object.values(statusRules).some(rule => {
+      return rule && (rule.systolic_low !== undefined || rule.systolic_high !== undefined || rule.diastolic_low !== undefined || rule.diastolic_high !== undefined);
+    });
+
+    if (hasBloodPressureRules) {
+      const bpMatch = String(testResult).match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+      const systolic = markerText.includes('systolic') ? result : (bpMatch ? parseFloat(bpMatch[1]) : null);
+      const diastolic = markerText.includes('diastolic') ? result : (bpMatch ? parseFloat(bpMatch[2]) : null);
+
+      if (systolic !== null || diastolic !== null) {
+        const matchesThreshold = (value, rule, threshold, direction = 'min') => {
+          if (!rule || rule[threshold] === undefined) return false;
+          return direction === 'max' ? value <= rule[threshold] : value >= rule[threshold];
+        };
+        const crisis = statusRules.crisis || {};
+        const stage2 = statusRules.stage2 || {};
+        const stage1 = statusRules.stage1 || {};
+        const elevated = statusRules.elevated || {};
+        let matchedRule = null;
+
+        if ((systolic !== null && matchesThreshold(systolic, crisis, 'systolic_low')) || (diastolic !== null && matchesThreshold(diastolic, crisis, 'diastolic_low'))) {
+          matchedRule = 'crisis';
+        } else if ((systolic !== null && matchesThreshold(systolic, stage2, 'systolic_low')) || (diastolic !== null && matchesThreshold(diastolic, stage2, 'diastolic_low'))) {
+          matchedRule = 'stage2';
+        } else if ((systolic !== null && matchesThreshold(systolic, stage1, 'systolic_low')) || (diastolic !== null && matchesThreshold(diastolic, stage1, 'diastolic_low'))) {
+          matchedRule = 'stage1';
+        } else if (systolic !== null && matchesThreshold(systolic, elevated, 'systolic_low') && matchesThreshold(systolic, elevated, 'systolic_high', 'max') && (diastolic === null || matchesThreshold(diastolic, elevated, 'diastolic_high', 'max'))) {
+          matchedRule = 'elevated';
+        } else if ((systolic === null || systolic <= (statusRules.normal?.systolic_high ?? Number.POSITIVE_INFINITY)) && (diastolic === null || diastolic <= (statusRules.normal?.diastolic_high ?? Number.POSITIVE_INFINITY))) {
+          matchedRule = 'normal';
+        }
+
+        if (matchedRule) return getRuleStatus(matchedRule, statusRules[matchedRule]);
+      }
+    } else if (!isNaN(result)) {
+      const ruleOrder = ['diabetes', 'high', 'deficient', 'borderline', 'prediabetes', 'insufficient', 'low', 'normal'];
+      const matchesRule = (rule) => {
+        if (!rule || typeof rule !== 'object') return false;
+        const low = rule.low;
+        const high = rule.high;
+        return (low === undefined || result >= low) && (high === undefined || result <= high);
+      };
+      const matchedRule = ruleOrder.find(ruleName => matchesRule(statusRules[ruleName]));
+      if (matchedRule) return getRuleStatus(matchedRule, statusRules[matchedRule]);
+    }
+  }
   
   // ✅ Albumin, s LOGIC
   if (markerName.includes('Albumin')) {
@@ -319,7 +473,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     };
   }
     // ✅ PSA PROSTATE LOGIC
-  if (markerName === 'PSA Serum') {
+  if (markerName === 'PSA,Serum') {
     if (result < 4.0) {
       return { 
       type: 'success', 
@@ -343,53 +497,110 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       message: 'PSA is high' 
     };
   }
+  // LIPID PANEL LOGIC
   // ✅ CHOLESTEROL LOGIC
-  if (markerName === 'Total Cholesterol') {
+  if (markerName === 'Cholesterol') {
     if (result < 200) return { 
       type: 'success', 
       title: 'Normal', 
       range: marker.normalRange,
-      message: 'Total cholesterol is normal' 
+      message: 'Cholesterol is normal' 
     };
     if (result <= 239) return { 
       type: 'warning', 
       title: 'Borderline High', 
       range: marker.borderlineRange,
-      message: 'Total cholesterol is Borderline high' 
+      message: 'Cholesterol is Borderline high' 
     };
     return { 
       type: 'error', 
       title: 'High', 
       range: marker.highRange,
-      message: 'Total cholesterol is high' 
+      message: 'Cholesterol is high' 
     };
   }
   
-  if (markerName === 'LDL') {
+  if (markerName === 'LDL' || markerName.toLowerCase() === 'ldl' || markerText.includes('ldl cholesterol')) {
     if (result < 100) return { type: 'success', title: 'Normal', range: marker.normalRange };
     if (result <= 159) return { type: 'warning', title: 'Borderline High', range: marker.borderlineRange };
     return { type: 'error', title: 'High', range: marker.highRange };
   }
+
+  if (markerName === 'HDL Cholesterol' || markerName.toLowerCase() === 'hdl' || markerText.includes('hdl cholesterol')) {
+    if (result < 40) return {
+      type: 'warning',
+      title: 'Low',
+      range: marker.lowRange || '< 40 mg/dL',
+      message: 'HDL cholesterol is below the normal range'
+    };
+    if (result <= 60) return {
+      type: 'success',
+      title: 'Normal',
+      range: marker.normalRange || '40 - 60 mg/dL',
+      message: 'HDL cholesterol is in the normal range'
+    };
+    return {
+      type: 'info',
+      title: 'High',
+      range: marker.highRange || '> 60 mg/dL',
+      message: 'HDL cholesterol is above the standard range'
+    };
+  }
   
-  if (markerName === 'HDL') {
+  /*if (markerName === 'HDL Cholesterol') {
     if (result >= 40 && result <= 60) return {
       type: 'success',
       title: 'Normal',
       range: marker.normalRange };
     if (result < 40 ) return {
-      type: 'warning',
-      title: 'Low', 
+      type: 'critical',
+      title: 'Low - Risk of Heart Disease', 
       range: marker.lowRange };
-    if (result > 60 && result <= 70) return {
-      type: 'warning',
+    if (result > 60 ) return {
+      type: 'critical',
+      title: 'High - Risk of Heart Disease', 
+      range: marker.borderlineHigh
+    };
+  }*/
+    // ✅ Chol/HDL Ratio LOGIC
+  if (markerName === 'Chol/HDL Ratio') {
+    if (result < 6.7) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'Chol/HDL Ratio is normal'
+    };
+    if (result > 6.7) return { 
+      type: 'warning', 
       title: 'Borderline High', 
-      range: marker.borderlineHigh };
-
-    return { type: 'high', title: 'Very High!', range: marker.highRange };
+      range: marker.borderlineRange,
+      message: 'Chol/HDL Ratio is Borderline high' 
+    };
+    return { 
+      type: 'error', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'Cholesterol is high' 
+    };
   }
-  
-  // ✅ Triglycerides LOGIC
-  if (markerName === 'Triglycerides') {
+
+    // ✅ Non-HDL (calc) LOGIC
+  if (markerName === 'Non-HDL (calc)') {
+    if (result < 130) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'Non-HDL (calc) is normal'
+    };
+    if (result >= 130) return { 
+      type: 'error', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'Non-HDL (calc) is high'     };
+  }
+
+  // ✅ Triglyceride LOGIC
+  if (markerName === 'Triglyceride') {
     if (result < 150) return { 
       type: 'success', 
       title: 'Normal', 
@@ -407,6 +618,21 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
       title: 'High', 
       range: marker.highRange,
       message: 'Triglycerides level is high' 
+    };
+  }
+  // ✅ Triglycerides LOGIC
+  if (markerName === 'Trig/HDL (calc)') {
+    if (result < 2.0) return { 
+      type: 'success', 
+      title: 'Normal', 
+      range: marker.normalRange,
+      message: 'Triglycerides level is normal' 
+    };
+    if (result > 2.0) return { 
+      type: 'critical', 
+      title: 'High', 
+      range: marker.highRange,
+      message: 'Triglycerides level is high'  
     };
   }
 
@@ -438,17 +664,93 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
   }
   
   // ✅ BLOOD PRESSURE LOGIC
-  if (markerName === 'Blood_Pressure_Systolic') {
-    if (result < 120) return { type: 'success', title: 'Normal', range: marker.normalRange };
-    if (result <= 129) return { type: 'info', title: 'Elevated', range: marker.elevatedRange };
-    if (result <= 139) return { type: 'warning', title: 'Stage 1 Hypertension', range: marker.stage1Range };
-    return { type: 'error', title: 'Stage 2 Hypertension', range: marker.stage2Range };
+  // Systolic and Diastolic have different ranges, so we handle them separately
+  // Normal: Less than 120 / 80 mm Hg
+  // Elevated: 120–129 / less than 80 mm Hg
+  // Stage 1 High: 130–139 / 80–89 mm Hg
+  // Stage 2 High: 140 or higher / 90 or higher mm Hg
+  // Crisis: Higher than 180 / 120 mm Hg (seek care now)
+  const bpRanges = {
+    normal: 'Less than 120 / 80 mm Hg',
+    elevated: '120-129 / less than 80 mm Hg',
+    stage1: '130-139 / 80-89 mm Hg',
+    stage2: '140 or higher / 90 or higher mm Hg',
+    crisis: 'Higher than 180 / 120 mm Hg (seek care now)'
+  };
+
+  const classifyBloodPressure = (systolic, diastolic) => {
+    if (systolic > 180 || diastolic > 120) {
+      return {
+        type: 'error',
+        title: 'Crisis',
+        range: bpRanges.crisis,
+        message: 'Higher than 180 / 120 mm Hg (seek care now)'
+      };
+    }
+    if (systolic <= 120 && diastolic <= 80) {
+      return { type: 'success', title: 'Normal', range: bpRanges.normal };
+    }    
+    if (systolic >= 140 || diastolic >= 90) {
+      return { type: 'error', title: 'Stage 2 High', range: bpRanges.stage2 };
+    }
+    if ((systolic >= 120 && systolic <= 139) || (diastolic >= 80 && diastolic <= 89)) {
+      return { type: 'warning', title: 'Stage 1 High', range: bpRanges.stage1 };
+    }
+    if (systolic > 120 && systolic <= 129 && diastolic < 80) {
+      return { type: 'info', title: 'Elevated', range: bpRanges.elevated };
+    }
+    return { type: 'success', title: 'Normal', range: bpRanges.normal };
+  };
+
+  const isSystolicMarker = markerName === 'Blood_Pressure_Systolic' || markerText.includes('systolic');
+  const isDiastolicMarker = markerName === 'Blood_Pressure_Diastolic' || markerText.includes('diastolic');
+  const isGenericBloodPressure = markerText.includes('blood pressure') && !isSystolicMarker && !isDiastolicMarker;
+
+  if (isSystolicMarker) {
+    if (result < 120) return { type: 'success', title: 'Normal', range: bpRanges.normal };
+    if (result <= 129) return { type: 'info', title: 'Elevated', range: bpRanges.elevated };
+    if (result <= 139) return { type: 'warning', title: 'Stage 1 High', range: bpRanges.stage1 };
+    if (result <= 180) return { type: 'error', title: 'Stage 2 High', range: bpRanges.stage2 };
+    return {
+      type: 'error',
+      title: 'Crisis',
+      range: bpRanges.crisis,
+      message: 'Higher than 180 / 120 mm Hg (seek care now)'
+    };
   }
   
-  if (markerName === 'Blood_Pressure_Diastolic') {
-    if (result < 80) return { type: 'success', title: 'Normal', range: marker.normalRange };
-    if (result <= 89) return { type: 'warning', title: 'Stage 1 Hypertension', range: marker.stage1Range };
-    return { type: 'error', title: 'Stage 2 Hypertension', range: marker.stage2Range };
+  if (isDiastolicMarker) {
+    if (result < 80) return { type: 'success', title: 'Normal', range: bpRanges.normal };
+    if (result <= 89) return { type: 'warning', title: 'Stage 1 High', range: bpRanges.stage1 };
+    if (result <= 120) return { type: 'error', title: 'Stage 2 High', range: bpRanges.stage2 };
+    return {
+      type: 'error',
+      title: 'Crisis',
+      range: bpRanges.crisis,
+      message: 'Higher than 180 / 120 mm Hg (seek care now)'
+    };
+  }
+
+  if (isGenericBloodPressure) {
+    const bpMatch = String(testResult).match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+    if (bpMatch) {
+      const systolic = parseFloat(bpMatch[1]);
+      const diastolic = parseFloat(bpMatch[2]);
+      if (!isNaN(systolic) && !isNaN(diastolic)) {
+        return classifyBloodPressure(systolic, diastolic);
+      }
+    }
+
+    if (!isNaN(result)) {
+      return classifyBloodPressure(result, 0);
+    }
+
+    return {
+      type: 'info',
+      title: 'Result Recorded',
+      range: bpRanges.normal,
+      message: 'Use format systolic/diastolic (e.g., 120/80). Optional pulse can be appended, e.g., 120/80 (68 bpm).'
+    };
   }
   
   // ✅ GENERIC RANGE CHECKING FOR DATABASE MARKERS
