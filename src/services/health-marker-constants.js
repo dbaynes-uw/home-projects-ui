@@ -761,7 +761,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     const normalHigh = parseFloat(marker.normal_range_high);
     const borderlineLow = parseFloat(marker.borderline_range_low);
     const borderlineHigh = parseFloat(marker.borderline_range_high);
-    
+    console.log(`Checking ranges for ${markerName}: result=${result}, normalLow=${normalLow}, normalHigh=${normalHigh}, borderlineLow=${borderlineLow}, borderlineHigh=${borderlineHigh}`); 
     // PRIORITY 1: Check normal range first
     if (!isNaN(normalLow) && !isNaN(normalHigh)) {
       if (result >= normalLow && result <= normalHigh) {

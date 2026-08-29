@@ -16,7 +16,7 @@
         </p>
         <p v-if="markerPanel" class="panel-name">
           <i class="fas fa-folder"></i>
-          @@@Panel: 
+          Panel: 
           <router-link 
             :to="{ name: 'HealthMarkerPanelDetails', params: { id: markerPanel.id } }"
             class="panel-link"
