@@ -40,9 +40,13 @@
           <i class="fas fa-check-circle"></i>
           {{ statusSummary.normal }} Normal
         </span>
-        <span v-if="statusSummary.borderline > 0" class="status-count status-borderline">
+        <span v-if="statusSummary.borderlineHigh > 0" class="status-count status-borderline">
           <i class="fas fa-exclamation-triangle"></i>
-          {{ statusSummary.borderline }} Borderline
+          {{ statusSummary.borderlineHigh }} Borderline High
+        </span>
+        <span v-if="statusSummary.borderlineLow > 0" class="status-count status-borderline">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ statusSummary.borderlineLow }} Borderline Low
         </span>
         <span v-if="statusSummary.high > 0" class="status-count status-high">
           <i class="fas fa-arrow-up"></i>
@@ -180,11 +184,12 @@ const statusSummary = computed(() => {
     : panelMarkers.value;
   if (markers.length === 0) return props.panel?.status_summary || null;
 
-  const summary = { total: markers.length, normal: 0, borderline: 0, high: 0, low: 0, critical: 0 };
+  const summary = { total: markers.length, normal: 0, borderlineHigh: 0, borderlineLow: 0, high: 0, low: 0, critical: 0 };
   markers.forEach(marker => {
     const status = getDisplayStatus(marker).toLowerCase();
     if (status.includes('critical') || status.includes('crisis')) summary.critical++;
-    else if (status.includes('borderline')) summary.borderline++;
+    else if (status.includes('borderline low')) summary.borderlineLow++;
+    else if (status.includes('borderline')) summary.borderlineHigh++;
     else if (status.includes('high')) summary.high++;
     else if (status.includes('low')) summary.low++;
     else if (status.includes('normal')) summary.normal++;

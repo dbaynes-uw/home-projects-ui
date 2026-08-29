@@ -781,11 +781,13 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
         // Only mark as borderline if it's actually outside the normal range
         const outsideNormal = (isNaN(normalLow) || result < normalLow || result > normalHigh);
         if (outsideNormal) {
+          const isBelowNormal = !isNaN(normalLow) && result < normalLow;
+          const borderlineTitle = isBelowNormal ? 'Borderline Low' : 'Borderline High';
           return {
             type: 'warning',
-            title: 'Borderline',
+            title: borderlineTitle,
             range: `${borderlineLow} - ${borderlineHigh} ${marker.unit || ''}`,
-            message: `${marker.label} is in borderline range`
+            message: `${marker.label} is in the ${borderlineTitle.toLowerCase()} range`
           };
         }
       }
