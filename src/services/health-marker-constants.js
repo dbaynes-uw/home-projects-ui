@@ -258,6 +258,9 @@ export const getHealthMarkerByName = (name) => {
   const normalized = String(name).trim();
   if (!normalized) return undefined;
 
+  const exact = HEALTH_MARKERS.find(marker => marker.name === normalized || marker.label === normalized);
+  if (exact) return exact;
+
   const normalizeLookupText = (value) => {
     return String(value || '')
       .toLowerCase()
@@ -265,9 +268,6 @@ export const getHealthMarkerByName = (name) => {
       .replace(/\s+/g, ' ')
       .trim();
   };
-
-  const direct = HEALTH_MARKERS.find(marker => marker.name === normalized || marker.label === normalized);
-  if (direct) return direct;
 
   const aliases = {
     'Blood Pressure (Systolic)': 'Blood_Pressure_Systolic',
@@ -761,7 +761,7 @@ export const getResultStatus = (markerNameOrDef, testResult) => {
     const normalHigh = parseFloat(marker.normal_range_high);
     const borderlineLow = parseFloat(marker.borderline_range_low);
     const borderlineHigh = parseFloat(marker.borderline_range_high);
-    console.log(`Checking ranges for ${markerName}: result=${result}, normalLow=${normalLow}, normalHigh=${normalHigh}, borderlineLow=${borderlineLow}, borderlineHigh=${borderlineHigh}`); 
+
     // PRIORITY 1: Check normal range first
     if (!isNaN(normalLow) && !isNaN(normalHigh)) {
       if (result >= normalLow && result <= normalHigh) {

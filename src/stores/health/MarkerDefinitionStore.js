@@ -31,6 +31,19 @@ export const useMarkerDefinitionStore = defineStore('markerDefinition', {
     // Get definition by name
     getDefinitionByName: (state) => {
       return (name) => {
+        const exactName = String(name || '').trim();
+        if (!exactName) return undefined;
+
+        const exactDbDef = state.definitions.find(d => {
+          return d.name === exactName || d.label === exactName;
+        });
+        if (exactDbDef) return exactDbDef;
+
+        const exactConstant = HEALTH_MARKERS.find(m => {
+          return m.name === exactName || m.label === exactName;
+        });
+        if (exactConstant) return exactConstant;
+
         const normalizedName = normalizeDefinitionName(name);
         if (!normalizedName) return undefined;
 
