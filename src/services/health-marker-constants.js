@@ -247,6 +247,7 @@ export const HEALTH_MARKER_CATEGORIES = [
   'Heart',
   'Liver',
   'Kidney',
+  'Liver/Kidney',
   'Other'
 ];
 

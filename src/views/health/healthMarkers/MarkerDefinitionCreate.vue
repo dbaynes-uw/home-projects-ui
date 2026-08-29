@@ -122,6 +122,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { HEALTH_MARKER_CATEGORIES } from '@/services/health-marker-constants';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 const router = useRouter();
@@ -130,7 +131,7 @@ const confirmDialogue = ref(null);
 const isSaving = ref(false);
 const errorMessage = ref('');
 
-const categories = ['Diabetes', 'Prostate', 'Thyroid', 'Lipids', 'Vitamins', 'Heart', 'Liver', 'Kidney', 'Liver/Kidney', 'Other'];
+const categories = HEALTH_MARKER_CATEGORIES;
 const formData = ref({
   name: '',
   label: '',

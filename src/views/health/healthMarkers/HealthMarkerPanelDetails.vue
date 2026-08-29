@@ -112,7 +112,7 @@
         <div class="section-header">
           <h2>
             <i class="fas fa-vials"></i>
-            Markers in this Panel ({{ panel.health_markers.length }})
+            Markers in Panel {{ panel.panel_name }}: {{ panel.health_markers.length }}
           </h2>
         </div>
 

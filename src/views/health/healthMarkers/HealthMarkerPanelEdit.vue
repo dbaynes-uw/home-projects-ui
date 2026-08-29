@@ -247,6 +247,64 @@
                     />
                   </div>
 
+                  <div class="custom-field small">
+                    <label class="form-label">Category</label>
+                    <select v-model="newCustomMarker.category" class="form-input">
+                      <option value="">Select category...</option>
+                      <option v-for="category in markerCategories" :key="category" :value="category">{{ category }}</option>
+                    </select>
+                  </div>
+
+                  <div class="custom-field small">
+                    <label class="form-label">Normal Range (Low)</label>
+                    <input
+                      v-model="newCustomMarker.normal_range_low"
+                      type="text"
+                      class="form-input"
+                      placeholder="Lower bound"
+                    />
+                  </div>
+
+                  <div class="custom-field small">
+                    <label class="form-label">Normal Range (High)</label>
+                    <input
+                      v-model="newCustomMarker.normal_range_high"
+                      type="text"
+                      class="form-input"
+                      placeholder="Upper bound"
+                    />
+                  </div>
+
+                  <div class="custom-field small">
+                    <label class="form-label">Borderline Range (Low)</label>
+                    <input
+                      v-model="newCustomMarker.borderline_range_low"
+                      type="text"
+                      class="form-input"
+                      placeholder="Optional"
+                    />
+                  </div>
+
+                  <div class="custom-field small">
+                    <label class="form-label">Borderline Range (High)</label>
+                    <input
+                      v-model="newCustomMarker.borderline_range_high"
+                      type="text"
+                      class="form-input"
+                      placeholder="Optional"
+                    />
+                  </div>
+
+                  <div class="custom-field">
+                    <label class="form-label">Description</label>
+                    <textarea
+                      v-model="newCustomMarker.description"
+                      class="form-input"
+                      rows="2"
+                      placeholder="Educational information about this marker..."
+                    ></textarea>
+                  </div>
+
                   <button
                     type="button"
                     class="btn btn-sm btn-success"
@@ -298,12 +356,14 @@ import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore'
 import {
   getResultStatus,
   getHealthMarkerOptions,
-  getHealthMarkerByName
+  getHealthMarkerByName,
+  HEALTH_MARKER_CATEGORIES
 } from '@/services/health-marker-constants';
 
 const router = useRouter();
 const route = useRoute();
 const markerDefinitionStore = useMarkerDefinitionStore();
+const markerCategories = HEALTH_MARKER_CATEGORIES;
 
 const isLoading = ref(true);
 const isSaving = ref(false);
@@ -327,7 +387,13 @@ const newCustomMarker = ref({
   custom_marker_choice: '',
   custom_name: '',
   marker_result: '',
-  unit: ''
+  unit: '',
+  category: '',
+  normal_range_low: '',
+  normal_range_high: '',
+  borderline_range_low: '',
+  borderline_range_high: '',
+  description: ''
 });
 
 function normalizeMarkerName(name) {
@@ -518,6 +584,24 @@ watch(
     if (selected?.unit && !newCustomMarker.value.unit) {
       newCustomMarker.value.unit = selected.unit;
     }
+    if (selected?.category && !newCustomMarker.value.category) {
+      newCustomMarker.value.category = selected.category;
+    }
+    if (selected?.normal_range_low && !newCustomMarker.value.normal_range_low) {
+      newCustomMarker.value.normal_range_low = selected.normal_range_low;
+    }
+    if (selected?.normal_range_high && !newCustomMarker.value.normal_range_high) {
+      newCustomMarker.value.normal_range_high = selected.normal_range_high;
+    }
+    if (selected?.borderline_range_low && !newCustomMarker.value.borderline_range_low) {
+      newCustomMarker.value.borderline_range_low = selected.borderline_range_low;
+    }
+    if (selected?.borderline_range_high && !newCustomMarker.value.borderline_range_high) {
+      newCustomMarker.value.borderline_range_high = selected.borderline_range_high;
+    }
+    if (selected?.description && !newCustomMarker.value.description) {
+      newCustomMarker.value.description = selected.description;
+    }
   }
 );
 
@@ -576,10 +660,12 @@ async function addCustomMarker() {
       marker_date: formData.value.test_date,
       marker_result: newCustomMarker.value.marker_result,
       unit: newCustomMarker.value.unit || selectedMarker?.unit || '',
+      normal_range_low: newCustomMarker.value.normal_range_low || selectedMarker?.normal_range_low || '',
+      normal_range_high: newCustomMarker.value.normal_range_high || selectedMarker?.normal_range_high || '',
       lab_name: formData.value.lab_name || '',
       doctor_name: formData.value.doctor_name || '',
       notes: formData.value.notes || '',
-      marker_facts: selectedMarker?.description || '',
+      marker_facts: newCustomMarker.value.description || selectedMarker?.description || '',
       health_marker_panel_id: route.params.id,
       status
     };
@@ -594,27 +680,74 @@ async function addCustomMarker() {
       status: createdMarker.status || status,
       lab_name: createdMarker.lab_name || formData.value.lab_name || '',
       doctor_name: createdMarker.doctor_name || formData.value.doctor_name || '',
-      marker_facts: createdMarker.marker_facts || selectedMarker?.description || '',
+      marker_facts: createdMarker.marker_facts || newCustomMarker.value.description || selectedMarker?.description || '',
       health_marker_panel_id: route.params.id
     });
 
-    // Brand new marker name with no known definition yet - create a starter definition
+    // Create a starter definition for a brand new marker name, or fill in gaps on an existing custom one
+    const hasRangeData = Boolean(
+      newCustomMarker.value.category ||
+      newCustomMarker.value.normal_range_low ||
+      newCustomMarker.value.normal_range_high ||
+      newCustomMarker.value.borderline_range_low ||
+      newCustomMarker.value.borderline_range_high ||
+      newCustomMarker.value.description
+    );
+
     if (!selectedMarker) {
       try {
         await markerDefinitionStore.createDefinition({
           name: chosenMarkerName,
           label: chosenMarkerName,
           unit: payload.unit || '',
-          category: 'Other',
+          category: newCustomMarker.value.category || 'Other',
+          normal_range_low: newCustomMarker.value.normal_range_low || '',
+          normal_range_high: newCustomMarker.value.normal_range_high || '',
+          borderline_range_low: newCustomMarker.value.borderline_range_low || '',
+          borderline_range_high: newCustomMarker.value.borderline_range_high || '',
+          description: newCustomMarker.value.description || '',
           icon: 'mdi-test-tube'
         });
         await markerDefinitionStore.fetchDefinitions();
       } catch (definitionError) {
         console.error('⚠️ Failed to auto-create marker definition:', definitionError);
       }
+    } else if (!selectedMarker.is_global && hasRangeData) {
+      try {
+        await markerDefinitionStore.updateDefinition({
+          id: selectedMarker.id,
+          name: selectedMarker.name,
+          label: selectedMarker.label,
+          unit: selectedMarker.unit || payload.unit || '',
+          category: selectedMarker.category || newCustomMarker.value.category || 'Other',
+          normal_range_low: selectedMarker.normal_range_low || newCustomMarker.value.normal_range_low || '',
+          normal_range_high: selectedMarker.normal_range_high || newCustomMarker.value.normal_range_high || '',
+          borderline_range_low: selectedMarker.borderline_range_low || newCustomMarker.value.borderline_range_low || '',
+          borderline_range_high: selectedMarker.borderline_range_high || newCustomMarker.value.borderline_range_high || '',
+          description: selectedMarker.description || newCustomMarker.value.description || '',
+          test_frequency: selectedMarker.test_frequency || '',
+          icon: selectedMarker.icon || 'mdi-test-tube'
+        });
+        await markerDefinitionStore.fetchDefinitions();
+      } catch (definitionError) {
+        console.error('⚠️ Failed to update marker definition:', definitionError);
+      }
     }
 
-    newCustomMarker.value = { marker_name: '', custom_marker_choice: '', custom_name: '', marker_result: '', unit: '' };
+
+    newCustomMarker.value = {
+      marker_name: '',
+      custom_marker_choice: '',
+      custom_name: '',
+      marker_result: '',
+      unit: '',
+      category: '',
+      normal_range_low: '',
+      normal_range_high: '',
+      borderline_range_low: '',
+      borderline_range_high: '',
+      description: ''
+    };
   } catch (error) {
     console.error('❌ Add custom marker error:', error);
     alert('Failed to create unique panel marker.');

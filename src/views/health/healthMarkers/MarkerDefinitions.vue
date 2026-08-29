@@ -206,6 +206,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { HEALTH_MARKER_CATEGORIES } from '@/services/health-marker-constants';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 
 const definitionStore = useMarkerDefinitionStore();
@@ -229,7 +230,7 @@ const formData = ref({
   icon: 'mdi-test-tube'
 });
 
-const categories = ['Diabetes', 'Prostate', 'Thyroid', 'Lipids', 'Vitamins', 'Heart', 'Liver', 'Kidney', 'Liver/Kidney', 'Other'];
+const categories = HEALTH_MARKER_CATEGORIES;
 
 const globalDefinitions = computed(() => 
   definitionStore.allDefinitions.filter(d => d.is_global || !d.id)
