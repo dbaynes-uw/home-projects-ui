@@ -59,36 +59,75 @@
           <div v-if="panelStatusSummary" class="status-summary-section">
             <h3>Status Summary</h3>
             <div class="status-grid">
-              <div class="status-item">
+              <button
+                type="button"
+                :class="['status-item', { active: selectedStatus === null }]"
+                @click="selectedStatus = null"
+              >
                 <i class="fas fa-vials"></i>
                 <span class="status-value">{{ panelStatusSummary.total }}</span>
                 <span class="status-label">Total Markers</span>
-              </div>
-              <div v-if="panelStatusSummary.normal > 0" class="status-item status-normal">
+              </button>
+              <button
+                v-if="panelStatusSummary.normal > 0"
+                type="button"
+                :class="['status-item', 'status-normal', { active: selectedStatus === 'normal' }]"
+                @click="selectedStatus = 'normal'"
+              >
                 <i class="fas fa-check-circle"></i>
                 <span class="status-value">{{ panelStatusSummary.normal }}</span>
                 <span class="status-label">Normal</span>
-              </div>
-              <div v-if="panelStatusSummary.borderline > 0" class="status-item status-borderline">
+              </button>
+              <button
+                v-if="panelStatusSummary.borderlineHigh > 0"
+                type="button"
+                :class="['status-item', 'status-borderline', { active: selectedStatus === 'borderlineHigh' }]"
+                @click="selectedStatus = 'borderlineHigh'"
+              >
                 <i class="fas fa-exclamation-triangle"></i>
-                <span class="status-value">{{ panelStatusSummary.borderline }}</span>
-                <span class="status-label">Borderline</span>
-              </div>
-              <div v-if="panelStatusSummary.high > 0" class="status-item status-high">
+                <span class="status-value">{{ panelStatusSummary.borderlineHigh }}</span>
+                <span class="status-label">Borderline High</span>
+              </button>
+              <button
+                v-if="panelStatusSummary.borderlineLow > 0"
+                type="button"
+                :class="['status-item', 'status-borderline', { active: selectedStatus === 'borderlineLow' }]"
+                @click="selectedStatus = 'borderlineLow'"
+              >
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="status-value">{{ panelStatusSummary.borderlineLow }}</span>
+                <span class="status-label">Borderline Low</span>
+              </button>
+              <button
+                v-if="panelStatusSummary.high > 0"
+                type="button"
+                :class="['status-item', 'status-high', { active: selectedStatus === 'high' }]"
+                @click="selectedStatus = 'high'"
+              >
                 <i class="fas fa-arrow-up"></i>
                 <span class="status-value">{{ panelStatusSummary.high }}</span>
                 <span class="status-label">High</span>
-              </div>
-              <div v-if="panelStatusSummary.low > 0" class="status-item status-low">
+              </button>
+              <button
+                v-if="panelStatusSummary.low > 0"
+                type="button"
+                :class="['status-item', 'status-low', { active: selectedStatus === 'low' }]"
+                @click="selectedStatus = 'low'"
+              >
                 <i class="fas fa-arrow-down"></i>
                 <span class="status-value">{{ panelStatusSummary.low }}</span>
                 <span class="status-label">Low</span>
-              </div>
-              <div v-if="panelStatusSummary.critical > 0" class="status-item status-critical">
+              </button>
+              <button
+                v-if="panelStatusSummary.critical > 0"
+                type="button"
+                :class="['status-item', 'status-critical', { active: selectedStatus === 'critical' }]"
+                @click="selectedStatus = 'critical'"
+              >
                 <i class="fas fa-exclamation-circle"></i>
                 <span class="status-value">{{ panelStatusSummary.critical }}</span>
                 <span class="status-label">Critical</span>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -112,13 +151,13 @@
         <div class="section-header">
           <h2>
             <i class="fas fa-vials"></i>
-            Markers in Panel {{ panel.panel_name }}: {{ panel.health_markers.length }}
+            Markers in Panel {{ panel.panel_name }}: {{ filteredPanelMarkers.length }}
           </h2>
         </div>
 
-        <div v-if="panel.health_markers.length > 0" class="cards-grid">
+        <div v-if="filteredPanelMarkers.length > 0" class="cards-grid">
           <HealthMarkerCard
-            v-for="marker in panel.health_markers"
+            v-for="marker in filteredPanelMarkers"
             :key="marker.id"
             :healthMarker="marker"
             :panels="panel ? [panel] : []"
@@ -129,8 +168,8 @@
 
         <div v-else class="empty-state">
           <i class="fas fa-inbox"></i>
-          <h3>No Markers in Panel</h3>
-          <p>Add markers to this panel from the edit page</p>
+          <h3>{{ selectedStatus ? 'No Matching Markers' : 'No Markers in Panel' }}</h3>
+          <p>{{ selectedStatus ? 'Choose Total Markers to clear the status filter' : 'Add markers to this panel from the edit page' }}</p>
           <button class="btn btn-primary" @click="handleEdit">
             <i class="fas fa-edit"></i>
             Edit Panel
@@ -160,6 +199,28 @@ const panel = ref(null);
 const isLoading = ref(true);
 const confirmDialogue = ref(null);
 const markerDefinitionStore = useMarkerDefinitionStore();
+const selectedStatus = ref(null);
+
+function getMarkerStatusKey(marker) {
+  const definition = markerDefinitionStore.getDefinitionByName(marker.marker_name) ||
+    getHealthMarkerByName(marker.marker_name);
+  const derivedStatus = getResultStatus(definition || marker.marker_name, marker.marker_result);
+  const status = (derivedStatus?.title || marker.status || 'Unknown').toLowerCase();
+
+  if (status.includes('critical') || status.includes('crisis')) return 'critical';
+  if (status.includes('borderline low')) return 'borderlineLow';
+  if (status.includes('borderline')) return 'borderlineHigh';
+  if (status.includes('high')) return 'high';
+  if (status.includes('low')) return 'low';
+  if (status.includes('normal')) return 'normal';
+  return 'unknown';
+}
+
+const filteredPanelMarkers = computed(() => {
+  const markers = panel.value?.health_markers || [];
+  if (!selectedStatus.value) return markers;
+  return markers.filter(marker => getMarkerStatusKey(marker) === selectedStatus.value);
+});
 
 const panelStatusSummary = computed(() => {
   const markers = panel.value?.health_markers;
@@ -168,23 +229,16 @@ const panelStatusSummary = computed(() => {
   const summary = {
     total: markers.length,
     normal: 0,
-    borderline: 0,
+    borderlineHigh: 0,
+    borderlineLow: 0,
     high: 0,
     low: 0,
     critical: 0
   };
 
   markers.forEach(marker => {
-    const definition = markerDefinitionStore.getDefinitionByName(marker.marker_name) ||
-      getHealthMarkerByName(marker.marker_name);
-    const derivedStatus = getResultStatus(definition || marker.marker_name, marker.marker_result);
-    const status = (derivedStatus?.title || marker.status || 'Unknown').toLowerCase();
-
-    if (status.includes('critical') || status.includes('crisis')) summary.critical++;
-    else if (status.includes('borderline')) summary.borderline++;
-    else if (status.includes('high')) summary.high++;
-    else if (status.includes('low')) summary.low++;
-    else if (status.includes('normal')) summary.normal++;
+    const statusKey = getMarkerStatusKey(marker);
+    if (statusKey in summary) summary[statusKey]++;
   });
 
   return summary;
@@ -420,10 +474,20 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
   padding: 1.5rem;
+  border: 2px solid transparent;
   background: #f9fafb;
   border-radius: 8px;
   text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-item:hover,
+.status-item.active {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
 .status-item i {
