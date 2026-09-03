@@ -36,10 +36,10 @@
       <li class="li-left">Notes:</li>
       <template v-for="(notes, idx) in joinedNotes(props.travelEvent)" :key="idx">
         <br v-if="notes === ''" class="blank-line" />
-        <b v-else-if="isUrl(notes)" class="li-left-none pre-wrap">
+        <b v-else-if="isUrl(notes)" class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">
           <a :href="notes.trim()" target="_blank" class="detail-link-blue">{{ friendlyUrlLabel(notes) }}</a>
         </b>
-        <b v-else class="li-left-none pre-wrap">{{ notes }}</b>
+        <b v-else class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">{{ notes.trimStart() }}</b>
       </template>
     </ul>
     
@@ -115,6 +115,11 @@ const joinedNotes = (e) => {
   return []
 }
 
+const noteIndentation = (text) => {
+  const leadingWhitespace = text.match(/^\s*/)?.[0].replace(/\t/g, '    ').length || 0
+  return `${2 + Math.floor(leadingWhitespace / 4) * 1.5}rem`
+}
+
 const formatStandardDateTime = (value) => {
   return DateFormatService.formatStandardDateTimejs(value)
 }
@@ -178,6 +183,11 @@ const hasEventPassed = (event) => {
 
 .pre-wrap {
   white-space: pre-wrap;
+  display: block;
+}
+
+.note-line {
+  text-align: left;
   display: block;
 }
 </style>

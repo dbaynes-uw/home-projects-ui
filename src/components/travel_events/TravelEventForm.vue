@@ -115,9 +115,9 @@
         </label>
         <div class="textarea-toolbar">
           <button type="button" @click="insertAtCursor('notes', '• ')" title="Bullet point">• Bullet</button>
-          <button type="button" @click="insertAtCursor('notes', '    • ')" title="Indented sub-bullet">&nbsp;&nbsp;↳ Sub-item</button>
+          <button type="button" @click="insertAtCursor('notes', '    - ')" title="Indented sub-bullet">&nbsp;&nbsp;↳ Sub-item</button>
           <button type="button" @click="insertAtCursor('notes', getNextLineNumber('notes') + '. ')" title="Numbered list">1. Number</button>
-          <button type="button" @click="insertAtCursor('notes', '    ' + getNextLineNumber('notes') + '. ')" title="Indented Numbered list">&nbsp;&nbsp;↳ Sub-Number</button>
+          <button type="button" @click="insertAtCursor('notes', '    ' + getNextSubLineLetter('notes') + '. ')" title="Alphabetic sub-list">&nbsp;&nbsp;↳ Sub-item</button>
           <button type="button" @click="insertAtCursor('notes', '    ')" title="Indent">⇥ Indent</button>
           <button type="button" @click="insertAtCursor('notes', '\n')" title="New line">↵ Line</button>
         </div>
@@ -225,6 +225,28 @@ const getNextLineNumber = (field) => {
   const matches = [...text.matchAll(/^\s*(\d+)\./gm)]
   if (!matches.length) return 1
   return Math.max(...matches.map(m => parseInt(m[1]))) + 1
+}
+
+const getNextSubLineLetter = (field) => {
+  const text = formData.value[field] || ''
+  const cursorPosition = notesTextarea.value?.selectionStart ?? text.length
+  const lines = text.slice(0, cursorPosition).split('\n')
+  let parentLineIndex = -1
+
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    if (/^\d+\.\s/.test(lines[index])) {
+      parentLineIndex = index
+      break
+    }
+  }
+
+  if (parentLineIndex === -1) return 'a'
+
+  const subItemCount = lines
+    .slice(parentLineIndex + 1)
+    .filter(line => /^\s{4,}[a-z]\.\s/i.test(line)).length
+
+  return String.fromCharCode(97 + subItemCount)
 }
 
 // Check if we're in edit mode

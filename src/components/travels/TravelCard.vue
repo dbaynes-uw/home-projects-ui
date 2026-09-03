@@ -107,7 +107,12 @@
           </span>
           <b class="event-sub-item">Notes:</b>
           <div v-if="showEventNotes && event.notes" class="event-sub-item event-notes">
-            {{ event.notes }}
+            <span
+              v-for="(line, index) in eventNoteLines(event.notes)"
+              :key="index"
+              class="event-note-line"
+              :style="{ marginLeft: eventNoteIndentation(line) }"
+            >{{ line.trimStart() }}</span>
           </div>          
         </div>
       </div>
@@ -164,7 +169,7 @@ const props = defineProps({
   },
   showEventNotes: {
     type: Boolean,
-    default: false
+    default: true
   }
 })
 
@@ -190,6 +195,13 @@ const navigateToDetails = () => {
 
 const formatStandardDateTime = (value) => {
   return DateFormatService.formatStandardDateTimejs(value)
+}
+
+const eventNoteLines = (notes) => notes.split('\n')
+
+const eventNoteIndentation = (line) => {
+  const leadingWhitespace = line.match(/^\s*/)?.[0].replace(/\t/g, '    ').length || 0
+  return `${Math.floor(leadingWhitespace / 4) * 1.5}rem`
 }
 
 const hasEventPassed = (travel) => {
@@ -364,10 +376,14 @@ const getTravelStatus = (travel) => {
 }
 
 .event-notes {
-  white-space: pre-line;
   color: var(--color-text-secondary);
   font-size: 0.95rem;
   padding-left: 1rem;
+}
+
+.event-note-line {
+  display: block;
+  min-height: 1.5em;
 }
 
 /* ✅ FOOTER */

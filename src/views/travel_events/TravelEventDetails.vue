@@ -40,6 +40,63 @@
           </div>
         </div>
       </template>
+
+      <section class="event-navigation" aria-label="Travel event navigation">
+        <BaseButton
+          variant="secondary"
+          size="small"
+          :disabled="!previousEvent"
+          @click="goToEvent(previousEvent)"
+        >
+          <i class="mdi mdi-chevron-left"></i>
+          Previous
+        </BaseButton>
+
+        <div class="event-position">
+          <span>Event {{ currentEventPosition }} of {{ travelEvents.length }}</span>
+          <strong>{{ travel?.title || 'Travel itinerary' }}</strong>
+        </div>
+
+        <BaseButton
+          variant="secondary"
+          size="small"
+          :disabled="!nextEvent"
+          @click="goToEvent(nextEvent)"
+        >
+          Next
+          <i class="mdi mdi-chevron-right"></i>
+        </BaseButton>
+      </section>
+
+      <section class="key-information" aria-labelledby="key-information-heading">
+        <h3 id="key-information-heading">Key Information</h3>
+        <div class="key-information-grid">
+          <div v-if="travelEvent.start_date" class="key-information-item">
+            <i class="mdi mdi-calendar-start"></i>
+            <div><span>Starts</span><strong>{{ formatEventDate(travelEvent.start_date) }}</strong></div>
+          </div>
+          <div v-if="travelEvent.end_date" class="key-information-item">
+            <i class="mdi mdi-calendar-end"></i>
+            <div><span>Ends</span><strong>{{ formatEventDate(travelEvent.end_date) }}</strong></div>
+          </div>
+          <div v-if="travelEvent.transport" class="key-information-item">
+            <i class="mdi mdi-train-car"></i>
+            <div><span>Transportation</span><strong>{{ travelEvent.transport }}</strong></div>
+          </div>
+          <div v-if="travelEvent.booking_reference" class="key-information-item">
+            <i class="mdi mdi-ticket-confirmation-outline"></i>
+            <div><span>Booking</span><strong>{{ bookingReferenceLabel }}</strong></div>
+          </div>
+        </div>
+        <div v-if="travelEvent.travel_event_url || travelEvent.transport_url" class="quick-links">
+          <a v-if="travelEvent.travel_event_url" :href="travelEvent.travel_event_url" target="_blank" rel="noopener noreferrer">
+            <i class="mdi mdi-open-in-new"></i> Event site
+          </a>
+          <a v-if="travelEvent.transport_url" :href="travelEvent.transport_url" target="_blank" rel="noopener noreferrer">
+            <i class="mdi mdi-map-marker-path"></i> Directions
+          </a>
+        </div>
+      </section>
       
       <!-- Debug: Show raw data -->
       <!--div style="background: #f0f0f0; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
@@ -118,13 +175,14 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTravelStore } from '@/stores/travel/TravelStore'
 import TravelEventCard from '@/components/travel_events/TravelEventCard.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
+import DateFormatService from '@/services/DateFormatService.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -140,9 +198,36 @@ const isDeleting = ref(false)
 
 // Computed
 const eventId = computed(() => route.params.id)
+const travelEvents = computed(() => {
+  if (!travelEvent.value?.travel_id) return []
+
+  return travelStore.travelEventsForTravel(travelEvent.value.travel_id)
+})
+const currentEventIndex = computed(() =>
+  travelEvents.value.findIndex(event => event.id === travelEvent.value?.id)
+)
+const currentEventPosition = computed(() =>
+  currentEventIndex.value >= 0 ? currentEventIndex.value + 1 : 1
+)
+const previousEvent = computed(() =>
+  currentEventIndex.value > 0 ? travelEvents.value[currentEventIndex.value - 1] : null
+)
+const nextEvent = computed(() =>
+  currentEventIndex.value >= 0 && currentEventIndex.value < travelEvents.value.length - 1
+    ? travelEvents.value[currentEventIndex.value + 1]
+    : null
+)
+const bookingReferenceLabel = computed(() => {
+  const bookingReference = travelEvent.value?.booking_reference
+  return /^https?:\/\//i.test(bookingReference) ? 'Open booking reference' : bookingReference
+})
 
 // Lifecycle
 onMounted(async () => {
+  await loadTravelEvent()
+})
+
+watch(eventId, async () => {
   await loadTravelEvent()
 })
 
@@ -157,6 +242,7 @@ const loadTravelEvent = async () => {
     // Load associated travel details
     if (travelEvent.value?.travel_id) {
       travel.value = await travelStore.fetchTravel(travelEvent.value.travel_id)
+      await travelStore.fetchTravelEvents(travelEvent.value.travel_id)
     }
   } catch (err) {
     console.error('Error loading travel event:', err)
@@ -172,6 +258,14 @@ const handleEdit = () => {
     params: { id: travelEvent.value.id } 
   })
 }
+
+const goToEvent = (event) => {
+  if (!event) return
+
+  router.push({ name: 'TravelEventDetails', params: { id: event.id } })
+}
+
+const formatEventDate = (value) => DateFormatService.formatStandardDateTimejs(value)
 
 const handleDelete = () => {
   showDeleteDialog.value = true
@@ -257,6 +351,117 @@ const handleBackToTravels = () => {
 .header-content h2 {
   margin: 0;
   color: #2c3e50;
+}
+
+.event-navigation {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) auto minmax(100px, 1fr);
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.event-navigation > :last-child {
+  justify-self: end;
+}
+
+.event-position {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  text-align: center;
+}
+
+.event-position span {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.event-position strong {
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.key-information {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.key-information h3 {
+  margin: 0 0 0.9rem;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.key-information-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.key-information-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-left: 3px solid #007bff;
+}
+
+.key-information-item > i {
+  color: #007bff;
+  font-size: 1.2rem;
+}
+
+.key-information-item div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.key-information-item span {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.key-information-item strong {
+  color: #2c3e50;
+  overflow-wrap: anywhere;
+}
+
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.9rem;
+}
+
+.quick-links a {
+  color: #0069d9;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.quick-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .event-navigation {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .event-position {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .event-navigation > :last-child {
+    justify-self: end;
+  }
 }
 
 .header-actions {
