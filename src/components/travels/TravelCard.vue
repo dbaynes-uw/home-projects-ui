@@ -87,6 +87,23 @@
     <!-- Travel Events -->
     <div v-if="travel.travel_events && travel.travel_events.length > 0" class="travel-events">
       <h2 style="margin-left: -1rem;">Travel Events:</h2>
+
+      <!-- Event Timeline -->
+      <div class="event-timeline">
+        <div
+          v-for="event in sortedTravelEvents"
+          :key="`timeline-${event.id}`"
+          :class="['timeline-item', timelineStatusClass(event)]"
+        >
+          <span class="timeline-marker"></span>
+          <span class="timeline-date">{{ timelineDate(event) }}</span>
+          <router-link
+            :to="{ name: 'TravelEventDetails', params: { id: `${event.id}` } }"
+            class="timeline-title"
+          >{{ event.title }}</router-link>
+        </div>
+      </div>
+
       <div class="events-list">
         <div
           v-for="event in travel.travel_events"
@@ -217,6 +234,27 @@ const eventNoteIndentation = (line) => {
 }
 
 const expandedEventNotes = ref({})
+
+const sortedTravelEvents = computed(() => {
+  return [...(props.travel.travel_events || [])].sort(
+    (a, b) => new Date(a.start_date || 0) - new Date(b.start_date || 0)
+  )
+})
+
+const timelineDate = (event) => {
+  const value = event.start_date || event.end_date
+  return value ? dayjs(value).format('MMM D') : 'TBD'
+}
+
+const timelineStatusClass = (event) => {
+  const today = dayjs()
+  const start = event.start_date ? dayjs(event.start_date) : null
+  const end = event.end_date ? dayjs(event.end_date) : null
+
+  if (end && end.isBefore(today, 'day')) return 'timeline-past'
+  if (start && start.isAfter(today, 'day')) return 'timeline-upcoming'
+  return 'timeline-current'
+}
 
 const toggleEventNotes = (eventId) => {
   expandedEventNotes.value = {
@@ -371,6 +409,66 @@ const getTravelStatus = (travel) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* Event Timeline */
+.event-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.25rem 0 1rem;
+  padding: 0.5rem 0.5rem 0.25rem 1.25rem;
+  border-left: 2px solid #cbd5e1;
+}
+
+.timeline-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -1.25rem;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #cbd5e1;
+}
+
+.timeline-item.timeline-current .timeline-marker {
+  background: #22c55e;
+}
+
+.timeline-item.timeline-past .timeline-marker {
+  background: #9ca3af;
+}
+
+.timeline-item.timeline-past {
+  opacity: 0.65;
+}
+
+.timeline-date {
+  flex-shrink: 0;
+  min-width: 3.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.timeline-title {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.timeline-title:hover {
+  text-decoration: underline;
 }
 
 .event-item {
