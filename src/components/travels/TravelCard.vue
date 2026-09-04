@@ -105,8 +105,20 @@
               ~ {{event.transport}} Map/Link
             </a>
           </span>
-          <b class="event-sub-item">Notes:</b>
-          <div v-if="showEventNotes && event.notes" class="event-sub-item event-notes">
+          <div class="event-sub-item notes-header">
+            <b>Notes:</b>
+            <button
+              v-if="event.notes"
+              type="button"
+              class="notes-toggle"
+              :aria-expanded="expandedEventNotes[event.id] ? 'true' : 'false'"
+              :title="expandedEventNotes[event.id] ? 'Hide notes' : 'Show notes'"
+              @click.stop="toggleEventNotes(event.id)"
+            >
+              <i :class="expandedEventNotes[event.id] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+            </button>
+          </div>
+          <div v-if="showEventNotes && event.notes && expandedEventNotes[event.id]" class="event-sub-item event-notes">
             <span
               v-for="(line, index) in eventNoteLines(event.notes)"
               :key="index"
@@ -147,7 +159,7 @@
   </BaseCard>
 </template>
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import DateFormatService from '@/services/DateFormatService.js'
@@ -202,6 +214,15 @@ const eventNoteLines = (notes) => notes.split('\n')
 const eventNoteIndentation = (line) => {
   const leadingWhitespace = line.match(/^\s*/)?.[0].replace(/\t/g, '    ').length || 0
   return `${Math.floor(leadingWhitespace / 4) * 1.5}rem`
+}
+
+const expandedEventNotes = ref({})
+
+const toggleEventNotes = (eventId) => {
+  expandedEventNotes.value = {
+    ...expandedEventNotes.value,
+    [eventId]: !expandedEventNotes.value[eventId]
+  }
 }
 
 const hasEventPassed = (travel) => {
@@ -373,6 +394,28 @@ const getTravelStatus = (travel) => {
 
 .event-link:hover {
   opacity: 0.8;
+}
+
+.notes-header {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.notes-toggle {
+  background: none;
+  border: none;
+  padding: 0.15rem 0.35rem;
+  cursor: pointer;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  line-height: 1;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.notes-toggle:hover {
+  background: rgba(59, 130, 246, 0.12);
 }
 
 .event-notes {
