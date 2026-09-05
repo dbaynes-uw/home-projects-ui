@@ -126,7 +126,7 @@
           v-model="formData.notes"
           class="notes-textarea"
           rows="6"
-          placeholder="Additional notes or details&#10;  • Use the toolbar above to add bullets&#10;  • Or type • manually"
+          placeholder="Additional notes or details&#10;  • Use the toolbar above to add bullets&#10;  • Add a link: [Website name](https://example.com)"
         ></textarea>
         <div v-if="errors.notes" class="form-error">
           <i class="mdi mdi-alert-circle"></i>

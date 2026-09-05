@@ -36,8 +36,8 @@
       <li class="li-left">Notes:</li>
       <template v-for="(notes, idx) in joinedNotes(props.travelEvent)" :key="idx">
         <br v-if="notes === ''" class="blank-line" />
-        <b v-else-if="isUrl(notes)" class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">
-          <a :href="notes.trim()" target="_blank" class="detail-link-blue">{{ friendlyUrlLabel(notes) }}</a>
+        <b v-else-if="noteLink(notes)" class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">
+          {{ noteLink(notes).prefix }}<a :href="noteLink(notes).url" target="_blank" rel="noopener noreferrer" class="detail-link-blue">{{ noteLink(notes).label }}</a>
         </b>
         <b v-else class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">{{ notes.trimStart() }}</b>
       </template>
@@ -92,6 +92,17 @@ const startsWithHtml = (event) => {
 const isUrl = (text) => {
   const t = text.trim()
   return /^https?:\/\/\S+$/.test(t) || /^\/\S+\.\w+$/.test(t)
+}
+
+const noteLink = (text) => {
+  const trimmed = text.trim()
+  const markdownMatch = trimmed.match(/^(.*?)\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/)
+
+  if (markdownMatch) {
+    return { prefix: markdownMatch[1], label: markdownMatch[2], url: markdownMatch[3] }
+  }
+
+  return isUrl(trimmed) ? { prefix: '', label: friendlyUrlLabel(trimmed), url: trimmed } : null
 }
 
 const friendlyUrlLabel = (text) => {

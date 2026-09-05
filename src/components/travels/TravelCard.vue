@@ -141,7 +141,7 @@
               :key="index"
               class="event-note-line"
               :style="{ marginLeft: eventNoteIndentation(line) }"
-            >{{ line.trimStart() }}</span>
+            ><template v-if="eventNoteLink(line)">{{ eventNoteLink(line).prefix }}<a :href="eventNoteLink(line).url" target="_blank" rel="noopener noreferrer" class="detail-link-blue">{{ eventNoteLink(line).label }}</a></template><template v-else>{{ line.trimStart() }}</template></span>
           </div>          
         </div>
       </div>
@@ -231,6 +231,17 @@ const eventNoteLines = (notes) => notes.split('\n')
 const eventNoteIndentation = (line) => {
   const leadingWhitespace = line.match(/^\s*/)?.[0].replace(/\t/g, '    ').length || 0
   return `${Math.floor(leadingWhitespace / 4) * 1.5}rem`
+}
+
+const eventNoteLink = (line) => {
+  const trimmed = line.trim()
+  const markdownMatch = trimmed.match(/^(.*?)\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/)
+
+  if (markdownMatch) {
+    return { prefix: markdownMatch[1], label: markdownMatch[2], url: markdownMatch[3] }
+  }
+
+  return /^https?:\/\/\S+$/.test(trimmed) ? { prefix: '', label: trimmed, url: trimmed } : null
 }
 
 const expandedEventNotes = ref({})
