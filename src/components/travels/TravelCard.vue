@@ -119,7 +119,7 @@
           <span v-if="event.transport" class="event-sub-item">
             <!--b>{{ event.transport }}<b-->
             <a :href="event.transport_url" target="_blank" class="detail-link-blue">
-              ~ {{event.transport}} Map/Link
+              ~ {{event.transport}} - Map/Link
             </a>
           </span>
           <div class="event-sub-item notes-header">
