@@ -49,11 +49,6 @@
         placeholder="Link to event information"
       />
       
-      <!-- URL Character Count for Event URL -->
-      <span v-if="formData.travel_event_url" class="text-caption">
-        {{ urlMaxLength - formData.travel_event_url.length }} / {{ urlMaxLength }} characters remaining
-      </span>
-      
       <!-- Transportation Type -->
       <BaseTextField
         v-model="formData.transport"
@@ -83,11 +78,6 @@
         :error="errors.transport_url"
         placeholder="Link to transportation booking"
       />
-      
-      <!-- URL Character Count for Transport URL -->
-      <span v-if="formData.transport_url" class="text-caption">
-        {{ urlMaxLength - formData.transport_url.length }} / {{ urlMaxLength }} characters remaining
-      </span>
       
       <!-- Start Date -->
       <BaseTextField
@@ -201,7 +191,6 @@ const formatDateForAPI = (dateString) => {
 // Reactive data
 const isSubmitting = ref(false)
 const errors = ref({})
-const urlMaxLength = ref(255)
 const notesTextarea = ref(null)
 
 // Insert text at the cursor position in a textarea
@@ -330,14 +319,6 @@ const validateForm = () => {
     if (endDate < startDate) {
       errors.value.end_date = 'End date must be after start date'
     }
-  }
-  
-  if (formData.value.travel_event_url && formData.value.travel_event_url.length > urlMaxLength.value) {
-    errors.value.travel_event_url = `URL must be less than ${urlMaxLength.value} characters`
-  }
-  
-  if (formData.value.transport_url && formData.value.transport_url.length > urlMaxLength.value) {
-    errors.value.transport_url = `URL must be less than ${urlMaxLength.value} characters`
   }
   
   return Object.keys(errors.value).length === 0
