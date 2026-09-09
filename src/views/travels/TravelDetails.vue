@@ -22,6 +22,15 @@
               Print
             </BaseButton>
             <BaseButton
+              v-if="hasMap"
+              variant="secondary"
+              size="small"
+              :icon="showMap ? 'map-off' : 'map'"
+              @click="showMap = !showMap"
+            >
+              {{ showMap ? 'Hide Map' : 'Show Map' }}
+            </BaseButton>
+            <BaseButton
               variant="primary"
               size="small"
               icon="edit"
@@ -60,7 +69,7 @@
     <TravelCard
       v-if="travel"
       :travel="travel"
-      :show-map="true"
+      :show-map="showMap"
       :show-event-notes="true"
       class="travel-card-display"
     />
@@ -262,9 +271,14 @@ const showEditDialog = ref(false)
 const showAddEventDialog = ref(false)
 const eventToDelete = ref(null)
 const isDeleting = ref(false)
+const showMap = ref(true)
 
 // Computed properties
 const travel = computed(() => travelStore.currentTravel)
+const hasMap = computed(() => {
+  const mapUrl = travel.value?.map_embed_url?.trim()
+  return Boolean(mapUrl?.includes('google.com/maps/embed'))
+})
 const travel_events = computed(() => {
   return travelStore.travelEventsForTravel(route.params.id)
 })
