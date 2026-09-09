@@ -271,7 +271,7 @@ const showEditDialog = ref(false)
 const showAddEventDialog = ref(false)
 const eventToDelete = ref(null)
 const isDeleting = ref(false)
-const showMap = ref(true)
+const showMap = ref(false)
 
 // Computed properties
 const travel = computed(() => travelStore.currentTravel)

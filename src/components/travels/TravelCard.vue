@@ -136,12 +136,27 @@
             </button>
           </div>
           <div v-if="showEventNotes && event.notes && expandedEventNotes[event.id]" class="event-sub-item event-notes">
-            <span
-              v-for="(line, index) in eventNoteLines(event.notes)"
-              :key="index"
-              class="event-note-line"
-              :style="{ marginLeft: eventNoteIndentation(line) }"
-            ><template v-if="eventNoteLink(line)">{{ eventNoteLink(line).prefix }}<a :href="eventNoteLink(line).url" target="_blank" rel="noopener noreferrer" class="detail-link-blue">{{ eventNoteLink(line).label }}</a></template><template v-else>{{ line.trimStart() }}</template></span>
+            <template v-for="section in eventNoteSections(event)" :key="section.id">
+              <button
+                v-if="section.heading"
+                type="button"
+                class="event-note-bullet-toggle"
+                :style="{ marginLeft: eventNoteIndentation(section.heading) }"
+                :aria-expanded="isNoteSectionExpanded(section.id)"
+                @click.stop="toggleNoteSection(section.id)"
+              >
+                <i :class="isNoteSectionExpanded(section.id) ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"></i>
+                {{ section.heading.trimStart() }}
+              </button>
+              <template v-if="!section.heading || isNoteSectionExpanded(section.id)">
+                <span
+                  v-for="(line, index) in section.lines"
+                  :key="index"
+                  class="event-note-line"
+                  :style="{ marginLeft: eventNoteIndentation(line) }"
+                ><template v-if="eventNoteLink(line)">{{ eventNoteLink(line).prefix }}<a :href="eventNoteLink(line).url" target="_blank" rel="noopener noreferrer" class="detail-link-blue">{{ eventNoteLink(line).label }}</a></template><template v-else>{{ line.trimStart() }}</template></span>
+              </template>
+            </template>
           </div>          
         </div>
       </div>
@@ -228,6 +243,29 @@ const formatStandardDateTime = (value) => {
 
 const eventNoteLines = (notes) => notes.split('\n')
 
+const eventNoteSections = (event) => {
+  const sections = []
+  let currentSection = null
+
+  eventNoteLines(event.notes).forEach((line, index) => {
+    if (/^(?:•|\d+\.)\s+/.test(line)) {
+      currentSection = { id: `${event.id}-bullet-${index}`, heading: line, lines: [] }
+      sections.push(currentSection)
+    } else if (currentSection) {
+      currentSection.lines.push(line)
+    } else {
+      let introSection = sections.find(section => !section.heading)
+      if (!introSection) {
+        introSection = { id: `${event.id}-intro`, heading: '', lines: [] }
+        sections.push(introSection)
+      }
+      introSection.lines.push(line)
+    }
+  })
+
+  return sections
+}
+
 const eventNoteIndentation = (line) => {
   const leadingWhitespace = line.match(/^\s*/)?.[0].replace(/\t/g, '    ').length || 0
   return `${Math.floor(leadingWhitespace / 4) * 1.5}rem`
@@ -245,6 +283,16 @@ const eventNoteLink = (line) => {
 }
 
 const expandedEventNotes = ref({})
+const collapsedNoteSections = ref({})
+
+const isNoteSectionExpanded = (sectionId) => !collapsedNoteSections.value[sectionId]
+
+const toggleNoteSection = (sectionId) => {
+  collapsedNoteSections.value = {
+    ...collapsedNoteSections.value,
+    [sectionId]: !collapsedNoteSections.value[sectionId]
+  }
+}
 
 const sortedTravelEvents = computed(() => {
   return [...(props.travel.travel_events || [])].sort(
@@ -536,6 +584,25 @@ const getTravelStatus = (travel) => {
 .event-note-line {
   display: block;
   min-height: 1.5em;
+}
+
+.event-note-bullet-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.3rem;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.event-note-bullet-toggle:hover {
+  background: rgba(59, 130, 246, 0.12);
 }
 
 /* ✅ FOOTER */

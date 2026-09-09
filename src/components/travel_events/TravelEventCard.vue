@@ -34,12 +34,27 @@
         <li class="li-left">End: <b>{{ formatStandardDateTime(props.travelEvent.end_date) }}</b></li>
       </span>
       <li class="li-left">Notes:</li>
-      <template v-for="(notes, idx) in joinedNotes(props.travelEvent)" :key="idx">
-        <br v-if="notes === ''" class="blank-line" />
-        <b v-else-if="noteLink(notes)" class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">
-          {{ noteLink(notes).prefix }}<a :href="noteLink(notes).url" target="_blank" rel="noopener noreferrer" class="detail-link-blue">{{ noteLink(notes).label }}</a>
-        </b>
-        <b v-else class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">{{ notes.trimStart() }}</b>
+      <template v-for="section in noteSections" :key="section.id">
+        <button
+          v-if="section.heading"
+          type="button"
+          class="note-bullet-toggle"
+          :style="{ marginLeft: noteIndentation(section.heading) }"
+          :aria-expanded="isNoteSectionExpanded(section.id)"
+          @click.stop="toggleNoteSection(section.id)"
+        >
+          <i :class="isNoteSectionExpanded(section.id) ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"></i>
+          {{ section.heading.trimStart() }}
+        </button>
+        <template v-if="!section.heading || isNoteSectionExpanded(section.id)">
+          <template v-for="(notes, idx) in section.lines" :key="idx">
+            <br v-if="notes === ''" class="blank-line" />
+            <b v-else-if="noteLink(notes)" class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">
+              {{ noteLink(notes).prefix }}<a :href="noteLink(notes).url" target="_blank" rel="noopener noreferrer" class="detail-link-blue">{{ noteLink(notes).label }}</a>
+            </b>
+            <b v-else class="note-line pre-wrap" :style="{ marginLeft: noteIndentation(notes) }">{{ notes.trimStart() }}</b>
+          </template>
+        </template>
       </template>
     </ul>
     
@@ -65,6 +80,7 @@
   </div>
 </template>
 <script setup>
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import DateFormatService from "@/services/DateFormatService.js"
 import dayjs from 'dayjs'
@@ -79,6 +95,7 @@ const props = defineProps({
 
 // Composables
 const router = useRouter()
+const collapsedNoteSections = ref({})
 
 // Methods
 const navigateToEdit = () => {
@@ -124,6 +141,38 @@ const joinedNotes = (e) => {
     return e.notes.split('\n')
   }
   return []
+}
+
+const noteSections = computed(() => {
+  const sections = []
+  let currentSection = null
+
+  joinedNotes(props.travelEvent).forEach((line, index) => {
+    if (/^(?:•|\d+\.)\s+/.test(line)) {
+      currentSection = { id: `bullet-${index}`, heading: line, lines: [] }
+      sections.push(currentSection)
+    } else if (currentSection) {
+      currentSection.lines.push(line)
+    } else {
+      let introSection = sections.find(section => !section.heading)
+      if (!introSection) {
+        introSection = { id: 'intro', heading: '', lines: [] }
+        sections.push(introSection)
+      }
+      introSection.lines.push(line)
+    }
+  })
+
+  return sections
+})
+
+const isNoteSectionExpanded = (sectionId) => !collapsedNoteSections.value[sectionId]
+
+const toggleNoteSection = (sectionId) => {
+  collapsedNoteSections.value = {
+    ...collapsedNoteSections.value,
+    [sectionId]: !collapsedNoteSections.value[sectionId]
+  }
 }
 
 const noteIndentation = (text) => {
@@ -200,5 +249,24 @@ const hasEventPassed = (event) => {
 .note-line {
   text-align: left;
   display: block;
+}
+
+.note-bullet-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.3rem;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.note-bullet-toggle:hover {
+  background: rgba(0, 123, 255, 0.12);
 }
 </style>
