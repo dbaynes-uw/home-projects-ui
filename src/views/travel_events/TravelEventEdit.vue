@@ -86,11 +86,7 @@ const loadTravel = async (travelId) => {
 const handleUpdateEvent = async (eventData) => {
   try {
     await travelStore.updateTravelEvent(eventId.value, eventData)
-    router.push({ 
-      name: 'TravelDetails', 
-      params: { id: travelEvent.value.travel_id },
-      query: { tab: 'events' }
-    })
+    router.push({ name: 'TravelEventDetails', params: { id: eventId.value } })
   } catch (error) {
     console.error('Error updating travel event:', error)
     // Handle error (show toast, etc.)
