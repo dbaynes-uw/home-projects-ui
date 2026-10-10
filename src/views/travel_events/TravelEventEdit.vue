@@ -42,6 +42,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useTravelStore } from '@/stores/travel/TravelStore'
 import TravelEventForm from '@/components/travel_events/TravelEventForm.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
+import { notify } from '@/composables/useNotify.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -86,6 +87,7 @@ const loadTravel = async (travelId) => {
 const handleUpdateEvent = async (eventData) => {
   try {
     await travelStore.updateTravelEvent(eventId.value, eventData)
+    notify('Travel Event has been Updated')
     router.push({ name: 'TravelEventDetails', params: { id: eventId.value } })
   } catch (error) {
     console.error('Error updating travel event:', error)

@@ -28,10 +28,10 @@
         <b>~ <a :href="props.travelEvent.transport_url" target="_blank" class="detail-link-blue">Map/Link</a></b>
       </span>
       <span v-if="props.travelEvent.start_date">
-        <li class="li-left">Start: <b>{{ formatStandardDateTime(props.travelEvent.start_date) }}</b></li>
+        <li class="li-left">Start: <b>{{ formatStandardDateTime(props.travelEvent.start_date, props.travelEvent.start_time_zone) }}</b></li>
       </span>
       <span v-if="props.travelEvent.end_date">
-        <li class="li-left">End: <b>{{ formatStandardDateTime(props.travelEvent.end_date) }}</b></li>
+        <li class="li-left">End: <b>{{ formatStandardDateTime(props.travelEvent.end_date, props.travelEvent.end_time_zone) }}</b></li>
       </span>
       <li class="li-left">Notes:</li>
       <template v-for="section in noteSections" :key="section.id">
@@ -83,7 +83,6 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import DateFormatService from "@/services/DateFormatService.js"
-import dayjs from 'dayjs'
 
 // Props
 const props = defineProps({
@@ -180,14 +179,11 @@ const noteIndentation = (text) => {
   return `${2 + Math.floor(leadingWhitespace / 4) * 1.5}rem`
 }
 
-const formatStandardDateTime = (value) => {
-  return DateFormatService.formatStandardDateTimejs(value)
+const formatStandardDateTime = (value, tz) => {
+  return DateFormatService.formatInZonejs(value, tz)
 }
 
-const hasEventPassed = (event) => {
-  const formatDateTime = dayjs(new Date()).format("MM-DD-YY H:mma")
-  return DateFormatService.formatDateTimejs(event.end_date) < formatDateTime
-}
+const hasEventPassed = (event) => DateFormatService.hasPassedjs(event.end_date)
 </script>
 <style scoped>
 .event-actions {

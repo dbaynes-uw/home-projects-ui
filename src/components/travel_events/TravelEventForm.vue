@@ -80,6 +80,12 @@
       />
       
       <!-- Start Date -->
+      <BaseSelect
+        :model-value="formData.start_time_zone"
+        @update:model-value="changeZone('start', $event)"
+        label="Start Time Zone"
+        :items="zoneOptions(formData.start_time_zone)"
+      />
       <BaseTextField
         v-model="formData.start_date"
         label="Start Date"
@@ -89,6 +95,12 @@
       />
       
       <!-- End Date -->
+      <BaseSelect
+        :model-value="formData.end_time_zone"
+        @update:model-value="changeZone('end', $event)"
+        label="End Time Zone"
+        :items="zoneOptions(formData.end_time_zone)"
+      />
       <BaseTextField
         v-model="formData.end_date"
         label="End Date"
@@ -154,7 +166,15 @@ import { ref, computed, watch } from 'vue'
 import { useStore as useVuexStore } from 'vuex'
 import BaseTextField from '@/components/ui/BaseTextField.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseSelect from '@/components/ui/BaseSelect.vue'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { DEFAULT_TIME_ZONE, TIME_ZONES } from '@/services/constants.js'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 
 const props = defineProps({
   travelEvent: {
@@ -177,15 +197,28 @@ const emit = defineEmits(['save', 'cancel'])
 const vuexStore = useVuexStore()
 
 // Utilities
-const formatDateForInput = (dateString) => {
+// Stored UTC instant -> wall-clock time in the event's zone, for datetime-local
+const formatDateForInput = (dateString, tz) => {
   if (!dateString) return ''
-  // Format for datetime-local input (YYYY-MM-DDTHH:MM)
-  return dayjs(dateString).format('YYYY-MM-DDTHH:mm')
+  return dayjs(dateString).tz(tz).format('YYYY-MM-DDTHH:mm')
 }
 
-const formatDateForAPI = (dateString) => {
+// Typed wall-clock time in the event's zone -> ISO instant (explicit offset; Rails would otherwise assume its own zone)
+const formatDateForAPI = (dateString, tz) => {
   if (!dateString) return null
-  return dayjs(dateString).format('YYYY-MM-DD HH:mm:ss')
+  return dayjs.tz(dateString, tz).toISOString()
+}
+
+// Changing a zone keeps the same instant, so the displayed wall-clock time shifts
+const changeZone = (which, newTz) => {
+  const tzKey = `${which}_time_zone`
+  const dateKey = `${which}_date`
+  const oldTz = formData.value[tzKey]
+  const current = formData.value[dateKey]
+  if (current && oldTz !== newTz) {
+    formData.value[dateKey] = dayjs.tz(current, oldTz).tz(newTz).format('YYYY-MM-DDTHH:mm')
+  }
+  formData.value[tzKey] = newTz
 }
 
 // Reactive data
@@ -241,6 +274,13 @@ const getNextSubLineLetter = (field) => {
 // Check if we're in edit mode
 const isEditMode = computed(() => !!props.travelEvent)
 
+// Keep a saved zone selectable even if it's not in the preset list
+const zoneOptions = (current) => {
+  return !current || TIME_ZONES.some(z => z.value === current)
+    ? TIME_ZONES
+    : [...TIME_ZONES, { value: current, title: current }]
+}
+
 // Form data with defaults
 const formData = ref({
   id: '',
@@ -250,6 +290,8 @@ const formData = ref({
   travel_event_url: '',
   start_date: '',
   end_date: '',
+  start_time_zone: DEFAULT_TIME_ZONE,
+  end_time_zone: DEFAULT_TIME_ZONE,
   transport: '',
   booking_reference: '',
   transport_url: '',
@@ -274,6 +316,8 @@ const resetForm = () => {
     travel_event_url: '',
     start_date: '',
     end_date: '',
+    start_time_zone: DEFAULT_TIME_ZONE,
+    end_time_zone: DEFAULT_TIME_ZONE,
     transport: '',
     booking_reference: '',
     transport_url: '',
@@ -287,10 +331,14 @@ const resetForm = () => {
 watch(() => props.travelEvent, (newTravelEvent) => {
   if (newTravelEvent) {
     // Populate form with existing travel event data for editing
+    const startTz = newTravelEvent.start_time_zone || DEFAULT_TIME_ZONE
+    const endTz = newTravelEvent.end_time_zone || startTz
     formData.value = {
       ...newTravelEvent,
-      start_date: formatDateForInput(newTravelEvent.start_date),
-      end_date: formatDateForInput(newTravelEvent.end_date)
+      start_time_zone: startTz,
+      end_time_zone: endTz,
+      start_date: formatDateForInput(newTravelEvent.start_date, startTz),
+      end_date: formatDateForInput(newTravelEvent.end_date, endTz)
     }
   } else {
     resetForm()
@@ -314,9 +362,9 @@ const validateForm = () => {
   //}
   
   if (formData.value.end_date && formData.value.start_date) {
-    const startDate = new Date(formData.value.start_date)
-    const endDate = new Date(formData.value.end_date)
-    if (endDate < startDate) {
+    const startDate = dayjs.tz(formData.value.start_date, formData.value.start_time_zone)
+    const endDate = dayjs.tz(formData.value.end_date, formData.value.end_time_zone)
+    if (endDate.isBefore(startDate)) {
       errors.value.end_date = 'End date must be after start date'
     }
   }
@@ -336,8 +384,8 @@ const handleSubmit = async () => {
     const travelEventData = {
       ...formData.value,
       travel_id: props.travelId,
-      start_date: formatDateForAPI(formData.value.start_date),
-      end_date: formData.value.end_date ? formatDateForAPI(formData.value.end_date) : null,
+      start_date: formatDateForAPI(formData.value.start_date, formData.value.start_time_zone),
+      end_date: formatDateForAPI(formData.value.end_date, formData.value.end_time_zone),
       created_by: vuexStore.state.user?.resource_owner?.email || ''
     }
     

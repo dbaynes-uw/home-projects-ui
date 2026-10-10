@@ -73,11 +73,11 @@
         <div class="key-information-grid">
           <div v-if="travelEvent.start_date" class="key-information-item">
             <i class="mdi mdi-calendar-start"></i>
-            <div><span>Starts</span><strong>{{ formatEventDate(travelEvent.start_date) }}</strong></div>
+            <div><span>Starts</span><strong>{{ formatEventDate(travelEvent.start_date, travelEvent.start_time_zone) }}</strong></div>
           </div>
           <div v-if="travelEvent.end_date" class="key-information-item">
             <i class="mdi mdi-calendar-end"></i>
-            <div><span>Ends</span><strong>{{ formatEventDate(travelEvent.end_date) }}</strong></div>
+            <div><span>Ends</span><strong>{{ formatEventDate(travelEvent.end_date, travelEvent.end_time_zone) }}</strong></div>
           </div>
           <div v-if="travelEvent.transport" class="key-information-item">
             <i class="mdi mdi-train-car"></i>
@@ -265,7 +265,7 @@ const goToEvent = (event) => {
   router.push({ name: 'TravelEventDetails', params: { id: event.id } })
 }
 
-const formatEventDate = (value) => DateFormatService.formatStandardDateTimejs(value)
+const formatEventDate = (value, tz) => DateFormatService.formatInZonejs(value, tz)
 
 const handleDelete = () => {
   showDeleteDialog.value = true

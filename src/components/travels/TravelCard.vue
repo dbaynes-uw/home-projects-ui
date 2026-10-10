@@ -302,16 +302,19 @@ const sortedTravelEvents = computed(() => {
 
 const timelineDate = (event) => {
   const value = event.start_date || event.end_date
-  return value ? dayjs(value).format('MMM D') : 'TBD'
+  const tz = event.start_date ? event.start_time_zone : event.end_time_zone
+  return value ? DateFormatService.formatInZonejs(value, tz, 'MMM D') : 'TBD'
 }
 
 const timelineStatusClass = (event) => {
+  const startTz = event.start_time_zone || 'America/Los_Angeles'
+  const endTz = event.end_time_zone || startTz
   const today = dayjs()
-  const start = event.start_date ? dayjs(event.start_date) : null
-  const end = event.end_date ? dayjs(event.end_date) : null
+  const start = event.start_date ? dayjs(event.start_date).tz(startTz) : null
+  const end = event.end_date ? dayjs(event.end_date).tz(endTz) : null
 
-  if (end && end.isBefore(today, 'day')) return 'timeline-past'
-  if (start && start.isAfter(today, 'day')) return 'timeline-upcoming'
+  if (end && end.isBefore(today.tz(endTz), 'day')) return 'timeline-past'
+  if (start && start.isAfter(today.tz(startTz), 'day')) return 'timeline-upcoming'
   return 'timeline-current'
 }
 

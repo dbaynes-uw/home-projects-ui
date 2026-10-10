@@ -58,11 +58,11 @@
               <td class="dates-cell">
                 <div v-if="event.start_date" class="date-line">
                   <i class="fas fa-play"></i>
-                  {{ formatDate(event.start_date) }}
+                  {{ formatDate(event.start_date, event.start_time_zone) }}
                 </div>
                 <div v-if="event.end_date" class="date-line">
                   <i class="fas fa-stop"></i>
-                  {{ formatDate(event.end_date) }}
+                  {{ formatDate(event.end_date, event.end_time_zone) }}
                 </div>
               </td>
               <td class="transport-cell">
@@ -115,7 +115,6 @@ import { useRouter } from 'vue-router'
 import { useTravelStore } from '@/stores/travel/TravelStore'
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 import DateFormatService from '@/services/DateFormatService.js'
-import dayjs from 'dayjs'
 
 const props = defineProps({
   travel_events: {
@@ -165,14 +164,13 @@ function splitLines(text) {
   return text.split('\n').filter(l => l.trim())
 }
 
-function formatDate(value) {
-  return DateFormatService.formatStandardDateTimejs(value)
+function formatDate(value, tz) {
+  return DateFormatService.formatInZonejs(value, tz)
 }
 
 function eventStatusClass(event) {
   if (!event.end_date) return ''
-  const today = dayjs().format('YYYY-MM-DD')
-  return event.end_date < today ? 'event-passed-row' : ''
+  return DateFormatService.hasPassedjs(event.end_date) ? 'event-passed-row' : ''
 }
 
 function viewDetails(event) {

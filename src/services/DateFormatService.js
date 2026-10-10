@@ -1,6 +1,23 @@
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { DEFAULT_TIME_ZONE, TIME_ZONES } from '@/services/constants.js'
 //import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(utc)
+dayjs.extend(timezone)
 export default {
+  hasPassedjs(date_time) {
+    return !!date_time && dayjs(date_time).isBefore(dayjs())
+  },
+  // Appends the zone's friendly name unless a custom format is given
+  formatInZonejs(date_time, tz, format) {
+    if (!date_time) return undefined
+    const zone = tz || DEFAULT_TIME_ZONE
+    const local = dayjs(date_time).tz(zone)
+    if (format) return local.format(format)
+    const label = TIME_ZONES.find(z => z.value === zone)?.title || zone
+    return `${local.format('MM/DD/YY hh:mmA')} ${label}`
+  },
   formatDayOfWeekjs(action_date) {
     if (action_date) {
       action_date =  dayjs(action_date).format('dddd')
