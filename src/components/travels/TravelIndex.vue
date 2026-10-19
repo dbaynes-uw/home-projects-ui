@@ -22,13 +22,13 @@
           </th>
           <th class="table-header" @click="sortList('departure_date')">
             <span class="header-content">
-              Departure
+              Dates
               <i class="fas fa-sort sort-icon"></i>
             </span>
           </th>
-          <th class="table-header" @click="sortList('return_date')">
+          <th class="table-header" @click="sortList('expenses')">
             <span class="header-content">
-              Return
+              Expenses
               <i class="fas fa-sort sort-icon"></i>
             </span>
           </th>
@@ -61,10 +61,11 @@
             </div>
           </td>
           <td class="travel-date">
-            {{ formatFullYearDate(travel.departure_date) }}
+            <div>{{ formatFullYearDate(travel.departure_date) }}</div>
+            <div>{{ formatFullYearDate(travel.return_date) }}</div>
           </td>
-          <td class="travel-date">
-            {{ formatFullYearDate(travel.return_date) }}
+          <td class="travel-expenses">
+            {{ formatCurrency(travel.expenses) || '—' }}
           </td>
           <td class="travel-reference">
             <a 
@@ -127,6 +128,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import DateFormatService from '@/services/DateFormatService.js'
+import { formatCurrency } from '@/utils/formatCurrency.js'
 import dayjs from 'dayjs'
 
 // Props
@@ -162,7 +164,9 @@ const displayedTravels = computed(() => {
         : aDate.isBefore(bDate) ? 1 : -1
     }
     
-    const comparison = aVal.toString().localeCompare(bVal.toString())
+    const comparison = sortField.value === 'expenses'
+      ? Number(aVal || 0) - Number(bVal || 0)
+      : aVal.toString().localeCompare(bVal.toString())
     return sortDirection.value === 'asc' ? comparison : -comparison
   })
   
@@ -246,8 +250,10 @@ const viewDetails = (travel) => {
 
 /* ✅ HEADER */
 .table-header {
+  /* Global .table-header (table-components.css) sets display:flex, which breaks <th> layout */
+  display: table-cell;
   background: var(--color-primary);
-  color: white;
+  color: black;
   padding: 1rem 0.75rem;
   text-align: left;
   cursor: pointer;
@@ -337,6 +343,10 @@ const viewDetails = (travel) => {
 
 .travel-reference {
   text-align: center;
+}
+
+.travel-expenses {
+  white-space: nowrap;
 }
 
 .reference-link {

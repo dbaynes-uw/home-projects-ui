@@ -85,6 +85,18 @@
         {{ urlMaxLength - formData.transport_url.length }} / {{ urlMaxLength }} characters remaining
       </span>
 
+      <!-- Expenses -->
+      <BaseTextField
+        v-model="formData.expenses"
+        label="Expenses"
+        type="number"
+        prepend-icon="currency-usd"
+        min="0"
+        step="0.01"
+        :error="errors.expenses"
+        placeholder="Total trip expenses"
+      />
+
       <!-- Map Embed URL -->
       <BaseTextField
         v-model="formData.map_embed_url"
@@ -179,6 +191,7 @@ const formData = ref({
   transport: '',
   transport_url: '',
   booking_reference: '',
+  expenses: '',
   notes: '',
   created_by: vuexStore.state.user?.resource_owner?.email || '',
 })
@@ -222,6 +235,7 @@ const resetForm = () => {
     transport: '',
     transport_url: '',
     booking_reference: '',
+    expenses: '',
     notes: '',
     created_by: vuexStore.state.user?.resource_owner?.email || '',
   }
@@ -289,6 +303,7 @@ const handleSubmit = async () => {
     const travelData = {
       ...formData.value,
       map_embed_url: normalizeMapEmbedUrl(formData.value.map_embed_url),
+      expenses: formData.value.expenses === '' ? null : formData.value.expenses,
       created_by: vuexStore.state.user?.resource_owner?.email || ''
     }
     

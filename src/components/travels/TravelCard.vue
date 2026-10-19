@@ -76,6 +76,11 @@
         <span class="detail-value">{{ formatStandardDateTime(travel.return_date) }}</span>
       </div>
       
+      <div v-if="travel.expenses != null" class="detail-row">
+        <span class="detail-label">Expenses:</span>
+        <span class="detail-value">{{ formatCurrency(travel.expenses) }}</span>
+      </div>
+      
       <div v-if="travel.notes" class="detail-row notes-row">
         <span class="detail-label">Notes:</span>
         <div class="detail-value notes-content">
@@ -195,6 +200,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import DateFormatService from '@/services/DateFormatService.js'
+import { formatCurrency } from '@/utils/formatCurrency.js'
 import dayjs from 'dayjs'
 
 // Composables

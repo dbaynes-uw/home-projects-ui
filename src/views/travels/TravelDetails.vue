@@ -61,6 +61,10 @@
           <i class="mdi mdi-calendar-check"></i>
           <span>{{ travel_events?.length || 0 }} Events</span>
         </div>
+        <div v-if="travel.expenses != null" class="summary-item">
+          <i class="mdi mdi-currency-usd"></i>
+          <span>{{ formatCurrency(travel.expenses) }} Expenses</span>
+        </div>
       </div>
     </BaseCard>
 
@@ -251,6 +255,7 @@ import TravelEventCard from "@/components/travel_events/TravelEventCard.vue"
 import TravelEventForm from '@/components/travel_events/TravelEventForm.vue'
 import TravelForm from '@/components/travels/TravelForm.vue'
 import TravelCard from '@/components/travels/TravelCard.vue'
+import { formatCurrency } from '@/utils/formatCurrency.js'
 import dayjs from 'dayjs'
 
 // Props
