@@ -89,12 +89,12 @@
       <BaseTextField
         v-model="formData.expenses"
         label="Expenses"
-        type="number"
+        type="text"
+        inputmode="decimal"
         prepend-icon="currency-usd"
-        min="0"
-        step="0.01"
         :error="errors.expenses"
         placeholder="Total trip expenses"
+        @blur="formatExpensesInput"
       />
 
       <!-- Map Embed URL -->
@@ -225,6 +225,19 @@ const normalizeMapEmbedUrl = (value) => {
 }
 
 // Methods - Define before watchers to avoid hoisting issues
+const cleanExpenses = (value) => String(value ?? '').replace(/,/g, '').trim()
+
+const isValidExpenses = (cleaned) => /^\d+(\.\d{1,2})?$/.test(cleaned)
+
+const displayExpenses = (value) => {
+  const cleaned = cleanExpenses(value)
+  if (!isValidExpenses(cleaned)) return value ?? ''
+  return Number(cleaned).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const formatExpensesInput = () => {
+  formData.value.expenses = displayExpenses(formData.value.expenses)
+}
 const resetForm = () => {
   formData.value = {
     title: '',
@@ -255,6 +268,10 @@ watch(() => props.travel, (newTravel) => {
       data.return_date = formatDateForInput(data.return_date);
     }
     
+    if (data.expenses != null) {
+      data.expenses = displayExpenses(data.expenses);
+    }
+    
     formData.value = data;
   } else {
     resetForm();
@@ -270,6 +287,11 @@ const validateForm = () => {
   
   if (!formData.value.departure_date) {
     errors.value.departure_date = 'Departure date is required'
+  }
+  
+  const expenses = cleanExpenses(formData.value.expenses)
+  if (expenses && !isValidExpenses(expenses)) {
+    errors.value.expenses = 'Enter a positive amount, e.g. 1250.50'
   }
   
   if (formData.value.transport_url && formData.value.transport_url.length > urlMaxLength.value) {
@@ -303,7 +325,7 @@ const handleSubmit = async () => {
     const travelData = {
       ...formData.value,
       map_embed_url: normalizeMapEmbedUrl(formData.value.map_embed_url),
-      expenses: formData.value.expenses === '' ? null : formData.value.expenses,
+      expenses: cleanExpenses(formData.value.expenses) || null,
       created_by: vuexStore.state.user?.resource_owner?.email || ''
     }
     
