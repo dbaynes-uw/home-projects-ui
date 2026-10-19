@@ -225,7 +225,7 @@ const normalizeMapEmbedUrl = (value) => {
 }
 
 // Methods - Define before watchers to avoid hoisting issues
-const cleanExpenses = (value) => String(value ?? '').replace(/,/g, '').trim()
+const cleanExpenses = (value) => String(value ?? '').replace(/[$,\s]/g, '')
 
 const isValidExpenses = (cleaned) => /^\d+(\.\d{1,2})?$/.test(cleaned)
 
