@@ -1,5 +1,10 @@
 <template>
   <div class="travel-table-container">
+    <div v-if="travels.length > 0" class="expenses-summary">
+      Total Travel Expenses from <strong>{{ earliestDate }}</strong> to <strong>{{ latestDate }}</strong>:
+      <strong>{{ formatCurrency(totalExpenses) }}</strong>
+    </div>
+
     <div v-if="travels.length === 0" class="empty-table">
       <i class="fas fa-map fa-2x"></i>
       <p>No travels to display</p>
@@ -32,8 +37,6 @@
               <i class="fas fa-sort sort-icon"></i>
             </span>
           </th>
-          <th class="table-header">Reference</th>
-          <th class="table-header">Status</th>
           <th class="table-header actions-header">Actions</th>
         </tr>
       </thead>
@@ -67,32 +70,6 @@
           <td class="travel-expenses">
             {{ formatCurrency(travel.expenses) || '—' }}
           </td>
-          <td class="travel-reference">
-            <a 
-              v-if="travel.url_reference" 
-              :href="travel.url_reference" 
-              target="_blank" 
-              class="reference-link"
-            >
-              <i class="fas fa-external-link-alt"></i>
-              Review
-            </a>
-            <span v-else class="no-reference">—</span>
-          </td>
-          <td class="travel-status">
-            <span 
-              :class="[
-                'status-badge',
-                { 
-                  'status-past': hasEventPassed(travel),
-                  'status-current': isEventCurrent(travel) && !hasEventPassed(travel),
-                  'status-upcoming': !isEventCurrent(travel) && !hasEventPassed(travel)
-                }
-              ]"
-            >
-              {{ getTravelStatus(travel) }}
-            </span>
-          </td>
           <td class="travel-actions">
             <div class="action-buttons">
               <BaseButton 
@@ -121,6 +98,11 @@
         </tr>
       </tbody>
     </table>
+
+    <div v-if="travels.length > 0" class="expenses-summary">
+      Total Travel Expenses from <strong>{{ earliestDate }}</strong> to <strong>{{ latestDate }}</strong>:
+      <strong>{{ formatCurrency(totalExpenses) }}</strong>
+    </div>
   </div>
 </template>
 <script setup>
@@ -147,10 +129,23 @@ defineEmits(['edit', 'delete'])
 const router = useRouter()
 
 // Reactive data
-const sortField = ref('title')
+const sortField = ref('departure_date')
 const sortDirection = ref('asc')
 
 // Computed
+const totalExpenses = computed(() =>
+  props.travels.reduce((sum, travel) => sum + Number(travel.expenses || 0), 0)
+)
+
+const earliestDate = computed(() => {
+  const dates = props.travels.map(t => t.departure_date).filter(Boolean).map(d => dayjs(d))
+  return dates.length ? formatFullYearDate(dates.reduce((a, b) => (b.isBefore(a) ? b : a))) : '—'
+})
+
+const latestDate = computed(() => {
+  const dates = props.travels.map(t => t.return_date || t.departure_date).filter(Boolean).map(d => dayjs(d))
+  return dates.length ? formatFullYearDate(dates.reduce((a, b) => (b.isAfter(a) ? b : a))) : '—'
+})
 const displayedTravels = computed(() => {
   const sorted = [...props.travels].sort((a, b) => {
     const aVal = a[sortField.value] || ''
@@ -208,12 +203,6 @@ const isEventCurrent = (travel) => {
     (departureDate.isSame(today, 'day') || departureDate.isBefore(today, 'day')) &&
     (returnDate.isSame(today, 'day') || returnDate.isAfter(today, 'day'))
   )
-}
-
-const getTravelStatus = (travel) => {
-  if (hasEventPassed(travel)) return 'Completed'
-  if (isEventCurrent(travel)) return 'Current'
-  return 'Upcoming'
 }
 
 const viewDetails = (travel) => {
@@ -341,61 +330,14 @@ const viewDetails = (travel) => {
   font-size: 0.875rem;
 }
 
-.travel-reference {
-  text-align: center;
-}
-
 .travel-expenses {
   white-space: nowrap;
+  text-align: left;
 }
 
-.reference-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--color-primary);
-  text-decoration: none;
-  font-size: 0.875rem;
-  transition: opacity 0.2s;
-}
-
-.reference-link:hover {
-  opacity: 0.8;
-}
-
-.no-reference {
-  color: var(--color-text-secondary);
-  font-style: italic;
-}
-
-/* ✅ STATUS */
-.travel-status {
-  text-align: center;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-  white-space: nowrap;
-}
-
-.status-upcoming {
-  background: rgba(59, 130, 246, 0.1);
-  color: rgb(59, 130, 246);
-}
-
-.status-current {
-  background: rgba(34, 197, 94, 0.1);
-  color: rgb(34, 197, 94);
-}
-
-.status-past {
-  background: rgba(107, 114, 128, 0.1);
-  color: rgb(107, 114, 128);
+.expenses-summary {
+  text-align: left;
+  padding: 0.75rem 0.75rem;
 }
 
 /* ✅ ACTIONS */
