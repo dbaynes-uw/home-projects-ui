@@ -1,5 +1,13 @@
 <template>
   <div class="travel-table-container">
+    <BaseSelect
+      v-if="travels.length > 0"
+      v-model="selectedYear"
+      label="Year"
+      :items="yearOptions"
+      class="year-filter"
+    />
+
     <div v-if="travels.length > 0" class="expenses-summary">
       Total Travel Expenses from <strong>{{ earliestDate }}</strong> to <strong>{{ latestDate }}</strong>:
       <strong>{{ formatCurrency(totalExpenses) }}</strong>
@@ -109,6 +117,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseSelect from '@/components/ui/BaseSelect.vue'
 import DateFormatService from '@/services/DateFormatService.js'
 import { formatCurrency } from '@/utils/formatCurrency.js'
 import dayjs from 'dayjs'
@@ -131,23 +140,42 @@ const router = useRouter()
 // Reactive data
 const sortField = ref('departure_date')
 const sortDirection = ref('asc')
+const selectedYear = ref('all')
 
 // Computed
+const yearOptions = computed(() => {
+  const years = new Set(
+    props.travels.filter(t => t.departure_date).map(t => String(dayjs(t.departure_date).year()))
+  )
+  return [
+    { value: 'all', title: 'All' },
+    ...[...years].sort((a, b) => b - a).map(y => ({ value: y, title: y }))
+  ]
+})
+
+// Year is the departure year
+const filteredTravels = computed(() => {
+  if (selectedYear.value === 'all') return props.travels
+  return props.travels.filter(
+    t => t.departure_date && String(dayjs(t.departure_date).year()) === selectedYear.value
+  )
+})
+
 const totalExpenses = computed(() =>
-  props.travels.reduce((sum, travel) => sum + Number(travel.expenses || 0), 0)
+  filteredTravels.value.reduce((sum, travel) => sum + Number(travel.expenses || 0), 0)
 )
 
 const earliestDate = computed(() => {
-  const dates = props.travels.map(t => t.departure_date).filter(Boolean).map(d => dayjs(d))
+  const dates = filteredTravels.value.map(t => t.departure_date).filter(Boolean).map(d => dayjs(d))
   return dates.length ? formatFullYearDate(dates.reduce((a, b) => (b.isBefore(a) ? b : a))) : '—'
 })
 
 const latestDate = computed(() => {
-  const dates = props.travels.map(t => t.return_date || t.departure_date).filter(Boolean).map(d => dayjs(d))
+  const dates = filteredTravels.value.map(t => t.return_date || t.departure_date).filter(Boolean).map(d => dayjs(d))
   return dates.length ? formatFullYearDate(dates.reduce((a, b) => (b.isAfter(a) ? b : a))) : '—'
 })
 const displayedTravels = computed(() => {
-  const sorted = [...props.travels].sort((a, b) => {
+  const sorted = [...filteredTravels.value].sort((a, b) => {
     const aVal = a[sortField.value] || ''
     const bVal = b[sortField.value] || ''
     
@@ -333,6 +361,11 @@ const viewDetails = (travel) => {
 .travel-expenses {
   white-space: nowrap;
   text-align: left;
+}
+
+.year-filter {
+  max-width: 200px;
+  margin: 0.75rem 0.75rem 0;
 }
 
 .expenses-summary {
