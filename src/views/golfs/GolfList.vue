@@ -4,6 +4,7 @@
     <header class="page-shell-header pb-0" style="display:flex; align-items:center; justify-content:space-between;">
       <h2>Golf Rounds</h2>
       <div style="display:flex; gap:0.5rem; align-items:center;">
+        &nbsp;
         <router-link :to="{ name: 'GolfGroupScorecard' }" class="btn btn-success btn-sm">
           ⛳ New Round
         </router-link>        
