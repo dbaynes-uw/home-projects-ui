@@ -4,6 +4,9 @@
     <header class="page-shell-header pb-0" style="display:flex; align-items:center; justify-content:space-between;">
       <h2>Golf Rounds</h2>
       <div style="display:flex; gap:0.5rem; align-items:center;">
+        <router-link :to="{ name: 'GolfGroupScorecard' }" class="btn btn-success btn-sm">
+          ⛳ New Round
+        </router-link>        
         <button
           type="button"
           :class="['btn btn-sm', viewMode === 'cards' ? 'btn-primary' : 'btn-outline-primary']"
@@ -20,9 +23,6 @@
         </button>
         <router-link :to="{ name: 'GolfPlayers' }" class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-users" />&nbsp;Players
-        </router-link>
-        <router-link :to="{ name: 'GolfGroupScorecard' }" class="btn btn-success btn-sm">
-          ⛳ New Round
         </router-link>
       </div>
     </header>
@@ -101,7 +101,7 @@ const golfStore = useGolfStore()
 
 const inputSearchText = ref('')
 const filteredResults = ref([])
-const viewMode        = ref('cards')
+const viewMode        = ref('table')
 
 const rounds = computed(() => golfStore.allGolfRounds)
 
