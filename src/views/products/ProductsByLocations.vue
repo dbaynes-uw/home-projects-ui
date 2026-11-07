@@ -569,6 +569,7 @@ import { useRouter, onBeforeRouteLeave } from "vue-router";
 import { useStore } from "vuex";
 import { v4 as uuidv4 } from "uuid";
 import ConfirmDialogue from "@/components/ConfirmDialogue.vue";
+import { applyPendingProductSelections, toggleProductSelection } from "@/utils/productSelectionChanges.js";
 
 const router = useRouter();
 const store = useStore();
@@ -578,7 +579,8 @@ const showShoppingList = ref(true);
 const isLoading = ref(true);
 const isSubmitting = ref(false);
 const confirmDialogue = ref(null);
-const hasUnsavedChanges = ref(false);
+const pendingProducts = ref(new Map());
+const hasUnsavedChanges = computed(() => pendingProducts.value.size > 0);
 
 // ✅ PRODUCT DIALOG STATE (THESE WERE MISSING!)
 const showProductDialog = ref(false);
@@ -620,6 +622,10 @@ const vendorsProducts = computed(() => {
   if (rawData?.vendors_products && Array.isArray(rawData.vendors_products))
     return rawData.vendors_products;
   return [];
+});
+
+watch(vendorsProducts, (vendors) => {
+  applyPendingProductSelections(vendors, pendingProducts.value);
 });
 
 const vendorsLocationsGroup = computed(() => {
@@ -1016,6 +1022,7 @@ function toggleAllVendors() {
 }
 
 function handleProductClick(product, event, productIndex, vendorProducts) {
+  if (isSubmitting.value) return;
   if (event?.shiftKey && lastSelectedIndex.value !== null) {
     const start = Math.min(lastSelectedIndex.value, productIndex);
     const end = Math.max(lastSelectedIndex.value, productIndex);
@@ -1032,9 +1039,7 @@ function handleProductClick(product, event, productIndex, vendorProducts) {
     }
     lastSelectedIndex.value = productIndex;
   } else {
-    product.active = !product.active;
-    hasUnsavedChanges.value = true;
-    updateProduct(product);
+    toggleProductSelection(product, pendingProducts.value);
     selectedProducts.value.clear();
     lastSelectedIndex.value = null;
   }
@@ -1084,43 +1089,17 @@ function editProduct(product) {
   });
 }
 
-function updateProduct(product) {
-  if (!product) {
-    console.warn("❌ updateProduct called with invalid product:", product);
-    return;
-  }
-}
-
 async function submitChanges() {
   try {
     isSubmitting.value = true;
-    if (!Array.isArray(vendorsProducts.value) || vendorsProducts.value.length === 0) {
-      throw new Error("No vendors products to update!");
-    }
-    const allProducts = [];
-    vendorsProducts.value.forEach((vendor) => {
-      if (vendor.products && Array.isArray(vendor.products)) {
-        vendor.products.forEach((product) => {
-          allProducts.push({
-            ...product,
-            vendor_id: product.vendor_id || vendor.id,
-            vendor_name: vendor.vendor_name || product.vendor_name,
-            location: vendor.location || product.location,
-          });
-        });
-      }
-    });
-    const changedProducts = allProducts.map((product) => ({
+    const changedProducts = [...pendingProducts.value.values()].map((product) => ({
       id: product.id,
-      vendor_id: product.vendor_id || 1,
-      product_name: product.product_name || "Unknown Product",
-      location: product.location,
-      vendor_name: product.vendor_name,
-      active: !!product.active,
-      updated_by: store.state.user?.resource_owner?.email || "",
+      active: product.active,
     }));
-    const activeCount = changedProducts.filter((p) => p.active).length;
-    const inactiveCount = changedProducts.filter((p) => !p.active).length;
+    if (changedProducts.length === 0) {
+      alert("No changes to submit.");
+      return;
+    }
     const submitData = {
       products: changedProducts,
       id: uuidv4(),
@@ -1128,10 +1107,9 @@ async function submitChanges() {
     };
     const result = await store.dispatch("putProducts", submitData);
     if (result !== false) {
-      hasUnsavedChanges.value = false;
-      alert(
-        `✅ Updated ${changedProducts.length} products (${activeCount} active, ${inactiveCount} inactive)`
-      );
+      pendingProducts.value.clear();
+      const count = result.updated_count ?? changedProducts.length;
+      alert(`✅ ${count} ${count === 1 ? "product was" : "products were"} updated.`);
       await Promise.all([
         store.dispatch("fetchProducts"),
         store.dispatch("fetchShoppingList"),
@@ -1160,42 +1138,11 @@ async function fetchData() {
       store.dispatch("fetchVendorsProductsGroup"),
     ];
     await Promise.all(promises);
-    setSmartDefaults();
   } catch (error) {
     console.error("❌ Error fetching data:", error);
   } finally {
     isLoading.value = false;
   }
-}
-
-function setSmartDefaults() {
-  locations.value.forEach((location, index) => {
-    expandedLocations.value.add(index);
-  });
-  locations.value.forEach((location) => {
-    const vendors = getVendorsForLocation(location);
-    vendors.forEach((vendor) => {
-      const hasSelectedProducts =
-        vendor.products && vendor.products.some((p) => p.active);
-      if (hasSelectedProducts) {
-        expandedVendors.value.add(getVendorKey(location, vendor));
-        const vendorId = vendor.vendor_id || vendor.id;
-        vendorProductFilters.value.set(vendorId, true);
-      } else {
-        const vendorId = vendor.vendor_id || vendor.id;
-        vendorProductFilters.value.set(vendorId, false);
-      }
-    });
-  });
-  locations.value.forEach((location) => {
-    const vendors = getVendorsForLocation(location);
-    const hasAnySelected = vendors.some(
-      (v) => v.products && v.products.some((p) => p.active)
-    );
-    locationFilters.value.set(location, hasAnySelected);
-  });
-  //showShoppingList.value = expandedVendorCount > 0;
-  showShoppingList.value = true;
 }
 
 onBeforeRouteLeave(async (to, from, next) => {

@@ -1023,7 +1023,7 @@ actions: {
     },
 
     // ✅ UPDATE YOUR store.js putProducts ACTION
-    async putProducts({ commit }, products) {
+    async putProducts(_context, products) {
       try {
 
         const response = await EventService.putProducts(products);
@@ -1031,12 +1031,7 @@ actions: {
         // ✅ RETURN TRUE ON SUCCESS
         if (response && (response.status === 200 || response.status === 201)) {
 
-          // ✅ UPDATE STORE STATE IF NEEDED
-          if (response.data) {
-            commit('SET_PRODUCTS', response.data);
-          }
-
-          return true; // ✅ SUCCESS
+          return response.data || true;
         }
 
         console.error('❌ Store putProducts: Invalid response');
@@ -1288,7 +1283,7 @@ actions: {
         });
     },
     async fetchVendorsProducts({ commit }) {
-      EventService.getVendorsProducts()
+      return EventService.getVendorsProducts()
         .then((response) => {
           commit("SET_VENDORS_PRODUCTS", response.data);
           return response.data;
