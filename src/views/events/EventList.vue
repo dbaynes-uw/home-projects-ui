@@ -44,12 +44,6 @@
       <div class="card-body">
         <!-- ✅ FILTER COMPONENTS ROW -->
         <div class="filters-grid mb-4">
-          <EventsPastDue 
-            :selectedPastDueValue="selectedPastDueValue"
-            @past-due-filter="handlePastDueFilter"
-            @clear-past-due="handleClearPastDue"
-          />
-
           <EventsStatus 
             :show-active-events="showActiveEvents"
             @toggle-status="handleStatusToggle"
@@ -129,18 +123,16 @@
 
         <!-- ✅ LEGEND -->
         <div class="legend-chips">
-          <span class="chip chip-success chip-small">
-            <i class="fas fa-check-circle"></i>
-            Complete
-          </span>
-          <span class="chip chip-warning chip-small">
-            <i class="fas fa-clock"></i>
-            Incomplete
-          </span>
-          <span class="chip chip-danger chip-small">
+          <button
+            type="button"
+            class="chip chip-danger chip-small past-due-filter-button"
+            :class="{ 'past-due-filter-active': selectedPastDueValue === 'pastdue' }"
+            :aria-pressed="selectedPastDueValue === 'pastdue'"
+            @click="togglePastDueFilter"
+          >
             <i class="fas fa-exclamation-triangle"></i>
-            Past Due
-          </span>
+            {{ selectedPastDueValue === 'pastdue' ? 'Show Future Events' : 'Show Past Due' }}
+          </button>
         </div>
       </div>
 
@@ -212,7 +204,6 @@ import EventCard from "@/components/events/EventCard.vue";
 import EventIndex from "@/components/events/EventIndex.vue";
 import EventsDueBy from "@/components/events/EventsDueBy.vue";
 import EventsLocations from "@/components/events/EventsLocations.vue";
-import EventsPastDue from "@/components/events/EventsPastDue.vue";
 import EventsStatus from "@/components/events/EventsStatus.vue";
 const router = useRouter();
 const store = useStore();
@@ -244,6 +235,13 @@ const isAdmin = computed(() =>
 
 const displayEvents = computed(() => {
   let filtered = events.value;
+
+  if (selectedPastDueValue.value === 'pastdue') {
+    const today = dayjs().format('YYYY-MM-DD');
+    filtered = filtered.filter(event =>
+      event.status?.toLowerCase() === 'active' && event.action_due_date < today
+    );
+  }
   
   // Status filter
   if (showActiveEvents.value) {
@@ -276,14 +274,26 @@ const displayEvents = computed(() => {
 });
 
 // ✅ METHODS
-function handlePastDueFilter(pastDueValue) {
-  selectedPastDueValue.value = pastDueValue;
-  store.dispatch('eventsPastDue');
-}
-
 function handleClearPastDue() {
   selectedPastDueValue.value = '';
+  store.commit('SET_EVENTS_REQUEST', 'All');
   store.dispatch('fetchEvents');
+}
+
+function togglePastDueFilter() {
+  if (selectedPastDueValue.value === 'pastdue') {
+    handleClearPastDue();
+    return;
+  }
+
+  selectedPastDueValue.value = 'pastdue';
+  showActiveEvents.value = true;
+  selectedDueByValue.value = '';
+  selectedLocationValue.value = '';
+  inputSearchText.value = '';
+  filteredResults.value = [];
+  store.commit('SET_EVENTS_REQUEST', 'PastDue');
+  store.dispatch('eventsPastDue');
 }
 
 function handleDueByFilter(daysValue) {
@@ -310,10 +320,13 @@ function handleClearLocation() {
 
 function handleStatusToggle(newActiveState) {
   showActiveEvents.value = newActiveState;
+  selectedPastDueValue.value = '';
   filteredResults.value = [];
   inputSearchText.value = '';
   selectedLocationValue.value = '';
   selectedDueByValue.value = '';
+  store.commit('SET_EVENTS_REQUEST', 'All');
+  store.dispatch('fetchEvents');
 }
 
 //function getStatusBadgeClass() {
@@ -321,6 +334,8 @@ function handleStatusToggle(newActiveState) {
 //}
 
 function getResultsTitle() {
+  if (selectedPastDueValue.value === 'pastdue') return 'Past Due Events';
+
   const statusText = showActiveEvents.value ? 'Active' : 'Inactive';
   let title = `${statusText} Events`;
   
@@ -595,6 +610,21 @@ onMounted(async () => {
   gap: 0.75rem;
   flex-wrap: wrap;
   margin-top: 0.75rem;
+}
+
+.past-due-filter-button {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.past-due-filter-button:focus-visible {
+  outline: 2px solid #991b1b;
+  outline-offset: 2px;
+}
+
+.past-due-filter-active {
+  box-shadow: 0 0 0 2px rgba(153, 27, 27, 0.35);
 }
 
 /* Events Grid */
