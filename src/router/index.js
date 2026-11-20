@@ -277,6 +277,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/health/markers/:id/trends',
+    name: 'HealthMarkerTrends',
+    component: () => import('@/views/health/healthMarkers/HealthMarkerTrends.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/health/markers/:id',
     name: 'HealthMarkerDetails',
     component: () => import('@/views/health/healthMarkers/HealthMarkerDetails.vue'),

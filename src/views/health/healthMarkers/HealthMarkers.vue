@@ -89,6 +89,34 @@
               <div class="stat-label">Marker Types</div>
             </div>
           </div>
+
+          <button
+            type="button"
+            class="stat-card stat-trend-up"
+            :class="{ 'stat-card-selected': selectedTrend === 'up' }"
+            :aria-pressed="selectedTrend === 'up'"
+            @click="toggleTrendFilter('up')"
+          >
+            <div class="stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
+            <div class="stat-content">
+              <div class="stat-value">{{ trendCounts.up }}</div>
+              <div class="stat-label">Trending Up</div>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="stat-card stat-trend-down"
+            :class="{ 'stat-card-selected': selectedTrend === 'down' }"
+            :aria-pressed="selectedTrend === 'down'"
+            @click="toggleTrendFilter('down')"
+          >
+            <div class="stat-icon"><i class="fas fa-arrow-trend-down"></i></div>
+            <div class="stat-content">
+              <div class="stat-value">{{ trendCounts.down }}</div>
+              <div class="stat-label">Trending Down</div>
+            </div>
+          </button>
           
           <div class="stat-card stat-success">
             <div class="stat-icon">
@@ -237,6 +265,13 @@
           <button v-if="searchQuery" class="btn-clear-filter" @click="searchQuery = ''">
             <i class="fas fa-times"></i>
             Clear Search
+          </button>
+        </div>
+        <div v-if="selectedTrend" class="date-filter-section trend-filter-notice">
+          <span><i :class="selectedTrend === 'up' ? 'fas fa-arrow-trend-up' : 'fas fa-arrow-trend-down'"></i> Showing markers trending {{ selectedTrend }}</span>
+          <button class="btn-clear-filter" type="button" @click="selectedTrend = null">
+            <i class="fas fa-times"></i>
+            Clear Trend Filter
           </button>
         </div>
     <!-- ✅ CONTENT AREA -->
@@ -442,6 +477,7 @@ import HealthMarkerPanelCard from '@/components/health/healthMarkers/HealthMarke
 import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import EventService from '@/services/EventService';
+import { getHealthMarkerTrend } from '@/utils/healthMarkerTrend.js';
 
 // ✅ ROUTER & STORE
 const router = useRouter();
@@ -458,6 +494,7 @@ const selectedTestDate = ref(null);
 const selectedPanelId = ref(null);
 const selectedMarkerName = ref(null);
 const searchQuery = ref('');
+const selectedTrend = ref(null);
 
 // ✅ VIEW OPTIONS
 const views = [
@@ -512,9 +549,28 @@ const statusCounts = computed(() => {
   return counts;
 });
 
+const trendFilteredMarkers = computed(() => baseFilteredMarkers.value.filter(marker =>
+  selectedTrend.value && getHealthMarkerTrend(marker, healthMarkers.value) === selectedTrend.value
+));
+
+const trendCounts = computed(() => ({
+  up: baseFilteredMarkers.value.filter(marker => getHealthMarkerTrend(marker, healthMarkers.value) === 'up').length,
+  down: baseFilteredMarkers.value.filter(marker => getHealthMarkerTrend(marker, healthMarkers.value) === 'down').length,
+}));
+
+const trendingMarkerIds = computed(() => new Set(trendFilteredMarkers.value.map(marker => marker.id)));
+
+function toggleTrendFilter(trend) {
+  selectedTrend.value = selectedTrend.value === trend ? null : trend;
+}
+
 // ✅ AUTO-SWITCH VIEW WHEN FILTERING BY MARKER NAME
 watch(selectedMarkerName, (name) => {
   if (name) viewMode.value = 'markers';
+});
+
+watch(selectedTrend, (trend) => {
+  if (trend) viewMode.value = 'markers';
 });
 
 // ✅ TEST DATE FILTERING
@@ -523,7 +579,7 @@ const uniqueTestDates = computed(() => {
   return Array.from(dates).sort((a, b) => new Date(b) - new Date(a));
 });
 
-const filteredMarkers = computed(() => {
+const baseFilteredMarkers = computed(() => {
   let markers = healthMarkers.value;
   if (selectedTestDate.value) markers = markers.filter(m => m.marker_date === selectedTestDate.value);
   if (selectedPanelId.value) markers = markers.filter(m => m.health_marker_panel_id === selectedPanelId.value);
@@ -548,6 +604,11 @@ const filteredMarkers = computed(() => {
   return markers;
 });
 
+const filteredMarkers = computed(() => {
+  if (!selectedTrend.value) return baseFilteredMarkers.value;
+  return baseFilteredMarkers.value.filter(marker => trendingMarkerIds.value.has(marker.id));
+});
+
 const filteredPanels = computed(() => {
   let panelList = panels.value;
   if (selectedTestDate.value) panelList = panelList.filter(p => p.test_date === selectedTestDate.value);
@@ -564,6 +625,11 @@ const filteredPanels = computed(() => {
 
       return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
     });
+  }
+  if (selectedTrend.value) {
+    panelList = panelList.filter(panel => healthMarkers.value.some(marker =>
+      marker.health_marker_panel_id === panel.id && trendingMarkerIds.value.has(marker.id)
+    ));
   }
   return panelList;
 });
@@ -593,6 +659,14 @@ const filteredMixedItems = computed(() => {
         : [item.panel_name, item.marker_name, item.status, item.marker_result, item.unit, item.lab_name, item.doctor_name, item.marker_date];
 
       return searchableFields.some(value => String(value || '').toLowerCase().includes(query));
+    });
+  }
+  if (selectedTrend.value) {
+    items = items.filter(item => {
+      if (item.type === 'marker') return trendingMarkerIds.value.has(item.id);
+      return healthMarkers.value.some(marker =>
+        marker.health_marker_panel_id === item.id && trendingMarkerIds.value.has(marker.id)
+      );
     });
   }
   return items;
@@ -1181,6 +1255,44 @@ onMounted(async () => {
 }
 
 /* Stat card link styling */
+.stat-card.stat-trend-up,
+.stat-card.stat-trend-down {
+  width: 100%;
+  border: 2px solid transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.stat-card.stat-trend-up {
+  background: #fff7ed;
+}
+
+.stat-card.stat-trend-up .stat-icon,
+.stat-card.stat-trend-up .stat-value {
+  color: #c2410c;
+}
+
+.stat-card.stat-trend-down {
+  background: #f0fdf4;
+}
+
+.stat-card.stat-trend-down .stat-icon,
+.stat-card.stat-trend-down .stat-value {
+  color: #15803d;
+}
+
+.stat-card.stat-trend-up.stat-card-selected,
+.stat-card.stat-trend-down.stat-card-selected {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.18);
+}
+
+.stat-card.stat-trend-up:focus-visible,
+.stat-card.stat-trend-down:focus-visible {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+}
+
 .stat-card-link {
   display: flex;
   align-items: center;

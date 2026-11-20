@@ -99,15 +99,15 @@
         <p class="notes-text">{{ truncateNotes(healthMarker.notes) }}</p>
       </div>
       <!-- Trends Image Link -->
-      <a
-        v-if="healthMarker.trends_image"
-        href="#"
+      <router-link
+        v-if="healthMarker.id"
+        :to="{ name: 'HealthMarkerTrends', params: { id: healthMarker.id } }"
         class="trends-link"
-        @click.stop.prevent="openDataUrlImage(healthMarker.trends_image)"
+        @click.stop
       >
         <i class="fas fa-chart-line"></i>
         View Trends
-      </a>
+      </router-link>
     </div>
 
     <!-- ✅ CARD FOOTER -->
@@ -142,7 +142,6 @@ import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
-import { openDataUrlImage } from '@/utils/openDataUrlImage';
 
 // ✅ ROUTER
 const router = useRouter();

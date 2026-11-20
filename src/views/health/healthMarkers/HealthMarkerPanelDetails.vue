@@ -61,8 +61,8 @@
             <div class="status-grid">
               <button
                 type="button"
-                :class="['status-item', { active: selectedStatus === null }]"
-                @click="selectedStatus = null"
+                :class="['status-item', { active: !hasMarkerFilter }]"
+                @click="clearMarkerFilters"
               >
                 <i class="fas fa-vials"></i>
                 <span class="status-value">{{ panelStatusSummary.total }}</span>
@@ -128,6 +128,28 @@
                 <span class="status-value">{{ panelStatusSummary.critical }}</span>
                 <span class="status-label">Critical</span>
               </button>
+              <button
+                type="button"
+                :class="['status-item', 'status-trend-up', { active: selectedTrend === 'up' }]"
+                :aria-pressed="selectedTrend === 'up'"
+                :disabled="panelStatusSummary.trendingUp === 0"
+                @click="toggleTrendFilter('up')"
+              >
+                <i class="fas fa-arrow-trend-up"></i>
+                <span class="status-value">{{ panelStatusSummary.trendingUp }}</span>
+                <span class="status-label">Upward Trend</span>
+              </button>
+              <button
+                type="button"
+                :class="['status-item', 'status-trend-down', { active: selectedTrend === 'down' }]"
+                :aria-pressed="selectedTrend === 'down'"
+                :disabled="panelStatusSummary.trendingDown === 0"
+                @click="toggleTrendFilter('down')"
+              >
+                <i class="fas fa-arrow-trend-down"></i>
+                <span class="status-value">{{ panelStatusSummary.trendingDown }}</span>
+                <span class="status-label">Downward Trend</span>
+              </button>
             </div>
           </div>
 
@@ -168,8 +190,8 @@
 
         <div v-else class="empty-state">
           <i class="fas fa-inbox"></i>
-          <h3>{{ selectedStatus ? 'No Matching Markers' : 'No Markers in Panel' }}</h3>
-          <p>{{ selectedStatus ? 'Choose Total Markers to clear the status filter' : 'Add markers to this panel from the edit page' }}</p>
+          <h3>{{ hasMarkerFilter ? 'No Matching Markers' : 'No Markers in Panel' }}</h3>
+          <p>{{ hasMarkerFilter ? 'Choose Total Markers to clear the filters' : 'Add markers to this panel from the edit page' }}</p>
           <button class="btn btn-primary" @click="handleEdit">
             <i class="fas fa-edit"></i>
             Edit Panel
@@ -191,6 +213,7 @@ import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import EventService from '@/services/EventService';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import { getHealthMarkerTrend } from '@/utils/healthMarkerTrend.js';
 
 const router = useRouter();
 const route = useRoute();
@@ -200,6 +223,9 @@ const isLoading = ref(true);
 const confirmDialogue = ref(null);
 const markerDefinitionStore = useMarkerDefinitionStore();
 const selectedStatus = ref(null);
+const selectedTrend = ref(null);
+const historicalMarkers = ref([]);
+const hasMarkerFilter = computed(() => selectedStatus.value !== null || selectedTrend.value !== null);
 
 function getMarkerStatusKey(marker) {
   const definition = markerDefinitionStore.getDefinitionByName(marker.marker_name) ||
@@ -218,8 +244,12 @@ function getMarkerStatusKey(marker) {
 
 const filteredPanelMarkers = computed(() => {
   const markers = panel.value?.health_markers || [];
-  if (!selectedStatus.value) return markers;
-  return markers.filter(marker => getMarkerStatusKey(marker) === selectedStatus.value);
+  return markers.filter((marker) => {
+    const matchesStatus = selectedStatus.value === null || getMarkerStatusKey(marker) === selectedStatus.value;
+    const trend = getHealthMarkerTrend(marker, historicalMarkers.value);
+    const matchesTrend = selectedTrend.value === null || trend === selectedTrend.value;
+    return matchesStatus && matchesTrend;
+  });
 });
 
 const panelStatusSummary = computed(() => {
@@ -233,12 +263,17 @@ const panelStatusSummary = computed(() => {
     borderlineLow: 0,
     high: 0,
     low: 0,
-    critical: 0
+    critical: 0,
+    trendingUp: 0,
+    trendingDown: 0
   };
 
   markers.forEach(marker => {
     const statusKey = getMarkerStatusKey(marker);
     if (statusKey in summary) summary[statusKey]++;
+    const trend = getHealthMarkerTrend(marker, historicalMarkers.value);
+    if (trend === 'up') summary.trendingUp++;
+    if (trend === 'down') summary.trendingDown++;
   });
 
   return summary;
@@ -258,6 +293,15 @@ function formatDate(dateString) {
   } catch {
     return dateString;
   }
+}
+
+function toggleTrendFilter(trend) {
+  selectedTrend.value = selectedTrend.value === trend ? null : trend;
+}
+
+function clearMarkerFilters() {
+  selectedStatus.value = null;
+  selectedTrend.value = null;
 }
 
 function handleEdit() {
@@ -354,6 +398,20 @@ async function fetchPanel() {
   try {
     const response = await EventService.getHealthMarkerPanel(route.params.id);
     panel.value = response.data;
+    try {
+      const historyResponse = await EventService.getHealthMarkers();
+      const history = historyResponse.data;
+      historicalMarkers.value = Array.isArray(history)
+        ? history
+        : Array.isArray(history?.health_markers)
+          ? history.health_markers
+          : Array.isArray(history?.data)
+            ? history.data
+            : [];
+    } catch (historyError) {
+      historicalMarkers.value = panel.value?.health_markers || [];
+      console.error('❌ Fetch marker history error:', historyError);
+    }
   } catch (error) {
     console.error('❌ Fetch panel error:', error);
     alert('Failed to load panel. Please try again.');
@@ -529,6 +587,19 @@ onMounted(() => {
 .status-critical { background: #fee2e2; }
 .status-critical i { color: #991b1b; }
 .status-critical .status-value { color: #991b1b; }
+
+.status-trend-up { background: #fef3c7; }
+.status-trend-up i,
+.status-trend-up .status-value { color: #92400e; }
+
+.status-trend-down { background: #d1fae5; }
+.status-trend-down i,
+.status-trend-down .status-value { color: #065f46; }
+
+.status-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
 
 .notes-section {
   background: #f9fafb;
