@@ -66,6 +66,15 @@
                   <span v-if="markerInfo?.category" class="badge badge-lg badge-info">
                     {{ markerInfo.category }}
                   </span>
+                  <router-link
+                    v-if="markerTrend && healthMarker.id"
+                    :to="{ name: 'HealthMarkerTrends', params: { id: healthMarker.id } }"
+                    :class="['marker-trend-badge', `trend-${markerTrend}`]"
+                    title="View marker trend"
+                  >
+                    <i :class="trendIcon"></i>
+                    {{ markerTrend === 'up' ? 'Trending up' : 'Trending down' }}
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -278,6 +287,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import { getLatestHealthMarkerTrendForName } from '@/utils/healthMarkerTrend.js';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import EventService from '@/services/EventService';
 
@@ -319,6 +329,15 @@ const intelligentStatus = computed(() => {
 const markerPanel = computed(() => {
   return healthMarker.value?.health_marker_panel || fetchedPanel.value;
 });
+
+const markerTrend = computed(() => getLatestHealthMarkerTrendForName(
+  healthMarker.value?.marker_name,
+  healthMarkerStore.allHealthMarkers
+));
+const trendIcon = computed(() => markerTrend.value === 'up'
+  ? 'fas fa-arrow-trend-up'
+  : 'fas fa-arrow-trend-down'
+);
 
 // ✅ METHODS
 function formatDate(dateString) {
@@ -498,6 +517,32 @@ onMounted(async () => {
 .panel-breadcrumb .breadcrumb-link {
   color: navy !important;
   font-weight: 600;
+}
+
+.marker-trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.marker-trend-badge:hover {
+  filter: brightness(0.94);
+}
+
+.marker-trend-badge.trend-up {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.marker-trend-badge.trend-down {
+  color: #166534;
+  background: #dcfce7;
 }
 
 /* Details card */

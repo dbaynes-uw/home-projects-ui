@@ -44,3 +44,33 @@ export function getHealthMarkerTrend(marker, allMarkers) {
   if (currentValue < previousValue) return 'down'
   return 'stable'
 }
+
+export function getLatestHealthMarkerTrends(allMarkers) {
+  const grouped = new Map()
+
+  ;(allMarkers || []).forEach((marker) => {
+    const name = normalizeName(marker?.marker_name)
+    if (!name || dateValue(marker?.marker_date) === null || numericResult(marker?.marker_result) === null) return
+    if (!grouped.has(name)) grouped.set(name, [])
+    grouped.get(name).push(marker)
+  })
+
+  return [...grouped.values()].map((readings) => {
+    const ordered = [...readings].sort((a, b) => {
+      const dateDifference = dateValue(b.marker_date) - dateValue(a.marker_date)
+      if (dateDifference !== 0) return dateDifference
+      const createdAtDifference = dateValue(b.created_at) - dateValue(a.created_at)
+      if (Number.isFinite(createdAtDifference) && createdAtDifference !== 0) return createdAtDifference
+      return Number(b.id) - Number(a.id)
+    })
+    const latest = ordered[0]
+    return { marker: latest, trend: getHealthMarkerTrend(latest, readings) }
+  }).filter(({ trend }) => trend !== null)
+}
+
+export function getLatestHealthMarkerTrendForName(markerName, allMarkers) {
+  const normalizedName = normalizeName(markerName)
+  if (!normalizedName) return null
+  return getLatestHealthMarkerTrends(allMarkers)
+    .find(({ marker }) => normalizeName(marker.marker_name) === normalizedName)?.trend || null
+}

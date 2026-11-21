@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { getHealthMarkerTrend } from '../src/utils/healthMarkerTrend.js'
+import { getHealthMarkerTrend, getLatestHealthMarkerTrendForName, getLatestHealthMarkerTrends } from '../src/utils/healthMarkerTrend.js'
 
 const history = [
   { id: 1, marker_name: 'Cholesterol', marker_result: '180', marker_date: '2025-01-01' },
@@ -34,4 +34,30 @@ test('uses an earlier record as the prior reading when dates match', () => {
     { id: 21, marker_name: 'TSH', marker_result: '3.2', marker_date: '2025-01-01' },
   ]
   assert.equal(getHealthMarkerTrend(readings[1], readings), 'up')
+})
+
+test('returns one direction per marker type from its latest two readings', () => {
+  const readings = [
+    { id: 1, marker_name: 'Cholesterol', marker_result: '180', marker_date: '2025-01-01' },
+    { id: 2, marker_name: 'Cholesterol', marker_result: '210', marker_date: '2025-02-01' },
+    { id: 3, marker_name: 'Cholesterol', marker_result: '190', marker_date: '2025-03-01' },
+    { id: 4, marker_name: 'TSH', marker_result: '2', marker_date: '2025-01-01' },
+    { id: 5, marker_name: 'TSH', marker_result: '3', marker_date: '2025-02-01' },
+  ]
+
+  const trends = getLatestHealthMarkerTrends(readings)
+  assert.equal(trends.length, 2)
+  assert.deepEqual(
+    trends.map(({ marker, trend }) => [marker.marker_name, marker.id, trend]),
+    [['Cholesterol', 3, 'down'], ['TSH', 5, 'up']]
+  )
+})
+
+test('shows latest marker-type trend on older cards of that marker type', () => {
+  const readings = [
+    { id: 1, marker_name: 'Cholesterol', marker_result: '180', marker_date: '2025-01-01' },
+    { id: 2, marker_name: 'Cholesterol', marker_result: '210', marker_date: '2025-02-01' },
+    { id: 3, marker_name: 'Cholesterol', marker_result: '190', marker_date: '2025-03-01' },
+  ]
+  assert.equal(getLatestHealthMarkerTrendForName(' cholesterol ', readings), 'down')
 })

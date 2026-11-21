@@ -31,6 +31,16 @@
         <span :class="['status-badge', getStatusClass(displayStatus)]">
           {{ displayStatus }}
         </span>
+        <router-link
+          v-if="markerTrend && healthMarker.id"
+          :to="{ name: 'HealthMarkerTrends', params: { id: healthMarker.id } }"
+          :class="['trend-badge', `trend-${markerTrend}`]"
+          title="View marker trend"
+          @click.stop
+        >
+          <i :class="trendIcon"></i>
+          {{ markerTrend === 'up' ? 'Trending up' : 'Trending down' }}
+        </router-link>
       </div>
     </div>
     <!-- ✅ CARD BODY -->
@@ -141,11 +151,14 @@
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore';
+import { useHealthMarkerStore } from '@/stores/health/HealthMarkerStore';
 import { getHealthMarkerByName, getResultStatus } from '@/services/health-marker-constants';
+import { getLatestHealthMarkerTrendForName } from '@/utils/healthMarkerTrend.js';
 
 // ✅ ROUTER
 const router = useRouter();
 const markerDefinitionStore = useMarkerDefinitionStore();
+const healthMarkerStore = useHealthMarkerStore();
 
 // ✅ PROPS
 const props = defineProps({
@@ -192,6 +205,14 @@ const displayStatus = computed(() => {
   return derivedStatus.value || props.healthMarker.status || 'Unknown';
 });
 
+const markerTrend = computed(() =>
+  getLatestHealthMarkerTrendForName(props.healthMarker.marker_name, healthMarkerStore.allHealthMarkers)
+)
+const trendIcon = computed(() => markerTrend.value === 'up'
+  ? 'fas fa-arrow-trend-up'
+  : 'fas fa-arrow-trend-down'
+)
+
 // ✅ METHODS
 // ✅ ADDED THIS METHOD
 function handleDoubleClick() {
@@ -235,8 +256,12 @@ function truncateNotes(notes) {
   return notes.substring(0, 100) + '...';
 }
 
-onMounted(() => {
-  markerDefinitionStore.fetchDefinitions();
+onMounted(async () => {
+  const requests = [markerDefinitionStore.fetchDefinitions()];
+  if (healthMarkerStore.allHealthMarkers.length === 0 && !healthMarkerStore.loading) {
+    requests.push(healthMarkerStore.fetchHealthMarkers());
+  }
+  await Promise.all(requests);
 });
 </script>
 
@@ -326,6 +351,38 @@ onMounted(() => {
 
 .header-right {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.trend-badge:hover {
+  filter: brightness(0.94);
+}
+
+.trend-up {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.trend-down {
+  color: #166534;
+  background: #dcfce7;
 }
 
 /* Card body */

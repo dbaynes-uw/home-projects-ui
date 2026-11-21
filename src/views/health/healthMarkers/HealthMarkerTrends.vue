@@ -95,6 +95,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import EventService from '@/services/EventService'
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore'
+import { getLatestHealthMarkerTrends } from '@/utils/healthMarkerTrend.js'
 
 const route = useRoute()
 const markerDefinitionStore = useMarkerDefinitionStore()
@@ -114,13 +115,19 @@ const chartPoints = computed(() => {
     .filter(reading => normalizeName(reading.marker_name) === markerName && reading.marker_date)
     .map(reading => ({ ...reading, numericValue: parseNumericResult(reading.marker_result) }))
     .filter(reading => reading.numericValue !== null)
-    .sort((a, b) => String(a.marker_date).localeCompare(String(b.marker_date)))
+    .sort((a, b) => {
+      const dateDifference = new Date(a.marker_date).getTime() - new Date(b.marker_date).getTime()
+      return dateDifference || Number(a.id) - Number(b.id)
+    })
 
   if (marker.value && !readings.some(reading => reading.id === marker.value.id)) {
     const value = parseNumericResult(marker.value.marker_result)
     if (value !== null && marker.value.marker_date) {
       readings.push({ ...marker.value, numericValue: value })
-      readings.sort((a, b) => String(a.marker_date).localeCompare(String(b.marker_date)))
+      readings.sort((a, b) => {
+        const dateDifference = new Date(a.marker_date).getTime() - new Date(b.marker_date).getTime()
+        return dateDifference || Number(a.id) - Number(b.id)
+      })
     }
   }
 
@@ -158,11 +165,12 @@ const chartPoints = computed(() => {
 
 const linePoints = computed(() => chartPoints.value.map(point => `${point.x},${point.y}`).join(' '))
 const latestPoint = computed(() => chartPoints.value[chartPoints.value.length - 1] || null)
+const latestTrend = computed(() => getLatestHealthMarkerTrends(allMarkers.value)
+  .find(({ marker: reading }) => normalizeName(reading.marker_name) === normalizeName(marker.value?.marker_name))?.trend || 'stable'
+)
 const direction = computed(() => {
   if (chartPoints.value.length < 2) return 'stable'
-  const first = chartPoints.value[0].numericValue
-  const last = chartPoints.value[chartPoints.value.length - 1].numericValue
-  return last > first ? 'up' : last < first ? 'down' : 'stable'
+  return latestTrend.value
 })
 const directionIcon = computed(() => ({ up: 'fas fa-arrow-trend-up', down: 'fas fa-arrow-trend-down', stable: 'fas fa-arrows-left-right' }[direction.value]))
 const directionLabel = computed(() => ({ up: 'Trending up', down: 'Trending down', stable: 'Stable' }[direction.value]))

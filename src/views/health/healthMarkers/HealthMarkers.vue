@@ -477,7 +477,7 @@ import HealthMarkerPanelCard from '@/components/health/healthMarkers/HealthMarke
 import HealthMarkerIndex from '@/components/health/healthMarkers/HealthMarkerIndex.vue';
 import ConfirmDialogue from '@/components/ConfirmDialogue.vue';
 import EventService from '@/services/EventService';
-import { getHealthMarkerTrend } from '@/utils/healthMarkerTrend.js';
+import { getLatestHealthMarkerTrends } from '@/utils/healthMarkerTrend.js';
 
 // ✅ ROUTER & STORE
 const router = useRouter();
@@ -549,13 +549,19 @@ const statusCounts = computed(() => {
   return counts;
 });
 
-const trendFilteredMarkers = computed(() => baseFilteredMarkers.value.filter(marker =>
-  selectedTrend.value && getHealthMarkerTrend(marker, healthMarkers.value) === selectedTrend.value
-));
+const latestTrendEntries = computed(() => {
+  const baseIds = new Set(baseFilteredMarkers.value.map(marker => marker.id));
+  return getLatestHealthMarkerTrends(healthMarkers.value)
+    .filter(({ marker }) => baseIds.has(marker.id));
+});
+
+const trendFilteredMarkers = computed(() => latestTrendEntries.value
+  .filter(({ trend }) => trend === selectedTrend.value)
+  .map(({ marker }) => marker));
 
 const trendCounts = computed(() => ({
-  up: baseFilteredMarkers.value.filter(marker => getHealthMarkerTrend(marker, healthMarkers.value) === 'up').length,
-  down: baseFilteredMarkers.value.filter(marker => getHealthMarkerTrend(marker, healthMarkers.value) === 'down').length,
+  up: latestTrendEntries.value.filter(({ trend }) => trend === 'up').length,
+  down: latestTrendEntries.value.filter(({ trend }) => trend === 'down').length,
 }));
 
 const trendingMarkerIds = computed(() => new Set(trendFilteredMarkers.value.map(marker => marker.id)));

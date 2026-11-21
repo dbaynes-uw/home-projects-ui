@@ -200,10 +200,8 @@ export default {
     return api.post(api_url + 'glucose_readings', { glucose_reading: glucose_reading });
   },
   getHealthMarker(id) {
-    console.log("ES GET Health Marker with ID:", id);
     this.init();
     const response = api.get(api_url + "health_markers/" + id);
-    console.log("ES GET Health Marker response:", response);
     return response;
   },
   getHealthMarkers() {
