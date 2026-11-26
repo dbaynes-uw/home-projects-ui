@@ -95,7 +95,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import EventService from '@/services/EventService'
 import { useMarkerDefinitionStore } from '@/stores/health/MarkerDefinitionStore'
-import { getLatestHealthMarkerTrends } from '@/utils/healthMarkerTrend.js'
+import { getLatestHealthMarkerTrends, normalizeHealthMarkerName } from '@/utils/healthMarkerTrend.js'
 
 const route = useRoute()
 const markerDefinitionStore = useMarkerDefinitionStore()
@@ -108,11 +108,11 @@ const markerInfo = computed(() => markerDefinitionStore.getDefinitionByName(mark
 const unit = computed(() => marker.value?.unit || markerInfo.value?.unit || '')
 
 const chartPoints = computed(() => {
-  const markerName = normalizeName(marker.value?.marker_name)
+  const markerName = normalizeHealthMarkerName(marker.value?.marker_name)
   if (!markerName) return []
 
   const readings = allMarkers.value
-    .filter(reading => normalizeName(reading.marker_name) === markerName && reading.marker_date)
+    .filter(reading => normalizeHealthMarkerName(reading.marker_name) === markerName && reading.marker_date)
     .map(reading => ({ ...reading, numericValue: parseNumericResult(reading.marker_result) }))
     .filter(reading => reading.numericValue !== null)
     .sort((a, b) => {
@@ -166,7 +166,7 @@ const chartPoints = computed(() => {
 const linePoints = computed(() => chartPoints.value.map(point => `${point.x},${point.y}`).join(' '))
 const latestPoint = computed(() => chartPoints.value[chartPoints.value.length - 1] || null)
 const latestTrend = computed(() => getLatestHealthMarkerTrends(allMarkers.value)
-  .find(({ marker: reading }) => normalizeName(reading.marker_name) === normalizeName(marker.value?.marker_name))?.trend || 'stable'
+  .find(({ marker: reading }) => normalizeHealthMarkerName(reading.marker_name) === normalizeHealthMarkerName(marker.value?.marker_name))?.trend || 'stable'
 )
 const direction = computed(() => {
   if (chartPoints.value.length < 2) return 'stable'
@@ -195,10 +195,6 @@ const xTicks = computed(() => {
   const indices = [...new Set([0, Math.floor((points.length - 1) / 2), points.length - 1])]
   return indices.map(index => ({ x: points[index].x, label: points[index].formattedDate }))
 })
-
-function normalizeName(name) {
-  return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
-}
 
 function parseNumericResult(result) {
   const value = String(result ?? '').trim()

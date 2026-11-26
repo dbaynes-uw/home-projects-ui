@@ -1,4 +1,4 @@
-const normalizeName = (name) => String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+export const normalizeHealthMarkerName = (name) => String(name || '').trim().toLowerCase().replace(/\s+/g, ' ')
 
 const numericResult = (value) => {
   if (typeof value === 'number') return Number.isFinite(value) ? value : null
@@ -15,7 +15,7 @@ const dateValue = (value) => {
 }
 
 export function getHealthMarkerTrend(marker, allMarkers) {
-  const markerName = normalizeName(marker?.marker_name)
+  const markerName = normalizeHealthMarkerName(marker?.marker_name)
   const currentDate = dateValue(marker?.marker_date)
   const currentValue = numericResult(marker?.marker_result)
   if (!markerName || currentDate === null || currentValue === null) return null
@@ -24,7 +24,7 @@ export function getHealthMarkerTrend(marker, allMarkers) {
     .map(candidate => ({ candidate, date: dateValue(candidate.marker_date) }))
     .filter(({ candidate, date }) =>
       String(candidate.id) !== String(marker.id) &&
-      normalizeName(candidate.marker_name) === markerName &&
+      normalizeHealthMarkerName(candidate.marker_name) === markerName &&
       date !== null && (
         date < currentDate ||
         (date === currentDate && Number(candidate.id) < Number(marker.id))
@@ -49,7 +49,7 @@ export function getLatestHealthMarkerTrends(allMarkers) {
   const grouped = new Map()
 
   ;(allMarkers || []).forEach((marker) => {
-    const name = normalizeName(marker?.marker_name)
+    const name = normalizeHealthMarkerName(marker?.marker_name)
     if (!name || dateValue(marker?.marker_date) === null || numericResult(marker?.marker_result) === null) return
     if (!grouped.has(name)) grouped.set(name, [])
     grouped.get(name).push(marker)
@@ -69,8 +69,8 @@ export function getLatestHealthMarkerTrends(allMarkers) {
 }
 
 export function getLatestHealthMarkerTrendForName(markerName, allMarkers) {
-  const normalizedName = normalizeName(markerName)
+  const normalizedName = normalizeHealthMarkerName(markerName)
   if (!normalizedName) return null
   return getLatestHealthMarkerTrends(allMarkers)
-    .find(({ marker }) => normalizeName(marker.marker_name) === normalizedName)?.trend || null
+    .find(({ marker }) => normalizeHealthMarkerName(marker.marker_name) === normalizedName)?.trend || null
 }

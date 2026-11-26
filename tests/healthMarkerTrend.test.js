@@ -61,3 +61,20 @@ test('shows latest marker-type trend on older cards of that marker type', () => 
   ]
   assert.equal(getLatestHealthMarkerTrendForName(' cholesterol ', readings), 'down')
 })
+
+test('keeps marker names with different punctuation as separate trend series', () => {
+  const readings = [
+    { id: 1, marker_name: 'POLYS-AUTO', marker_result: '4.1', marker_date: '2025-01-01' },
+    { id: 2, marker_name: 'POLYS-AUTO,%', marker_result: '55', marker_date: '2025-01-01' },
+    { id: 3, marker_name: 'POLYS-AUTO', marker_result: '4.5', marker_date: '2025-02-01' },
+    { id: 4, marker_name: 'POLYS-AUTO,%', marker_result: '60', marker_date: '2025-02-01' },
+  ]
+
+  const trends = getLatestHealthMarkerTrends(readings)
+  assert.equal(trends.length, 2)
+  assert.deepEqual(
+    trends.map(({ marker, trend }) => [marker.marker_name, trend]),
+    [['POLYS-AUTO', 'up'], ['POLYS-AUTO,%', 'up']]
+  )
+  assert.equal(getHealthMarkerTrend(readings[0], readings), null)
+})

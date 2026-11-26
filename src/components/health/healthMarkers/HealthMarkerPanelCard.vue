@@ -36,30 +36,34 @@
       </div>
       
       <div v-if="statusSummary" class="status-summary">
-        <span v-if="statusSummary.normal > 0" class="status-count status-normal">
+        <button v-if="statusSummary.normal > 0" type="button" :class="['status-count', 'status-normal', { active: selectedStatus === 'normal' }]" :aria-pressed="selectedStatus === 'normal'" @click.stop="selectStatus('normal')">
           <i class="fas fa-check-circle"></i>
           {{ statusSummary.normal }} Normal
-        </span>
-        <span v-if="statusSummary.borderlineHigh > 0" class="status-count status-borderline">
+        </button>
+        <button v-if="statusSummary.borderlineHigh > 0" type="button" :class="['status-count', 'status-borderline', { active: selectedStatus === 'borderlineHigh' }]" :aria-pressed="selectedStatus === 'borderlineHigh'" @click.stop="selectStatus('borderlineHigh')">
           <i class="fas fa-exclamation-triangle"></i>
           {{ statusSummary.borderlineHigh }} Borderline High
-        </span>
-        <span v-if="statusSummary.borderlineLow > 0" class="status-count status-borderline">
+        </button>
+        <button v-if="statusSummary.borderlineLow > 0" type="button" :class="['status-count', 'status-borderline', { active: selectedStatus === 'borderlineLow' }]" :aria-pressed="selectedStatus === 'borderlineLow'" @click.stop="selectStatus('borderlineLow')">
           <i class="fas fa-exclamation-triangle"></i>
           {{ statusSummary.borderlineLow }} Borderline Low
-        </span>
-        <span v-if="statusSummary.high > 0" class="status-count status-high">
+        </button>
+        <button v-if="statusSummary.prediabetes > 0" type="button" :class="['status-count', 'status-borderline', { active: selectedStatus === 'prediabetes' }]" :aria-pressed="selectedStatus === 'prediabetes'" @click.stop="selectStatus('prediabetes')">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ statusSummary.prediabetes }} Prediabetes
+        </button>
+        <button v-if="statusSummary.high > 0" type="button" :class="['status-count', 'status-high', { active: selectedStatus === 'high' }]" :aria-pressed="selectedStatus === 'high'" @click.stop="selectStatus('high')">
           <i class="fas fa-arrow-up"></i>
           {{ statusSummary.high }} High
-        </span>
-        <span v-if="statusSummary.low > 0" class="status-count status-low">
+        </button>
+        <button v-if="statusSummary.low > 0" type="button" :class="['status-count', 'status-low', { active: selectedStatus === 'low' }]" :aria-pressed="selectedStatus === 'low'" @click.stop="selectStatus('low')">
           <i class="fas fa-arrow-down"></i>
           {{ statusSummary.low }} Low
-        </span>
-        <span v-if="statusSummary.critical > 0" class="status-count status-critical">
+        </button>
+        <button v-if="statusSummary.critical > 0" type="button" :class="['status-count', 'status-critical', { active: selectedStatus === 'critical' }]" :aria-pressed="selectedStatus === 'critical'" @click.stop="selectStatus('critical')">
           <i class="fas fa-exclamation-circle"></i>
           {{ statusSummary.critical }} Critical
-        </span>
+        </button>
       </div>
     </div>
 
@@ -80,14 +84,20 @@
       <div v-if="isExpanded" class="panel-expanded">
         <div class="markers-list">
           <div 
-            v-for="marker in panelMarkers" 
+            v-for="marker in filteredPanelMarkers" 
             :key="marker.id"
             class="marker-item"
           >
             <div class="marker-item-header">
               <span class="marker-name">
                 <i class="fas fa-vial"></i>
-                {{ marker.marker_name }}
+                <router-link
+                  v-if="marker.id"
+                  :to="{ name: 'HealthMarkerDetails', params: { id: marker.id } }"
+                  class="marker-name-link"
+                  @click.stop
+                >{{ marker.marker_name }}</router-link>
+                <span v-else>{{ marker.marker_name }}</span>
               </span>
               <span :class="['marker-status', getStatusClass(getDisplayStatus(marker))]">
                 {{ getDisplayStatus(marker) }}
@@ -103,6 +113,9 @@
             </div>
           </div>
         </div>
+        <p v-if="filteredPanelMarkers.length === 0" class="no-status-markers">
+          No markers match the selected status.
+        </p>
         
         <div class="panel-actions">
           <button
@@ -171,6 +184,12 @@ const isExpanded = ref(false);
 const panelMarkers = ref([]);
 const loading = ref(false);
 const panelMarkersLoaded = ref(false);
+const selectedStatus = ref(null);
+
+const filteredPanelMarkers = computed(() => selectedStatus.value
+  ? panelMarkers.value.filter(marker => getStatusKey(getDisplayStatus(marker)) === selectedStatus.value)
+  : panelMarkers.value
+);
 
 const markerCount = computed(() => {
   if (Array.isArray(props.panel?.health_markers)) return props.panel.health_markers.length;
@@ -184,20 +203,33 @@ const statusSummary = computed(() => {
     : panelMarkers.value;
   if (markers.length === 0) return props.panel?.status_summary || null;
 
-  const summary = { total: markers.length, normal: 0, borderlineHigh: 0, borderlineLow: 0, high: 0, low: 0, critical: 0 };
+  const summary = { total: markers.length, normal: 0, borderlineHigh: 0, borderlineLow: 0, prediabetes: 0, high: 0, low: 0, critical: 0 };
   markers.forEach(marker => {
-    const status = getDisplayStatus(marker).toLowerCase();
-    if (status.includes('critical') || status.includes('crisis')) summary.critical++;
-    else if (status.includes('borderline low')) summary.borderlineLow++;
-    else if (status.includes('borderline')) summary.borderlineHigh++;
-    else if (status.includes('high')) summary.high++;
-    else if (status.includes('low')) summary.low++;
-    else if (status.includes('normal')) summary.normal++;
+    const statusKey = getStatusKey(getDisplayStatus(marker));
+    if (Object.prototype.hasOwnProperty.call(summary, statusKey)) summary[statusKey]++;
   });
   return summary;
 });
 
 // ✅ METHODS
+function getStatusKey(status) {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized.includes('critical') || normalized.includes('crisis')) return 'critical';
+  if (normalized.includes('borderline low')) return 'borderlineLow';
+  if (normalized.includes('borderline')) return 'borderlineHigh';
+  if (normalized.includes('prediabetes')) return 'prediabetes';
+  if (normalized.includes('high') || normalized.includes('diabetes')) return 'high';
+  if (normalized.includes('low')) return 'low';
+  if (normalized.includes('normal')) return 'normal';
+  return 'unknown';
+}
+
+function selectStatus(status) {
+  selectedStatus.value = selectedStatus.value === status ? null : status;
+  isExpanded.value = true;
+  if (!panelMarkersLoaded.value) fetchPanelDetails();
+}
+
 function toggleExpanded() {
   isExpanded.value = !isExpanded.value;
   
@@ -247,7 +279,7 @@ function getDisplayStatus(marker) {
     const derived = getResultStatus(definition || marker.marker_name, marker.marker_result);
     if (derived?.title && derived.title !== 'Result Recorded') return derived.title;
     return marker.status || derived?.title || 'Unknown';
-  } catch (error) {
+  } catch {
     return marker.status || 'Unknown';
   }
 }
@@ -396,10 +428,33 @@ function formatDate(dateString) {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  width: auto;
+  height: auto;
+  margin: 0;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
+  border: 0;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.status-count:hover,
+.status-count.active {
+  box-shadow: 0 0 0 2px currentColor;
+  transform: translateY(-1px);
+}
+
+.status-count:focus-visible {
+  outline: 2px solid #1f2937;
+  outline-offset: 2px;
+}
+
+.no-status-markers {
+  margin: 0 0 1rem;
+  color: #6b7280;
+  font-size: 0.875rem;
 }
 
 .status-normal {
@@ -480,6 +535,17 @@ function formatDate(dateString) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.marker-name-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.marker-name-link:hover,
+.marker-name-link:focus-visible {
+  color: #1565c0;
 }
 
 .marker-name i {
