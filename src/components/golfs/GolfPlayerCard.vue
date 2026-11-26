@@ -4,8 +4,16 @@
     <div class="gpc-header">
       <div class="gpc-avatar">{{ initials }}</div>
       <div class="gpc-title">
-        <h3 class="gpc-name">{{ player.name }}</h3>
-        <span class="gpc-rounds">{{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }}{{ selectedTees !== 'All' ? ` (${selectedTees})` : '' }}</span>
+        <h3 class="gpc-name">
+          <button
+            type="button"
+            class="gpc-name-link"
+            :aria-label="`Show rounds for ${player.name}`"
+            title="Show this player's rounds"
+            @click="showRounds"
+          >{{ player.name }}</button>
+        </h3>
+        <span class="gpc-rounds">{{ displayedRounds.length }} round{{ displayedRounds.length !== 1 ? 's' : '' }}{{ selectedTees !== 'All' ? ` (${selectedTees})` : '' }}</span>
       </div>
       <button class="gpc-toggle" @click="cycleView" :title="toggleTitle">
         <i :class="toggleIcon" />
@@ -35,12 +43,21 @@
           <option :value="0">All</option>
           <option v-for="n in roundLimitOptions" :key="`stats-${n}`" :value="n">Last {{ n }}</option>
         </select>
+        <label class="gpc-rounds-filter-label">Avg score outings:</label>
+        <select
+          v-model.number="selectedAvgScoreOutings"
+          class="gpc-rounds-select"
+          aria-label="Average score outing range"
+        >
+          <option :value="0">All outings</option>
+          <option v-for="n in 10" :key="`avg-score-${n}`" :value="n">Last {{ n }} outing{{ n === 1 ? '' : 's' }}</option>
+        </select>
         <span class="gpc-tees-count">({{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }})</span>
       </div>
       <div class="gpc-stats">
       <div class="gpc-stat">
         <span class="gpc-stat-val">{{ stats.avgScore }}</span>
-        <span class="gpc-stat-label">Avg Score</span>
+        <span class="gpc-stat-label">{{ avgScoreLabel }}</span>
       </div>
       <div class="gpc-stat">
         <span class="gpc-stat-val pts">{{ stats.avgPts }}</span>
@@ -98,17 +115,16 @@
             @click="selectedTees = t"
           >{{ t }}</button>
         </template>
-        <label class="gpc-rounds-filter-label" for="gpc-rounds-filter-table">Rounds:</label>
+        <label class="gpc-rounds-filter-label" for="gpc-rounds-filter-table">Avg score outings:</label>
         <select
           id="gpc-rounds-filter-table"
-          v-model.number="selectedRoundsLimit"
+          v-model.number="selectedAvgScoreOutings"
           class="gpc-rounds-select"
-          :disabled="maxRoundCount === 0"
         >
-          <option :value="0">All</option>
-          <option v-for="n in roundLimitOptions" :key="`table-${n}`" :value="n">Last {{ n }}</option>
+          <option :value="0">All outings</option>
+          <option v-for="n in 10" :key="`table-avg-score-${n}`" :value="n">Last {{ n }} outing{{ n === 1 ? '' : 's' }}</option>
         </select>
-        <span class="gpc-tees-count">({{ filteredRounds.length }} round{{ filteredRounds.length !== 1 ? 's' : '' }})</span>
+        <span class="gpc-tees-count">({{ avgScoreRounds.length }} round{{ avgScoreRounds.length !== 1 ? 's' : '' }})</span>
       </div>
       <table class="gpc-table">
         <thead>
@@ -126,7 +142,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(r, i) in filteredRounds" :key="i">
+          <tr v-for="(r, i) in avgScoreRounds" :key="i">
             <td class="tc nowrap">{{ fmtDate(r.round.date_played) }}</td>
             <td>
               <router-link :to="golfDetailsRoute(r.round.id)" class="gpc-link">
@@ -173,6 +189,7 @@ const route = useRoute()
 const viewMode     = ref('stats')
 const selectedTees = ref('All')
 const selectedRoundsLimit = ref(0)
+const selectedAvgScoreOutings = ref(0)
 
 // ── Tees helpers ──────────────────────────────────────────────────────────
 const TEE_COLOURS = {
@@ -223,8 +240,26 @@ const filteredRounds = computed(() =>
     : teesFilteredRounds.value
 )
 
+const avgScoreRounds = computed(() => {
+  const outings = teesFilteredRounds.value
+  const count = selectedAvgScoreOutings.value
+  return count ? outings.slice(0, Math.min(count, outings.length)) : outings
+})
+
+const displayedRounds = computed(() =>
+  viewMode.value === 'table' ? avgScoreRounds.value : filteredRounds.value
+)
+
+const avgScoreLabel = computed(() => selectedAvgScoreOutings.value
+  ? `Avg Score · Last ${selectedAvgScoreOutings.value} Outing${selectedAvgScoreOutings.value === 1 ? '' : 's'}`
+  : 'Avg Score · All Outings'
+)
+
 function cycleView() {
   viewMode.value = viewMode.value === 'stats' ? 'table' : viewMode.value === 'table' ? 'chart' : 'stats'
+}
+function showRounds() {
+  viewMode.value = 'table'
 }
 const toggleTitle = computed(() =>
   viewMode.value === 'stats' ? 'Show rounds table' : viewMode.value === 'table' ? 'Show hole charts' : 'Show stats'
@@ -299,7 +334,7 @@ const stats = computed(() => {
   const rounds = filteredRounds.value
   if (!rounds.length) return { avgScore: '—', avgPts: '—', avgNet: '—', avgPutts: '—', avgPenalties: '—', bestScore: '—', bestPts: '—' }
 
-  const scores    = rounds.map(r => totalScore(r.ps)).filter(v => v > 0)
+  const scores    = avgScoreRounds.value.map(r => totalScore(r.ps)).filter(v => v > 0)
   const nets      = rounds.map(r => { const s = totalScore(r.ps); return s ? s - (r.ps.course_handicap || 0) : null }).filter(v => v !== null)
   const putts     = rounds.map(r => totalPutts(r.ps))
   const pts       = rounds.map(r => stablefordTotal(r.ps, r.round))
@@ -387,6 +422,23 @@ function golfDetailsRoute(roundId) {
 }
 .gpc-title   { flex: 1; }
 .gpc-name    { margin: 0; font-size: 1rem; font-weight: 700; }
+.gpc-name-link {
+  display: inline;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.gpc-name-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 .gpc-rounds  { font-size: 0.75rem; opacity: 0.85; }
 .gpc-toggle  {
   background: rgba(255,255,255,0.2);
