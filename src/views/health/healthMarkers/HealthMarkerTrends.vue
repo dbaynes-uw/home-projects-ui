@@ -38,6 +38,10 @@
           <div>
             <p class="eyebrow">Marker trend</p>
             <h2>{{ markerInfo?.label || marker?.marker_name }}</h2>
+              <div v-if="normalRangeText" class="summary-item normal-range-summary">
+                <span class="summary-label">Normal Range</span>
+                <strong>{{ normalRangeText }}</strong>
+              </div>
             <p class="trend-description">
               {{ markerInfo?.category || 'Health marker' }}
               <span v-if="unit">· {{ unit }}</span>
@@ -66,6 +70,14 @@
               <i :class="directionIcon"></i>
               {{ directionLabel }}
             </span>
+          </div>
+          <div class="overall-trend" :class="`trend-${overallDirection}`">
+            <span class="overall-trend-label">Overall trend · {{ firstPoint.formattedDate }} to {{ latestPoint.formattedDate }}</span>
+            <strong>
+              <i :class="overallDirectionIcon"></i>
+              {{ overallDirectionLabel }}
+            </strong>
+            <span>{{ firstPoint.value }} → {{ latestPoint.value }} {{ unit }}</span>
           </div>
 
           <svg class="trend-chart" viewBox="0 0 800 360" role="img" :aria-label="`${markerInfo?.label || marker?.marker_name} results over time`">
@@ -106,6 +118,15 @@ const errorMessage = ref('')
 const markerId = computed(() => Number(route.params.id))
 const markerInfo = computed(() => markerDefinitionStore.getDefinitionByName(marker.value?.marker_name))
 const unit = computed(() => marker.value?.unit || markerInfo.value?.unit || '')
+const normalRangeText = computed(() => {
+  const low = marker.value?.normal_range_low ?? markerInfo.value?.normal_range_low
+  const high = marker.value?.normal_range_high ?? markerInfo.value?.normal_range_high
+  if (low === null || low === undefined || low === '') {
+    return high === null || high === undefined || high === '' ? '' : `≤ ${high} ${unit.value}`.trim()
+  }
+  if (high === null || high === undefined || high === '') return `≥ ${low} ${unit.value}`.trim()
+  return `${low} - ${high} ${unit.value}`.trim()
+})
 
 const chartPoints = computed(() => {
   const markerName = normalizeHealthMarkerName(marker.value?.marker_name)
@@ -164,6 +185,7 @@ const chartPoints = computed(() => {
 })
 
 const linePoints = computed(() => chartPoints.value.map(point => `${point.x},${point.y}`).join(' '))
+const firstPoint = computed(() => chartPoints.value[0] || null)
 const latestPoint = computed(() => chartPoints.value[chartPoints.value.length - 1] || null)
 const latestTrend = computed(() => getLatestHealthMarkerTrends(allMarkers.value)
   .find(({ marker: reading }) => normalizeHealthMarkerName(reading.marker_name) === normalizeHealthMarkerName(marker.value?.marker_name))?.trend || 'stable'
@@ -174,6 +196,14 @@ const direction = computed(() => {
 })
 const directionIcon = computed(() => ({ up: 'fas fa-arrow-trend-up', down: 'fas fa-arrow-trend-down', stable: 'fas fa-arrows-left-right' }[direction.value]))
 const directionLabel = computed(() => ({ up: 'Trending up', down: 'Trending down', stable: 'Stable' }[direction.value]))
+const overallDirection = computed(() => {
+  if (!firstPoint.value || !latestPoint.value) return 'stable'
+  if (latestPoint.value.numericValue > firstPoint.value.numericValue) return 'up'
+  if (latestPoint.value.numericValue < firstPoint.value.numericValue) return 'down'
+  return 'stable'
+})
+const overallDirectionIcon = computed(() => ({ up: 'fas fa-arrow-trend-up', down: 'fas fa-arrow-trend-down', stable: 'fas fa-arrows-left-right' }[overallDirection.value]))
+const overallDirectionLabel = computed(() => ({ up: 'Increased', down: 'Decreased', stable: 'Unchanged' }[overallDirection.value]))
 
 const yTicks = computed(() => {
   if (!chartPoints.value.length) return []
@@ -249,6 +279,9 @@ onMounted(async () => {
 .latest-reading { display: flex; align-items: baseline; flex-wrap: wrap; gap: .75rem; color: #64748b; }
 .latest-reading strong { color: #1e293b; font-size: 1.5rem; }
 .latest-reading small { font-size: .9rem; color: #64748b; }
+.overall-trend { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .75rem; margin-top: .75rem; padding: .65rem .8rem; border-radius: 8px; font-size: .9rem; }
+.overall-trend strong { display: inline-flex; align-items: center; gap: .35rem; }
+.overall-trend-label { color: #475569; }
 .trend-direction { display: inline-flex; gap: .35rem; align-items: center; padding: .3rem .6rem; border-radius: 999px; font-size: .85rem; font-weight: 700; }
 .trend-up { color: #9a3412; background: #ffedd5; }
 .trend-down { color: #166534; background: #dcfce7; }

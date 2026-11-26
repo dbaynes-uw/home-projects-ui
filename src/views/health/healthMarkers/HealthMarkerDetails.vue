@@ -100,7 +100,10 @@
                 </div>
 
                 <!-- Intelligent Range Display -->
-                <div v-if="intelligentStatus && intelligentStatus.range" class="metric-card metric-info">
+                <div
+                  v-if="intelligentStatus?.range && (intelligentStatus.title?.toLowerCase() !== 'normal' || !normalRangeText)"
+                  class="metric-card metric-info"
+                >
                   <div class="metric-icon">
                     <i class="fas fa-arrows-alt-h"></i>
                   </div>
@@ -112,18 +115,15 @@
                   </div>
                 </div>
                 
-                <!-- Fallback to normal_range if no intelligent status -->
-                <div v-else-if="healthMarker.normal_range_low || healthMarker.normal_range_high" class="metric-card metric-info">
+                <!-- Always show the normal range, independently of the current status range -->
+                <div v-if="normalRangeText" class="metric-card metric-info">
                   <div class="metric-icon">
                     <i class="fas fa-arrows-alt-h"></i>
                   </div>
                   <div class="metric-content">
                     <div class="metric-label">Normal Range</div>
                     <div class="metric-value-secondary">
-                      <span v-if="healthMarker.normal_range_low">{{ healthMarker.normal_range_low }}</span>
-                      <span v-if="healthMarker.normal_range_low && healthMarker.normal_range_high"> - </span>
-                      <span v-if="healthMarker.normal_range_high">{{ healthMarker.normal_range_high }}</span>
-                      <span v-if="healthMarker.unit" class="metric-unit">{{ healthMarker.unit }}</span>
+                      {{ normalRangeText }}
                     </div>
                   </div>
                 </div>
@@ -314,6 +314,18 @@ const markerInfo = computed(() => {
   if (!healthMarker.value) return null;
   return markerDefinitionStore.getDefinitionByName(healthMarker.value.marker_name) ||
     getHealthMarkerByName(healthMarker.value.marker_name);
+});
+
+const normalRangeText = computed(() => {
+  const low = healthMarker.value?.normal_range_low ?? markerInfo.value?.normal_range_low;
+  const high = healthMarker.value?.normal_range_high ?? markerInfo.value?.normal_range_high;
+  if (low === null || low === undefined || low === '') {
+    return high === null || high === undefined || high === '' ? '' : `≤ ${high} ${healthMarker.value?.unit || markerInfo.value?.unit || ''}`.trim();
+  }
+  if (high === null || high === undefined || high === '') {
+    return `≥ ${low} ${healthMarker.value?.unit || markerInfo.value?.unit || ''}`.trim();
+  }
+  return `${low} - ${high} ${healthMarker.value?.unit || markerInfo.value?.unit || ''}`.trim();
 });
 
 // ✅ GET INTELLIGENT STATUS
