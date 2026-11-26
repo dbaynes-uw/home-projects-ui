@@ -14,6 +14,7 @@
           >{{ player.name }}</button>
         </h3>
         <span class="gpc-rounds">{{ displayedRounds.length }} round{{ displayedRounds.length !== 1 ? 's' : '' }}{{ selectedTees !== 'All' ? ` (${selectedTees})` : '' }}</span>
+        <span v-if="latestPlayedDate" class="gpc-last-played">Last played: {{ latestPlayedDate }}</span>
       </div>
       <button class="gpc-toggle" @click="cycleView" :title="toggleTitle">
         <i :class="toggleIcon" />
@@ -240,6 +241,11 @@ const filteredRounds = computed(() =>
     : teesFilteredRounds.value
 )
 
+const latestPlayedDate = computed(() => {
+  const date = teesFilteredRounds.value[0]?.round?.date_played
+  return date ? fmtDate(date) : ''
+})
+
 const avgScoreRounds = computed(() => {
   const outings = teesFilteredRounds.value
   const count = selectedAvgScoreOutings.value
@@ -440,6 +446,7 @@ function golfDetailsRoute(roundId) {
 }
 .gpc-name-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 .gpc-rounds  { font-size: 0.75rem; opacity: 0.85; }
+.gpc-last-played { display: block; margin-top: 0.15rem; font-size: 0.72rem; opacity: 0.9; }
 .gpc-toggle  {
   background: rgba(255,255,255,0.2);
   border: 1px solid rgba(255,255,255,0.4);
